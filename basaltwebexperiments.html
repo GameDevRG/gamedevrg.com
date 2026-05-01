@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basalt Web Experiments</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <style>
+        .inter-normal {
+            font-family: "Inter", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 300;
+            font-style: normal;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Inter", sans-serif;
+        }
+
+        body {
+            overflow-x: auto;
+            overflow-y: hidden;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            width: max-content;
+        }
+
+        /* LEFT PANEL */
+        .panel {
+
+            width: 50vw;
+            min-width: 520px;
+            background: #0d0d0d;
+            color: white;
+            padding: 50px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .panel h1 {
+            font-size: 3.2rem;
+            margin-bottom: 20px;
+        }
+
+        .panel p {
+            opacity: 0.7;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .panel .actions {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .panel button {
+            background: #1e8b3c;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .panel input {
+            background: #1a1a1a;
+            border: 2px solid #2a2a2a;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        /* GRID */
+        .grid {
+            display: grid;
+            grid-auto-flow: column;
+            grid-template-rows: repeat(2, 50vh);
+            grid-auto-columns: 50vh;
+            gap: 0;
+        }
+
+        .card,
+        .placeholder {
+            width: 50vh;
+            height: 50vh;
+        }
+
+        .placeholder {
+            visibility: hidden;
+        }
+
+        .card {
+            position: relative;
+            border: 2px solid #333;
+            background: #1a1a1a;
+            color: white;
+            cursor: pointer;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 6px;
+        }
+
+        .card:hover {
+            background: #222;
+        }
+
+        .card img {
+            width: 55%;
+            height: 55%;
+            object-fit: contain;
+        }
+
+        .card .title {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .play-btn {
+            margin-top: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            background: #fff;
+            color: #000;
+            font-size: 0.85rem;
+        }
+
+        .card.expanded:hover {
+            transform: none;
+            background: #222222ee;
+            backdrop-filter: blur(40px);
+            
+        }
+        .card.expanded {
+            transform: none;
+            background: #1a1a1a;
+            backdrop-filter: blur(40px);
+            
+        }
+
+        .close {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            font-size: 2rem;
+            color: white;
+            z-index: 100;
+            cursor: pointer;
+            display: none;
+        }
+
+        .close.show {
+            display: block;
+        }
+
+        .expanded-info {
+            display: none;
+            padding: 60px;
+            color: white;
+            text-align: center;
+        }
+
+        .card.expanded .expanded-info {
+            display: block;
+        }
+
+        .card.expanded .title {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="panel">
+            <div>
+                <h1>[ Basalt Web Experiments ]</h1>
+                <p>welcome to basalt web experiments.</p>
+                <p>this is a collection of web games and experiments made by me with<br>help from some friends.</p>
+
+                <div class="actions">
+                    <button>log in</button>
+                    <input placeholder="search experiments"></input>
+                </div>
+            </div>
+            <p>© GameDevRG 2026. All Lefts Reserved...?</p>
+        </div>
+
+        <div class="grid">
+
+            <div class="card">
+                <img src="https://picsum.photos/200?1">
+                <div class="title">blind keyboard</div>
+                <div class="expanded-info">
+                    <h2>Experiment 1</h2>
+                    <p>More details about experiment 1 go here.</p>
+                    <button class="play-btn">Play</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/200?2">
+                <div class="title">alphabetical speedrun</div>
+                <div class="expanded-info">
+                    <h2>Experiment 2</h2>
+                    <p>More details about experiment 2 go here.</p>
+                    <button class="play-btn">Play</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/200?3">
+                <div class="title">by definition</div>
+                <div class="expanded-info">
+                    <h2>Experiment 3</h2>
+                    <p>Extra description shown only when opened.</p>
+                    <button class="play-btn">Play</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="expanded-info">
+                    <h2>distance wordle</h2>
+                </div>
+                <img src="distancewordless.png">
+                <div class="title">distance wordle</div>
+                <div class="expanded-info">
+                    <p>experiment #004 - supports PC and mobile</p>
+                    <button class="play-btn" onclick="openDistanceWordle()">launch</button>
+                </div>
+
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/200?5">
+                <div class="title">peak literature generator</div>
+                <div class="expanded-info">
+                    <h2>Experiment 5</h2>
+                    <p>Extra description shown only when opened.</p>
+                    <button class="play-btn">Play</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/200?6">
+                <div class="title">hexagonal minesweeper</div>
+                <div class="expanded-info">
+                    <h2>Experiment 6</h2>
+                    <p>Extra description shown only when opened.</p>
+                    <button class="play-btn">Play</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/200?6">
+                <div class="title">simple organism test</div>
+                <div class="expanded-info">
+                    <h2>Experiment 6</h2>
+                    <p>Extra description shown only when opened.</p>
+                    <button class="play-btn">Play</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="title">credits</div>
+                <div class="expanded-info">
+                    <h2>credits</h2>
+                    <p>basalt web experiments project created by Robert Gordon<br>with help from Atharv Kulkarni</p>
+                    <button class="play-btn">Play</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="close" id="close">✕</div>
+
+    <script>
+        const cards = document.querySelectorAll('.card');
+        const closeBtn = document.getElementById('close');
+        let activeCard = null;
+        let lastRect = null;
+        let placeholder = null;
+
+        function lockScroll() {
+            document.body.style.overflow = 'hidden';
+        }
+
+        function unlockScroll() {
+            document.body.style.overflow = '';
+        }
+
+        function openDistanceWordle() {
+            window.location.href = "distancewordle.html";
+        }
+
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                if (activeCard) return;
+
+                activeCard = card;
+                const rect = card.getBoundingClientRect();
+                lastRect = rect;
+
+                placeholder = document.createElement('div');
+                placeholder.className = 'placeholder';
+                card.parentNode.insertBefore(placeholder, card);
+
+                lockScroll();
+
+                card.style.position = 'fixed';
+                card.style.top = rect.top + 'px';
+                card.style.left = rect.left + 'px';
+                card.style.width = rect.width + 'px';
+                card.style.height = rect.height + 'px';
+                card.style.zIndex = 50;
+
+                card.getBoundingClientRect();
+
+                card.style.transition = 'all 0.5s ease';
+                card.style.top = '0px';
+                card.style.left = '0px';
+                card.style.width = '100vw';
+                card.style.height = '100vh';
+
+                card.classList.add('expanded');
+                closeBtn.classList.add('show');
+            });
+        });
+
+        closeBtn.addEventListener('click', () => {
+            if (!activeCard) return;
+
+            const card = activeCard;
+
+            card.style.transition = 'all 0.5s ease';
+
+            card.style.top = lastRect.top + 'px';
+            card.style.left = lastRect.left + 'px';
+            card.style.width = lastRect.width + 'px';
+            card.style.height = lastRect.height + 'px';
+
+            setTimeout(() => {
+                card.style.position = '';
+                card.style.top = '';
+                card.style.left = '';
+                card.style.width = '';
+                card.style.height = '';
+                card.style.zIndex = '';
+                card.style.transition = '';
+
+                card.classList.remove('expanded');
+
+                if (placeholder) {
+                    placeholder.remove();
+                    placeholder = null;
+                }
+
+                activeCard = null;
+                unlockScroll();
+            }, 500);
+
+            closeBtn.classList.remove('show');
+        });
+
+        window.addEventListener("wheel", (e) => {
+            if (activeCard) return;
+            e.preventDefault();
+            window.scrollBy({ left: e.deltaY * 2 });
+        }, { passive: false });
+    </script>
+
+</body>
+
+</html>

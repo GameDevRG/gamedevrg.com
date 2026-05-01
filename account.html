@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>gamedevrg.com/account</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #3b82f6;
+            font-family: "Chakra Petch", sans-serif;
+        }
+
+        #settingsOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0);
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #settingsBox {
+            background: linear-gradient(145deg, #002155, #000000);
+
+            border-radius: 0px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow:
+                0 25px 50px -12px rgba(0, 0, 0, 0.7),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .settings-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .settings-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: #3b82f6;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+        }
+
+        .settings-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .settings-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .setting-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .setting-label {
+            font-weight: 500;
+            color: #e2e8f0;
+        }
+
+        input {
+            background: rgb(0, 0, 0);
+			color: #e2e8f0;
+
+			border: 2px solid #3b82f6;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #f87171;
+            border-radius: 0px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="settingsOverlay">
+        <div id="settingsBox">
+            <button class="close-btn" onclick="closeSettings()" data-i18n="closeSettings">◁ back</button>
+            <div class="settings-header">
+                <h1 class="settings-title" data-i18n="signIn">sign in</h1>
+            </div>
+
+            <div class="settings-section">
+                <h3 style="color: #94a3b8; margin: 0 0 15px 0; font-size: 16px;" data-i18n="enterLogIn">enter log in
+                    information here</h3>
+                <div class="setting-item">
+                    <span class="setting-label" data-i18n="username">username</span>
+                    <div class="slider-container">
+                        <input type="text">
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <span class="setting-label" data-i18n="password">password</span>
+                    <div class="slider-container">
+                        <input type="text">
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    <script>
+        function closeSettings() {
+            window.location.href = "index.html";
+        }
+
+        const translations = {
+            en: { // english
+                signIn: "sign in",
+                username: "username",
+                password: "password",
+                enterLogIn: "enter log in information here",
+                back: "◁ back"
+            },
+            es: { // spanish
+                signIn: "iniciar sesión",
+                username: "nombre de usuario",
+                password: "contraseña",
+                enterLogIn: "ingrese la información de inicio de sesión aquí",
+                back: "◁ volver"
+            },
+            ja: { // japanese
+                signIn: "サインイン",
+                username: "ユーザー名",
+                password: "パスワード",
+                enterLogIn: "ここにログイン情報を入力してください",
+                back: "◁ 戻る"
+            },
+            zh: { // chinese
+                signIn: "登录",
+                username: "用户名",
+                password: "密码",
+                enterLogIn: "在此输入登录信息",
+                back: "◁ 返回"
+            },
+        };
+        function applyLanguage(lang) {
+            const elements = document.querySelectorAll("[data-i18n]");
+
+            elements.forEach(el => {
+                const key = el.getAttribute("data-i18n");
+                if (translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
+            });
+        }
+
+        const savedLang = localStorage.getItem("lang") || "en";
+        applyLanguage(savedLang);
+        document.getElementById("languageSelect").value = savedLang;
+        document.getElementById("languageSelect").addEventListener("change", (e) => {
+            const lang = e.target.value;
+            localStorage.setItem("lang", lang);
+            applyLanguage(lang);
+        });
+    </script>
+</body>
+
+</html>

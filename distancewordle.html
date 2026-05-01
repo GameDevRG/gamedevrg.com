@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>distance wordle</title>
+    <link rel="icon" href="distance wordle logo (3).png" type="image/png">
+
+    <style>
+        body {
+            background: #0b0b0b;
+            color: #eaeaea;
+            font-family: helvetica, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            gap: 12px;
+            transition: filter 0.25s ease;
+        }
+
+        body.blurred>*:not(.overlay) {
+            filter: blur(6px);
+        }
+
+        #title {
+            font-size: 22px;
+            letter-spacing: 2px;
+        }
+
+        #stats {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(5, 48px);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .cell {
+            width: 48px;
+            height: 48px;
+            border: 2px solid #111;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            background: #111;
+            color: #eaeaea;
+        }
+
+        .keyboard {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .row.offset-1 {
+            margin-left: 24px;
+        }
+
+        .row.offset-2 {
+            margin-left: 48px;
+        }
+
+        .key {
+            width: 48px;
+            height: 48px;
+            background: #1a1a1a;
+            border: 2px solid #2a2a2a;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #eaeaea;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .controls {
+            display: flex;
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .restart {
+            background: #8b1e1e;
+        }
+
+        .backspace {
+            background: #555;
+        }
+
+        .submit {
+            background: #1e8b3c;
+        }
+
+        .scores {
+            background: #555;
+        }
+
+        .info {
+            background: #555;
+        }
+
+        #scoreboard {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        #warning {
+            color: #ff5555;
+            font-size: 12px;
+            margin-top: 6px;
+            height: 14px;
+            visibility: hidden;
+            animation: flash 0.6s infinite;
+        }
+
+        @keyframes flash {
+
+            0%,
+            50%,
+            100% {
+                opacity: 1;
+            }
+
+            25%,
+            75% {
+                opacity: 0.5;
+            }
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .overlay.active {
+            display: flex;
+        }
+
+        .modal {
+
+            background: #111;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 20px 24px;
+            min-width: 300px;
+            max-width: 600px;
+            max-height: 70vh;
+            overflow-y: auto;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .overlay.active .modal {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .modal h2 {
+            font-size: 20px;
+            margin-bottom: 14px;
+            color: #eaeaea;
+        }
+
+        .modal .score-entry {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #333;
+            font-size: 14px;
+        }
+
+        .modal .score-entry:nth-child(even) {
+            background: #1a1a1a;
+        }
+
+        .modal .score-entry:nth-child(odd) {
+            background: #111;
+        }
+
+        .modal .score-entry span {
+            flex: 1;
+        }
+
+        .modal button {
+            margin-top: 16px;
+            padding: 10px 0;
+            width: 100%;
+            border: none;
+            border-radius: 6px;
+            background: #333;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .modal::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .modal::-webkit-scrollbar-track {
+            background: #1a1a1a;
+            border-radius: 10px;
+        }
+
+        .modal::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 10px;
+        }
+
+        .modal::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="distance wordle logo (2).png" width="400" height="auto"></img>
+    <div id="stats">attempt 1 / 6</div>
+    <div id="grid"></div>
+    <div class="keyboard" id="keyboard"></div>
+    <div id="warning">word '' doesn't exist in the word bank.</div>
+
+    <div class="controls">
+        <button class="restart" id="restart">restart</button>
+        <button class="backspace" id="backspace">backspace</button>
+        <button class="submit" id="submit">submit</button>
+        <button class="scores" id="showScores">scores</button>
+        <button class="info" id="info">info</button>
+    </div>
+    <div id="scoreboard"></div>
+
+    <div class="overlay" id="overlay">
+        <div class="modal" id="modalContent"></div>
+    </div>
+
+    <script>
+
+        const keyboardMap = {
+            q: [0, 0], w: [1, 0], e: [2, 0], r: [3, 0], t: [4, 0], y: [5, 0], u: [6, 0], i: [7, 0], o: [8, 0], p: [9, 0],
+            a: [0.5, 1], s: [1.5, 1], d: [2.5, 1], f: [3.5, 1], g: [4.5, 1], h: [5.5, 1], j: [6.5, 1], k: [7.5, 1], l: [8.5, 1],
+            z: [1, 2], x: [2, 2], c: [3, 2], v: [4, 2], b: [5, 2], n: [6, 2], m: [7, 2]
+        };
+
+
+        function keyDistance(a, b) { const [x1, y1] = keyboardMap[a]; const [x2, y2] = keyboardMap[b]; return Math.hypot(x1 - x2, y1 - y2); }
+        function distanceColor(dist) { // color gradient!!!
+            if (dist === 0) return '#1e8b3c';
+            const max = 5;
+            const t = Math.min(dist / max, 1);
+            const r = Math.round(255 * (1 - t) * 0.8 + 75);
+            const g = Math.round(50 * (1 - t));
+            const b = Math.round(255 * t * 0.8 + 50);
+            return `rgb(${r},${g},${b})`;
+        }
+        let WORDS = [];
+
+        async function loadWords() {
+            const response = await fetch("words.txt");
+            const text = await response.text();
+
+            WORDS = text // get the words from a text document instead of a really long list
+                .split(/\r?\n/)
+                .map(w => w.trim().toLowerCase())
+                .filter(w => w.length === 5);
+
+            startNewRound();
+        }
+
+        loadWords();
+
+
+
+        let WORD;
+        let attempt = 0, index = 0, current = [], totalDist = 0;
+        const grid = document.getElementById('grid');
+        const stats = document.getElementById('stats');
+        const scoreboard = document.getElementById('scoreboard');
+        const warning = document.getElementById('warning');
+        let scoreList = [];
+
+
+
+        function updateKeyboardForCursorColumn() {
+            const columnIndex = index; // (the index is basically the 'cursor' key)
+
+            document.querySelectorAll('.key').forEach(k => {
+                k.style.background = '#1a1a1a';
+                k.style.borderColor = '#2a2a2a';
+            });
+
+            for (let r = 0; r < attempt; r++) {
+                const guessLetter = grid.children[r * 5 + columnIndex].textContent.toLowerCase();
+                if (!guessLetter) continue;
+
+                const dist = keyDistance(guessLetter, WORD[columnIndex]);
+                const color = distanceColor(dist);
+
+                const key = document.querySelector(`.key[data-key="${guessLetter}"]`);
+                if (key) {
+                    key.style.background = color;
+                    key.style.borderColor = color;
+                }
+            }
+        }
+
+        function updateCursorCell() {
+            document.querySelectorAll('.cell').forEach((cell, i) => {
+                cell.style.boxShadow = '';
+            });
+
+            const cursorCell = grid.children[attempt * 5 + index];
+            if (!cursorCell) return;
+
+            cursorCell.style.boxShadow = `
+                inset 0 0 0 2px #1b1b1b
+            `;
+        }
+
+        updateCursorCell();
+        updateKeyboardForCursorColumn();
+
+
+        for (let i = 0; i < 30; i++) { const c = document.createElement('div'); c.className = 'cell'; grid.appendChild(c); }
+
+        const rows = [['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'], ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'], ['z', 'x', 'c', 'v', 'b', 'n', 'm']];
+        rows.forEach((r, i) => { const row = document.createElement('div'); row.className = 'row'; if (i === 1) row.classList.add('offset-1'); if (i === 2) row.classList.add('offset-2'); r.forEach(ch => { const k = document.createElement('button'); k.className = 'key'; k.dataset.key = ch; k.textContent = ch; k.onclick = () => press(ch); row.appendChild(k); }); keyboard.appendChild(row); });
+
+        function press(ch) {
+            if (index >= 5) return;
+            current.push(ch);
+            grid.children[attempt * 5 + index].textContent = ch;
+            index++;
+
+            updateKeyboardForCursorColumn();
+            updateCursorCell();
+        }
+
+
+        function backspace() { if (index <= 0) return; index--; current.pop(); grid.children[attempt * 5 + index].textContent = ''; updateKeyboardForCursorColumn(); updateCursorCell(); }
+
+        function submit() {
+            if (current.length < 5) return;
+            const guess = current.join('');
+
+            if (!WORDS.includes(guess)) {
+                warning.textContent = `word '${guess}' doesn't exist in the word bank.`;
+                warning.style.visibility = 'visible';
+                setTimeout(() => { warning.style.visibility = 'hidden'; }, 1200);
+
+                return;
+            }
+
+            let won = true;
+            current.forEach((c, i) => {
+                const dist = keyDistance(c, WORD[i]);
+                const color = distanceColor(dist);
+
+                const cell = grid.children[attempt * 5 + i];
+                cell.style.background = color;
+                cell.style.borderColor = color;
+
+                if (i === index - 1) {
+                    const key = document.querySelector(`.key[data-key="${c}"]`);
+                    if (key) {
+                        key.style.background = color;
+                        key.style.borderColor = color;
+                    }
+                }
+
+
+
+
+                if (dist !== 0) won = false;
+            });
+
+            totalDist += current.reduce((sum, c, i) => sum + keyDistance(c, WORD[i]), 0);
+            attempt++;
+            index = 0;
+
+            if (won || attempt >= 6) {
+                scoreList.push({ word: WORD, attempts: attempt, totalDist });
+                showOverlay(`<h2>${won ? 'Congratulations! You won!' : 'You lost!'}</h2><p>The word was: ${WORD}</p><button id='modalBtn'>close</button><button id='searchBtn'>search definition</button>`);
+                document.getElementById('modalBtn').onclick = () => { hideOverlay(); restart(); };
+                document.getElementById('searchBtn').onclick = () => { window.open(`https://www.google.com/search?q=definition+of+${WORD}`, '_blank'); };
+            }
+
+            current = [];
+            stats.textContent = `attempt ${attempt + 1} / 6`;
+
+            updateCursorCell();
+            updateKeyboardForCursorColumn();
+        }
+
+
+        function startNewRound() {
+            WORD = WORDS[Math.floor(Math.random() * WORDS.length)];
+
+            attempt = 0;
+            index = 0;
+            current = [];
+            totalDist = 0;
+
+            for (let i = 0; i < grid.children.length; i++) {
+                grid.children[i].textContent = '';
+                grid.children[i].style.background = '#111';
+                grid.children[i].style.borderColor = '#111';
+            }
+
+            document.querySelectorAll('.key').forEach(k => {
+                k.style.background = '#1a1a1a';
+                k.style.borderColor = '#2a2a2a';
+            });
+
+
+
+            stats.textContent = `attempt 1 / 6`;
+            warning.style.visibility = 'hidden';
+        }
+
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Backspace') backspace();
+            else if (e.key === 'Enter') submit();
+            else if (keyboardMap[e.key]) press(e.key);
+        });
+        document.getElementById('backspace').onclick = backspace;
+        document.getElementById('submit').onclick = submit;
+
+        document.getElementById('restart').onclick = startNewRound;
+        //document.getElementById('restart').onclick=()=>{ restart(); hideOverlay(); };
+        document.getElementById('showScores').onclick = () => {
+            let content = `<h2>score history</h2>`;
+            scoreList.forEach((s, i) => {
+                content += `<div class='score-entry'><span>${i + 1}</span><span>${s.word}</span><span>${s.attempts}</span></div>`;
+            });
+            content += `<button id='closeScores'>close</button>`;
+            showOverlay(content);
+            document.getElementById('closeScores').onclick = hideOverlay;
+
+        };
+
+        document.getElementById('info').onclick = () => { // the how to play text (the 'info' button.)
+            let content = `<h2>how to play</h2>`;
+            content += `<div class='text'>
+            <p>
+                This is a variation of the game “Wordle,” but it tells you how far each letter is on your physical keyboard from the target letter in a game of hot-and-cold. Each letter distances are based on the target letter in that same position in the goal word, so if the word you typed is “Start”, and the target word is “Crowd”, the second letter of ‘start’ (T) is right next to the second letter of ‘Crowd’ (R). 
+            </p>
+            <p>
+                If your keyboard layout is different than the standard QWERTY keyboard, then you may use the virtual keyboard provided as a reference. This will come in handy even if you have the same keyboard layout.
+            </p>
+            <p>
+                Confused?
+                <br>Don’t worry; you’ll get it eventually.
+            </p>
+            <p>
+                As you are typing, the colors will shift on the virtual keyboard. It will only display the color distances for the current letter you are typing.
+            </p>
+            <p>
+                Red means it’s very close. Blue means it’s very far away. Colors can fall in between this range: Red (closest, hot) → Purple → Blue (farthest, cold).
+            </p>
+            <p>
+                If the letter turns green, then you’ve guessed that letter correctly.
+            </p>
+            <p>
+                You win by guessing the mystery five-letter word, and you only get six tries to do so.
+            </p>
+            <p>
+                You may use your physical keyboard to type, or click/tap the keys on the virtual keyboard.
+            </p>
+            <small style="color: #bbb;">
+                This game was originally made for the experimental web game collection <strong>“Basalt Web Experiments”</strong> by <strong>Robert Gordon</strong>.
+                <br>Special thanks to <strong>Atharv Kulkarni</strong> for helping me on this project.
+            </small>
+
+
+            </div>`;
+            content += `<button id='closeScores'>close</button>`;
+            showOverlay(content);
+            document.getElementById('closeScores').onclick = hideOverlay;
+        };
+
+
+        function restart() {
+            
+            attempt = 0; index = 0; current = []; totalDist = 0;
+            document.querySelectorAll('.cell').forEach(c => { c.textContent = ''; c.style.background = '#111'; c.style.borderColor = '#111'; });
+            document.querySelectorAll('.key').forEach(k => { k.className = 'key'; k.style.background = '#1a1a1a'; k.style.borderColor = '#2a2a2a'; });
+            stats.textContent = 'attempt 1 / 6 · total distance: 0.00';
+            startNewRound();
+        }
+
+        function showOverlay(content) { const modal = document.getElementById('modalContent'); modal.innerHTML = content; document.getElementById('overlay').classList.add('active'); document.body.classList.add('blurred'); }
+        function hideOverlay() { document.getElementById('overlay').classList.remove('active'); document.body.classList.remove('blurred'); }
+    </script>
+
+
+</body>
+</html>
