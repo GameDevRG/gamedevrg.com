@@ -148,30 +148,31 @@
                     </div>
                 </div>
 
-                <div style="display:flex; flex-direction:column; gap:10px;">
+                <div id="loginButtons">
                     <button onclick="loginUser()" style="
-                    padding:10px;
-                    background:#3b82f6;
-                    border:none;
-                    color:white;
-                    font-weight:600;
-                    cursor:pointer;
-                ">
+        padding:10px;
+        background:#3b82f6;
+        border:none;
+        color:white;
+        font-weight:600;
+        cursor:pointer;
+    ">
                         log in
                     </button>
 
                     <button onclick="switchToRegister()" style="
-                    padding:8px;
-                    background:transparent;
-                    border:1px solid #3b82f6;
-                    color:#3b82f6;
-                    cursor:pointer;
-                ">
+        padding:8px;
+        background:transparent;
+        border:1px solid #3b82f6;
+        color:#3b82f6;
+        cursor:pointer;
+    ">
                         create account
                     </button>
 
                     <p id="status" style="color:white; margin:0;"></p>
                 </div>
+
             </div>
 
             <!-- REGISTER VIEW -->
@@ -320,14 +321,19 @@
         }
 
         function switchToRegister() {
+            document.getElementById("loginView").style.display = "none";
             document.getElementById("registerBox").style.display = "block";
-            document.querySelector(".settings-section").style.display = "none";
+
+            document.getElementById("loginButtons").style.display = "none";
         }
 
         function switchToLogin() {
             document.getElementById("registerBox").style.display = "none";
-            document.querySelector(".settings-section").style.display = "block";
+            document.getElementById("loginView").style.display = "block";
+
+            document.getElementById("loginButtons").style.display = "flex";
         }
+
 
         async function registerUser() {
             const username = document.getElementById("regUsername").value;
