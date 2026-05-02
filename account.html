@@ -225,7 +225,18 @@
     </div>
 
     <script>
+        function checkIfAlreadyLoggedIn() {
+            const loggedIn = localStorage.getItem("loggedIn");
+            const user = localStorage.getItem("username");
 
+            if (loggedIn === "true" && user) {
+                // already logged in → go to dashboard
+                window.location.href = "dashboard.html";
+            }
+        }
+
+        // run immediately on page load
+        checkIfAlreadyLoggedIn();
         let mode = "login";
 
         function closeSettings() {
@@ -368,18 +379,7 @@
                 console.error(err);
             }
         }
-        function checkIfAlreadyLoggedIn() {
-            const loggedIn = localStorage.getItem("loggedIn");
-            const user = localStorage.getItem("username");
 
-            if (loggedIn === "true" && user) {
-                // already logged in → go to dashboard
-                window.location.href = "dashboard.html";
-            }
-        }
-
-        // run immediately on page load
-        checkIfAlreadyLoggedIn();
 
     </script>
 </body>
