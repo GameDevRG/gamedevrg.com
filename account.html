@@ -155,13 +155,60 @@
                 log in
             </button>
 
+            <button onclick="switchToRegister()" style="
+    margin-top: 10px;
+    background: transparent;
+    border: 1px solid #3b82f6;
+    color: #3b82f6;
+    padding: 8px 12px;
+    cursor: pointer;
+">
+                register
+            </button>
+
+
             <p id="status" style="color: white; margin-top: 10px;"></p>
 
 
 
         </div>
+
+        <div id="registerBox" style="display:none;">
+            <h3 style="color:#94a3b8;">create account</h3>
+
+            <input id="regUsername" type="text" placeholder="username"><br><br>
+            <input id="regPassword" type="password" placeholder="password"><br><br>
+
+            <button onclick="registerUser()" style="
+        padding:10px 20px;
+        background:#22c55e;
+        border:none;
+        color:white;
+        cursor:pointer;
+    ">
+                register
+            </button>
+
+            <p id="regStatus" style="color:white;"></p>
+
+            <br>
+
+            <button onclick="switchToLogin()" style="
+        background:transparent;
+        border:1px solid #3b82f6;
+        color:#3b82f6;
+        padding:8px 12px;
+        cursor:pointer;
+    ">
+                back to login
+            </button>
+        </div>
+
     </div>
     <script>
+
+        let mode = "login";
+
         function closeSettings() {
             window.location.href = "index.html";
         }
@@ -253,6 +300,51 @@
                 console.error(err);
             }
         }
+
+        function switchToRegister() {
+            document.getElementById("registerBox").style.display = "block";
+            document.querySelector(".settings-section").style.display = "none";
+        }
+
+        function switchToLogin() {
+            document.getElementById("registerBox").style.display = "none";
+            document.querySelector(".settings-section").style.display = "block";
+        }
+
+        async function registerUser() {
+            const username = document.getElementById("regUsername").value;
+            const password = document.getElementById("regPassword").value;
+            const status = document.getElementById("regStatus");
+
+            status.textContent = "creating account...";
+
+            try {
+                const res = await fetch("https://gamedevrg-com-backend.onrender.com/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        username,
+                        password
+                    })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    status.textContent = "❌ " + data.message;
+                    return;
+                }
+
+                status.textContent = "✅ account created!";
+            } catch (err) {
+                status.textContent = "❌ server error";
+                console.error(err);
+            }
+        }
+
+
     </script>
 </body>
 
