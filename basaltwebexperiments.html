@@ -157,13 +157,14 @@
             transform: none;
             background: #222222ee;
             backdrop-filter: blur(40px);
-            
+
         }
+
         .card.expanded {
             transform: none;
             background: #1a1a1a;
             backdrop-filter: blur(40px);
-            
+
         }
 
         .close {
@@ -209,10 +210,12 @@
                 <p>this is a collection of web games and experiments made by me with<br>help from some friends.</p>
 
                 <div class="actions">
-                    <button>log in</button>
+                    <button id="authButton" onclick="goToAccount()">log in</button>
+
                     <input placeholder="search experiments"></input>
                 </div>
             </div>
+            <p id="loginStatusText"><br>you are not currently logged in.</p>
             <p>© GameDevRG 2026. All Lefts Reserved...?</p>
         </div>
 
@@ -399,6 +402,38 @@
             e.preventDefault();
             window.scrollBy({ left: e.deltaY * 2 });
         }, { passive: false });
+
+        function updateAuthUI() {
+            const user = localStorage.getItem("username");
+            const loggedIn = localStorage.getItem("loggedIn");
+
+            const statusText = document.getElementById("loginStatusText");
+            const authButton = document.getElementById("authButton");
+
+            if (loggedIn === "true" && user) {
+                statusText.innerHTML = `<br>signed in as [ ${user} ]. welcome back!`;
+                authButton.textContent = "my account";
+                authButton.onclick = () => {
+                    window.location.href = "account.html"; // or your account page
+                };
+            } else {
+                statusText.innerHTML = `<br>you are not currently logged in.`;
+                authButton.textContent = "log in";
+                authButton.onclick = () => {
+                    window.location.href = "account.html";
+                };
+            }
+        }
+
+        function goToAccount() {
+            window.location.href = "account.html";
+        }
+
+        // run on page load
+        updateAuthUI();
+
+        window.addEventListener("storage", updateAuthUI);
+
     </script>
 
 </body>
