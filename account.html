@@ -92,9 +92,9 @@
 
         input {
             background: rgb(0, 0, 0);
-			color: #e2e8f0;
+            color: #e2e8f0;
 
-			border: 2px solid #3b82f6;
+            border: 2px solid #3b82f6;
         }
 
         .close-btn {
@@ -133,16 +133,30 @@
                 <div class="setting-item">
                     <span class="setting-label" data-i18n="username">username</span>
                     <div class="slider-container">
-                        <input type="text">
+                        <input id="username" type="text">
                     </div>
                 </div>
                 <div class="setting-item">
                     <span class="setting-label" data-i18n="password">password</span>
                     <div class="slider-container">
-                        <input type="text">
+                        <input id="password" type="password">
                     </div>
                 </div>
             </div>
+            <button onclick="loginUser()" style="
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #3b82f6;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+">
+                log in
+            </button>
+
+            <p id="status" style="color: white; margin-top: 10px;"></p>
+
 
 
         </div>
@@ -201,6 +215,44 @@
             localStorage.setItem("lang", lang);
             applyLanguage(lang);
         });
+
+        /* LOGIN FUNCTION */
+        async function loginUser() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const status = document.getElementById("status");
+
+            status.textContent = "logging in...";
+
+            try {
+                const res = await fetch("https://gamedevrg-com-backend.onrender.com/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        username,
+                        password
+                    })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    status.textContent = "❌ " + data.message;
+                    return;
+                }
+
+                status.textContent = "✅ " + data.message;
+
+                // optional: redirect after login
+                // window.location.href = "dashboard.html";
+
+            } catch (err) {
+                status.textContent = "❌ server error";
+                console.error(err);
+            }
+        }
     </script>
 </body>
 
