@@ -1,138 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>404 Not Found</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Not Found</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Chakra Petch", sans-serif;
+        }
 
-<style>
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-    }
+        body {
+            background: #3b82f6;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-    body {
-        background: #0f172a;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-    }
+        .topbar {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 60px;
+			background: rgba(0, 0, 0, 0.85);
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			padding: 0 22px;
+			z-index: 9999;
+		}
 
-    /* [top bar div] */
-    .topbar {
-        width: 100%;
-        height: 50px;
-        background: #1e293b;
-    }
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
 
-    .container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 20px;
-    }
+        .image {
+            width: 220px;
+            height: auto;
+            margin-bottom: 20px;
+        }
 
-    /* [Image] */
-    .image {
-        width: 220px;
-        height: auto;
-        margin-bottom: 20px;
-    }
+        .main-text {
+            font-size: 64px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
 
-    /* big text */
-    .main-text {
-        font-size: 64px;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
+        .subtext {
+            font-size: 18px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
 
-    .subtext {
-        font-size: 18px;
-        margin-bottom: 20px;
-        line-height: 1.5;
-    }
+        .error {
+            margin-top: 10px;
+            font-size: 14px;
+            opacity: 0.7;
+            letter-spacing: 2px;
+        }
 
-    .error {
-        margin-top: 10px;
-        font-size: 14px;
-        opacity: 0.7;
-        letter-spacing: 2px;
-    }
+        .search-container {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+        }
 
-    /* search */
-    .search-container {
-        margin-top: 30px;
-        display: flex;
-        gap: 10px;
-    }
+        .search-container input {
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 2px solid #8db9ff;
+            background: #0341a3;
+            color: white;
+            border-radius: 0px;
+            outline: none;
+            width: 240px;
+        }
 
-    .search-container input {
-        padding: 12px 16px;
-        font-size: 16px;
-        border: none;
-        border-radius: 6px;
-        outline: none;
-        width: 240px;
-    }
+        ::placeholder {
+            color: #8db9ff;
+        }
 
-    .search-container button {
-        padding: 12px 20px;
-        font-size: 16px;
-        border: none;
-        border-radius: 6px;
-        background: #3b82f6;
-        color: white;
-        cursor: pointer;
-    }
+        .search-container button {
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 0px;
+            background: #ffffff;
+            color: #3b82f6;
+            cursor: pointer;
+        }
 
-    .search-container button:hover {
-        background: #2563eb;
-    }
+        .credit {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 12px;
+            opacity: 0.6;
+        }
 
-    /* corner credit */
-    .credit {
-        position: fixed;
-        bottom: 10px;
-        right: 10px;
-        font-size: 12px;
-        opacity: 0.6;
-    }
-</style>
+        .subtext {
+            font-size: 18px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+
+        small {
+			font-size: 0.6em;
+			color: #ffffff77;
+			font-weight: 300;
+		}
+
+        #homeButton {
+			background: #3b82f6;
+			border: none;
+			color: white;
+			padding: 6px 10px;
+			font-family: "Chakra Petch", sans-serif;
+		}
+    </style>
 </head>
 
 <body>
 
-<div class="topbar"></div>
-
-<div class="container">
-    <!-- [Image] -->
-    <img src="your-image.png" alt="404 image" class="image">
-
-    <!-- え…？ <-- big text -->
-    <div class="main-text">え…？</div>
-
-    <div class="subtext">
-        the webpage you’re looking for doesn’t exist!<br>
-        sorry!
+    <div class="topbar">
+        <p style="color: #ffffff;"><strong>gamedevrg</strong><small>.com</small></p>
+		<button id="homeButton" onclick="doSearch()">homepage</button>
     </div>
 
-    <div class="error">ERROR 404</div>
+    <div class="container">
+        <img src="kaito oh no.webp" alt="404 image" class="image">
 
-    <div class="search-container">
-        <input type="text" placeholder="SEARCH">
-        <button>GO!</button>
+        <div class="main-text">え⋯？</div>
+
+        <div class="subtext" data-i18n="line1">
+            the webpage you’re looking for doesn’t exist!<br>
+            sorry!
+        </div>
+
+        <div class="error">ERROR 404</div>
+
+        <div class="search-container">
+            <input type="text" data-i18n-placeholder="search" placeholder="SEARCH">
+            <button data-i18n="go">GO!</button>
+        </div>
     </div>
-</div>
 
-<div class="credit">
-    Image credit: KAITO, © Crypton Future Media, Inc. 2006
-</div>
+    <div class="credit" data-i18n="credit">
+        image credit: KAITO, © Crypton Future Media, Inc. 2006
+    </div>
+    <script>
+        const translations = {
+            en: { // english
+                line1: "the webpage you're looking for doesn't exist!\nsorry!",
+                search: "SEARCH",
+                go: "GO!",
+                credit: "image credit: KAITO, © Crypton Future Media, Inc. 2006"
+            },
+            es: { // spanish
+                line1: "¡la página web que buscas no existe!\n¡lo siento!",
+                search: "BUSCAR",
+                go: "¡IR!",
+                credit: "crédito de la imagen: KAITO, © Crypton Future Media, Inc. 2006"
 
+            },
+            ja: { // japanese
+                line1: "お探しのウェブページは存在しません！\nごめんね！",
+                search: "検索",
+                go: "行く！",
+                credit: "画像クレジット：KAITO、© Crypton Future Media, Inc. 2006"
+
+            },
+            zh: { // chinese
+                line1: "您正在查找的网页不存在！\n抱歉！",
+                search: "搜索",
+                go: "前往！",
+                credit: "图片来源：KAITO，© Crypton Future Media, Inc. 2006"
+            },
+        };
+        function applyLanguage(lang) {
+            const elements = document.querySelectorAll("[data-i18n]");
+
+            elements.forEach(el => {
+                const key = el.getAttribute("data-i18n");
+                if (translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
+            });
+
+            // for placeholders
+            const placeholderElements = document.querySelectorAll("[data-i18n-placeholder]");
+
+            placeholderElements.forEach(el => {
+                const key = el.getAttribute("data-i18n-placeholder");
+                if (translations[lang][key]) {
+                    el.placeholder = translations[lang][key];
+                }
+            });
+        }
+
+
+        const savedLang = localStorage.getItem("lang") || "en";
+        applyLanguage(savedLang);
+        document.getElementById("languageSelect").value = savedLang;
+        document.getElementById("languageSelect").addEventListener("change", (e) => {
+            const lang = e.target.value;
+            localStorage.setItem("lang", lang);
+            applyLanguage(lang);
+        });
+    </script>
 </body>
+
 </html>
