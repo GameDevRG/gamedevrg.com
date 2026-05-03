@@ -113,7 +113,8 @@
 		/* identical look to leaderboard rows */
 		.row {
 			display: grid;
-			grid-template-columns: 80px 1fr 120px;
+			grid-template-columns: var(--col-1) var(--col-2) var(--col-3);
+
 
 			padding: 12px;
 			background: #101010;
@@ -169,6 +170,48 @@
 			color: #ff8080;
 			text-decoration: underline;
 		}
+
+		button {
+			background: #1e8b3c;
+			border: 1px solid #2f2f2f;
+			border-radius: 8px;
+			color: white;
+
+			padding: 10px 14px;
+			margin-right: 8px;
+
+			font-size: 14px;
+			cursor: pointer;
+
+			transition: 0.15s ease;
+		}
+
+		:root {
+			--col-1: 80px;
+			--col-2: 1fr;
+			--col-3: 120px;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			table-layout: fixed;
+		}
+
+		th:nth-child(1),
+		td:nth-child(1) {
+			width: var(--col-1);
+		}
+
+		th:nth-child(2),
+		td:nth-child(2) {
+			width: var(--col-2);
+		}
+
+		th:nth-child(3),
+		td:nth-child(3) {
+			width: var(--col-3);
+		}
 	</style>
 </head>
 
@@ -177,6 +220,21 @@
 	<div class="container">
 
 		<h1>Alphabetical Speedrun</h1>
+		<p>
+			this is the leaderboard for alphabetical speedrun. your score will automatically be updated if you are
+			logged in.
+		</p>
+
+		<div style="margin-bottom: 10px;">
+			<button onclick="window.location.href='game.html'">
+				return to game
+			</button>
+
+			<button onclick="window.location.href='leaderboards.html'">
+				return to leaderboards menu
+			</button>
+		</div>
+
 
 		<!-- YOUR CARD -->
 		<div class="your-place-row">
