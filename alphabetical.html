@@ -327,6 +327,11 @@
 			alert("Logged in as " + username);
 			return true;
 		}
+		function getFinalTime() {
+			if (!startTime) return 0;
+			return (performance.now() - startTime) / 1000;
+		}
+
 
 		document.getElementById('uploadScore').onclick = async () => {
 			if (!currentUser) {
@@ -334,14 +339,14 @@
 				return;
 			}
 
-			const totalScore = correct;
+			const finalTime = getFinalTime().toFixed(2);
 
 			const res = await fetch(`${API_URL}/score`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
 					username: currentUser,
-					time: totalScore,
+					time: parseFloat(finalTime),
 					leaderboard: "abcLeaderboard"
 				})
 			});
@@ -349,6 +354,8 @@
 			const data = await res.json();
 			alert(data.message);
 		};
+
+
 
 		document.getElementById('viewLeaderboard').onclick = () => {
 			window.location.href = "abclead.html";
