@@ -212,7 +212,6 @@
 	<div class="controls">
 		<button class="control restart" id="restart">restart</button>
 		<button class="control scores" id="scores">view local scores</button>
-		<button class="control uploadScore" id="uploadScore">upload highscore</button>
 		<button class="control viewLeaderboard" id="viewLeaderboard">view leaderboard</button>
 	</div>
 
@@ -259,6 +258,8 @@
 		const output = document.getElementById('output');
 		const stats = document.getElementById('stats');
 		const keyboard = document.getElementById('keyboard');
+		let hasSubmitted = false;
+
 
 		function updateStats() {
 			const total = correct + wrong;
@@ -267,8 +268,46 @@
 			stats.textContent = `accuracy: ${acc}% · time: ${time}s`;
 		}
 		function startTimer() { if (!startTime) { startTime = performance.now(); timerInterval = setInterval(updateStats, 50); } }
-		function endRun() { clearInterval(timerInterval); const total = correct + wrong; const acc = total === 0 ? 100 : Math.round((correct / total) * 100); const time = ((performance.now() - startTime) / 1000).toFixed(2); history.push({ accuracy: acc, time }); }
-		function resetGame() { index = 0; correct = 0; wrong = 0; startTime = null; clearInterval(timerInterval); output.textContent = ''; updateStats(); document.querySelectorAll('.key').forEach(k => k.classList.remove('correct', 'wrong')); }
+		async function endRun() {
+			clearInterval(timerInterval);
+
+			if (hasSubmitted) return;
+			hasSubmitted = true;
+
+			const total = correct + wrong;
+			const acc = total === 0 ? 100 : Math.round((correct / total) * 100);
+			const time = (performance.now() - startTime) / 1000;
+
+			history.push({ accuracy: acc, time: time.toFixed(2) });
+
+			// AUTO UPLOAD (backend handles "is it a new highscore?")
+			if (currentUser) {
+				await fetch(`${API_URL}/score`, {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						username: currentUser,
+						time: time, // send raw float
+						leaderboard: "abcLeaderboard"
+					})
+				});
+			}
+		}
+
+
+		function resetGame() {
+			index = 0;
+			correct = 0;
+			wrong = 0;
+			startTime = null;
+			hasSubmitted = false; // 🔥 ADD THIS
+
+			clearInterval(timerInterval);
+			output.textContent = '';
+			updateStats();
+			document.querySelectorAll('.key').forEach(k => k.classList.remove('correct', 'wrong'));
+		}
+
 		function pressKey(char, keyEl) { const el = keyEl || document.querySelector(`.key[data-key="${char}"]`); if (!el) return; startTimer(); if (char === alphabet[index]) { el.classList.add('correct'); output.textContent += char; index++; correct++; if (index === alphabet.length) endRun(); } else { el.classList.add('wrong'); wrong++; setTimeout(() => el.classList.remove('wrong'), 200); } updateStats(); }
 		const rows = [['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'], ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'], ['z', 'x', 'c', 'v', 'b', 'n', 'm']];
 		rows.forEach((rowChars, i) => { const row = document.createElement('div'); row.className = 'row'; if (i === 1) row.classList.add('offset-1'); if (i === 2) row.classList.add('offset-2'); rowChars.forEach(char => { const key = document.createElement('button'); key.className = 'key'; key.dataset.key = char; key.addEventListener('click', () => pressKey(char, key)); row.appendChild(key); }); keyboard.appendChild(row); });
@@ -328,32 +367,9 @@
 			return true;
 		}
 		function getFinalTime() {
-			if (!startTime) return 0;
+			if (!startTime) return null;
 			return (performance.now() - startTime) / 1000;
 		}
-
-
-		document.getElementById('uploadScore').onclick = async () => {
-			if (!currentUser) {
-				alert("Please log in first");
-				return;
-			}
-
-			const finalTime = getFinalTime().toFixed(2);
-
-			const res = await fetch(`${API_URL}/score`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					username: currentUser,
-					time: parseFloat(finalTime),
-					leaderboard: "abcLeaderboard"
-				})
-			});
-
-			const data = await res.json();
-			alert(data.message);
-		};
 
 
 
