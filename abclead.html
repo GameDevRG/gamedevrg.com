@@ -289,7 +289,8 @@
 				row.innerHTML = `
 			<td>#${i + 1}</td>
 			<td>${d.username}</td>
-			<td>${d.time}</td>
+			<td>${Number(d.time).toFixed(3)}</td>
+
 		`;
 
 				board.appendChild(row);
@@ -328,9 +329,9 @@
 			// LOGGED IN BUT NOT FOUND
 			if (!data) {
 				el.className = "row error";
-				el.children[0].textContent = "#--";
+				el.children[0].textContent = "#";
 				el.children[1].textContent = CURRENT_USER;
-				el.children[2].textContent = "Not ranked";
+				el.children[2].textContent = "not ranked";
 				return;
 			}
 
@@ -339,7 +340,8 @@
 
 			el.children[0].textContent = `#${rank + 1}`;
 			el.children[1].textContent = data.username;
-			el.children[2].textContent = data.time;
+			el.children[2].textContent = Number(data.time).toFixed(3);
+
 
 			// top 3 colors
 			if (rank === 0) el.classList.add("gold");
