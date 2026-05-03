@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Leaderboard</title>
+	<style>
+		body {
+			background:#0b0b0b;
+			color:white;
+			font-family: Arial;
+			text-align:center;
+			padding:40px;
+		}
+
+		table {
+			margin:auto;
+			width:60%;
+			border-collapse:collapse;
+		}
+
+		th, td {
+			border:1px solid #333;
+			padding:10px;
+		}
+
+		th {
+			background:#1a1a1a;
+		}
+	</style>
+</head>
+<body>
+
+<h1>ABC Leaderboard</h1>
+
+<table>
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>User</th>
+			<th>Score</th>
+		</tr>
+	</thead>
+	<tbody id="board"></tbody>
+</table>
+
+<script>
+
+const API_URL = "https://gamedevrg-com-backend.onrender.com";
+
+async function load() {
+	const res = await fetch(`${API_URL}/leaderboard/abcLeaderboard`);
+	const data = await res.json();
+
+	const board = document.getElementById("board");
+	board.innerHTML = "";
+
+	data.forEach((d, i) => {
+		const row = document.createElement("tr");
+		row.innerHTML = `
+			<td>${i+1}</td>
+			<td>${d.username}</td>
+			<td>${d.time}</td>
+		`;
+		board.appendChild(row);
+	});
+}
+
+load();
+
+</script>
+
+</body>
+</html>
