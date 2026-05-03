@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Leaderboard</title>
 
@@ -7,9 +8,9 @@
 		body {
 			margin: 0;
 			background-color: #0b0b0b;
-            background-image: radial-gradient(#333 1px, transparent 0);
-            background-size: 40px 40px;
-            background-position: center;
+			background-image: radial-gradient(#333 1px, transparent 0);
+			background-size: 40px 40px;
+			background-position: center;
 			font-family: Arial, sans-serif;
 			color: white;
 
@@ -24,7 +25,7 @@
 		.container {
 			width: 70%;
 			background: #0e0e0e;
-			border: 1px solid #2a2a2a;
+			border: 2px solid #2a2a2a;
 			padding: 30px;
 			border-radius: 10px;
 		}
@@ -39,7 +40,7 @@
 		/* your card */
 		.your-card {
 			background: #151515;
-			border: 1px solid #2f2f2f;
+			border: 2px solid #2f2f2f;
 			padding: 12px 16px;
 			margin-bottom: 20px;
 			border-radius: 8px;
@@ -70,24 +71,101 @@
 		/* base row */
 		tr {
 			background: #101010;
+			color: #888;
 		}
 
 		/* top 3 styles */
 		.gold {
-			background: linear-gradient(90deg, #d4af37, transparent);
+			background: linear-gradient(90deg, #d4af371e, transparent);
+			color: #d4af37;
 		}
 
 		.silver {
-			background: linear-gradient(90deg, #c0c0c0, transparent);
+			background: linear-gradient(90deg, #c0c0c01e, transparent);
+			color: #c0c0c0;
 		}
 
 		.bronze {
-			background: linear-gradient(90deg, #cd7f32, transparent);
+			background: linear-gradient(90deg, #cd7f321e, transparent);
+			color: #cd7f32;
 		}
 
 		/* hover effect */
 		tr:hover {
 			background: #1a1a1a;
+		}
+
+		.table-frame {
+			border: 2px solid #2f2f2f;
+			border-radius: 8px;
+			overflow: hidden;
+			/* keeps rounded corners clean */
+		}
+
+		/* fake table row container */
+		.your-place-row {
+			width: 100%;
+			margin-bottom: 20px;
+		}
+
+		/* identical look to leaderboard rows */
+		.row {
+			display: grid;
+			grid-template-columns: 80px 1fr 120px;
+
+			padding: 12px;
+			background: #101010;
+			color: #888;
+			border-bottom: 1px solid #222;
+		}
+
+		/* match table header spacing */
+		.row:first-child {
+			border-radius: 8px;
+			border: 1px solid #2f2f2f;
+		}
+
+		/* SAME rank styles reused */
+		.row.gold {
+			background: linear-gradient(90deg, #d4af371e, transparent);
+			color: #d4af37;
+		}
+
+		.row.silver {
+			background: linear-gradient(90deg, #c0c0c01e, transparent);
+			color: #c0c0c0;
+		}
+
+		.row.bronze {
+			background: linear-gradient(90deg, #cd7f321e, transparent);
+			color: #cd7f32;
+		}
+
+		/* hover identical feel */
+		.row:hover {
+			background: #1a1a1a;
+		}
+
+		/* red state */
+		.row.error {
+			background: linear-gradient(90deg, rgba(255, 0, 0, 0.15), transparent);
+			color: #ff4d4d;
+			border: 1px solid rgba(255, 0, 0, 0.4);
+		}
+
+		/* override grid for centered message */
+		.row.error.single {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			gap: 0;
+		}
+
+		/* link styling */
+		.row.error a {
+			color: #ff8080;
+			text-decoration: underline;
 		}
 	</style>
 </head>
@@ -99,57 +177,122 @@
 		<h1>Alphabetical Speedrun</h1>
 
 		<!-- YOUR CARD -->
-		<div class="your-card">
-			<span>#-- | You</span>
-			<span>Score: 0</span>
+		<div class="your-place-row">
+			<div id="yourRow" class="row">
+				<div>#--</div>
+				<div>You</div>
+				<div>Loading...</div>
+			</div>
 		</div>
 
-		<table>
-			<thead>
-				<tr>
-					<th>#</th>
-					<th>User</th>
-					<th>Score</th>
-				</tr>
-			</thead>
 
-			<tbody id="board"></tbody>
-		</table>
+
+
+		<div class="table-frame">
+			<table>
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>User</th>
+						<th>Score</th>
+					</tr>
+				</thead>
+
+				<tbody id="board"></tbody>
+			</table>
+		</div>
 
 	</div>
 
-<script>
+	<script>
 
-const API_URL = "https://gamedevrg-com-backend.onrender.com";
+		const API_URL = "https://gamedevrg-com-backend.onrender.com";
+		const CURRENT_USER = localStorage.getItem("username");
 
-async function load() {
-	const res = await fetch(`${API_URL}/leaderboard/abcLeaderboard`);
-	const data = await res.json();
+		async function load() {
+			const res = await fetch(`${API_URL}/leaderboard/abcLeaderboard`);
+			const data = await res.json();
 
-	const board = document.getElementById("board");
-	board.innerHTML = "";
+			const board = document.getElementById("board");
+			board.innerHTML = "";
 
-	data.forEach((d, i) => {
-		const row = document.createElement("tr");
+			let yourIndex = -1;
+			let yourData = null;
 
-		// assign top 3 styles
-		if (i === 0) row.classList.add("gold");
-		if (i === 1) row.classList.add("silver");
-		if (i === 2) row.classList.add("bronze");
+			data.forEach((d, i) => {
+				const row = document.createElement("tr");
 
-		row.innerHTML = `
+				// top 3 styling
+				if (i === 0) row.classList.add("gold");
+				if (i === 1) row.classList.add("silver");
+				if (i === 2) row.classList.add("bronze");
+
+				row.innerHTML = `
 			<td>#${i + 1}</td>
 			<td>${d.username}</td>
 			<td>${d.time}</td>
 		`;
 
-		board.appendChild(row);
-	});
-}
+				board.appendChild(row);
 
-load();
+				// find current user
+				if (d.username === CURRENT_USER) {
+					yourIndex = i;
+					yourData = d;
+				}
+			});
 
-</script>
+			updateYourRow(yourIndex, yourData);
+		}
+
+
+		function updateYourRow(rank, data) {
+			const el = document.getElementById("yourRow");
+
+			const isLoggedIn = !!CURRENT_USER;
+
+			// NOT LOGGED IN
+			if (!isLoggedIn) {
+				el.className = "row error single";
+				el.innerHTML = `
+			<div>
+				you are not signed in. log in or create an account
+				<a href="/login">here</a>
+				to view and publish your highscore.
+			</div>
+		`;
+				return;
+			}
+
+			// LOGGED IN BUT NOT FOUND
+			if (!data) {
+				el.className = "row error";
+				el.children[0].textContent = "#--";
+				el.children[1].textContent = CURRENT_USER;
+				el.children[2].textContent = "Not ranked";
+				return;
+			}
+
+			// NORMAL STATE
+			el.className = "row";
+
+			el.children[0].textContent = `#${rank + 1}`;
+			el.children[1].textContent = data.username;
+			el.children[2].textContent = data.time;
+
+			// top 3 colors
+			if (rank === 0) el.classList.add("gold");
+			else if (rank === 1) el.classList.add("silver");
+			else if (rank === 2) el.classList.add("bronze");
+		}
+
+
+
+
+		load();
+
+	</script>
 
 </body>
+
 </html>
