@@ -2,45 +2,118 @@
 <html>
 <head>
 	<title>Leaderboard</title>
+
 	<style>
 		body {
-			background:#0b0b0b;
-			color:white;
-			font-family: Arial;
-			text-align:center;
-			padding:40px;
+			margin: 0;
+			background: #070707;
+			font-family: Arial, sans-serif;
+			color: white;
+
+			/* center the strip */
+			display: flex;
+			justify-content: center;
+			align-items: flex-start;
+			padding-top: 40px;
+		}
+
+		/* the long centered strip */
+		.container {
+			width: 70%;
+			background: #0e0e0e;
+			border: 1px solid #2a2a2a;
+			padding: 30px;
+			border-radius: 10px;
+		}
+
+		h1 {
+			margin-top: 0;
+			margin-bottom: 20px;
+			font-size: 34px;
+			letter-spacing: 1px;
+		}
+
+		/* your card */
+		.your-card {
+			background: #151515;
+			border: 1px solid #2f2f2f;
+			padding: 12px 16px;
+			margin-bottom: 20px;
+			border-radius: 8px;
+			display: flex;
+			justify-content: space-between;
 		}
 
 		table {
-			margin:auto;
-			width:60%;
-			border-collapse:collapse;
-		}
-
-		th, td {
-			border:1px solid #333;
-			padding:10px;
+			width: 100%;
+			border-collapse: collapse;
+			overflow: hidden;
+			border-radius: 8px;
 		}
 
 		th {
-			background:#1a1a1a;
+			background: #1b1b1b;
+			padding: 12px;
+			text-align: left;
+			font-size: 14px;
+			letter-spacing: 1px;
+		}
+
+		td {
+			padding: 12px;
+			border-bottom: 1px solid #222;
+		}
+
+		/* base row */
+		tr {
+			background: #101010;
+		}
+
+		/* top 3 styles */
+		.gold {
+			background: linear-gradient(90deg, #d4af37, transparent);
+		}
+
+		.silver {
+			background: linear-gradient(90deg, #c0c0c0, transparent);
+		}
+
+		.bronze {
+			background: linear-gradient(90deg, #cd7f32, transparent);
+		}
+
+		/* hover effect */
+		tr:hover {
+			background: #1a1a1a;
 		}
 	</style>
 </head>
+
 <body>
 
-<h1>ABC Leaderboard</h1>
+	<div class="container">
 
-<table>
-	<thead>
-		<tr>
-			<th>#</th>
-			<th>User</th>
-			<th>Score</th>
-		</tr>
-	</thead>
-	<tbody id="board"></tbody>
-</table>
+		<h1>Alphabetical Speedrun</h1>
+
+		<!-- YOUR CARD -->
+		<div class="your-card">
+			<span>#-- | You</span>
+			<span>Score: 0</span>
+		</div>
+
+		<table>
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>User</th>
+					<th>Score</th>
+				</tr>
+			</thead>
+
+			<tbody id="board"></tbody>
+		</table>
+
+	</div>
 
 <script>
 
@@ -55,11 +128,18 @@ async function load() {
 
 	data.forEach((d, i) => {
 		const row = document.createElement("tr");
+
+		// assign top 3 styles
+		if (i === 0) row.classList.add("gold");
+		if (i === 1) row.classList.add("silver");
+		if (i === 2) row.classList.add("bronze");
+
 		row.innerHTML = `
-			<td>${i+1}</td>
+			<td>#${i + 1}</td>
 			<td>${d.username}</td>
 			<td>${d.time}</td>
 		`;
+
 		board.appendChild(row);
 	});
 }
