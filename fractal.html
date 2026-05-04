@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Custom Fractal Generator</title>
+<style>
+    /* Frosted glass theme */
+
+    body {
+        margin: 0;
+        overflow: hidden;
+        font-family: Helvetica, Arial, sans-serif;
+        background: radial-gradient(circle at top, #0b1024, #05060c 60%, #03040a);
+        color: #eaeaea;
+    }
+
+    canvas {
+        display: block;
+        cursor: grab;
+    }
+
+    canvas:active {
+        cursor: grabbing;
+    }
+
+    #ui {
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        width: 280px;
+
+        /* frosted glass */
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 12px;
+        padding: 12px;
+
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    }
+
+    label {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.75);
+        display: block;
+        margin-top: 6px;
+    }
+
+    input {
+        width: 100%;
+        margin-top: 4px;
+        margin-bottom: 10px;
+        padding: 8px;
+        border-radius: 8px;
+
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+
+        color: #eaeaea;
+        font-family: monospace;
+        outline: none;
+
+        backdrop-filter: blur(6px);
+    }
+
+    input:focus {
+        border-color: rgba(125, 183, 255, 0.7);
+        box-shadow: 0 0 10px rgba(125, 183, 255, 0.25);
+    }
+
+    small {
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 11px;
+    }
+</style>
+</head>
+<body>
+
+<div id="ui">
+    <label>Iterations</label>
+    <input id="iter" type="number" value="80" min="10" max="500">
+
+    <label>Next zx (use zx, zy, x, y)</label>
+    <input id="zxExpr" value="zx*zx - zy*zy + x">
+
+    <label>Next zy (use zx, zy, x, y)</label>
+    <input id="zyExpr" value="2*zx*zy + y">
+
+    <small>Scroll = zoom · Drag = pan · UI is non-interactive for canvas</small>
+</div>
+
+<canvas id="c"></canvas>
+
+<script>
+window.addEventListener("DOMContentLoaded", () => {
+
+    const canvas = document.getElementById("c");
+    const ctx = canvas.getContext("2d");
+
+    const ui = document.getElementById("ui");
+    const iterInput = document.getElementById("iter");
+    const zxExprInput = document.getElementById("zxExpr");
+    const zyExprInput = document.getElementById("zyExpr");
+
+    let offsetX = -0.5;
+    let offsetY = 0;
+    let zoom = 1;
+
+    let isDragging = false;
+    let lastMouseX = 0;
+    let lastMouseY = 0;
+
+    function compile(expr) {
+        try {
+            return new Function("zx", "zy", "x", "y", "return " + expr);
+        } catch {
+            return () => 0;
+        }
+    }
+
+    let zxFn = compile(zxExprInput.value);
+    let zyFn = compile(zyExprInput.value);
+
+    zxExprInput.addEventListener("input", () => zxFn = compile(zxExprInput.value));
+    zyExprInput.addEventListener("input", () => zyFn = compile(zyExprInput.value));
+
+    function mandelbrotLike(x, y, maxIter) {
+        let zx = 0, zy = 0;
+        let i = 0;
+
+        while (zx*zx + zy*zy < 4 && i < maxIter) {
+            const nzx = zxFn(zx, zy, x, y);
+            const nzy = zyFn(zx, zy, x, y);
+            zx = nzx;
+            zy = nzy;
+            i++;
+        }
+        return i;
+    }
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        draw();
+    }
+
+    window.addEventListener("resize", resize);
+    resize();
+
+    function draw() {
+        const w = canvas.width;
+        const h = canvas.height;
+        const maxIter = parseInt(iterInput.value);
+
+        const img = ctx.createImageData(w, h);
+        const data = img.data;
+
+        for (let px = 0; px < w; px++) {
+            for (let py = 0; py < h; py++) {
+
+                let x = (px - w / 2) / (0.5 * zoom * w) + offsetX;
+                let y = (py - h / 2) / (0.5 * zoom * h) + offsetY;
+
+                let i = mandelbrotLike(x, y, maxIter);
+                let idx = (px + py * w) * 4;
+
+                let t = i / maxIter;
+
+                let r = Math.floor(17 * (1 - t));
+                let g = Math.floor(17 * (1 - t));
+                let b = Math.floor(17 * (1 - t) + 255 * t);
+
+                if (i === maxIter) {
+                    r = 0; g = 0; b = 0;
+                }
+
+                data[idx] = r;
+                data[idx + 1] = g * 0.6;
+                data[idx + 2] = b;
+                data[idx + 3] = 255;
+            }
+        }
+
+        ctx.putImageData(img, 0, 0);
+    }
+
+    function getWorldCoords(mx, my) {
+        const w = canvas.width;
+        const h = canvas.height;
+        return {
+            x: (mx - w / 2) / (0.5 * zoom * w) + offsetX,
+            y: (my - h / 2) / (0.5 * zoom * h) + offsetY
+        };
+    }
+
+    window.addEventListener("wheel", (e) => {
+        if (e.target.closest && e.target.closest("#ui")) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+
+        const before = getWorldCoords(mx, my);
+
+        zoom *= e.deltaY < 0 ? 1.1 : 0.9;
+
+        const after = getWorldCoords(mx, my);
+
+        offsetX += before.x - after.x;
+        offsetY += before.y - after.y;
+
+        draw();
+    });
+
+    canvas.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+    });
+
+    window.addEventListener("mouseup", () => isDragging = false);
+
+    window.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+
+        const dx = e.clientX - lastMouseX;
+        const dy = e.clientY - lastMouseY;
+
+        offsetX -= dx / (0.5 * zoom * canvas.width);
+        offsetY -= dy / (0.5 * zoom * canvas.height);
+
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+
+        draw();
+    });
+
+    iterInput.addEventListener("input", draw);
+
+    draw();
+});
+</script>
+
+</body>
+</html>
