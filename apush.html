@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Custom APUSH Timeline</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #timeline {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: #f5f5f5;
+      cursor: grab;
+    }
+
+    .event {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #2c3e50;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .axis {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: black;
+    }
+  </style>
+</head>
+<body>
+
+<div id="timeline">
+  <div class="axis"></div>
+</div>
+
+<script>
+let events = [];
+let scale = 5;        // pixels per year
+let offsetX = 0;      // pan position
+
+const container = document.getElementById("timeline");
+
+async function loadData() {
+  const res = await fetch("events.json");
+  events = await res.json();
+  render();
+}
+
+function getVisiblePriority() {
+  // 👇 zoom-based detail logic
+  if (scale < 2) return 1;     // zoomed way out
+  if (scale < 8) return 2;     // medium
+  return 3;                    // zoomed in
+}
+
+function yearToX(year) {
+  return (year * scale) + offsetX + window.innerWidth / 2;
+}
+
+function render() {
+  // remove old events
+  document.querySelectorAll(".event").forEach(e => e.remove());
+
+  const maxPriority = getVisiblePriority();
+
+  events.forEach(ev => {
+    if (ev.priority > maxPriority) return;
+
+    const x = yearToX(ev.year);
+
+    const el = document.createElement("div");
+    el.className = "event";
+    el.style.left = x + "px";
+    el.textContent = ev.title;
+
+    container.appendChild(el);
+  });
+}
+
+
+// 🖱️ ZOOM
+container.addEventListener("wheel", (e) => {
+  e.preventDefault();
+
+  const zoomFactor = 0.1;
+  const direction = e.deltaY > 0 ? -1 : 1;
+
+  scale += direction * scale * zoomFactor;
+
+  if (scale < 0.5) scale = 0.5;
+  if (scale > 50) scale = 50;
+
+  render();
+});
+
+
+// 🖱️ PAN
+let isDragging = false;
+let lastX = 0;
+
+container.addEventListener("mousedown", (e) => {
+  isDragging = true;
+  lastX = e.clientX;
+  container.style.cursor = "grabbing";
+});
+
+window.addEventListener("mouseup", () => {
+  isDragging = false;
+  container.style.cursor = "grab";
+});
+
+window.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+
+  const dx = e.clientX - lastX;
+  lastX = e.clientX;
+
+  offsetX += dx;
+
+  render();
+});
+
+
+// 📱 basic touch support
+container.addEventListener("touchmove", (e) => {
+  if (e.touches.length === 1) {
+    offsetX += e.touches[0].movementX || 0;
+    render();
+  }
+});
+
+loadData();
+</script>
+
+</body>
+</html>
