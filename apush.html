@@ -1,45 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Custom APUSH Timeline</title>
+<meta charset="UTF-8">
+<title>APUSH Timeline</title>
 
-  <style>
-    body {
-      font-family: Arial;
-      margin: 0;
-      overflow: hidden;
-    }
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial;
+  }
 
-    #timeline {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      background: #f5f5f5;
-      cursor: grab;
-    }
+  #timeline {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: #f5f5f5;
+    cursor: grab;
+  }
 
-    .event {
-      position: absolute;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      background: #2c3e50;
-      color: white;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 12px;
-      white-space: nowrap;
-    }
+  .axis {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    height: 2px;
+    background: black;
+  }
 
-    .axis {
-      position: absolute;
-      top: 50%;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: black;
-    }
-  </style>
+  .tick {
+    position: absolute;
+    width: 1px;
+    background: black;
+    top: 50%;
+  }
+
+  .tick-label {
+    position: absolute;
+    top: calc(50% + 8px);
+    font-size: 10px;
+    color: #333;
+    transform: translateX(-50%);
+  }
+
+  .event {
+    position: absolute;
+    top: 45%;
+    transform: translate(-50%, -100%);
+    background: #2c3e50;
+    color: white;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+</style>
 </head>
 <body>
 
@@ -49,8 +63,8 @@
 
 <script>
 let events = [];
-let scale = 5;        // pixels per year
-let offsetX = 0;      // pan position
+let scale = 5;      // pixels per year
+let offsetX = 0;
 
 const container = document.getElementById("timeline");
 
@@ -61,22 +75,59 @@ async function loadData() {
 }
 
 function getVisiblePriority() {
-  // 👇 zoom-based detail logic
-  if (scale < 2) return 1;     // zoomed way out
-  if (scale < 8) return 2;     // medium
-  return 3;                    // zoomed in
+  if (scale < 2) return 1;
+  if (scale < 8) return 2;
+  return 3;
 }
 
 function yearToX(year) {
   return (year * scale) + offsetX + window.innerWidth / 2;
 }
 
+function xToYear(x) {
+  return (x - window.innerWidth / 2 - offsetX) / scale;
+}
+
+
+// 🧠 dynamic tick spacing
+function getTickStep() {
+  if (scale < 1) return 100;
+  if (scale < 3) return 50;
+  if (scale < 8) return 10;
+  return 1;
+}
+
 function render() {
-  // remove old events
-  document.querySelectorAll(".event").forEach(e => e.remove());
+  document.querySelectorAll(".event, .tick, .tick-label").forEach(e => e.remove());
 
   const maxPriority = getVisiblePriority();
 
+  // 🧱 draw ticks
+  const step = getTickStep();
+
+  const startYear = Math.floor(xToYear(0));
+  const endYear = Math.ceil(xToYear(window.innerWidth));
+
+  for (let y = startYear - (startYear % step); y <= endYear; y += step) {
+    const x = yearToX(y);
+
+    const tick = document.createElement("div");
+    tick.className = "tick";
+    tick.style.left = x + "px";
+    tick.style.height = (y % (step * 5) === 0) ? "20px" : "10px";
+
+    const label = document.createElement("div");
+    label.className = "tick-label";
+    label.style.left = x + "px";
+
+    // BC support
+    label.textContent = y < 0 ? Math.abs(y) + " BC" : y;
+
+    container.appendChild(tick);
+    container.appendChild(label);
+  }
+
+  // 📍 draw events
   events.forEach(ev => {
     if (ev.priority > maxPriority) return;
 
@@ -92,55 +143,56 @@ function render() {
 }
 
 
-// 🖱️ ZOOM
+// 🎯 CURSOR-CENTERED ZOOM
 container.addEventListener("wheel", (e) => {
   e.preventDefault();
 
-  const zoomFactor = 0.1;
-  const direction = e.deltaY > 0 ? -1 : 1;
+  const mouseX = e.clientX;
 
-  scale += direction * scale * zoomFactor;
+  const beforeZoomYear = xToYear(mouseX);
 
-  if (scale < 0.5) scale = 0.5;
-  if (scale > 50) scale = 50;
+  const zoomFactor = 1.1;
+  if (e.deltaY > 0) {
+    scale /= zoomFactor;
+  } else {
+    scale *= zoomFactor;
+  }
+
+  // limits
+  scale = Math.max(0.5, Math.min(scale, 50));
+
+  const afterZoomYear = xToYear(mouseX);
+
+  // 🔥 adjust offset so cursor stays anchored
+  offsetX += (afterZoomYear - beforeZoomYear) * scale;
 
   render();
 });
 
 
 // 🖱️ PAN
-let isDragging = false;
+let dragging = false;
 let lastX = 0;
 
 container.addEventListener("mousedown", (e) => {
-  isDragging = true;
+  dragging = true;
   lastX = e.clientX;
   container.style.cursor = "grabbing";
 });
 
 window.addEventListener("mouseup", () => {
-  isDragging = false;
+  dragging = false;
   container.style.cursor = "grab";
 });
 
 window.addEventListener("mousemove", (e) => {
-  if (!isDragging) return;
+  if (!dragging) return;
 
   const dx = e.clientX - lastX;
   lastX = e.clientX;
 
   offsetX += dx;
-
   render();
-});
-
-
-// 📱 basic touch support
-container.addEventListener("touchmove", (e) => {
-  if (e.touches.length === 1) {
-    offsetX += e.touches[0].movementX || 0;
-    render();
-  }
 });
 
 loadData();
