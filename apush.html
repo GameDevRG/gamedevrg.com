@@ -38,20 +38,42 @@
     position: absolute;
     top: calc(50% + 8px);
     font-size: 10px;
-    color: #333;
     transform: translateX(-50%);
   }
 
   .event {
     position: absolute;
-    top: 45%;
-    transform: translate(-50%, -100%);
+    transform: translateX(-50%);
     background: #2c3e50;
     color: white;
     padding: 4px 6px;
     border-radius: 4px;
     font-size: 12px;
+    cursor: pointer;
     white-space: nowrap;
+  }
+
+  .connector {
+    position: absolute;
+    width: 2px;
+    background: #2c3e50;
+  }
+
+  /* popup */
+  #popup {
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 6px;
+    display: none;
+    max-width: 250px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 10;
+  }
+
+  #popup h4 {
+    margin: 0 0 5px 0;
   }
 </style>
 </head>
@@ -61,12 +83,15 @@
   <div class="axis"></div>
 </div>
 
+<div id="popup"></div>
+
 <script>
 let events = [];
-let scale = 5;      // pixels per year
+let scale = 5;
 let offsetX = 0;
 
 const container = document.getElementById("timeline");
+const popup = document.getElementById("popup");
 
 async function loadData() {
   const res = await fetch("events.json");
@@ -88,8 +113,6 @@ function xToYear(x) {
   return (x - window.innerWidth / 2 - offsetX) / scale;
 }
 
-
-// 🧠 dynamic tick spacing
 function getTickStep() {
   if (scale < 1) return 100;
   if (scale < 3) return 50;
@@ -98,16 +121,15 @@ function getTickStep() {
 }
 
 function render() {
-  document.querySelectorAll(".event, .tick, .tick-label").forEach(e => e.remove());
+  document.querySelectorAll(".event, .tick, .tick-label, .connector").forEach(e => e.remove());
 
   const maxPriority = getVisiblePriority();
-
-  // 🧱 draw ticks
   const step = getTickStep();
 
   const startYear = Math.floor(xToYear(0));
   const endYear = Math.ceil(xToYear(window.innerWidth));
 
+  // ticks
   for (let y = startYear - (startYear % step); y <= endYear; y += step) {
     const x = yearToX(y);
 
@@ -119,52 +141,70 @@ function render() {
     const label = document.createElement("div");
     label.className = "tick-label";
     label.style.left = x + "px";
-
-    // BC support
-    label.textContent = y < 0 ? Math.abs(y) + " BC" : y;
+    label.textContent = y;
 
     container.appendChild(tick);
     container.appendChild(label);
   }
 
-  // 📍 draw events
+  // 🧠 STACKING SYSTEM
+  const lanes = {}; // track used vertical slots
+
   events.forEach(ev => {
     if (ev.priority > maxPriority) return;
 
-    const x = yearToX(ev.year);
+    const x = Math.round(yearToX(ev.year));
 
-    const el = document.createElement("div");
-    el.className = "event";
-    el.style.left = x + "px";
-    el.textContent = ev.title;
+    if (!lanes[x]) lanes[x] = 0;
 
-    container.appendChild(el);
+    const lane = lanes[x]++;
+    const yOffset = 60 + lane * 30; // stack height
+
+    const eventEl = document.createElement("div");
+    eventEl.className = "event";
+    eventEl.style.left = x + "px";
+    eventEl.style.top = `calc(50% - ${yOffset}px)`;
+    eventEl.textContent = ev.title;
+
+    // connector line
+    const line = document.createElement("div");
+    line.className = "connector";
+    line.style.left = x + "px";
+    line.style.top = `calc(50% - ${yOffset - 5}px)`;
+    line.style.height = (yOffset - 5) + "px";
+
+    // 📦 popup click
+    eventEl.onclick = (e) => {
+      popup.style.display = "block";
+      popup.style.left = (e.clientX + 10) + "px";
+      popup.style.top = (e.clientY + 10) + "px";
+
+      popup.innerHTML = `
+        <h4>${ev.title}</h4>
+        <p>${ev.description}</p>
+        <small>${ev.year}</small>
+      `;
+    };
+
+    container.appendChild(line);
+    container.appendChild(eventEl);
   });
 }
 
 
-// 🎯 CURSOR-CENTERED ZOOM
+// 🎯 ZOOM TO CURSOR
 container.addEventListener("wheel", (e) => {
   e.preventDefault();
 
   const mouseX = e.clientX;
-
-  const beforeZoomYear = xToYear(mouseX);
+  const before = xToYear(mouseX);
 
   const zoomFactor = 1.1;
-  if (e.deltaY > 0) {
-    scale /= zoomFactor;
-  } else {
-    scale *= zoomFactor;
-  }
-
-  // limits
+  scale = e.deltaY > 0 ? scale / zoomFactor : scale * zoomFactor;
   scale = Math.max(0.5, Math.min(scale, 50));
 
-  const afterZoomYear = xToYear(mouseX);
-
-  // 🔥 adjust offset so cursor stays anchored
-  offsetX += (afterZoomYear - beforeZoomYear) * scale;
+  const after = xToYear(mouseX);
+  offsetX += (after - before) * scale;
 
   render();
 });
@@ -193,6 +233,14 @@ window.addEventListener("mousemove", (e) => {
 
   offsetX += dx;
   render();
+});
+
+
+// ❌ close popup on click outside
+window.addEventListener("click", (e) => {
+  if (!e.target.classList.contains("event")) {
+    popup.style.display = "none";
+  }
 });
 
 loadData();
