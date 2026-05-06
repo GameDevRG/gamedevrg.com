@@ -4,6 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>APUSH Timeline</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 	<style>
 		body {
@@ -139,14 +140,78 @@
 			background: #1a252f;
 			transform: scale(1.1);
 		}
+
+		#search-btn i {
+			font-size: 16px;
+			pointer-events: none;
+		}
+
+		/* suggestions container (anchors ABOVE bar) */
+		#suggestions {
+			position: absolute;
+			bottom: 100%;
+			/* anchor to top of bar */
+			left: 0;
+			right: 0;
+
+			display: flex;
+			flex-direction: column-reverse;
+			/* stack UP */
+
+			gap: 4px;
+			margin-bottom: 8px;
+
+			pointer-events: none;
+			/* clicks pass through unless enabled */
+		}
+
+		/* individual suggestion */
+		.suggestion {
+			font-size: 13px;
+			color: rgba(0, 0, 0, 0.6);
+
+			opacity: 0;
+			transform: translateY(10px);
+
+			animation: fadeInUp 0.2s ease forwards;
+			pointer-events: auto;
+			cursor: pointer;
+		}
+
+		/* fade OUT */
+		.suggestion.removing {
+			animation: fadeOutDown 0.15s ease forwards;
+		}
+
+		/* bold match */
+		.suggestion b {
+			font-weight: bold;
+			color: rgba(0, 0, 0, 0.9);
+		}
+
+		/* animations */
+		@keyframes fadeInUp {
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		@keyframes fadeOutDown {
+			to {
+				opacity: 0;
+				transform: translateY(10px);
+			}
+		}
 	</style>
 </head>
 
 <body>
 	<div id="search-container">
+		<div id="suggestions"></div>
 		<input type="text" id="search-input" placeholder="Search events..." />
 		<button id="search-btn">
-			🔍
+			<i class="fa-solid fa-magnifying-glass"></i>
 		</button>
 	</div>
 
@@ -357,6 +422,58 @@
 				el.style.display = text.includes(query) ? "block" : "none";
 			});
 		});
+
+		const suggestionsEl = document.getElementById("suggestions");
+		const inputEl = document.getElementById("search-input");
+
+		function highlightMatch(text, query) {
+			const i = text.toLowerCase().indexOf(query.toLowerCase());
+			if (i === -1) return text;
+
+			return (
+				text.slice(0, i) +
+				"<b>" +
+				text.slice(i, i + query.length) +
+				"</b>" +
+				text.slice(i + query.length)
+			);
+		}
+
+		function updateSuggestions() {
+			const query = inputEl.value.trim();
+
+			// clear with fade out
+			[...suggestionsEl.children].forEach(child => {
+				child.classList.add("removing");
+				setTimeout(() => child.remove(), 150);
+			});
+
+			if (!query) return;
+
+			const matches = events
+				.filter(ev => ev.title.toLowerCase().includes(query.toLowerCase()))
+				.slice(0, 5);
+
+			matches.forEach(ev => {
+				const div = document.createElement("div");
+				div.className = "suggestion";
+
+				div.innerHTML = highlightMatch(ev.title, query);
+
+				div.onclick = () => {
+					inputEl.value = ev.title;
+					suggestionsEl.innerHTML = "";
+
+					// optional: center timeline on event
+					offsetX = -ev.year * scale;
+					render();
+				};
+
+				suggestionsEl.appendChild(div);
+			});
+		}
+
+		inputEl.addEventListener("input", updateSuggestions);
 	</script>
 
 
