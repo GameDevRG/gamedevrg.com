@@ -384,9 +384,6 @@
 		let scale = 5;
 		let offsetX = 0;
 
-		const renderedEvents = new Map(); // ev -> {el, line}
-		let lastRange = { start: null, end: null, scale: null };
-
 		const loaderTextEl = document.getElementById("loader-subtext");
 
 		const loadingMessages = [
@@ -417,18 +414,30 @@
 		let msgIndex = 0;
 		let msgInterval;
 
-		function renderPeriods() {
+		function render() {
+			document.querySelectorAll(".event, .tick, .tick-label, .connector").forEach(e => e.remove());
+
+			const maxPriority = getVisiblePriority();
+			const step = getTickStep();
+
+			const startYear = Math.floor(xToYear(0));
+			const endYear = Math.ceil(xToYear(window.innerWidth));
+
+			// remove old
 			document.querySelectorAll(".period-layer, .period-label").forEach(e => e.remove());
 
+			// create layer
 			const layer = document.createElement("div");
 			layer.className = "period-layer";
 			container.appendChild(layer);
 
+			// render each period
 			periods.forEach(p => {
 				const startX = yearToX(p.start);
 				const endX = yearToX(p.end);
 				const width = endX - startX;
 
+				// segment
 				const seg = document.createElement("div");
 				seg.className = "period-segment";
 				seg.style.left = startX + "px";
@@ -437,6 +446,7 @@
 
 				layer.appendChild(seg);
 
+				// label
 				const label = document.createElement("div");
 				label.className = "period-label";
 				label.style.left = (startX + width / 2) + "px";
@@ -445,11 +455,8 @@
 
 				container.appendChild(label);
 			});
-		}
 
-		function renderTicks(startYear, endYear, step) {
-			document.querySelectorAll(".tick, .tick-label").forEach(e => e.remove());
-
+			// ticks
 			for (let y = startYear - (startYear % step); y <= endYear; y += step) {
 				const x = yearToX(y);
 
@@ -466,99 +473,44 @@
 				container.appendChild(tick);
 				container.appendChild(label);
 			}
-		}
 
-		function render() {
-			const maxPriority = getVisiblePriority();
-			const step = getTickStep();
+			// 🧠 STACKING SYSTEM
+			const lanes = {}; // track used vertical slots
 
-			const startYear = Math.floor(xToYear(0));
-			const endYear = Math.ceil(xToYear(window.innerWidth));
-
-			const buffer = 50;
-
-			// 🧠 only rerender if range changed meaningfully
-			if (
-				lastRange.start === startYear &&
-				lastRange.end === endYear &&
-				lastRange.scale === scale
-			) {
-				updatePositionsOnly();
-				return;
-			}
-
-			lastRange = { start: startYear, end: endYear, scale };
-
-			const visible = new Set();
-
-			// 🧠 STACKING SYSTEM (only for visible events)
+			// store placed boxes for collision detection
 			const placed = [];
+
+			const buffer = 50; // render slightly offscreen to avoid popping
 
 			events.forEach(ev => {
 				if (ev.year < startYear - buffer || ev.year > endYear + buffer) return;
 				if (ev.priority > maxPriority) return;
 
-				visible.add(ev);
-
-				let entry = renderedEvents.get(ev);
-
-				if (!entry) {
-					// CREATE ONCE
-					const el = document.createElement("div");
-					el.className = "event";
-
-					if (ev.keyEvent) {
-						el.style.background = "#22c55e";
-						el.textContent = "★ " + ev.title;
-					} else {
-						el.textContent = ev.title;
-					}
-
-					const line = document.createElement("div");
-					line.className = "connector";
-
-					container.appendChild(el);
-					container.appendChild(line);
-
-					entry = { el, line, yOffset: 60 };
-					renderedEvents.set(ev, entry);
-
-					// attach click once
-					el.onclick = (e) => {
-						const info = infoData.find(i => i.id === ev.infoId);
-
-						popup.style.display = "block";
-						popup.style.left = (e.clientX + 10) + "px";
-						popup.style.top = (e.clientY + 10) + "px";
-
-						popup.innerHTML = `
-                    <h4>${ev.title}</h4>
-                    <p>${ev.description}</p>
-                    <small>${ev.year}</small>
-                    ${ev.keyEvent ? `<button id="more-info-btn">More Info</button>` : ""}
-                `;
-
-						if (ev.keyEvent) {
-							setTimeout(() => {
-								document.getElementById("more-info-btn").onclick = () => {
-									openSidebar(info || ev);
-								};
-							}, 0);
-						}
-					};
-				}
-
-				// POSITIONING + stacking
 				const x = yearToX(ev.year);
 
-				let yOffset = 60;
+				let yOffset = 60; // starting height
 				let placedSuccessfully = false;
 
+				let eventEl;
+
 				while (!placedSuccessfully) {
-					entry.el.style.transform = `translate(${x}px, calc(50% - ${yOffset}px))`;
+					// create temp element to measure
+					eventEl = document.createElement("div");
+					eventEl.className = "event";
+					eventEl.style.left = x + "px";
+					eventEl.style.top = `calc(50% - ${yOffset}px)`;
+					if (ev.keyEvent) {
+						eventEl.style.background = "#22c55e"; // green
+						eventEl.textContent = "★ " + ev.title;
+					} else {
+						eventEl.textContent = ev.title;
+					}
 
-					const rect = entry.el.getBoundingClientRect();
+					container.appendChild(eventEl);
 
+					const rect = eventEl.getBoundingClientRect();
+
+					// check collision
 					let collision = false;
 					for (let p of placed) {
 						if (
@@ -573,55 +525,47 @@
 					}
 
 					if (collision) {
-						yOffset += 35;
+						container.removeChild(eventEl);
+						yOffset += 35; // move higher and retry
 					} else {
 						placed.push(rect);
 						placedSuccessfully = true;
 					}
 				}
 
-				entry.yOffset = yOffset;
+				// connector line
+				const line = document.createElement("div");
+				line.className = "connector";
+				line.style.left = x + "px";
+				line.style.top = `calc(50% - ${yOffset - 5}px)`;
+				line.style.height = (yOffset - 5) + "px";
 
-				// update connector
-				entry.line.style.transform =
-					`translate(${x}px, calc(50% - ${yOffset - 5}px))`;
-				entry.line.style.height = (yOffset - 5) + "px";
+				// popup
+				eventEl.onclick = (e) => {
+					const info = infoData.find(i => i.id === ev.infoId);
+
+					popup.style.display = "block";
+					popup.style.left = (e.clientX + 10) + "px";
+					popup.style.top = (e.clientY + 10) + "px";
+
+					popup.innerHTML = `
+    <h4>${ev.title}</h4>
+    <p>${ev.description}</p>
+    <small>${ev.year}</small>
+    ${ev.keyEvent ? `<button id="more-info-btn">More Info</button>` : ""}
+  `;
+
+					if (ev.keyEvent) {
+						setTimeout(() => {
+							document.getElementById("more-info-btn").onclick = () => {
+								openSidebar(info || ev);
+							};
+						}, 0);
+					}
+				};
+
+				container.appendChild(line);
 			});
-
-			// 🧹 REMOVE things that left viewport
-			renderedEvents.forEach((entry, ev) => {
-				if (!visible.has(ev)) {
-					entry.el.remove();
-					entry.line.remove();
-					renderedEvents.delete(ev);
-				}
-			});
-
-			renderTicks(startYear, endYear, step);
-		}
-
-		function updatePositionsOnly() {
-			renderedEvents.forEach((entry, ev) => {
-				const x = yearToX(ev.year);
-
-				entry.el.style.transform =
-					`translate(${x}px, calc(50% - ${entry.yOffset}px))`;
-
-				entry.line.style.transform =
-					`translate(${x}px, calc(50% - ${entry.yOffset - 5}px))`;
-			});
-		}
-
-		let scheduled = false;
-
-		function requestRender() {
-			if (!scheduled) {
-				scheduled = true;
-				requestAnimationFrame(() => {
-					render();
-					scheduled = false;
-				});
-			}
 		}
 
 		const container = document.getElementById("timeline");
@@ -636,7 +580,7 @@
 		async function loadData() {
 			const res = await fetch("events.json");
 			events = await res.json();
-			requestRender();
+			render();
 		}
 
 		function getVisiblePriority() {
@@ -677,7 +621,7 @@
 			const after = xToYear(mouseX);
 			offsetX += (after - before) * scale;
 
-			requestRender();
+			render();
 		});
 
 
@@ -703,7 +647,7 @@
 			lastX = e.clientX;
 
 			offsetX += dx;
-			requestRender();
+			render();
 		});
 
 
@@ -804,7 +748,7 @@
 					suggestionsEl.innerHTML = "";
 
 					offsetX = -ev.year * scale;
-					requestRender();
+					render();
 				};
 
 				suggestionsEl.appendChild(div);
