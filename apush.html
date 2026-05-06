@@ -372,42 +372,6 @@
 		let scale = 5;
 		let offsetX = 0;
 
-		const container = document.getElementById("timeline");
-		const popup = document.getElementById("popup");
-
-		let infoData = [];
-
-		async function loadInfo() {
-			const res = await fetch("info.json");
-			infoData = await res.json();
-		}
-		async function loadData() {
-			const res = await fetch("events.json");
-			events = await res.json();
-			render();
-		}
-
-		function getVisiblePriority() {
-			if (scale < 2) return 1;
-			if (scale < 8) return 2;
-			return 3;
-		}
-
-		function yearToX(year) {
-			return (year * scale) + offsetX + window.innerWidth / 2;
-		}
-
-		function xToYear(x) {
-			return (x - window.innerWidth / 2 - offsetX) / scale;
-		}
-
-		function getTickStep() {
-			if (scale < 1) return 100;
-			if (scale < 3) return 50;
-			if (scale < 8) return 10;
-			return 1;
-		}
-
 		function render() {
 			document.querySelectorAll(".event, .tick, .tick-label, .connector").forEach(e => e.remove());
 
@@ -558,6 +522,44 @@
 				container.appendChild(line);
 			});
 		}
+
+		const container = document.getElementById("timeline");
+		const popup = document.getElementById("popup");
+
+		let infoData = [];
+
+		async function loadInfo() {
+			const res = await fetch("info.json");
+			infoData = await res.json();
+		}
+		async function loadData() {
+			const res = await fetch("events.json");
+			events = await res.json();
+			render();
+		}
+
+		function getVisiblePriority() {
+			if (scale < 2) return 1;
+			if (scale < 8) return 2;
+			return 3;
+		}
+
+		function yearToX(year) {
+			return (year * scale) + offsetX + window.innerWidth / 2;
+		}
+
+		function xToYear(x) {
+			return (x - window.innerWidth / 2 - offsetX) / scale;
+		}
+
+		function getTickStep() {
+			if (scale < 1) return 100;
+			if (scale < 3) return 50;
+			if (scale < 8) return 10;
+			return 1;
+		}
+
+		
 
 
 		// 🎯 ZOOM TO CURSOR
