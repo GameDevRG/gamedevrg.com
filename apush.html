@@ -417,6 +417,57 @@
 		let msgIndex = 0;
 		let msgInterval;
 
+		function renderPeriods() {
+			document.querySelectorAll(".period-layer, .period-label").forEach(e => e.remove());
+
+			const layer = document.createElement("div");
+			layer.className = "period-layer";
+			container.appendChild(layer);
+
+			periods.forEach(p => {
+				const startX = yearToX(p.start);
+				const endX = yearToX(p.end);
+				const width = endX - startX;
+
+				const seg = document.createElement("div");
+				seg.className = "period-segment";
+				seg.style.left = startX + "px";
+				seg.style.width = width + "px";
+				seg.style.background = p.color;
+
+				layer.appendChild(seg);
+
+				const label = document.createElement("div");
+				label.className = "period-label";
+				label.style.left = (startX + width / 2) + "px";
+				label.style.color = p.color;
+				label.textContent = p.name;
+
+				container.appendChild(label);
+			});
+		}
+
+		function renderTicks(startYear, endYear, step) {
+			document.querySelectorAll(".tick, .tick-label").forEach(e => e.remove());
+
+			for (let y = startYear - (startYear % step); y <= endYear; y += step) {
+				const x = yearToX(y);
+
+				const tick = document.createElement("div");
+				tick.className = "tick";
+				tick.style.left = x + "px";
+				tick.style.height = (y % (step * 5) === 0) ? "20px" : "10px";
+
+				const label = document.createElement("div");
+				label.className = "tick-label";
+				label.style.left = x + "px";
+				label.textContent = y;
+
+				container.appendChild(tick);
+				container.appendChild(label);
+			}
+		}
+
 		function render() {
 			const maxPriority = getVisiblePriority();
 			const step = getTickStep();
@@ -560,7 +611,7 @@
 					`translate(${x}px, calc(50% - ${entry.yOffset - 5}px))`;
 			});
 		}
-		
+
 		let scheduled = false;
 
 		function requestRender() {
