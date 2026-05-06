@@ -238,6 +238,47 @@
 			text-shadow: 0 0 0 white;
 			/* keeps readability without glow */
 		}
+
+		#overlay {
+			position: fixed;
+			inset: 0;
+			background: rgba(0, 0, 0, 0.4);
+			backdrop-filter: blur(6px);
+			display: none;
+			z-index: 50;
+		}
+
+		#sidebar {
+			position: fixed;
+			top: 0;
+			left: -420px;
+			width: 400px;
+			height: 100vh;
+			background: rgba(20, 20, 20, 0.95);
+			color: white;
+			padding: 20px;
+			transition: left 0.3s ease;
+			z-index: 60;
+			overflow-y: auto;
+		}
+
+		#sidebar img {
+			width: 100%;
+			border-radius: 8px;
+			margin: 10px 0;
+		}
+
+		#sidebar small {
+			opacity: 0.7;
+		}
+
+		#more-info-btn {
+			margin-top: 10px;
+			padding: 8px 10px;
+			border: none;
+			cursor: pointer;
+			border-radius: 6px;
+		}
 	</style>
 </head>
 
@@ -256,6 +297,12 @@
 
 	<div id="popup"></div>
 
+	<div id="sidebar">
+		<div id="sidebar-content"></div>
+	</div>
+
+	<div id="overlay"></div>
+
 	<script>
 		let events = [];
 		let scale = 5;
@@ -264,6 +311,12 @@
 		const container = document.getElementById("timeline");
 		const popup = document.getElementById("popup");
 
+		let infoData = [];
+
+		async function loadInfo() {
+			const res = await fetch("info.json");
+			infoData = await res.json();
+		}
 		async function loadData() {
 			const res = await fetch("events.json");
 			events = await res.json();
@@ -373,7 +426,12 @@
 					eventEl.className = "event";
 					eventEl.style.left = x + "px";
 					eventEl.style.top = `calc(50% - ${yOffset}px)`;
-					eventEl.textContent = ev.title;
+					if (ev.keyEvent) {
+						eventEl.style.background = "#22c55e"; // green
+						eventEl.textContent = "★ " + ev.title;
+					} else {
+						eventEl.textContent = ev.title;
+					}
 
 					container.appendChild(eventEl);
 
@@ -411,15 +469,26 @@
 
 				// popup
 				eventEl.onclick = (e) => {
+					const info = infoData.find(i => i.name === ev.title);
+
 					popup.style.display = "block";
 					popup.style.left = (e.clientX + 10) + "px";
 					popup.style.top = (e.clientY + 10) + "px";
 
 					popup.innerHTML = `
-      <h4>${ev.title}</h4>
-      <p>${ev.description}</p>
-      <small>${ev.year}</small>
-    `;
+    <h4>${ev.title}</h4>
+    <p>${ev.description}</p>
+    <small>${ev.year}</small>
+    ${ev.keyEvent ? `<button id="more-info-btn">More Info</button>` : ""}
+  `;
+
+					if (ev.keyEvent) {
+						setTimeout(() => {
+							document.getElementById("more-info-btn").onclick = () => {
+								openSidebar(info || ev);
+							};
+						}, 0);
+					}
 				};
 
 				container.appendChild(line);
@@ -563,6 +632,29 @@
 			{ name: "PERIOD 8", start: 1945, end: 1980, color: "rgba(56, 189, 248, 0.25)" },  // sky blue
 			{ name: "PERIOD 9", start: 1980, end: 2020, color: "rgba(129, 140, 248, 0.25)" }  // indigo
 		];
+
+		const sidebar = document.getElementById("sidebar");
+		const overlay = document.getElementById("overlay");
+		const sidebarContent = document.getElementById("sidebar-content");
+
+		function openSidebar(data) {
+			sidebar.style.left = "0";
+			overlay.style.display = "block";
+
+			sidebarContent.innerHTML = `
+    <h2>${data.name}</h2>
+    <small>${data.dates}</small>
+    <img src="${data.image}" />
+    <p>${data.text}</p>
+  `;
+		}
+
+		function closeSidebar() {
+			sidebar.style.left = "-420px";
+			overlay.style.display = "none";
+		}
+
+		overlay.onclick = closeSidebar;
 	</script>
 
 
