@@ -203,6 +203,41 @@
 				transform: translateY(10px);
 			}
 		}
+
+		.period-layer {
+			position: absolute;
+			top: calc(50% - 10px);
+			/* 10px above axis */
+			height: 10px;
+			width: 100%;
+			pointer-events: none;
+		}
+
+		/* sharp solid bars */
+		.period-segment {
+			position: absolute;
+			height: 100%;
+			border-radius: 0;
+			/* hard edges */
+
+			opacity: 1;
+		}
+
+		.period-label {
+			position: absolute;
+			top: calc(50% - 28px);
+
+			font-size: 10px;
+			font-weight: bold;
+
+			transform: translateX(-50%);
+
+			opacity: 0.8;
+			white-space: nowrap;
+
+			text-shadow: 0 0 0 white;
+			/* keeps readability without glow */
+		}
 	</style>
 </head>
 
@@ -264,6 +299,39 @@
 
 			const startYear = Math.floor(xToYear(0));
 			const endYear = Math.ceil(xToYear(window.innerWidth));
+
+			// remove old
+			document.querySelectorAll(".period-layer, .period-label").forEach(e => e.remove());
+
+			// create layer
+			const layer = document.createElement("div");
+			layer.className = "period-layer";
+			container.appendChild(layer);
+
+			// render each period
+			periods.forEach(p => {
+				const startX = yearToX(p.start);
+				const endX = yearToX(p.end);
+				const width = endX - startX;
+
+				// segment
+				const seg = document.createElement("div");
+				seg.className = "period-segment";
+				seg.style.left = startX + "px";
+				seg.style.width = width + "px";
+				seg.style.background = p.color;
+
+				layer.appendChild(seg);
+
+				// label
+				const label = document.createElement("div");
+				label.className = "period-label";
+				label.style.left = (startX + width / 2) + "px";
+				label.style.color = p.color;
+				label.textContent = p.name;
+
+				container.appendChild(label);
+			});
 
 			// ticks
 			for (let y = startYear - (startYear % step); y <= endYear; y += step) {
@@ -483,6 +551,18 @@
 			});
 		}
 		inputEl.addEventListener("input", updateSuggestions);
+
+		const periods = [
+			{ name: "PERIOD 1", start: 1491, end: 1607, color: "rgba(167, 139, 250, 0.25)" }, // purple
+			{ name: "PERIOD 2", start: 1607, end: 1754, color: "rgba(96, 165, 250, 0.25)" },  // blue
+			{ name: "PERIOD 3", start: 1754, end: 1800, color: "rgba(52, 211, 153, 0.25)" },  // green
+			{ name: "PERIOD 4", start: 1800, end: 1848, color: "rgba(251, 191, 36, 0.25)" },  // yellow
+			{ name: "PERIOD 5", start: 1844, end: 1877, color: "rgba(248, 113, 113, 0.25)" }, // red
+			{ name: "PERIOD 6", start: 1865, end: 1898, color: "rgba(251, 146, 60, 0.25)" },  // orange
+			{ name: "PERIOD 7", start: 1890, end: 1945, color: "rgba(250, 204, 21, 0.25)" },  // gold
+			{ name: "PERIOD 8", start: 1945, end: 1980, color: "rgba(56, 189, 248, 0.25)" },  // sky blue
+			{ name: "PERIOD 9", start: 1980, end: 2020, color: "rgba(129, 140, 248, 0.25)" }  // indigo
+		];
 	</script>
 
 
