@@ -339,6 +339,16 @@
 				width: 100%;
 			}
 		}
+
+		#loader-subtext {
+			position: absolute;
+			top: 58%;
+			font-size: 12px;
+			opacity: 0.6;
+			font-style: italic;
+			letter-spacing: 0.5px;
+			transition: opacity 0.4s ease;
+		}
 	</style>
 </head>
 
@@ -346,6 +356,7 @@
 	<div id="loader">
 		<div class="loader-line"></div>
 		<div class="loader-text">Loading...</div>
+		<div id="loader-subtext"></div>
 	</div>
 	<div id="search-container">
 		<div id="suggestions"></div>
@@ -371,6 +382,25 @@
 		let events = [];
 		let scale = 5;
 		let offsetX = 0;
+
+		const loaderTextEl = document.getElementById("loader-subtext");
+
+		const loadingMessages = [
+			"Wait... this isn't Asia!?",
+			"Rewriting history...",
+			"Aligning colonial grievances...",
+			"Summoning founding fathers...",
+			"Loading tea shipment data...",
+			"Untangling British taxes...",
+			"Negotiating with France...",
+			"Fixing time itself...",
+			"Teaching George Washington how to code...",
+			"Calibrating revolution probability...",
+			"Reticulating splines..."
+		];
+
+		let msgIndex = 0;
+		let msgInterval;
 
 		function render() {
 			document.querySelectorAll(".event, .tick, .tick-label, .connector").forEach(e => e.remove());
@@ -559,7 +589,7 @@
 			return 1;
 		}
 
-		
+
 
 
 		// 🎯 ZOOM TO CURSOR
