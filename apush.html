@@ -439,14 +439,18 @@
 			);
 		}
 
+		let hasTyped = false;
+
 		function updateSuggestions() {
 			const query = inputEl.value.trim();
 
-			// clear with fade out
-			[...suggestionsEl.children].forEach(child => {
-				child.classList.add("removing");
-				setTimeout(() => child.remove(), 150);
-			});
+			// detect first character typed
+			const isFirstChar = query.length === 1 && !hasTyped;
+			if (query.length === 0) hasTyped = false;
+			else hasTyped = true;
+
+			// clear existing suggestions
+			suggestionsEl.innerHTML = "";
 
 			if (!query) return;
 
@@ -458,13 +462,19 @@
 				const div = document.createElement("div");
 				div.className = "suggestion";
 
+				// ONLY animate on first character
+				if (!isFirstChar) {
+					div.style.animation = "none";
+					div.style.opacity = "1";
+					div.style.transform = "translateY(0)";
+				}
+
 				div.innerHTML = highlightMatch(ev.title, query);
 
 				div.onclick = () => {
 					inputEl.value = ev.title;
 					suggestionsEl.innerHTML = "";
 
-					// optional: center timeline on event
 					offsetX = -ev.year * scale;
 					render();
 				};
@@ -472,7 +482,6 @@
 				suggestionsEl.appendChild(div);
 			});
 		}
-
 		inputEl.addEventListener("input", updateSuggestions);
 	</script>
 
