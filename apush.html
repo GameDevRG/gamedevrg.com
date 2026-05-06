@@ -2,282 +2,364 @@
 <html>
 
 <head>
-  <meta charset="UTF-8">
-  <title>APUSH Timeline</title>
+	<meta charset="UTF-8">
+	<title>APUSH Timeline</title>
 
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      font-family: Arial;
-    }
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+			font-family: Arial;
+		}
 
-    #timeline {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      background: #f5f5f5;
-      cursor: grab;
-    }
+		#timeline {
+			position: relative;
+			width: 100vw;
+			height: 100vh;
+			background: #f5f5f5;
+			cursor: grab;
+		}
 
-    .axis {
-      position: absolute;
-      top: 50%;
-      width: 100%;
-      height: 2px;
-      background: black;
-    }
+		.axis {
+			position: absolute;
+			top: 50%;
+			width: 100%;
+			height: 2px;
+			background: black;
+		}
 
-    .tick {
-      position: absolute;
-      width: 1px;
-      background: black;
-      top: 50%;
-    }
+		.tick {
+			position: absolute;
+			width: 1px;
+			background: black;
+			top: 50%;
+		}
 
-    .tick-label {
-      position: absolute;
-      top: calc(50% + 8px);
-      font-size: 10px;
-      transform: translateX(-50%);
-    }
+		.tick-label {
+			position: absolute;
+			top: calc(50% + 8px);
+			font-size: 10px;
+			transform: translateX(-50%);
+		}
 
-    .event {
-      position: absolute;
-      transform: translateX(-50%);
-      background: #2c3e50;
-      color: white;
-      padding: 4px 6px;
-      border-radius: 4px;
-      font-size: 12px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
+		.event {
+			position: absolute;
+			transform: translateX(-50%);
+			background: #2c3e50;
+			color: white;
+			padding: 4px 6px;
+			border-radius: 4px;
+			font-size: 12px;
+			cursor: pointer;
+			white-space: nowrap;
+		}
 
-    .connector {
-      position: absolute;
-      width: 2px;
-      background: #2c3e50;
-    }
+		.connector {
+			position: absolute;
+			width: 2px;
+			background: #2c3e50;
+		}
 
-    /* popup */
-    #popup {
-      position: absolute;
-      background: white;
-      border: 1px solid #ccc;
-      padding: 10px;
-      border-radius: 6px;
-      display: none;
-      max-width: 250px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      z-index: 10;
-    }
+		/* popup */
+		#popup {
+			position: absolute;
+			background: white;
+			border: 1px solid #ccc;
+			padding: 10px;
+			border-radius: 6px;
+			display: none;
+			max-width: 250px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+			z-index: 10;
+		}
 
-    #popup h4 {
-      margin: 0 0 5px 0;
-    }
-  </style>
+		#popup h4 {
+			margin: 0 0 5px 0;
+		}
+
+		/* floating search bar */
+		#search-container {
+			position: fixed;
+			bottom: 25px;
+			/* NOT touching bottom */
+			left: 50%;
+			transform: translateX(-50%);
+
+			display: flex;
+			align-items: center;
+			gap: 8px;
+
+			background: rgba(255, 255, 255, 0.85);
+			backdrop-filter: blur(10px);
+
+			padding: 8px 10px;
+			border-radius: 999px;
+			/* MAX rounded */
+
+			box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+			z-index: 20;
+		}
+
+		/* input field */
+		#search-input {
+			border: none;
+			outline: none;
+			background: transparent;
+
+			padding: 10px 14px;
+			font-size: 14px;
+
+			border-radius: 999px;
+			width: 200px;
+		}
+
+		/* circular button */
+		#search-btn {
+			width: 40px;
+			height: 40px;
+
+			border: none;
+			cursor: pointer;
+
+			border-radius: 50%;
+			/* perfect circle */
+			background: #2c3e50;
+			color: white;
+
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			font-size: 16px;
+
+			transition: transform 0.15s, background 0.2s;
+		}
+
+		#search-btn:hover {
+			background: #1a252f;
+			transform: scale(1.1);
+		}
+	</style>
 </head>
 
 <body>
+	<div id="search-container">
+		<input type="text" id="search-input" placeholder="Search events..." />
+		<button id="search-btn">
+			🔍
+		</button>
+	</div>
 
-  <div id="timeline">
-    <div class="axis"></div>
-  </div>
+	<div id="timeline">
+		<div class="axis"></div>
+	</div>
 
-  <div id="popup"></div>
+	<div id="popup"></div>
 
-  <script>
-    let events = [];
-    let scale = 5;
-    let offsetX = 0;
+	<script>
+		let events = [];
+		let scale = 5;
+		let offsetX = 0;
 
-    const container = document.getElementById("timeline");
-    const popup = document.getElementById("popup");
+		const container = document.getElementById("timeline");
+		const popup = document.getElementById("popup");
 
-    async function loadData() {
-      const res = await fetch("events.json");
-      events = await res.json();
-      render();
-    }
+		async function loadData() {
+			const res = await fetch("events.json");
+			events = await res.json();
+			render();
+		}
 
-    function getVisiblePriority() {
-      if (scale < 2) return 1;
-      if (scale < 8) return 2;
-      return 3;
-    }
+		function getVisiblePriority() {
+			if (scale < 2) return 1;
+			if (scale < 8) return 2;
+			return 3;
+		}
 
-    function yearToX(year) {
-      return (year * scale) + offsetX + window.innerWidth / 2;
-    }
+		function yearToX(year) {
+			return (year * scale) + offsetX + window.innerWidth / 2;
+		}
 
-    function xToYear(x) {
-      return (x - window.innerWidth / 2 - offsetX) / scale;
-    }
+		function xToYear(x) {
+			return (x - window.innerWidth / 2 - offsetX) / scale;
+		}
 
-    function getTickStep() {
-      if (scale < 1) return 100;
-      if (scale < 3) return 50;
-      if (scale < 8) return 10;
-      return 1;
-    }
+		function getTickStep() {
+			if (scale < 1) return 100;
+			if (scale < 3) return 50;
+			if (scale < 8) return 10;
+			return 1;
+		}
 
-    function render() {
-      document.querySelectorAll(".event, .tick, .tick-label, .connector").forEach(e => e.remove());
+		function render() {
+			document.querySelectorAll(".event, .tick, .tick-label, .connector").forEach(e => e.remove());
 
-      const maxPriority = getVisiblePriority();
-      const step = getTickStep();
+			const maxPriority = getVisiblePriority();
+			const step = getTickStep();
 
-      const startYear = Math.floor(xToYear(0));
-      const endYear = Math.ceil(xToYear(window.innerWidth));
+			const startYear = Math.floor(xToYear(0));
+			const endYear = Math.ceil(xToYear(window.innerWidth));
 
-      // ticks
-      for (let y = startYear - (startYear % step); y <= endYear; y += step) {
-        const x = yearToX(y);
+			// ticks
+			for (let y = startYear - (startYear % step); y <= endYear; y += step) {
+				const x = yearToX(y);
 
-        const tick = document.createElement("div");
-        tick.className = "tick";
-        tick.style.left = x + "px";
-        tick.style.height = (y % (step * 5) === 0) ? "20px" : "10px";
+				const tick = document.createElement("div");
+				tick.className = "tick";
+				tick.style.left = x + "px";
+				tick.style.height = (y % (step * 5) === 0) ? "20px" : "10px";
 
-        const label = document.createElement("div");
-        label.className = "tick-label";
-        label.style.left = x + "px";
-        label.textContent = y;
+				const label = document.createElement("div");
+				label.className = "tick-label";
+				label.style.left = x + "px";
+				label.textContent = y;
 
-        container.appendChild(tick);
-        container.appendChild(label);
-      }
+				container.appendChild(tick);
+				container.appendChild(label);
+			}
 
-      // 🧠 STACKING SYSTEM
-      const lanes = {}; // track used vertical slots
+			// 🧠 STACKING SYSTEM
+			const lanes = {}; // track used vertical slots
 
-      // store placed boxes for collision detection
-      const placed = [];
+			// store placed boxes for collision detection
+			const placed = [];
 
-      events.forEach(ev => {
-        if (ev.priority > maxPriority) return;
+			events.forEach(ev => {
+				if (ev.priority > maxPriority) return;
 
-        const x = yearToX(ev.year);
+				const x = yearToX(ev.year);
 
-        let yOffset = 60; // starting height
-        let placedSuccessfully = false;
+				let yOffset = 60; // starting height
+				let placedSuccessfully = false;
 
-        let eventEl;
+				let eventEl;
 
-        while (!placedSuccessfully) {
-          // create temp element to measure
-          eventEl = document.createElement("div");
-          eventEl.className = "event";
-          eventEl.style.left = x + "px";
-          eventEl.style.top = `calc(50% - ${yOffset}px)`;
-          eventEl.textContent = ev.title;
+				while (!placedSuccessfully) {
+					// create temp element to measure
+					eventEl = document.createElement("div");
+					eventEl.className = "event";
+					eventEl.style.left = x + "px";
+					eventEl.style.top = `calc(50% - ${yOffset}px)`;
+					eventEl.textContent = ev.title;
 
-          container.appendChild(eventEl);
+					container.appendChild(eventEl);
 
-          const rect = eventEl.getBoundingClientRect();
+					const rect = eventEl.getBoundingClientRect();
 
-          // check collision
-          let collision = false;
-          for (let p of placed) {
-            if (
-              rect.left < p.right &&
-              rect.right > p.left &&
-              rect.top < p.bottom &&
-              rect.bottom > p.top
-            ) {
-              collision = true;
-              break;
-            }
-          }
+					// check collision
+					let collision = false;
+					for (let p of placed) {
+						if (
+							rect.left < p.right &&
+							rect.right > p.left &&
+							rect.top < p.bottom &&
+							rect.bottom > p.top
+						) {
+							collision = true;
+							break;
+						}
+					}
 
-          if (collision) {
-            container.removeChild(eventEl);
-            yOffset += 35; // move higher and retry
-          } else {
-            placed.push(rect);
-            placedSuccessfully = true;
-          }
-        }
+					if (collision) {
+						container.removeChild(eventEl);
+						yOffset += 35; // move higher and retry
+					} else {
+						placed.push(rect);
+						placedSuccessfully = true;
+					}
+				}
 
-        // connector line
-        const line = document.createElement("div");
-        line.className = "connector";
-        line.style.left = x + "px";
-        line.style.top = `calc(50% - ${yOffset - 5}px)`;
-        line.style.height = (yOffset - 5) + "px";
+				// connector line
+				const line = document.createElement("div");
+				line.className = "connector";
+				line.style.left = x + "px";
+				line.style.top = `calc(50% - ${yOffset - 5}px)`;
+				line.style.height = (yOffset - 5) + "px";
 
-        // popup
-        eventEl.onclick = (e) => {
-          popup.style.display = "block";
-          popup.style.left = (e.clientX + 10) + "px";
-          popup.style.top = (e.clientY + 10) + "px";
+				// popup
+				eventEl.onclick = (e) => {
+					popup.style.display = "block";
+					popup.style.left = (e.clientX + 10) + "px";
+					popup.style.top = (e.clientY + 10) + "px";
 
-          popup.innerHTML = `
+					popup.innerHTML = `
       <h4>${ev.title}</h4>
       <p>${ev.description}</p>
       <small>${ev.year}</small>
     `;
-        };
+				};
 
-        container.appendChild(line);
-      });
-    }
-
-
-    // 🎯 ZOOM TO CURSOR
-    container.addEventListener("wheel", (e) => {
-      e.preventDefault();
-
-      const mouseX = e.clientX;
-      const before = xToYear(mouseX);
-
-      const zoomFactor = 1.1;
-      scale = e.deltaY > 0 ? scale / zoomFactor : scale * zoomFactor;
-      scale = Math.max(0.5, Math.min(scale, 50));
-
-      const after = xToYear(mouseX);
-      offsetX += (after - before) * scale;
-
-      render();
-    });
+				container.appendChild(line);
+			});
+		}
 
 
-    // 🖱️ PAN
-    let dragging = false;
-    let lastX = 0;
+		// 🎯 ZOOM TO CURSOR
+		container.addEventListener("wheel", (e) => {
+			e.preventDefault();
 
-    container.addEventListener("mousedown", (e) => {
-      dragging = true;
-      lastX = e.clientX;
-      container.style.cursor = "grabbing";
-    });
+			const mouseX = e.clientX;
+			const before = xToYear(mouseX);
 
-    window.addEventListener("mouseup", () => {
-      dragging = false;
-      container.style.cursor = "grab";
-    });
+			const zoomFactor = 1.1;
+			scale = e.deltaY > 0 ? scale / zoomFactor : scale * zoomFactor;
+			scale = Math.max(0.5, Math.min(scale, 50));
 
-    window.addEventListener("mousemove", (e) => {
-      if (!dragging) return;
+			const after = xToYear(mouseX);
+			offsetX += (after - before) * scale;
 
-      const dx = e.clientX - lastX;
-      lastX = e.clientX;
-
-      offsetX += dx;
-      render();
-    });
+			render();
+		});
 
 
-    // ❌ close popup on click outside
-    window.addEventListener("click", (e) => {
-      if (!e.target.classList.contains("event")) {
-        popup.style.display = "none";
-      }
-    });
+		// 🖱️ PAN
+		let dragging = false;
+		let lastX = 0;
 
-    loadData();
-  </script>
+		container.addEventListener("mousedown", (e) => {
+			dragging = true;
+			lastX = e.clientX;
+			container.style.cursor = "grabbing";
+		});
+
+		window.addEventListener("mouseup", () => {
+			dragging = false;
+			container.style.cursor = "grab";
+		});
+
+		window.addEventListener("mousemove", (e) => {
+			if (!dragging) return;
+
+			const dx = e.clientX - lastX;
+			lastX = e.clientX;
+
+			offsetX += dx;
+			render();
+		});
+
+
+		// ❌ close popup on click outside
+		window.addEventListener("click", (e) => {
+			if (!e.target.classList.contains("event")) {
+				popup.style.display = "none";
+			}
+		});
+
+		loadData();
+
+		const searchInput = document.getElementById("search-input");
+
+		searchInput.addEventListener("input", () => {
+			const query = searchInput.value.toLowerCase();
+
+			document.querySelectorAll(".event").forEach(el => {
+				const text = el.textContent.toLowerCase();
+				el.style.display = text.includes(query) ? "block" : "none";
+			});
+		});
+	</script>
+
+
 
 </body>
 
