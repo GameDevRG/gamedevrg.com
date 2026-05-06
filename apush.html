@@ -646,14 +646,27 @@
 		const loader = document.getElementById("loader");
 
 		async function init() {
+			loaderTextEl.textContent =
+					loadingMessages[msgIndex % loadingMessages.length];
+			// start messages immediately
+			msgInterval = setInterval(() => {
+				loaderTextEl.textContent =
+					loadingMessages[msgIndex % loadingMessages.length];
+				msgIndex++;
+			}, 3000);
+
+			// load data
 			await loadInfo();
 			await loadData();
 
-			// small delay so animation feels intentional
+			// small “settling” delay so render finishes + feels smooth
 			setTimeout(() => {
+				clearInterval(msgInterval);
 				loader.classList.add("hidden");
-			}, 400);
+			}, 600);
 		}
+
+		init();
 
 		init();
 
