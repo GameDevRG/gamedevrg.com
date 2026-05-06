@@ -127,7 +127,7 @@
 			/* perfect circle */
 			background: #2c3e50;
 			color: white;
-			
+
 
 			display: flex;
 			align-items: center;
@@ -282,10 +282,71 @@
 			cursor: pointer;
 			border-radius: 6px;
 		}
+
+		#loader {
+			position: fixed;
+			inset: 0;
+			background: #f5f5f5;
+			z-index: 999;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+			transition: opacity 0.6s ease, visibility 0.6s ease;
+		}
+
+		#loader.hidden {
+			opacity: 0;
+			visibility: hidden;
+		}
+
+		/* expanding center line */
+		.loader-line {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 0%;
+			height: 2px;
+			background: black;
+			transform: translate(-50%, -50%);
+			animation: expandLine 1.2s ease forwards;
+		}
+
+		/* loading text "cuts" the line */
+		.loader-text {
+			position: relative;
+			background: #f5f5f5;
+			padding: 0 12px;
+			font-size: 14px;
+			letter-spacing: 2px;
+			z-index: 2;
+
+			/* fake outline matching background to enhance split effect */
+			text-shadow:
+				-1px 0 #f5f5f5,
+				1px 0 #f5f5f5,
+				0 -1px #f5f5f5,
+				0 1px #f5f5f5;
+		}
+
+		/* animation */
+		@keyframes expandLine {
+			from {
+				width: 0%;
+			}
+
+			to {
+				width: 100%;
+			}
+		}
 	</style>
 </head>
 
 <body>
+	<div id="loader">
+		<div class="loader-line"></div>
+		<div class="loader-text">Loading...</div>
+	</div>
 	<div id="search-container">
 		<div id="suggestions"></div>
 		<input type="text" id="search-input" placeholder="Search events..." />
@@ -550,7 +611,19 @@
 			}
 		});
 
-		loadData();
+		const loader = document.getElementById("loader");
+
+		async function init() {
+			await loadInfo();
+			await loadData();
+
+			// small delay so animation feels intentional
+			setTimeout(() => {
+				loader.classList.add("hidden");
+			}, 400);
+		}
+
+		init();
 
 		const searchInput = document.getElementById("search-input");
 
