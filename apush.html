@@ -657,29 +657,28 @@
 		const loader = document.getElementById("loader");
 
 		async function init() {
-			loaderTextEl.textContent =
-				loadingMessages[msgIndex % loadingMessages.length];
-			// start messages immediately
+			// pick a random starting message
+			msgIndex = Math.floor(Math.random() * loadingMessages.length);
+			loaderTextEl.textContent = loadingMessages[msgIndex];
+
+			// start rotating messages
 			msgInterval = setInterval(() => {
-				loaderTextEl.textContent =
-					loadingMessages[msgIndex % loadingMessages.length];
-				msgIndex++;
+				msgIndex = (msgIndex + 1) % loadingMessages.length;
+				loaderTextEl.textContent = loadingMessages[msgIndex];
 			}, 3000);
 
 			// load data
 			await loadInfo();
 			await loadData();
 
-			// small “settling” delay so render finishes + feels smooth
+			// small delay so rendering + layout settles
 			setTimeout(() => {
 				clearInterval(msgInterval);
 				loader.classList.add("hidden");
 			}, 600);
 		}
-
 		init();
 
-		init();
 
 		const searchInput = document.getElementById("search-input");
 
