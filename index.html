@@ -605,7 +605,7 @@
 		const runner = Runner.create();
 		Runner.run(runner, engine);
 
-		// Boundaries
+		// black border thing
 		const ground = Bodies.rectangle(window.innerWidth / 2, window.innerHeight - 30, window.innerWidth, 60, {
 			isStatic: true,
 			render: { fillStyle: 'rgba(0,0,0,1)' }
@@ -711,7 +711,6 @@
 			const dy = mouse.position.y - clickStartPos.y;
 			const distance = Math.sqrt(dx * dx + dy * dy);
 
-			// ⭐ Only enable drag if long press OR moved >20px (backup)
 			if (!isLongPress && distance > 20) {
 				isLongPress = true;
 				enableDragging();
@@ -805,7 +804,7 @@
 			if (e.key === 'Escape') closeSettings();
 		});
 
-		// Text rendering
+		// ext stufes
 		Events.on(render, 'afterRender', () => {
 			const ctx = render.context;
 			ctx.save();
@@ -831,7 +830,7 @@
 
 
 
-		// Resize
+		// Resize🥀🥀🥀🥀🥀🥀🥀🥀🥀🥀🥀🥀🥀🥀🥀🥀
 		window.addEventListener('resize', () => {
 			Render.lookAt(render, {
 				min: { x: 0, y: 0 },
@@ -873,7 +872,7 @@
 
 			searchItems
 				.filter(item => item.toLowerCase().includes(q))
-				.slice(0, 5) // limit results
+				.slice(0, 5) // limit search suggestion results
 				.forEach(item => {
 					const div = document.createElement("div");
 					div.className = "resultItem";
