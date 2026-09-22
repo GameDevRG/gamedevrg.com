@@ -937,7 +937,7 @@ function setUniforms(u, o){
 
 function draw(){
   if (!gl || !prog) return;
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const dpr = Math.min(window.devicePixelRatio || 1, 3);
   const g = geom();
   if (!canvas.clientWidth || !canvas.clientHeight) return;
   const w = Math.round(g.W * dpr), h = Math.round(g.H * dpr);
@@ -951,7 +951,7 @@ function draw(){
 
   gl.viewport(0, 0, w, h);
   setUniforms(prog.U, {w, h, ox:0, oy:0, sx:(g.cx - g.W / 2) * dpr, sy:(g.H / 2 - g.cy) * dpr,
-    view:S.view, julia:S.mode === 'julia', aa:S.aa && (forceHQ || (!lowQ && !animating() && !introCap))});
+    view:S.view, julia:S.mode === 'julia', aa:S.aa});
   gl.drawArrays(gl.TRIANGLES, 0, 3);
 
   drawOverlay();
@@ -987,7 +987,7 @@ let cursor = null, hover = null, orbitInfo = '';
 const MONO = '11px "IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace';
 
 function drawOverlay(){
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const dpr = Math.min(window.devicePixelRatio || 1, 3);
   const g = geom();
   const w = Math.round(g.W * dpr), h = Math.round(g.H * dpr);
   if (ovl.width !== w || ovl.height !== h){ ovl.width = w; ovl.height = h; }
