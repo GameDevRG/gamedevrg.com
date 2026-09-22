@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>fractal lab</title>
+<title>fractalengine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -307,9 +307,153 @@ kbd{font:11.5px var(--mono);padding:1px 6px;border-radius:4px;border:1px solid v
 @media (prefers-reduced-motion:reduce){
   .sec-body,.sec-h,.chev,.mark,.btn,.seg button,.chips button,.pals .bar,#toast{transition:none !important;animation:none !important}
 }
+
+/* ---------- equation syntax highlighting ---------- */
+:root{
+  --tok-num:#a15c00; --tok-kw:#1d4ed8; --tok-param:#7c3aed; --tok-func:#0f766e;
+  --tok-op:#64748b; --tok-punct:#94a3b8; --tok-err:#b42318;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --tok-num:#e3a640; --tok-kw:#8ea8ff; --tok-param:#c9a6ff; --tok-func:#5fd6bd;
+    --tok-op:#8e9bab; --tok-punct:#5d6b79; --tok-err:#ff8a80;
+  }
+}
+:root[data-theme="dark"]{
+  --tok-num:#e3a640; --tok-kw:#8ea8ff; --tok-param:#c9a6ff; --tok-func:#5fd6bd;
+  --tok-op:#8e9bab; --tok-punct:#5d6b79; --tok-err:#ff8a80;
+}
+.eqbox{position:relative;flex:1;min-width:0}
+.eqbox input.eqinput{position:relative;width:100%;color:transparent;caret-color:var(--ink)}
+.eqhl{position:absolute;inset:0;padding:0 10px;display:flex;align-items:center;
+  white-space:pre;overflow:hidden;pointer-events:none;color:var(--ink)}
+#eqhl{height:42px;font-size:16px}
+.fnin .eqhl{height:30px;font-size:14px}
+.row .eqhl{height:36px;font-size:15px}
+.tk-num{color:var(--tok-num)}
+.tk-kw{color:var(--tok-kw);font-weight:500}
+.tk-param{color:var(--tok-param);font-weight:500}
+.tk-func{color:var(--tok-func)}
+.tk-op{color:var(--tok-op)}
+.tk-punct{color:var(--tok-punct)}
+.tk-err{color:var(--tok-err);text-decoration:wavy underline;text-decoration-color:var(--tok-err)}
+.legend{display:flex;flex-wrap:wrap;gap:5px 12px;margin:8px 0 0;font-size:11.5px;font-family:var(--mono)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:8px;height:8px;border-radius:2px;display:inline-block}
+
+/* ---------- modular parameters ---------- */
+#paramList{display:grid;gap:16px}
+.param{padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--field)}
+.param-top{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center}
+.param-name{width:40px;height:36px;padding:0;text-align:center;font-size:16px;font-weight:600;text-transform:lowercase}
+.param-name.bad{border-color:var(--err);color:var(--err)}
+.param .field{margin-top:0}
+.param-range{margin-top:10px}
+.param-range label,.param-sweep label{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)}
+.param-range input,.param-sweep input{width:100%;height:30px;padding:0 8px;font-size:12.5px}
+.param-sweep{margin-top:8px}
+.param .msg{min-height:0;margin-top:6px}
+.param .x{width:36px;height:36px;flex:none;border-radius:6px;border:1px solid var(--line);background:var(--field);color:var(--muted);font:16px/1 var(--sans);cursor:pointer}
+.param .x:hover{border-color:var(--err);color:var(--err)}
+
+/* ---------- color theme groups ---------- */
+.paltitle{margin:16px 0 6px;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.paltitle:first-of-type{margin-top:2px}
+.swatchbtn{display:flex;flex-direction:column;gap:5px;padding:0;border:0;background:none;cursor:pointer;color:var(--muted);font:11.5px var(--sans);text-align:left;width:100%}
+.swatchbtn .bar{display:block;height:24px;border-radius:5px;box-shadow:0 0 0 1px var(--line)}
+.swatchbtn[aria-checked="true"]{color:var(--ink);font-weight:500}
+.swatchbtn[aria-checked="true"] .bar{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--accent)}
+.swatchbtn:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.custItems{grid-template-columns:repeat(3,1fr)}
+.custItem{display:flex;flex-direction:column;gap:4px}
+.custActs{display:flex;gap:4px}
+.custActs .mini{flex:1;font:10.5px var(--mono);padding:3px 0;border-radius:4px;border:1px solid var(--line);background:var(--chip);color:var(--muted);cursor:pointer}
+.custActs .mini:hover{border-color:var(--accent);color:var(--ink)}
+.addPalTile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  height:24px;border:1.5px dashed var(--line);border-radius:5px;background:none;color:var(--muted);
+  cursor:pointer;font:11px var(--sans);transition:border-color .15s,color .15s}
+.addPalTile .plus{font-size:14px;line-height:1}
+.addPalTile:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ---------- custom palette editor (modal over the stage) ---------- */
+#peBackdrop{position:absolute;inset:0;z-index:9;background:rgba(8,10,14,0);
+  backdrop-filter:blur(0px) saturate(1);-webkit-backdrop-filter:blur(0px) saturate(1);
+  pointer-events:none;transition:background-color .4s ease,backdrop-filter .4s ease,-webkit-backdrop-filter .4s ease}
+#peBackdrop.show{background:rgba(8,10,14,.32);backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);pointer-events:auto}
+#peModal{position:absolute;z-index:10;left:50%;top:50%;transform:translate(-50%,-47%) scale(.97);
+  width:min(400px,88%);max-height:min(78%,640px);overflow-y:auto;
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  box-shadow:0 30px 80px -20px rgba(0,0,0,.55);
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .26s ease,transform .26s ease,visibility 0s .26s}
+#peModal.show{opacity:1;visibility:visible;transform:translate(-50%,-50%) scale(1);pointer-events:auto;transition:opacity .26s ease,transform .26s ease,visibility 0s}
+.pe-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 8px 14px 18px;border-bottom:1px solid var(--line)}
+.pe-head h3{margin:0;font-size:15px;font-weight:600}
+.pe-body{padding:16px 18px 20px}
+.pe-body .lbl{margin-top:4px}
+.pe-body input[type=text]{margin-bottom:12px}
+.pe-preview{height:32px;border-radius:6px;box-shadow:0 0 0 1px var(--line);margin-bottom:14px}
+.pe-grid{display:grid;gap:10px}
+.pe-row{display:grid;grid-template-columns:16px repeat(3,1fr);gap:8px;align-items:center}
+.pe-glabel{color:var(--muted);text-transform:uppercase;font-weight:600}
+.pe-slider{display:flex;flex-direction:column;gap:2px}
+.pe-slider span{font-size:10.5px;color:var(--muted);text-align:center}
+.pe-slider input{width:100%}
+
+/* ---------- classic fractal gallery ---------- */
+#classicHint{margin-top:10px}
+
+/* ---------- collapsible "what is this" info ---------- */
+details.info{margin-top:10px;font-size:12.5px}
+details.info summary{cursor:pointer;color:var(--muted);padding:2px 0;list-style:none}
+details.info summary::-webkit-details-marker{display:none}
+details.info summary::before{content:"?  ";color:var(--muted);font-family:var(--mono)}
+details.info .doc{margin:6px 0 0;padding-left:12px;border-left:2px solid var(--line);color:var(--muted);font-size:12px}
+details.info .doc p{margin:0}
+
+/* ---------- save & share cards ---------- */
+.mark.add{display:flex;flex-direction:column;align-items:stretch;background:transparent;
+  border:1.5px dashed var(--line);border-radius:8px;box-shadow:none;cursor:pointer;padding:0;font:inherit;color:inherit;
+  transition:border-color .15s,background-color .15s}
+.mark.add:hover{border-color:var(--accent);background:var(--chip)}
+.mark.add:disabled{opacity:.45;cursor:not-allowed}
+.mark.add .plus{display:flex;align-items:center;justify-content:center;aspect-ratio:8/5;
+  font-size:28px;font-weight:300;color:var(--muted);transition:color .18s,transform .18s}
+.mark.add:not(:disabled):hover .plus{color:var(--accent);transform:scale(1.1) rotate(90deg)}
+.mark.add .cap{display:block;padding:6px 8px 7px;font:11.5px var(--mono);color:var(--muted);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.mark.add .cap b{display:block;overflow:hidden;text-overflow:ellipsis;color:var(--ink);font-weight:500}
+
+/* ---------- pop-out windows ---------- */
+.dragh{display:inline-flex;align-items:center;justify-content:center;width:14px;flex:none;
+  margin-right:2px;color:var(--muted);cursor:grab;line-height:1;font-size:11px;letter-spacing:-1px}
+.dragh:active{cursor:grabbing}
+.sec-h-label{flex:1}
+@media (max-width:760px){.dragh{display:none}}
+.popped-note{display:none;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 12px;border:1px dashed var(--line);border-radius:8px;color:var(--muted);font-size:12.5px}
+section.popped .popped-note{display:flex}
+.popped-note button{font:inherit;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;text-decoration:underline}
+.floatwin{position:fixed;z-index:60;display:flex;flex-direction:column;
+  min-width:260px;min-height:160px;width:360px;height:340px;
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  box-shadow:0 24px 60px -18px rgba(0,0,0,.55);resize:both;overflow:hidden;
+  animation:fwpop .18s cubic-bezier(.2,.7,.2,1)}
+@keyframes fwpop{from{opacity:0;transform:scale(.96)}}
+#app[data-side="glass"] .floatwin{background:color-mix(in srgb,var(--panel) 72%,transparent);
+  -webkit-backdrop-filter:blur(30px) saturate(1.6);backdrop-filter:blur(30px) saturate(1.6)}
+.floatwin .fwhead{flex:none;display:flex;align-items:center;gap:8px;padding:9px 8px 9px 14px;
+  border-bottom:1px solid var(--line);cursor:move;touch-action:none;font-size:13px;font-weight:600;user-select:none}
+.floatwin .fwhead span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.floatwin .fwx{flex:none;width:26px;height:26px;border:0;border-radius:6px;background:none;
+  color:var(--muted);font:16px/1 var(--sans);cursor:pointer}
+.floatwin .fwx:hover{background:var(--chip);color:var(--ink)}
+.floatwin .fwbody{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:16px 18px 18px;direction:ltr}
+.floatwin.dragging{opacity:.88}
+body[data-kind="complex"] .only-classic{display:none !important}
+body[data-kind="classic"] .only-complex{display:none !important}
 </style>
-</head>
-<body data-mode="mandel">
+<body data-mode="mandel" data-kind="complex">
 <div id="app" data-side="solid">
 
   <main id="stage">
@@ -329,24 +473,68 @@ kbd{font:11.5px var(--mono);padding:1px 6px;border-radius:4px;border:1px solid v
       <div id="pin"></div>
     </div>
     <div id="nogl"><div>this page needs webgl 2, which your browser or device does not provide.<br>try a recent version of chrome, edge, firefox or safari.</div></div>
+
+    <div id="peBackdrop" aria-hidden="true"></div>
+    <div id="peModal" role="dialog" aria-modal="true" aria-labelledby="peTitle">
+      <div class="pe-head">
+        <h3 id="peTitle">custom palette</h3>
+        <button type="button" id="peClose" class="fwx" aria-label="close the palette editor">×</button>
+      </div>
+      <div class="pe-body">
+        <label class="lbl" for="peName">name</label>
+        <input id="peName" type="text" maxlength="24" spellcheck="false" autocomplete="off">
+        <div id="pePreview" class="pe-preview"></div>
+        <div id="peSliders" class="pe-grid"></div>
+        <p class="hint">this uses the same formula as the built-in themes: color = a + b·cos(2π·(c·t + d)), worked out separately for red, green and blue as the theme runs from 0 to 1.</p>
+        <div class="btnrow">
+          <button class="btn" id="peSave" type="button">save palette</button>
+          <button class="btn" id="peExport" type="button">export code</button>
+        </div>
+        <label class="lbl" for="peImport" style="margin-top:16px">import a code</label>
+        <div class="btnrow" style="margin-top:0">
+          <input id="peImport" type="text" class="mono" placeholder="paste a palette code" style="flex:1;min-width:160px">
+          <button class="btn" id="peImportBtn" type="button">add</button>
+        </div>
+      </div>
+    </div>
   </main>
 
   <div id="side">
     <aside id="panel" aria-label="fractal controls">
      <div class="pad">
       <header>
-        <h1>fractal lab</h1>
-        <p class="sub">write any complex map. it is compiled to a gpu shader and drawn live.</p>
+        <h1>fractalengine</h1>
+        <p class="sub">write any complex map, or browse a gallery of classic fractals. it is compiled to a gpu shader and drawn live.</p>
       </header>
 
       <section>
+        <h2>fractal type</h2>
+        <details class="info">
+          <summary>what is this?</summary>
+          <div class="doc"><p>switch between the live complex-map engine below — where you write your own equation and it is compiled to run on the gpu — and a gallery of classic geometric fractals built from a simple repeated rule.</p></div>
+        </details>
+        <div class="seg" role="group" aria-label="fractal type" style="margin-top:10px">
+          <button id="kComplex" type="button" aria-pressed="true">complex map</button>
+          <button id="kClassic" type="button" aria-pressed="false">classic fractals</button>
+        </div>
+      </section>
+
+      <section class="only-complex">
         <h2>equation</h2>
+        <details class="info">
+          <summary>what is this?</summary>
+          <div class="doc"><p>the rule applied at every pixel, every step. the colored zones below work like a code editor: names, numbers, functions and operators each get their own color as you type.</p></div>
+        </details>
         <label class="lbl" for="eq">applied at every step</label>
         <div class="eqwrap"><span class="pre mono">f(z) =</span>
-          <input id="eq" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" aria-describedby="eqmsg">
+          <div class="eqbox">
+            <input id="eq" class="eqinput mono" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" aria-describedby="eqmsg">
+            <div id="eqhl" class="eqhl mono" aria-hidden="true"></div>
+          </div>
         </div>
         <div id="eqmsg" class="msg" role="status" aria-live="polite"></div>
         <div class="chips" id="chips" aria-label="insert into equation"></div>
+        <div class="legend" id="eqlegend"></div>
 
         <label class="lbl" for="preset">preset</label>
         <select id="preset"></select>
@@ -355,7 +543,7 @@ kbd{font:11.5px var(--mono);padding:1px 6px;border-radius:4px;border:1px solid v
           <summary>syntax reference</summary>
           <div class="doc">
             <p>each pixel repeats <code>z ← f(z)</code>. everything is a complex number.</p>
-            <p><b>names:</b> <code>z</code> current value, <code>c</code> the fixed value, <code>a</code> the slider below, <code>i</code>, <code>pi</code>, <code>e</code></p>
+            <p><b>names:</b> <code>z</code> current value, <code>c</code> the fixed value, <code>i</code>, <code>pi</code>, <code>e</code>, plus any parameters you add below</p>
             <p><b>operators:</b> <code>+ − * / ^</code> and implicit multiplication (<code>2z</code>, <code>3(z+1)</code>)</p>
             <p><b>functions:</b> <code>sin cos tan sinh cosh tanh exp log sqrt conj sqr recip</code>, plus <code>abs</code> (absolute value of each part, as in the burning ship), <code>mag</code> (modulus), <code>re</code>, <code>im</code>, <code>arg</code></p>
             <p><b>try:</b> <code>z^2 + c/z^2</code>, <code>sin(z)*c + z^2</code>, <code>z - a*(z^3-1)/(3z^2)</code></p>
@@ -363,8 +551,12 @@ kbd{font:11.5px var(--mono);padding:1px 6px;border-radius:4px;border:1px solid v
         </details>
       </section>
 
-      <section>
+      <section class="only-complex">
         <h2>where the iteration starts</h2>
+        <details class="info">
+          <summary>what is this?</summary>
+          <div class="doc"><p>in mandelbrot mode, every pixel is a different <code>c</code> and <code>z</code> starts from the value below. in julia mode, every pixel is a different starting <code>z</code> and <code>c</code> stays fixed at one point you choose.</p></div>
+        </details>
         <div class="seg" role="group" aria-label="iteration mode">
           <button id="mMandel" type="button" aria-pressed="true">mandelbrot</button>
           <button id="mJulia" type="button" aria-pressed="false">julia</button>
@@ -372,7 +564,9 @@ kbd{font:11.5px var(--mono);padding:1px 6px;border-radius:4px;border:1px solid v
         <p class="hint only-mandel">each pixel is <code class="mono">c</code>, and <code class="mono">z</code> starts at the value below.</p>
         <p class="hint only-julia">each pixel is the starting <code class="mono">z</code>, and <code class="mono">c</code> stays fixed.</p>
 
-        <div class="row only-mandel"><label for="z0">start z₀</label><input id="z0" class="mono" type="text" spellcheck="false" autocomplete="off" aria-describedby="eqmsg"></div>
+        <div class="row only-mandel"><label for="z0">start z₀</label>
+          <div class="eqbox"><input id="z0" class="mono eqinput" type="text" spellcheck="false" autocomplete="off" aria-describedby="eqmsg"><div id="z0hl" class="eqhl mono" aria-hidden="true"></div></div>
+        </div>
 
         <div class="row two only-julia">
           <label for="cre">c</label>
@@ -384,17 +578,22 @@ kbd{font:11.5px var(--mono);padding:1px 6px;border-radius:4px;border:1px solid v
         <label class="check only-julia"><input class="sw" type="checkbox" id="showInset" checked> show the c map (click or drag on it to pick c)</label>
       </section>
 
-      <section>
-        <h2>parameter</h2>
-        <div class="field" style="margin-top:0">
-          <div class="head"><label class="lbl" for="a" style="margin:0">a</label><span id="aval">0.50</span></div>
-          <input id="a" type="range" min="-3" max="3" step="0.001" value="0.5">
-        </div>
-        <label class="check"><input class="sw" type="checkbox" id="animate"> sweep a from −2 to 2</label>
+      <section class="only-complex">
+        <h2>parameters</h2>
+        <details class="info">
+          <summary>what is this?</summary>
+          <div class="doc"><p>extra named numbers you can use inside the equation above. give each one a single-letter name, a range it can be dragged across, and — optionally — a range to sweep between automatically.</p></div>
+        </details>
+        <div id="paramList"></div>
+        <div class="btnrow"><button class="btn" id="addParam" type="button">add parameter</button><span class="note" id="paramCount"></span></div>
       </section>
 
-      <section>
+      <section class="only-complex">
         <h2>rendering</h2>
+        <details class="info">
+          <summary>what is this?</summary>
+          <div class="doc"><p>controls for how the escape-time calculation itself runs: how many steps to try, how far a point must travel to count as "escaped", and how those steps turn into a picture.</p></div>
+        </details>
         <div class="field" style="margin-top:0">
           <div class="head"><label class="lbl" for="iter" style="margin:0">iterations</label><span id="iterv">250</span></div>
           <input id="iter" type="range" min="20" max="2000" step="10" value="250">
@@ -413,10 +612,37 @@ kbd{font:11.5px var(--mono);padding:1px 6px;border-radius:4px;border:1px solid v
         <div style="margin-top:16px"><button class="btn" id="reset" type="button">reset view</button></div>
       </section>
 
+      <section class="only-classic">
+        <h2>classic fractal</h2>
+        <details class="info">
+          <summary>what is this?</summary>
+          <div class="doc"><p>a small gallery of fractals built by repeating one simple geometric rule, rather than iterating a complex-number equation. pan and zoom work the same way as the complex map.</p></div>
+        </details>
+        <label class="lbl" for="classicPick">shape</label>
+        <select id="classicPick"></select>
+        <p class="hint" id="classicHint"></p>
+        <div class="field">
+          <div class="head"><label class="lbl" for="classicDepth" style="margin:0">depth</label><span id="classicDepthV">1</span></div>
+          <input id="classicDepth" type="range" min="1" max="10" step="1" value="1">
+        </div>
+        <p class="hint">higher depths look finer but take more to draw — if it starts to lag while panning, bring the depth down a little.</p>
+        <div style="margin-top:16px"><button class="btn" id="resetClassic" type="button">reset view</button></div>
+      </section>
+
       <section>
         <h2>color themes</h2>
-        <div class="pals" id="pals" role="radiogroup" aria-label="color theme"></div>
-        <p class="hint">convergence coloring uses hue instead, and the shift slider rotates it.</p>
+        <details class="info">
+          <summary>what is this?</summary>
+          <div class="doc"><p>the palette used to paint escape-time (or classic-fractal) values. pick a built-in theme, or design and save your own in the custom palette editor.</p></div>
+        </details>
+        <p class="paltitle">classic</p>
+        <div class="pals" id="palsClassic" role="radiogroup" aria-label="classic color themes"></div>
+        <p class="paltitle">hue</p>
+        <div class="pals" id="palsHue" role="radiogroup" aria-label="hue color themes"></div>
+        <p class="paltitle">custom</p>
+        <div class="pals custItems" id="palsCustom" role="radiogroup" aria-label="custom color themes"></div>
+        <div class="btnrow"><button class="btn" id="openPalEditor" type="button">custom palette editor</button></div>
+        <p class="hint only-complex">convergence coloring uses hue instead, and the shift slider rotates it.</p>
         <div class="field">
           <div class="head"><label class="lbl" for="density" style="margin:0">density</label><span id="densityv">1.0</span></div>
           <input id="density" type="range" min="0.1" max="4" step="0.05" value="1">
@@ -425,37 +651,58 @@ kbd{font:11.5px var(--mono);padding:1px 6px;border-radius:4px;border:1px solid v
           <div class="head"><label class="lbl" for="offset" style="margin:0">shift</label><span id="offsetv">0.00</span></div>
           <input id="offset" type="range" min="0" max="1" step="0.005" value="0">
         </div>
-        <label class="check"><input class="sw" type="checkbox" id="cycle"> cycle colors</label>
+        <div class="btnrow" style="margin-top:12px">
+          <label class="check" style="margin-top:0"><input class="sw" type="checkbox" id="cycle"> cycle colors</label>
+          <button class="btn" id="cycleReset" type="button" title="reset the color cycle back to the start">reset cycle</button>
+        </div>
       </section>
 
       <section>
         <h2>overlays</h2>
+        <details class="info">
+          <summary>what is this?</summary>
+          <div class="doc"><p>extra drawing on top of the fractal: a coordinate grid, and — for the complex map — a trace of where a point travels as the equation is applied to it again and again.</p></div>
+        </details>
         <label class="check" style="margin-top:0"><input class="sw" type="checkbox" id="grid"> coordinate plane</label>
-        <label class="check"><input class="sw" type="checkbox" id="orbit"> orbit trace</label>
-        <p class="hint">a faint line follows your cursor, showing the path that point takes at each step. click to pin one. double-click zoom is off while this is on.</p>
-        <div class="btnrow"><button class="btn" id="clearOrbits" type="button">clear lines</button><span class="note" id="pinCount">0 pinned</span></div>
+        <div class="only-complex">
+          <label class="check"><input class="sw" type="checkbox" id="orbit"> orbit trace</label>
+          <p class="hint">a faint line follows your cursor, showing the path that point takes at each step. click to pin one. double-click zoom is off while this is on.</p>
+          <div class="btnrow"><button class="btn" id="clearOrbits" type="button">clear lines</button><span class="note" id="pinCount">0 pinned</span></div>
+        </div>
       </section>
 
-      <section>
+      <section class="only-complex">
         <h2>reference functions</h2>
+        <details class="info">
+          <summary>what is this?</summary>
+          <div class="doc"><p>ordinary y = f(x) functions, drawn as a line on top of the fractal. useful for things like newton's method, where the reference function is the curve being solved.</p></div>
+        </details>
         <div id="fnlist"></div>
-        <p class="hint" id="fnempty">no functions yet. add one to draw y = f(x) on top of the fractal. it can use a too.</p>
+        <p class="hint" id="fnempty">no functions yet. add one to draw y = f(x) on top of the fractal. it can use any of your parameters too.</p>
         <div class="btnrow"><button class="btn" id="addfn" type="button">add function</button></div>
       </section>
 
       <section>
         <h2>save and share</h2>
+        <details class="info">
+          <summary>what is this?</summary>
+          <div class="doc"><p>keep a gallery of views in this browser, copy the current picture, or copy a link that reopens exactly this view for someone else.</p></div>
+        </details>
         <div class="btnrow" style="margin-top:0">
-          <button class="btn" id="bmAdd" type="button">save view</button>
+          <button class="btn" id="copyImage" type="button">copy image</button>
           <button class="btn" id="savePng" type="button">save image</button>
           <button class="btn" id="copyLink" type="button">copy link</button>
         </div>
         <div class="marks" id="marks"></div>
-        <p class="hint" id="marksEmpty">no saved views yet. save one to fly back to it later. saved views stay in this browser, and the link holds the current view.</p>
+        <p class="hint">saved views stay in this browser. the "save fractal" card keeps the view you're looking at right now.</p>
       </section>
 
       <section id="secKeys" data-shut>
         <h2>keyboard</h2>
+        <details class="info">
+          <summary>what is this?</summary>
+          <div class="doc"><p>shortcuts for the most common actions, so you don't need to reach for the sidebar.</p></div>
+        </details>
         <dl class="keys">
           <dt><kbd>h</kbd></dt><dd>hide or show the controls</dd>
           <dt><kbd>+</kbd><kbd>−</kbd></dt><dd>zoom in and out</dd>
@@ -472,8 +719,12 @@ kbd{font:11.5px var(--mono);padding:1px 6px;border-radius:4px;border:1px solid v
 
       <section data-shut>
         <h2>sidebar</h2>
+        <details class="info">
+          <summary>what is this?</summary>
+          <div class="doc"><p>how the controls panel itself looks: solid or frosted glass, light or dark, and how wide it sits. on desktop, drag the ⠿ handle on any section title to pop it into its own window.</p></div>
+        </details>
         <div class="seg" role="group" aria-label="sidebar style">
-          <button id="sSolid" type="button" aria-pressed="true">solid</button>
+          <button id="sSolid" type="button" aria-pressed="true">original</button>
           <button id="sGlass" type="button" aria-pressed="false">frosted glass</button>
         </div>
         <div class="field">
@@ -496,12 +747,12 @@ kbd{font:11.5px var(--mono);padding:1px 6px;border-radius:4px;border:1px solid v
     <div id="grip" role="separator" tabindex="0" aria-orientation="vertical" aria-label="resize sidebar" title="drag to resize"></div>
   </div>
 </div>
-
 <script>
 (() => {
 'use strict';
 const $ = s => document.querySelector(s);
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 /* =====================================================================
    1. equation parser
@@ -511,6 +762,9 @@ const FUNCS = {
   exp:'cexp', log:'clog', ln:'clog', sqrt:'csqrt', conj:'cconj', abs:'abs',
   mag:'cmag', re:'cre', im:'cim', arg:'carg', sqr:'csqr', recip:'crecip'
 };
+const BUILTIN_NAMES = ['z','c','i','pi','e'];
+const RESERVED = new Set(['z','c','i','e','x']);
+const MAX_PARAMS = 10;
 
 function tokenize(src){
   src = src.replace(/[−–]/g,'-').replace(/[×·]/g,'*').replace(/π/g,'pi')
@@ -595,10 +849,17 @@ function fnum(v){
   return s;
 }
 
+/* param-name -> uParamN index, set fresh right before each gen() pass in compile() */
+let GEN_PIDX = {};
 function gen(n){
   switch (n.t){
     case 'num': return 'vec2(' + fnum(n.v) + ',0.0)';
-    case 'var': return {z:'z', c:'c', a:'vec2(uA,0.0)', i:'vec2(0.0,1.0)', pi:'vec2(3.14159265359,0.0)', e:'vec2(2.71828182846,0.0)'}[n.n];
+    case 'var': {
+      const b = {z:'z', c:'c', i:'vec2(0.0,1.0)', pi:'vec2(3.14159265359,0.0)', e:'vec2(2.71828182846,0.0)'}[n.n];
+      if (b) return b;
+      const idx = GEN_PIDX[n.n];
+      return 'vec2(uParam' + idx + ',0.0)';
+    }
     case 'neg': return '(-' + gen(n.x) + ')';
     case 'call': return FUNCS[n.f] + '(' + gen(n.x) + ')';
     case 'bin': {
@@ -652,12 +913,12 @@ function evalAst(n, env){
       switch (n.n){
         case 'z': return env.z;
         case 'c': return env.c;
-        case 'a': return [env.a,0];
         case 'x': return [env.x,0];
         case 'i': return [0,1];
         case 'pi': return [Math.PI,0];
         case 'e': return [Math.E,0];
       }
+      { const pr = S.params.find(q => q.name === n.n); if (pr) return [pr.value,0]; }
       return [0,0];
     case 'neg': { const v = evalAst(n.x, env); return [-v[0],-v[1]]; }
     case 'call': return CX[n.f](evalAst(n.x, env));
@@ -679,6 +940,51 @@ function evalAst(n, env){
   }
   return [NaN,NaN];
 }
+
+/* ---------- lenient lexer + colorer for the equation inputs ---------- */
+function paramNamesLower(){ return new Set(S.params.map(p => p.name)); }
+function lexHL(src, extraOk){
+  const toks = []; let i = 0; const n = src.length; const pset = paramNamesLower();
+  while (i < n){
+    const ch = src[i];
+    if (/\s/.test(ch)){ toks.push({s:i,e:i+1,k:'ws'}); i++; continue; }
+    if ('+-−–*×·/^'.includes(ch)){ toks.push({s:i,e:i+1,k:'op'}); i++; continue; }
+    if ('(),'.includes(ch)){ toks.push({s:i,e:i+1,k:'punct'}); i++; continue; }
+    if (ch === 'π'){ toks.push({s:i,e:i+1,k:'kw'}); i++; continue; }
+    if (ch === '²' || ch === '³'){ toks.push({s:i,e:i+1,k:'op'}); i++; continue; }
+    const rest = src.slice(i); let m;
+    if ((m = /^(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?/.exec(rest))){ toks.push({s:i,e:i+m[0].length,k:'num'}); i += m[0].length; continue; }
+    if ((m = /^[A-Za-z_]\w*/.exec(rest))){
+      const w = m[0].toLowerCase(); let k = 'err';
+      if (FUNCS[w]) k = 'func';
+      else if (w === 'z' || w === 'c' || w === 'i' || w === 'pi' || w === 'e') k = 'kw';
+      else if (pset.has(w)) k = 'param';
+      else if (extraOk && extraOk.includes(w)) k = 'kw';
+      toks.push({s:i,e:i+m[0].length,k}); i += m[0].length; continue;
+    }
+    toks.push({s:i,e:i+1,k:'err'}); i++;
+  }
+  return toks;
+}
+function highlightHTML(src, extraOk){
+  const toks = lexHL(src, extraOk);
+  let out = '';
+  for (const t of toks){
+    const chunk = escapeHtml(src.slice(t.s, t.e));
+    out += t.k === 'ws' ? chunk : '<span class="tk-' + t.k + '">' + chunk + '</span>';
+  }
+  return out;
+}
+const highlighters = [];
+function attachHighlighter(input, overlay, extraOk){
+  const sync = () => { overlay.innerHTML = highlightHTML(input.value, extraOk) || '&nbsp;'; overlay.scrollLeft = input.scrollLeft; };
+  input.addEventListener('input', sync);
+  input.addEventListener('scroll', () => { overlay.scrollLeft = input.scrollLeft; });
+  sync();
+  highlighters.push(sync);
+  return sync;
+}
+function refreshHighlighters(){ highlighters.forEach(fn => fn()); }
 
 /* =====================================================================
    2. shaders
@@ -716,7 +1022,7 @@ const HEAD = `#version 300 es
 precision highp float;
 precision highp int;
 uniform vec2 uRes, uOrigin, uShift, uCenter, uC;
-uniform float uScale, uBail, uBail2, uA, uDegree, uDensity, uOffset;
+uniform float uScale, uBail, uBail2, uDegree, uDensity, uOffset;
 uniform int uMaxIter, uJulia, uColorMode, uAA;
 uniform vec3 uPa, uPb, uPc, uPd;
 out vec4 outColor;
@@ -780,32 +1086,65 @@ void main(){
 }
 `;
 
+function paramUniformDecl(){
+  return S.params.length ? ('uniform float ' + S.params.map((p,i)=>'uParam'+i).join(', ') + ';\n') : '';
+}
 function buildFragment(fExpr, zExpr){
-  return HEAD + HELPERS +
+  return HEAD + paramUniformDecl() + HELPERS +
     'vec2 f(vec2 z, vec2 c){ return ' + fExpr + '; }\n' +
     'vec2 startZ(vec2 c){ return ' + zExpr + '; }\n' + MAIN;
 }
 
 /* =====================================================================
-   3. state, presets, palettes
+   3. state, presets, palettes, classic fractal gallery
    ===================================================================== */
 const PALETTES = [
-  {name:'spectrum', a:[.5,.5,.5],    b:[.5,.5,.5],    c:[1,1,1],   d:[0,.33,.67]},
-  {name:'ember',    a:[.5,.5,.5],    b:[.5,.5,.5],    c:[1,1,.5],  d:[.8,.9,.3]},
-  {name:'lagoon',   a:[.25,.5,.6],   b:[.25,.4,.4],   c:[1,1,1],   d:[.55,.65,.75]},
-  {name:'magenta',  a:[.5,.5,.5],    b:[.5,.5,.5],    c:[2,1,0],   d:[.5,.2,.25]},
-  {name:'orchid',   a:[.5,.5,.5],    b:[.5,.5,.5],    c:[1,.7,.4], d:[0,.15,.2]},
-  {name:'graphite', a:[.5,.5,.5],    b:[.5,.5,.5],    c:[1,1,1],   d:[0,0,0]},
-  {name:'dusk',     a:[.8,.5,.4],    b:[.2,.4,.2],    c:[2,1,1],   d:[0,.25,.25]},
-  {name:'sunset',   a:[.55,.4,.45],  b:[.45,.35,.35], c:[1,1,1],   d:[0,.1,.25]},
-  {name:'glacier',  a:[.55,.72,.85], b:[.3,.24,.15],  c:[1,1,1],   d:[.5,.55,.6]},
-  {name:'forest',   a:[.3,.45,.3],   b:[.25,.35,.25], c:[1,1,1],   d:[.3,0,.2]},
-  {name:'toxic',    a:[.4,.55,.3],   b:[.4,.45,.3],   c:[1,1,1],   d:[.35,0,.6]},
-  {name:'gold',     a:[.5,.4,.2],    b:[.5,.4,.2],    c:[1,1,1],   d:[0,.1,.2]},
-  {name:'candy',    a:[.75,.62,.75], b:[.25,.3,.25],  c:[1,1,1],   d:[0,.33,.67]},
-  {name:'copper',   a:[.5,.3,.2],    b:[.5,.3,.2],    c:[1,1,1],   d:[0,0,0]},
-  {name:'aurora',   a:[.2,.5,.5],    b:[.2,.5,.4],    c:[1,1,1],   d:[.2,.4,.6]}
+  {id:'spectrum', name:'spectrum', group:'classic', a:[.5,.5,.5],    b:[.5,.5,.5],    c:[1,1,1],   d:[0,.33,.67]},
+  {id:'ember',    name:'ember',    group:'classic', a:[.5,.5,.5],    b:[.5,.5,.5],    c:[1,1,.5],  d:[.8,.9,.3]},
+  {id:'lagoon',   name:'lagoon',   group:'classic', a:[.25,.5,.6],   b:[.25,.4,.4],   c:[1,1,1],   d:[.55,.65,.75]},
+  {id:'magenta',  name:'magenta',  group:'classic', a:[.5,.5,.5],    b:[.5,.5,.5],    c:[2,1,0],   d:[.5,.2,.25]},
+  {id:'orchid',   name:'orchid',   group:'classic', a:[.5,.5,.5],    b:[.5,.5,.5],    c:[1,.7,.4], d:[0,.15,.2]},
+  {id:'graphite', name:'graphite', group:'classic', a:[.5,.5,.5],    b:[.5,.5,.5],    c:[1,1,1],   d:[0,0,0]},
+  {id:'dusk',     name:'dusk',     group:'classic', a:[.8,.5,.4],    b:[.2,.4,.2],    c:[2,1,1],   d:[0,.25,.25]},
+  {id:'sunset',   name:'sunset',   group:'classic', a:[.55,.4,.45],  b:[.45,.35,.35], c:[1,1,1],   d:[0,.1,.25]},
+  {id:'glacier',  name:'glacier',  group:'classic', a:[.55,.72,.85], b:[.3,.24,.15],  c:[1,1,1],   d:[.5,.55,.6]},
+  {id:'forest',   name:'forest',   group:'classic', a:[.3,.45,.3],   b:[.25,.35,.25], c:[1,1,1],   d:[.3,0,.2]},
+  {id:'toxic',    name:'toxic',    group:'classic', a:[.4,.55,.3],   b:[.4,.45,.3],   c:[1,1,1],   d:[.35,0,.6]},
+  {id:'gold',     name:'gold',     group:'classic', a:[.5,.4,.2],    b:[.5,.4,.2],    c:[1,1,1],   d:[0,.1,.2]},
+  {id:'candy',    name:'candy',    group:'classic', a:[.75,.62,.75], b:[.25,.3,.25],  c:[1,1,1],   d:[0,.33,.67]},
+  {id:'copper',   name:'copper',   group:'classic', a:[.5,.3,.2],    b:[.5,.3,.2],    c:[1,1,1],   d:[0,0,0]},
+  {id:'aurora',   name:'aurora',   group:'classic', a:[.2,.5,.5],    b:[.2,.5,.4],    c:[1,1,1],   d:[.2,.4,.6]}
 ];
+function huePal(id, base){ return {id, name:id, group:'hue', a:base.map(v=>v/2), b:base.map(v=>v/2), c:[1,1,1], d:[0,0,0]}; }
+PALETTES.push(
+  huePal('red',    [0.95,0.18,0.16]),
+  huePal('orange', [0.98,0.55,0.15]),
+  huePal('amber',  [0.98,0.80,0.20]),
+  huePal('lime',   [0.55,0.85,0.20]),
+  huePal('green',  [0.20,0.78,0.35]),
+  huePal('teal',   [0.15,0.75,0.65]),
+  huePal('blue',   [0.25,0.50,0.95]),
+  huePal('indigo', [0.42,0.35,0.92]),
+  huePal('violet', [0.65,0.35,0.92]),
+  huePal('pink',   [0.95,0.28,0.62]),
+  huePal('mono',   [0.88,0.88,0.90])
+);
+function findPalette(id){
+  return PALETTES.find(p => p.id === id) || S.customPalettes.find(p => p.id === id) || PALETTES[0];
+}
+function jsPal(P, t){
+  const rgb = [0,1,2].map(j => Math.round(255 * clamp(P.a[j] + P.b[j]*Math.cos(6.28318530718*(P.c[j]*t + P.d[j])), 0, 1)));
+  return 'rgb(' + rgb.join(',') + ')';
+}
+function swatchGradient(P){
+  const stops = []; for (let k = 0; k <= 16; k++) stops.push(jsPal(P, k/16));
+  return 'linear-gradient(to right,' + stops.join(',') + ')';
+}
+function shadeRgb(rgbStr, f){
+  const m = /rgb\((\d+),(\d+),(\d+)\)/.exec(rgbStr);
+  if (!m) return rgbStr;
+  return 'rgb(' + [1,2,3].map(i => Math.round(+m[i]*f)).join(',') + ')';
+}
 
 const PRESETS = [
   {id:'mandelbrot', name:'mandelbrot set',            eq:'z^2 + c',                 mode:'mandel', view:[-0.5,0,1.35]},
@@ -825,14 +1164,29 @@ const PRESETS = [
   {id:'relaxed',    name:'relaxed newton (uses a)',   eq:'z - a*(z^3 - 1)/(3z^2)',  mode:'julia',  view:[0,0,2], colorMode:1, iter:80, a:1.0, inset:false}
 ];
 
+const CLASSICS = [
+  {id:'sierpinski', name:'sierpinski triangle', minD:1, maxD:8,  defD:6,  view:[0,0.15,1.5],
+    desc:'a triangle repeatedly split into three smaller triangles, leaving the middle one out each time.'},
+  {id:'carpet',     name:'sierpinski carpet',    minD:1, maxD:5,  defD:4,  view:[0,0,1.4],
+    desc:'a square repeatedly divided into a 3×3 grid, with the centre square removed each time.'},
+  {id:'koch',       name:'koch snowflake',       minD:0, maxD:6,  defD:4,  view:[0,0.05,1.7],
+    desc:'each edge of a triangle is replaced by four shorter edges with a triangular bump, again and again.'},
+  {id:'dragon',     name:'dragon curve',         minD:1, maxD:16, defD:12, view:[0.15,0.05,1.3],
+    desc:'a single folded strip of paper: take the curve, copy it, rotate the copy a quarter turn, and join them — repeatedly.'},
+  {id:'menger',     name:'menger sponge',        minD:0, maxD:3,  defD:2,  view:[0,0,2.6],
+    desc:'a cube with its face-centres and its core drilled out, then the same drilled into each of the 20 remaining sub-cubes.'}
+];
+
 const FN_COLORS = ['#ffd166','#06d6a0','#ef476f','#4cc9f0','#f78c6b','#c77dff'];
 const toView = arr => ({x:arr[0], y:arr[1], s:arr[2]});
 const mq = window.matchMedia('(max-width:760px)');
 
 let sideVis = 1, introCap = 0, forceHQ = false;
 const S = {
-  eq:'', z0:'0', mode:'mandel', c:[-0.8,0.156], a:0.5, iter:250, bail:32, degree:2,
-  colorMode:0, palette:0, density:1, offset:0, aa:true, showInset:true, animate:false,
+  eq:'', z0:'0', mode:'mandel', c:[-0.8,0.156], iter:250, bail:32, degree:2,
+  colorMode:0, palette:'spectrum', customPalettes:[], density:1, offset:0, aa:true, showInset:true,
+  params:[{name:'a', value:0.5, min:-3, max:3, animate:false, aMin:-2, aMax:2}],
+  kind:'complex', classic:{id:'sierpinski', depth:6},
   view:toView([-0.5,0,1.35]), inset:toView([-0.5,0,1.5]),
   def:{mandel:[-0.5,0,1.35], julia:[0,0,1.6]},
   astF:null, astZ0:null,
@@ -851,7 +1205,7 @@ const gl = canvas.getContext('webgl2', {antialias:false, alpha:false, powerPrefe
 if (!gl) $('#nogl').style.display = 'flex';
 
 let prog = null, vs = null;
-const UNIFORMS = ['uRes','uOrigin','uShift','uCenter','uC','uScale','uBail','uBail2','uA','uDegree','uDensity','uOffset','uMaxIter','uJulia','uColorMode','uAA','uPa','uPb','uPc','uPd'];
+const UNIFORMS = ['uRes','uOrigin','uShift','uCenter','uC','uScale','uBail','uBail2','uDegree','uDensity','uOffset','uMaxIter','uJulia','uColorMode','uAA','uPa','uPb','uPc','uPd'];
 
 function compileShader(type, src){
   const s = gl.createShader(type);
@@ -863,7 +1217,7 @@ function compileShader(type, src){
   }
   return s;
 }
-function makeProgram(fragSrc){
+function makeProgram(fragSrc, paramCount){
   if (!vs) vs = compileShader(gl.VERTEX_SHADER, VERT);
   const fs = compileShader(gl.FRAGMENT_SHADER, fragSrc);
   const p = gl.createProgram();
@@ -875,18 +1229,23 @@ function makeProgram(fragSrc){
     throw new Error('the gpu could not link this equation. ' + log);
   }
   const U = {}; UNIFORMS.forEach(n => U[n] = gl.getUniformLocation(p, n));
-  return {p, U};
+  const PU = []; for (let i = 0; i < paramCount; i++) PU.push(gl.getUniformLocation(p, 'uParam' + i));
+  return {p, U, PU};
 }
 
 const eqEl = $('#eq'), msgEl = $('#eqmsg');
 function setMsg(text, isErr){ msgEl.textContent = text; msgEl.classList.toggle('err', !!isErr); }
 
+function paramNameList(){ return S.params.map(p => p.name); }
 function compile(){
   if (!gl) return;
   try{
-    const fAst = parse(S.eq, ['z','c','a','i','pi','e']);
-    const zAst = parse(S.z0, ['c','a','i','pi','e']);
-    const next = makeProgram(buildFragment(gen(fAst), gen(zAst)));
+    const names = paramNameList();
+    const fAst = parse(S.eq, ['z','c','i','pi','e', ...names]);
+    const zAst = parse(S.z0, ['c','i','pi','e', ...names]);
+    GEN_PIDX = {}; S.params.forEach((p,i) => GEN_PIDX[p.name] = i);
+    const fExpr = gen(fAst), zExpr = gen(zAst);
+    const next = makeProgram(buildFragment(fExpr, zExpr), S.params.length);
     if (prog) gl.deleteProgram(prog.p);
     prog = next; S.astF = fAst; S.astZ0 = zAst;
     setMsg('compiled. z ← ' + S.eq.trim());
@@ -904,6 +1263,7 @@ function geom(){
   return {W, H, L, B, cx:(W + L) / 2, cy:(H - B) / 2, k:S.view.s / (H / 2)};
 }
 function s2c(x, y, g){ return {x:S.view.x + (x - g.cx) * g.k, y:S.view.y - (y - g.cy) * g.k}; }
+function W2S(re, im, g){ return [g.cx + (re - S.view.x) / g.k, g.cy - (im - S.view.y) / g.k]; }
 
 /* ---------- rendering ---------- */
 let raf = 0, oraf = 0, lowQ = false, lqTimer = 0;
@@ -914,8 +1274,9 @@ function bump(){
   lqTimer = setTimeout(() => { lowQ = false; render(); }, 180);
 }
 
-function setUniforms(u, o){
-  const P = PALETTES[S.palette];
+function setUniforms(pr, o){
+  const u = pr.U;
+  const P = findPalette(S.palette);
   gl.uniform2f(u.uRes, o.w, o.h);
   gl.uniform2f(u.uOrigin, o.ox, o.oy);
   gl.uniform2f(u.uShift, o.sx, o.sy);
@@ -924,7 +1285,6 @@ function setUniforms(u, o){
   gl.uniform1f(u.uScale, o.view.s);
   gl.uniform1f(u.uBail, S.bail);
   gl.uniform1f(u.uBail2, S.bail * S.bail);
-  gl.uniform1f(u.uA, S.a);
   gl.uniform1f(u.uDegree, S.degree);
   gl.uniform1f(u.uDensity, S.density);
   gl.uniform1f(u.uOffset, S.offset + S.phase);
@@ -933,15 +1293,25 @@ function setUniforms(u, o){
   gl.uniform1i(u.uColorMode, S.colorMode);
   gl.uniform1i(u.uAA, o.aa ? 2 : 1);
   gl.uniform3fv(u.uPa, P.a); gl.uniform3fv(u.uPb, P.b); gl.uniform3fv(u.uPc, P.c); gl.uniform3fv(u.uPd, P.d);
+  S.params.forEach((p,i) => { if (pr.PU[i]) gl.uniform1f(pr.PU[i], p.value); });
 }
 
 function draw(){
-  if (!gl || !prog) return;
+  if (!gl) return;
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const g = geom();
   if (!canvas.clientWidth || !canvas.clientHeight) return;
   const w = Math.round(g.W * dpr), h = Math.round(g.H * dpr);
   if (canvas.width !== w || canvas.height !== h){ canvas.width = w; canvas.height = h; }
+
+  if (S.kind === 'classic'){
+    cmapEl.classList.add('off'); dockEl.classList.add('off');
+    gl.viewport(0, 0, w, h); gl.clearColor(0.02, 0.02, 0.03, 1); gl.clear(gl.COLOR_BUFFER_BIT);
+    drawOverlay();
+    scheduleHash();
+    return;
+  }
+  if (!prog) return;
   gl.useProgram(prog.p);
 
   const cmapOn = S.mode === 'julia' && S.showInset;
@@ -950,7 +1320,7 @@ function draw(){
   if (cmapOn) drawCmap(dpr, w, h);
 
   gl.viewport(0, 0, w, h);
-  setUniforms(prog.U, {w, h, ox:0, oy:0, sx:(g.cx - g.W / 2) * dpr, sy:(g.H / 2 - g.cy) * dpr,
+  setUniforms(prog, {w, h, ox:0, oy:0, sx:(g.cx - g.W / 2) * dpr, sy:(g.H / 2 - g.cy) * dpr,
     view:S.view, julia:S.mode === 'julia', aa:S.aa && (forceHQ || (!lowQ && !animating() && !introCap))});
   gl.drawArrays(gl.TRIANGLES, 0, 3);
 
@@ -966,7 +1336,7 @@ function drawCmap(dpr, w, h){
   rw = Math.max(1, Math.floor(rw * sc)); rh = Math.max(1, Math.floor(rh * sc));
   if (cmapCanvas.width !== rw || cmapCanvas.height !== rh){ cmapCanvas.width = rw; cmapCanvas.height = rh; }
   gl.viewport(0, 0, rw, rh);
-  setUniforms(prog.U, {w:rw, h:rh, ox:0, oy:0, sx:0, sy:0, view:S.inset, julia:false, aa:false});
+  setUniforms(prog, {w:rw, h:rh, ox:0, oy:0, sx:0, sy:0, view:S.inset, julia:false, aa:false});
   gl.drawArrays(gl.TRIANGLES, 0, 3);
   cctx.drawImage(canvas, 0, h - rh, rw, rh, 0, 0, rw, rh);
   updatePin();
@@ -981,7 +1351,7 @@ function updatePin(){
 }
 
 /* =====================================================================
-   5. overlay: coordinate plane, reference functions, orbits
+   5. overlay: coordinate plane, reference functions, orbits, classic fractals
    ===================================================================== */
 let cursor = null, hover = null, orbitInfo = '';
 const MONO = '11px "IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace';
@@ -994,8 +1364,12 @@ function drawOverlay(){
   octx.setTransform(dpr, 0, 0, dpr, 0, 0);
   octx.clearRect(0, 0, g.W, g.H);
   if (S.grid) drawGrid(g);
-  drawFns(g);
-  drawOrbits(g);
+  if (S.kind === 'classic'){
+    drawClassic(g);
+  } else {
+    drawFns(g);
+    drawOrbits(g);
+  }
   updateReadout();
 }
 
@@ -1062,7 +1436,7 @@ function drawGrid(g){
 function drawFns(g){
   for (const f of S.fns){
     if (!f.on || !f.ast) continue;
-    const env = {a:S.a, x:0};
+    const env = {x:0};
     octx.beginPath();
     let pen = false, py = 0;
     for (let px = 0; px <= g.W; px += 1.25){
@@ -1085,13 +1459,13 @@ function drawFns(g){
 /* the orbit: where a starting point goes as the equation is applied again and again */
 function orbitOf(start){
   if (!S.astF || !S.astZ0) return null;
-  const a = S.a, maxN = Math.min(S.iter, 300), B2 = S.bail * S.bail;
+  const maxN = Math.min(S.iter, 300), B2 = S.bail * S.bail;
   let z, c;
   if (S.mode === 'julia'){ z = [start.x, start.y]; c = S.c; }
-  else { c = [start.x, start.y]; z = evalAst(S.astZ0, {c, a}); }
+  else { c = [start.x, start.y]; z = evalAst(S.astZ0, {c}); }
   const pts = [z]; let status = 'bounded', n;
   for (n = 1; n <= maxN; n++){
-    const zn = evalAst(S.astF, {z, c, a});
+    const zn = evalAst(S.astF, {z, c});
     if (!isFinite(zn[0]) || !isFinite(zn[1])){ status = 'escaped'; break; }
     pts.push(zn);
     const m2 = zn[0] * zn[0] + zn[1] * zn[1];
@@ -1142,6 +1516,155 @@ function drawOrbits(g){
   }
 }
 
+/* ---------- classic fractal gallery: recursive shapes, memoized by depth ---------- */
+const classicCache = {};
+function genSierpinski(depth){
+  const out = [];
+  const mid = (a,b) => [(a[0]+b[0])/2, (a[1]+b[1])/2];
+  (function rec(p1,p2,p3,d){
+    if (d<=0){ out.push([p1,p2,p3]); return; }
+    const m12=mid(p1,p2), m23=mid(p2,p3), m13=mid(p1,p3);
+    rec(p1,m12,m13,d-1); rec(m12,p2,m23,d-1); rec(m13,m23,p3,d-1);
+  })([-1,-0.577],[1,-0.577],[0,1.155], depth);
+  return out;
+}
+function genCarpet(depth){
+  const out = [];
+  (function rec(x,y,size,d){
+    if (d<=0){ out.push([x,y,size]); return; }
+    const s = size/3;
+    for (let i=0;i<3;i++) for (let j=0;j<3;j++){
+      if (i===1 && j===1) continue;
+      rec(x+i*s, y+j*s, s, d-1);
+    }
+  })(-1,-1,2, depth);
+  return out;
+}
+function genKoch(depth){
+  const out = [];
+  function rec(p1,p2,d){
+    if (d<=0){ out.push([p1,p2]); return; }
+    const dx=(p2[0]-p1[0])/3, dy=(p2[1]-p1[1])/3;
+    const a=p1, b=[p1[0]+dx,p1[1]+dy], dd=[p1[0]+2*dx,p1[1]+2*dy], e=p2;
+    const ang=Math.atan2(dy,dx)-Math.PI/3, len=Math.hypot(dx,dy);
+    const c=[b[0]+len*Math.cos(ang), b[1]+len*Math.sin(ang)];
+    rec(a,b,d-1); rec(b,c,d-1); rec(c,dd,d-1); rec(dd,e,d-1);
+  }
+  const p1=[-1,-0.4], p2=[1,-0.4], p3=[0,1.13];
+  rec(p1,p2,depth); rec(p2,p3,depth); rec(p3,p1,depth);
+  return out;
+}
+function genDragon(depth){
+  let turns = [true];
+  for (let i=1;i<depth;i++){
+    const rev = turns.slice().reverse().map(t => !t);
+    turns = turns.concat([true], rev);
+  }
+  const step = 1.5 / Math.pow(Math.SQRT2, depth);
+  let ang = 0, x = 0, y = 0;
+  const pts = [[0,0]];
+  x += step*Math.cos(ang); y += step*Math.sin(ang); pts.push([x,y]);
+  for (let i=0;i<turns.length;i++){
+    ang += turns[i] ? Math.PI/2 : -Math.PI/2;
+    x += step*Math.cos(ang); y += step*Math.sin(ang);
+    pts.push([x,y]);
+  }
+  return pts;
+}
+function genMenger(depth){
+  const out = [];
+  (function rec(cx,cy,cz,s,d){
+    if (d<=0){ out.push({x:cx,y:cy,z:cz,s}); return; }
+    const ns = s/3;
+    for (let i=-1;i<=1;i++) for (let j=-1;j<=1;j++) for (let k=-1;k<=1;k++){
+      const zeros = (i===0?1:0) + (j===0?1:0) + (k===0?1:0);
+      if (zeros >= 2) continue;
+      rec(cx+i*2*ns, cy+j*2*ns, cz+k*2*ns, ns, d-1);
+    }
+  })(0,0,0,1, depth);
+  return out;
+}
+function isoPoint(x,y,z){
+  const cos30 = 0.8660254, sin30 = 0.5;
+  return [(x - z) * cos30, (x + z) * sin30 - y];
+}
+function poly(pts, fill){
+  octx.beginPath();
+  pts.forEach((p,i) => i ? octx.lineTo(p[0],p[1]) : octx.moveTo(p[0],p[1]));
+  octx.closePath(); octx.fillStyle = fill; octx.fill();
+}
+function drawIsoCube(px, py, r, top, left, right){
+  const ex=[r*0.866, r*0.5], ez=[-r*0.866, r*0.5], ey=[0, r*1.15];
+  const p0=[px,py];
+  const p1=[px+ex[0], py+ex[1]];
+  const p2=[px+ex[0]+ez[0], py+ex[1]+ez[1]];
+  const p3=[px+ez[0], py+ez[1]];
+  const p4=[p1[0], p1[1]+ey[1]];
+  const p5=[p2[0], p2[1]+ey[1]];
+  const p6=[p3[0], p3[1]+ey[1]];
+  poly([p0,p1,p2,p3], top);
+  poly([p3,p2,p5,p6], left);
+  poly([p1,p2,p5,p4], right);
+}
+function drawMenger(cubes, g, P){
+  const withKey = cubes.map(c => ({c, d:c.x+c.y+c.z}));
+  withKey.sort((a,b) => a.d - b.d);
+  const n = withKey.length || 1;
+  withKey.forEach(({c}, idx) => {
+    const top3 = isoPoint(c.x, c.y+c.s, c.z);
+    const [sx, sy] = W2S(top3[0], top3[1], g);
+    const r = (c.s * 1.05) / g.k;
+    if (r < 0.4) return;
+    const base = jsPal(P, ((idx/n) + S.offset + S.phase) % 1);
+    drawIsoCube(sx, sy, r, base, shadeRgb(base,0.6), shadeRgb(base,0.8));
+  });
+}
+function drawClassic(g){
+  const P = findPalette(S.palette);
+  const cfg = CLASSICS.find(c => c.id === S.classic.id) || CLASSICS[0];
+  const depth = clamp(S.classic.depth, cfg.minD, cfg.maxD);
+  octx.save();
+  if (cfg.id === 'sierpinski'){
+    const key = 'si:'+depth, tris = classicCache[key] || (classicCache[key] = genSierpinski(depth));
+    const n = tris.length || 1;
+    tris.forEach((t,i) => {
+      const a = W2S(t[0][0],t[0][1],g), b = W2S(t[1][0],t[1][1],g), c = W2S(t[2][0],t[2][1],g);
+      octx.beginPath(); octx.moveTo(a[0],a[1]); octx.lineTo(b[0],b[1]); octx.lineTo(c[0],c[1]); octx.closePath();
+      octx.fillStyle = jsPal(P, ((i/n) + S.offset + S.phase) % 1); octx.fill();
+    });
+  } else if (cfg.id === 'carpet'){
+    const key = 'ca:'+depth, sqs = classicCache[key] || (classicCache[key] = genCarpet(depth));
+    const n = sqs.length || 1;
+    sqs.forEach((sq,i) => {
+      const a = W2S(sq[0], sq[1]+sq[2], g), b = W2S(sq[0]+sq[2], sq[1], g);
+      octx.fillStyle = jsPal(P, ((i/n) + S.offset + S.phase) % 1);
+      octx.fillRect(Math.min(a[0],b[0]), Math.min(a[1],b[1]), Math.abs(b[0]-a[0])+1, Math.abs(b[1]-a[1])+1);
+    });
+  } else if (cfg.id === 'koch'){
+    const key = 'ko:'+depth, segs = classicCache[key] || (classicCache[key] = genKoch(depth));
+    const n = segs.length || 1;
+    octx.lineJoin = 'round'; octx.lineCap = 'round'; octx.lineWidth = 2;
+    segs.forEach((s,i) => {
+      const a = W2S(s[0][0],s[0][1],g), b = W2S(s[1][0],s[1][1],g);
+      octx.strokeStyle = jsPal(P, ((i/n) + S.offset + S.phase) % 1);
+      octx.beginPath(); octx.moveTo(a[0],a[1]); octx.lineTo(b[0],b[1]); octx.stroke();
+    });
+  } else if (cfg.id === 'dragon'){
+    const key = 'dr:'+depth, pts = classicCache[key] || (classicCache[key] = genDragon(depth));
+    const n = pts.length || 1;
+    octx.lineJoin = 'round'; octx.lineCap = 'round'; octx.lineWidth = 1.6;
+    for (let i=1;i<pts.length;i++){
+      const a = W2S(pts[i-1][0],pts[i-1][1],g), b = W2S(pts[i][0],pts[i][1],g);
+      octx.strokeStyle = jsPal(P, ((i/n) + S.offset + S.phase) % 1);
+      octx.beginPath(); octx.moveTo(a[0],a[1]); octx.lineTo(b[0],b[1]); octx.stroke();
+    }
+  } else if (cfg.id === 'menger'){
+    const key = 'me:'+depth, cubes = classicCache[key] || (classicCache[key] = genMenger(depth));
+    drawMenger(cubes, g, P);
+  }
+  octx.restore();
+}
+
 /* ---------- readout ---------- */
 function fmt(v, d){ return v.toFixed(d).replace('-', '−'); }
 function updateReadout(){
@@ -1149,12 +1672,12 @@ function updateReadout(){
   const s = S.view.s;
   const digits = clamp(Math.ceil(-Math.log10(s)) + 4, 4, 10);
   const pt = cursor || {x:S.view.x, y:S.view.y};
-  const zoom = S.def[S.mode][2] / s;
+  const zoom = (S.def[S.mode][2] || 1) / s;
   const zs = zoom < 10 ? zoom.toFixed(2) : zoom < 1000 ? zoom.toFixed(0) : zoom.toExponential(1);
   const px = 2 * s / g.H;
   const mag = Math.max(1, Math.abs(S.view.x), Math.abs(S.view.y));
   let html = (cursor ? 'cursor ' : 'center ') + fmt(pt.x, digits) + (pt.y < 0 ? ' − ' : ' + ') + fmt(Math.abs(pt.y), digits) + 'i<br>zoom ×' + zs;
-  if (S.orbit && orbitInfo) html += '<br><span class="dim">orbit: ' + orbitInfo + '</span>';
+  if (S.kind === 'complex' && S.orbit && orbitInfo) html += '<br><span class="dim">orbit: ' + orbitInfo + '</span>';
   if (px < mag * 3e-7) html += ' <span class="warn">(at the limit of gpu precision)</span>';
   $('#readout').innerHTML = html;
 }
@@ -1275,7 +1798,7 @@ canvas.addEventListener('pointermove', e => {
   if (changed){ bump(); render(); } else renderOverlay();
 });
 function endPtr(e, cancelled){
-  if (ptrs.has(e.pointerId) && !cancelled && S.orbit && down && !multi && ptrs.size === 1 && down.moved < 5){
+  if (ptrs.has(e.pointerId) && !cancelled && S.kind === 'complex' && S.orbit && down && !multi && ptrs.size === 1 && down.moved < 5){
     const l = local(e);
     S.pins.push(s2c(l.x, l.y, geom()));
     updatePinCount(); renderOverlay();
@@ -1292,7 +1815,7 @@ canvas.addEventListener('wheel', e => {
   zoomBy(l.x, l.y, Math.exp(clamp(e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.0015), -0.7, 0.7)));
 }, {passive:false});
 canvas.addEventListener('dblclick', e => {
-  if (S.orbit) return;
+  if (S.kind === 'complex' && S.orbit) return;
   const l = local(e);
   zoomBy(l.x, l.y, e.shiftKey ? 2.5 : 0.4);
 });
@@ -1343,9 +1866,9 @@ PRESETS.forEach(p => presetSel.add(new Option(p.name, p.id)));
 presetSel.add(new Option('custom', ''));
 
 const CHIPS = [['z','z'],['c','c'],['a','a'],['i','i'],['π','pi'],['^','^'],['( )','()'],['sin','sin()'],['cos','cos()'],['exp','exp()'],['log','log()'],['abs','abs()'],['conj','conj()']];
-CHIPS.forEach(([label, text]) => {
+CHIPS.forEach(([lbl, text]) => {
   const b = document.createElement('button');
-  b.type = 'button'; b.textContent = label; b.setAttribute('aria-label', 'insert ' + label);
+  b.type = 'button'; b.textContent = lbl; b.setAttribute('aria-label', 'insert ' + lbl);
   b.addEventListener('click', () => insertText(text));
   $('#chips').appendChild(b);
 });
@@ -1358,15 +1881,42 @@ function insertText(t){
   onEqInput();
 }
 
+const eqhlEl = $('#eqhl'), z0hlEl = $('#z0hl');
+attachHighlighter(eqEl, eqhlEl);
+attachHighlighter($('#z0'), z0hlEl);
+
+function renderLegend(){
+  const items = [
+    ['tk-kw','tok-kw','names (z, c, i, pi, e)'], ['tk-param','tok-param','your parameters'],
+    ['tk-func','tok-func','functions'], ['tk-num','tok-num','numbers'], ['tk-op','tok-op','operators'], ['tk-err','tok-err','unknown']
+  ];
+  $('#eqlegend').innerHTML = items.map(([cls,varname,txt]) =>
+    '<span><i style="background:var(--' + varname + ')"></i>' + txt + '</span>'
+  ).join('');
+}
+renderLegend();
+
 let compTimer = 0;
 function scheduleCompile(){ clearTimeout(compTimer); compTimer = setTimeout(compile, 220); }
-function onEqInput(){ S.eq = eqEl.value; presetSel.value = ''; scheduleCompile(); }
+function onEqInput(){ S.eq = eqEl.value; presetSel.value = ''; scheduleCompile(); updateAddCaption(); }
 eqEl.addEventListener('input', onEqInput);
 $('#z0').addEventListener('input', e => { S.z0 = e.target.value; presetSel.value = ''; scheduleCompile(); });
 
 function setMode(m){ S.mode = m; S.view = toView(S.def[m]); syncUI(); render(); }
 $('#mMandel').addEventListener('click', () => setMode('mandel'));
 $('#mJulia').addEventListener('click', () => setMode('julia'));
+
+function setKind(k){
+  S.kind = k;
+  document.body.dataset.kind = k;
+  $('#kComplex').setAttribute('aria-pressed', String(k === 'complex'));
+  $('#kClassic').setAttribute('aria-pressed', String(k === 'classic'));
+  if (k === 'classic'){ resetClassicView(); } else { S.view = toView(S.def[S.mode]); }
+  updateAddCaption();
+  render();
+}
+$('#kComplex').addEventListener('click', () => setKind('complex'));
+$('#kClassic').addEventListener('click', () => setKind('classic'));
 
 function syncC(){ $('#cre').value = S.c[0].toFixed(4); $('#cim').value = S.c[1].toFixed(4); }
 $('#cre').addEventListener('input', e => { const v = parseFloat(e.target.value); if (isFinite(v)){ S.c[0] = v; bump(); render(); } });
@@ -1380,28 +1930,126 @@ function fillRange(el){
 function fillAll(){ document.querySelectorAll('input[type=range]').forEach(fillRange); }
 document.addEventListener('input', e => { if (e.target.type === 'range') fillRange(e.target); });
 
-function syncA(){ $('#a').value = S.a; $('#aval').textContent = (+S.a).toFixed(2); fillRange($('#a')); }
-$('#a').addEventListener('input', e => { S.a = parseFloat(e.target.value); $('#aval').textContent = S.a.toFixed(2); bump(); render(); });
+/* ---------- modular parameters ---------- */
+function validateParamName(v, self){
+  if (!/^[a-z]$/.test(v)) return 'use a single letter, a to z.';
+  if (RESERVED.has(v)) return '"' + v + '" is already a built-in name.';
+  if (S.params.some(p => p !== self && p.name === v)) return '"' + v + '" is already used by another parameter.';
+  return '';
+}
+function nextFreeParamName(){
+  for (let c = 97; c <= 122; c++){ const ch = String.fromCharCode(c); if (!RESERVED.has(ch) && !S.params.some(p => p.name === ch)) return ch; }
+  return null;
+}
+let paramRowEls = [];
+function renderParams(){
+  const box = $('#paramList'); box.innerHTML = ''; paramRowEls = [];
+  $('#paramCount').textContent = S.params.length + ' / ' + MAX_PARAMS;
+  S.params.forEach((p, idx) => {
+    const row = document.createElement('div'); row.className = 'param';
+    row.innerHTML =
+      '<div class="param-top">' +
+        '<input class="param-name mono" type="text" maxlength="1" aria-label="parameter name">' +
+        '<div class="field" style="margin:0"><div class="head"><span class="lbl" style="margin:0">value</span><span class="pv"></span></div>' +
+          '<input class="param-val" type="range" step="0.001">' +
+        '</div>' +
+        '<button class="x param-del" type="button" aria-label="remove this parameter">×</button>' +
+      '</div>' +
+      '<div class="param-range grid2">' +
+        '<label class="mono">min <input class="param-min" type="number" step="any"></label>' +
+        '<label class="mono">max <input class="param-max" type="number" step="any"></label>' +
+      '</div>' +
+      '<label class="check" style="margin-top:8px"><input class="sw param-anim" type="checkbox"> sweep automatically</label>' +
+      '<div class="param-sweep grid2">' +
+        '<label class="mono">from <input class="param-amin" type="number" step="any"></label>' +
+        '<label class="mono">to <input class="param-amax" type="number" step="any"></label>' +
+      '</div>' +
+      '<div class="msg err param-err" style="display:none"></div>';
+    box.appendChild(row);
 
-let animRaf = 0, lastT = 0, aPhase = 0;
-const animating = () => S.animate || S.cycle;
+    const nameInp = row.querySelector('.param-name');
+    const valInp = row.querySelector('.param-val'), pv = row.querySelector('.pv');
+    const minInp = row.querySelector('.param-min'), maxInp = row.querySelector('.param-max');
+    const animCb = row.querySelector('.param-anim'), sweepDiv = row.querySelector('.param-sweep');
+    const aminInp = row.querySelector('.param-amin'), amaxInp = row.querySelector('.param-amax');
+    const delBtn = row.querySelector('.param-del'), errDiv = row.querySelector('.param-err');
+
+    nameInp.value = p.name;
+    valInp.min = p.min; valInp.max = p.max; valInp.value = p.value; fillRange(valInp);
+    pv.textContent = p.value.toFixed(3);
+    minInp.value = p.min; maxInp.value = p.max;
+    animCb.checked = p.animate; sweepDiv.style.display = p.animate ? 'grid' : 'none';
+    aminInp.value = p.aMin; amaxInp.value = p.aMax;
+
+    nameInp.addEventListener('input', () => { nameInp.value = nameInp.value.toLowerCase().replace(/[^a-z]/g, '').slice(0, 1); });
+    nameInp.addEventListener('change', () => {
+      const v = nameInp.value, err = validateParamName(v, p);
+      if (err){ errDiv.textContent = err; errDiv.style.display = 'block'; nameInp.classList.add('bad'); nameInp.value = p.name; return; }
+      errDiv.style.display = 'none'; nameInp.classList.remove('bad');
+      p.name = v; refreshHighlighters(); updateAddCaption(); compile();
+    });
+    valInp.addEventListener('input', () => { p.value = +valInp.value; pv.textContent = p.value.toFixed(3); bump(); render(); });
+    minInp.addEventListener('change', () => {
+      const v = parseFloat(minInp.value);
+      if (isFinite(v) && v < p.max){ p.min = v; valInp.min = v; if (p.value < v){ p.value = v; valInp.value = v; pv.textContent = v.toFixed(3); } fillRange(valInp); render(); }
+      else minInp.value = p.min;
+    });
+    maxInp.addEventListener('change', () => {
+      const v = parseFloat(maxInp.value);
+      if (isFinite(v) && v > p.min){ p.max = v; valInp.max = v; if (p.value > v){ p.value = v; valInp.value = v; pv.textContent = v.toFixed(3); } fillRange(valInp); render(); }
+      else maxInp.value = p.max;
+    });
+    animCb.addEventListener('change', () => {
+      p.animate = animCb.checked;
+      sweepDiv.style.display = p.animate ? 'grid' : 'none';
+      if (p.animate){
+        const mid = (p.aMin + p.aMax) / 2, amp = ((p.aMax - p.aMin) / 2) || 1;
+        p.aPhase = Math.asin(clamp((p.value - mid) / amp, -1, 1)) - performance.now() * 0.00035;
+        startAnim();
+      } else render();
+    });
+    aminInp.addEventListener('change', () => { const v = parseFloat(aminInp.value); if (isFinite(v)) p.aMin = v; else aminInp.value = p.aMin; });
+    amaxInp.addEventListener('change', () => { const v = parseFloat(amaxInp.value); if (isFinite(v)) p.aMax = v; else amaxInp.value = p.aMax; });
+    delBtn.addEventListener('click', () => {
+      if (S.params.length <= 1){ toast('keep at least one parameter'); return; }
+      S.params.splice(idx, 1); renderParams(); refreshHighlighters(); compile();
+    });
+
+    paramRowEls.push({valInp, pv});
+  });
+}
+function syncParamValues(){
+  S.params.forEach((p, i) => {
+    const els = paramRowEls[i]; if (!els) return;
+    els.valInp.value = p.value; fillRange(els.valInp); els.pv.textContent = p.value.toFixed(3);
+  });
+}
+$('#addParam').addEventListener('click', () => {
+  if (S.params.length >= MAX_PARAMS){ toast('up to ' + MAX_PARAMS + ' parameters'); return; }
+  const name = nextFreeParamName();
+  if (!name){ toast('no free single-letter names left'); return; }
+  S.params.push({name, value:0.5, min:-3, max:3, animate:false, aMin:-2, aMax:2});
+  renderParams(); refreshHighlighters(); compile();
+});
+
+let animRaf = 0, lastT = 0;
+const animating = () => S.cycle || S.params.some(p => p.animate);
 function tick(t){
   if (!animating()){ animRaf = 0; return; }
   const dt = Math.min(0.1, Math.max(0, (t - lastT) / 1000)); lastT = t;
-  if (S.animate){ S.a = +(2 * Math.sin(t * 0.00035 + aPhase)).toFixed(3); syncA(); }
+  let changed = false;
+  S.params.forEach(p => {
+    if (!p.animate) return;
+    const mid = (p.aMin + p.aMax) / 2, amp = (p.aMax - p.aMin) / 2;
+    p.value = +(mid + amp * Math.sin(t * 0.00035 + (p.aPhase || 0))).toFixed(4);
+    changed = true;
+  });
+  if (changed) syncParamValues();
   if (S.cycle) S.phase += dt * 0.06;
   draw();
   animRaf = requestAnimationFrame(tick);
 }
 function startAnim(){ if (!animRaf){ lastT = performance.now(); animRaf = requestAnimationFrame(tick); } }
-$('#animate').addEventListener('change', e => {
-  S.animate = e.target.checked;
-  if (S.animate){ aPhase = Math.asin(clamp(S.a / 2, -1, 1)) - performance.now() * 0.00035; startAnim(); } else render();
-});
-$('#cycle').addEventListener('change', e => {
-  S.cycle = e.target.checked;
-  if (S.cycle) startAnim(); else render();
-});
 
 $('#iter').addEventListener('input', e => { S.iter = +e.target.value; $('#iterv').textContent = S.iter; bump(); render(); });
 $('#bail').addEventListener('input', e => {
@@ -1414,24 +2062,184 @@ $('#density').addEventListener('input', e => { S.density = +e.target.value; $('#
 $('#offset').addEventListener('input', e => { S.offset = +e.target.value; $('#offsetv').textContent = S.offset.toFixed(2); bump(); render(); });
 $('#degree').addEventListener('input', e => { const v = parseFloat(e.target.value); if (isFinite(v)){ S.degree = v; render(); } });
 $('#aa').addEventListener('change', e => { S.aa = e.target.checked; render(); });
-$('#reset').addEventListener('click', () => { flyTo(toView(S.def[S.mode]), 700); S.inset = toView(S.def.mandel); render(); });
+function resetView(){
+  if (S.kind === 'classic'){ resetClassicView(); render(); }
+  else { flyTo(toView(S.def[S.mode]), 700); S.inset = toView(S.def.mandel); render(); }
+}
+$('#reset').addEventListener('click', resetView);
+$('#resetClassic').addEventListener('click', resetView);
+
+/* ---------- classic fractal gallery ui ---------- */
+const classicSel = $('#classicPick');
+CLASSICS.forEach(c => classicSel.add(new Option(c.name, c.id)));
+function resetClassicView(){
+  const cfg = CLASSICS.find(c => c.id === S.classic.id) || CLASSICS[0];
+  S.view = toView(cfg.view);
+}
+function syncClassicUI(){
+  const cfg = CLASSICS.find(c => c.id === S.classic.id) || CLASSICS[0];
+  classicSel.value = cfg.id;
+  const dEl = $('#classicDepth');
+  dEl.min = cfg.minD; dEl.max = cfg.maxD;
+  S.classic.depth = clamp(S.classic.depth, cfg.minD, cfg.maxD);
+  dEl.value = S.classic.depth; fillRange(dEl);
+  $('#classicDepthV').textContent = S.classic.depth;
+  $('#classicHint').textContent = cfg.desc;
+}
+classicSel.addEventListener('change', () => {
+  const cfg = CLASSICS.find(c => c.id === classicSel.value);
+  S.classic.id = cfg.id; S.classic.depth = cfg.defD;
+  syncClassicUI(); resetClassicView(); updateAddCaption(); render();
+});
+$('#classicDepth').addEventListener('input', e => {
+  S.classic.depth = +e.target.value; $('#classicDepthV').textContent = S.classic.depth; render();
+});
 
 /* ---------- color themes ---------- */
-const palBtns = [];
-PALETTES.forEach((P, i) => {
-  const stops = [];
-  for (let k = 0; k <= 16; k++){
-    const t = k / 16;
-    const rgb = [0,1,2].map(j => Math.round(255 * clamp(P.a[j] + P.b[j] * Math.cos(6.28318530718 * (P.c[j] * t + P.d[j])), 0, 1)));
-    stops.push('rgb(' + rgb.join(',') + ')');
+function syncPal(){
+  document.querySelectorAll('.swatchbtn').forEach(b => b.setAttribute('aria-checked', String(b.dataset.id === S.palette)));
+}
+function renderBuiltinGrid(sel, group){
+  const box = $(sel); box.innerHTML = '';
+  PALETTES.filter(P => P.group === group).forEach(P => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'swatchbtn'; b.setAttribute('role', 'radio'); b.dataset.id = P.id;
+    b.innerHTML = '<span class="bar" style="background:' + swatchGradient(P) + '"></span><span>' + P.name + '</span>';
+    b.addEventListener('click', () => { S.palette = P.id; syncPal(); render(); });
+    box.appendChild(b);
+  });
+}
+function renderCustomPalGrid(){
+  const box = $('#palsCustom'); box.innerHTML = '';
+  S.customPalettes.forEach(P => {
+    const wrap = document.createElement('div'); wrap.className = 'custItem';
+    wrap.innerHTML =
+      '<button type="button" class="swatchbtn" role="radio" data-id="' + P.id + '">' +
+        '<span class="bar" style="background:' + swatchGradient(P) + '"></span><span>' + escapeHtml(P.name) + '</span>' +
+      '</button>' +
+      '<div class="custActs">' +
+        '<button type="button" class="mini" data-act="edit">edit</button>' +
+        '<button type="button" class="mini" data-act="code">code</button>' +
+        '<button type="button" class="mini" data-act="del">delete</button>' +
+      '</div>';
+    wrap.querySelector('.swatchbtn').addEventListener('click', () => { S.palette = P.id; syncPal(); render(); });
+    wrap.querySelector('[data-act="edit"]').addEventListener('click', () => openEditor(P));
+    wrap.querySelector('[data-act="code"]').addEventListener('click', async () => {
+      const code = b64e(JSON.stringify({n:P.name, a:P.a, b:P.b, c:P.c, d:P.d}));
+      toast(await copyText(code) ? 'palette code copied' : 'could not copy');
+    });
+    wrap.querySelector('[data-act="del"]').addEventListener('click', () => {
+      S.customPalettes = S.customPalettes.filter(x => x !== P);
+      if (S.palette === P.id) S.palette = 'spectrum';
+      store.set('custompals', S.customPalettes);
+      renderCustomPalGrid(); syncPal(); render();
+    });
+    box.appendChild(wrap);
+  });
+  const add = document.createElement('button');
+  add.type = 'button'; add.className = 'addPalTile';
+  add.innerHTML = '<span class="plus">+</span><span>new custom palette</span>';
+  add.addEventListener('click', () => openEditor(null));
+  box.appendChild(add);
+}
+function renderAllPalGrids(){
+  renderBuiltinGrid('#palsClassic', 'classic');
+  renderBuiltinGrid('#palsHue', 'hue');
+  renderCustomPalGrid();
+  syncPal();
+}
+
+/* ---------- custom palette editor: blurs the fractal view behind it while open ---------- */
+const peBackdrop = $('#peBackdrop'), peModal = $('#peModal');
+const PE_GROUPS = ['a','b','c','d'], PE_CH = ['r','g','b'];
+const PE_RANGE = {a:[0,1], b:[0,1], c:[0,2], d:[0,1]};
+let peDraft = null, peEditId = null;
+function buildPeSliders(){
+  const box = $('#peSliders'); box.innerHTML = '';
+  PE_GROUPS.forEach(g => {
+    const row = document.createElement('div'); row.className = 'pe-row';
+    row.innerHTML = '<span class="pe-glabel mono">' + g + '</span>';
+    PE_CH.forEach((ch, ci) => {
+      const [mn, mx] = PE_RANGE[g];
+      const wrap = document.createElement('label'); wrap.className = 'pe-slider';
+      wrap.innerHTML = '<span class="mono">' + ch + '</span><input type="range" min="' + mn + '" max="' + mx + '" step="0.01" data-g="' + g + '" data-i="' + ci + '">';
+      row.appendChild(wrap);
+    });
+    box.appendChild(row);
+  });
+  box.querySelectorAll('input[type=range]').forEach(inp => {
+    inp.addEventListener('input', () => {
+      peDraft[inp.dataset.g][+inp.dataset.i] = +inp.value;
+      fillRange(inp); updatePePreview();
+    });
+  });
+}
+buildPeSliders();
+function updatePePreview(){ $('#pePreview').style.background = swatchGradient(peDraft); }
+function fillEditorFields(){
+  $('#peName').value = peDraft.name;
+  $('#peSliders').querySelectorAll('input[type=range]').forEach(inp => {
+    inp.value = peDraft[inp.dataset.g][+inp.dataset.i]; fillRange(inp);
+  });
+  updatePePreview();
+}
+function openEditor(existing){
+  peEditId = existing ? existing.id : null;
+  peDraft = existing
+    ? {name:existing.name, a:existing.a.slice(), b:existing.b.slice(), c:existing.c.slice(), d:existing.d.slice()}
+    : {name:'untitled', a:[.5,.5,.5], b:[.5,.5,.5], c:[1,1,1], d:[0,0,0]};
+  fillEditorFields();
+  peBackdrop.classList.add('show'); peModal.classList.add('show');
+  setTimeout(() => $('#peName').focus(), 60);
+}
+function closeEditor(){ peBackdrop.classList.remove('show'); peModal.classList.remove('show'); }
+$('#peName').addEventListener('input', e => { peDraft.name = e.target.value; });
+$('#openPalEditor').addEventListener('click', () => openEditor(null));
+$('#peClose').addEventListener('click', closeEditor);
+peBackdrop.addEventListener('click', closeEditor);
+$('#peSave').addEventListener('click', () => {
+  const name = (peDraft.name || '').trim().slice(0, 24) || 'untitled';
+  peDraft.name = name;
+  if (peEditId && S.customPalettes.some(p => p.id === peEditId)){
+    const existing = S.customPalettes.find(p => p.id === peEditId);
+    Object.assign(existing, {name, a:peDraft.a.slice(), b:peDraft.b.slice(), c:peDraft.c.slice(), d:peDraft.d.slice()});
+  } else {
+    const id = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+    S.customPalettes.push({id, name, group:'custom', a:peDraft.a.slice(), b:peDraft.b.slice(), c:peDraft.c.slice(), d:peDraft.d.slice()});
+    S.palette = id;
   }
-  const b = document.createElement('button');
-  b.type = 'button'; b.setAttribute('role', 'radio');
-  b.innerHTML = '<span class="bar" style="background:linear-gradient(to right,' + stops.join(',') + ')"></span><span>' + P.name + '</span>';
-  b.addEventListener('click', () => { S.palette = i; syncPal(); render(); });
-  $('#pals').appendChild(b); palBtns.push(b);
+  store.set('custompals', S.customPalettes);
+  renderCustomPalGrid(); syncPal(); render();
+  toast('palette saved'); closeEditor();
 });
-function syncPal(){ palBtns.forEach((b, i) => b.setAttribute('aria-checked', String(i === S.palette))); }
+$('#peExport').addEventListener('click', async () => {
+  const code = b64e(JSON.stringify({n:peDraft.name, a:peDraft.a, b:peDraft.b, c:peDraft.c, d:peDraft.d}));
+  toast(await copyText(code) ? 'palette code copied' : 'could not copy the code');
+});
+function decodePaletteCode(code){
+  try{
+    const o = JSON.parse(b64d(code.trim()));
+    const ok3 = v => Array.isArray(v) && v.length === 3 && v.every(n => typeof n === 'number' && isFinite(n));
+    if (typeof o.n !== 'string' || !ok3(o.a) || !ok3(o.b) || !ok3(o.c) || !ok3(o.d)) return null;
+    return {name:(o.n.slice(0,24) || 'untitled'), a:o.a, b:o.b, c:o.c, d:o.d};
+  }catch(e){ return null; }
+}
+$('#peImportBtn').addEventListener('click', () => {
+  const dec = decodePaletteCode($('#peImport').value);
+  if (!dec){ toast('that code did not look right'); return; }
+  const id = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  S.customPalettes.push({id, group:'custom', name:dec.name, a:dec.a, b:dec.b, c:dec.c, d:dec.d});
+  store.set('custompals', S.customPalettes);
+  S.palette = id; renderCustomPalGrid(); syncPal(); render();
+  $('#peImport').value = ''; toast('palette added');
+});
+
+/* ---------- cycle colors ---------- */
+$('#cycle').addEventListener('change', e => {
+  S.cycle = e.target.checked;
+  if (S.cycle) startAnim(); else render();
+});
+$('#cycleReset').addEventListener('click', () => { S.phase = 0; render(); toast('cycle reset'); });
 
 /* ---------- overlays ---------- */
 $('#grid').addEventListener('change', e => { S.grid = e.target.checked; renderOverlay(); });
@@ -1449,7 +2257,7 @@ let fnId = 0;
 function parseFn(f){
   f.err = ''; f.ast = null;
   if (!f.text.trim()) return;
-  try { f.ast = parse(f.text, ['x','a','i','pi','e']); } catch (e) { f.err = e.message; }
+  try { f.ast = parse(f.text, ['x','i','pi','e', ...paramNameList()]); } catch (e) { f.err = e.message; }
 }
 function updateFnEmpty(){ $('#fnempty').style.display = S.fns.length ? 'none' : 'block'; }
 function addFn(text, on){
@@ -1458,10 +2266,11 @@ function addFn(text, on){
   const row = document.createElement('div');
   row.className = 'fn'; row.style.setProperty('--c', f.color);
   row.innerHTML = '<input class="sw" type="checkbox" aria-label="show this function">' +
-    '<div class="fnin"><span class="mono">y =</span><input class="mono" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="sin(x)" aria-label="function of x"></div>' +
+    '<div class="fnin"><span class="mono">y =</span><div class="eqbox"><input class="mono eqinput" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="sin(x)" aria-label="function of x"><div class="eqhl mono" aria-hidden="true"></div></div></div>' +
     '<button class="x" type="button" aria-label="remove this function">×</button><div class="fnmsg mono" role="status"></div>';
-  const cb = row.querySelector('.sw'), inp = row.querySelector('.fnin input'), msg = row.querySelector('.fnmsg'), del = row.querySelector('.x');
+  const cb = row.querySelector('.sw'), inp = row.querySelector('.fnin input'), hl = row.querySelector('.eqhl'), msg = row.querySelector('.fnmsg'), del = row.querySelector('.x');
   cb.checked = f.on; inp.value = f.text;
+  attachHighlighter(inp, hl, ['x']);
   let t = 0;
   const showErr = () => { msg.textContent = f.err; msg.style.display = f.err ? 'block' : 'none'; };
   cb.addEventListener('change', () => { f.on = cb.checked; renderOverlay(); });
@@ -1533,23 +2342,23 @@ sizeEl.addEventListener('input', e => setSize(+e.target.value));
 mq.addEventListener('change', () => { setSideVis(sideVis); setSize(mq.matches ? S.sh : S.sw); });
 window.addEventListener('resize', () => { setSize(mq.matches ? S.sh : S.sw, true); render(); });
 
-const grip = $('#grip');
+const gripEl = $('#grip');
 let gripOff = 0;
-grip.addEventListener('pointerdown', e => {
-  grip.setPointerCapture(e.pointerId); grip.classList.add('drag'); e.preventDefault();
+gripEl.addEventListener('pointerdown', e => {
+  gripEl.setPointerCapture(e.pointerId); gripEl.classList.add('drag'); e.preventDefault();
   const r = app.getBoundingClientRect();
   gripOff = mq.matches ? e.clientY - (r.bottom - S.sh) : e.clientX - (r.left + S.sw);
 });
-grip.addEventListener('pointermove', e => {
-  if (!grip.classList.contains('drag')) return;
+gripEl.addEventListener('pointermove', e => {
+  if (!gripEl.classList.contains('drag')) return;
   const r = app.getBoundingClientRect();
   if (mq.matches) setSize(r.bottom - (e.clientY - gripOff)); else setSize(e.clientX - gripOff - r.left);
 });
-grip.addEventListener('dblclick', () => setSize(mq.matches ? Math.round(window.innerHeight * 0.5) : 400));
-const endDrag = () => grip.classList.remove('drag');
-grip.addEventListener('pointerup', endDrag);
-grip.addEventListener('pointercancel', endDrag);
-grip.addEventListener('keydown', e => {
+gripEl.addEventListener('dblclick', () => setSize(mq.matches ? Math.round(window.innerHeight * 0.5) : 400));
+const endGripDrag = () => gripEl.classList.remove('drag');
+gripEl.addEventListener('pointerup', endGripDrag);
+gripEl.addEventListener('pointercancel', endGripDrag);
+gripEl.addEventListener('keydown', e => {
   const stepPx = e.shiftKey ? 60 : 20;
   const cur = mq.matches ? S.sh : S.sw;
   let d = 0;
@@ -1572,7 +2381,101 @@ function toast(msg){
   clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('show'), 2200);
 }
 
-/* ---------- collapsible sections ---------- */
+/* ---------- pop-out windows: drag a section title's grip to float it, desktop only ---------- */
+let fwZ = 60;
+const floatDockers = [];
+function wireFloatable(sec, grip, body, inner, title){
+  if (!grip) return;
+  let win = null, dragOff = null;
+
+  const note = document.createElement('div'); note.className = 'popped-note';
+  const noteSpan = document.createElement('span'); noteSpan.textContent = 'popped out into its own window';
+  const noteBtn = document.createElement('button'); noteBtn.type = 'button'; noteBtn.textContent = 'bring back';
+  note.appendChild(noteSpan); note.appendChild(noteBtn);
+  body.appendChild(note);
+  noteBtn.addEventListener('click', dock);
+
+  function popOut(cx, cy){
+    sec.classList.add('popped');
+    win = document.createElement('div'); win.className = 'floatwin';
+    win.style.left = Math.max(8, Math.min(window.innerWidth - 280, cx - 40)) + 'px';
+    win.style.top = Math.max(8, Math.min(window.innerHeight - 200, cy - 18)) + 'px';
+    const fh = document.createElement('div'); fh.className = 'fwhead';
+    const fs = document.createElement('span'); fs.textContent = title; fh.appendChild(fs);
+    const fx = document.createElement('button'); fx.type = 'button'; fx.className = 'fwx';
+    fx.setAttribute('aria-label', 'close and dock back into the sidebar'); fx.textContent = '×';
+    fh.appendChild(fx);
+    const fb = document.createElement('div'); fb.className = 'fwbody';
+    fb.appendChild(inner);
+    win.appendChild(fh); win.appendChild(fb);
+    document.body.appendChild(win);
+    fx.addEventListener('click', dock);
+    fh.addEventListener('pointerdown', headDown);
+    win.addEventListener('pointerdown', () => { win.style.zIndex = String(++fwZ); });
+    win.style.zIndex = String(++fwZ);
+  }
+  function dock(){
+    if (!win) return;
+    body.insertBefore(inner, note);
+    win.remove(); win = null;
+    sec.classList.remove('popped');
+  }
+  function headDown(e){
+    if (e.target.closest('.fwx')) return;
+    win.setPointerCapture(e.pointerId);
+    const r = win.getBoundingClientRect();
+    dragOff = {x:e.clientX - r.left, y:e.clientY - r.top};
+    win.classList.add('dragging');
+    win.addEventListener('pointermove', headMove);
+    win.addEventListener('pointerup', headUp);
+    win.addEventListener('pointercancel', headUp);
+  }
+  function headMove(e){
+    if (!dragOff) return;
+    win.style.left = (e.clientX - dragOff.x) + 'px';
+    win.style.top = (e.clientY - dragOff.y) + 'px';
+  }
+  function headUp(e){
+    win.classList.remove('dragging');
+    win.removeEventListener('pointermove', headMove);
+    win.removeEventListener('pointerup', headUp);
+    win.removeEventListener('pointercancel', headUp);
+    dragOff = null;
+    const r = side.getBoundingClientRect();
+    if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) dock();
+  }
+
+  let startPt = null;
+  grip.addEventListener('pointerdown', e => {
+    if (mq.matches) return;
+    e.preventDefault(); e.stopPropagation();
+    startPt = {x:e.clientX, y:e.clientY};
+    const move = e2 => {
+      if (!win){
+        if (Math.hypot(e2.clientX - startPt.x, e2.clientY - startPt.y) > 6) popOut(e2.clientX, e2.clientY);
+      } else {
+        win.style.left = (e2.clientX - 40) + 'px';
+        win.style.top = (e2.clientY - 18) + 'px';
+      }
+    };
+    const up = e2 => {
+      document.removeEventListener('pointermove', move);
+      document.removeEventListener('pointerup', up);
+      if (win){
+        const r = side.getBoundingClientRect();
+        if (e2.clientX >= r.left && e2.clientX <= r.right && e2.clientY >= r.top && e2.clientY <= r.bottom) dock();
+      }
+      startPt = null;
+    };
+    document.addEventListener('pointermove', move);
+    document.addEventListener('pointerup', up);
+  });
+
+  floatDockers.push(dock);
+}
+mq.addEventListener('change', () => { if (mq.matches) floatDockers.forEach(fn => fn()); });
+
+/* ---------- collapsible sections (and pop-out grip wiring) ---------- */
 document.querySelectorAll('#panel section').forEach((sec, i) => {
   const h = sec.querySelector(':scope > h2'); if (!h) return;
   const label = h.textContent;
@@ -1580,12 +2483,16 @@ document.querySelectorAll('#panel section').forEach((sec, i) => {
   while (h.nextSibling) inner.appendChild(h.nextSibling);
   const body = document.createElement('div'); body.className = 'sec-body'; body.id = 'secb' + i;
   body.appendChild(inner); sec.appendChild(body);
-  h.innerHTML = '<button type="button" class="sec-h" aria-expanded="true" aria-controls="secb' + i + '"><span></span>' +
+  h.innerHTML = '<button type="button" class="sec-h" aria-expanded="true" aria-controls="secb' + i + '">' +
+    '<span class="dragh" aria-hidden="true" title="drag to pop out into a window">⠿</span>' +
+    '<span class="sec-h-label"></span>' +
     '<svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';
-  const btn = h.firstChild; btn.firstChild.textContent = label;
+  const btn = h.firstChild;
+  btn.querySelector('.sec-h-label').textContent = label;
   const set = shut => { sec.classList.toggle('shut', shut); btn.setAttribute('aria-expanded', String(!shut)); };
   if (sec.hasAttribute('data-shut')) set(true);
-  btn.addEventListener('click', () => set(!sec.classList.contains('shut')));
+  btn.addEventListener('click', e => { if (e.target.closest('.dragh')) return; set(!sec.classList.contains('shut')); });
+  wireFloatable(sec, btn.querySelector('.dragh'), body, inner, label);
 });
 
 /* ---------- theme ---------- */
@@ -1600,36 +2507,68 @@ Object.keys(THEMES).forEach(k => THEMES[k].addEventListener('click', () => setTh
 
 /* ---------- state snapshots: used by saved views and the link ---------- */
 function snap(){
-  return {v:1, eq:S.eq, z0:S.z0, m:S.mode, c:S.c.slice(), a:S.a, it:S.iter, b:S.bail, d:S.degree, cm:S.colorMode,
-    p:S.palette, de:S.density, o:S.offset, vw:[S.view.x, S.view.y, S.view.s], iv:[S.inset.x, S.inset.y, S.inset.s],
-    df:[S.def.mandel, S.def.julia], si:S.showInset};
+  return {v:2, eq:S.eq, z0:S.z0, m:S.mode, c:S.c.slice(), it:S.iter, b:S.bail, d:S.degree, cm:S.colorMode,
+    pal:S.palette, de:S.density, o:S.offset, vw:[S.view.x, S.view.y, S.view.s], iv:[S.inset.x, S.inset.y, S.inset.s],
+    df:[S.def.mandel, S.def.julia], si:S.showInset,
+    pr:S.params.map(p => ({n:p.name, v:p.value, mn:p.min, mx:p.max, an:p.animate, ai:p.aMin, ax:p.aMax})),
+    k:S.kind, ci:S.classic.id, cd:S.classic.depth};
 }
 const vec3ok = v => Array.isArray(v) && v.length === 3 && v.every(n => typeof n === 'number' && isFinite(n));
 const numIn = (v, d, lo, hi) => (typeof v === 'number' && isFinite(v)) ? clamp(v, lo, hi) : d;
+
+function loadParams(o){
+  if (Array.isArray(o.pr) && o.pr.length){
+    const used = new Set(); const out = [];
+    o.pr.forEach(raw => {
+      if (!raw || typeof raw.n !== 'string') return;
+      const n = raw.n.toLowerCase();
+      if (!/^[a-z]$/.test(n) || RESERVED.has(n) || used.has(n) || out.length >= MAX_PARAMS) return;
+      used.add(n);
+      const mn = numIn(raw.mn, -3, -1e6, 1e6), mx = numIn(raw.mx, 3, -1e6, 1e6);
+      if (!(mx > mn)) return;
+      out.push({
+        name:n, value:clamp(numIn(raw.v, (mn+mx)/2, -1e6, 1e6), mn, mx), min:mn, max:mx,
+        animate:!!raw.an, aMin:numIn(raw.ai, mn, -1e6, 1e6), aMax:numIn(raw.ax, mx, -1e6, 1e6)
+      });
+    });
+    if (out.length) return out;
+  }
+  if (typeof o.a === 'number' && isFinite(o.a)) return [{name:'a', value:clamp(o.a,-3,3), min:-3, max:3, animate:false, aMin:-2, aMax:2}];
+  return [{name:'a', value:0.5, min:-3, max:3, animate:false, aMin:-2, aMax:2}];
+}
+function loadPaletteId(o){
+  if (typeof o.pal === 'string' && findPalette(o.pal) && (PALETTES.some(p=>p.id===o.pal) || S.customPalettes.some(p=>p.id===o.pal))) return o.pal;
+  if (typeof o.p === 'number' && isFinite(o.p)) return (PALETTES[Math.round(clamp(o.p, 0, PALETTES.length - 1))] || PALETTES[0]).id;
+  return 'spectrum';
+}
 
 function loadSnap(o, fly){
   if (!o || typeof o !== 'object' || typeof o.eq !== 'string' || !o.eq.trim() || o.eq.length > 400) return false;
   const z0 = typeof o.z0 === 'string' && o.z0.length < 200 ? o.z0 : '0';
   const mode = o.m === 'julia' ? 'julia' : 'mandel';
   const needCompile = o.eq !== S.eq || z0 !== S.z0;
-  const canFly = fly && !needCompile && mode === S.mode;
+  const canFly = fly && !needCompile && mode === S.mode && (o.k !== 'classic');
   const from = {x:S.view.x, y:S.view.y, s:S.view.s};
 
   S.eq = o.eq; S.z0 = z0; S.mode = mode;
   if (Array.isArray(o.c) && o.c.length === 2 && o.c.every(Number.isFinite)) S.c = [clamp(o.c[0], -100, 100), clamp(o.c[1], -100, 100)];
-  S.a = numIn(o.a, 0.5, -3, 3);
+  S.params = loadParams(o);
   S.iter = Math.round(numIn(o.it, 250, 20, 2000));
   S.bail = numIn(o.b, 32, 1.5, 1000);
   S.degree = numIn(o.d, 2, 1.1, 16);
   S.colorMode = o.cm === 1 ? 1 : 0;
-  S.palette = Math.round(numIn(o.p, 0, 0, PALETTES.length - 1));
+  S.palette = loadPaletteId(o);
   S.density = numIn(o.de, 1, 0.1, 4);
   S.offset = numIn(o.o, 0, 0, 1);
   S.showInset = o.si !== false;
+  S.kind = o.k === 'classic' ? 'classic' : 'complex';
+  if (CLASSICS.some(c => c.id === o.ci)) S.classic.id = o.ci;
+  if (typeof o.cd === 'number' && isFinite(o.cd)) S.classic.depth = Math.round(o.cd);
   if (Array.isArray(o.df) && vec3ok(o.df[0]) && vec3ok(o.df[1])) S.def = {mandel:o.df[0].slice(), julia:o.df[1].slice()};
-  const target = vec3ok(o.vw) ? {x:clamp(o.vw[0], -1e3, 1e3), y:clamp(o.vw[1], -1e3, 1e3), s:clamp(o.vw[2], 1e-7, 50)} : toView(S.def[S.mode]);
+  const target = S.kind === 'classic' ? toView((CLASSICS.find(c=>c.id===S.classic.id)||CLASSICS[0]).view)
+    : (vec3ok(o.vw) ? {x:clamp(o.vw[0], -1e3, 1e3), y:clamp(o.vw[1], -1e3, 1e3), s:clamp(o.vw[2], 1e-7, 50)} : toView(S.def[S.mode]));
   S.inset = vec3ok(o.iv) ? toView(o.iv) : toView(S.def.mandel);
-  S.animate = false; S.pins = []; updatePinCount(); stopMotion();
+  S.pins = []; updatePinCount(); stopMotion();
   S.view = target;
   syncUI(); presetSel.value = '';
   if (canFly){ S.view = from; flyTo(target, 900); render(); } else if (needCompile) compile(); else render();
@@ -1677,7 +2616,7 @@ $('#copyLink').addEventListener('click', async () => {
 
 /* ---------- image: exactly what you see beside the sidebar, overlays included ---------- */
 function snapshotCanvas(withOverlay){
-  if (!gl || !prog) return null;
+  if (!gl || (S.kind === 'complex' && !prog)) return null;
   forceHQ = true; draw(); forceHQ = false;
   const g = geom(), k = canvas.width / g.W;
   const sx = Math.round(g.L * k), sw = canvas.width - sx, sh = Math.round((g.H - g.B) * k);
@@ -1700,6 +2639,19 @@ $('#savePng').addEventListener('click', () => {
     toast('image saved');
   }, 'image/png');
 });
+$('#copyImage').addEventListener('click', () => {
+  const c = snapshotCanvas(true);
+  if (!c){ toast('nothing to copy yet'); return; }
+  c.toBlob(async b => {
+    if (!b){ toast('could not copy the image'); return; }
+    try{
+      if (navigator.clipboard && window.ClipboardItem){
+        await navigator.clipboard.write([new ClipboardItem({'image/png': b})]);
+        toast('image copied');
+      } else { toast('your browser does not support copying images'); }
+    }catch(e){ toast('could not copy the image'); }
+  }, 'image/png');
+});
 
 /* ---------- saved views ---------- */
 const MAX_MARKS = 12;
@@ -1714,6 +2666,11 @@ function thumb(){
   t.getContext('2d').drawImage(src, (W - dw) / 2, (H - dh) / 2, dw, dh);
   return t.toDataURL('image/jpeg', 0.82);
 }
+let addTileCap = null;
+function currentLabel(){
+  return S.kind === 'classic' ? (CLASSICS.find(c => c.id === S.classic.id) || {name:''}).name : S.eq;
+}
+function updateAddCaption(){ if (addTileCap) addTileCap.textContent = currentLabel(); }
 function renderMarks(newId){
   const box = $('#marks'); box.textContent = '';
   marks.forEach(m => {
@@ -1724,7 +2681,9 @@ function renderMarks(newId){
     if (/^data:image\/jpeg;base64,/.test(m.thumb || '')){ const img = document.createElement('img'); img.src = m.thumb; img.alt = ''; go.appendChild(img); }
     const cap = document.createElement('span'); cap.className = 'cap';
     const b = document.createElement('b'); b.textContent = m.s.eq;
-    cap.appendChild(b); cap.appendChild(document.createTextNode((m.s.m === 'julia' ? 'julia' : 'mandelbrot') + ', zoom ×' + (m.z || '1')));
+    cap.appendChild(b);
+    const kindLbl = m.s.k === 'classic' ? 'classic fractal' : (m.s.m === 'julia' ? 'julia' : 'mandelbrot');
+    cap.appendChild(document.createTextNode(kindLbl + ', zoom ×' + (m.z || '1')));
     go.appendChild(cap);
     go.addEventListener('click', () => loadSnap(m.s, true));
     const x = document.createElement('button'); x.type = 'button'; x.className = 'x'; x.textContent = '×'; x.setAttribute('aria-label', 'delete this view');
@@ -1734,14 +2693,26 @@ function renderMarks(newId){
     });
     el.appendChild(go); el.appendChild(x); box.appendChild(el);
   });
-  $('#marksEmpty').style.display = marks.length ? 'none' : 'block';
+  const add = document.createElement('button');
+  add.type = 'button'; add.className = 'mark add';
+  const atMax = marks.length >= MAX_MARKS;
+  add.disabled = atMax;
+  add.title = atMax ? (MAX_MARKS + ' views saved — delete one to add another.') : 'save the current view';
+  const plus = document.createElement('span'); plus.className = 'plus'; plus.setAttribute('aria-hidden', 'true'); plus.textContent = '+';
+  const cap = document.createElement('span'); cap.className = 'cap';
+  const b = document.createElement('b'); b.textContent = 'save fractal';
+  const capText = document.createElement('span'); capText.textContent = currentLabel();
+  cap.appendChild(b); cap.appendChild(capText); addTileCap = capText;
+  add.appendChild(plus); add.appendChild(cap);
+  add.addEventListener('click', () => { if (!add.disabled) doSaveView(); });
+  box.appendChild(add);
 }
-$('#bmAdd').addEventListener('click', () => {
+function doSaveView(){
   if (marks.length >= MAX_MARKS){ toast(MAX_MARKS + ' views saved. delete one to add another.'); return; }
-  const zoom = S.def[S.mode][2] / S.view.s;
+  const zoom = S.kind === 'classic' ? 1 : (S.def[S.mode][2] || 1) / S.view.s;
   const m = {id:Date.now().toString(36), thumb:thumb(), s:snap(), z:zoom < 10 ? zoom.toFixed(2) : zoom < 1000 ? zoom.toFixed(0) : zoom.toExponential(1)};
   marks.unshift(m); store.set('views', marks); renderMarks(m.id); toast('view saved');
-});
+}
 
 /* ---------- keyboard ---------- */
 const isTyping = t => t && (t.isContentEditable || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' ||
@@ -1771,9 +2742,15 @@ document.addEventListener('keydown', e => {
     case 'h': showSide(app.classList.contains('collapsed')); break;
     case 'r': $('#reset').click(); break;
     case 'g': toggleCheck('#grid'); break;
-    case 'o': toggleCheck('#orbit'); break;
+    case 'o': if (S.kind === 'complex') toggleCheck('#orbit'); break;
     case 'c': toggleCheck('#cycle'); break;
-    case 'p': S.palette = (S.palette + 1) % PALETTES.length; syncPal(); render(); toast(PALETTES[S.palette].name); break;
+    case 'p': {
+      const all = PALETTES.concat(S.customPalettes);
+      const i = all.findIndex(x => x.id === S.palette);
+      const next = all[(i + 1 + all.length) % all.length] || all[0];
+      S.palette = next.id; syncPal(); render(); toast(next.name);
+      break;
+    }
     case 's': $('#savePng').click(); break;
     case '?': openKeys(); break;
     default: return;
@@ -1783,7 +2760,7 @@ document.addEventListener('keydown', e => {
 
 /* ---------- the one moment on load: the set resolves as the iteration count climbs ---------- */
 function startIntro(){
-  if (rm.matches || !gl) return;
+  if (rm.matches || !gl || S.kind === 'classic') return;
   const t0 = performance.now(), ms = 1700;
   introCap = 4;
   const step = now => {
@@ -1803,12 +2780,17 @@ presetSel.addEventListener('change', e => {
 
 function syncUI(){
   document.body.dataset.mode = S.mode;
+  document.body.dataset.kind = S.kind;
   $('#mMandel').setAttribute('aria-pressed', String(S.mode === 'mandel'));
   $('#mJulia').setAttribute('aria-pressed', String(S.mode === 'julia'));
+  $('#kComplex').setAttribute('aria-pressed', String(S.kind === 'complex'));
+  $('#kClassic').setAttribute('aria-pressed', String(S.kind === 'classic'));
   eqEl.value = S.eq; $('#z0').value = S.z0;
-  syncC(); syncA(); syncPal();
+  refreshHighlighters();
+  syncC(); syncPal();
+  renderParams();
+  syncClassicUI();
   $('#showInset').checked = S.showInset;
-  $('#animate').checked = S.animate;
   $('#cycle').checked = S.cycle;
   $('#iter').value = S.iter; $('#iterv').textContent = S.iter;
   $('#bail').value = Math.log10(S.bail).toFixed(3);
@@ -1819,15 +2801,18 @@ function syncUI(){
   $('#offset').value = S.offset; $('#offsetv').textContent = S.offset.toFixed(2);
   $('#aa').checked = S.aa;
   fillAll();
+  updateAddCaption();
 }
 
 function applyPreset(p){
   const d = Object.assign({mode:'mandel', z0:'0', c:[-0.8,0.156], a:0.5, iter:250, degree:2, colorMode:0, bail:32, jview:[0,0,1.6], mview:[-0.5,0,1.5], inset:true}, p);
-  S.eq = d.eq; S.z0 = d.z0; S.mode = d.mode; S.c = d.c.slice(); S.a = d.a;
+  S.kind = 'complex';
+  S.eq = d.eq; S.z0 = d.z0; S.mode = d.mode; S.c = d.c.slice();
+  S.params = [{name:'a', value:d.a, min:-3, max:3, animate:false, aMin:-2, aMax:2}];
   S.iter = d.iter; S.degree = d.degree; S.colorMode = d.colorMode; S.bail = d.bail; S.showInset = d.inset;
   S.def = {mandel:d.mode === 'mandel' ? d.view : d.mview, julia:d.mode === 'julia' ? d.view : d.jview};
   S.view = toView(S.def[S.mode]); S.inset = toView(S.def.mandel);
-  S.animate = false; S.pins = []; updatePinCount(); stopMotion();
+  S.pins = []; updatePinCount(); stopMotion();
   syncUI(); presetSel.value = p.id;
   compile();
 }
@@ -1840,9 +2825,13 @@ setSide(store.get('side', 'solid') === 'glass' ? 'glass' : 'solid');
 S.sw = Math.round(clamp(+store.get('sw', 400) || 400, 320, 720));
 S.sh = Math.round(clamp(+store.get('sh', S.sh) || S.sh, 200, 2000));
 setSize(mq.matches ? S.sh : S.sw, true);
+let loadedCustom = store.get('custompals', []);
+if (!Array.isArray(loadedCustom)) loadedCustom = [];
+S.customPalettes = loadedCustom.filter(p => p && typeof p.id === 'string' && typeof p.name === 'string' && vec3ok(p.a) && vec3ok(p.b) && vec3ok(p.c) && vec3ok(p.d));
+renderAllPalGrids();
 updateFnEmpty();
 renderMarks();
-if (!(loadSnap(readHash(), false) && prog)) applyPreset(PRESETS[0]);
+if (!(loadSnap(readHash(), false) && (S.kind === 'classic' || prog))) applyPreset(PRESETS[0]);
 startIntro();
 })();
 </script>
