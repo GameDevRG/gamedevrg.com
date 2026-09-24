@@ -47,7 +47,7 @@ body{margin:0;background:#000;color:var(--ink);font:14px/1.45 var(--sans);overfl
 #zoombtns button{width:36px;height:34px;border:0;background:transparent;color:inherit;font:16px var(--mono);cursor:pointer}
 #zoombtns button + button{border-left:1px solid rgba(255,255,255,.14)}
 #toggle:hover,#zoombtns button:hover{background:rgba(255,255,255,.12)}
-#readout{left:var(--pl);bottom:var(--pb);padding:6px 10px;border-radius:6px;font:12px var(--mono);max-width:calc(100% - var(--pl) - 230px);line-height:1.5}
+#readout{left:var(--pl);bottom:var(--pb);padding:6px 10px;border-radius:6px;font:12px var(--mono);max-width:calc(100% - var(--pl) - 230px);line-height:1.5;transition:bottom .22s ease}
 #readout .warn{color:#ffc46b}
 #readout .dim{opacity:.7}
 #help{left:calc((100% + var(--pl)) / 2);top:14px;transform:translateX(-50%);padding:6px 12px;border-radius:999px;font-size:12.5px;white-space:nowrap;transition:opacity .6s;pointer-events:none}
@@ -60,11 +60,8 @@ body{margin:0;background:#000;color:var(--ink);font:14px/1.45 var(--sans);overfl
 #cmap.snap{transition:left .32s cubic-bezier(.22,.86,.32,1),top .32s cubic-bezier(.22,.86,.32,1)}
 #cmap.dragging,#cmap.resizing{transition:none;user-select:none}
 #cmap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-#cmap .tag{position:absolute;left:0;top:0;z-index:1;display:flex;align-items:center;gap:6px;padding:2px 3px 2px 7px;font:11px var(--mono);background:rgba(10,12,16,.78);color:#eef2f7;border-bottom-right-radius:6px;cursor:grab;touch-action:none}
+#cmap .tag{position:absolute;left:0;top:0;z-index:1;display:flex;align-items:center;gap:6px;padding:4px 10px;font:11px var(--mono);background:rgba(10,12,16,.78);color:#eef2f7;border-bottom-right-radius:6px;cursor:grab;touch-action:none}
 #cmap .tag:active{cursor:grabbing}
-#cmap .tag button{font:11px var(--mono);color:#eef2f7;background:rgba(255,255,255,.16);border:0;border-radius:4px;padding:1px 7px;cursor:pointer}
-#cmap .tag button:hover{background:rgba(255,255,255,.3)}
-#cmap .tag button:focus-visible{outline:2px solid #fff;outline-offset:1px}
 #cmap .resize{position:absolute;z-index:1;right:0;bottom:0;width:18px;height:18px;cursor:nwse-resize;touch-action:none}
 #cmap .resize::before{content:"";position:absolute;right:4px;bottom:4px;width:8px;height:8px;border-right:2px solid rgba(255,255,255,.5);border-bottom:2px solid rgba(255,255,255,.5);border-radius:0 0 2px 0;pointer-events:none}
 /* the resize handle moves to whichever corner of the widget faces away from the
@@ -75,7 +72,8 @@ body{margin:0;background:#000;color:var(--ink);font:14px/1.45 var(--sans);overfl
 #cmap.rs-bl .resize::before{right:auto;left:4px;bottom:4px;top:auto;border-right:0;border-top:0;border-left:2px solid rgba(255,255,255,.5);border-bottom:2px solid rgba(255,255,255,.5);border-radius:0 0 0 2px}
 #cmap.rs-tr .resize{right:0;left:auto;bottom:auto;top:0;cursor:nesw-resize}
 #cmap.rs-tr .resize::before{right:4px;left:auto;bottom:auto;top:4px;border-left:0;border-bottom:0;border-right:2px solid rgba(255,255,255,.5);border-top:2px solid rgba(255,255,255,.5);border-radius:0 2px 0 0}
-#cmap.docked{position:relative;right:auto;bottom:auto;width:100%;height:190px}
+#cmap.docked{position:relative;right:auto;bottom:auto;width:auto;height:190px}
+#cmap.flying{transition:none}
 #cmap.docked .resize{display:none}
 #cmap.docked .tag{cursor:grab}
 #cmap.docked .tag:active{cursor:grabbing}
@@ -107,8 +105,21 @@ body{margin:0;background:#000;color:var(--ink);font:14px/1.45 var(--sans);overfl
 /* the scrollbar lives on the left, so the right edge stays clean for resizing */
 #panel{position:relative;flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;direction:rtl;scrollbar-gutter:stable;overscroll-behavior:contain}
 .pad{direction:ltr;padding:20px 22px 28px 12px}
-#dock{position:relative;flex:none;padding:6px 22px 16px 22px}
-#dock.off{display:none}
+/* the dock slot appears instantly; the dashed placeholder inside it does the animating (a small pop) */
+#dock{position:relative;flex:none;display:grid;grid-template-rows:1fr}
+#dock.off{grid-template-rows:0fr}
+#dockIn{min-height:0;overflow:hidden}
+#dockIn > *{margin:6px 22px 16px}
+/* a dashed placeholder that appears where a dragged c map or popped-out section
+   would land, shown only while hovering the sidebar mid-drag */
+.dockPreview{border:1.5px dashed var(--accent);border-radius:8px;background:color-mix(in srgb,var(--accent) 12%,transparent);
+  display:flex;align-items:center;justify-content:center;color:var(--accent);font:11.5px var(--mono);font-weight:500;
+  box-sizing:border-box;pointer-events:none;
+  animation:dockpop .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes dockpop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+#dock .dockPreview{height:190px}
+@media (max-width:760px){ #dock .dockPreview{height:170px} }
+.sec-body .dockPreview{height:56px;margin-bottom:12px}
 #panel::-webkit-scrollbar{width:12px}
 #panel::-webkit-scrollbar-track{background:transparent}
 #panel::-webkit-scrollbar-thumb{
@@ -267,13 +278,13 @@ body[data-mode="julia"] .only-mandel{display:none !important}
   #side{top:auto;left:0;right:0;bottom:0;width:auto;height:var(--sh);border-right:0;border-top:1px solid var(--line);border-radius:14px 14px 0 0;box-shadow:0 -10px 30px -14px rgba(0,0,0,.6)}
   #panel{border-radius:14px 14px 0 0}
   .pad{padding:22px 18px 20px 8px}
-  #dock{padding:6px 18px 12px 20px}
+  #dockIn > *{margin:6px 18px 12px 20px}
   #grip{top:-7px;bottom:auto;left:0;right:0;width:auto;height:14px;cursor:ns-resize}
   #grip::before{top:6px;bottom:auto;left:0;right:0;width:auto;height:2px}
   #grip::after{left:50%;top:2px;width:46px;height:10px;margin:0 0 0 -23px;background:linear-gradient(var(--muted),var(--muted)) center/18px 2px no-repeat,var(--panel)}
   #grip:hover::after,#grip:focus-visible::after,#grip.drag::after{width:64px;height:10px;margin:0 0 0 -32px;background:linear-gradient(var(--accent),var(--accent)) center/18px 2px no-repeat,var(--panel)}
   #cmap{width:132px;height:99px}
-  #cmap.docked{width:100%;height:170px}
+  #cmap.docked{width:auto;height:170px}
   #readout{max-width:calc(100% - var(--pl) - 150px);font-size:11px}
   #help{display:none}
 }
@@ -327,7 +338,7 @@ section.shut .sec-body{grid-template-rows:0fr;margin-top:0;visibility:hidden;
 kbd{font:11.5px var(--mono);padding:1px 6px;border-radius:4px;border:1px solid var(--line);background:var(--chip);color:var(--ink);box-shadow:0 1px 0 var(--line)}
 
 @media (prefers-reduced-motion:reduce){
-  .sec-body,.sec-h,.chev,.mark,.btn,.seg button,.chips button,.pals .bar,#toast{transition:none !important;animation:none !important}
+  .sec-body,.sec-h,.chev,.mark,.btn,.seg button,.chips button,.pals .bar,#toast,.dockPreview{transition:none !important;animation:none !important}
 }
 
 /* ---------- equation syntax highlighting ---------- */
@@ -491,7 +502,7 @@ body[data-kind="classic"] .only-complex{display:none !important}
     <div id="readout" class="ov" aria-live="off"></div>
     <div id="cmap" class="off" title="click or drag to choose c. scroll to zoom. double-click to reset.">
       <canvas id="cmapc"></canvas>
-      <div class="tag"><span>c map</span><button id="dockbtn" type="button" title="dock the c map into the bottom of the sidebar">dock</button></div>
+      <div class="tag" title="drag to move — drop on the sidebar to dock, or pull it off the sidebar to float"><span>c map</span></div>
       <div id="pin"></div>
       <div class="resize" title="drag to resize"></div>
     </div>
@@ -534,11 +545,11 @@ body[data-kind="classic"] .only-complex{display:none !important}
         <h2>fractal type</h2>
         <details class="info">
           <summary>what is this?</summary>
-          <div class="doc"><p>switch between the live complex-map engine below — where you write your own equation and it is compiled to run on the gpu — and a gallery of classic geometric fractals built from a simple repeated rule.</p></div>
+          <div class="doc"><p>switch between the live complex-map engine below, where you write your own equation and it is compiled to run on the gpu, and a gallery of geometric fractals built from a simple repeated rule.</p></div>
         </details>
         <div class="seg" role="group" aria-label="fractal type" style="margin-top:10px">
           <button id="kComplex" type="button" aria-pressed="true">complex map</button>
-          <button id="kClassic" type="button" aria-pressed="false">classic fractals</button>
+          <button id="kClassic" type="button" aria-pressed="false">geometric</button>
         </div>
       </section>
 
@@ -709,13 +720,22 @@ body[data-kind="classic"] .only-complex{display:none !important}
         <h2>save and share</h2>
         <details class="info">
           <summary>what is this?</summary>
-          <div class="doc"><p>keep a gallery of views in this browser, copy the current picture, or copy a link that reopens exactly this view for someone else.</p></div>
+          <div class="doc"><p>keep a gallery of views in this browser, copy the current picture or its glsl shader, or copy a link that reopens exactly this view for someone else.</p></div>
         </details>
         <div class="btnrow" style="margin-top:0">
           <button class="btn" id="copyImage" type="button">copy image</button>
           <button class="btn" id="savePng" type="button">save image</button>
           <button class="btn" id="copyLink" type="button">copy link</button>
         </div>
+        <div class="btnrow only-complex">
+          <select id="shaderFmt" aria-label="shader export format">
+            <option value="raw">glsl — as run here (webgl2)</option>
+            <option value="shadertoy">glsl — shadertoy-style (values baked in)</option>
+          </select>
+          <button class="btn" id="copyShader" type="button">copy shader</button>
+          <button class="btn" id="saveShader" type="button">save shader</button>
+        </div>
+        <p class="hint only-complex">"as run here" is the exact shader this page compiles, with the current values noted in a comment at the top. "shadertoy-style" bakes those values in as constants and wraps it in <code>mainImage()</code>, ready to paste into shadertoy's image tab.</p>
         <div class="marks" id="marks"></div>
         <p class="hint">saved views stay in this browser. the "save fractal" card keeps the view you're looking at right now.</p>
       </section>
@@ -766,7 +786,7 @@ body[data-kind="classic"] .only-complex{display:none !important}
       </section>
      </div>
     </aside>
-    <div id="dock" class="off"></div>
+    <div id="dock" class="off"><div id="dockIn"></div></div>
     <div id="grip" role="separator" tabindex="0" aria-orientation="vertical" aria-label="resize sidebar" title="drag to resize"></div>
   </div>
 </div>
@@ -1121,6 +1141,109 @@ function buildFragment(fExpr, zExpr){
     'vec2 startZ(vec2 c){ return ' + zExpr + '; }\n' + MAIN;
 }
 
+/* ---------- shadertoy export: same maths, current values baked in as consts ---------- */
+const STOY_MAIN = `
+vec3 pal(float t){ return uPa + uPb*cos(6.28318530718*(uPc*t+uPd)); }
+vec3 hsv2rgb(vec3 c){
+  vec3 p=abs(fract(c.xxx+vec3(1.0,2.0/3.0,1.0/3.0))*6.0-3.0);
+  return c.z*mix(vec3(1.0),clamp(p-1.0,0.0,1.0),c.y);
+}
+vec3 shade(vec2 p){
+  vec2 c, z;
+  if(uJulia==1){ z=p; c=uC; } else { c=p; z=startZ(c); }
+  vec3 inside=vec3(0.012,0.012,0.018);
+  if(uColorMode==0){
+    for(int i=0;i<5000;i++){
+      if(i>=uMaxIter) break;
+      z=f(z,c);
+      float m2=dot(z,z);
+      if(!(m2<uBail2)){
+        float sm=float(i);
+        if(m2<1e30){
+          float lz=0.5*log(m2);
+          sm=float(i)+1.0-log(max(lz/log(uBail),1e-6))/log(max(uDegree,1.05));
+        }
+        return pal(sm*0.03*uDensity+uOffset);
+      }
+    }
+    return inside;
+  } else {
+    for(int i=0;i<5000;i++){
+      if(i>=uMaxIter) break;
+      vec2 zn=f(z,c);
+      vec2 d=zn-z;
+      z=zn;
+      if(dot(d,d)<1e-10){
+        float ang=atan(z.y,z.x)/6.28318530718+0.5;
+        float b=0.3+0.7*exp(-0.09*float(i)*uDensity);
+        return hsv2rgb(vec3(fract(ang+uOffset),0.72,b));
+      }
+      if(!(dot(z,z)<1e12)) return inside;
+    }
+    return inside;
+  }
+}
+void mainImage(out vec4 fragColor, in vec2 fragCoord){
+  vec3 col=vec3(0.0);
+  int N=uAA;
+  for(int j=0;j<2;j++){
+    for(int k=0;k<2;k++){
+      if(j>=N||k>=N) continue;
+      vec2 off=(vec2(float(j),float(k))+0.5)/float(N)-0.5;
+      vec2 fc=fragCoord+off;
+      vec2 p=uCenter+(fc-0.5*iResolution.xy)/(0.5*iResolution.y)*uScale;
+      col+=shade(p);
+    }
+  }
+  col/=float(N*N);
+  fragColor=vec4(col,1.0);
+}
+`;
+function shaderExportInfoLines(){
+  const P = findPalette(S.palette);
+  return [
+    'exported from fractalengine 2D',
+    'equation: z <- ' + S.eq.trim(),
+    S.mode === 'mandel' ? ('start z0: ' + S.z0.trim()) : ('julia c: ' + S.c[0] + ' + ' + S.c[1] + 'i'),
+    'view: center ' + S.view.x + ' + ' + S.view.y + 'i, scale ' + S.view.s,
+    'iterations: ' + S.iter + ', bail: ' + S.bail + ', degree: ' + S.degree,
+    'color mode: ' + (S.colorMode ? 'convergence (roots)' : 'escape time') + ', palette: ' + P.name,
+    S.params.length ? ('parameters: ' + S.params.map(p => p.name + ' = ' + p.value).join(', ')) : ''
+  ].filter(Boolean);
+}
+function buildRawExport(fragSrc){
+  return shaderExportInfoLines().map(l => '// ' + l).join('\n') + '\n\n' + fragSrc;
+}
+function buildShadertoyExport(fExpr, zExpr){
+  const P = findPalette(S.palette);
+  const v2 = (a,b) => 'vec2(' + fnum(a) + ',' + fnum(b) + ')';
+  const v3 = a => 'vec3(' + a.map(fnum).join(',') + ')';
+  let out = shaderExportInfoLines().map(l => '// ' + l).join('\n') +
+    '\n// paste into shadertoy\'s "image" tab (shadertoy runs webgl2 / glsl es 3.00)\n\n';
+  S.params.forEach((p,i) => { out += 'const float uParam' + i + ' = ' + fnum(p.value) + '; // parameter ' + p.name + '\n'; });
+  out +=
+    'const vec2 uCenter = ' + v2(S.view.x, S.view.y) + ';\n' +
+    'const vec2 uC = ' + v2(S.c[0], S.c[1]) + ';\n' +
+    'const float uScale = ' + fnum(S.view.s) + ';\n' +
+    'const float uBail = ' + fnum(S.bail) + ';\n' +
+    'const float uBail2 = ' + fnum(S.bail * S.bail) + ';\n' +
+    'const float uDegree = ' + fnum(S.degree) + ';\n' +
+    'const float uDensity = ' + fnum(S.density) + ';\n' +
+    'const float uOffset = ' + fnum(S.offset + S.phase) + ';\n' +
+    'const int uMaxIter = ' + Math.round(S.iter) + ';\n' +
+    'const int uJulia = ' + (S.mode === 'julia' ? 1 : 0) + ';\n' +
+    'const int uColorMode = ' + S.colorMode + ';\n' +
+    'const int uAA = ' + (S.aa ? 2 : 1) + ';\n' +
+    'const vec3 uPa = ' + v3(P.a) + ';\n' +
+    'const vec3 uPb = ' + v3(P.b) + ';\n' +
+    'const vec3 uPc = ' + v3(P.c) + ';\n' +
+    'const vec3 uPd = ' + v3(P.d) + ';\n\n';
+  out += HELPERS +
+    'vec2 f(vec2 z, vec2 c){ return ' + fExpr + '; }\n' +
+    'vec2 startZ(vec2 c){ return ' + zExpr + '; }\n' + STOY_MAIN;
+  return out;
+}
+
 /* =====================================================================
    3. state, presets, palettes, classic fractal gallery
    ===================================================================== */
@@ -1224,7 +1347,7 @@ const S = {
    ===================================================================== */
 const app = $('#app'), side = $('#side'), stage = $('#stage');
 const canvas = $('#gl'), ovl = $('#ovl'), octx = ovl.getContext('2d');
-const cmapEl = $('#cmap'), cmapCanvas = $('#cmapc'), cctx = cmapCanvas.getContext('2d'), pinEl = $('#pin'), dockEl = $('#dock');
+const cmapEl = $('#cmap'), cmapCanvas = $('#cmapc'), cctx = cmapCanvas.getContext('2d'), pinEl = $('#pin'), dockEl = $('#dock'), dockIn = $('#dockIn');
 const gl = canvas.getContext('webgl2', {antialias:false, alpha:false, powerPreference:'high-performance'});
 if (!gl) $('#nogl').style.display = 'flex';
 
@@ -1261,6 +1384,7 @@ const eqEl = $('#eq'), msgEl = $('#eqmsg');
 function setMsg(text, isErr){ msgEl.textContent = text; msgEl.classList.toggle('err', !!isErr); }
 
 function paramNameList(){ return S.params.map(p => p.name); }
+let lastFragSrc = '';
 function compile(){
   if (!gl) return;
   try{
@@ -1269,9 +1393,10 @@ function compile(){
     const zAst = parse(S.z0, ['c','i','pi','e', ...names]);
     GEN_PIDX = {}; S.params.forEach((p,i) => GEN_PIDX[p.name] = i);
     const fExpr = gen(fAst), zExpr = gen(zAst);
-    const next = makeProgram(buildFragment(fExpr, zExpr), S.params.length);
+    const fragSrc = buildFragment(fExpr, zExpr);
+    const next = makeProgram(fragSrc, S.params.length);
     if (prog) gl.deleteProgram(prog.p);
-    prog = next; S.astF = fAst; S.astZ0 = zAst;
+    prog = next; S.astF = fAst; S.astZ0 = zAst; lastFragSrc = fragSrc;
     setMsg('compiled. z ← ' + S.eq.trim());
   }catch(err){
     setMsg(err.message, true);
@@ -1340,7 +1465,7 @@ function draw(){
 
   const cmapOn = S.mode === 'julia' && S.showInset;
   cmapEl.classList.toggle('off', !cmapOn);
-  dockEl.classList.toggle('off', !(cmapOn && S.docked));
+  dockEl.classList.toggle('off', !(cmapOn && S.docked) && !cmapDockPreviewEl);
   if (cmapOn){ repositionCmap(); drawCmap(dpr, w, h); }
 
   gl.viewport(0, 0, w, h);
@@ -1647,7 +1772,15 @@ function drawClassic(g){
 
 /* ---------- readout ---------- */
 function fmt(v, d){ return v.toFixed(d).replace('-', '−'); }
+const readoutEl = $('#readout');
+/* the floating c map can visually collide with the coordinate readout in the corner
+   they share (bottom-left) — when that happens, lift the readout up clear of it */
+function syncReadoutLift(){
+  const overlap = !S.docked && !cmapEl.classList.contains('off') && cmapCorner === 'bl';
+  readoutEl.style.bottom = overlap ? ('calc(var(--pb) + ' + (cmapEl.offsetHeight + 14) + 'px)') : '';
+}
 function updateReadout(){
+  syncReadoutLift();
   const g = geom();
   const s = S.view.s;
   const digits = clamp(Math.ceil(-Math.log10(s)) + 4, 4, 10);
@@ -1659,7 +1792,7 @@ function updateReadout(){
   let html = (cursor ? 'cursor ' : 'center ') + fmt(pt.x, digits) + (pt.y < 0 ? ' − ' : ' + ') + fmt(Math.abs(pt.y), digits) + 'i<br>zoom ×' + zs;
   if (S.kind === 'complex' && S.orbit && orbitInfo) html += '<br><span class="dim">orbit: ' + orbitInfo + '</span>';
   if (px < mag * 3e-7) html += ' <span class="warn">(at the limit of gpu precision)</span>';
-  $('#readout').innerHTML = html;
+  readoutEl.innerHTML = html;
 }
 
 /* =====================================================================
@@ -1882,7 +2015,17 @@ function applyResizeHandleClass(){
   const map = {tl:'rs-br', tr:'rs-bl', bl:'rs-tr', br:'rs-tl'};
   cmapEl.classList.add(map[cmapCorner] || 'rs-br');
 }
+function effectiveCorner(corner){
+  /* on mobile the controls are a bottom sheet, so the bottom corners sit right where
+     it covers — while it's showing, redirect a bottom-corner snap to the matching
+     top corner instead of letting the c map end up behind it */
+  if (mq.matches && !app.classList.contains('collapsed') && (corner === 'bl' || corner === 'br')){
+    return corner === 'bl' ? 'tl' : 'tr';
+  }
+  return corner;
+}
 function snapCmapToCorner(corner, animate){
+  corner = effectiveCorner(corner);
   cmapCorner = corner; store.set('cmapCorner', corner);
   applyResizeHandleClass();
   if (animate !== false){ cmapEl.classList.add('snap'); setTimeout(() => cmapEl.classList.remove('snap'), 340); }
@@ -1894,7 +2037,7 @@ function snapCmapToCorner(corner, animate){
    size or visibility changes, since a fixed pixel position would otherwise drift
    underneath it as the sidebar grows */
 function repositionCmap(){
-  if (S.docked || cmapDragOff || cmapResizeStart) return;
+  if (S.docked || cmapDragOff || cmapResizeStart || cmapFlying) return;
   const {x, y} = cmapCornerXY(cmapCorner, cmapEl.offsetWidth || cmapW, cmapEl.offsetHeight || cmapH);
   placeCmapAt(x, y);
 }
@@ -1903,50 +2046,158 @@ function floatCmap(){
   snapCmapToCorner(cmapCorner, false);
 }
 
-let cmapDragOff = null;
-cmapTag.addEventListener('pointerdown', e => {
-  if (e.target.closest('button')) return;
-  e.preventDefault(); e.stopPropagation();
-  cmapTag.setPointerCapture(e.pointerId);
-  if (S.docked){
-    /* pulling the tag while docked undocks it on the spot, right under the pointer,
-       so the drag continues smoothly instead of requiring a separate "float" step first */
-    const dr = cmapEl.getBoundingClientRect();
-    const offX = e.clientX - dr.left, offY = e.clientY - dr.top;
-    S.docked = false;
-    stage.appendChild(cmapEl);
-    cmapEl.classList.remove('docked');
-    dockBtn.textContent = 'dock';
-    dockBtn.title = 'dock the c map into the bottom of the sidebar';
-    applyCmapSize();
-    const sr = stage.getBoundingClientRect();
-    placeCmapAt(e.clientX - sr.left - offX, e.clientY - sr.top - offY);
-    render();
+let cmapDragOff = null;   // {fx, fy, w, h, px, py}: grab point as a fraction of the box, its current size, and the pointer position
+let cmapDockPreviewEl = null;
+let cmapFlying = false, cmapAnimRaf = 0;
+const CMAP_MS = 380;
+const easeInOut = u => u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+const easeOut = u => 1 - Math.pow(1 - u, 3);
+
+/* shows/hides a dashed placeholder in the sidebar's dock slot for where the c map
+   would land, so hovering it there while dragging previews the drop before you commit */
+function setCmapDockPreview(active){
+  if (active && !cmapDockPreviewEl){
+    cmapDockPreviewEl = document.createElement('div');
+    cmapDockPreviewEl.className = 'dockPreview';
+    cmapDockPreviewEl.textContent = 'drop to dock';
+    dockEl.classList.remove('off');
+    dockIn.appendChild(cmapDockPreviewEl);
+  } else if (!active && cmapDockPreviewEl){
+    cmapDockPreviewEl.remove();
+    cmapDockPreviewEl = null;
+    dockEl.classList.toggle('off', !(S.mode === 'julia' && S.showInset && S.docked));
   }
-  const r = cmapEl.getBoundingClientRect(), sr = stage.getBoundingClientRect();
-  cmapDragOff = {x:e.clientX - r.left, y:e.clientY - r.top};
-  cmapEl.classList.add('dragging');
-  placeCmapAt(r.left - sr.left, r.top - sr.top);
-});
-cmapTag.addEventListener('pointermove', e => {
-  if (!cmapDragOff) return;
-  const sr = stage.getBoundingClientRect();
-  placeCmapAt(e.clientX - sr.left - cmapDragOff.x, e.clientY - sr.top - cmapDragOff.y);
-});
+}
+
+function cancelCmapAnim(){
+  cancelAnimationFrame(cmapAnimRaf); cmapAnimRaf = 0;
+  cmapFlying = false; cmapEl.classList.remove('flying');
+}
+
+/* glides the floating c map from wherever it is now to a target box (position AND size),
+   re-reading the target every frame so it can follow a slot that is still moving.
+   target() returns {x, y, w, h} in stage coordinates, or null to reuse the last one. */
+function flyCmap(target, done, ease){
+  cancelCmapAnim();
+  const sr0 = stage.getBoundingClientRect(), r0 = cmapEl.getBoundingClientRect();
+  const from = {x:r0.left - sr0.left, y:r0.top - sr0.top, w:r0.width, h:r0.height};
+  const put = b => {
+    placeCmapAt(b.x, b.y);
+    cmapEl.style.width = b.w + 'px'; cmapEl.style.height = b.h + 'px';
+  };
+  const finish = () => { cmapAnimRaf = 0; cmapFlying = false; cmapEl.classList.remove('flying'); done(); };
+  cmapFlying = true; cmapEl.classList.add('flying');
+  if (rm.matches){ put(target() || from); finish(); return; }
+  let last = from; const t0 = performance.now();
+  const step = now => {
+    const u = clamp((now - t0) / CMAP_MS, 0, 1), k = ease(u);
+    const to = target() || last; last = to;
+    put({x:from.x + (to.x - from.x) * k, y:from.y + (to.y - from.y) * k,
+         w:from.w + (to.w - from.w) * k, h:from.h + (to.h - from.h) * k});
+    bump(); render();
+    if (u < 1) cmapAnimRaf = requestAnimationFrame(step); else finish();
+  };
+  cmapAnimRaf = requestAnimationFrame(step);
+}
+
+function finishDock(){
+  S.docked = true;            // set first, so removing the preview doesn't collapse the dock
+  setCmapDockPreview(false);
+  placeCmap();                // the docked box lands exactly where the slot was
+}
+
+/* while dragging: place the box so the grabbed point stays under the pointer at the current size */
+function placeDragBox(){
+  const d = cmapDragOff, sr = stage.getBoundingClientRect();
+  cmapEl.style.width = d.w + 'px'; cmapEl.style.height = d.h + 'px';
+  placeCmapAt(d.px - sr.left - d.fx * d.w, d.py - sr.top - d.fy * d.h);
+}
+/* smoothly scales the box being dragged (e.g. docked size -> floating size) around the grab point */
+function easeCmapDragSize(toW, toH){
+  const d = cmapDragOff;
+  if (!d || (Math.abs(d.w - toW) < 1 && Math.abs(d.h - toH) < 1)) return;
+  if (rm.matches){ d.w = toW; d.h = toH; placeDragBox(); render(); return; }
+  const w0 = d.w, h0 = d.h, t0 = performance.now();
+  const step = now => {
+    const dd = cmapDragOff; if (!dd) return;
+    const u = clamp((now - t0) / CMAP_MS, 0, 1), k = easeOut(u);
+    dd.w = w0 + (toW - w0) * k; dd.h = h0 + (toH - h0) * k;
+    placeDragBox(); bump(); render();
+    cmapAnimRaf = u < 1 ? requestAnimationFrame(step) : 0;
+  };
+  cmapAnimRaf = requestAnimationFrame(step);
+}
+
+/* the drag is tracked from the document rather than relying on this element's own
+   pointer capture: undocking reparents the c map out of the sidebar mid-gesture, and
+   some browsers silently drop pointer capture across a DOM move — which is exactly
+   what made a fast drag "let go" as soon as the cursor left the little tag. Listening
+   on the document instead keeps following the pointer no matter how fast it moves or
+   where it ends up. */
+function onCmapTagMove(e){
+  const d = cmapDragOff; if (!d) return;
+  d.px = e.clientX; d.py = e.clientY;
+  placeDragBox();
+  const r = side.getBoundingClientRect();
+  setCmapDockPreview(e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom);
+}
 function endCmapDrag(e){
   if (!cmapDragOff) return;
   cmapDragOff = null;
+  cancelCmapAnim();
   cmapEl.classList.remove('dragging');
+  document.removeEventListener('pointermove', onCmapTagMove);
+  document.removeEventListener('pointerup', endCmapDrag);
+  document.removeEventListener('pointercancel', endCmapDrag);
   const r = side.getBoundingClientRect();
   if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom){
-    S.docked = true; placeCmap(); return;
+    /* glide (and scale) into the dashed slot, then swap it for the real docked box */
+    setCmapDockPreview(true);
+    const slot = cmapDockPreviewEl;
+    flyCmap(() => {
+      if (!slot.isConnected) return null;
+      /* the slot may be mid-"pop" (scaled about its centre), so aim at its untransformed box */
+      const sr = stage.getBoundingClientRect(), t = slot.getBoundingClientRect();
+      const w = slot.offsetWidth, h = slot.offsetHeight;
+      return {x:t.left + t.width / 2 - w / 2 - sr.left, y:t.top + t.height / 2 - h / 2 - sr.top, w, h};
+    }, finishDock, easeInOut);
+    return;
   }
+  setCmapDockPreview(false);
   const sr = stage.getBoundingClientRect();
   const cx = e.clientX - sr.left, cy = e.clientY - sr.top;
-  snapCmapToCorner((cy < sr.height / 2 ? 't' : 'b') + (cx < sr.width / 2 ? 'l' : 'r'));
+  const corner = effectiveCorner((cy < sr.height / 2 ? 't' : 'b') + (cx < sr.width / 2 ? 'l' : 'r'));
+  flyCmap(() => {
+    const p = cmapCornerXY(corner, cmapW, cmapH);
+    return {x:p.x, y:p.y, w:cmapW, h:cmapH};
+  }, () => { applyCmapSize(); snapCmapToCorner(corner, false); }, easeOut);
 }
-cmapTag.addEventListener('pointerup', endCmapDrag);
-cmapTag.addEventListener('pointercancel', endCmapDrag);
+cmapTag.addEventListener('pointerdown', e => {
+  e.preventDefault(); e.stopPropagation();
+  cancelCmapAnim();                       // grabbing it mid-flight just takes over from where it is
+  const sr = stage.getBoundingClientRect();
+  if (S.docked){
+    /* lift it out of the dock at its docked size; the slot stays behind as a dashed
+       placeholder while the pointer is over the sidebar */
+    const dr = cmapEl.getBoundingClientRect();
+    S.docked = false;
+    stage.appendChild(cmapEl);
+    cmapEl.classList.remove('docked');
+    cmapEl.style.width = dr.width + 'px'; cmapEl.style.height = dr.height + 'px';
+    placeCmapAt(dr.left - sr.left, dr.top - sr.top);
+    setCmapDockPreview(true);
+    render();
+  }
+  const r = cmapEl.getBoundingClientRect();
+  cmapDragOff = {fx:(e.clientX - r.left) / (r.width || 1), fy:(e.clientY - r.top) / (r.height || 1),
+                 w:r.width, h:r.height, px:e.clientX, py:e.clientY};
+  cmapEl.classList.add('dragging');
+  placeCmapAt(r.left - sr.left, r.top - sr.top);
+  document.addEventListener('pointermove', onCmapTagMove);
+  document.addEventListener('pointerup', endCmapDrag);
+  document.addEventListener('pointercancel', endCmapDrag);
+  easeCmapDragSize(cmapW, cmapH);         // scale down to the floating size while it follows the pointer
+});
 
 let cmapResizeStart = null;
 cmapResizeGrip.addEventListener('pointerdown', e => {
@@ -1987,12 +2238,9 @@ function endCmapResize(){
 cmapResizeGrip.addEventListener('pointerup', endCmapResize);
 cmapResizeGrip.addEventListener('pointercancel', endCmapResize);
 
-const dockBtn = $('#dockbtn');
 function placeCmap(){
-  (S.docked ? dockEl : stage).appendChild(cmapEl);
+  (S.docked ? dockIn : stage).appendChild(cmapEl);
   cmapEl.classList.toggle('docked', S.docked);
-  dockBtn.textContent = S.docked ? 'float' : 'dock';
-  dockBtn.title = S.docked ? 'float the c map back over the fractal' : 'dock the c map into the bottom of the sidebar';
   if (S.docked){
     cmapEl.style.left = cmapEl.style.top = cmapEl.style.right = cmapEl.style.bottom = '';
     cmapEl.style.width = cmapEl.style.height = '';
@@ -2001,9 +2249,8 @@ function placeCmap(){
   }
   render();
 }
-dockBtn.addEventListener('click', () => { S.docked = !S.docked; placeCmap(); });
-window.addEventListener('resize', () => { if (!S.docked && !cmapDragOff && !cmapResizeStart) snapCmapToCorner(cmapCorner, false); });
-mq.addEventListener('change', () => { if (!S.docked) floatCmap(); });
+window.addEventListener('resize', () => { if (!S.docked && !cmapDragOff && !cmapResizeStart && !cmapFlying) snapCmapToCorner(cmapCorner, false); });
+mq.addEventListener('change', () => { if (!S.docked && !cmapFlying) floatCmap(); });
 
 /* =====================================================================
    7. ui wiring
@@ -2449,6 +2696,7 @@ function showSide(open){
   toggleBtn.textContent = open ? 'hide controls' : 'show controls';
   toggleBtn.title = open ? 'hide controls (h)' : 'show controls (h)';
   toggleBtn.setAttribute('aria-expanded', String(open));
+  if (open && mq.matches && !S.docked && (cmapCorner === 'bl' || cmapCorner === 'br')) snapCmapToCorner(cmapCorner);
   const from = sideVis, want = open ? 1 : 0, t0 = performance.now(), ms = rm.matches ? 0 : 340;
   const step = now => {
     const u = ms ? clamp((now - t0) / ms, 0, 1) : 1;
@@ -2759,6 +3007,35 @@ $('#copyLink').addEventListener('click', async () => {
   const url = location.href.split('#')[0] + hashOf();
   try { history.replaceState(null, '', hashOf()); } catch (e) {}
   toast(await copyText(url) ? 'link copied' : 'could not copy the link');
+});
+
+/* ---------- shader export ---------- */
+const shaderFmtEl = $('#shaderFmt');
+function currentShaderSource(){
+  if (S.kind !== 'complex' || !S.astF || !S.astZ0) return '';
+  try{
+    if (shaderFmtEl.value === 'shadertoy'){
+      GEN_PIDX = {}; S.params.forEach((p,i) => GEN_PIDX[p.name] = i);
+      return buildShadertoyExport(gen(S.astF), gen(S.astZ0));
+    }
+    return lastFragSrc ? buildRawExport(lastFragSrc) : '';
+  }catch(e){ return ''; }
+}
+$('#copyShader').addEventListener('click', async () => {
+  const src = currentShaderSource();
+  if (!src){ toast('nothing to export yet'); return; }
+  toast(await copyText(src) ? 'shader copied' : 'could not copy the shader');
+});
+$('#saveShader').addEventListener('click', () => {
+  const src = currentShaderSource();
+  if (!src){ toast('nothing to export yet'); return; }
+  const blob = new Blob([src], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (shaderFmtEl.value === 'shadertoy' ? 'fractal-shadertoy' : 'fractal-shader') + '.glsl';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  toast('shader saved');
 });
 
 /* ---------- image: exactly what you see beside the sidebar, overlays included ---------- */
