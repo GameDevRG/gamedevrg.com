@@ -130,6 +130,16 @@ body{margin:0;background:#000;color:var(--ink);font:14px/1.45 var(--sans);overfl
 @supports not selector(::-webkit-scrollbar){
   #panel{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--muted) 45%,transparent) transparent}
 }
+.floatwin .fwbody::-webkit-scrollbar{width:12px}
+.floatwin .fwbody::-webkit-scrollbar-track{background:transparent}
+.floatwin .fwbody::-webkit-scrollbar-thumb{
+  min-height:56px;border:3px solid transparent;border-radius:999px;
+  background:color-mix(in srgb,var(--muted) 34%,transparent);background-clip:padding-box;
+}
+.floatwin .fwbody::-webkit-scrollbar-thumb:hover,.floatwin .fwbody::-webkit-scrollbar-thumb:active{background:var(--accent);background-clip:padding-box}
+@supports not selector(::-webkit-scrollbar){
+  .floatwin .fwbody{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--muted) 45%,transparent) transparent}
+}
 
 /* resize handle: a pill sitting on the edge, with the edge itself lighting up */
 #grip{position:absolute;z-index:4;top:0;bottom:0;right:-7px;width:14px;cursor:ew-resize;touch-action:none;outline:none}
@@ -276,9 +286,12 @@ body[data-mode="julia"] .only-mandel{display:none !important}
 @media (max-width:760px){
   #app{--pl:12px;--pb:calc(var(--sh) * var(--sv) + 12px)}
   #side{top:auto;left:0;right:0;bottom:0;width:auto;height:var(--sh);border-right:0;border-top:1px solid var(--line);border-radius:14px 14px 0 0;box-shadow:0 -10px 30px -14px rgba(0,0,0,.6)}
-  #panel{border-radius:14px 14px 0 0}
-  .pad{padding:22px 18px 20px 8px}
-  #dockIn > *{margin:6px 18px 12px 20px}
+  /* on desktop the scrollbar sits on the left (via #panel's rtl trick above), but on
+     mobile it should sit on the normal right edge instead, so undo the trick here and
+     mirror the padding that was offset to make room for it */
+  #panel{border-radius:14px 14px 0 0;direction:ltr}
+  .pad{padding:22px 8px 20px 18px}
+  #dockIn > *{margin:6px 20px 12px 18px}
   #grip{top:-7px;bottom:auto;left:0;right:0;width:auto;height:14px;cursor:ns-resize}
   #grip::before{top:6px;bottom:auto;left:0;right:0;width:auto;height:2px}
   #grip::after{left:50%;top:2px;width:46px;height:10px;margin:0 0 0 -23px;background:linear-gradient(var(--muted),var(--muted)) center/18px 2px no-repeat,var(--panel)}
@@ -538,14 +551,14 @@ body[data-kind="classic"] .only-complex{display:none !important}
      <div class="pad">
       <header>
         <h1>fractalengine 2D</h1>
-        <p class="sub">write any complex map, or browse a gallery of classic fractals. it is compiled to a gpu shader and drawn live.</p>
+        <p class="sub">write any complex map, or browse a gallery of geometric fractals. it is compiled to a gpu shader and drawn live.</p>
       </header>
 
       <section>
         <h2>fractal type</h2>
         <details class="info">
           <summary>what is this?</summary>
-          <div class="doc"><p>switch between the live complex-map engine below, where you write your own equation and it is compiled to run on the gpu, and a gallery of geometric fractals built from a simple repeated rule.</p></div>
+          <div class="doc"><p>switch between the live complex-map engine below — where you write your own equation and it is compiled to run on the gpu — and a gallery of classic geometric fractals built from a simple repeated rule.</p></div>
         </details>
         <div class="seg" role="group" aria-label="fractal type" style="margin-top:10px">
           <button id="kComplex" type="button" aria-pressed="true">complex map</button>
@@ -647,7 +660,7 @@ body[data-kind="classic"] .only-complex{display:none !important}
       </section>
 
       <section class="only-classic">
-        <h2>classic fractal</h2>
+        <h2>geometric fractal</h2>
         <details class="info">
           <summary>what is this?</summary>
           <div class="doc"><p>a small gallery of fractals built by repeating one simple geometric rule, rather than iterating a complex-number equation. pan and zoom work the same way as the complex map.</p></div>
@@ -3106,7 +3119,7 @@ function renderMarks(newId){
     const cap = document.createElement('span'); cap.className = 'cap';
     const b = document.createElement('b'); b.textContent = m.s.eq;
     cap.appendChild(b);
-    const kindLbl = m.s.k === 'classic' ? 'classic fractal' : (m.s.m === 'julia' ? 'julia' : 'mandelbrot');
+    const kindLbl = m.s.k === 'classic' ? 'geometric fractal' : (m.s.m === 'julia' ? 'julia' : 'mandelbrot');
     cap.appendChild(document.createTextNode(kindLbl + ', zoom ×' + (m.z || '1')));
     go.appendChild(cap);
     go.addEventListener('click', () => loadSnap(m.s, true));
