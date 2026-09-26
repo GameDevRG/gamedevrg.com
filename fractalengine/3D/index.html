@@ -11,7 +11,7 @@
         href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
         rel="stylesheet">
     <style>
-        :root {
+        css:root {
             --panel: #eef1f5;
             --ink: #14202b;
             --muted: #5d6b79;
@@ -28,7 +28,7 @@
             padding-bottom: env(safe-area-inset-bottom, 0px);
         }
 
-        @media (prefers-color-scheme:dark) {
+        @media (prefers-color-scheme: dark) {
             :root:not([data-theme="light"]) {
                 --panel: #11151b;
                 --ink: #e6ebf1;
@@ -85,11 +85,38 @@
         }
 
         /* ---------- stage ---------- */
+        #app {
+            --sliceGap: 0
+        }
+
         #stage {
             position: absolute;
             inset: 0;
             background: #000;
             overflow: hidden
+        }
+
+        #pane3d {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: calc(100% * var(--sliceGap));
+            overflow: hidden
+        }
+
+        #pane2d {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: calc(100% * (1 - var(--sliceGap)));
+            right: 0;
+            overflow: hidden;
+            background: #000
+        }
+
+        #app:not([data-slice="1"]) #pane2d {
+            visibility: hidden
         }
 
         #gl {
@@ -104,6 +131,24 @@
 
         #gl:active {
             cursor: grabbing
+        }
+
+        #gl2 {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            touch-action: none;
+            cursor: grab
+        }
+
+        #gl2:active {
+            cursor: grabbing
+        }
+
+        #gl2[data-drag="rotate"] {
+            cursor: crosshair
         }
 
         .ov {
@@ -151,6 +196,254 @@
         #toggle:hover,
         #zoombtns button:hover {
             background: rgba(255, 255, 255, .12)
+        }
+
+        #app[data-mode="fly"] #zoombtns {
+            display: none
+        }
+
+        /* ---------- slice grip: draggable divider between the 3d view and the 2d slice ---------- */
+        #sliceGrip {
+            position: absolute;
+            z-index: 5;
+            top: 0;
+            bottom: 0;
+            left: calc(100% * (1 - var(--sliceGap)));
+            width: 14px;
+            margin-left: -7px;
+            cursor: ew-resize;
+            touch-action: none;
+            outline: none;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s
+        }
+
+        #app[data-slice="1"] #sliceGrip {
+            opacity: 1;
+            pointer-events: auto
+        }
+
+        #sliceGrip::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 6px;
+            width: 2px;
+            background: rgba(255, 255, 255, .5)
+        }
+
+        #sliceGrip::after {
+            content: "";
+            position: absolute;
+            left: 2px;
+            top: 50%;
+            width: 10px;
+            height: 46px;
+            margin-top: -23px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, .3);
+            background: linear-gradient(rgba(255, 255, 255, .6), rgba(255, 255, 255, .6)) center/2px 18px no-repeat, rgba(20, 24, 30, .85);
+            box-shadow: 0 1px 5px rgba(0, 0, 0, .4);
+            transition: height .2s, margin .2s
+        }
+
+        #sliceGrip:hover::after,
+        #sliceGrip.drag::after {
+            height: 64px;
+            margin-top: -32px
+        }
+
+        @media (pointer:coarse) {
+            #sliceGrip {
+                width: 26px;
+                margin-left: -13px
+            }
+
+            #sliceGrip::before {
+                left: 12px
+            }
+
+            #sliceGrip::after {
+                left: 8px
+            }
+        }
+
+        /* ---------- 2d slice pane overlay controls (mirror the 3d pane's .ov look) ---------- */
+        #slice2dHelp {
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12.5px;
+            white-space: nowrap;
+            transition: opacity .6s;
+            pointer-events: none
+        }
+
+        #slice2dHelp.gone {
+            opacity: 0
+        }
+
+        #slice2dZoom {
+            top: 12px;
+            right: 12px;
+            display: flex;
+            border-radius: 6px;
+            overflow: hidden
+        }
+
+        #slice2dZoom button {
+            width: 36px;
+            height: 34px;
+            border: 0;
+            background: transparent;
+            color: inherit;
+            font: 16px var(--mono);
+            cursor: pointer
+        }
+
+        #slice2dZoom button+button {
+            border-left: 1px solid rgba(255, 255, 255, .14)
+        }
+
+        #slice2dZoom button:hover {
+            background: rgba(255, 255, 255, .12)
+        }
+
+        #slice2dMode {
+            top: 12px;
+            left: 12px;
+            display: flex;
+            border-radius: 6px;
+            overflow: hidden
+        }
+
+        #slice2dMode button {
+            height: 34px;
+            padding: 0 10px;
+            border: 0;
+            background: transparent;
+            color: inherit;
+            font: 12.5px var(--sans);
+            cursor: pointer;
+            opacity: .6
+        }
+
+        #slice2dMode button+button {
+            border-left: 1px solid rgba(255, 255, 255, .14)
+        }
+
+        #slice2dMode button[aria-pressed="true"] {
+            opacity: 1;
+            background: rgba(255, 255, 255, .14)
+        }
+
+        #slice2dMode {
+            display: none
+        }
+
+        @media (pointer:coarse) {
+            #slice2dMode {
+                display: flex
+            }
+        }
+
+        #slice2dReadout {
+            left: 12px;
+            bottom: 12px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font: 12px var(--mono);
+            line-height: 1.5
+        }
+
+        #slice2dReadout .dim {
+            opacity: .7
+        }
+
+        #slice2dReset {
+            bottom: 12px;
+            right: 12px;
+            height: 30px;
+            padding: 0 12px;
+            border-radius: 6px;
+            font: 12px var(--sans);
+            cursor: pointer
+        }
+
+        #slice2dReset:hover {
+            background: rgba(255, 255, 255, .12)
+        }
+
+        /* ---------- free-fly touch overlay ---------- */
+        #joyWrap {
+            left: calc(16px + env(safe-area-inset-left, 0px));
+            bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+            width: 116px;
+            height: 116px;
+            border-radius: 50%;
+            padding: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            touch-action: none
+        }
+
+        #app[data-mode="fly"][data-touch="1"] #joyWrap {
+            display: flex
+        }
+
+        #joyBase {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, .24);
+            background: rgba(255, 255, 255, .04)
+        }
+
+        #joyKnob {
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            left: 50%;
+            top: 50%;
+            margin: -24px 0 0 -24px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .3);
+            border: 1px solid rgba(255, 255, 255, .45);
+            transition: background .1s
+        }
+
+        #joyBase.active #joyKnob {
+            background: rgba(255, 255, 255, .5)
+        }
+
+        #flySpeedBox {
+            right: 12px;
+            bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px
+        }
+
+        #app[data-mode="fly"][data-touch="1"] #flySpeedBox {
+            display: flex
+        }
+
+        #flySpeedBox input[type=range] {
+            width: 110px
+        }
+
+        .flyLbl {
+            font: 12px var(--mono);
+            opacity: .85;
+            white-space: nowrap
         }
 
         #readout {
@@ -218,15 +511,21 @@
             backdrop-filter: blur(40px) saturate(1.6);
         }
 
+        #app[data-side="glass"] #panel input[type=text],
         #app[data-side="glass"] #panel input[type=number],
         #app[data-side="glass"] #panel select,
         #app[data-side="glass"] .btn,
+        #app[data-side="glass"] .param .x,
         #app[data-side="glass"] .seg button {
             background: color-mix(in srgb, var(--field) 55%, transparent)
         }
 
         #app[data-side="glass"] .seg button[aria-pressed="true"] {
             background: var(--accent)
+        }
+
+        #app[data-side="glass"] .param {
+            background: color-mix(in srgb, var(--field) 40%, transparent)
         }
 
         #app[data-side="glass"] .chips button,
@@ -395,12 +694,26 @@
             font-family: var(--mono)
         }
 
+        .msg {
+            min-height: 20px;
+            margin: 6px 0 0;
+            font-size: 12.5px;
+            color: var(--muted);
+            font-family: var(--mono);
+            word-break: break-word
+        }
+
+        .msg.err {
+            color: var(--err)
+        }
+
         .hint {
             margin: 8px 0 0;
             font-size: 12.5px;
             color: var(--muted)
         }
 
+        input[type=text],
         input[type=number],
         select {
             width: 100%;
@@ -413,12 +726,35 @@
             font: inherit;
         }
 
+        input.mono,
+        #ceq {
+            font-family: var(--mono);
+            font-size: 15px
+        }
+
         input:focus-visible,
         select:focus-visible,
         button:focus-visible,
         summary:focus-visible {
             outline: 2px solid var(--accent);
             outline-offset: 1px
+        }
+
+        .eqwrap {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .eqwrap .pre {
+            color: var(--muted);
+            font-size: 14px;
+            white-space: nowrap
+        }
+
+        #ceq {
+            height: 42px;
+            font-size: 16px
         }
 
         /* sliders */
@@ -566,6 +902,27 @@
             #help {
                 transition: none
             }
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 10px 0 14px
+        }
+
+        .chips button {
+            font: 12.5px var(--mono);
+            padding: 3px 8px;
+            border-radius: 5px;
+            border: 1px solid var(--line);
+            background: var(--chip);
+            color: var(--ink);
+            cursor: pointer
+        }
+
+        .chips button:hover {
+            border-color: var(--accent)
         }
 
         details {
@@ -897,14 +1254,6 @@
         }
 
         .pe-body input[type=text] {
-            width: 100%;
-            height: 36px;
-            padding: 0 10px;
-            border-radius: 6px;
-            border: 1px solid var(--line);
-            background: var(--field);
-            color: var(--ink);
-            font: inherit;
             margin-bottom: 12px
         }
 
@@ -949,7 +1298,6 @@
             width: 100%
         }
 
-        /* fwx close button, reused by the palette editor */
         .fwx {
             flex: none;
             width: 26px;
@@ -967,7 +1315,204 @@
             color: var(--ink)
         }
 
-        /* ---------- toast ---------- */
+        /* equation syntax highlighting */
+        :root {
+            --tok-num: #a15c00;
+            --tok-kw: #1d4ed8;
+            --tok-param: #7c3aed;
+            --tok-func: #0f766e;
+            --tok-op: #64748b;
+            --tok-punct: #94a3b8;
+            --tok-err: #b42318;
+        }
+
+        @media (prefers-color-scheme:dark) {
+            :root:not([data-theme="light"]) {
+                --tok-num: #e3a640;
+                --tok-kw: #8ea8ff;
+                --tok-param: #c9a6ff;
+                --tok-func: #5fd6bd;
+                --tok-op: #8e9bab;
+                --tok-punct: #5d6b79;
+                --tok-err: #ff8a80;
+            }
+        }
+
+        :root[data-theme="dark"] {
+            --tok-num: #e3a640;
+            --tok-kw: #8ea8ff;
+            --tok-param: #c9a6ff;
+            --tok-func: #5fd6bd;
+            --tok-op: #8e9bab;
+            --tok-punct: #5d6b79;
+            --tok-err: #ff8a80;
+        }
+
+        .eqbox {
+            position: relative;
+            flex: 1;
+            min-width: 0
+        }
+
+        .eqbox input.eqinput {
+            position: relative;
+            width: 100%;
+            color: transparent;
+            caret-color: var(--ink)
+        }
+
+        .eqhl {
+            position: absolute;
+            inset: 0;
+            padding: 0 10px;
+            display: flex;
+            align-items: center;
+            white-space: pre;
+            overflow: hidden;
+            pointer-events: none;
+            color: var(--ink)
+        }
+
+        #ceqhl {
+            height: 42px;
+            font-size: 16px
+        }
+
+        .tk-num {
+            color: var(--tok-num)
+        }
+
+        .tk-kw {
+            color: var(--tok-kw);
+            font-weight: 500
+        }
+
+        .tk-param {
+            color: var(--tok-param);
+            font-weight: 500
+        }
+
+        .tk-func {
+            color: var(--tok-func)
+        }
+
+        .tk-op {
+            color: var(--tok-op)
+        }
+
+        .tk-punct {
+            color: var(--tok-punct)
+        }
+
+        .tk-err {
+            color: var(--tok-err);
+            text-decoration: wavy underline;
+            text-decoration-color: var(--tok-err)
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px 12px;
+            margin: 8px 0 0;
+            font-size: 11.5px;
+            font-family: var(--mono)
+        }
+
+        .legend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px
+        }
+
+        .legend i {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            display: inline-block
+        }
+
+        /* modular parameters */
+        #paramList {
+            display: grid;
+            gap: 16px
+        }
+
+        .param {
+            padding: 12px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--field)
+        }
+
+        .param-top {
+            display: grid;
+            grid-template-columns: 40px 1fr auto;
+            gap: 10px;
+            align-items: center
+        }
+
+        .param-name {
+            width: 40px;
+            height: 36px;
+            padding: 0;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: lowercase
+        }
+
+        .param-name.bad {
+            border-color: var(--err);
+            color: var(--err)
+        }
+
+        .param .field {
+            margin-top: 0
+        }
+
+        .param-range {
+            margin-top: 10px
+        }
+
+        .param-range label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12.5px;
+            color: var(--muted)
+        }
+
+        .param-range input {
+            width: 100%;
+            height: 30px;
+            padding: 0 8px;
+            font-size: 12.5px
+        }
+
+        .param .msg {
+            min-height: 0;
+            margin-top: 6px
+        }
+
+        .param .x {
+            width: 36px;
+            height: 36px;
+            flex: none;
+            border-radius: 6px;
+            border: 1px solid var(--line);
+            background: var(--field);
+            color: var(--muted);
+            font: 16px/1 var(--sans);
+            cursor: pointer
+        }
+
+        .param .x:hover {
+            border-color: var(--err);
+            color: var(--err)
+        }
+
+        /* toast */
         #toast {
             left: calc((100% + var(--pl)) / 2);
             top: 56px;
@@ -989,7 +1534,7 @@
             transition: opacity .2s, transform .2s, visibility 0s
         }
 
-        /* ---------- saved views ---------- */
+        /* saved views */
         .marks {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -1158,7 +1703,7 @@
             font-weight: 500
         }
 
-        /* ---------- shortcuts ---------- */
+        /* shortcuts */
         .keys {
             display: grid;
             grid-template-columns: auto 1fr;
@@ -1189,7 +1734,7 @@
             box-shadow: 0 1px 0 var(--line)
         }
 
-        /* ---------- collapsible sections ---------- */
+        /* collapsible sections */
         .sec-h {
             display: flex;
             align-items: center;
@@ -1270,14 +1815,16 @@
         body[data-fractal="mandelbulb"] .only-mandelbulb,
         body[data-fractal="mandelbox"] .only-mandelbox,
         body[data-fractal="sierpinski"] .only-sierpinski,
-        body[data-fractal="menger"] .only-menger {
+        body[data-fractal="menger"] .only-menger,
+        body[data-fractal="custom"] .only-custom {
             display: block
         }
 
         .only-mandelbulb,
         .only-mandelbox,
         .only-sierpinski,
-        .only-menger {
+        .only-menger,
+        .only-custom {
             display: none
         }
 
@@ -1285,6 +1832,53 @@
             #app {
                 --pl: 12px;
                 --pb: calc(var(--sh) * var(--sv) + 12px)
+            }
+
+            #pane3d {
+                right: 0;
+                bottom: calc(100% * var(--sliceGap))
+            }
+
+            #pane2d {
+                left: 0;
+                top: calc(100% * (1 - var(--sliceGap)))
+            }
+
+            #sliceGrip {
+                left: 0;
+                right: 0;
+                top: calc(100% * (1 - var(--sliceGap)));
+                bottom: auto;
+                width: auto;
+                height: 14px;
+                margin-left: 0;
+                margin-top: -7px;
+                cursor: ns-resize
+            }
+
+            #sliceGrip::before {
+                top: 6px;
+                bottom: auto;
+                left: 0;
+                right: 0;
+                width: auto;
+                height: 2px
+            }
+
+            #sliceGrip::after {
+                left: 50%;
+                top: 2px;
+                width: 46px;
+                height: 10px;
+                margin: 0 0 0 -23px;
+                background: linear-gradient(rgba(255, 255, 255, .6), rgba(255, 255, 255, .6)) center/18px 2px no-repeat, rgba(20, 24, 30, .85)
+            }
+
+            #sliceGrip:hover::after,
+            #sliceGrip.drag::after {
+                width: 64px;
+                height: 10px;
+                margin: 0 0 0 -32px
             }
 
             #side {
@@ -1376,19 +1970,50 @@
     <div id="app" data-side="solid">
 
         <main id="stage">
-            <canvas id="gl" aria-label="3d fractal view. drag to orbit, scroll or pinch to zoom."></canvas>
-            <button id="toggle" class="ov" type="button" aria-expanded="true" aria-controls="side"
-                title="hide controls (h)">hide controls</button>
-            <div id="zoombtns" class="ov" role="group" aria-label="zoom">
-                <button id="zin" type="button" aria-label="zoom in">+</button>
-                <button id="zout" type="button" aria-label="zoom out">−</button>
+            <div id="pane3d">
+                <canvas id="gl" aria-label="3d fractal view. drag to orbit, scroll or pinch to zoom."></canvas>
+                <button id="toggle" class="ov" type="button" aria-expanded="true" aria-controls="side"
+                    title="hide controls (h)">hide controls</button>
+                <div id="zoombtns" class="ov" role="group" aria-label="zoom">
+                    <button id="zin" type="button" aria-label="zoom in">+</button>
+                    <button id="zout" type="button" aria-label="zoom out">−</button>
+                </div>
+                <div id="help" class="ov">drag to orbit. scroll or pinch to zoom.</div>
+                <div id="joyWrap" class="ov" aria-hidden="true">
+                    <div id="joyBase">
+                        <div id="joyKnob"></div>
+                    </div>
+                </div>
+                <div id="flySpeedBox" class="ov" aria-hidden="true">
+                    <span class="flyLbl">speed</span>
+                    <input type="range" id="flySpeedTouch" min="0" max="1" step="0.001" value="0.4"
+                        aria-label="flight speed">
+                </div>
+                <div id="toast" class="ov" role="status" aria-live="polite"></div>
+                <div id="readout" class="ov" aria-live="off"></div>
+                <div id="nogl">
+                    <div>this page needs webgl 2, which your browser or device does not provide.<br>try a recent version
+                        of chrome, edge, firefox or safari.</div>
+                </div>
             </div>
-            <div id="help" class="ov">drag to orbit. scroll or pinch to zoom.</div>
-            <div id="toast" class="ov" role="status" aria-live="polite"></div>
-            <div id="readout" class="ov" aria-live="off"></div>
-            <div id="nogl">
-                <div>this page needs webgl 2, which your browser or device does not provide.<br>try a recent version of
-                    chrome, edge, firefox or safari.</div>
+
+            <div id="sliceGrip" role="separator" tabindex="0" aria-orientation="vertical"
+                aria-label="resize the 2d slice pane" title="drag to resize"></div>
+
+            <div id="pane2d">
+                <canvas id="gl2"
+                    aria-label="2d slice view of the fractal. drag to pan, scroll or pinch to zoom."></canvas>
+                <div id="slice2dMode" class="ov" role="group" aria-label="drag mode">
+                    <button id="slice2dPan" type="button" aria-pressed="true">pan</button>
+                    <button id="slice2dRotate" type="button" aria-pressed="false">rotate</button>
+                </div>
+                <div id="slice2dZoom" class="ov" role="group" aria-label="slice zoom">
+                    <button id="slice2dZin" type="button" aria-label="zoom in">+</button>
+                    <button id="slice2dZout" type="button" aria-label="zoom out">−</button>
+                </div>
+                <div id="slice2dHelp" class="ov">drag to pan · scroll to zoom · shift-drag to rotate</div>
+                <div id="slice2dReadout" class="ov" aria-live="off"></div>
+                <button id="slice2dReset" class="ov" type="button">reset slice</button>
             </div>
 
             <div id="peBackdrop" aria-hidden="true"></div>
@@ -1433,8 +2058,9 @@
                             <summary>what is this?</summary>
                             <div class="doc">
                                 <p>each shape below is a distance-estimated surface, sphere-traced from the camera every
-                                    frame. mandelbulb and mandelbox are escape-time formulas generalized to 3d;
-                                    sierpinski and menger are exact folded ifs constructions.</p>
+                                    frame. mandelbulb and mandelbox are escape-time formulas generalized to 3d,
+                                    sierpinski and menger are exact folded ifs constructions, and custom lets you write
+                                    your own.</p>
                             </div>
                         </details>
                         <label class="lbl" for="fractalType" style="margin-top:10px">shape</label>
@@ -1443,6 +2069,7 @@
                             <option value="mandelbox">mandelbox</option>
                             <option value="sierpinski">sierpinski tetrahedron</option>
                             <option value="menger">menger sponge</option>
+                            <option value="custom">custom equation</option>
                         </select>
                     </section>
 
@@ -1456,7 +2083,7 @@
                         <div class="field">
                             <div class="head"><label class="lbl" for="mbIter" style="margin:0">iterations</label><span
                                     id="mbIterV">10</span></div>
-                            <input id="mbIter" type="range" min="3" max="24" step="1" value="10">
+                            <input id="mbIter" type="range" min="3" max="48" step="1" value="10">
                         </div>
                         <div class="field">
                             <div class="head"><label class="lbl" for="mbBail" style="margin:0">bailout</label><span
@@ -1477,7 +2104,7 @@
                         <div class="field">
                             <div class="head"><label class="lbl" for="boxIter" style="margin:0">iterations</label><span
                                     id="boxIterV">12</span></div>
-                            <input id="boxIter" type="range" min="4" max="24" step="1" value="12">
+                            <input id="boxIter" type="range" min="4" max="48" step="1" value="12">
                         </div>
                         <p class="hint">a box-fold and a sphere-fold, applied over and over. scale near 3 gives the
                             densest, most cavernous structure.</p>
@@ -1488,7 +2115,7 @@
                         <div class="field" style="margin-top:0">
                             <div class="head"><label class="lbl" for="sierpIter"
                                     style="margin:0">iterations</label><span id="sierpIterV">10</span></div>
-                            <input id="sierpIter" type="range" min="2" max="18" step="1" value="10">
+                            <input id="sierpIter" type="range" min="2" max="40" step="1" value="10">
                         </div>
                         <p class="hint">at each step, space is pulled toward whichever of four corners is closest, then
                             scaled up — the 3d cousin of the sierpinski triangle.</p>
@@ -1499,10 +2126,89 @@
                         <div class="field" style="margin-top:0">
                             <div class="head"><label class="lbl" for="mengerIter"
                                     style="margin:0">iterations</label><span id="mengerIterV">4</span></div>
-                            <input id="mengerIter" type="range" min="1" max="7" step="1" value="4">
+                            <input id="mengerIter" type="range" min="1" max="9" step="1" value="4">
                         </div>
                         <p class="hint">a cube with a cross-shaped hole punched through it, repeated at every remaining
                             sub-cube. each extra iteration triples the detail, so it adds up fast.</p>
+                    </section>
+
+                    <section class="only-custom">
+                        <h2>custom equation</h2>
+                        <details class="info">
+                            <summary>what is this?</summary>
+                            <div class="doc">
+                                <p>write your own iteration step, applied to an ordinary 3d point z, starting from z =
+                                    position. it's compiled to a gpu shader and drawn live, the same way the 2d engine
+                                    compiles complex equations — but here every operator works component by component on
+                                    x, y and z, and the distance to the surface is estimated numerically rather than
+                                    analytically, so it's an approximation: some formulas may need the precision or
+                                    iteration count tuned to look their best.</p>
+                            </div>
+                        </details>
+                        <label class="lbl" for="ceq">applied at every step</label>
+                        <div class="eqwrap"><span class="pre mono">f(z) =</span>
+                            <div class="eqbox">
+                                <input id="ceq" class="eqinput mono" type="text" spellcheck="false" autocomplete="off"
+                                    autocapitalize="off" autocorrect="off" aria-describedby="ceqmsg">
+                                <div id="ceqhl" class="eqhl mono" aria-hidden="true"></div>
+                            </div>
+                        </div>
+                        <div id="ceqmsg" class="msg" role="status" aria-live="polite"></div>
+                        <div class="chips" id="cchips" aria-label="insert into equation"></div>
+                        <div class="legend" id="ceqlegend"></div>
+                        <div class="field">
+                            <div class="head"><label class="lbl" for="cIter" style="margin:0">iterations</label><span
+                                    id="cIterV">10</span></div>
+                            <input id="cIter" type="range" min="3" max="60" step="1" value="10">
+                        </div>
+                        <div class="field">
+                            <div class="head"><label class="lbl" for="cBail" style="margin:0">bailout</label><span
+                                    id="cBailV">30</span></div>
+                            <input id="cBail" type="range" min="1" max="80" step="1" value="30">
+                        </div>
+                        <div class="field">
+                            <div class="head"><label class="lbl" for="cStep" style="margin:0">step scale</label><span
+                                    id="cStepV">0.60</span></div>
+                            <input id="cStep" type="range" min="0.15" max="1" step="0.05" value="0.6">
+                        </div>
+                        <p class="hint">custom formulas only get an approximate distance estimate, which can
+                            occasionally overshoot and tear the surface. lowering step scale takes smaller, safer steps
+                            — slower to render, but cleaner. if you see torn or noisy patches, especially when zoomed
+                            out, try turning this down.</p>
+                        <details>
+                            <summary>syntax reference</summary>
+                            <div class="doc">
+                                <p>each step repeats <code>z ← f(z)</code>, starting from <code>z = position</code>.
+                                    everything is an ordinary 3d vector.</p>
+                                <p><b>names:</b> <code>z</code> current vector, <code>c</code> the fixed position,
+                                    <code>pi</code>, <code>e</code>, plus any parameters you add below
+                                </p>
+                                <p><b>operators:</b> <code>+ − * / ^</code>, all applied component by component, plus
+                                    implicit multiplication (<code>2z</code>, <code>a(z+c)</code>)</p>
+                                <p><b>functions:</b> <code>sin cos tan sinh cosh tanh exp log sqrt abs</code>
+                                    (component-wise), <code>sqr</code> (z*z), <code>recip</code> (1/z), <code>mag</code>
+                                    (length, broadcast to all three axes), <code>boxfold</code> and
+                                    <code>spherefold</code> (the two mandelbox-style folds)
+                                </p>
+                                <p><b>try:</b> <code>boxfold(z)*a + c</code>, <code>abs(z)^a + c</code>,
+                                    <code>sin(z)*a + c</code>, <code>spherefold(boxfold(z))*a + c</code>
+                                </p>
+                            </div>
+                        </details>
+                    </section>
+
+                    <section class="only-custom">
+                        <h2>parameters</h2>
+                        <details class="info">
+                            <summary>what is this?</summary>
+                            <div class="doc">
+                                <p>extra named numbers you can use inside the equation above. give each one a
+                                    single-letter name and a range it can be dragged across.</p>
+                            </div>
+                        </details>
+                        <div id="paramList"></div>
+                        <div class="btnrow"><button class="btn" id="addParam" type="button">add parameter</button><span
+                                class="note" id="paramCount"></span></div>
                     </section>
 
                     <section>
@@ -1518,7 +2224,7 @@
                         <div class="field" style="margin-top:0">
                             <div class="head"><label class="lbl" for="maxSteps" style="margin:0">max steps</label><span
                                     id="maxStepsV">110</span></div>
-                            <input id="maxSteps" type="range" min="40" max="300" step="5" value="110">
+                            <input id="maxSteps" type="range" min="40" max="800" step="10" value="110">
                         </div>
                         <div class="field">
                             <div class="head"><label class="lbl" for="maxDist" style="margin:0">max
@@ -1528,7 +2234,8 @@
                         <div class="field">
                             <div class="head"><label class="lbl" for="precision" style="margin:0">precision</label><span
                                     id="precisionV">0.0008</span></div>
-                            <input id="precision" type="range" min="0.0002" max="0.003" step="0.0001" value="0.0008">
+                            <input id="precision" type="range" min="0.000005" max="0.003" step="0.000005"
+                                value="0.0008">
                         </div>
                         <div class="field">
                             <div class="head"><label class="lbl" for="fog" style="margin:0">fog</label><span
@@ -1544,29 +2251,119 @@
                     </section>
 
                     <section>
+                        <h2>performance</h2>
+                        <details class="info">
+                            <summary>what is this?</summary>
+                            <div class="doc">
+                                <p>presets and individual levers for trading detail against speed. lower the render
+                                    resolution or pixel density on slower devices, or turn off the automatic quality
+                                    drop during interaction if you'd rather keep it steady.</p>
+                            </div>
+                        </details>
+                        <div class="seg" role="group" aria-label="quality preset"
+                            style="grid-template-columns:1fr 1fr 1fr">
+                            <button id="presetPerf" type="button" aria-pressed="false">performance</button>
+                            <button id="presetBal" type="button" aria-pressed="true">balanced</button>
+                            <button id="presetQual" type="button" aria-pressed="false">quality</button>
+                        </div>
+                        <div class="field" style="margin-top:14px">
+                            <div class="head"><label class="lbl" for="resScale" style="margin:0">render
+                                    resolution</label><span id="resScaleV">100%</span></div>
+                            <input id="resScale" type="range" min="0.4" max="1.5" step="0.05" value="1">
+                        </div>
+                        <label class="check" style="margin-top:12px"><input class="sw" type="checkbox" id="dynQuality"
+                                checked> lower quality while moving</label>
+                        <label class="check"><input class="sw" type="checkbox" id="dprCap"> cap pixel density at
+                            1×</label>
+                        <label class="check"><input class="sw" type="checkbox" id="showFps"> show fps</label>
+                    </section>
+
+                    <section>
                         <h2>camera</h2>
                         <details class="info">
                             <summary>what is this?</summary>
                             <div class="doc">
-                                <p>the camera always orbits the origin. drag to rotate, scroll or pinch to zoom, or turn
-                                    on auto-rotate to let it spin on its own.</p>
+                                <p id="camDoc">the camera orbits the origin. drag to rotate, scroll or pinch to zoom, or
+                                    turn on auto-rotate to let it spin on its own. switch to free fly to pilot the
+                                    camera by hand — wasd (or a joystick on touch) to move, drag to look around, and
+                                    scroll or the speed slider to change how fast you fly.</p>
                             </div>
                         </details>
+                        <div class="seg" role="group" aria-label="camera mode" style="margin-bottom:14px">
+                            <button id="modeOrbit" type="button" aria-pressed="true">orbit</button>
+                            <button id="modeFly" type="button" aria-pressed="false">free fly</button>
+                        </div>
                         <div class="field" style="margin-top:0">
                             <div class="head"><label class="lbl" for="fov" style="margin:0">field of view</label><span
                                     id="fovV">42°</span></div>
                             <input id="fov" type="range" min="20" max="90" step="1" value="42">
                         </div>
-                        <div class="btnrow" style="margin-top:12px">
-                            <label class="check" style="margin-top:0"><input class="sw" type="checkbox" id="autoRotate">
-                                auto-rotate</label>
+                        <div id="orbitOnlyFields">
+                            <div class="btnrow" style="margin-top:12px">
+                                <label class="check" style="margin-top:0"><input class="sw" type="checkbox"
+                                        id="autoRotate"> auto-rotate</label>
+                            </div>
+                            <div class="field" id="autoSpeedField">
+                                <div class="head"><label class="lbl" for="autoSpeed" style="margin:0">rotate
+                                        speed</label><span id="autoSpeedV">0.12</span></div>
+                                <input id="autoSpeed" type="range" min="0.02" max="0.6" step="0.01" value="0.12">
+                            </div>
                         </div>
-                        <div class="field" id="autoSpeedField">
-                            <div class="head"><label class="lbl" for="autoSpeed" style="margin:0">rotate
-                                    speed</label><span id="autoSpeedV">0.12</span></div>
-                            <input id="autoSpeed" type="range" min="0.02" max="0.6" step="0.01" value="0.12">
+                        <div class="field" id="flySpeedField" style="display:none">
+                            <div class="head"><label class="lbl" for="flySpeed" style="margin:0">flight
+                                    speed</label><span id="flySpeedV">1.0</span></div>
+                            <input id="flySpeed" type="range" min="0" max="1" step="0.001" value="0.4">
                         </div>
                         <div style="margin-top:16px"><button class="btn" id="reset" type="button">reset view</button>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>2d slice</h2>
+                        <details class="info">
+                            <summary>what is this?</summary>
+                            <div class="doc">
+                                <p>cuts the fractal with a flat plane and draws the intersection as a flat 2d image,
+                                    brightened wherever the surface passes close to that plane. the view smoothly splits
+                                    so the slice appears beside the 3d view, and the cutting plane itself is drawn in
+                                    the 3d view so you can see exactly where it sits. drag the 2d view to move the
+                                    plane, shift-drag (or the rotate button on touch) to spin it, scroll or pinch to
+                                    zoom, and drag the divider between the two views to resize them.</p>
+                            </div>
+                        </details>
+                        <label class="check" style="margin-top:0"><input class="sw" type="checkbox" id="sliceOn"> show
+                            2d slice</label>
+                        <div id="sliceFields" style="display:none">
+                            <div class="field">
+                                <div class="head"><label class="lbl" for="sliceYaw" style="margin:0">plane
+                                        yaw</label><span id="sliceYawV">0°</span></div>
+                                <input id="sliceYaw" type="range" min="-180" max="180" step="1" value="0">
+                            </div>
+                            <div class="field">
+                                <div class="head"><label class="lbl" for="slicePitch" style="margin:0">plane
+                                        pitch</label><span id="slicePitchV">0°</span></div>
+                                <input id="slicePitch" type="range" min="-89" max="89" step="1" value="0">
+                            </div>
+                            <div class="field">
+                                <div class="head"><label class="lbl" for="sliceRoll" style="margin:0">plane
+                                        roll</label><span id="sliceRollV">0°</span></div>
+                                <input id="sliceRoll" type="range" min="-180" max="180" step="1" value="0">
+                            </div>
+                            <div class="field">
+                                <div class="head"><label class="lbl" for="sliceDepth" style="margin:0">depth (along
+                                        normal)</label><span id="sliceDepthV">0.00</span></div>
+                                <input id="sliceDepth" type="range" min="-4" max="4" step="0.01" value="0">
+                            </div>
+                            <div class="field">
+                                <div class="head"><label class="lbl" for="sliceZoom" style="margin:0">zoom</label><span
+                                        id="sliceZoomV">×1.0</span></div>
+                                <input id="sliceZoom" type="range" min="-3" max="4" step="0.02" value="0">
+                            </div>
+                            <div class="btnrow">
+                                <button class="btn" id="sliceResetBtn" type="button">reset slice</button>
+                                <label class="check" style="margin:0"><input class="sw" type="checkbox"
+                                        id="sliceShowIn3d" checked> show plane in 3d</label>
+                            </div>
                         </div>
                     </section>
 
@@ -1667,7 +2464,11 @@
                             <dt><kbd>+</kbd><kbd>−</kbd></dt>
                             <dd>zoom in and out</dd>
                             <dt><kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd></dt>
-                            <dd>orbit</dd>
+                            <dd>orbit / look around</dd>
+                            <dt><kbd>w</kbd><kbd>a</kbd><kbd>s</kbd><kbd>d</kbd></dt>
+                            <dd>fly (free-fly mode only)</dd>
+                            <dt><kbd>f</kbd></dt>
+                            <dd>toggle orbit / free fly</dd>
                             <dt><kbd>r</kbd></dt>
                             <dd>reset the view</dd>
                             <dt><kbd>p</kbd></dt>
@@ -1725,7 +2526,168 @@
             const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
             /* =====================================================================
-               1. palettes (identical cosine-gradient system to the 2d engine)
+               1. custom-equation parser & codegen (generic infix parser, 3d/vec3 target)
+               ===================================================================== */
+            const FUNCS3 = {
+                sin: 'sin', cos: 'cos', tan: 'tan', sinh: 'sinh', cosh: 'cosh', tanh: 'tanh',
+                exp: 'exp', log: 'log', ln: 'log', sqrt: 'sqrt', abs: 'abs',
+                sqr: 'vsqr', recip: 'vrecip', mag: 'vmag', boxfold: 'vboxfold', spherefold: 'vspherefold'
+            };
+            const RESERVED = new Set(['z', 'c', 'e']);
+            const MAX_PARAMS = 10;
+
+            function tokenize(src) {
+                src = src.replace(/[−–]/g, '-').replace(/[×·]/g, '*').replace(/π/g, 'pi')
+                    .replace(/²/g, '^2').replace(/³/g, '^3').replace(/\*\*/g, '^');
+                const toks = []; let i = 0;
+                while (i < src.length) {
+                    const ch = src[i];
+                    if (/\s/.test(ch)) { i++; continue; }
+                    const rest = src.slice(i); let m;
+                    if ((m = /^(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?/.exec(rest))) { toks.push({ t: 'num', v: parseFloat(m[0]) }); i += m[0].length; continue; }
+                    if ((m = /^[A-Za-z_]\w*/.exec(rest))) { toks.push({ t: 'id', v: m[0].toLowerCase() }); i += m[0].length; continue; }
+                    if ('+-*/^(),'.includes(ch)) { toks.push({ t: 'op', v: ch }); i++; continue; }
+                    throw new Error('unexpected character "' + ch + '".');
+                }
+                return toks;
+            }
+
+            function parseEq(src, allowed) {
+                const toks = tokenize(src);
+                if (!toks.length) throw new Error('the expression is empty.');
+                let p = 0;
+                const isOp = v => toks[p] && toks[p].t === 'op' && toks[p].v === v;
+                const startsPrimary = () => { const k = toks[p]; return k && (k.t === 'num' || k.t === 'id' || (k.t === 'op' && k.v === '(')); };
+
+                function expr() {
+                    let n = term();
+                    while (isOp('+') || isOp('-')) { const op = toks[p++].v; n = { t: 'bin', op, l: n, r: term() }; }
+                    return n;
+                }
+                function term() {
+                    let n = unary();
+                    for (; ;) {
+                        if (isOp('*') || isOp('/')) { const op = toks[p++].v; n = { t: 'bin', op, l: n, r: unary() }; }
+                        else if (startsPrimary()) n = { t: 'bin', op: '*', l: n, r: unary() };
+                        else break;
+                    }
+                    return n;
+                }
+                function unary() {
+                    if (isOp('-')) { p++; return { t: 'neg', x: unary() }; }
+                    if (isOp('+')) { p++; return unary(); }
+                    return power();
+                }
+                function power() {
+                    const b = primary();
+                    if (isOp('^')) { p++; return { t: 'bin', op: '^', l: b, r: unary() }; }
+                    return b;
+                }
+                function primary() {
+                    const k = toks[p++];
+                    if (!k) throw new Error('the expression ends too early.');
+                    if (k.t === 'num') return { t: 'num', v: k.v };
+                    if (k.t === 'id') {
+                        if (FUNCS3[k.v]) {
+                            if (!isOp('(')) throw new Error(k.v + ' needs brackets, like ' + k.v + '(z).');
+                            p++;
+                            const arg = expr();
+                            if (isOp(',')) throw new Error(k.v + ' takes one argument.');
+                            if (!isOp(')')) throw new Error('a closing bracket is missing after ' + k.v + '(.');
+                            p++;
+                            return { t: 'call', f: k.v, x: arg };
+                        }
+                        if (!allowed.includes(k.v)) throw new Error('unknown name "' + k.v + '". you can use: ' + allowed.join(', ') + '.');
+                        return { t: 'var', n: k.v };
+                    }
+                    if (k.v === '(') {
+                        const n = expr();
+                        if (!isOp(')')) throw new Error('a closing bracket is missing.');
+                        p++; return n;
+                    }
+                    throw new Error('unexpected "' + k.v + '".');
+                }
+                const ast = expr();
+                if (p < toks.length) throw new Error('unexpected "' + toks[p].v + '".');
+                return ast;
+            }
+
+            function fnum(v) {
+                if (!isFinite(v)) throw new Error('a number in the expression is out of range.');
+                let s = String(v);
+                if (!/[.eE]/.test(s)) s += '.0';
+                return s;
+            }
+
+            let GEN_PIDX = {};
+            function genEq(n) {
+                switch (n.t) {
+                    case 'num': return 'vec3(' + fnum(n.v) + ')';
+                    case 'var': {
+                        if (n.n === 'z') return 'z';
+                        if (n.n === 'c') return 'c';
+                        if (n.n === 'pi') return 'vec3(3.14159265359)';
+                        if (n.n === 'e') return 'vec3(2.71828182846)';
+                        const idx = GEN_PIDX[n.n];
+                        return 'vec3(uParam' + idx + ')';
+                    }
+                    case 'neg': return '(-' + genEq(n.x) + ')';
+                    case 'call': return FUNCS3[n.f] + '(' + genEq(n.x) + ')';
+                    case 'bin': {
+                        const L = genEq(n.l), R = genEq(n.r);
+                        if (n.op === '+') return '(' + L + '+' + R + ')';
+                        if (n.op === '-') return '(' + L + '-' + R + ')';
+                        if (n.op === '*') return '(' + L + '*' + R + ')';
+                        if (n.op === '/') return '(' + L + '/' + R + ')';
+                        return 'vpow(' + L + ',' + R + ')';
+                    }
+                }
+                throw new Error('could not read the expression.');
+            }
+
+            /* ---------- lenient lexer + colorer for the equation input ---------- */
+            function paramNamesLower() { return new Set(S.params.map(p => p.name)); }
+            function lexHL(src) {
+                const toks = []; let i = 0; const n = src.length; const pset = paramNamesLower();
+                while (i < n) {
+                    const ch = src[i];
+                    if (/\s/.test(ch)) { toks.push({ s: i, e: i + 1, k: 'ws' }); i++; continue; }
+                    if ('+-−–*×·/^'.includes(ch)) { toks.push({ s: i, e: i + 1, k: 'op' }); i++; continue; }
+                    if ('(),'.includes(ch)) { toks.push({ s: i, e: i + 1, k: 'punct' }); i++; continue; }
+                    if (ch === 'π') { toks.push({ s: i, e: i + 1, k: 'kw' }); i++; continue; }
+                    if (ch === '²' || ch === '³') { toks.push({ s: i, e: i + 1, k: 'op' }); i++; continue; }
+                    const rest = src.slice(i); let m;
+                    if ((m = /^(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?/.exec(rest))) { toks.push({ s: i, e: i + m[0].length, k: 'num' }); i += m[0].length; continue; }
+                    if ((m = /^[A-Za-z_]\w*/.exec(rest))) {
+                        const w = m[0].toLowerCase(); let k = 'err';
+                        if (FUNCS3[w]) k = 'func';
+                        else if (w === 'z' || w === 'c' || w === 'pi' || w === 'e') k = 'kw';
+                        else if (pset.has(w)) k = 'param';
+                        toks.push({ s: i, e: i + m[0].length, k }); i += m[0].length; continue;
+                    }
+                    toks.push({ s: i, e: i + 1, k: 'err' }); i++;
+                }
+                return toks;
+            }
+            function highlightHTML(src) {
+                const toks = lexHL(src);
+                let out = '';
+                for (const t of toks) {
+                    const chunk = escapeHtml(src.slice(t.s, t.e));
+                    out += '<span class="tk-' + t.k + '">' + chunk + '</span>';
+                }
+                return out;
+            }
+            function attachHighlighter(input, overlay) {
+                const sync = () => { overlay.innerHTML = highlightHTML(input.value) || '&nbsp;'; overlay.scrollLeft = input.scrollLeft; };
+                input.addEventListener('input', sync);
+                input.addEventListener('scroll', () => { overlay.scrollLeft = input.scrollLeft; });
+                sync();
+                return sync;
+            }
+
+            /* =====================================================================
+               2. palettes (identical cosine-gradient system to the 2d engine)
                ===================================================================== */
             const PALETTES = [
                 { id: 'spectrum', name: 'spectrum', group: 'classic', a: [.5, .5, .5], b: [.5, .5, .5], c: [1, 1, 1], d: [0, .33, .67] },
@@ -1771,16 +2733,22 @@
             }
 
             /* =====================================================================
-               2. state & per-fractal defaults
+               3. state & per-fractal defaults
                ===================================================================== */
             const DEFAULTS = {
                 mandelbulb: { dist: 3.2, yaw: 0.8, pitch: 0.45 },
                 mandelbox: { dist: 6.2, yaw: 0.9, pitch: 0.5 },
                 sierpinski: { dist: 4.0, yaw: 0.8, pitch: 0.5 },
-                menger: { dist: 3.4, yaw: 0.8, pitch: 0.5 }
+                menger: { dist: 3.4, yaw: 0.8, pitch: 0.5 },
+                custom: { dist: 3.6, yaw: 0.8, pitch: 0.5 }
             };
             const mq = window.matchMedia('(max-width:760px)');
             const rm = window.matchMedia('(prefers-reduced-motion:reduce)');
+            const touchUI = window.matchMedia('(pointer:coarse)').matches;
+            const SPEED_MIN = 0.08, SPEED_MAX = 60;
+            const sliderToSpeed = v => SPEED_MIN * Math.pow(SPEED_MAX / SPEED_MIN, clamp(v, 0, 1));
+            const speedToSlider = s => Math.log(clamp(s, SPEED_MIN, SPEED_MAX) / SPEED_MIN) / Math.log(SPEED_MAX / SPEED_MIN);
+            const wrapAngle = a => a - Math.PI * 2 * Math.floor((a + Math.PI) / (Math.PI * 2));
 
             const S = {
                 fractal: 'mandelbulb',
@@ -1788,53 +2756,100 @@
                 box: { scale: 2.5, iter: 12 },
                 sierp: { iter: 10 },
                 menger: { iter: 4 },
+                custom: { eq: 'boxfold(z)*a + c', iter: 10, bailout: 30, stepScale: 0.6 },
+                params: [{ name: 'a', value: 2.3, min: 0.5, max: 3.5 }],
                 maxSteps: 110, maxDist: 40, precision: 0.0008, fog: 0.05,
                 ao: true, shadows: true, spec: true,
+                perf: { resScale: 1, dynQuality: true, dprCap1: false, showFps: false },
                 cam: { yaw: DEFAULTS.mandelbulb.yaw, pitch: DEFAULTS.mandelbulb.pitch, dist: DEFAULTS.mandelbulb.dist, fov: 42 },
+                mode: 'orbit',
+                fly: { pos: [0, 0, DEFAULTS.mandelbulb.dist], yaw: 0, pitch: 0, speed: 1.5 },
                 autoRotate: false, autoSpeed: 0.12,
                 light: { az: -35, el: 52, ambient: 0.22 },
                 palette: 'spectrum', customPalettes: [], density: 1, offset: 0, cycle: false, phase: 0,
                 side: 'solid',
-                sw: 400, sh: Math.round(window.innerHeight * 0.5)
+                sw: 400, sh: Math.round(window.innerHeight * 0.5),
+                slice: { on: false, yaw: 0, pitch: 0, roll: 0, depth: 0, panU: 0, panV: 0, zoomLog: 0, split: 0.5, show3d: true, dragMode: 'pan' }
             };
 
             /* =====================================================================
-               3. webgl: a single static shader, all four fractals selected by uniform
+               4. webgl: shader template, rebuilt whenever the custom equation changes
                ===================================================================== */
             const app = $('#app'), side = $('#side'), stage = $('#stage'), canvas = $('#gl');
+            const pane3d = $('#pane3d'), pane2d = $('#pane2d'), canvas2 = $('#gl2'), sliceGrip = $('#sliceGrip');
+            let sideVis = 1;
             const gl = canvas.getContext('webgl2', { antialias: true, alpha: false, powerPreference: 'high-performance' });
             if (!gl) $('#nogl').style.display = 'flex';
+            const gl2 = canvas2.getContext('webgl2', { antialias: true, alpha: false, powerPreference: 'high-performance' });
 
             const VERT = '#version 300 es\nvoid main(){vec2 p=vec2(float((gl_VertexID<<1)&2),float(gl_VertexID&2));gl_Position=vec4(p*2.0-1.0,0.0,1.0);}';
 
-            const FRAG = `#version 300 es
+            const FRAG_HEAD = `#version 300 es
 precision highp float;
 precision highp int;
-uniform vec2 uRes;
+uniform vec2 uRes, uShift;
 uniform vec3 uRO, uFwd, uRight, uUp;
 uniform float uFovScale;
 uniform int uFractal;
 uniform float uPower; uniform int uMBIter; uniform float uBailout;
 uniform float uBoxScale; uniform int uBoxIter;
 uniform int uIFSIter;
+uniform int uCustomIter; uniform float uCustomBailout; uniform float uCustomStepScale;
 uniform int uMaxSteps; uniform float uMaxDist; uniform float uEpsilon;
 uniform int uAO; uniform int uShadows; uniform float uFog;
 uniform vec3 uLightDir; uniform float uAmbient; uniform int uSpec;
 uniform vec3 uPa, uPb, uPc, uPd;
 uniform float uDensity, uOffset;
+uniform int uSliceOn;
+uniform vec3 uSliceOrigin, uSliceRight, uSliceUp, uSliceNormal;
+uniform vec2 uSliceExtent;
 out vec4 outColor;
 
 vec3 pal(float t){ return uPa + uPb*cos(6.28318530718*(uPc*t+uPd)); }
+`;
 
+            /* head for the 2d slice program: only the fractal-shape and palette uniforms, none of the
+               camera / raymarch-specific ones the 3d program needs. */
+            const FRAG_HEAD2 = `#version 300 es
+precision highp float;
+precision highp int;
+uniform vec2 uRes;
+uniform int uFractal;
+uniform float uPower; uniform int uMBIter; uniform float uBailout;
+uniform float uBoxScale; uniform int uBoxIter;
+uniform int uIFSIter;
+uniform int uCustomIter; uniform float uCustomBailout; uniform float uCustomStepScale;
+uniform vec3 uPa, uPb, uPc, uPd;
+uniform float uDensity, uOffset;
+uniform vec3 uSliceOrigin, uSliceRight, uSliceUp;
+uniform float uSliceScale, uSliceGlow;
+out vec4 outColor;
+
+vec3 pal(float t){ return uPa + uPb*cos(6.28318530718*(uPc*t+uPd)); }
+`;
+
+            const FRAG_HELPERS = `
 float sdBox(vec3 p, vec3 b){
   vec3 q = abs(p) - b;
   return length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0);
 }
+vec3 vsqr(vec3 a){ return a*a; }
+vec3 vrecip(vec3 a){ return 1.0/a; }
+vec3 vmag(vec3 a){ return vec3(length(a)); }
+vec3 vboxfold(vec3 a){ return clamp(a,-1.0,1.0)*2.0-a; }
+vec3 vspherefold(vec3 a){
+  float r2 = dot(a,a);
+  float t = r2 < 0.25 ? 4.0 : (r2 < 1.0 ? 1.0/max(r2,1e-6) : 1.0);
+  return a*t;
+}
+vec3 vpow(vec3 a, vec3 b){ return sign(a)*pow(abs(a)+1e-9, b); }
+`;
 
+            const FRAG_MAPS = `
 vec2 mapMandelbulb(vec3 pos){
   vec3 z = pos;
   float dr = 1.0, r = 0.0, trap = 1e5;
-  for (int i = 0; i < 200; i++){
+  for (int i = 0; i < 320; i++){
     if (i >= uMBIter) break;
     r = length(z);
     trap = min(trap, r);
@@ -1853,7 +2868,7 @@ vec2 mapMandelbox(vec3 pos){
   vec3 z = pos;
   float dr = 1.0, trap = 1e5;
   const float minR2 = 0.25, fixedR2 = 1.0;
-  for (int i = 0; i < 200; i++){
+  for (int i = 0; i < 320; i++){
     if (i >= uBoxIter) break;
     z = clamp(z, -1.0, 1.0) * 2.0 - z;
     float r2 = dot(z, z);
@@ -1872,7 +2887,7 @@ vec2 mapSierpinski(vec3 pos){
   const float scale = 2.0;
   float trap = 1e5;
   int n = 0;
-  for (int i = 0; i < 200; i++){
+  for (int i = 0; i < 320; i++){
     if (i >= uIFSIter) break;
     n = i + 1;
     vec3 c = a1; float dist = length(z - a1);
@@ -1902,15 +2917,52 @@ vec2 mapMenger(vec3 pos){
   return vec2(d, trap);
 }
 
+vec2 mapCustom(vec3 pos){
+  vec3 z = pos;
+  float dr = 1.0, r = 0.0, trap = 1e5;
+  const float DEPS = 0.0004;
+  for (int i = 0; i < 320; i++){
+    if (i >= uCustomIter) break;
+    r = length(z);
+    trap = min(trap, r);
+    if (r > uCustomBailout) break;
+    vec3 w  = customFormula(z, pos);
+    vec3 wp = customFormula(z + vec3(DEPS, 0.0, 0.0), pos);
+    /* the local derivative is only an approximation for an arbitrary formula, and a
+       chaotic map can make it swing wildly from step to step. clamping the per-step
+       ratio (and the running product) keeps the estimate from collapsing toward zero
+       or exploding, either of which would make the returned distance unreliable. */
+    float ratio = clamp(length(wp - w) / DEPS, 0.05, 50.0);
+    dr = clamp(dr * ratio, 0.02, 1e6);
+    z = w;
+  }
+  float d = 0.5 * log(max(r, 1e-6)) * r / max(dr, 0.02);
+  /* an extra safety margin: since this distance is only approximate, stepping by
+     less than the full estimate trades a few extra ray-march steps for not skipping
+     past thin or chaotic detail, which is what causes the surface to look torn. */
+  return vec2(max(d, 0.0) * uCustomStepScale, trap);
+}
+
 vec2 map(vec3 p){
   if (uFractal == 0) return mapMandelbulb(p);
   if (uFractal == 1) return mapMandelbox(p);
   if (uFractal == 2) return mapSierpinski(p);
-  return mapMenger(p);
+  if (uFractal == 3) return mapMenger(p);
+  return mapCustom(p);
 }
+`;
 
-vec3 calcNormal(vec3 p){
-  const float e = 0.0006;
+            /* raymarch-only helpers: shading, shadows, and the render() entry point. shared by the
+               3d program only (the 2d slice program samples map() directly, with no raymarching). */
+            const FRAG_RENDER = `
+vec3 calcNormal(vec3 p, float t){
+  /* sampling the surface at a fixed, tiny offset works well close up, but at long
+     view distances that offset is far smaller than a pixel's actual footprint on
+     the surface, so it ends up amplifying any small noise in the distance field
+     (especially the custom equation's approximate one) into flickery, mottled
+     shading. scaling the offset with distance keeps it proportional to what a
+     pixel actually covers, the same idea as the epsilon*t hit tolerance below. */
+  float e = clamp(uEpsilon * t * 1.5, 0.0006, 0.02);
   vec2 k = vec2(1.0, -1.0);
   return normalize(
     k.xyy * map(p + k.xyy * e).x +
@@ -1951,7 +3003,7 @@ vec3 skyColor(vec3 rd){
 vec3 render(vec3 ro, vec3 rd){
   float t = 0.0, trap = 0.0;
   bool hit = false;
-  for (int i = 0; i < 400; i++){
+  for (int i = 0; i < 800; i++){
     if (i >= uMaxSteps) break;
     vec3 p = ro + rd * t;
     vec2 m = map(p);
@@ -1960,27 +3012,57 @@ vec3 render(vec3 ro, vec3 rd){
     if (t > uMaxDist) break;
   }
   vec3 bg = skyColor(rd);
-  if (!hit || t > uMaxDist) return bg;
-  vec3 p = ro + rd * t;
-  vec3 n = calcNormal(p);
-  vec3 albedo = pal(clamp(trap * uDensity + uOffset, -2.0, 4.0));
-  vec3 ld = normalize(uLightDir);
-  float diff = max(dot(n, ld), 0.0);
-  float sh = uShadows == 1 ? softShadow(p + n * 0.002, ld, 0.01, 6.0, 14.0) : 1.0;
-  float ao = uAO == 1 ? calcAO(p, n) : 1.0;
-  vec3 col = albedo * (uAmbient * ao + (1.0 - uAmbient) * diff * sh);
-  if (uSpec == 1){
-    vec3 h = normalize(ld - rd);
-    float spec = pow(max(dot(n, h), 0.0), 40.0);
-    col += vec3(1.0) * spec * sh * 0.4;
+  bool surfaceHit = hit && t <= uMaxDist;
+  vec3 col;
+  if (!surfaceHit){
+    col = bg;
+  } else {
+    vec3 p = ro + rd * t;
+    vec3 n = calcNormal(p, t);
+    vec3 albedo = pal(clamp(trap * uDensity + uOffset, -2.0, 4.0));
+    vec3 ld = normalize(uLightDir);
+    float diff = max(dot(n, ld), 0.0);
+    float sh = uShadows == 1 ? softShadow(p + n * 0.002, ld, 0.01, 6.0, 14.0) : 1.0;
+    float ao = uAO == 1 ? calcAO(p, n) : 1.0;
+    col = albedo * (uAmbient * ao + (1.0 - uAmbient) * diff * sh);
+    if (uSpec == 1){
+      vec3 h = normalize(ld - rd);
+      float spec = pow(max(dot(n, h), 0.0), 40.0);
+      col += vec3(1.0) * spec * sh * 0.4;
+    }
+    float fog = 1.0 - exp(-uFog * t);
+    col = mix(col, bg, clamp(fog, 0.0, 1.0));
   }
-  float fog = 1.0 - exp(-uFog * t);
-  col = mix(col, bg, clamp(fog, 0.0, 1.0));
+  if (uSliceOn == 1){
+    float denom = dot(rd, uSliceNormal);
+    if (abs(denom) > 1e-6){
+      float tPlane = dot(uSliceOrigin - ro, uSliceNormal) / denom;
+      if (tPlane > 0.0 && tPlane < uMaxDist && (!surfaceHit || tPlane < t)){
+        vec3 pp = ro + rd * tPlane;
+        vec3 rel = pp - uSliceOrigin;
+        float pu = dot(rel, uSliceRight), pv = dot(rel, uSliceUp);
+        if (abs(pu) <= uSliceExtent.x && abs(pv) <= uSliceExtent.y){
+          vec2 sm = map(pp);
+          vec3 sliceCol = pal(clamp(sm.y * uDensity + uOffset, -2.0, 4.0));
+          float glow = exp(-abs(sm.x) * (6.0 / max(min(uSliceExtent.x, uSliceExtent.y), 0.001)));
+          vec3 planeVis = sliceCol * (0.22 + 0.85 * glow);
+          float edge = 1.0 - smoothstep(0.0, 0.015, min(uSliceExtent.x - abs(pu), uSliceExtent.y - abs(pv)) / max(max(uSliceExtent.x, uSliceExtent.y), 0.001));
+          vec3 finalPlane = mix(planeVis, vec3(1.0, 0.85, 0.3), edge * 0.9);
+          float pfog = 1.0 - exp(-uFog * tPlane);
+          finalPlane = mix(finalPlane, bg, clamp(pfog, 0.0, 1.0));
+          float alpha = mix(0.5, 0.95, edge);
+          col = mix(col, finalPlane, alpha);
+        }
+      }
+    }
+  }
   return col;
 }
+`;
 
+            const FRAG_MAIN = `
 void main(){
-  vec2 uv = (gl_FragCoord.xy * 2.0 - uRes) / uRes.y;
+  vec2 uv = ((gl_FragCoord.xy - uShift) * 2.0 - uRes) / uRes.y;
   vec3 rd = normalize(uFwd * uFovScale + uv.x * uRight + uv.y * uUp);
   vec3 col = render(uRO, rd);
   col = pow(clamp(col, 0.0, 1.0), vec3(0.4545));
@@ -1988,39 +3070,143 @@ void main(){
 }
 `;
 
+            /* the 2d slice program: no raymarching at all, just sample map() once per pixel at the
+               3d position that pixel corresponds to on the cutting plane, then color it by the same
+               orbit-trap palette as the 3d view, brightened near the surface so the cross-section reads
+               as a clean line drawing rather than a flat trap-color wash. */
+            const FRAG_MAIN2 = `
+void main(){
+  vec2 uv = (gl_FragCoord.xy * 2.0 - uRes) / uRes.y;
+  vec3 p = uSliceOrigin + (uv.x * uSliceScale) * uSliceRight + (uv.y * uSliceScale) * uSliceUp;
+  vec2 m = map(p);
+  vec3 base = pal(clamp(m.y * uDensity + uOffset, -2.0, 4.0));
+  float glow = exp(-abs(m.x) * uSliceGlow);
+  vec3 col = base * (0.22 + 0.9 * glow);
+  col = pow(clamp(col, 0.0, 1.0), vec3(0.4545));
+  outColor = vec4(col, 1.0);
+}
+`;
+
+            const UNIFORM_NAMES = [
+                'uRes', 'uShift', 'uRO', 'uFwd', 'uRight', 'uUp', 'uFovScale', 'uFractal', 'uPower', 'uMBIter', 'uBailout',
+                'uBoxScale', 'uBoxIter', 'uIFSIter', 'uCustomIter', 'uCustomBailout', 'uCustomStepScale', 'uMaxSteps', 'uMaxDist', 'uEpsilon',
+                'uAO', 'uShadows', 'uFog', 'uLightDir', 'uAmbient', 'uSpec', 'uPa', 'uPb', 'uPc', 'uPd', 'uDensity', 'uOffset',
+                'uSliceOn', 'uSliceOrigin', 'uSliceRight', 'uSliceUp', 'uSliceNormal', 'uSliceExtent'
+            ];
+            const UNIFORM_NAMES2 = [
+                'uRes', 'uFractal', 'uPower', 'uMBIter', 'uBailout', 'uBoxScale', 'uBoxIter', 'uIFSIter',
+                'uCustomIter', 'uCustomBailout', 'uCustomStepScale', 'uPa', 'uPb', 'uPc', 'uPd', 'uDensity', 'uOffset',
+                'uSliceOrigin', 'uSliceRight', 'uSliceUp', 'uSliceScale', 'uSliceGlow'
+            ];
+
+            function buildFragSrc(customBodyExpr, paramCount) {
+                const paramDecl = paramCount ? ('uniform float ' + Array.from({ length: paramCount }, (_, i) => 'uParam' + i).join(', ') + ';\n') : '';
+                return FRAG_HEAD + paramDecl + FRAG_HELPERS +
+                    'vec3 customFormula(vec3 z, vec3 c){ return ' + customBodyExpr + '; }\n' +
+                    FRAG_MAPS + FRAG_RENDER + FRAG_MAIN;
+            }
+            function buildSliceFragSrc(customBodyExpr, paramCount) {
+                const paramDecl = paramCount ? ('uniform float ' + Array.from({ length: paramCount }, (_, i) => 'uParam' + i).join(', ') + ';\n') : '';
+                return FRAG_HEAD2 + paramDecl + FRAG_HELPERS +
+                    'vec3 customFormula(vec3 z, vec3 c){ return ' + customBodyExpr + '; }\n' +
+                    FRAG_MAPS + FRAG_MAIN2;
+            }
+
             function compileShader(type, src) {
                 const s = gl.createShader(type);
                 gl.shaderSource(s, src); gl.compileShader(s);
                 if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-                    const log = gl.getShaderInfoLog(s);
+                    const log = gl.getShaderInfoLog(s) || 'compile error';
                     gl.deleteShader(s);
-                    throw new Error('shader compile failed: ' + log);
+                    throw new Error(log.split('\n')[0]);
                 }
                 return s;
             }
-            let prog = null, U = {};
-            if (gl) {
-                const vs = compileShader(gl.VERTEX_SHADER, VERT);
-                const fs = compileShader(gl.FRAGMENT_SHADER, FRAG);
-                prog = gl.createProgram();
-                gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
-                if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-                    console.error(gl.getProgramInfoLog(prog));
-                    $('#nogl').style.display = 'flex';
-                    prog = null;
-                } else {
-                    ['uRes', 'uRO', 'uFwd', 'uRight', 'uUp', 'uFovScale', 'uFractal', 'uPower', 'uMBIter', 'uBailout',
-                        'uBoxScale', 'uBoxIter', 'uIFSIter', 'uMaxSteps', 'uMaxDist', 'uEpsilon', 'uAO', 'uShadows', 'uFog',
-                        'uLightDir', 'uAmbient', 'uSpec', 'uPa', 'uPb', 'uPc', 'uPd', 'uDensity', 'uOffset'
-                    ].forEach(n => U[n] = gl.getUniformLocation(prog, n));
-                    gl.useProgram(prog);
+
+            let prog = null, vs = null, U = {};
+            let prog2 = null, vs2 = null, U2 = {};
+            const eqMsgEl = $('#ceqmsg');
+            function setEqMsg(text, isErr) { eqMsgEl.textContent = text; eqMsgEl.classList.toggle('err', !!isErr); }
+
+            function paramNameList() { return S.params.map(p => p.name); }
+            function compileSliceProgram(bodyExpr) {
+                if (!gl2) return;
+                try {
+                    if (!vs2) vs2 = compileShader2(gl2.VERTEX_SHADER, VERT);
+                    const src = buildSliceFragSrc(bodyExpr, S.params.length);
+                    const fs = compileShader2(gl2.FRAGMENT_SHADER, src);
+                    const p = gl2.createProgram();
+                    gl2.attachShader(p, vs2); gl2.attachShader(p, fs); gl2.linkProgram(p);
+                    gl2.deleteShader(fs);
+                    if (!gl2.getProgramParameter(p, gl2.LINK_STATUS)) {
+                        const log = gl2.getProgramInfoLog(p) || 'link error';
+                        gl2.deleteProgram(p);
+                        throw new Error(log.split('\n')[0]);
+                    }
+                    if (prog2) gl2.deleteProgram(prog2);
+                    prog2 = p;
+                    U2 = {};
+                    UNIFORM_NAMES2.forEach(n => U2[n] = gl2.getUniformLocation(prog2, n));
+                    for (let i = 0; i < S.params.length; i++) U2['uParam' + i] = gl2.getUniformLocation(prog2, 'uParam' + i);
+                    gl2.useProgram(prog2);
+                } catch (err) {
+                    /* the slice view shares the same equation as the main view, so if it compiled there
+                       it will compile here too; this only guards against the two contexts disagreeing. */
                 }
+            }
+            function compileShader2(type, src) {
+                const s = gl2.createShader(type);
+                gl2.shaderSource(s, src); gl2.compileShader(s);
+                if (!gl2.getShaderParameter(s, gl2.COMPILE_STATUS)) {
+                    const log = gl2.getShaderInfoLog(s) || 'compile error';
+                    gl2.deleteShader(s);
+                    throw new Error(log.split('\n')[0]);
+                }
+                return s;
+            }
+            function compile() {
+                if (!gl) return;
+                let bodyExpr;
+                try {
+                    const names = paramNameList();
+                    const ast = parseEq(S.custom.eq, ['z', 'c', 'pi', 'e', ...names]);
+                    GEN_PIDX = {}; S.params.forEach((p, i) => GEN_PIDX[p.name] = i);
+                    bodyExpr = genEq(ast);
+                    setEqMsg('compiled. z ← ' + S.custom.eq.trim());
+                } catch (err) {
+                    setEqMsg(err.message, true);
+                    return;
+                }
+                try {
+                    if (!vs) vs = compileShader(gl.VERTEX_SHADER, VERT);
+                    const src = buildFragSrc(bodyExpr, S.params.length);
+                    const fs = compileShader(gl.FRAGMENT_SHADER, src);
+                    const p = gl.createProgram();
+                    gl.attachShader(p, vs); gl.attachShader(p, fs); gl.linkProgram(p);
+                    gl.deleteShader(fs);
+                    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) {
+                        const log = gl.getProgramInfoLog(p) || 'link error';
+                        gl.deleteProgram(p);
+                        throw new Error(log.split('\n')[0]);
+                    }
+                    if (prog) gl.deleteProgram(prog);
+                    prog = p;
+                    U = {};
+                    UNIFORM_NAMES.forEach(n => U[n] = gl.getUniformLocation(prog, n));
+                    for (let i = 0; i < S.params.length; i++) U['uParam' + i] = gl.getUniformLocation(prog, 'uParam' + i);
+                    gl.useProgram(prog);
+                } catch (err) {
+                    setEqMsg('the gpu could not compile this. ' + err.message, true);
+                    return;
+                }
+                compileSliceProgram(bodyExpr);
+                render();
             }
 
             /* =====================================================================
-               4. camera math
+               5. camera math
                ===================================================================== */
-            const FRACTAL_IDX = { mandelbulb: 0, mandelbox: 1, sierpinski: 2, menger: 3 };
+            const FRACTAL_IDX = { mandelbulb: 0, mandelbox: 1, sierpinski: 2, menger: 3, custom: 4 };
             function norm3(v) { const l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; }
             function cross3(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
 
@@ -2038,32 +3224,109 @@ void main(){
                 return { pos, fwd, right, up, fovScale };
             }
 
+            /* free-fly camera: pos plus a yaw/pitch pair in "looking" convention
+               (fwd = [cos(pitch)sin(yaw), sin(pitch), cos(pitch)cos(yaw)]), as opposed
+               to orbit's yaw/pitch which describe the camera's position around the origin. */
+            function basisFromViewAngles(pos, yaw, pitch) {
+                const cp = Math.cos(pitch), sp = Math.sin(pitch);
+                const cy = Math.cos(yaw), sy = Math.sin(yaw);
+                const fwd = [cp * sy, sp, cp * cy];
+                let right = cross3(fwd, [0, 1, 0]);
+                if (Math.hypot(right[0], right[1], right[2]) < 1e-5) right = [1, 0, 0];
+                right = norm3(right);
+                const up = norm3(cross3(right, fwd));
+                const fovScale = 1 / Math.tan(S.cam.fov * Math.PI / 360);
+                return { pos, fwd, right, up, fovScale };
+            }
+            function flyBasis() { return basisFromViewAngles(S.fly.pos, S.fly.yaw, S.fly.pitch); }
+            // the free-fly view angles that correspond to the orbit camera's current pose
+            // (orbit always looks straight at the origin from cameraBasis().pos)
+            function orbitViewAngles() { return { yaw: wrapAngle(S.cam.yaw + Math.PI), pitch: -S.cam.pitch }; }
+
+            let flyTrans = null; // in-flight fly->orbit transition state, or null
+            function activeBasis() {
+                if (S.mode === 'fly') return flyBasis();
+                if (flyTrans) return basisFromViewAngles(flyTrans.pos, flyTrans.yaw, flyTrans.pitch);
+                return cameraBasis();
+            }
+
+            /* the 2d slice's cutting plane: normal/right/up come from yaw+pitch (same construction as
+               the free-fly camera) plus a roll around that normal, and the plane's world position is
+               an offset along the normal (depth) plus a pan within its own right/up axes. */
+            function sliceZoom() { return Math.pow(2, S.slice.zoomLog); }
+            function sliceBasis() {
+                const { yaw, pitch, roll, depth, panU, panV } = S.slice;
+                const cp = Math.cos(pitch), sp = Math.sin(pitch);
+                const cy = Math.cos(yaw), sy = Math.sin(yaw);
+                const normal = [cp * sy, sp, cp * cy];
+                let right0 = cross3([0, 1, 0], normal);
+                if (Math.hypot(right0[0], right0[1], right0[2]) < 1e-5) right0 = [1, 0, 0];
+                right0 = norm3(right0);
+                const up0 = norm3(cross3(normal, right0));
+                const cr = Math.cos(roll), sr = Math.sin(roll);
+                const right = [right0[0] * cr + up0[0] * sr, right0[1] * cr + up0[1] * sr, right0[2] * cr + up0[2] * sr];
+                const up = [up0[0] * cr - right0[0] * sr, up0[1] * cr - right0[1] * sr, up0[2] * cr - right0[2] * sr];
+                const origin = [
+                    normal[0] * depth + right[0] * panU + up[0] * panV,
+                    normal[1] * depth + right[1] * panU + up[1] * panV,
+                    normal[2] * depth + right[2] * panU + up[2] * panV
+                ];
+                const baseExtent = (DEFAULTS[S.fractal] ? DEFAULTS[S.fractal].dist : 3.2) * 0.7;
+                const scale = baseExtent / sliceZoom();
+                return { normal, right, up, origin, scale };
+            }
+
             /* =====================================================================
-               5. render loop (a lower-quality pass while interacting keeps it smooth)
+               6. geometry & render loop (the view stays centered in the space the
+                  sidebar doesn't cover, and a lower-quality pass while interacting
+                  keeps it smooth)
                ===================================================================== */
+            function geom() {
+                const W = pane3d.clientWidth || 1, H = pane3d.clientHeight || 1;
+                let L = 0, B = 0;
+                if (mq.matches) B = side.offsetHeight * sideVis; else L = side.offsetWidth * sideVis;
+                return { W, H, L, B, cx: (W + L) / 2, cy: (H - B) / 2 };
+            }
+
             let raf = 0, lowQ = false, lqTimer = 0, introT = 0;
+            let lastFrameT = 0, fpsEMA = 0;
             function render() { if (!raf) raf = requestAnimationFrame(() => { raf = 0; draw(); }); }
             function bump() { lowQ = true; clearTimeout(lqTimer); lqTimer = setTimeout(() => { lowQ = false; render(); }, 160); }
             const animating = () => S.cycle || S.autoRotate;
+            function trackFps(nowT) {
+                if (lastFrameT) {
+                    const dt = nowT - lastFrameT;
+                    if (dt > 0 && dt < 250) fpsEMA = fpsEMA ? fpsEMA * 0.85 + (1000 / dt) * 0.15 : 1000 / dt;
+                }
+                lastFrameT = nowT;
+            }
 
             function draw() {
                 if (!gl || !prog) return;
-                const dpr = Math.min(window.devicePixelRatio || 1, 2);
-                const w = Math.round((stage.clientWidth || 1) * dpr), h = Math.round((stage.clientHeight || 1) * dpr);
-                if (!w || !h) return;
+                const nowT = performance.now();
+                gl.useProgram(prog);
+                const dpr = Math.min(window.devicePixelRatio || 1, S.perf.dprCap1 ? 1 : 2);
+                const g = geom();
+                if (!g.W || !g.H) return;
+                const w = Math.round(g.W * dpr), h = Math.round(g.H * dpr);
 
-                const interacting = lowQ || animating();
-                const scale = interacting ? 0.55 : 1;
+                const interacting = S.perf.dynQuality && (lowQ || animating());
+                const scale = (interacting ? 0.55 : 1) * S.perf.resScale;
                 const bw = Math.max(2, Math.round(w * scale)), bh = Math.max(2, Math.round(h * scale));
                 if (canvas.width !== bw || canvas.height !== bh) { canvas.width = bw; canvas.height = bh; }
                 gl.viewport(0, 0, bw, bh);
 
-                const cb = cameraBasis();
+                const px = bw / g.W;
+                const shiftX = (g.cx - g.W / 2) * px;
+                const shiftY = (g.H / 2 - g.cy) * px;
+
+                const cb = activeBasis();
                 const P = findPalette(S.palette);
                 const introFrac = introT >= 1 ? 1 : introT;
                 const iterMul = interacting ? 0.55 : 1;
 
                 gl.uniform2f(U.uRes, bw, bh);
+                gl.uniform2f(U.uShift, shiftX, shiftY);
                 gl.uniform3f(U.uRO, cb.pos[0], cb.pos[1], cb.pos[2]);
                 gl.uniform3f(U.uFwd, cb.fwd[0], cb.fwd[1], cb.fwd[2]);
                 gl.uniform3f(U.uRight, cb.right[0], cb.right[1], cb.right[2]);
@@ -2077,6 +3340,9 @@ void main(){
                 gl.uniform1i(U.uBoxIter, Math.max(2, Math.round(S.box.iter * introFrac * iterMul)));
                 const ifsIter = S.fractal === 'menger' ? S.menger.iter : S.sierp.iter;
                 gl.uniform1i(U.uIFSIter, Math.max(1, Math.round(ifsIter * introFrac * iterMul)));
+                gl.uniform1i(U.uCustomIter, Math.max(2, Math.round(S.custom.iter * introFrac * iterMul)));
+                gl.uniform1f(U.uCustomBailout, S.custom.bailout);
+                gl.uniform1f(U.uCustomStepScale, S.custom.stepScale);
                 gl.uniform1i(U.uMaxSteps, Math.max(24, Math.round(S.maxSteps * (interacting ? 0.6 : 1))));
                 gl.uniform1f(U.uMaxDist, S.maxDist);
                 gl.uniform1f(U.uEpsilon, S.precision);
@@ -2093,10 +3359,66 @@ void main(){
                 gl.uniform3f(U.uPd, P.d[0], P.d[1], P.d[2]);
                 gl.uniform1f(U.uDensity, S.density);
                 gl.uniform1f(U.uOffset, S.offset + S.phase);
+                S.params.forEach((p, i) => { const loc = U['uParam' + i]; if (loc) gl.uniform1f(loc, p.value); });
+
+                if (S.slice.on && S.slice.show3d) {
+                    const sb = sliceBasis();
+                    const aspect2d = pane2d.clientWidth / Math.max(1, pane2d.clientHeight);
+                    gl.uniform1i(U.uSliceOn, 1);
+                    gl.uniform3f(U.uSliceOrigin, sb.origin[0], sb.origin[1], sb.origin[2]);
+                    gl.uniform3f(U.uSliceRight, sb.right[0], sb.right[1], sb.right[2]);
+                    gl.uniform3f(U.uSliceUp, sb.up[0], sb.up[1], sb.up[2]);
+                    gl.uniform3f(U.uSliceNormal, sb.normal[0], sb.normal[1], sb.normal[2]);
+                    gl.uniform2f(U.uSliceExtent, sb.scale * aspect2d, sb.scale);
+                } else {
+                    gl.uniform1i(U.uSliceOn, 0);
+                }
 
                 gl.drawArrays(gl.TRIANGLES, 0, 3);
+                trackFps(nowT);
                 updateReadout();
                 scheduleHash();
+                if (S.slice.on) draw2d();
+            }
+
+            /* ---------- the 2d slice pane's own draw call ---------- */
+            function draw2d() {
+                if (!gl2 || !prog2) return;
+                gl2.useProgram(prog2);
+                const dpr = Math.min(window.devicePixelRatio || 1, S.perf.dprCap1 ? 1 : 2);
+                const w = Math.max(2, Math.round((pane2d.clientWidth || 1) * dpr));
+                const h = Math.max(2, Math.round((pane2d.clientHeight || 1) * dpr));
+                if (canvas2.width !== w || canvas2.height !== h) { canvas2.width = w; canvas2.height = h; }
+                gl2.viewport(0, 0, w, h);
+
+                const sb = sliceBasis();
+                const P = findPalette(S.palette);
+                gl2.uniform2f(U2.uRes, w, h);
+                gl2.uniform1i(U2.uFractal, FRACTAL_IDX[S.fractal]);
+                gl2.uniform1f(U2.uPower, S.mb.power);
+                gl2.uniform1i(U2.uMBIter, S.mb.iter);
+                gl2.uniform1f(U2.uBailout, S.mb.bailout);
+                gl2.uniform1f(U2.uBoxScale, S.box.scale);
+                gl2.uniform1i(U2.uBoxIter, S.box.iter);
+                gl2.uniform1i(U2.uIFSIter, S.fractal === 'menger' ? S.menger.iter : S.sierp.iter);
+                gl2.uniform1i(U2.uCustomIter, S.custom.iter);
+                gl2.uniform1f(U2.uCustomBailout, S.custom.bailout);
+                gl2.uniform1f(U2.uCustomStepScale, S.custom.stepScale);
+                gl2.uniform3f(U2.uPa, P.a[0], P.a[1], P.a[2]);
+                gl2.uniform3f(U2.uPb, P.b[0], P.b[1], P.b[2]);
+                gl2.uniform3f(U2.uPc, P.c[0], P.c[1], P.c[2]);
+                gl2.uniform3f(U2.uPd, P.d[0], P.d[1], P.d[2]);
+                gl2.uniform1f(U2.uDensity, S.density);
+                gl2.uniform1f(U2.uOffset, S.offset + S.phase);
+                gl2.uniform3f(U2.uSliceOrigin, sb.origin[0], sb.origin[1], sb.origin[2]);
+                gl2.uniform3f(U2.uSliceRight, sb.right[0], sb.right[1], sb.right[2]);
+                gl2.uniform3f(U2.uSliceUp, sb.up[0], sb.up[1], sb.up[2]);
+                gl2.uniform1f(U2.uSliceScale, sb.scale);
+                gl2.uniform1f(U2.uSliceGlow, clamp(0.9 * h / Math.max(sb.scale, 1e-6), 5, 200000));
+                S.params.forEach((p, i) => { const loc = U2['uParam' + i]; if (loc) gl2.uniform1f(loc, p.value); });
+
+                gl2.drawArrays(gl2.TRIANGLES, 0, 3);
+                updateSliceReadout();
             }
 
             /* ---------- animation: auto-rotate + color cycling ---------- */
@@ -2104,7 +3426,7 @@ void main(){
             function tick(t) {
                 if (!animating()) { animRaf = 0; return; }
                 const dt = Math.min(0.1, Math.max(0, (t - lastT) / 1000)); lastT = t;
-                if (S.autoRotate) S.cam.yaw += dt * S.autoSpeed;
+                if (S.autoRotate && S.mode === 'orbit') S.cam.yaw += dt * S.autoSpeed;
                 if (S.cycle) S.phase += dt * 0.06;
                 draw();
                 animRaf = requestAnimationFrame(tick);
@@ -2127,18 +3449,41 @@ void main(){
 
             /* ---------- readout ---------- */
             const readoutEl = $('#readout');
-            const FRACTAL_LABEL = { mandelbulb: 'mandelbulb', mandelbox: 'mandelbox', sierpinski: 'sierpinski tetrahedron', menger: 'menger sponge' };
+            const FRACTAL_LABEL = { mandelbulb: 'mandelbulb', mandelbox: 'mandelbox', sierpinski: 'sierpinski tetrahedron', menger: 'menger sponge', custom: 'custom equation' };
             function updateReadout() {
+                const fpsSuffix = (S.perf.showFps && fpsEMA) ? ' <span class="dim">· ' + Math.round(fpsEMA) + ' fps</span>' : '';
+                if (S.mode === 'fly') {
+                    readoutEl.innerHTML = FRACTAL_LABEL[S.fractal] + '<br>free fly <span class="dim">· speed ' + S.fly.speed.toFixed(2) + '</span>' + fpsSuffix;
+                    return;
+                }
                 const zoom = (DEFAULTS[S.fractal].dist / S.cam.dist);
                 const zs = zoom < 10 ? zoom.toFixed(2) : zoom < 1000 ? zoom.toFixed(0) : zoom.toExponential(1);
-                readoutEl.innerHTML = FRACTAL_LABEL[S.fractal] + '<br>zoom ×' + zs + ' <span class="dim">· dist ' + S.cam.dist.toFixed(2) + '</span>';
+                readoutEl.innerHTML = FRACTAL_LABEL[S.fractal] + '<br>zoom ×' + zs + ' <span class="dim">· dist ' + S.cam.dist.toFixed(2) + '</span>' + fpsSuffix;
+            }
+
+            const slice2dReadoutEl = $('#slice2dReadout');
+            function updateSliceReadout() {
+                const z = sliceZoom();
+                const zs = z < 10 ? z.toFixed(2) : z.toFixed(0);
+                const deg = r => Math.round(r * 180 / Math.PI);
+                slice2dReadoutEl.innerHTML = 'slice · zoom ×' + zs +
+                    '<br><span class="dim">yaw ' + deg(S.slice.yaw) + '° · pitch ' + deg(S.slice.pitch) + '° · roll ' + deg(S.slice.roll) + '°</span>';
             }
 
             /* =====================================================================
-               6. orbit + zoom interaction
+               7. orbit + zoom interaction
                ===================================================================== */
             const helpEl = $('#help');
             function hideHelp() { helpEl.classList.add('gone'); }
+            function showHelp(text) { helpEl.textContent = text; helpEl.classList.remove('gone'); }
+
+            app.dataset.touch = touchUI ? '1' : '0';
+
+            const HELP_TEXT = {
+                orbit: 'drag to orbit. scroll or pinch to zoom.',
+                fly: touchUI ? 'drag to look around · joystick to move · slider for speed'
+                    : 'wasd to move · drag to look around · scroll to change speed'
+            };
 
             const zm = { rem: 0, raf: 0, last: 0 };
             function zoomBy(f) {
@@ -2156,6 +3501,122 @@ void main(){
                 zm.raf = Math.abs(zm.rem) > 1e-9 ? requestAnimationFrame(zoomStep) : 0;
             }
 
+            /* ---------- free-fly: speed control (shared by wheel, sidebar slider, touch slider) ---------- */
+            const flySpeedEl = $('#flySpeed'), flySpeedVEl = $('#flySpeedV'), flySpeedTouchEl = $('#flySpeedTouch');
+            function setFlySpeed(v, opts) {
+                S.fly.speed = clamp(v, SPEED_MIN, SPEED_MAX);
+                const sv = speedToSlider(S.fly.speed);
+                flySpeedEl.value = sv; flySpeedTouchEl.value = sv;
+                flySpeedVEl.textContent = S.fly.speed.toFixed(2);
+                if (!(opts && opts.silent) && S.mode === 'fly') { updateReadout(); render(); }
+            }
+            function flySpeedBy(f) { setFlySpeed(S.fly.speed * f); }
+            flySpeedEl.addEventListener('input', e => setFlySpeed(sliderToSpeed(+e.target.value)));
+            flySpeedTouchEl.addEventListener('input', e => setFlySpeed(sliderToSpeed(+e.target.value)));
+
+            /* ---------- free-fly: enter / exit ---------- */
+            function syncModeUI() {
+                const m = S.mode === 'toOrbit' ? 'orbit' : S.mode;
+                app.dataset.mode = m;
+                $('#modeOrbit').setAttribute('aria-pressed', String(m === 'orbit'));
+                $('#modeFly').setAttribute('aria-pressed', String(m === 'fly'));
+                $('#orbitOnlyFields').style.display = m === 'orbit' ? '' : 'none';
+                $('#flySpeedField').style.display = m === 'fly' ? '' : 'none';
+                canvas.setAttribute('aria-label', m === 'fly'
+                    ? '3d fractal view, free-fly camera. ' + HELP_TEXT.fly
+                    : '3d fractal view. drag to orbit, scroll or pinch to zoom.');
+                showHelp(HELP_TEXT[m]);
+                updateReadout();
+            }
+            function enterFly() {
+                if (S.mode === 'fly') return;
+                const cb = cameraBasis();
+                S.fly.pos = cb.pos.slice();
+                const va = orbitViewAngles();
+                S.fly.yaw = va.yaw; S.fly.pitch = va.pitch;
+                setFlySpeed(clamp(S.cam.dist * 0.6, SPEED_MIN, SPEED_MAX), { silent: true });
+                S.mode = 'fly'; flyTrans = null;
+                syncModeUI(); bump(); render();
+            }
+            function startTransitionToOrbit() {
+                if (S.mode !== 'fly') return;
+                const fromPos = S.fly.pos.slice(), fromYaw = S.fly.yaw, fromPitch = S.fly.pitch;
+                const toPos = cameraBasis().pos, va = orbitViewAngles();
+                const dYaw = wrapAngle(va.yaw - fromYaw);
+                const dur = rm.matches ? 1 : 450;
+                const t0 = performance.now();
+                S.mode = 'toOrbit';
+                syncModeUI();
+                const step = now => {
+                    const u = clamp((now - t0) / dur, 0, 1);
+                    const e = u < 1 ? u * u * (3 - 2 * u) : 1;
+                    flyTrans = {
+                        pos: [fromPos[0] + (toPos[0] - fromPos[0]) * e, fromPos[1] + (toPos[1] - fromPos[1]) * e, fromPos[2] + (toPos[2] - fromPos[2]) * e],
+                        yaw: fromYaw + dYaw * e,
+                        pitch: fromPitch + (va.pitch - fromPitch) * e
+                    };
+                    render();
+                    if (u < 1) requestAnimationFrame(step);
+                    else { S.mode = 'orbit'; flyTrans = null; syncModeUI(); render(); }
+                };
+                requestAnimationFrame(step);
+            }
+            $('#modeOrbit').addEventListener('click', startTransitionToOrbit);
+            $('#modeFly').addEventListener('click', enterFly);
+
+            /* ---------- free-fly: wasd + joystick movement ---------- */
+            const flyKeys = new Set();
+            const joyVec = { x: 0, y: 0 };
+            let flyRaf = 0, flyLastT = 0;
+            function flyActive() { return S.mode === 'fly' && (flyKeys.size > 0 || joyVec.x !== 0 || joyVec.y !== 0); }
+            function kickFlyLoop() { if (!flyRaf && flyActive()) { flyLastT = performance.now(); flyRaf = requestAnimationFrame(flyTick); } }
+            function flyTick(t) {
+                if (!flyActive()) { flyRaf = 0; return; }
+                const dt = Math.min(0.05, Math.max(0, (t - flyLastT) / 1000)); flyLastT = t;
+                let ix = joyVec.x, iz = joyVec.y;
+                if (flyKeys.has('a')) ix -= 1;
+                if (flyKeys.has('d')) ix += 1;
+                if (flyKeys.has('w')) iz += 1;
+                if (flyKeys.has('s')) iz -= 1;
+                const mag = Math.hypot(ix, iz);
+                if (mag > 1e-4) {
+                    const scale = Math.min(mag, 1) / mag;
+                    const cb = flyBasis();
+                    const move = S.fly.speed * dt * scale;
+                    S.fly.pos[0] += (cb.right[0] * ix + cb.fwd[0] * iz) * move;
+                    S.fly.pos[1] += (cb.right[1] * ix + cb.fwd[1] * iz) * move;
+                    S.fly.pos[2] += (cb.right[2] * ix + cb.fwd[2] * iz) * move;
+                    bump(); draw();
+                }
+                flyRaf = requestAnimationFrame(flyTick);
+            }
+
+            /* on-screen joystick (touch): drag the knob to move; released, it snaps back to center */
+            const joyBaseEl = $('#joyBase'), joyKnobEl = $('#joyKnob');
+            let joyPointerId = null;
+            const JOY_R = 34;
+            function joyLocal(e) { const r = joyBaseEl.getBoundingClientRect(); return { x: e.clientX - (r.left + r.right) / 2, y: e.clientY - (r.top + r.bottom) / 2 }; }
+            joyBaseEl.addEventListener('pointerdown', e => {
+                joyBaseEl.setPointerCapture(e.pointerId); joyPointerId = e.pointerId;
+                joyBaseEl.classList.add('active');
+            });
+            joyBaseEl.addEventListener('pointermove', e => {
+                if (e.pointerId !== joyPointerId) return;
+                const l = joyLocal(e);
+                const d = Math.hypot(l.x, l.y) || 1, k = Math.min(1, d / JOY_R);
+                const nx = (l.x / d) * k, ny = (l.y / d) * k;
+                joyVec.x = nx; joyVec.y = -ny;
+                joyKnobEl.style.transform = 'translate(' + (nx * JOY_R) + 'px,' + (ny * JOY_R) + 'px)';
+                kickFlyLoop();
+            });
+            function joyEnd(e) {
+                if (e.pointerId !== joyPointerId) return;
+                joyPointerId = null; joyVec.x = 0; joyVec.y = 0;
+                joyKnobEl.style.transform = ''; joyBaseEl.classList.remove('active');
+            }
+            joyBaseEl.addEventListener('pointerup', joyEnd);
+            joyBaseEl.addEventListener('pointercancel', joyEnd);
+
             const ptrs = new Map();
             let pinch = null;
             function local(e) { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
@@ -2170,6 +3631,16 @@ void main(){
                 const l = local(e);
                 const prev = ptrs.get(e.pointerId);
                 if (!prev) return;
+                if (S.mode === 'fly') {
+                    if (ptrs.size === 1) {
+                        const dx = l.x - prev.x, dy = l.y - prev.y;
+                        S.fly.yaw = wrapAngle(S.fly.yaw - dx * 0.006);
+                        S.fly.pitch = clamp(S.fly.pitch - dy * 0.006, -1.5, 1.5);
+                        prev.x = l.x; prev.y = l.y;
+                        bump(); render();
+                    } else { prev.x = l.x; prev.y = l.y; }
+                    return;
+                }
                 if (ptrs.size === 1) {
                     const dx = l.x - prev.x, dy = l.y - prev.y;
                     S.cam.yaw -= dx * 0.006;
@@ -2190,6 +3661,7 @@ void main(){
             canvas.addEventListener('pointercancel', endPtr);
             canvas.addEventListener('wheel', e => {
                 e.preventDefault(); hideHelp();
+                if (S.mode === 'fly') { flySpeedBy(Math.exp(clamp(-e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.0015), -0.7, 0.7))); return; }
                 zoomBy(Math.exp(clamp(e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.0015), -0.7, 0.7)));
             }, { passive: false });
             canvas.addEventListener('dblclick', () => resetView());
@@ -2199,12 +3671,154 @@ void main(){
             function resetView() {
                 const d = DEFAULTS[S.fractal];
                 S.cam.yaw = d.yaw; S.cam.pitch = d.pitch; S.cam.dist = d.dist;
+                if (S.mode === 'fly') {
+                    const cb = cameraBasis(), va = orbitViewAngles();
+                    S.fly.pos = cb.pos.slice(); S.fly.yaw = va.yaw; S.fly.pitch = va.pitch;
+                }
                 bump(); render();
             }
             $('#reset').addEventListener('click', resetView);
 
             /* =====================================================================
-               7. persistence
+               7b. 2d slice: pan / rotate / zoom interaction on its own canvas
+               ===================================================================== */
+            const slice2dHelpEl = $('#slice2dHelp');
+            function hideSliceHelp() { slice2dHelpEl.classList.add('gone'); }
+            function local2(e) { const r = canvas2.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+            function setSliceDragMode(m) {
+                S.slice.dragMode = m;
+                $('#slice2dPan').setAttribute('aria-pressed', String(m === 'pan'));
+                $('#slice2dRotate').setAttribute('aria-pressed', String(m === 'rotate'));
+                canvas2.dataset.drag = m;
+            }
+            $('#slice2dPan').addEventListener('click', () => setSliceDragMode('pan'));
+            $('#slice2dRotate').addEventListener('click', () => setSliceDragMode('rotate'));
+
+            const sptrs = new Map();
+            let spinch = null;
+            canvas2.addEventListener('pointerdown', e => {
+                canvas2.setPointerCapture(e.pointerId);
+                const l = local2(e);
+                sptrs.set(e.pointerId, { x: l.x, y: l.y });
+                spinch = null; hideSliceHelp();
+            });
+            canvas2.addEventListener('pointermove', e => {
+                const l = local2(e);
+                const prev = sptrs.get(e.pointerId);
+                if (!prev) return;
+                if (sptrs.size === 1) {
+                    const dx = l.x - prev.x, dy = l.y - prev.y;
+                    const rotating = S.slice.dragMode === 'rotate' || e.shiftKey;
+                    if (rotating) {
+                        S.slice.yaw = wrapAngle(S.slice.yaw - dx * 0.006);
+                        S.slice.pitch = clamp(S.slice.pitch + dy * 0.006, -1.5, 1.5);
+                    } else {
+                        const sb = sliceBasis();
+                        const wpp = (2 * sb.scale) / Math.max(1, pane2d.clientHeight);
+                        S.slice.panU -= dx * wpp;
+                        S.slice.panV += dy * wpp;
+                    }
+                    prev.x = l.x; prev.y = l.y;
+                    syncSliceUI(); render();
+                } else if (sptrs.size === 2) {
+                    prev.x = l.x; prev.y = l.y;
+                    const [a, b] = [...sptrs.values()];
+                    const dist = Math.hypot(a.x - b.x, a.y - b.y) || 1;
+                    if (spinch) S.slice.zoomLog = clamp(S.slice.zoomLog + Math.log2(dist / spinch.dist), -3, 4);
+                    spinch = { dist };
+                    syncSliceUI(); render();
+                }
+            });
+            function endSptr(e) { sptrs.delete(e.pointerId); spinch = null; }
+            canvas2.addEventListener('pointerup', endSptr);
+            canvas2.addEventListener('pointercancel', endSptr);
+            canvas2.addEventListener('wheel', e => {
+                e.preventDefault(); hideSliceHelp();
+                S.slice.zoomLog = clamp(S.slice.zoomLog - e.deltaY * (e.deltaMode === 1 ? 0.02 : 0.0015), -3, 4);
+                syncSliceUI(); render();
+            }, { passive: false });
+            canvas2.addEventListener('dblclick', () => { S.slice.panU = 0; S.slice.panV = 0; S.slice.zoomLog = 0; syncSliceUI(); render(); });
+            $('#slice2dZin').addEventListener('click', () => { S.slice.zoomLog = clamp(S.slice.zoomLog + 0.5, -3, 4); syncSliceUI(); render(); });
+            $('#slice2dZout').addEventListener('click', () => { S.slice.zoomLog = clamp(S.slice.zoomLog - 0.5, -3, 4); syncSliceUI(); render(); });
+
+            function resetSlice() {
+                Object.assign(S.slice, { yaw: 0, pitch: 0, roll: 0, depth: 0, panU: 0, panV: 0, zoomLog: 0 });
+                syncSliceUI(); render(); toast('slice reset');
+            }
+            $('#sliceResetBtn').addEventListener('click', resetSlice);
+            $('#slice2dReset').addEventListener('click', resetSlice);
+            $('#sliceShowIn3d').addEventListener('change', e => { S.slice.show3d = e.target.checked; render(); });
+
+            /* ---------- slice: open / close (the split animation) ---------- */
+            let sliceAnim = 0;
+            function setSliceOpenAmt(v) {
+                app.style.setProperty('--sliceGap', (v * (1 - S.slice.split)).toFixed(4));
+            }
+            function setSliceOn(on) {
+                $('#sliceOn').checked = on;
+                $('#sliceFields').style.display = on ? '' : 'none';
+                if (on) { S.slice.on = true; app.dataset.slice = '1'; showHelp2d(); }
+                cancelAnimationFrame(sliceAnim);
+                const from = parseFloat(getComputedStyle(app).getPropertyValue('--sliceGap')) || 0;
+                const fromAmt = S.slice.split > 0 ? from / (1 - S.slice.split) : 0;
+                const want = on ? 1 : 0, t0 = performance.now(), ms = rm.matches ? 0 : 380;
+                const step = now => {
+                    const u = ms ? clamp((now - t0) / ms, 0, 1) : 1;
+                    const e = u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+                    setSliceOpenAmt(fromAmt + (want - fromAmt) * e);
+                    render();
+                    if (u < 1) sliceAnim = requestAnimationFrame(step);
+                    else if (!on) { S.slice.on = false; app.dataset.slice = '0'; render(); }
+                };
+                sliceAnim = requestAnimationFrame(step);
+            }
+            function showHelp2d() { slice2dHelpEl.classList.remove('gone'); clearTimeout(showHelp2d._t); showHelp2d._t = setTimeout(hideSliceHelp, 4000); }
+            $('#sliceOn').addEventListener('change', e => setSliceOn(e.target.checked));
+
+            /* ---------- slice: sidebar sliders ---------- */
+            function syncSliceUI() {
+                const deg = r => Math.round(r * 180 / Math.PI);
+                $('#sliceYaw').value = deg(S.slice.yaw); $('#sliceYawV').textContent = deg(S.slice.yaw) + '°';
+                $('#slicePitch').value = deg(S.slice.pitch); $('#slicePitchV').textContent = deg(S.slice.pitch) + '°';
+                $('#sliceRoll').value = deg(S.slice.roll); $('#sliceRollV').textContent = deg(S.slice.roll) + '°';
+                $('#sliceDepth').value = S.slice.depth; $('#sliceDepthV').textContent = S.slice.depth.toFixed(2);
+                $('#sliceZoom').value = S.slice.zoomLog; $('#sliceZoomV').textContent = '×' + sliceZoom().toFixed(2);
+                fillRange($('#sliceYaw')); fillRange($('#slicePitch')); fillRange($('#sliceRoll')); fillRange($('#sliceDepth')); fillRange($('#sliceZoom'));
+                updateSliceReadout();
+            }
+            $('#sliceYaw').addEventListener('input', e => { S.slice.yaw = +e.target.value * Math.PI / 180; $('#sliceYawV').textContent = e.target.value + '°'; updateSliceReadout(); render(); });
+            $('#slicePitch').addEventListener('input', e => { S.slice.pitch = +e.target.value * Math.PI / 180; $('#slicePitchV').textContent = e.target.value + '°'; updateSliceReadout(); render(); });
+            $('#sliceRoll').addEventListener('input', e => { S.slice.roll = +e.target.value * Math.PI / 180; $('#sliceRollV').textContent = e.target.value + '°'; updateSliceReadout(); render(); });
+            $('#sliceDepth').addEventListener('input', e => { S.slice.depth = +e.target.value; $('#sliceDepthV').textContent = S.slice.depth.toFixed(2); render(); });
+            $('#sliceZoom').addEventListener('input', e => { S.slice.zoomLog = +e.target.value; $('#sliceZoomV').textContent = '×' + sliceZoom().toFixed(2); updateSliceReadout(); render(); });
+
+            /* ---------- slice: draggable divider between the two panes ---------- */
+            let sgripOff = null;
+            sliceGrip.addEventListener('pointerdown', e => {
+                sliceGrip.setPointerCapture(e.pointerId); sliceGrip.classList.add('drag'); e.preventDefault();
+            });
+            sliceGrip.addEventListener('pointermove', e => {
+                if (!sliceGrip.classList.contains('drag')) return;
+                const r = stage.getBoundingClientRect();
+                const frac = mq.matches ? (e.clientY - r.top) / r.height : (e.clientX - r.left) / r.width;
+                S.slice.split = clamp(frac, 0.15, 0.85);
+                setSliceOpenAmt(1);
+                render();
+            });
+            const endSliceGrip = () => sliceGrip.classList.remove('drag');
+            sliceGrip.addEventListener('pointerup', endSliceGrip);
+            sliceGrip.addEventListener('pointercancel', endSliceGrip);
+            sliceGrip.addEventListener('dblclick', () => { S.slice.split = 0.5; setSliceOpenAmt(S.slice.on ? 1 : 0); render(); });
+            sliceGrip.addEventListener('keydown', e => {
+                const step = e.shiftKey ? 0.1 : 0.02;
+                let d = 0;
+                if (mq.matches) { if (e.key === 'ArrowUp') d = -step; if (e.key === 'ArrowDown') d = step; }
+                else { if (e.key === 'ArrowLeft') d = -step; if (e.key === 'ArrowRight') d = step; }
+                if (d) { e.preventDefault(); S.slice.split = clamp(S.slice.split + d, 0.15, 0.85); setSliceOpenAmt(S.slice.on ? 1 : 0); render(); }
+            });
+
+            /* =====================================================================
+               8. persistence
                ===================================================================== */
             const store = {
                 get(k, d) { try { const v = localStorage.getItem('fractal3d:' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
@@ -2212,7 +3826,7 @@ void main(){
             };
 
             /* =====================================================================
-               8. ui wiring
+               9. ui wiring
                ===================================================================== */
             function fillRange(el) {
                 const mn = +el.min, mx = +el.max;
@@ -2250,14 +3864,155 @@ void main(){
             $('#sierpIter').addEventListener('input', e => { S.sierp.iter = +e.target.value; $('#sierpIterV').textContent = S.sierp.iter; bump(); render(); });
             $('#mengerIter').addEventListener('input', e => { S.menger.iter = +e.target.value; $('#mengerIterV').textContent = S.menger.iter; bump(); render(); });
 
+            /* ---------- custom equation ---------- */
+            const ceqEl = $('#ceq'), ceqhlEl = $('#ceqhl');
+            attachHighlighter(ceqEl, ceqhlEl);
+            let compTimer = 0;
+            function scheduleCompile() { clearTimeout(compTimer); compTimer = setTimeout(compile, 220); }
+            ceqEl.addEventListener('input', () => { S.custom.eq = ceqEl.value; scheduleCompile(); });
+
+            const CHIPS = [['z', 'z'], ['c', 'c'], ['a', 'a'], ['^', '^'], ['( )', '()'], ['sin', 'sin()'], ['abs', 'abs()'], ['sqr', 'sqr()'], ['boxfold', 'boxfold()'], ['spherefold', 'spherefold()']];
+            CHIPS.forEach(([lbl, text]) => {
+                const b = document.createElement('button');
+                b.type = 'button'; b.textContent = lbl; b.setAttribute('aria-label', 'insert ' + lbl);
+                b.addEventListener('click', () => insertText(text));
+                $('#cchips').appendChild(b);
+            });
+            function insertText(t) {
+                const s = ceqEl.selectionStart == null ? ceqEl.value.length : ceqEl.selectionStart;
+                const e = ceqEl.selectionEnd == null ? s : ceqEl.selectionEnd;
+                ceqEl.value = ceqEl.value.slice(0, s) + t + ceqEl.value.slice(e);
+                const caret = s + (t.endsWith('()') ? t.length - 1 : t.length);
+                ceqEl.focus(); ceqEl.setSelectionRange(caret, caret);
+                ceqEl.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            function renderLegend() {
+                const items = [
+                    ['tok-kw', 'names (z, c, pi, e)'], ['tok-param', 'your parameters'],
+                    ['tok-func', 'functions'], ['tok-num', 'numbers'], ['tok-op', 'operators'], ['tok-err', 'unknown']
+                ];
+                $('#ceqlegend').innerHTML = items.map(([varname, txt]) =>
+                    '<span><i style="background:var(--' + varname + ')"></i>' + txt + '</span>'
+                ).join('');
+            }
+            renderLegend();
+            $('#cIter').addEventListener('input', e => { S.custom.iter = +e.target.value; $('#cIterV').textContent = S.custom.iter; bump(); render(); });
+            $('#cBail').addEventListener('input', e => { S.custom.bailout = +e.target.value; $('#cBailV').textContent = S.custom.bailout; bump(); render(); });
+            $('#cStep').addEventListener('input', e => { S.custom.stepScale = +e.target.value; $('#cStepV').textContent = S.custom.stepScale.toFixed(2); bump(); render(); });
+
+            /* ---------- parameters ---------- */
+            function validateParamName(v, self) {
+                if (!/^[a-z]$/.test(v)) return 'use a single letter, a to z.';
+                if (RESERVED.has(v)) return '"' + v + '" is already a built-in name.';
+                if (S.params.some(p => p !== self && p.name === v)) return '"' + v + '" is already used by another parameter.';
+                return '';
+            }
+            function nextFreeParamName() {
+                for (let c = 97; c <= 122; c++) { const ch = String.fromCharCode(c); if (!RESERVED.has(ch) && !S.params.some(p => p.name === ch)) return ch; }
+                return null;
+            }
+            let paramRowEls = [];
+            function renderParams() {
+                const box = $('#paramList'); box.innerHTML = ''; paramRowEls = [];
+                $('#paramCount').textContent = S.params.length + ' / ' + MAX_PARAMS;
+                S.params.forEach((p, idx) => {
+                    const row = document.createElement('div'); row.className = 'param';
+                    row.innerHTML =
+                        '<div class="param-top">' +
+                        '<input class="param-name mono" type="text" maxlength="1" aria-label="parameter name">' +
+                        '<div class="field" style="margin:0"><div class="head"><span class="lbl" style="margin:0">value</span><span class="pv"></span></div>' +
+                        '<input class="param-val" type="range" step="0.001">' +
+                        '</div>' +
+                        '<button class="x param-del" type="button" aria-label="remove this parameter">×</button>' +
+                        '</div>' +
+                        '<div class="param-range grid2">' +
+                        '<label class="mono">min <input class="param-min" type="number" step="any"></label>' +
+                        '<label class="mono">max <input class="param-max" type="number" step="any"></label>' +
+                        '</div>' +
+                        '<div class="msg err param-err" style="display:none"></div>';
+                    box.appendChild(row);
+
+                    const nameInp = row.querySelector('.param-name');
+                    const valInp = row.querySelector('.param-val'), pv = row.querySelector('.pv');
+                    const minInp = row.querySelector('.param-min'), maxInp = row.querySelector('.param-max');
+                    const delBtn = row.querySelector('.param-del'), errDiv = row.querySelector('.param-err');
+
+                    nameInp.value = p.name;
+                    valInp.min = p.min; valInp.max = p.max; valInp.value = p.value; fillRange(valInp);
+                    pv.textContent = p.value.toFixed(3);
+                    minInp.value = p.min; maxInp.value = p.max;
+
+                    nameInp.addEventListener('input', () => { nameInp.value = nameInp.value.toLowerCase().replace(/[^a-z]/g, '').slice(0, 1); });
+                    nameInp.addEventListener('change', () => {
+                        const v = nameInp.value, err = validateParamName(v, p);
+                        if (err) { errDiv.textContent = err; errDiv.style.display = 'block'; nameInp.classList.add('bad'); nameInp.value = p.name; return; }
+                        errDiv.style.display = 'none'; nameInp.classList.remove('bad');
+                        p.name = v; compile();
+                    });
+                    valInp.addEventListener('input', () => { p.value = +valInp.value; pv.textContent = p.value.toFixed(3); render(); });
+                    minInp.addEventListener('change', () => {
+                        const v = parseFloat(minInp.value);
+                        if (isFinite(v) && v < p.max) { p.min = v; valInp.min = v; if (p.value < v) { p.value = v; valInp.value = v; pv.textContent = v.toFixed(3); } fillRange(valInp); render(); }
+                        else minInp.value = p.min;
+                    });
+                    maxInp.addEventListener('change', () => {
+                        const v = parseFloat(maxInp.value);
+                        if (isFinite(v) && v > p.min) { p.max = v; valInp.max = v; if (p.value > v) { p.value = v; valInp.value = v; pv.textContent = v.toFixed(3); } fillRange(valInp); render(); }
+                        else maxInp.value = p.max;
+                    });
+                    delBtn.addEventListener('click', () => {
+                        if (S.params.length <= 1) { toast('keep at least one parameter'); return; }
+                        S.params.splice(idx, 1); renderParams(); compile();
+                    });
+                    paramRowEls.push({ valInp, pv });
+                });
+            }
+            $('#addParam').addEventListener('click', () => {
+                if (S.params.length >= MAX_PARAMS) { toast('up to ' + MAX_PARAMS + ' parameters'); return; }
+                const name = nextFreeParamName();
+                if (!name) { toast('no free single-letter names left'); return; }
+                S.params.push({ name, value: 1, min: -3, max: 3 });
+                renderParams(); compile();
+            });
+
             /* ---------- rendering ---------- */
             $('#maxSteps').addEventListener('input', e => { S.maxSteps = +e.target.value; $('#maxStepsV').textContent = S.maxSteps; bump(); render(); });
             $('#maxDist').addEventListener('input', e => { S.maxDist = +e.target.value; $('#maxDistV').textContent = S.maxDist; bump(); render(); });
-            $('#precision').addEventListener('input', e => { S.precision = +e.target.value; $('#precisionV').textContent = S.precision.toFixed(4); bump(); render(); });
+            $('#precision').addEventListener('input', e => { S.precision = +e.target.value; $('#precisionV').textContent = S.precision.toFixed(6); bump(); render(); });
             $('#fog').addEventListener('input', e => { S.fog = +e.target.value; $('#fogV').textContent = S.fog.toFixed(3); bump(); render(); });
             $('#ao').addEventListener('change', e => { S.ao = e.target.checked; render(); });
             $('#shadows').addEventListener('change', e => { S.shadows = e.target.checked; render(); });
             $('#spec').addEventListener('change', e => { S.spec = e.target.checked; render(); });
+
+            /* ---------- performance ---------- */
+            function persistPerf() { store.set('perf', S.perf); }
+            function syncResScaleV() { $('#resScaleV').textContent = Math.round(S.perf.resScale * 100) + '%'; }
+            $('#resScale').addEventListener('input', e => {
+                S.perf.resScale = +e.target.value; syncResScaleV(); persistPerf(); bump(); render();
+            });
+            $('#dynQuality').addEventListener('change', e => { S.perf.dynQuality = e.target.checked; persistPerf(); bump(); render(); });
+            $('#dprCap').addEventListener('change', e => { S.perf.dprCap1 = e.target.checked; persistPerf(); bump(); render(); });
+            $('#showFps').addEventListener('change', e => { S.perf.showFps = e.target.checked; persistPerf(); if (!S.perf.showFps) fpsEMA = 0; updateReadout(); });
+
+            const PERF_PRESETS = {
+                performance: { maxSteps: 65, precision: 0.0016, ao: false, shadows: false, spec: false, resScale: 0.65, dprCap1: true },
+                balanced: { maxSteps: 110, precision: 0.0008, ao: true, shadows: true, spec: true, resScale: 1, dprCap1: false },
+                quality: { maxSteps: 400, precision: 0.00006, ao: true, shadows: true, spec: true, resScale: 1, dprCap1: false }
+            };
+            function applyPreset(name) {
+                const p = PERF_PRESETS[name]; if (!p) return;
+                S.maxSteps = p.maxSteps; S.precision = p.precision;
+                S.ao = p.ao; S.shadows = p.shadows; S.spec = p.spec;
+                S.perf.resScale = p.resScale; S.perf.dprCap1 = p.dprCap1;
+                persistPerf();
+                $('#presetPerf').setAttribute('aria-pressed', String(name === 'performance'));
+                $('#presetBal').setAttribute('aria-pressed', String(name === 'balanced'));
+                $('#presetQual').setAttribute('aria-pressed', String(name === 'quality'));
+                syncUI(); bump(); render();
+            }
+            $('#presetPerf').addEventListener('click', () => applyPreset('performance'));
+            $('#presetBal').addEventListener('click', () => applyPreset('balanced'));
+            $('#presetQual').addEventListener('click', () => applyPreset('quality'));
 
             /* ---------- camera ---------- */
             $('#fov').addEventListener('input', e => { S.cam.fov = +e.target.value; $('#fovV').textContent = S.cam.fov + '°'; bump(); render(); });
@@ -2416,7 +4171,7 @@ void main(){
 
             /* ---------- sidebar: collapse, style, size ---------- */
             const toggleBtn = $('#toggle');
-            let sideVis = 1, sideAnim = 0;
+            let sideAnim = 0;
             function setSideVis(v) {
                 sideVis = v;
                 app.style.setProperty('--sv', v.toFixed(4));
@@ -2525,15 +4280,30 @@ void main(){
             Object.keys(THEMES).forEach(k => THEMES[k].addEventListener('click', () => setTheme(k)));
 
             /* =====================================================================
-               9. state snapshots (saved views + shareable link)
+               10. state snapshots (saved views + shareable link)
                ===================================================================== */
             function snap() {
                 return {
-                    v: 1, f: S.fractal, mb: S.mb, box: S.box, sierp: S.sierp, menger: S.menger,
-                    ms: S.maxSteps, md: S.maxDist, pr: S.precision, fog: S.fog, ao: S.ao, sh: S.shadows, sp: S.spec,
+                    v: 2, f: S.fractal, mb: S.mb, box: S.box, sierp: S.sierp, menger: S.menger,
+                    ceq: S.custom, pr: S.params.map(p => ({ n: p.name, v: p.value, mn: p.min, mx: p.max })),
+                    ms: S.maxSteps, md: S.maxDist, pre: S.precision, fog: S.fog, ao: S.ao, sh: S.shadows, sp: S.spec,
                     cam: S.cam, ar: S.autoRotate, as: S.autoSpeed, lt: S.light,
                     pal: S.palette, de: S.density, o: S.offset
                 };
+            }
+            function loadParams(o) {
+                if (!Array.isArray(o.pr) || !o.pr.length) return null;
+                const used = new Set(); const out = [];
+                o.pr.forEach(raw => {
+                    if (!raw || typeof raw.n !== 'string') return;
+                    const n = raw.n.toLowerCase();
+                    if (!/^[a-z]$/.test(n) || RESERVED.has(n) || used.has(n) || out.length >= MAX_PARAMS) return;
+                    used.add(n);
+                    const mn = typeof raw.mn === 'number' ? raw.mn : -3, mx = typeof raw.mx === 'number' ? raw.mx : 3;
+                    if (!(mx > mn)) return;
+                    out.push({ name: n, value: clamp(typeof raw.v === 'number' ? raw.v : (mn + mx) / 2, mn, mx), min: mn, max: mx });
+                });
+                return out.length ? out : null;
             }
             function loadSnap(o) {
                 if (!o || typeof o !== 'object' || !FRACTAL_IDX.hasOwnProperty(o.f)) return false;
@@ -2542,9 +4312,11 @@ void main(){
                 if (o.box) Object.assign(S.box, o.box);
                 if (o.sierp) Object.assign(S.sierp, o.sierp);
                 if (o.menger) Object.assign(S.menger, o.menger);
-                if (typeof o.ms === 'number') S.maxSteps = clamp(o.ms, 40, 300);
+                if (o.ceq && typeof o.ceq.eq === 'string' && o.ceq.eq.length < 400) Object.assign(S.custom, o.ceq);
+                const params = loadParams(o); if (params) S.params = params;
+                if (typeof o.ms === 'number') S.maxSteps = clamp(o.ms, 40, 800);
                 if (typeof o.md === 'number') S.maxDist = clamp(o.md, 8, 80);
-                if (typeof o.pr === 'number') S.precision = clamp(o.pr, 0.0001, 0.01);
+                if (typeof o.pre === 'number') S.precision = clamp(o.pre, 0.000005, 0.01);
                 if (typeof o.fog === 'number') S.fog = clamp(o.fog, 0, 0.5);
                 if (typeof o.ao === 'boolean') S.ao = o.ao;
                 if (typeof o.sh === 'boolean') S.shadows = o.sh;
@@ -2558,8 +4330,8 @@ void main(){
                 if (typeof o.o === 'number') S.offset = clamp(o.o, 0, 1);
                 document.body.dataset.fractal = S.fractal;
                 syncUI();
+                compile();
                 if (S.autoRotate || S.cycle) startAnim();
-                render();
                 return true;
             }
 
@@ -2707,24 +4479,39 @@ void main(){
                 setTimeout(() => sec.scrollIntoView({ block: 'center', behavior: rm.matches ? 'auto' : 'smooth' }), 60);
             }
             const ARROWS = { arrowleft: [-1, 0], arrowright: [1, 0], arrowup: [0, -1], arrowdown: [0, 1] };
+            const FLY_MOVE_KEYS = new Set(['w', 'a', 's', 'd']);
             document.addEventListener('keydown', e => {
                 if (e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented || isTyping(e.target)) return;
                 const k = e.key.toLowerCase();
                 const onControl = e.target && (e.target.tagName === 'INPUT' || e.target.id === 'grip');
+                if (S.mode === 'fly' && FLY_MOVE_KEYS.has(k)) {
+                    if (onControl) return;
+                    e.preventDefault();
+                    if (!flyKeys.has(k)) { flyKeys.add(k); kickFlyLoop(); }
+                    return;
+                }
                 if (ARROWS[k]) {
                     if (onControl) return;
                     e.preventDefault();
-                    S.cam.yaw += ARROWS[k][0] * 0.09;
-                    S.cam.pitch = clamp(S.cam.pitch + ARROWS[k][1] * 0.09, -1.5, 1.5);
-                    bump(); render(); return;
+                    if (S.mode === 'fly') {
+                        S.fly.yaw = wrapAngle(S.fly.yaw + ARROWS[k][0] * 0.09);
+                        S.fly.pitch = clamp(S.fly.pitch - ARROWS[k][1] * 0.09, -1.5, 1.5);
+                        render();
+                    } else {
+                        S.cam.yaw += ARROWS[k][0] * 0.09;
+                        S.cam.pitch = clamp(S.cam.pitch + ARROWS[k][1] * 0.09, -1.5, 1.5);
+                        bump(); render();
+                    }
+                    return;
                 }
-                if (k === '+' || k === '=') { e.preventDefault(); zoomBy(0.85); return; }
-                if (k === '-' || k === '_') { e.preventDefault(); zoomBy(1 / 0.85); return; }
+                if (k === '+' || k === '=') { e.preventDefault(); S.mode === 'fly' ? flySpeedBy(1.15) : zoomBy(0.85); return; }
+                if (k === '-' || k === '_') { e.preventDefault(); S.mode === 'fly' ? flySpeedBy(1 / 1.15) : zoomBy(1 / 0.85); return; }
                 if (e.repeat) return;
                 switch (k) {
                     case 'h': showSide(app.classList.contains('collapsed')); break;
                     case 'r': resetView(); break;
-                    case 'a': toggleCheck('#autoRotate'); break;
+                    case 'f': S.mode === 'fly' ? startTransitionToOrbit() : enterFly(); break;
+                    case 'a': if (S.mode !== 'fly') toggleCheck('#autoRotate'); break;
                     case 'c': toggleCheck('#cycle'); break;
                     case 'p': {
                         const all = PALETTES.concat(S.customPalettes);
@@ -2733,15 +4520,19 @@ void main(){
                         S.palette = next.id; syncPal(); render(); toast(next.name);
                         break;
                     }
-                    case 's': $('#savePng').click(); break;
+                    case 's': if (S.mode !== 'fly') $('#savePng').click(); break;
                     case '?': openKeys(); break;
                     default: return;
                 }
                 e.preventDefault();
             });
+            document.addEventListener('keyup', e => {
+                const k = e.key.toLowerCase();
+                if (flyKeys.has(k)) flyKeys.delete(k);
+            });
 
             /* =====================================================================
-               10. sync + init
+               11. sync + init
                ===================================================================== */
             function syncUI() {
                 typeSel.value = S.fractal;
@@ -2752,11 +4543,20 @@ void main(){
                 $('#boxIter').value = S.box.iter; $('#boxIterV').textContent = S.box.iter;
                 $('#sierpIter').value = S.sierp.iter; $('#sierpIterV').textContent = S.sierp.iter;
                 $('#mengerIter').value = S.menger.iter; $('#mengerIterV').textContent = S.menger.iter;
+                ceqEl.value = S.custom.eq; ceqhlEl.innerHTML = highlightHTML(S.custom.eq) || '&nbsp;';
+                $('#cIter').value = S.custom.iter; $('#cIterV').textContent = S.custom.iter;
+                $('#cBail').value = S.custom.bailout; $('#cBailV').textContent = S.custom.bailout;
+                $('#cStep').value = S.custom.stepScale; $('#cStepV').textContent = S.custom.stepScale.toFixed(2);
+                renderParams();
                 $('#maxSteps').value = S.maxSteps; $('#maxStepsV').textContent = S.maxSteps;
                 $('#maxDist').value = S.maxDist; $('#maxDistV').textContent = S.maxDist;
-                $('#precision').value = S.precision; $('#precisionV').textContent = S.precision.toFixed(4);
+                $('#precision').value = S.precision; $('#precisionV').textContent = S.precision.toFixed(6);
                 $('#fog').value = S.fog; $('#fogV').textContent = S.fog.toFixed(3);
                 $('#ao').checked = S.ao; $('#shadows').checked = S.shadows; $('#spec').checked = S.spec;
+                $('#resScale').value = S.perf.resScale; syncResScaleV();
+                $('#dynQuality').checked = S.perf.dynQuality;
+                $('#dprCap').checked = S.perf.dprCap1;
+                $('#showFps').checked = S.perf.showFps;
                 $('#fov').value = S.cam.fov; $('#fovV').textContent = S.cam.fov + '°';
                 $('#autoRotate').checked = S.autoRotate; syncAutoSpeedVis();
                 $('#autoSpeed').value = S.autoSpeed; $('#autoSpeedV').textContent = S.autoSpeed.toFixed(2);
@@ -2769,13 +4569,30 @@ void main(){
                 syncPal();
                 fillAll();
                 updateAddCaption();
+                setFlySpeed(S.fly.speed, { silent: true });
+                syncModeUI();
+                app.dataset.slice = S.slice.on ? '1' : '0';
+                $('#sliceOn').checked = S.slice.on;
+                $('#sliceFields').style.display = S.slice.on ? '' : 'none';
+                $('#sliceShowIn3d').checked = S.slice.show3d;
+                setSliceDragMode(S.slice.dragMode);
+                setSliceOpenAmt(S.slice.on ? 1 : 0);
+                syncSliceUI();
             }
 
-            new ResizeObserver(() => render()).observe(stage);
+            new ResizeObserver(() => render()).observe(pane3d);
+            new ResizeObserver(() => render()).observe(pane2d);
             new ResizeObserver(() => render()).observe(side);
 
             setTheme(store.get('theme', 'auto'));
             setSide(store.get('side', 'solid') === 'glass' ? 'glass' : 'solid');
+            const savedPerf = store.get('perf', null);
+            if (savedPerf && typeof savedPerf === 'object') {
+                if (typeof savedPerf.resScale === 'number') S.perf.resScale = clamp(savedPerf.resScale, 0.4, 1.5);
+                if (typeof savedPerf.dynQuality === 'boolean') S.perf.dynQuality = savedPerf.dynQuality;
+                if (typeof savedPerf.dprCap1 === 'boolean') S.perf.dprCap1 = savedPerf.dprCap1;
+                if (typeof savedPerf.showFps === 'boolean') S.perf.showFps = savedPerf.showFps;
+            }
             S.sw = Math.round(clamp(+store.get('sw', 400) || 400, 320, 720));
             S.sh = Math.round(clamp(+store.get('sh', S.sh) || S.sh, 200, 2000));
             setSize(mq.matches ? S.sh : S.sw, true);
@@ -2785,7 +4602,7 @@ void main(){
             S.customPalettes = loadedCustom.filter(p => p && typeof p.id === 'string' && typeof p.name === 'string' && vec3ok(p.a) && vec3ok(p.b) && vec3ok(p.c) && vec3ok(p.d));
             renderAllPalGrids();
             renderMarks();
-            if (!loadSnap(readHash())) syncUI();
+            if (!loadSnap(readHash())) { syncUI(); compile(); }
             startIntro();
             render();
         })();
