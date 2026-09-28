@@ -193,12 +193,69 @@
             border-left: 1px solid rgba(255, 255, 255, .14)
         }
 
+        #app[data-mode="roll"] #gl {
+            cursor: crosshair
+        }
+
+        /* barrel roll: a ring at the middle of the view marks "straight ahead"; the dot follows the steering input */
+        #steerHud {
+            position: absolute;
+            z-index: 2;
+            left: 0;
+            top: 0;
+            width: 0;
+            height: 0;
+            display: none;
+            pointer-events: none
+        }
+
+        #app[data-mode="roll"] #steerHud {
+            display: block
+        }
+
+        #steerHud .ring {
+            position: absolute;
+            width: 56px;
+            height: 56px;
+            margin: -28px 0 0 -28px;
+            border: 1px solid rgba(255, 255, 255, .32);
+            border-radius: 50%
+        }
+
+        #steerHud .ring::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 4px;
+            height: 4px;
+            margin: -2px 0 0 -2px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .5)
+        }
+
+        #steerHud .dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            margin: -5px 0 0 -5px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity .15s
+        }
+
+        #steerHud.on .dot {
+            opacity: .9
+        }
+
         #toggle:hover,
         #zoombtns button:hover {
             background: rgba(255, 255, 255, .12)
         }
 
-        #app[data-mode="fly"] #zoombtns {
+        #app[data-mode="fly"] #zoombtns,
+        #app[data-mode="roll"] #zoombtns {
             display: none
         }
 
@@ -392,7 +449,8 @@
             touch-action: none
         }
 
-        #app[data-mode="fly"][data-touch="1"] #joyWrap {
+        #app[data-mode="fly"][data-touch="1"] #joyWrap,
+        #app[data-mode="roll"][data-touch="1"] #joyWrap {
             display: flex
         }
 
@@ -432,7 +490,8 @@
             border-radius: 999px
         }
 
-        #app[data-mode="fly"][data-touch="1"] #flySpeedBox {
+        #app[data-mode="fly"][data-touch="1"] #flySpeedBox,
+        #app[data-mode="roll"][data-touch="1"] #flySpeedBox {
             display: flex
         }
 
@@ -2153,6 +2212,7 @@
                     <button id="zout" type="button" aria-label="zoom out">−</button>
                 </div>
                 <div id="help" class="ov">drag to orbit. scroll or pinch to zoom toward the pointer.</div>
+                <div id="steerHud" aria-hidden="true"><div class="ring"></div><div class="dot"></div></div>
                 <div id="joyWrap" class="ov" aria-hidden="true">
                     <div id="joyBase">
                         <div id="joyKnob"></div>
@@ -2758,12 +2818,13 @@
                                 <p id="camDoc">the camera orbits the origin. drag to rotate, scroll or pinch to zoom, or
                                     turn on auto-rotate to let it spin on its own. switch to free fly to pilot the
                                     camera by hand — wasd (or a joystick on touch) to move, drag to look around, and
-                                    scroll or the speed slider to change how fast you fly.</p>
+                                    scroll or the speed slider to change how fast you fly. barrel roll is a flight simulator: the camera flies like a plane, steered by where your pointer sits relative to the middle of the view, and it can turn all the way over.</p>
                             </div>
                         </details>
-                        <div class="seg" role="group" aria-label="camera mode" style="margin-bottom:14px">
+                        <div class="seg three" role="group" aria-label="camera mode" style="margin-bottom:14px">
                             <button id="modeOrbit" type="button" aria-pressed="true">orbit</button>
                             <button id="modeFly" type="button" aria-pressed="false">free fly</button>
+                            <button id="modeRoll" type="button" aria-pressed="false">barrel roll</button>
                         </div>
                         <div class="field" style="margin-top:0">
                             <div class="head"><label class="lbl" for="fov" style="margin:0">field of view</label><span
@@ -2787,6 +2848,12 @@
                             <input id="flySpeed" type="range" min="0" max="1" step="0.001" value="0.4">
                             <label class="check"><input class="sw" type="checkbox" id="flyAuto"> slow down near surfaces</label>
                             <p class="hint">the flight speed becomes a top speed: the closer the nearest surface ahead of you, the slower you move, so you can glide right up to detail without crashing into it or having to keep changing the speed.</p>
+                        </div>
+                        <div class="field" id="rollField" style="display:none">
+                            <div class="head"><label class="lbl" for="rollSens" style="margin:0">steering
+                                    sensitivity</label><span id="rollSensV">1.00</span></div>
+                            <input id="rollSens" type="range" min="0.2" max="3" step="0.05" value="1">
+                            <p class="hint">keep the pointer over the view. above the middle pitches up (hold it and you loop), below dives, and off to the side banks and turns, so up and to the side makes the camera roll and corkscrew. the further from the middle, the faster it turns, and there is no limit on your angle. w and s fly forward and back (up and down on the touch joystick; touch and hold off-center to steer).</p>
                         </div>
                         <div style="margin-top:16px"><button class="btn" id="reset" type="button">reset view</button>
                         </div>
@@ -2940,9 +3007,11 @@
                             <dt><kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd></dt>
                             <dd>orbit / look around</dd>
                             <dt><kbd>w</kbd><kbd>a</kbd><kbd>s</kbd><kbd>d</kbd></dt>
-                            <dd>fly (free-fly mode only)</dd>
+                            <dd>fly (free fly and barrel roll; barrel roll uses only w and s)</dd>
                             <dt><kbd>f</kbd></dt>
                             <dd>toggle orbit / free fly</dd>
+                            <dt><kbd>b</kbd></dt>
+                            <dd>toggle orbit / barrel roll</dd>
                             <dt><kbd>r</kbd></dt>
                             <dd>reset the view</dd>
                             <dt><kbd>p</kbd></dt>
@@ -3261,6 +3330,7 @@
                 cam: { yaw: DEFAULTS.mandelbulb.yaw, pitch: DEFAULTS.mandelbulb.pitch, dist: DEFAULTS.mandelbulb.dist, fov: 42, target: [0, 0, 0] },
                 mode: 'orbit',
                 fly: { pos: [0, 0, DEFAULTS.mandelbulb.dist], yaw: 0, pitch: 0, speed: 1.5, autoSlow: false, eff: 1.5 },
+                roll: { fwd: [0, 0, -1], up: [0, 1, 0], sens: 1 },
                 autoRotate: false, autoSpeed: 0.12,
                 light: { az: -35, el: 52, ambient: 0.22 },
                 palette: 'spectrum', customPalettes: [], density: 1, offset: 0, cycle: false, phase: 0,
@@ -4461,15 +4531,54 @@ void main(){
                 const fovScale = 1 / Math.tan(S.cam.fov * Math.PI / 360);
                 return { pos, fwd, right, up, fovScale };
             }
-            function flyBasis() { return basisFromViewAngles(S.fly.pos, S.fly.yaw, S.fly.pitch); }
+            /* barrel roll camera: orientation is a forward and an up vector (not yaw/pitch), so it can point anywhere
+               and roll to any angle with no gimbal lock. */
+            function basisFromFwdUp(pos, fwd, up) {
+                const f = norm3(fwd);
+                let right = cross3(f, up);
+                if (Math.hypot(right[0], right[1], right[2]) < 1e-6) right = cross3(f, [0, 1, 0]);
+                if (Math.hypot(right[0], right[1], right[2]) < 1e-6) right = [1, 0, 0];
+                right = norm3(right);
+                const u = norm3(cross3(right, f));
+                const fovScale = 1 / Math.tan(S.cam.fov * Math.PI / 360);
+                return { pos, fwd: f, right, up: u, fovScale };
+            }
+            function flyBasis() {
+                return S.mode === 'roll' ? basisFromFwdUp(S.fly.pos, S.roll.fwd, S.roll.up) : basisFromViewAngles(S.fly.pos, S.fly.yaw, S.fly.pitch);
+            }
+            const isFree = () => S.mode === 'fly' || S.mode === 'roll';
+            const dot3 = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+            function rotAbout(v, axis, ang) {   // rodrigues rotation of v about a unit axis
+                const c = Math.cos(ang), sn = Math.sin(ang), d = dot3(axis, v) * (1 - c), x = cross3(axis, v);
+                return [v[0] * c + x[0] * sn + axis[0] * d, v[1] * c + x[1] * sn + axis[1] * d, v[2] * c + x[2] * sn + axis[2] * d];
+            }
+            function slerp3(a, b, t) {
+                const th = Math.acos(clamp(dot3(a, b), -1, 1)), sn = Math.sin(th);
+                if (sn < 1e-6) return a.slice();
+                const wa = Math.sin((1 - t) * th) / sn, wb = Math.sin(t * th) / sn;
+                return [a[0] * wa + b[0] * wb, a[1] * wa + b[1] * wb, a[2] * wa + b[2] * wb];
+            }
+            /* turn the barrel-roll camera about its own axes: pitch about right (positive = nose up), roll about
+               forward (positive = bank right), yaw about up (positive = turn left) */
+            function rotateRoll(pitch, roll, yaw) {
+                let f = S.roll.fwd, u = S.roll.up;
+                const right = norm3(cross3(f, u));
+                if (pitch) { f = rotAbout(f, right, pitch); u = rotAbout(u, right, pitch); }
+                if (roll) u = rotAbout(u, f, roll);
+                if (yaw) f = rotAbout(f, u, yaw);
+                f = norm3(f);
+                const d = dot3(u, f);
+                u = norm3([u[0] - f[0] * d, u[1] - f[1] * d, u[2] - f[2] * d]);
+                S.roll.fwd = f; S.roll.up = u;
+            }
             // the free-fly view angles that correspond to the orbit camera's current pose
             // (orbit always looks straight at the origin from cameraBasis().pos)
             function orbitViewAngles() { return { yaw: wrapAngle(S.cam.yaw + Math.PI), pitch: -S.cam.pitch }; }
 
             let flyTrans = null; // in-flight fly->orbit transition state, or null
             function activeBasis() {
-                if (S.mode === 'fly') return flyBasis();
-                if (flyTrans) return basisFromViewAngles(flyTrans.pos, flyTrans.yaw, flyTrans.pitch);
+                if (S.mode === 'fly' || S.mode === 'roll') return flyBasis();
+                if (flyTrans) return basisFromFwdUp(flyTrans.pos, flyTrans.fwd, flyTrans.up);
                 return cameraBasis();
             }
 
@@ -4660,6 +4769,7 @@ void main(){
 
                 trackFps(nowT);
                 updateReadout();
+                updateSteerHud();
                 scheduleHash();
                 if (S.slice.on) draw2d();
             }
@@ -4740,8 +4850,8 @@ void main(){
             const FRACTAL_LABEL = { mandelbulb: 'mandelbulb', mandelbox: 'mandelbox', sierpinski: 'sierpinski tetrahedron', menger: 'menger sponge', custom: 'custom equation', qjulia: 'quaternion julia', ship: 'burning ship 3d', julibulb: 'julia bulb', apollo: 'apollonian gasket', kifs: 'folding ifs' };
             function updateReadout() {
                 const fpsSuffix = (S.perf.showFps && fpsEMA) ? ' <span class="dim">· ' + Math.round(fpsEMA) + ' fps</span>' : '';
-                if (S.mode === 'fly') {
-                    readoutEl.innerHTML = FRACTAL_LABEL[S.fractal] + '<br>free fly <span class="dim">· speed ' + fmtSpeed(S.fly.autoSlow && S.fly.eff < S.fly.speed ? S.fly.eff : S.fly.speed) + (S.fly.autoSlow && S.fly.eff < S.fly.speed * 0.98 ? ' (slowed)' : '') + '</span>' + fpsSuffix;
+                if (isFree()) {
+                    readoutEl.innerHTML = FRACTAL_LABEL[S.fractal] + '<br>' + (S.mode === 'roll' ? 'barrel roll' : 'free fly') + ' <span class="dim">· speed ' + fmtSpeed(S.fly.autoSlow && S.fly.eff < S.fly.speed ? S.fly.eff : S.fly.speed) + (S.fly.autoSlow && S.fly.eff < S.fly.speed * 0.98 ? ' (slowed)' : '') + '</span>' + fpsSuffix;
                     return;
                 }
                 const zoom = (DEFAULTS[S.fractal].dist / S.cam.dist);
@@ -4770,7 +4880,9 @@ void main(){
             const HELP_TEXT = {
                 orbit: 'drag to orbit. scroll or pinch to zoom toward the pointer.',
                 fly: touchUI ? 'drag to look around · joystick to move · slider for speed'
-                    : 'wasd to move · drag to look around · scroll to change speed'
+                    : 'wasd to move · drag to look around · scroll to change speed',
+                roll: touchUI ? 'touch and hold off-center to steer · joystick up/down to fly · slider for speed'
+                    : 'move the pointer to steer · w / s to fly · scroll to change speed'
             };
 
             const zm = { rem: 0, raf: 0, last: 0, anchor: null };
@@ -4851,36 +4963,61 @@ void main(){
             flySpeedTouchEl.addEventListener('input', e => setFlySpeed(sliderToSpeed(+e.target.value)));
 
             /* ---------- free-fly: enter / exit ---------- */
+            function yawPitchFromFwd(f) { return { yaw: Math.atan2(f[0], f[2]), pitch: Math.asin(clamp(f[1], -1, 1)) }; }
             function syncModeUI() {
                 const m = S.mode === 'toOrbit' ? 'orbit' : S.mode;
                 app.dataset.mode = m;
                 $('#modeOrbit').setAttribute('aria-pressed', String(m === 'orbit'));
                 $('#modeFly').setAttribute('aria-pressed', String(m === 'fly'));
+                $('#modeRoll').setAttribute('aria-pressed', String(m === 'roll'));
                 $('#orbitOnlyFields').style.display = m === 'orbit' ? '' : 'none';
-                $('#flySpeedField').style.display = m === 'fly' ? '' : 'none';
+                $('#flySpeedField').style.display = m === 'orbit' ? 'none' : '';
+                $('#rollField').style.display = m === 'roll' ? '' : 'none';
                 canvas.setAttribute('aria-label', m === 'fly'
                     ? '3d fractal view, free-fly camera. ' + HELP_TEXT.fly
-                    : '3d fractal view. drag to orbit, scroll or pinch to zoom.');
+                    : m === 'roll' ? '3d fractal view, barrel roll camera. ' + HELP_TEXT.roll
+                        : '3d fractal view. drag to orbit, scroll or pinch to zoom.');
+                if (m !== 'roll') steer.on = false;
                 showHelp(HELP_TEXT[m]);
                 syncDofVis();
                 updateReadout();
+                updateSteerHud();
             }
             function enterFly() {
                 if (S.mode === 'fly') return;
-                const cb = cameraBasis();
-                S.fly.pos = cb.pos.slice();
-                const va = orbitViewAngles();
-                S.fly.yaw = va.yaw; S.fly.pitch = va.pitch;
-                setFlySpeed(clamp(S.cam.dist * 0.6, SPEED_MIN, SPEED_MAX), { silent: true });
+                if (S.mode === 'roll') {
+                    const va = yawPitchFromFwd(S.roll.fwd);
+                    S.fly.yaw = va.yaw; S.fly.pitch = clamp(va.pitch, -1.5, 1.5);
+                } else {
+                    const cb = cameraBasis();
+                    S.fly.pos = cb.pos.slice();
+                    const va = orbitViewAngles();
+                    S.fly.yaw = va.yaw; S.fly.pitch = va.pitch;
+                    setFlySpeed(clamp(S.cam.dist * 0.6, SPEED_MIN, SPEED_MAX), { silent: true });
+                }
                 S.mode = 'fly'; flyTrans = null;
                 syncModeUI(); bump(); render();
             }
+            function enterRoll() {
+                if (S.mode === 'roll') return;
+                if (S.mode === 'fly') {
+                    const fb = flyBasis();
+                    S.roll.fwd = fb.fwd.slice(); S.roll.up = fb.up.slice();
+                } else {
+                    const cb = cameraBasis();
+                    S.fly.pos = cb.pos.slice();
+                    S.roll.fwd = cb.fwd.slice(); S.roll.up = cb.up.slice();
+                    setFlySpeed(clamp(S.cam.dist * 0.6, SPEED_MIN, SPEED_MAX), { silent: true });
+                }
+                S.mode = 'roll'; flyTrans = null;
+                syncModeUI(); bump(); render();
+            }
             function startTransitionToOrbit() {
-                if (S.mode !== 'fly') return;
-                const fromPos = S.fly.pos.slice(), fromYaw = S.fly.yaw, fromPitch = S.fly.pitch;
-                const toPos = cameraBasis().pos, va = orbitViewAngles();
-                const dYaw = wrapAngle(va.yaw - fromYaw);
-                const dur = rm.matches ? 1 : 450;
+                if (!isFree()) return;
+                const fb = flyBasis();
+                const fromPos = S.fly.pos.slice(), fromF = fb.fwd.slice(), fromU = fb.up.slice();
+                const ob = cameraBasis(), toPos = ob.pos;
+                const dur = rm.matches ? 1 : (S.mode === 'roll' ? 650 : 450);
                 const t0 = performance.now();
                 S.mode = 'toOrbit';
                 syncModeUI();
@@ -4889,8 +5026,8 @@ void main(){
                     const e = u < 1 ? u * u * (3 - 2 * u) : 1;
                     flyTrans = {
                         pos: [fromPos[0] + (toPos[0] - fromPos[0]) * e, fromPos[1] + (toPos[1] - fromPos[1]) * e, fromPos[2] + (toPos[2] - fromPos[2]) * e],
-                        yaw: fromYaw + dYaw * e,
-                        pitch: fromPitch + (va.pitch - fromPitch) * e
+                        fwd: slerp3(fromF, ob.fwd, e),
+                        up: slerp3(fromU, ob.up, e)
                     };
                     render();
                     if (u < 1) requestAnimationFrame(step);
@@ -4900,12 +5037,48 @@ void main(){
             }
             $('#modeOrbit').addEventListener('click', startTransitionToOrbit);
             $('#modeFly').addEventListener('click', enterFly);
+            $('#modeRoll').addEventListener('click', enterRoll);
 
             /* ---------- free-fly: wasd + joystick movement ---------- */
             const flyKeys = new Set();
             const joyVec = { x: 0, y: 0 };
             let flyRaf = 0, flyLastT = 0;
-            function flyActive() { return S.mode === 'fly' && (flyKeys.size > 0 || joyVec.x !== 0 || joyVec.y !== 0); }
+            /* barrel roll steering: the pointer's offset from the middle of the view (x right, y up, each -1..1), with a
+               small dead zone and a curve that gives fine control near the centre and full deflection at the edges */
+            const steer = { x: 0, y: 0, on: false };
+            function steerVec() {
+                if (!steer.on) return [0, 0];
+                const f = v => { const a = Math.abs(v); if (a < 0.06) return 0; return Math.sign(v) * Math.pow((a - 0.06) / 0.94, 1.4); };
+                return [f(steer.x), f(steer.y)];
+            }
+            function setSteer(x, y) {
+                const g = geom();
+                const hw = Math.max((g.W - g.L) / 2, 1), hh = Math.max((g.H - g.B) / 2, 1);
+                steer.x = clamp((x - g.cx) / hw, -1, 1);
+                steer.y = clamp(-(y - g.cy) / hh, -1, 1);
+                steer.on = true;
+            }
+            const steerHudEl = $('#steerHud'), steerDotEl = steerHudEl.querySelector('.dot');
+            function updateSteerHud() {
+                if (S.mode !== 'roll') return;
+                const g = geom();
+                steerHudEl.style.left = g.cx + 'px'; steerHudEl.style.top = g.cy + 'px';
+                steerDotEl.style.transform = 'translate(' + (steer.x * (g.W - g.L) / 2) + 'px,' + (-steer.y * (g.H - g.B) / 2) + 'px)';
+                steerHudEl.classList.toggle('on', steer.on && (steer.x !== 0 || steer.y !== 0));
+            }
+            function applySteer(dt) {
+                const [sx, sy] = steerVec();
+                if (!sx && !sy) return false;
+                const k = S.roll.sens * dt;
+                // pointer up pitches up, pointer right banks right and turns right
+                rotateRoll(sy * 1.7 * k, sx * 2.6 * k, -sx * 0.9 * k);
+                return true;
+            }
+            function flyActive() {
+                if (S.mode === 'fly') return flyKeys.size > 0 || joyVec.x !== 0 || joyVec.y !== 0;
+                if (S.mode === 'roll') { const [sx, sy] = steerVec(); return sx !== 0 || sy !== 0 || flyKeys.has('w') || flyKeys.has('s') || joyVec.y !== 0; }
+                return false;
+            }
             function kickFlyLoop() { if (!flyRaf && flyActive()) { flyLastT = performance.now(); flyRaf = requestAnimationFrame(flyTick); } }
             /* nearest surface in the view: reads the depth stored in the last frame's alpha at the screen centre and
                at four points around it (throttled, since a readback stalls the gpu), returning the smallest camera
@@ -4937,12 +5110,18 @@ void main(){
             function flyTick(t) {
                 if (!flyActive()) { flyRaf = 0; setSlowedUI(false); return; }
                 const dt = Math.min(0.05, Math.max(0, (t - flyLastT) / 1000)); flyLastT = t;
+                const rolling = S.mode === 'roll';
                 let ix = joyVec.x, iz = joyVec.y;
-                if (flyKeys.has('a')) ix -= 1;
-                if (flyKeys.has('d')) ix += 1;
+                if (!rolling) {
+                    if (flyKeys.has('a')) ix -= 1;
+                    if (flyKeys.has('d')) ix += 1;
+                }
                 if (flyKeys.has('w')) iz += 1;
                 if (flyKeys.has('s')) iz -= 1;
+                if (rolling) ix = 0;
+                const rotated = rolling ? applySteer(dt) : false;
                 const mag = Math.hypot(ix, iz);
+                let moved = false;
                 if (mag > 1e-4) {
                     const scale = Math.min(mag, 1) / mag;
                     const cb = flyBasis();
@@ -4961,8 +5140,9 @@ void main(){
                     S.fly.pos[0] += (cb.right[0] * ix + cb.fwd[0] * iz) * move;
                     S.fly.pos[1] += (cb.right[1] * ix + cb.fwd[1] * iz) * move;
                     S.fly.pos[2] += (cb.right[2] * ix + cb.fwd[2] * iz) * move;
-                    bump(); draw();
+                    moved = true;
                 }
+                if (moved || rotated) { bump(); draw(); }
                 flyRaf = requestAnimationFrame(flyTick);
             }
 
@@ -4980,8 +5160,10 @@ void main(){
                 const l = joyLocal(e);
                 const d = Math.hypot(l.x, l.y) || 1, k = Math.min(1, d / JOY_R);
                 const nx = (l.x / d) * k, ny = (l.y / d) * k;
-                joyVec.x = nx; joyVec.y = -ny;
-                joyKnobEl.style.transform = 'translate(' + (nx * JOY_R) + 'px,' + (ny * JOY_R) + 'px)';
+                const rl = S.mode === 'roll';   // barrel roll only uses forward / back, so the stick is vertical-only
+                const kx = rl ? 0 : nx, ky = rl ? clamp(l.y / JOY_R, -1, 1) : ny;
+                joyVec.x = kx; joyVec.y = -ky;
+                joyKnobEl.style.transform = 'translate(' + (kx * JOY_R) + 'px,' + (ky * JOY_R) + 'px)';
                 kickFlyLoop();
             });
             function joyEnd(e) {
@@ -5001,9 +5183,15 @@ void main(){
                 const l = local(e);
                 ptrs.set(e.pointerId, { x: l.x, y: l.y });
                 pinch = null; hideHelp(); zm.rem = 0;
+                if (S.mode === 'roll') { setSteer(l.x, l.y); updateSteerHud(); kickFlyLoop(); }
             });
             canvas.addEventListener('pointermove', e => {
                 const l = local(e);
+                if (S.mode === 'roll') {
+                    // a mouse steers just by hovering; touch steers while a finger is held down
+                    if (e.pointerType === 'mouse' || ptrs.has(e.pointerId)) { setSteer(l.x, l.y); updateSteerHud(); kickFlyLoop(); }
+                    return;
+                }
                 const prev = ptrs.get(e.pointerId);
                 if (!prev) return;
                 if (S.mode === 'fly') {
@@ -5031,12 +5219,16 @@ void main(){
                     bump(); render();
                 }
             });
-            function endPtr(e) { ptrs.delete(e.pointerId); pinch = null; }
+            function endPtr(e) {
+                ptrs.delete(e.pointerId); pinch = null;
+                if (S.mode === 'roll' && e.pointerType !== 'mouse') { steer.on = false; updateSteerHud(); }
+            }
+            canvas.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse' && steer.on) { steer.on = false; updateSteerHud(); } });
             canvas.addEventListener('pointerup', endPtr);
             canvas.addEventListener('pointercancel', endPtr);
             canvas.addEventListener('wheel', e => {
                 e.preventDefault(); hideHelp();
-                if (S.mode === 'fly') { flySpeedBy(Math.exp(clamp(-e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.0015), -0.7, 0.7))); return; }
+                if (isFree()) { flySpeedBy(Math.exp(clamp(-e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.0015), -0.7, 0.7))); return; }
                 zoomBy(Math.exp(clamp(e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.0015), -0.7, 0.7)), local(e));
             }, { passive: false });
             canvas.addEventListener('dblclick', () => resetView());
@@ -5046,7 +5238,10 @@ void main(){
             function resetView() {
                 const d = DEFAULTS[S.fractal];
                 S.cam.yaw = d.yaw; S.cam.pitch = d.pitch; S.cam.dist = d.dist; S.cam.target = [0, 0, 0];
-                if (S.mode === 'fly') {
+                if (S.mode === 'roll') {
+                    const cb = cameraBasis();
+                    S.fly.pos = cb.pos.slice(); S.roll.fwd = cb.fwd.slice(); S.roll.up = cb.up.slice();
+                } else if (S.mode === 'fly') {
                     const cb = cameraBasis(), va = orbitViewAngles();
                     S.fly.pos = cb.pos.slice(); S.fly.yaw = va.yaw; S.fly.pitch = va.pitch;
                 }
@@ -5398,8 +5593,8 @@ void main(){
             function syncGodrayVis() { $('#godrayFields').style.display = S.post.godray.on ? '' : 'none'; }
             function syncDofVis() {
                 $('#dofFields').style.display = S.post.dof.on ? '' : 'none';
-                $('#dofRefField').style.display = (S.mode === 'fly') ? 'none' : '';
-                const zf = S.post.dof.ref === 'focus' && S.mode !== 'fly';
+                $('#dofRefField').style.display = isFree() ? 'none' : '';
+                const zf = S.post.dof.ref === 'focus' && !isFree();
                 $('#dofBoth').style.display = zf ? '' : 'none';
                 const em = (S.post.dof.mode === 'both' && !zf) ? 'far' : S.post.dof.mode;
                 $('#dofFar').setAttribute('aria-pressed', String(em === 'far'));
@@ -6070,16 +6265,20 @@ void main(){
                 if (e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented || isTyping(e.target)) return;
                 const k = e.key.toLowerCase();
                 const onControl = e.target && (e.target.tagName === 'INPUT' || e.target.id === 'grip');
-                if (S.mode === 'fly' && FLY_MOVE_KEYS.has(k)) {
+                if (isFree() && FLY_MOVE_KEYS.has(k)) {
                     if (onControl) return;
                     e.preventDefault();
+                    if (S.mode === 'roll' && (k === 'a' || k === 'd')) return;   // barrel roll only flies forward and back
                     if (!flyKeys.has(k)) { flyKeys.add(k); kickFlyLoop(); }
                     return;
                 }
                 if (ARROWS[k]) {
                     if (onControl) return;
                     e.preventDefault();
-                    if (S.mode === 'fly') {
+                    if (S.mode === 'roll') {
+                        rotateRoll(-ARROWS[k][1] * 0.09, ARROWS[k][0] * 0.09, 0);
+                        render();
+                    } else if (S.mode === 'fly') {
                         S.fly.yaw = wrapAngle(S.fly.yaw + ARROWS[k][0] * 0.09);
                         S.fly.pitch = clamp(S.fly.pitch - ARROWS[k][1] * 0.09, -1.5, 1.5);
                         render();
@@ -6090,14 +6289,15 @@ void main(){
                     }
                     return;
                 }
-                if (k === '+' || k === '=') { e.preventDefault(); S.mode === 'fly' ? flySpeedBy(1.15) : zoomBy(0.85); return; }
-                if (k === '-' || k === '_') { e.preventDefault(); S.mode === 'fly' ? flySpeedBy(1 / 1.15) : zoomBy(1 / 0.85); return; }
+                if (k === '+' || k === '=') { e.preventDefault(); isFree() ? flySpeedBy(1.15) : zoomBy(0.85); return; }
+                if (k === '-' || k === '_') { e.preventDefault(); isFree() ? flySpeedBy(1 / 1.15) : zoomBy(1 / 0.85); return; }
                 if (e.repeat) return;
                 switch (k) {
                     case 'h': showSide(app.classList.contains('collapsed')); break;
                     case 'r': resetView(); break;
-                    case 'f': S.mode === 'fly' ? startTransitionToOrbit() : enterFly(); break;
-                    case 'a': if (S.mode !== 'fly') toggleCheck('#autoRotate'); break;
+                    case 'f': isFree() ? startTransitionToOrbit() : enterFly(); break;
+                    case 'b': S.mode === 'roll' ? startTransitionToOrbit() : enterRoll(); break;
+                    case 'a': if (!isFree()) toggleCheck('#autoRotate'); break;
                     case 'c': toggleCheck('#cycle'); break;
                     case 'p': {
                         const all = PALETTES.concat(S.customPalettes);
@@ -6106,7 +6306,7 @@ void main(){
                         S.palette = next.id; syncPal(); render(); toast(next.name);
                         break;
                     }
-                    case 's': if (S.mode !== 'fly') $('#savePng').click(); break;
+                    case 's': if (!isFree()) $('#savePng').click(); break;
                     case '?': openKeys(); break;
                     default: return;
                 }
@@ -6200,6 +6400,9 @@ void main(){
             new ResizeObserver(() => render()).observe(side);
 
             S.fly.autoSlow = store.get('flyAuto', false) === true; $('#flyAuto').checked = S.fly.autoSlow;
+            S.roll.sens = clamp(+store.get('rollSens', 1) || 1, 0.2, 3);
+            $('#rollSens').value = S.roll.sens; $('#rollSensV').textContent = S.roll.sens.toFixed(2);
+            $('#rollSens').addEventListener('input', e => { S.roll.sens = +e.target.value; $('#rollSensV').textContent = S.roll.sens.toFixed(2); store.set('rollSens', S.roll.sens); });
             setTheme(store.get('theme', 'auto'));
             setSide(store.get('side', 'solid') === 'glass' ? 'glass' : 'solid');
             const savedPerf = store.get('perf', null);
