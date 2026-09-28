@@ -21,6 +21,7 @@
             --accent-ink: #ffffff;
             --err: #b42318;
             --chip: #e1e6ed;
+            --hl: #0b8f58;
             --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
             --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
             box-sizing: border-box;
@@ -39,6 +40,7 @@
                 --accent-ink: rgb(5, 27, 18);
                 --err: #ff8a80;
                 --chip: #1a212b;
+                --hl: var(--accent);
             }
         }
 
@@ -52,6 +54,7 @@
             --accent-ink: rgb(5, 27, 18);
             --err: #ff8a80;
             --chip: #1a212b;
+            --hl: var(--accent);
         }
 
         *,
@@ -2197,6 +2200,236 @@
                 top: 8px
             }
         }
+
+        /* ---------- search bar (pinned above the scrolling controls) ---------- */
+        #searchbar {
+            flex: none;
+            position: relative;
+            z-index: 2;
+            padding: 12px 22px 10px 24px;
+            border-bottom: 1px solid var(--line)
+        }
+
+        #searchbar .sfield {
+            position: relative
+        }
+
+        #searchbar .sico {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            width: 15px;
+            height: 15px;
+            margin-top: -7.5px;
+            color: var(--muted);
+            pointer-events: none
+        }
+
+        #q {
+            width: 100%;
+            height: 36px;
+            padding: 0 36px 0 32px;
+            border-radius: 6px;
+            border: 1px solid var(--line);
+            background: var(--field);
+            color: var(--ink);
+            font: inherit
+        }
+
+        #q::placeholder {
+            color: var(--muted)
+        }
+
+        #q:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 1px
+        }
+
+        #qClear {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            width: 28px;
+            height: 28px;
+            margin-top: -14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 0;
+            border-radius: 5px;
+            background: none;
+            color: var(--muted);
+            cursor: pointer
+        }
+
+        #qClear[hidden] {
+            display: none
+        }
+
+        #qClear:hover {
+            color: var(--ink);
+            background: var(--chip)
+        }
+
+        #qClear svg {
+            width: 14px;
+            height: 14px
+        }
+
+        #app[data-side="glass"] #q {
+            background: color-mix(in srgb, var(--field) 55%, transparent)
+        }
+
+        #searchEmpty {
+            display: none;
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        #searchEmpty.show {
+            display: block
+        }
+
+        /* search state: hiding, revealing, highlighting */
+        .s-hide {
+            display: none !important
+        }
+
+        #panel section.s-first {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: 0
+        }
+
+        .s-reveal {
+            display: block !important
+        }
+
+        mark.s-hl {
+            background: none;
+            color: var(--hl);
+            font-weight: 600;
+            padding: 0
+        }
+
+        .seg button[aria-pressed="true"] mark.s-hl,
+        .s-opt[aria-pressed="true"] mark.s-hl {
+            color: #fff
+        }
+
+        section.s-force.shut .chev {
+            transform: none
+        }
+
+        section.s-force.shut .sec-body {
+            grid-template-rows: 1fr;
+            margin-top: 12px;
+            visibility: visible;
+            transition: none
+        }
+
+        .seg.s-filtered {
+            grid-template-columns: none !important;
+            grid-auto-flow: column;
+            grid-auto-columns: 1fr
+        }
+
+        .seg.s-filtered button {
+            border-left: 0 !important
+        }
+
+        .seg.s-filtered button:not(.s-hide)~button:not(.s-hide) {
+            border-left: 1px solid var(--line) !important
+        }
+
+        .s-selfield:not(.s-listing)>.s-opts {
+            display: none
+        }
+
+        .s-selfield.s-listing>select {
+            display: none
+        }
+
+        .s-opts {
+            display: flex;
+            flex-direction: column;
+            gap: 4px
+        }
+
+        .s-opt {
+            height: 34px;
+            padding: 0 10px;
+            text-align: left;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            background: var(--field);
+            color: var(--ink);
+            font: inherit;
+            cursor: pointer
+        }
+
+        .s-opt:hover {
+            border-color: var(--accent)
+        }
+
+        .s-opt[aria-pressed="true"] {
+            background: var(--accent);
+            color: var(--accent-ink);
+            font-weight: 500
+        }
+
+        #app[data-side="glass"] .s-opt {
+            background: color-mix(in srgb, var(--field) 55%, transparent)
+        }
+
+        #app[data-side="glass"] .s-opt[aria-pressed="true"] {
+            background: var(--accent)
+        }
+
+        /* ---------- "loading…" veil while a custom equation compiles ---------- */
+        #loadVeil {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-left: calc(var(--pl) - 12px);
+            padding-bottom: calc(var(--pb) - 12px);
+            background: rgba(0, 0, 0, .38);
+            color: #fff;
+            font: 500 16px/1 var(--sans);
+            letter-spacing: .04em;
+            text-shadow: 0 1px 8px rgba(0, 0, 0, .6);
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .2s, visibility 0s .2s
+        }
+
+        #loadVeil.on {
+            opacity: 1;
+            visibility: visible;
+            transition: none
+        }
+
+        #loadVeil span {
+            animation: lvpulse 1.1s ease-in-out infinite
+        }
+
+        @keyframes lvpulse {
+            50% {
+                opacity: .55
+            }
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            #loadVeil span {
+                animation: none
+            }
+        }
     </style>
 
 <body data-fractal="mandelbulb">
@@ -2277,9 +2510,19 @@
             </div>
         </main>
 
+        <div id="loadVeil" role="status" aria-live="polite"><span>loading…</span></div>
+
         <div id="side">
+            <div id="searchbar" role="search">
+                <div class="sfield">
+                    <svg class="sico" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10.6 10.6L14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                    <input id="q" type="text" placeholder="search controls" aria-label="search controls" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
+                    <button id="qClear" type="button" aria-label="clear search" title="clear search" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+                </div>
+            </div>
             <aside id="panel" aria-label="fractal controls">
                 <div class="pad">
+                    <p id="searchEmpty" role="status" aria-live="polite"></p>
                     <header>
                         <h1><span class="logo-f">f(<span class="acc">e³</span>)</span> <span class="logo-name">fractal<span class="acc">engine³ᴰ</span></span></h1>
                         <p class="sub">ray-marched, distance-estimated 3d fractals, drawn live on the gpu. drag the view
@@ -4149,7 +4392,7 @@ void main(){
                 }
                 return s;
             }
-            function compile() {
+            function compileNow() {
                 if (!gl) return;
                 let bodyExpr;
                 try {
@@ -4186,6 +4429,32 @@ void main(){
                 }
                 compileSliceProgram(bodyExpr);
                 render();
+            }
+
+
+            /* while a custom equation compiles, the (blocking) shader build would freeze the page with no feedback.
+               so: darken the view and show "loading…", wait for that to actually be painted, then compile. */
+            const loadVeil = $('#loadVeil');
+            let veilSince = 0, veilTimer = 0, compBusy = false, compAgain = false;
+            function setVeil(on) {
+                clearTimeout(veilTimer);
+                if (on) { veilSince = performance.now(); loadVeil.classList.add('on'); return; }
+                const wait = Math.max(0, 220 - (performance.now() - veilSince));   // avoid a one-frame flicker on quick compiles
+                veilTimer = setTimeout(() => loadVeil.classList.remove('on'), wait);
+            }
+            function compile() {
+                if (!gl) return;
+                if (S.fractal !== 'custom' || !prog) { compileNow(); return; }
+                if (compBusy) { compAgain = true; return; }
+                compBusy = true;
+                setVeil(true);
+                requestAnimationFrame(() => requestAnimationFrame(() => {
+                    try { compileNow(); } finally {
+                        compBusy = false;
+                        if (compAgain) { compAgain = false; compile(); if (S.fractal !== 'custom') setVeil(false); }
+                        else requestAnimationFrame(() => requestAnimationFrame(() => setVeil(false)));
+                    }
+                }));
             }
 
             /* =====================================================================
@@ -6472,6 +6741,231 @@ void main(){
             renderAllPalGrids();
             renderMarks();
             if (!loadSnap(readHash())) { syncUI(); compile(); }
+
+            /* ---------- search: filters the sidebar (and any popped-out windows) ---------- */
+            (() => {
+                const panel = $('#panel'), pad = panel.querySelector('.pad');
+                const qEl = $('#q'), clearBtn = $('#qClear'), emptyEl = $('#searchEmpty');
+                const norm = t => String(t || '').replace(/\s+/g, ' ').trim().toLowerCase();
+                const esc = t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                let tokens = [], rx = null, active = false, prevScroll = 0;
+
+                /* switch labels are flex rows with a gap: keep their text in a single element so highlight fragments stay joined */
+                panel.querySelectorAll('label.check').forEach(l => {
+                    const sp = document.createElement('span'); sp.className = 'chk-t';
+                    Array.from(l.childNodes).forEach(n => { if (!(n.nodeType === 1 && n.tagName === 'INPUT')) sp.appendChild(n); });
+                    l.appendChild(sp);
+                });
+
+                /* every dropdown gets wrapped together with its label, plus a list that stands in for the
+                   native menu while a search is narrowing its options (native options can't be highlighted) */
+                panel.querySelectorAll('select').forEach(sel => {
+                    const lab = sel.id ? panel.querySelector('label[for="' + sel.id + '"]') : null;
+                    const wrap = document.createElement('div'); wrap.className = 's-selfield';
+                    sel.parentNode.insertBefore(wrap, lab || sel);
+                    if (lab) wrap.appendChild(lab);
+                    wrap.appendChild(sel);
+                    const list = document.createElement('div'); list.className = 's-opts'; list.setAttribute('role', 'group');
+                    if (lab) list.setAttribute('aria-label', lab.textContent.trim());
+                    wrap.appendChild(list);
+                    list.addEventListener('click', e => {
+                        const b = e.target.closest('.s-opt'); if (!b) return;
+                        sel.value = b.dataset.v;
+                        sel.dispatchEvent(new Event('change', { bubbles: true }));
+                        list.querySelectorAll('.s-opt').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.v === sel.value)));
+                    });
+                });
+
+                const has = text => { const t = norm(text); return tokens.every(k => t.includes(k)); };
+
+                function kindOf(el) {
+                    if (el.classList.contains('param')) return 'param';
+                    if (el.classList.contains('s-selfield')) return 'select';
+                    if (el.classList.contains('custItem') || (el.tagName === 'DIV' && el.classList.contains('mark'))) return 'item';
+                    if (el.classList.contains('field') && el.querySelector('input[type="range"]')) return 'field';
+                    if (el.tagName === 'LABEL' && el.classList.contains('check')) return 'check';
+                    if (el.tagName === 'BUTTON') return 'button';
+                    return null;
+                }
+                function atomText(el, kind) {
+                    switch (kind) {
+                        case 'field': { const l = el.querySelector('.head .lbl') || el.querySelector('.lbl'); return l ? l.textContent : ''; }
+                        case 'check': return el.textContent;
+                        case 'button': return el.textContent.trim() || el.getAttribute('aria-label') || el.title || '';
+                        case 'param': { const n = el.querySelector('.param-name'); return 'parameter value ' + (n ? n.value : ''); }
+                        case 'item': return el.textContent + (el.classList.contains('mark') ? ' saved view' : '');
+                    }
+                    return '';
+                }
+                const isHeading = el => el.classList.contains('paltitle') || (el.tagName === 'SPAN' && el.classList.contains('lbl'));
+
+                /* ----- text highlighting ----- */
+                function markTextNode(node) {
+                    const text = node.nodeValue; rx.lastIndex = 0;
+                    let m, last = 0, frag = null;
+                    while ((m = rx.exec(text))) {
+                        if (!m[0]) { rx.lastIndex++; continue; }
+                        frag = frag || document.createDocumentFragment();
+                        if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+                        const mk = document.createElement('mark'); mk.className = 's-hl'; mk.textContent = m[0];
+                        frag.appendChild(mk); last = m.index + m[0].length;
+                    }
+                    if (!frag) return;
+                    if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+                    node.replaceWith(frag);
+                }
+                function highlightIn(root) {
+                    const nodes = [], w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+                    for (let n = w.nextNode(); n; n = w.nextNode()) if (n.nodeValue.trim()) nodes.push(n);
+                    nodes.forEach(markTextNode);
+                }
+                function highlightAtom(el, kind) {
+                    if (kind === 'field') el.querySelectorAll('.head .lbl').forEach(highlightIn);
+                    else if (kind === 'param') el.querySelectorAll('.lbl').forEach(highlightIn);
+                    else if (kind === 'select') { const l = el.querySelector('label'); if (l) highlightIn(l); }
+                    else highlightIn(el);
+                }
+
+                /* ----- reset everything the search changed ----- */
+                function reset() {
+                    document.querySelectorAll('mark.s-hl').forEach(m => { const par = m.parentNode; m.replaceWith(document.createTextNode(m.textContent)); par.normalize(); });
+                    document.querySelectorAll('.s-hide, .s-reveal, .s-force, .s-filtered, .s-listing, .s-first').forEach(e => e.classList.remove('s-hide', 's-reveal', 's-force', 's-filtered', 's-listing', 's-first'));
+                    document.querySelectorAll('.s-opts').forEach(l => { l.textContent = ''; });
+                    emptyEl.classList.remove('show');
+                }
+
+                /* ----- the filter itself ----- */
+                let hides, reveals, hits, selInfo;
+                function visit(el, inMatched, noNest) {
+                    const cs = getComputedStyle(el);
+                    let revealed = false;
+                    if (cs.display === 'none') {
+                        /* hidden by a toggle or mode (e.g. bloom settings while post-processing is off): still searchable.
+                           hidden by anything else (another shape's section, a control that never applies): skipped */
+                        if (inMatched || el.style.display !== 'none' || el.id === 'dofBoth') return false;
+                        revealed = true;
+                    }
+                    const kind = noNest ? null : kindOf(el);
+                    let matched = inMatched;
+                    if (kind === 'select') {
+                        const sel = el.querySelector('select'), lab = el.querySelector('label');
+                        const opts = Array.from(sel.options).filter(o => has(o.textContent));
+                        const labelHit = has(lab ? lab.textContent : '');
+                        selInfo.push({ el, sel, opts });
+                        if (labelHit) hits.push([el, "select"]);
+                        const shown = labelHit || opts.length > 0;
+                        if (shown && revealed) reveals.push(el);
+                        return shown;
+                    }
+                    if (kind) { matched = has(atomText(el, kind)); if (matched) hits.push([el, kind]); }
+                    const nest = noNest || kind === 'param' || kind === 'item';
+                    const kids = Array.from(el.children);
+                    const res = kids.map(c => visit(c, matched, nest));
+                    if (!matched) {
+                        /* a group title (or a "theme"-style caption) follows its neighbours: shown when something under it is */
+                        for (let i = 0; i < kids.length; i++) {
+                            if (!isHeading(kids[i])) continue;
+                            let any = false;
+                            for (let j = i + 1; j < kids.length; j++) {
+                                if (isHeading(kids[j]) || kids[j].classList.contains('field')) break;
+                                if (res[j]) { any = true; break; }
+                            }
+                            res[i] = any;
+                        }
+                    }
+                    const shown = matched || res.some(Boolean);
+                    if (shown) kids.forEach((c, i) => { if (!res[i]) hides.push(c); });
+                    if (shown && revealed) reveals.push(el);
+                    return shown;
+                }
+
+                function apply() {
+                    obs.disconnect();
+                    const focusV = document.activeElement && document.activeElement.classList.contains('s-opt') ? document.activeElement.dataset.v : null;
+                    reset();
+                    if (!tokens.length) {
+                        if (active) { active = false; panel.scrollTop = prevScroll; }
+                        clearBtn.hidden = !qEl.value;
+                        attach(); return;
+                    }
+                    if (!active) { active = true; prevScroll = panel.scrollTop; panel.scrollTop = 0; }
+                    clearBtn.hidden = false;
+
+                    hides = []; reveals = []; hits = []; selInfo = [];
+                    let total = 0;
+                    const sectionHits = [], winHits = [];
+                    document.querySelectorAll('.sec-in').forEach(root => {
+                        const win = root.closest('.floatwin');
+                        const sec = win ? null : root.closest('section');
+                        const holder = win || sec;
+                        if (!holder || getComputedStyle(holder).display === 'none') return;   // not applicable right now
+                        const shown = visit(root, false, false);
+                        if (shown) total++;
+                        (win ? winHits : sectionHits).push([holder, shown]);
+                    });
+
+                    hides.forEach(e => {
+                        e.classList.add('s-hide');
+                        if (e.tagName === 'BUTTON' && e.parentElement && e.parentElement.classList.contains('seg')) e.parentElement.classList.add('s-filtered');
+                    });
+                    reveals.forEach(e => e.classList.add('s-reveal'));
+                    sectionHits.forEach(([sec, shown]) => { if (shown) sec.classList.add('s-force'); else sec.classList.add('s-hide'); });
+                    winHits.forEach(([win, shown]) => { if (!shown) win.classList.add('s-hide'); });
+                    Array.from(pad.children).forEach(c => { if (c.tagName !== 'SECTION' && c !== emptyEl) c.classList.add('s-hide'); });
+                    const firstSec = Array.from(pad.children).find(c => c.tagName === 'SECTION' && getComputedStyle(c).display !== 'none');
+                    if (firstSec) firstSec.classList.add('s-first');
+
+                    selInfo.forEach(({ el, sel, opts }) => {
+                        if (!opts.length) return;
+                        const list = el.querySelector('.s-opts');
+                        opts.forEach(o => {
+                            const b = document.createElement('button'); b.type = 'button'; b.className = 's-opt';
+                            b.dataset.v = o.value; b.setAttribute('aria-pressed', String(sel.value === o.value));
+                            b.textContent = o.textContent.trim(); highlightIn(b); list.appendChild(b);
+                        });
+                        el.classList.add('s-listing');
+                    });
+                    hits.forEach(([el, kind]) => highlightAtom(el, kind));
+
+                    if (focusV !== null) { const f = document.querySelector('.s-opt[data-v="' + focusV + '"]'); if (f) f.focus(); }
+                    if (!total) { emptyEl.textContent = 'we looked for "' + qEl.value.trim() + '" but turned up empty-handed.'; emptyEl.classList.add('show'); }
+                    attach();
+                }
+
+                /* ----- keep the filter in step when the app changes what is visible (toggles, shape, pop-outs, rebuilt lists) ----- */
+                const OPTS = { subtree: true, childList: true, attributes: true, attributeFilter: ['style', 'hidden'], attributeOldValue: true };
+                let frame = 0;
+                const schedule = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(apply); };
+                const obs = new MutationObserver(recs => {
+                    if (!tokens.length) return;
+                    for (const m of recs) {
+                        if (m.type === 'attributes') {
+                            if (m.attributeName === 'data-fractal' || m.attributeName === 'hidden') { schedule(); return; }
+                            const old = /display\s*:\s*([^;]*)/.exec(m.oldValue || '');
+                            if ((old ? old[1].trim() : '') !== m.target.style.display) { schedule(); return; }
+                        } else if (Array.from(m.addedNodes).concat(Array.from(m.removedNodes)).some(n => n.nodeType === 1)) { schedule(); return; }
+                    }
+                });
+                function attach() {
+                    obs.observe(panel, OPTS);
+                    document.querySelectorAll('.floatwin').forEach(w => obs.observe(w, OPTS));
+                    obs.observe(document.body, { childList: true, attributes: true, attributeFilter: ['data-fractal'] });
+                    obs.takeRecords();
+                }
+
+                /* ----- the search box ----- */
+                function onInput() {
+                    const words = norm(qEl.value).split(' ').filter(Boolean);
+                    tokens = words;
+                    rx = words.length ? new RegExp(words.slice().sort((a, b) => b.length - a.length).map(esc).join('|'), 'gi') : null;
+                    apply();
+                }
+                qEl.addEventListener('input', onInput);
+                qEl.addEventListener('keydown', e => { if (e.key === 'Escape' && qEl.value) { e.preventDefault(); qEl.value = ''; onInput(); } });
+                clearBtn.addEventListener('click', () => { qEl.value = ''; onInput(); qEl.focus(); });
+                attach();
+            })();
+
             startIntro();
             render();
         })();
