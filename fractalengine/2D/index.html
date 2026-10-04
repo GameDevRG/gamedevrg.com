@@ -3279,6 +3279,8 @@ html[data-ui="paper"] #app .btn, html[data-ui="paper"] #app .cbtn, html[data-ui=
           <div class="head"><label class="lbl" for="iter" style="margin:0">iterations</label><span id="iterv">250</span></div>
           <input id="iter" type="range" min="20" max="2000" step="10" value="250">
         </div>
+        <label class="check"><input class="sw" type="checkbox" id="autoiter" checked> more iterations as you zoom in</label>
+        <p class="hint" style="margin:2px 0 8px">the slider sets the count at the starting zoom; each ×10 of zoom adds 100 more, up to 4000.</p>
         <div class="field">
           <div class="head"><label class="lbl" for="bail" style="margin:0">escape radius</label><span id="bailv">32</span></div>
           <input id="bail" type="range" min="0.3" max="3" step="0.01" value="1.505">
@@ -3290,6 +3292,8 @@ html[data-ui="paper"] #app .btn, html[data-ui="paper"] #app .cbtn, html[data-ui=
           <input id="degree" type="number" min="1.1" max="16" step="0.1" value="2">
         </div>
         <label class="check"><input class="sw" type="checkbox" id="aa" checked> smooth edges (2×2 sampling)</label>
+        <label class="check"><input class="sw" type="checkbox" id="deep" checked> deep zoom precision</label>
+        <p class="hint" style="margin:2px 0 0">keeps the centre at arbitrary precision and renders deep views by perturbation, so you can zoom far past where the gpu's floats run out. raise iterations as you go deeper.</p>
         <div style="margin-top:16px"><button class="btn" id="reset" type="button">reset view</button></div>
       </section>
 
@@ -4792,7 +4796,7 @@ function buildShadertoyExport(fExpr, zExpr){
     'const float uDegree = ' + fnum(S.degree) + ';\n' +
     'const float uDensity = ' + fnum(S.density) + ';\n' +
     'const float uOffset = ' + fnum(S.offset + S.phase) + ';\n' +
-    'const int uMaxIter = ' + Math.round(S.iter) + ';\n' +
+    'const int uMaxIter = ' + Math.round(iterEff()) + ';\n' +
     'const int uJulia = ' + (S.mode === 'julia' ? 1 : 0) + ';\n' +
     'const int uColorMode = ' + S.colorMode + ';\n' +
     'const int uAA = ' + (S.aa ? 2 : 1) + ';\n' +
@@ -4809,6 +4813,471 @@ function buildShadertoyExport(fExpr, zExpr){
 /* =====================================================================
    3. state, presets, palettes, classic fractal gallery
    ===================================================================== */
+/* =====================================================================
+   2b. deep zoom: perturbation theory
+   the centre of the view is kept as an arbitrary-precision fixed-point number (BigInt). one
+   reference orbit is iterated at that precision on the cpu; the gpu then only iterates the small
+   *difference* between each pixel's orbit and the reference, in ordinary floats. the difference is
+   stored in units of the view scale, so the zoom depth is limited by a double's exponent (~1e290),
+   not by the 24-bit float mantissa. the per-pixel delta update is derived from the parsed formula.
+   ===================================================================== */
+const f64 = new Float64Array(1), u64 = new BigUint64Array(f64.buffer);
+function toFx(v, F){                                   // double -> fixed point (exact)
+  if (!v || !isFinite(v)) return 0n;
+  f64[0] = v; const b = u64[0];
+  const ex = Number((b >> 52n) & 0x7ffn); let m = b & 0xfffffffffffffn, e;
+  if (ex === 0) e = -1074; else { m |= 1n << 52n; e = ex - 1075; }
+  const sh = e + F, r = sh >= 0 ? m << BigInt(sh) : m >> BigInt(-sh);
+  return (b >> 63n) ? -r : r;
+}
+function fxToNum(x, F){                                // fixed point -> nearest double
+  if (x === 0n) return 0;
+  const neg = x < 0n; if (neg) x = -x;
+  const sh = Math.max(0, x.toString(16).length * 4 - 64);
+  const top = Number(x >> BigInt(sh)), ex = sh - F, h = Math.trunc(ex / 2);
+  const r = top * Math.pow(2, h) * Math.pow(2, ex - h);
+  return neg ? -r : r;
+}
+function fxToDec(x, F, digits){
+  const neg = x < 0n; if (neg) x = -x;
+  const ip = x >> BigInt(F), fp = x & ((1n << BigInt(F)) - 1n);
+  const fr = ((fp * (10n ** BigInt(digits))) >> BigInt(F)).toString().padStart(digits, '0');
+  return (neg ? '-' : '') + ip + '.' + fr;
+}
+function decToFx(str, F){
+  const m = /^\s*([+-]?)(\d*)\.?(\d*)\s*$/.exec(str); if (!m) return null;
+  const fr = m[3] || '';
+  const v = (BigInt(m[2] || '0') << BigInt(F)) + ((BigInt(fr || '0') << BigInt(F)) / (10n ** BigInt(fr.length)));
+  return m[1] === '-' ? -v : v;
+}
+/* iterations that grow with depth: the slider sets the count at the starting zoom, and every ×10 of zoom adds 100 more (rounded up to 25s so the reference orbit is not rebuilt every frame) */
+const ITER_CAP = 4000;
+function iterEff(){
+  if (!S.autoIter || S.kind !== 'complex') return S.iter;
+  const zoom = (S.def[S.mode][2] || 1) / S.view.s;
+  if (!(zoom > 1)) return S.iter;
+  return Math.min(ITER_CAP, Math.max(S.iter, Math.ceil((S.iter + 100 * Math.log10(zoom)) / 25) * 25));
+}
+const minScale = () => (S.deep && S.kind === 'complex') ? 1e-290 : 1e-7;
+const hpBitsFor = s => Math.max(128, Math.ceil(-Math.log2(s)) + 80);
+
+/* the high-precision centre. S.view.x/y stay as doubles for everything else in the app; this holds the
+   digits a double cannot. if anything else rewrites S.view (presets, links, fly-to), it is rebuilt from the doubles. */
+const HP = {x:0n, y:0n, F:0, dx:NaN, dy:NaN};
+function hpSync(){
+  const F = hpBitsFor(S.view.s);
+  if (HP.dx !== S.view.x || HP.dy !== S.view.y || !HP.F){
+    HP.F = F; HP.x = toFx(S.view.x, F); HP.y = toFx(S.view.y, F); HP.dx = S.view.x; HP.dy = S.view.y;
+  } else if (F > HP.F){
+    const d = BigInt(F - HP.F); HP.x <<= d; HP.y <<= d; HP.F = F;
+  }
+}
+function hpMove(ddx, ddy){                              // move the centre by a double-sized displacement, losing no digits
+  if (!(S.deep && S.kind === 'complex')){ S.view.x += ddx; S.view.y += ddy; return; }
+  hpSync();
+  HP.x += toFx(ddx, HP.F); HP.y += toFx(ddy, HP.F);
+  S.view.x = HP.dx = fxToNum(HP.x, HP.F); S.view.y = HP.dy = fxToNum(HP.y, HP.F);
+}
+function hpStrings(){
+  hpSync(); const d = Math.ceil(-Math.log10(S.view.s)) + 8;
+  return [fxToDec(HP.x, HP.F, d), fxToDec(HP.y, HP.F, d)];
+}
+function hpLoad(vh){
+  if (!Array.isArray(vh) || vh.length !== 2 || vh.some(s => typeof s !== 'string' || s.length > 1200)) return;
+  const F = Math.max(hpBitsFor(S.view.s), Math.ceil(vh[0].length * 3.33) + 16);
+  const x = decToFx(vh[0], F), y = decToFx(vh[1], F); if (x === null || y === null) return;
+  HP.F = F; HP.x = x; HP.y = y;
+  S.view.x = HP.dx = fxToNum(x, F); S.view.y = HP.dy = fxToNum(y, F);
+}
+
+/* ---------- the formula in fixed-point complex arithmetic (for the reference orbit) ---------- */
+const HP_FUNCS = ['conj','re','im','abs','mag','sqrt','sqr','recip'];
+function canHP(n){
+  switch (n.t){
+    case 'num': case 'var': return true;
+    case 'neg': return canHP(n.x);
+    case 'call': return HP_FUNCS.includes(n.f) && canHP(n.x);
+    case 'bin': {
+      if (n.op === '^'){
+        const r = n.r; let k = null; if (r.t === 'num') k = r.v; else if (r.t === 'neg' && r.x.t === 'num') k = -r.x.v;
+        return k !== null && ((Number.isInteger(k) && Math.abs(k) <= 32) || k === 0.5) && canHP(n.l);
+      }
+      return canHP(n.l) && canHP(n.r);
+    }
+  }
+  return false;
+}
+function bigCtx(F){
+  const f = BigInt(F), ONE = 1n << f;
+  const isq = n => { if (n < 2n) return n < 0n ? 0n : n; let x = 1n << BigInt((n.toString(2).length + 1) >> 1); for (;;){ const y = (x + n / x) >> 1n; if (y >= x) return x; x = y; } };
+  const mul = (a, b) => [(a[0] * b[0] - a[1] * b[1]) >> f, (a[0] * b[1] + a[1] * b[0]) >> f];
+  const sqr = a => [(a[0] * a[0] - a[1] * a[1]) >> f, (a[0] * a[1]) >> (f - 1n)];
+  const div = (a, b) => { const d = b[0] * b[0] + b[1] * b[1]; if (d === 0n) throw new RangeError('div0'); return [((a[0] * b[0] + a[1] * b[1]) << f) / d, ((a[1] * b[0] - a[0] * b[1]) << f) / d]; };
+  const sqrt = a => {
+    const r = isq(a[0] * a[0] + a[1] * a[1]);
+    const u = (r + a[0]) >> 1n, v = (r - a[0]) >> 1n;
+    const re = isq((u < 0n ? 0n : u) << f), im = isq((v < 0n ? 0n : v) << f);
+    return [re, a[1] < 0n ? -im : im];
+  };
+  const powi = (a, k) => { let r = [ONE, 0n], b = a; while (k > 0){ if (k & 1) r = mul(r, b); k >>= 1; if (k) b = sqr(b); } return r; };
+  const ev = (n, env) => {
+    switch (n.t){
+      case 'num': return [toFx(n.v, F), 0n];
+      case 'var':
+        switch (n.n){
+          case 'z': return env.z; case 'c': return env.c; case 'i': return [0n, ONE];
+          case 'pi': return [toFx(Math.PI, F), 0n]; case 'e': return [toFx(Math.E, F), 0n];
+        }
+        { const pr = S.params.find(q => q.name === n.n); return [toFx(pr ? pr.value : 0, F), 0n]; }
+      case 'neg': { const a = ev(n.x, env); return [-a[0], -a[1]]; }
+      case 'call': {
+        const a = ev(n.x, env);
+        switch (n.f){
+          case 'conj': return [a[0], -a[1]];
+          case 're': return [a[0], 0n]; case 'im': return [a[1], 0n];
+          case 'abs': return [a[0] < 0n ? -a[0] : a[0], a[1] < 0n ? -a[1] : a[1]];
+          case 'mag': return [isq(a[0] * a[0] + a[1] * a[1]), 0n];
+          case 'sqrt': return sqrt(a); case 'sqr': return sqr(a);
+          case 'recip': return div([ONE, 0n], a);
+        }
+        throw new Error('no hp');
+      }
+      case 'bin': {
+        const l = ev(n.l, env);
+        if (n.op === '^'){
+          const r = n.r; let k = null; if (r.t === 'num') k = r.v; else if (r.t === 'neg' && r.x.t === 'num') k = -r.x.v;
+          if (k === 0.5) return sqrt(l);
+          return k >= 0 ? powi(l, k) : div([ONE, 0n], powi(l, -k));
+        }
+        const r = ev(n.r, env);
+        if (n.op === '+') return [l[0] + r[0], l[1] + r[1]];
+        if (n.op === '-') return [l[0] - r[0], l[1] - r[1]];
+        if (n.op === '*') return mul(l, r);
+        return div(l, r);
+      }
+    }
+    throw new Error('no hp');
+  };
+  return ev;
+}
+
+/* ---------- reference orbit ---------- */
+const REF_W = 2048;                                     // orbit texture is 2048 wide, 2 rows: up to 4096 entries
+let REF = {valid:false, F:0, len:0}, refTex = null, texOf = null, pertOn = false;
+function refKey(){                                       // what the orbit depends on (not the iteration count: it is simply extended)
+  return [S.eq, S.z0, S.mode, S.colorMode, S.bail, S.mode === 'julia' ? S.c.join(',') : '',
+    S.params.map(p => p.name + '=' + p.value).join(',')].join('|');
+}
+/* a reference orbit that can be grown: extend(n) iterates on from where it stopped instead of starting over */
+function newRef(ax, ay, F){
+  const lim = S.colorMode === 1 ? 1e12 : Math.max(1e4, 4 * S.bail * S.bail);
+  const julia = S.mode === 'julia';
+  const data = new Float32Array(REF_W * 2 * 2);
+  const exact = canHP(S.astF) && canHP(S.astZ0);
+  const R = {valid:true, key:refKey(), ax, ay, F, s0:S.view.s, data, len:0, done:false, approx:!exact, extend:null};
+  const put = (x, y) => { data[2 * R.len] = x; data[2 * R.len + 1] = y; R.len++; return x * x + y * y; };
+  let next;
+  if (exact){
+    const ev = bigCtx(F);
+    const cc = julia ? [toFx(S.c[0], F), toFx(S.c[1], F)] : [ax, ay];
+    let z = julia ? [ax, ay] : ev(S.astZ0, {c: cc});
+    put(Math.fround(fxToNum(z[0], F)), Math.fround(fxToNum(z[1], F)));
+    next = () => { z = ev(S.astF, {z, c: cc}); return put(Math.fround(fxToNum(z[0], F)), Math.fround(fxToNum(z[1], F))); };
+  } else {
+    /* the formula uses a function with no fixed-point version (sin, exp, log, fractional powers...).
+       the reference orbit then runs in doubles at the centre rounded to a double. */
+    R.ax = ax = toFx(fxToNum(ax, F), F); R.ay = ay = toFx(fxToNum(ay, F), F);
+    const a = [fxToNum(ax, F), fxToNum(ay, F)], c = julia ? S.c.slice() : a;
+    let z = julia ? a : evalAst(S.astZ0, {z:[0,0], c, x:0});
+    put(Math.fround(z[0]), Math.fround(z[1]));
+    next = () => { z = evalAst(S.astF, {z, c, x:0}); return put(Math.fround(z[0]), Math.fround(z[1])); };
+  }
+  R.extend = n => {
+    n = Math.min(Math.round(n), 4094);
+    try {
+      while (!R.done && R.len < n + 1) if (!(next() < lim)) R.done = true;
+    } catch (err) { R.done = true; /* division by zero etc: the orbit simply ends here */ }
+    if (R.len < 2) put(data[0], data[1]);
+    return R;
+  };
+  return R;
+}
+const refFull = (r, n) => r.len >= Math.min(Math.round(n), 4094) + 1;     // long enough for n iterations (the orbit has not escaped)
+function uploadRef(r){
+  if (!refTex) refTex = gl.createTexture();
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, refTex);
+  gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RG32F, REF_W, 2, 0, gl.RG, gl.FLOAT, r.data);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  texOf = r;
+}
+/* where the view centre sits relative to the reference point, in units of the view scale */
+function refOffset(){
+  hpSync();
+  const F = Math.max(HP.F, REF.F), a = BigInt(F - HP.F), b = BigInt(F - REF.F), s = S.view.s;
+  return [fxToNum((HP.x << a) - (REF.ax << b), F) / s, fxToNum((HP.y << a) - (REF.ay << b), F) / s];
+}
+
+/* ---------- shader: per-node perturbation rules, generated from the parsed formula ----------
+   every value is a pair (V, d): V the reference value, d the difference from it, stored divided
+   by the view scale s (so the true difference is s*d). each rule gives (f(V+s*d) - f(V)) / s
+   in a form with no cancellation. */
+const PHELP = `
+uniform float uS;
+vec2 cphi1(vec2 x){ if(dot(x,x)<0.04){ vec2 r=vec2(1.0,0.0), t=vec2(1.0,0.0); float f=1.0; for(int k=1;k<9;k++){ f*=float(k+1); t=cmul(t,x); r+=t/f; } return r; } return cdiv(cexp(x)-vec2(1.0,0.0),x); }
+vec2 csinc(vec2 x){ if(dot(x,x)<0.25){ vec2 x2=cmul(x,x); vec2 r=vec2(1.0,0.0), t=vec2(1.0,0.0); float f=1.0; for(int k=1;k<6;k++){ f*=float(2*k)*float(2*k+1); t=-cmul(t,x2); r+=t/f; } return r; } return cdiv(csin(x),x); }
+vec2 csinhc(vec2 x){ if(dot(x,x)<0.25){ vec2 x2=cmul(x,x); vec2 r=vec2(1.0,0.0), t=vec2(1.0,0.0); float f=1.0; for(int k=1;k<6;k++){ f*=float(2*k)*float(2*k+1); t=cmul(t,x2); r+=t/f; } return r; } return cdiv(csinh(x),x); }
+vec2 clog1pc(vec2 u){ if(dot(u,u)<0.0225){ vec2 r=vec2(0.0), t=vec2(1.0,0.0), mu=-u; for(int k=0;k<10;k++){ r+=t/float(k+1); t=cmul(t,mu);} return r; } return cdiv(clog(vec2(1.0,0.0)+u),u); }
+vec2 dsqr(vec2 A, vec2 e){ return 2.0*cmul(A,e)+uS*csqr(e); }
+vec2 dpowi(vec2 A, vec2 e, int n){ vec2 P=A, E=e, B=A+uS*e; for(int k=1;k<32;k++){ if(k>=n) break; E=cmul(B,E)+cmul(e,P); P=cmul(P,A); } return E; }
+vec2 drecip(vec2 A, vec2 e){ vec2 d=cmul(A,A+uS*e); if(dot(d,d)==0.0) return vec2(0.0); return -cdiv(e,d); }
+vec2 ddiv(vec2 A, vec2 ea, vec2 B, vec2 eb){ vec2 d=B+uS*eb; if(dot(d,d)==0.0||dot(B,B)==0.0) return vec2(0.0); return cdiv(ea-cmul(cdiv(A,B),eb),d); }
+vec2 dexp(vec2 A, vec2 e){ return cmul(cexp(A),cmul(e,cphi1(uS*e))); }
+vec2 dsin(vec2 A, vec2 e){ vec2 h=0.5*uS*e; return cmul(ccos(A+h),cmul(e,csinc(h))); }
+vec2 dcos(vec2 A, vec2 e){ vec2 h=0.5*uS*e; return -cmul(csin(A+h),cmul(e,csinc(h))); }
+vec2 dsinh(vec2 A, vec2 e){ vec2 h=0.5*uS*e; return cmul(ccosh(A+h),cmul(e,csinhc(h))); }
+vec2 dcosh(vec2 A, vec2 e){ vec2 h=0.5*uS*e; return cmul(csinh(A+h),cmul(e,csinhc(h))); }
+vec2 dtan(vec2 A, vec2 e){ vec2 a=uS*e; vec2 d=cmul(ccos(A),ccos(A+a)); if(dot(d,d)==0.0) return vec2(0.0); return cdiv(cmul(e,csinc(a)),d); }
+vec2 dtanh(vec2 A, vec2 e){ vec2 a=uS*e; vec2 d=cmul(ccosh(A),ccosh(A+a)); if(dot(d,d)==0.0) return vec2(0.0); return cdiv(cmul(e,csinhc(a)),d); }
+bool cutX(vec2 A, vec2 e){ if(A.x>=0.0) return false; float y=A.y; if(y==0.0) return e.y<0.0; return y>0.0 ? (y+uS*e.y<0.0) : (y+uS*e.y>=0.0); }
+float sdv(){ return max(uS,1e-37); }
+vec2 dlog(vec2 A, vec2 e){ if(dot(A,A)==0.0) return vec2(0.0); if(cutX(A,e)) return (clog(A+uS*e)-clog(A))/sdv(); vec2 q=cdiv(e,A); return cmul(q,clog1pc(uS*q)); }
+vec2 dsqrt(vec2 A, vec2 e){ if(cutX(A,e)) return (csqrt(A+uS*e)-csqrt(A))/sdv(); vec2 d=csqrt(A+uS*e)+csqrt(A); if(dot(d,d)==0.0) return vec2(0.0); return cdiv(e,d); }
+float dabs1(float X, float e){ float Y=(X==0.0)?e:X+uS*e; if(X>=0.0) return Y>=0.0?e:(X==0.0?-e:-2.0*X/uS-e); return Y>=0.0?2.0*X/uS+e:-e; }
+vec2 dabs(vec2 A, vec2 e){ return vec2(dabs1(A.x,e.x),dabs1(A.y,e.y)); }
+vec2 dmag(vec2 A, vec2 e){ float n=length(A+uS*e)+length(A); if(n==0.0) return vec2(0.0); return vec2((2.0*dot(A,e)+uS*dot(e,e))/n,0.0); }
+vec2 darg(vec2 A, vec2 e){ if(dot(A,A)==0.0){ vec2 a=uS*e; return dot(a,a)==0.0 ? vec2(0.0) : vec2(atan(a.y,a.x)/sdv(),0.0); } if(cutX(A,e)){ vec2 a=A+uS*e; return vec2((atan(a.y,a.x)-atan(A.y,A.x))/sdv(),0.0); } vec2 q=cdiv(e,A); return vec2(cmul(q,clog1pc(uS*q)).y,0.0); }
+vec2 dpow(vec2 A, vec2 ea, vec2 B, vec2 eb){
+  if(dot(A,A)==0.0){ vec2 a=uS*ea; return dot(a,a)==0.0 ? vec2(0.0) : cpow(a,B+uS*eb)/sdv(); }
+  if(cutX(A,ea)) return (cpow(A+uS*ea,B+uS*eb)-cpow(A,B))/sdv();
+  vec2 q=cdiv(ea,A); vec2 L1=cmul(q,clog1pc(uS*q));
+  vec2 Ws=cmul(B+uS*eb,L1)+cmul(eb,clog(A));
+  return cmul(cpow(A,B),cmul(cphi1(uS*Ws),Ws));
+}
+`;
+function genPert(ast){
+  const L = []; let T = 0;
+  const bind = ex => { const n = 't' + (T++); L.push('vec2 ' + n + ' = ' + ex + ';'); return n; };
+  const Z0 = 'vec2(0.0)';
+  function powK(x, k){                                  // integer power, k >= 1
+    if (k === 1) return x;
+    if (k === 2) return {v:bind('csqr(' + x.v + ')'), e:x.e ? bind('dsqr(' + x.v + ',' + x.e + ')') : null};
+    return {v:bind('cpowi(' + x.v + ',' + k + ')'), e:x.e ? bind('dpowi(' + x.v + ',' + x.e + ',' + k + ')') : null};
+  }
+  function go(n){
+    switch (n.t){
+      case 'num': return {v:'vec2(' + fnum(n.v) + ',0.0)', e:null};
+      case 'var': {
+        if (n.n === 'z') return {v:'Z', e:'dZ'};
+        if (n.n === 'c') return {v:'C', e:'dC'};
+        const b = {i:'vec2(0.0,1.0)', pi:'vec2(3.14159265359,0.0)', e:'vec2(2.71828182846,0.0)'}[n.n];
+        if (b) return {v:b, e:null};
+        return {v:'vec2(uParam' + GEN_PIDX[n.n] + ',0.0)', e:null};
+      }
+      case 'neg': { const x = go(n.x); return {v:'(-' + x.v + ')', e:x.e ? '(-' + x.e + ')' : null}; }
+      case 'call': {
+        const x = go(n.x), f = n.f, v = bind(FUNCS[f] + '(' + x.v + ')');
+        if (!x.e) return {v, e:null};
+        const X = x.v, E = x.e;
+        const rule = {
+          conj:'cconj(' + E + ')', re:'cre(' + E + ')', im:'cim(' + E + ')', abs:'dabs(' + X + ',' + E + ')',
+          mag:'dmag(' + X + ',' + E + ')', arg:'darg(' + X + ',' + E + ')', sqr:'dsqr(' + X + ',' + E + ')',
+          recip:'drecip(' + X + ',' + E + ')', exp:'dexp(' + X + ',' + E + ')', sin:'dsin(' + X + ',' + E + ')',
+          cos:'dcos(' + X + ',' + E + ')', sinh:'dsinh(' + X + ',' + E + ')', cosh:'dcosh(' + X + ',' + E + ')',
+          tan:'dtan(' + X + ',' + E + ')', tanh:'dtanh(' + X + ',' + E + ')', log:'dlog(' + X + ',' + E + ')',
+          ln:'dlog(' + X + ',' + E + ')', sqrt:'dsqrt(' + X + ',' + E + ')'
+        }[f];
+        return {v, e:bind(rule)};
+      }
+      case 'bin': {
+        const l = go(n.l);
+        if (n.op === '^'){
+          const r = n.r; let k = null; if (r.t === 'num') k = r.v; else if (r.t === 'neg' && r.x.t === 'num') k = -r.x.v;
+          if (k !== null && Number.isInteger(k) && Math.abs(k) <= 32){
+            if (k === 0) return {v:'vec2(1.0,0.0)', e:null};
+            const p = powK(l, Math.abs(k));
+            if (k > 0) return p;
+            return {v:bind('crecip(' + p.v + ')'), e:p.e ? bind('drecip(' + p.v + ',' + p.e + ')') : null};
+          }
+          if (k === 0.5) return {v:bind('csqrt(' + l.v + ')'), e:l.e ? bind('dsqrt(' + l.v + ',' + l.e + ')') : null};
+          const rr = go(r);
+          const v = bind('cpow(' + l.v + ',' + rr.v + ')');
+          if (!l.e && !rr.e) return {v, e:null};
+          return {v, e:bind('dpow(' + l.v + ',' + (l.e || Z0) + ',' + rr.v + ',' + (rr.e || Z0) + ')')};
+        }
+        const r = go(n.r);
+        if (n.op === '+') return {v:bind('(' + l.v + '+' + r.v + ')'), e:l.e && r.e ? bind('(' + l.e + '+' + r.e + ')') : (l.e || r.e)};
+        if (n.op === '-') return {v:bind('(' + l.v + '-' + r.v + ')'), e:l.e && r.e ? bind('(' + l.e + '-' + r.e + ')') : (l.e || (r.e ? bind('(-' + r.e + ')') : null))};
+        if (n.op === '*'){
+          const v = bind('cmul(' + l.v + ',' + r.v + ')');
+          if (l.e && r.e) return {v, e:bind('cmul(' + l.v + ',' + r.e + ')+cmul(' + l.e + ',' + r.v + ')+uS*cmul(' + l.e + ',' + r.e + ')')};
+          if (l.e) return {v, e:bind('cmul(' + l.e + ',' + r.v + ')')};
+          if (r.e) return {v, e:bind('cmul(' + l.v + ',' + r.e + ')')};
+          return {v, e:null};
+        }
+        const v = bind('cdiv(' + l.v + ',' + r.v + ')');
+        if (!l.e && !r.e) return {v, e:null};
+        return {v, e:bind('ddiv(' + l.v + ',' + (l.e || Z0) + ',' + r.v + ',' + (r.e || Z0) + ')')};
+      }
+    }
+    throw new Error('could not read the expression.');
+  }
+  const r = go(ast);
+  return L.join('\n  ') + '\n  return ' + (r.e || Z0) + ';';
+}
+const HEAD_P = HEAD + `precision highp sampler2D;
+uniform sampler2D uRef;
+uniform int uRefLen, uProbe;
+uniform vec2 uOff, uAnchor;
+`;
+const MAIN_P = `
+vec3 pal(float t){ return uPa + uPb*cos(6.28318530718*(uPc*t+uPd)); }
+vec3 hsv2rgb(vec3 c){
+  vec3 p=abs(fract(c.xxx+vec3(1.0,2.0/3.0,1.0/3.0))*6.0-3.0);
+  return c.z*mix(vec3(1.0),clamp(p-1.0,0.0,1.0),c.y);
+}
+vec2 refZ(int n){ return texelFetch(uRef, ivec2(n & 2047, n >> 11), 0).rg; }
+vec3 shadeP(vec2 e0){
+  vec2 ep=e0+uOff, C, dC, d;
+  if(uJulia==1){ C=uC; dC=vec2(0.0); d=ep; } else { C=uAnchor; dC=ep; d=pdelta0(C,dC); }
+  vec2 Z0=refZ(0);
+  vec3 inside=vec3(0.012,0.012,0.018);
+  bool canRebase=uS>1e-30;
+  int n=0;
+  vec2 Zn=Z0;
+  for(int i=0;i<5000;i++){
+    if(i>=uMaxIter) break;
+    if(n>=uRefLen-1){
+      if(uProbe==1) return vec3(1.0,0.0,0.0);
+      if(!canRebase) return inside;
+      vec2 zz=Zn+uS*d; d=(zz-Z0)/uS; n=0; Zn=Z0;
+    }
+    vec2 dn=pdelta(Zn,C,d,dC);
+    vec2 Zm=refZ(n+1);
+    vec2 z=Zm+uS*dn;
+    if(uColorMode==0){
+      float m2=dot(z,z);
+      if(!(m2<uBail2)){
+        if(uProbe==1) return vec3(0.0);
+        float sm=float(i);
+        if(m2<1e30){
+          float lz=0.5*log(m2);
+          sm=float(i)+1.0-log(max(lz/log(uBail),1e-6))/log(max(uDegree,1.05));
+        }
+        return pal(sm*0.03*uDensity+uOffset);
+      }
+    } else {
+      vec2 dd=z-(Zn+uS*d);
+      if(dot(dd,dd)<1e-10){
+        if(uProbe==1) return vec3(0.0);
+        float ang=atan(z.y,z.x)/6.28318530718+0.5;
+        float b=0.3+0.7*exp(-0.09*float(i)*uDensity);
+        return hsv2rgb(vec3(fract(ang+uOffset),0.72,b));
+      }
+      if(!(dot(z,z)<1e12)) return uProbe==1 ? vec3(0.0) : inside;
+    }
+    d=dn; n++; Zn=Zm;
+    if(canRebase){ vec2 w=(Zm-Z0)/uS+d; if(dot(w,w)<dot(d,d)){ d=w; n=0; Zn=Z0; } }
+    else if(all(equal(Zm,Z0))){ n=0; Zn=Z0; }
+  }
+  return uProbe==1 ? vec3(0.0) : inside;
+}
+void main(){
+  vec3 col=vec3(0.0);
+  int N=uAA;
+  for(int j=0;j<2;j++){
+    for(int k=0;k<2;k++){
+      if(j>=N||k>=N) continue;
+      vec2 off=(vec2(float(j),float(k))+0.5)/float(N)-0.5;
+      vec2 fc=gl_FragCoord.xy-uOrigin+off;
+      col+=shadeP((fc-0.5*uRes-uShift)/(0.5*uRes.y));
+    }
+  }
+  col/=float(N*N);
+  outColor=vec4(col,1.0);
+}
+`;
+function buildFragmentP(){
+  GEN_PIDX = {}; S.params.forEach((p, i) => GEN_PIDX[p.name] = i);
+  const f = genPert(S.astF), z = genPert(S.astZ0);
+  return HEAD_P + paramUniformDecl() + HELPERS + PHELP +
+    'vec2 pdelta(vec2 Z, vec2 C, vec2 dZ, vec2 dC){\n  ' + f + '\n}\n' +
+    'vec2 pdelta0(vec2 C, vec2 dC){\n  vec2 Z=vec2(0.0), dZ=vec2(0.0);\n  ' + z + '\n}\n' + MAIN_P;
+}
+
+/* ---------- driving it from draw() ---------- */
+const PERT_EXTRA = ['uRef','uRefLen','uProbe','uS','uOff','uAnchor'];
+let progP = null, pertFail = '';
+function deepWanted(g){
+  const mag = Math.max(1, Math.abs(S.view.x), Math.abs(S.view.y));
+  return (2 * S.view.s / g.H) < mag * 2e-5;               // the plain float shader is still sharp above this
+}
+function setPertUniforms(mo, probe){
+  setUniforms(progP, mo);
+  const u = progP.U, off = refOffset();
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, refTex); gl.uniform1i(u.uRef, 0);
+  gl.uniform1i(u.uRefLen, REF.len); gl.uniform1i(u.uProbe, probe);
+  gl.uniform1f(u.uS, S.view.s);
+  gl.uniform2f(u.uOff, off[0], off[1]);
+  gl.uniform2f(u.uAnchor, fxToNum(REF.ax, REF.F), fxToNum(REF.ay, REF.F));
+}
+/* a tiny low-res pass: which pixels run past the end of the reference orbit? returns the one nearest the centre */
+function probeCandidate(){
+  const PW = 48, PH = 27, buf = new Uint8Array(PW * PH * 4);
+  gl.useProgram(progP.p); gl.viewport(0, 0, PW, PH);
+  setPertUniforms({w:PW, h:PH, ox:0, oy:0, sx:0, sy:0, view:S.view, julia:S.mode === 'julia', aa:false}, 1);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  gl.readPixels(0, 0, PW, PH, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+  let best = null, bd = 1e9;
+  for (let y = 0; y < PH; y++) for (let x = 0; x < PW; x++){
+    if (buf[(y * PW + x) * 4] < 128) continue;
+    const ex = (x + 0.5 - PW / 2) / (PH / 2), ey = (y + 0.5 - PH / 2) / (PH / 2), d = ex * ex + ey * ey;
+    if (d < bd){ bd = d; best = [ex, ey]; }
+  }
+  if (!best) return null;
+  return {x:HP.x + toFx(best[0] * S.view.s, HP.F), y:HP.y + toFx(best[1] * S.view.s, HP.F)};
+}
+const isMoving = () => lowQ || animating();
+function ensureRef(){
+  hpSync();
+  const need = Math.min(Math.round(iterEff()), 4094), moving = isMoving();
+  if (REF.valid && REF.key === refKey() && HP.F <= REF.F + 40 && S.view.s <= REF.s0 * 4){
+    /* how far the view centre has drifted from the reference point, in view widths. the reference is kept
+       while it stays close (and, in motion, a good deal further: rebasing on the gpu absorbs the distance),
+       and its orbit is simply grown when more iterations are wanted */
+    const o = refOffset(), lim = moving ? 48 : (refFull(REF, need) || REF.done ? 3 : 24);
+    if (Math.abs(o[0]) <= lim && Math.abs(o[1]) <= lim){
+      if (REF.len < need + 1 && !REF.done){ REF.extend(Math.min(need, REF.len + 600)); texOf = null; }
+      if (texOf !== REF) uploadRef(REF);
+      return;
+    }
+  }
+  let best = REF = newRef(HP.x, HP.y, HP.F).extend(need);
+  uploadRef(best);
+  /* a reference that escapes early cannot carry pixels that live longer. at rest, look for pixels that outlast it
+     and restart the orbit from one of them, a few times, until the orbit is long enough (this reads the gpu back, so never while moving) */
+  for (let round = 0; round < 8 && !moving && !refFull(best, need); round++){
+    const c = probeCandidate(); if (!c) break;
+    const cand = newRef(c.x, c.y, HP.F).extend(need);
+    if (cand.len <= best.len) break;
+    best = REF = cand; uploadRef(best);
+  }
+}
+function drawPert(mo){
+  if (pertFail) return false;
+  try {
+    if (!progP) progP = makeProgram(buildFragmentP(), S.params.length, PERT_EXTRA);
+    ensureRef();
+  } catch (err) { pertFail = 'deep zoom unavailable: ' + err.message; if (progP){ gl.deleteProgram(progP.p); progP = null; } return false; }
+  gl.useProgram(progP.p); gl.viewport(0, 0, mo.w, mo.h);
+  setPertUniforms(mo, 0);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  pertOn = true;
+  return true;
+}
+
+
 const PALETTES = [
   {id:'spectrum', name:'spectrum', group:'classic', a:[.5,.5,.5],    b:[.5,.5,.5],    c:[1,1,1],   d:[0,.33,.67]},
   {id:'ember',    name:'ember',    group:'classic', a:[.5,.5,.5],    b:[.5,.5,.5],    c:[1,1,.5],  d:[.8,.9,.3]},
@@ -4893,7 +5362,7 @@ const mq = window.matchMedia('(max-width:760px)');
 let sideVis = 1, introCap = 0, forceHQ = false;
 const S = {
   eq:'', z0:'0', mode:'mandel', c:[-0.8,0.156], iter:250, bail:32, degree:2,
-  colorMode:0, palette:'spectrum', customPalettes:[], density:1, offset:0, aa:true, showInset:true,
+  colorMode:0, palette:'spectrum', customPalettes:[], density:1, offset:0, aa:true, deep:true, autoIter:true, showInset:true,
   params:[{name:'a', value:0.5, min:-3, max:3, animate:false, aMin:-2, aMax:2}],
   kind:'complex', classic:{id:'sierpinski', depth:6},
   view:toView([-0.5,0,1.35]), inset:toView([-0.5,0,1.5]),
@@ -4926,7 +5395,7 @@ function compileShader(type, src){
   }
   return s;
 }
-function makeProgram(fragSrc, paramCount){
+function makeProgram(fragSrc, paramCount, extra){
   if (!vs) vs = compileShader(gl.VERTEX_SHADER, VERT);
   const fs = compileShader(gl.FRAGMENT_SHADER, fragSrc);
   const p = gl.createProgram();
@@ -4937,7 +5406,7 @@ function makeProgram(fragSrc, paramCount){
     gl.deleteProgram(p);
     throw new Error('the gpu could not link this equation. ' + log);
   }
-  const U = {}; UNIFORMS.forEach(n => U[n] = gl.getUniformLocation(p, n));
+  const U = {}; (extra ? UNIFORMS.concat(extra) : UNIFORMS).forEach(n => U[n] = gl.getUniformLocation(p, n));
   const PU = []; for (let i = 0; i < paramCount; i++) PU.push(gl.getUniformLocation(p, 'uParam' + i));
   return {p, U, PU};
 }
@@ -4959,6 +5428,7 @@ function compile(){
     const next = makeProgram(fragSrc, S.params.length);
     if (prog) gl.deleteProgram(prog.p);
     prog = next; S.astF = fAst; S.astZ0 = zAst; lastFragSrc = fragSrc;
+    if (progP){ gl.deleteProgram(progP.p); progP = null; } pertFail = ''; REF = {valid:false, F:0, len:0}; texOf = null;
     setMsg('compiled. z ← ' + S.eq.trim());
   }catch(err){
     setMsg(err.message, true);
@@ -5000,7 +5470,8 @@ function setUniforms(pr, o){
   gl.uniform1f(u.uDegree, S.degree);
   gl.uniform1f(u.uDensity, S.density);
   gl.uniform1f(u.uOffset, S.offset + S.phase);
-  gl.uniform1i(u.uMaxIter, introCap ? Math.min(S.iter, introCap) : S.iter);
+  const itN = o.iter || S.iter;
+  gl.uniform1i(u.uMaxIter, introCap ? Math.min(itN, introCap) : itN);
   gl.uniform1i(u.uJulia, o.julia ? 1 : 0);
   gl.uniform1i(u.uColorMode, S.colorMode);
   gl.uniform1i(u.uAA, o.aa ? 2 : 1);
@@ -5010,10 +5481,18 @@ function setUniforms(pr, o){
 
 function draw(){
   if (!gl) return;
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const dpr0 = Math.min(window.devicePixelRatio || 1, 2);
   const g = geom();
   if (!canvas.clientWidth || !canvas.clientHeight) return;
-  const w = Math.round(g.W * dpr), h = Math.round(g.H * dpr);
+  /* while the view is moving, expensive frames (deep zoom, many iterations) are drawn at a lower resolution and
+     the browser stretches them; the sharp frame follows as soon as movement stops */
+  let q = 1;
+  if (lowQ && !forceHQ && S.kind === 'complex'){
+    const it = iterEff();
+    if (S.deep && deepWanted(g)) q = it > 1500 ? 0.35 : 0.5; else if (it > 600) q = 0.6;
+  }
+  const dpr = dpr0 * q;
+  const w = Math.max(2, Math.round(g.W * dpr)), h = Math.max(2, Math.round(g.H * dpr));
   if (canvas.width !== w || canvas.height !== h){ canvas.width = w; canvas.height = h; }
 
   if (S.kind === 'classic'){
@@ -5032,9 +5511,14 @@ function draw(){
   if (cmapOn){ repositionCmap(); drawCmap(dpr, w, h); }
 
   gl.viewport(0, 0, w, h);
-  setUniforms(prog, {w, h, ox:0, oy:0, sx:(g.cx - g.W / 2) * dpr, sy:(g.H / 2 - g.cy) * dpr,
-    view:S.view, julia:S.mode === 'julia', aa:S.aa && (forceHQ || (!lowQ && !animating() && !introCap))});
-  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  const mo = {w, h, ox:0, oy:0, sx:(g.cx - g.W / 2) * dpr, sy:(g.H / 2 - g.cy) * dpr,
+    view:S.view, iter:iterEff(), julia:S.mode === 'julia', aa:S.aa && (forceHQ || (!lowQ && !animating() && !introCap))};
+  pertOn = false;
+  if (!(S.deep && deepWanted(g) && drawPert(mo))){
+    gl.useProgram(prog.p); gl.viewport(0, 0, w, h);
+    setUniforms(prog, mo);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
 
   drawOverlay();
   scheduleHash();
@@ -5347,14 +5831,23 @@ function updateReadout(){
   const g = geom();
   const s = S.view.s;
   const digits = clamp(Math.ceil(-Math.log10(s)) + 4, 4, 10);
-  const pt = cursor || {x:S.view.x, y:S.view.y};
+  const deepC = S.deep && S.kind === 'complex' && s < 1e-9;
+  const pt = (cursor && !deepC) ? cursor : {x:S.view.x, y:S.view.y};
   const zoom = (S.def[S.mode][2] || 1) / s;
   const zs = zoom < 10 ? zoom.toFixed(2) : zoom < 1000 ? zoom.toFixed(0) : zoom.toExponential(1);
   const px = 2 * s / g.H;
   const mag = Math.max(1, Math.abs(S.view.x), Math.abs(S.view.y));
-  let html = (cursor ? 'cursor ' : 'center ') + fmt(pt.x, digits) + (pt.y < 0 ? ' − ' : ' + ') + fmt(Math.abs(pt.y), digits) + 'i<br>zoom ×' + zs;
+  let html = (cursor && !deepC ? 'cursor ' : 'center ') + fmt(pt.x, digits) + (pt.y < 0 ? ' − ' : ' + ') + fmt(Math.abs(pt.y), digits) + 'i<br>zoom ×' + zs;
+  if (deepC){
+    hpSync(); const d = Math.ceil(-Math.log10(s)) + 5, cut = x => { const t = fxToDec(x, HP.F, d); return t.length > 64 ? t.slice(0, 64) + '…' : t; };
+    html = 'center ' + cut(HP.x).replace('-', '−') + (HP.y < 0n ? ' − ' : ' + ') + cut(HP.y < 0n ? -HP.y : HP.y) + 'i<br>zoom ×' + zs;
+    readoutEl.style.wordBreak = 'break-all'; readoutEl.style.maxWidth = 'min(52ch, 72vw)';
+  }
   if (S.kind === 'complex' && S.orbit && orbitInfo) html += '<br><span class="dim">orbit: ' + orbitInfo + '</span>';
-  if (px < mag * 3e-7) html += ' <span class="warn">(at the limit of gpu precision)</span>';
+  if (S.autoIter && S.kind === 'complex' && iterEff() > S.iter) html += '<br><span class="dim">iterations ' + iterEff() + '</span>';
+  if (S.deep && pertOn) html += REF.approx ? ' <span class="warn">(this formula runs its reference orbit in double precision, so detail stops near ×1e13)</span>' : ' <span class="dim">· deep zoom</span>';
+  else if (S.deep && pertFail) html += ' <span class="warn">(' + escapeHtml(pertFail) + ')</span>';
+  else if (px < mag * 3e-7) html += ' <span class="warn">(at the limit of gpu precision' + (S.deep ? '' : ' — try deep zoom precision') + ')</span>';
   readoutEl.innerHTML = html;
 }
 
@@ -5364,10 +5857,10 @@ function updateReadout(){
 function zoomAt(x, y, f){
   const g = geom();
   const p = s2c(x, y, g);
-  S.view.s = clamp(S.view.s * f, 1e-7, 50);
+  S.view.s = clamp(S.view.s * f, minScale(), 50);
   const k = S.view.s / (g.H / 2);
-  S.view.x = p.x - (x - g.cx) * k;
-  S.view.y = p.y + (y - g.cy) * k;
+  if (S.deep && S.kind === 'complex'){ const dk = g.k - k; hpMove((x - g.cx) * dk, -(y - g.cy) * dk); }
+  else { S.view.x = p.x - (x - g.cx) * k; S.view.y = p.y + (y - g.cy) * k; }
   bump(); render();
 }
 
@@ -5390,7 +5883,7 @@ function zoomStep(now){
   let d = zm.rem * (1 - Math.exp(-dt / 90));
   if (Math.abs(zm.rem) < 4e-4) d = zm.rem;
   zm.rem -= d;
-  if ((S.view.s <= 1e-7 && d < 0) || (S.view.s >= 50 && d > 0)) zm.rem = 0; else zoomAt(zm.x, zm.y, Math.exp(d));
+  if ((S.view.s <= minScale() && d < 0) || (S.view.s >= 50 && d > 0)) zm.rem = 0; else zoomAt(zm.x, zm.y, Math.exp(d));
   zm.raf = Math.abs(zm.rem) > 1e-9 ? requestAnimationFrame(zoomStep) : 0;
 }
 
@@ -5404,10 +5897,10 @@ function panStep(now){
   const f = rm.matches ? 1 : 1 - Math.exp(-dt / 90), g = geom();
   const dx = pn.x * f, dy = pn.y * f;
   pn.x -= dx; pn.y -= dy;
-  S.view.x += dx * g.k; S.view.y += dy * g.k;
+  hpMove(dx * g.k, dy * g.k);
   bump(); render();
   if (Math.hypot(pn.x, pn.y) > 0.3) pn.raf = requestAnimationFrame(panStep);
-  else { S.view.x += pn.x * g.k; S.view.y += pn.y * g.k; pn.x = pn.y = 0; pn.raf = 0; render(); }
+  else { hpMove(pn.x * g.k, pn.y * g.k); pn.x = pn.y = 0; pn.raf = 0; render(); }
 }
 
 /* glides to another view. the pan is weighted by zoom level, so long trips zoom out, slide, then zoom back in */
@@ -5452,8 +5945,7 @@ canvas.addEventListener('pointermove', e => {
   if (prev){
     if (down) down.moved = Math.max(down.moved, Math.hypot(l.x - down.x, l.y - down.y));
     if (ptrs.size === 1){
-      S.view.x -= (l.x - prev.x) * g.k;
-      S.view.y += (l.y - prev.y) * g.k;
+      hpMove(-(l.x - prev.x) * g.k, (l.y - prev.y) * g.k);
       prev.x = l.x; prev.y = l.y;
       changed = true;
     } else if (ptrs.size === 2){
@@ -5463,10 +5955,10 @@ canvas.addEventListener('pointermove', e => {
       const mid = {x:(a.x + b.x) / 2, y:(a.y + b.y) / 2};
       if (pinch){
         const p = s2c(pinch.mid.x, pinch.mid.y, g);
-        S.view.s = clamp(S.view.s * pinch.dist / dist, 1e-7, 50);
+        S.view.s = clamp(S.view.s * pinch.dist / dist, minScale(), 50);
         const k = S.view.s / (g.H / 2);
-        S.view.x = p.x - (mid.x - g.cx) * k;
-        S.view.y = p.y + (mid.y - g.cy) * k;
+        if (S.deep && S.kind === 'complex') hpMove((pinch.mid.x - g.cx) * g.k - (mid.x - g.cx) * k, -(pinch.mid.y - g.cy) * g.k + (mid.y - g.cy) * k);
+        else { S.view.x = p.x - (mid.x - g.cx) * k; S.view.y = p.y + (mid.y - g.cy) * k; }
         changed = true;
       }
       pinch = {dist, mid};
@@ -6012,6 +6504,7 @@ function tick(t){
 }
 function startAnim(){ if (!animRaf){ lastT = performance.now(); animRaf = requestAnimationFrame(tick); } }
 
+$('#autoiter').addEventListener('change', e => { S.autoIter = e.target.checked; bump(); render(); });
 $('#iter').addEventListener('input', e => { S.iter = +e.target.value; $('#iterv').textContent = S.iter; bump(); render(); });
 $('#bail').addEventListener('input', e => {
   S.bail = Math.pow(10, +e.target.value);
@@ -6023,6 +6516,7 @@ $('#density').addEventListener('input', e => { S.density = +e.target.value; $('#
 $('#offset').addEventListener('input', e => { S.offset = +e.target.value; $('#offsetv').textContent = S.offset.toFixed(2); bump(); render(); });
 $('#degree').addEventListener('input', e => { const v = parseFloat(e.target.value); if (isFinite(v)){ S.degree = v; render(); } });
 $('#aa').addEventListener('change', e => { S.aa = e.target.checked; render(); });
+$('#deep').addEventListener('change', e => { S.deep = e.target.checked; pertFail = ''; if (!S.deep) S.view.s = Math.max(S.view.s, 1e-7); render(); });
 function resetView(){
   if (S.kind === 'classic'){ resetClassicView(); render(); }
   else { flyTo(toView(S.def[S.mode]), 700); S.inset = toView(S.def.mandel); render(); }
@@ -6407,7 +6901,7 @@ Object.keys(THEMES).forEach(k => THEMES[k].addEventListener('click', () => setTh
 /* ---------- state snapshots: used by saved views and the link ---------- */
 function snap(){
   return {v:2, eq:S.eq, z0:S.z0, m:S.mode, c:S.c.slice(), it:S.iter, b:S.bail, d:S.degree, cm:S.colorMode,
-    pal:S.palette, de:S.density, o:S.offset, vw:[S.view.x, S.view.y, S.view.s], iv:[S.inset.x, S.inset.y, S.inset.s],
+    pal:S.palette, de:S.density, o:S.offset, vw:[S.view.x, S.view.y, S.view.s], dp:S.deep, ai:S.autoIter, vh:(S.deep && S.kind === 'complex' && S.view.s < 1e-9) ? hpStrings() : undefined, iv:[S.inset.x, S.inset.y, S.inset.s],
     df:[S.def.mandel, S.def.julia], si:S.showInset,
     pr:S.params.map(p => ({n:p.name, v:p.value, mn:p.min, mx:p.max, an:p.animate, ai:p.aMin, ax:p.aMax})),
     k:S.kind, ci:S.classic.id, cd:S.classic.depth};
@@ -6446,7 +6940,7 @@ function loadSnap(o, fly){
   const z0 = typeof o.z0 === 'string' && o.z0.length < 200 ? o.z0 : '0';
   const mode = o.m === 'julia' ? 'julia' : 'mandel';
   const needCompile = o.eq !== S.eq || z0 !== S.z0;
-  const canFly = fly && !needCompile && mode === S.mode && (o.k !== 'classic');
+  const canFly = fly && !needCompile && mode === S.mode && (o.k !== 'classic') && !o.vh;
   const from = {x:S.view.x, y:S.view.y, s:S.view.s};
 
   S.eq = o.eq; S.z0 = z0; S.mode = mode;
@@ -6460,15 +6954,17 @@ function loadSnap(o, fly){
   S.density = numIn(o.de, 1, 0.1, 4);
   S.offset = numIn(o.o, 0, 0, 1);
   S.showInset = o.si !== false;
+  S.deep = o.dp !== false; S.autoIter = o.ai !== false;
   S.kind = o.k === 'classic' ? 'classic' : 'complex';
   if (CLASSICS.some(c => c.id === o.ci)) S.classic.id = o.ci;
   if (typeof o.cd === 'number' && isFinite(o.cd)) S.classic.depth = Math.round(o.cd);
   if (Array.isArray(o.df) && vec3ok(o.df[0]) && vec3ok(o.df[1])) S.def = {mandel:o.df[0].slice(), julia:o.df[1].slice()};
   const target = S.kind === 'classic' ? toView((CLASSICS.find(c=>c.id===S.classic.id)||CLASSICS[0]).view)
-    : (vec3ok(o.vw) ? {x:clamp(o.vw[0], -1e3, 1e3), y:clamp(o.vw[1], -1e3, 1e3), s:clamp(o.vw[2], 1e-7, 50)} : toView(S.def[S.mode]));
+    : (vec3ok(o.vw) ? {x:clamp(o.vw[0], -1e3, 1e3), y:clamp(o.vw[1], -1e3, 1e3), s:clamp(o.vw[2], S.deep ? 1e-290 : 1e-7, 50)} : toView(S.def[S.mode]));
   S.inset = vec3ok(o.iv) ? toView(o.iv) : toView(S.def.mandel);
   S.pins = []; updatePinCount(); stopMotion();
   S.view = target;
+  if (S.deep && o.vh && S.kind === 'complex') hpLoad(o.vh);
   syncUI(); presetSel.value = '';
   if (canFly){ S.view = from; flyTo(target, 900); render(); } else if (needCompile) compile(); else render();
   return true;
@@ -6734,14 +7230,14 @@ function syncUI(){
   syncClassicUI();
   $('#showInset').checked = S.showInset;
   $('#cycle').checked = S.cycle;
-  $('#iter').value = S.iter; $('#iterv').textContent = S.iter;
+  $('#iter').value = S.iter; $('#iterv').textContent = S.iter; $('#autoiter').checked = S.autoIter;
   $('#bail').value = Math.log10(S.bail).toFixed(3);
   $('#bailv').textContent = S.bail < 10 ? S.bail.toFixed(1) : Math.round(S.bail);
   $('#degree').value = S.degree;
   $('#cmode').value = S.colorMode;
   $('#density').value = S.density; $('#densityv').textContent = S.density.toFixed(1);
   $('#offset').value = S.offset; $('#offsetv').textContent = S.offset.toFixed(2);
-  $('#aa').checked = S.aa;
+  $('#aa').checked = S.aa; $('#deep').checked = S.deep;
   fillAll();
   updateAddCaption();
 }
@@ -7275,7 +7771,9 @@ startIntro();
                     { sep: true, when: cx },
                     { src: 'mMandel', label: 'mandelbrot', radio: true, when: cx }, { src: 'mJulia', label: 'julia', radio: true, when: cx },
                     '-',
-                    { src: 'aa', label: 'smooth edges', check: true, when: cx }] },
+                    { src: 'aa', label: 'smooth edges', check: true, when: cx },
+                    { src: 'deep', label: 'deep zoom precision', check: true, when: cx },
+                    { src: 'autoiter', label: 'more iterations when zoomed', check: true, when: cx }] },
                 { name: 'color', items: [
                     { label: 'next color theme', key: 'p', run: () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'p', bubbles: true })) },
                     { src: 'cycle', label: 'cycle colors', check: true, key: 'c' }, { src: 'cycleReset', label: 'reset cycle' },
