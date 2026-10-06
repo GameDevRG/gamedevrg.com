@@ -1274,7 +1274,7 @@ details.info .doc p {
             z-index: 100001;
             display: none;
             box-sizing: border-box;
-            width: 248px;
+            width: 280px; max-width: calc(100vw - 16px);
             padding: 12px;
             border: 1px solid var(--line);
             border-radius: 14px;
@@ -1288,23 +1288,47 @@ details.info .doc p {
             display: block;
             animation: ibpop .16s cubic-bezier(.2, .7, .2, 1)
         }
+#markPop .mname {
+            display: block;
+            box-sizing: border-box;
+            width: 100%;
+            margin: 0 0 10px;
+            padding: 6px 9px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--field);
+            color: var(--ink);
+            font: 600 13px var(--sans);
+            outline: none
+        }
+#markPop .mname::placeholder {
+            color: var(--muted);
+            font-weight: 500
+        }
+#markPop .mname:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent)
+        }
 #markPop h4 {
             margin: 0 0 8px;
             font: 600 13px var(--sans)
         }
 #markPop dl {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 4px 12px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 5px 12px;
             margin: 0 0 10px
         }
 #markPop dt {
+            flex: 0 0 auto;
             color: var(--muted)
         }
 #markPop dd {
+            flex: 1 1 auto;
             margin: 0;
             min-width: 0;
-            overflow-wrap: anywhere;
+            overflow-wrap: break-word;
             font: 11.5px var(--mono);
             text-align: right
         }
@@ -3047,7 +3071,8 @@ html[data-ui="paper"] #app .btn, html[data-ui="paper"] #app .cbtn, html[data-ui=
 </style>
     <div id="splash" role="status" aria-label="loading fractalengine gravity basins">
         <div class="bg"></div>
-        <h1><span class="logo-f">f(<span class="acc">e</span>)</span> <span class="logo-name">fractal<span class="acc">engine</span></span> <span class="sub">gravity basins</span></h1>
+        <h1><span class="logo-f">f(<span class="acc">e</span>)</span> <span class="logo-name">fractal<span class="acc">engine</span></span> <span class="sub" id="splashSub">gravity basins</span></h1>
+        <script>try{var _l=localStorage.getItem("fegb.lang"),_m={es:"cuencas gravitacionales",ja:"重力の盆地",zh:"引力盆地"};if(_m[_l])document.getElementById("splashSub").textContent=_m[_l]}catch(e){}</script>
         <div class="status" aria-live="polite"><span id="splashStatus" class="shimmer">loading…</span></div>
         <div class="lbar" aria-hidden="true"><i id="splashBar"></i></div>
     </div>
@@ -4237,7 +4262,8 @@ function rows(){
     const r = document.createElement('div'); r.className = 'brow';
     r.innerHTML = '<input type="color" value="' + b.c + '" aria-label="body ' + (i + 1) + ' color"><input type="range" min="-3" max="4" step=".05" value="' + b.m + '" aria-label="body ' + (i + 1) + ' mass"><em>' + b.m.toFixed(2) + '</em><button class="x" type="button" aria-label="remove body">×</button>';
     const [c, m, e, x] = r.children;
-    c.addEventListener('input', () => { b.c = c.value; render(); }); m.addEventListener('input', () => { b.m = +m.value; e.textContent = b.m.toFixed(2); bump(); });
+    const paint = () => m.style.setProperty('--f', String((+m.value - +m.min) / (+m.max - +m.min))); paint();
+    c.addEventListener('input', () => { b.c = c.value; render(); }); m.addEventListener('input', () => { b.m = +m.value; e.textContent = b.m.toFixed(2); paint(); bump(); });
     x.addEventListener('click', () => { if (S.bodies.length > 1) { S.bodies.splice(i, 1); rows(); render(); } }); box.appendChild(r);
   });
 }
@@ -4312,7 +4338,7 @@ function rot(x, y, a){ const c = Math.cos(a), s = Math.sin(a); return [x * c - y
 const rawOf = (x, y) => rot(x, y, -S.omega * S.time);
 const eff = () => S.bodies.map((b, i) => { const p = rot(b.x, b.y, S.omega * S.time); return {x: p[0], y: p[1], m: b.m * (1 + S.pulse * Math.sin(S.time * 2 + i * 1.7)), c: b.c}; });
 function draw(t){
-  raf = 0; layoutCv();
+  raf = 0; layoutCv(); updateAddCaption();
   if (S.play){ const dt = lastT ? Math.min(.05, (t - lastT) / 1000) : 0; S.time += dt; lastT = t; render(); } else lastT = 0;
   const W = cv.clientWidth, H = cv.clientHeight, dpr = Math.min(devicePixelRatio || 1, 2), q = busy || S.play ? .5 : 1;
   const w = Math.max(1, Math.round(W * dpr * q)), h = Math.max(1, Math.round(H * dpr * q)); if (cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; }
@@ -4365,11 +4391,12 @@ function drawOv(){
     if (b.m > 0){ octx.fillStyle = b.c; octx.fill(); } else { octx.setLineDash([3, 3]); } octx.stroke(); octx.setLineDash([]);
   });
 }
+let lastPlotR = null;
 function plot(r){
-  const c = $('#plot'), x = c.getContext('2d'), W = c.width, H = c.height; x.clearRect(0, 0, W, H);
+  lastPlotR = r; const c = $('#plot'), x = c.getContext('2d'), W = c.width, H = c.height; x.clearRect(0, 0, W, H);
   if (!r || !r.spd.length){ $('#pinfo').textContent = 'hover or click the canvas'; return; }
   const line = (a, col) => { const mx = Math.max(...a, 1e-6); x.strokeStyle = col; x.lineWidth = 1.5; x.beginPath(); a.forEach((v, i) => { const px = i / (a.length - 1 || 1) * W, py = H - 4 - v / mx * (H - 8); i ? x.lineTo(px, py) : x.moveTo(px, py); }); x.stroke(); };
-  line(r.spd, '#ffffff'); line(r.dn, '#ff4d4f');
+  const bgc = (getComputedStyle(c).backgroundColor.match(/[\d.]+/g) || [0, 0, 0]).map(Number); line(r.spd, (bgc[0] * .299 + bgc[1] * .587 + bgc[2] * .114) > 140 ? '#000000' : '#ffffff'); line(r.dn, '#ff4d4f');
   $('#pinfo').innerHTML = (r.caught ? 'caught by body <b>' + (r.hit + 1) + '</b> after <b>' + r.t + '</b> steps' : 'not caught in <b>' + S.steps + '</b> steps (nearest: body <b>' + (r.hit + 1) + '</b>)') + '<br>max speed <b>' + Math.max(...r.spd).toFixed(2) + '</b> · closest approach <b>' + Math.min(...r.dn).toFixed(3) + '</b>';
 }
 function analyze(){
@@ -4418,8 +4445,50 @@ function togglePlay(){ S.play = !S.play; $('#play').textContent = S.play ? 'paus
 /* ---------- save, share, import ---------- */
 function savePngOld(){ busy = false; S.play = false; draw(0); const a = document.createElement('a'); a.download = 'gravity-basins.png'; cv.toBlob(b => { a.href = URL.createObjectURL(b); a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); }); L('saved a png'); }
 const state = () => ({b: S.bodies, p: Object.fromEntries(PK.map(k => [k, S[k]])), v: [S.cx, S.cy, S.scale], pal, th: S.theme});
-function loadState(o){
+/* ---------- camera glide: loading a setup that only differs in the view flies the camera there instead of jumping ---------- */
+let glideRaf = 0;
+function stopGlide(){ if (glideRaf){ cancelAnimationFrame(glideRaf); glideRaf = 0; } }
+const okView = v => Array.isArray(v) && v.length >= 3 && v.slice(0, 3).every(x => isFinite(x));
+function glideTo(tx, ty, ts){
+  stopGlide();
+  const cx0 = S.cx, cy0 = S.cy, s0 = S.scale, s1 = clamp(ts, 1e-4, 40);
+  const lr = Math.abs(Math.log(s1 / s0)), dist = Math.hypot(tx - cx0, ty - cy0) / Math.max(Math.min(s0, s1), 1e-9);
+  if (lr < 1e-6 && dist < 1e-6) return;
+  const ms = clamp(450 + 230 * lr + 140 * Math.min(dist, 6), 450, 1500), t0 = performance.now();
+  const zooming = lr > 1e-3, i0 = 1 / s0, i1 = 1 / s1;
+  const step = now => {
+    const u = clamp((now - t0) / ms, 0, 1), e = u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+    const sc = s0 * Math.pow(s1 / s0, e);
+    /* when the zoom changes, slide the centre in step with the zoom so the move feels like a real fly-to rather than a drift */
+    const f = zooming ? (1 / sc - i0) / (i1 - i0) : e;
+    S.scale = sc; S.cx = cx0 + (tx - cx0) * f; S.cy = cy0 + (ty - cy0) * f;
+    if (u < 1){ bump(); glideRaf = requestAnimationFrame(step); }
+    else { glideRaf = 0; S.cx = tx; S.cy = ty; S.scale = s1; bump(); }
+  };
+  glideRaf = requestAnimationFrame(step);
+}
+function sameSetup(o){
+  if (!o || !Array.isArray(o.b) || !o.p) return false;
+  const bs = o.b.filter(b => isFinite(b.x) && isFinite(b.y) && isFinite(b.m)).slice(0, 8);
+  if (!bs.length || bs.length !== S.bodies.length) return false;
+  if (PALS[o.pal] && o.pal !== pal) return false;
+  const pk = PALS[o.pal] ? o.pal : pal, near = (a, b) => Math.abs(a - b) < 1e-9;
+  for (let i = 0; i < bs.length; i++){
+    const a = bs[i], c = S.bodies[i], col = /^#[0-9a-f]{6}$/i.test(a.c) ? a.c : PALS[pk][i % 8];
+    if (!near(+a.x, c.x) || !near(+a.y, c.y) || !near(clamp(+a.m, -3, 4), c.m) || col.toLowerCase() !== String(c.c).toLowerCase()) return false;
+  }
+  for (const k of PK){
+    const v = +o.p[k]; if (!(k in o.p) || !isFinite(v)) continue;
+    if (!near(SP[k] ? clamp(v, SP[k][1], SP[k][2]) : v, S[k])) return false;
+  }
+  return true;
+}
+['pointerdown', 'wheel'].forEach(t => cv.addEventListener(t, stopGlide, {passive: true, capture: true}));
+addEventListener('keydown', e => { if (glideRaf && /^(Arrow|[-+=_rR]$)/.test(e.key)) stopGlide(); });
+function loadState(o, glide){
   if (!o || !Array.isArray(o.b) || !o.b.length) return false;
+  if (glide && !rm.matches && okView(o.v) && sameSetup(o)){ glideTo(o.v[0], o.v[1], o.v[2]); return true; }
+  stopGlide();
   PK.forEach(k => { const v = o.p && +o.p[k]; if (!isFinite(v) || !(k in o.p)) return; S[k] = SP[k] ? clamp(v, SP[k][1], SP[k][2]) : v; });
   if (Array.isArray(o.v) && o.v.every(isFinite)){ S.cx = o.v[0]; S.cy = o.v[1]; S.scale = clamp(o.v[2], 1e-4, 40); }
   if (PALS[o.pal]) pal = o.pal; 
@@ -4430,10 +4499,10 @@ function loadState(o){
 document.body.insertAdjacentHTML('beforeend', '<input type="file" id="impFile" accept="application/json,.json" hidden>');
 function layoutCv(){ const I = window.__feInsets ? window.__feInsets(sideVis) : {L: 0, R: 0, T: 0, B: 0}; [cv, ov].forEach(c => { c.style.left = I.L + 'px'; c.style.top = I.T + 'px'; c.style.width = Math.max(1, stage.clientWidth - I.L - I.R) + 'px'; c.style.height = Math.max(1, stage.clientHeight - I.T - I.B) + 'px'; }); }
 function snapshotCanvas(withOv){ if (!gl) return null; busy = false; draw(0); const o = document.createElement('canvas'); o.width = cv.width; o.height = cv.height; const x = o.getContext('2d'); x.drawImage(cv, 0, 0); if (withOv) x.drawImage(ov, 0, 0, o.width, o.height); return o; }
-const snap = () => JSON.parse(JSON.stringify(state())), loadSnap = s => loadState(s);
+const snap = () => JSON.parse(JSON.stringify(state())), loadSnap = (s, glide) => loadState(s, glide);
 
 function exportSetup(){ const a = document.createElement('a'); a.download = 'gravity-basins.json'; a.href = URL.createObjectURL(new Blob([JSON.stringify(state(), null, 1)], {type: 'application/json'})); a.click(); L('exported the setup'); }
-$('#impFile').addEventListener('change', e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { try { L(loadState(JSON.parse(t)) ? 'imported ' + f.name : 'that file is not a setup'); } catch (er) { L('could not read ' + f.name); } }); e.target.value = ''; });
+$('#impFile').addEventListener('change', e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { try { L(loadState(JSON.parse(t), true) ? 'imported ' + f.name : 'that file is not a setup'); } catch (er) { L('could not read ' + f.name); } }); e.target.value = ''; });
 /* ---------- sidebar: collapse, style, size ---------- */
 const toggleBtn = $('#toggle');
 let sideAnim = 0;
@@ -4606,6 +4675,7 @@ function thumb(){
   return t.toDataURL('image/jpeg', 0.82);
 }
 let addTileCap = null;
+function markTitle(m){ return m.name || ((typeof m.s.pal === 'string' && PALS[m.s.pal]) ? m.s.pal : 'saved view'); }
 function currentLabel(){
   return S.bodies.length + ' bodies';
 }
@@ -4619,30 +4689,30 @@ const markPop = (() => {
   let box = null, cur = null, btn = null;
   const onoff = v => v === undefined || v === null ? '–' : (v ? 'on' : 'off');
   function rows(m){
-    const s = m.s, r = [];
+    const s = m.s, r = [], p = s.p || {};
     const saved = parseInt(m.id, 36);
     r.push(['zoom', '×' + (m.z || '1')]);
     if (saved > 1e11) r.push(['saved', new Date(saved).toLocaleString([], {dateStyle:'medium', timeStyle:'short'})]);
-    if (s.k === 'classic'){
-      if (typeof s.cd === 'number') r.push(['depth', String(s.cd)]);
-      return r;
-    }
-    r.push(['type', s.m === 'julia' ? 'julia' : 'mandelbrot']);
-    if (s.m === 'julia' && Array.isArray(s.c) && s.c.length === 2 && s.c.every(Number.isFinite))
-      r.push(['c', (+s.c[0]).toFixed(4) + (s.c[1] < 0 ? ' − ' : ' + ') + Math.abs(+s.c[1]).toFixed(4) + 'i']);
-    const pal = findPalette(s.pal); if (pal) r.push(['palette', pal.name]);
-    if (typeof s.it === 'number') r.push(['iterations', String(s.it)]);
-    if (typeof s.b === 'number') r.push(['bailout', String(s.b)]);
-    if (typeof s.eq === 'string') r.push(['equation', s.eq]);
-    if (typeof s.z0 === 'string' && s.z0.trim() && s.z0.trim() !== '0') r.push(['start z', s.z0]);
-    if (Array.isArray(s.pr) && s.pr.length) r.push(['parameters', s.pr.map(p => p.n + ' = ' + (+p.v).toFixed(2)).join(', ')]);
-    r.push(['deep zoom', onoff(s.dp)]);
+    if (typeof s.pal === 'string' && PALS[s.pal]) r.push(['palette', s.pal]);
+    ['pow', 'soft', 'drag', 'steps'].forEach(k => { if (typeof p[k] === 'number' && isFinite(p[k]) && SP[k]) r.push([SP[k][0], String(+p[k].toFixed(3))]); });
+    ['integ', 'touch', 'mode', 'aa'].forEach(k => { const o = SEL[k], v = p[k]; if (o && Number.isInteger(v) && o[2][v] !== undefined) r.push([o[1], o[2][v]]); });
     return r;
   }
   function build(m, el){
     box.textContent = '';
-    const h = document.createElement('h4');
-    h.textContent = (m.s.b ? m.s.b.length : 0) + ' bodies';
+    const h = document.createElement('input');
+    h.type = 'text'; h.className = 'mname'; h.maxLength = 40; h.autocomplete = 'off'; h.spellcheck = false;
+    h.value = m.name || ''; h.placeholder = (m.s.b ? m.s.b.length : 0) + ' bodies';
+    h.setAttribute('aria-label', 'name this saved view');
+    const commit = () => {
+      const v = h.value.trim().slice(0, 40);
+      if ((m.name || '') === v) return;
+      if (v) m.name = v; else delete m.name;
+      store.set('views', marks);
+      const t = el && el.querySelector('.cap b'); if (t) t.textContent = markTitle(m);
+    };
+    h.addEventListener('input', commit);
+    h.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter'){ e.preventDefault(); commit(); const b2 = btn; close(); if (b2) b2.focus(); } else if (e.key === 'Escape'){ e.preventDefault(); commit(); const b2 = btn; close(); if (b2) b2.focus(); } });
     box.appendChild(h);
     const dl = document.createElement('dl');
     rows(m).forEach(([k, v]) => { const dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = k; dd.textContent = v; dl.appendChild(dt); dl.appendChild(dd); });
@@ -4687,7 +4757,7 @@ function renderMarks(newId){
     go.title = 'fly back to this view';
     if (/^data:image\/jpeg;base64,/.test(m.thumb || '')){ const img = document.createElement('img'); img.src = m.thumb; img.alt = ''; go.appendChild(img); }
     const cap = document.createElement('span'); cap.className = 'cap';
-    const b = document.createElement('b'); b.textContent = m.s.eq;
+    const b = document.createElement('b'); b.textContent = markTitle(m);
     cap.appendChild(b);
     const kindLbl = (m.s.b ? m.s.b.length : 0) + ' bodies';
     cap.appendChild(document.createTextNode(kindLbl + ', zoom ×' + (m.z || '1')));
@@ -4946,6 +5016,8 @@ function doSaveView(){
 
 
 
+const probeInfo = () => { const p = $('#s_probe .doc p'), b = (getComputedStyle($('#plot')).backgroundColor.match(/[\\d.]+/g) || [0, 0, 0]).map(Number); if (p) p.textContent = 'hover the canvas to follow one particle. click to pin it. the plot shows its speed (' + ((b[0] * .299 + b[1] * .587 + b[2] * .114) > 140 ? 'black' : 'white') + ') and its distance to the nearest body (red) over time.'; };
+new MutationObserver(() => { probeInfo(); setTimeout(probeInfo, 400); if (lastPlotR) { plot(lastPlotR); setTimeout(() => lastPlotR && plot(lastPlotR), 400); } }).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme', 'data-ui', 'class']});
 $('#savePng').addEventListener('click', () => { const c = snapshotCanvas(true); if (!c){ toast('nothing to save yet'); return; } c.toBlob(b => { if (!b){ toast('could not save the image'); return; } const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'gravity-basins.png'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); toast('image saved'); }, 'image/png'); });
 $('#copyImage').addEventListener('click', () => { const c = snapshotCanvas(true); if (!c){ toast('nothing to copy yet'); return; } c.toBlob(async b => { try { if (navigator.clipboard && window.ClipboardItem){ await navigator.clipboard.write([new ClipboardItem({'image/png': b})]); toast('image copied'); } else toast('your browser does not support copying images'); } catch (e) { toast('could not copy the image'); } }, 'image/png'); });
 const hashOf = () => '#' + btoa(unescape(encodeURIComponent(JSON.stringify(state()))));
@@ -4955,7 +5027,7 @@ $('#copyLink').addEventListener('click', async () => { setHash(); toast(await co
 $('#shareLink').addEventListener('click', async () => { setHash(); const u = location.href.split('#')[0] + hashOf(); if (navigator.share){ try { await navigator.share({title: 'fractalengine gravity basins', text: 'a gravity basin setup', url: u}); return; } catch (e) { if (e.name === 'AbortError') return; } } toast(await copyText(u) ? 'link copied' : 'could not copy the link'); });
 $('#expSetup').addEventListener('click', () => { exportSetup(); toast('setup exported'); }); $('#impSetup').addEventListener('click', () => $('#impFile').click());
 const readHash = () => { try { return JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(1))))); } catch (e) { return null; } };
-addEventListener('hashchange', () => { if (location.hash.length > 2 && loadState(readHash())) toast('opened a shared link'); });
+addEventListener('hashchange', () => { if (location.hash.length > 2 && loadState(readHash(), true)) toast('opened a shared link'); });
 $('#reset').addEventListener('click', () => { resetView(); toast('view reset'); });
 const nextPal = () => { const k = Object.keys(PALS); pal = k[(k.indexOf(pal) + 1) % k.length]; S.bodies.forEach((b, i) => b.c = PALS[pal][i % 8]); rows(); render(); toast('palette: ' + pal); };
 window.__gb = { setPal: k => { pal = k; S.bodies.forEach((b, i) => b.c = PALS[k][i % 8]); rows(); render(); toast('palette: ' + k); }, pal: () => pal };
@@ -4973,8 +5045,10 @@ document.addEventListener('keydown', e => {
 });
 S.sw = store.get('sw', 400); S.swr = store.get('swr', 400); S.sh = store.get('sh', S.sh); setTheme(store.get('theme', 'auto')); setSide(store.get('side', 'solid')); applySizes(true);
 new ResizeObserver(render).observe(stage); new ResizeObserver(render).observe(side);
+renderMarks();
 syncUI(); loadPreset('three attractors');
 if (location.hash.length > 2){ const o = readHash(); if (o && loadState(o)) L('boot', 'applied a shared link', 'ok'); else L('boot', 'ignored a broken link', 'warn'); }
+probeInfo();
 requestAnimationFrame(() => requestAnimationFrame(() => { L('render', 'first picture drawn', 'ok'); if (window.__feDone) window.__feDone(); }));
 })();
 
