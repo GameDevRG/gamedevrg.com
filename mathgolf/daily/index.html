@@ -1,229 +1,2236 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>daily challenge · hole in √-1</title>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#10162a;--grid:#1c2542;--ink:#e9edfa;--soft:#8f9bc0;--card:#192040;--imag:#ff6fa5;--ok:#4fd49b;--line:#2d3861;--blue:#7cc8ff}
-*{box-sizing:border-box}
-body{margin:0;min-height:100dvh;background:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:28px 28px;color:var(--ink);font-family:'Bricolage Grotesque',system-ui,sans-serif;text-align:center;text-transform:lowercase}
-main{max-width:520px;margin:0 auto;padding:24px 14px 40px}
-h1{margin:0;font-size:2rem;font-weight:800}
-.sub{color:var(--soft);margin:4px 0 14px;font-size:.95rem}
-button,input{font-family:inherit;font-size:1rem;text-transform:lowercase}
-button{min-height:44px;padding:8px 16px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
-button:disabled{opacity:.4;cursor:not-allowed}
-input{min-height:44px;padding:8px 10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:150px}
-.auth,.tools{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
-.board{background:var(--card);border:2px solid var(--ink);padding:18px;box-shadow:6px 6px 0 var(--ink)}
-.row{display:flex;align-items:center;justify-content:space-around;gap:16px}
-.lbl{color:var(--soft);font-size:.85rem}
-.num{font-size:3.2rem;font-weight:800;line-height:1.1;border:1px solid var(--line);background:var(--bg);padding:2px 14px;min-width:90px}
-.goal .num{color:var(--imag)}
-#info{margin:14px 0 4px;color:var(--soft)}
-#trail{min-height:1.5em;color:var(--soft);font-size:.95rem;margin-bottom:12px;overflow-wrap:anywhere}
-#ops{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-bottom:16px}
-#ops button{flex:0 0 100px;font-weight:800;font-size:1.4rem;line-height:1.1;padding:14px 6px;border:2px solid var(--blue);box-shadow:0 4px 0 var(--blue)}
-#ops button:active:not(:disabled){transform:translateY(4px);box-shadow:none}
-#ops button:disabled{transform:translateY(4px);box-shadow:none}
-#ops small{display:block;font-size:.65rem;font-weight:700}
-#msg{min-height:3em;font-weight:700;margin-top:12px}
-#msg.win{color:var(--ok)}#msg.bad{color:var(--imag)}
-h2{font-size:1.2rem;margin:26px 0 8px}
-ol{list-style:none;margin:0;padding:0;text-align:left}
-li{display:flex;justify-content:space-between;padding:8px 12px;border-top:1px solid var(--line)}
-li.me{color:var(--imag);font-weight:700}
-a{color:var(--blue)}
-.clockbox{margin-top:18px;padding:16px 14px}
-.clockbox h3{margin:0;font-size:1.15rem;font-weight:800}
-.clock{display:flex;align-items:flex-start;justify-content:center;gap:8px;margin-top:14px}
-.cg .lbl{margin-top:8px}
-.colon{color:var(--imag);font-size:2.1rem;font-weight:800;line-height:1.15}
-.fc{display:flex;gap:.14em;font-size:1.9rem;font-weight:800;line-height:1}
-.tile{position:relative;width:.8em;height:1.15em;perspective:5em;background:var(--bg);border:1px solid var(--line);color:var(--ink)}
-.tile::after{content:"";position:absolute;left:0;right:0;top:calc(50% - .5px);height:1px;background:rgba(255,255,255,.3);z-index:5}
-.tile::before{content:"";position:absolute;left:-4px;right:-4px;top:calc(50% - .08em);height:.16em;z-index:6;background:linear-gradient(90deg,var(--line) 3px,transparent 3px,transparent calc(100% - 3px),var(--line) calc(100% - 3px))}
-.tile .h{position:absolute;left:0;right:0;height:50%;overflow:hidden;background:var(--bg)}
-.tile .t{top:0;transform-origin:bottom}
-.tile .b{bottom:0;transform-origin:top;background:color-mix(in srgb,var(--bg) 55%,var(--card))}
-.tile .h span{position:absolute;left:0;right:0;height:200%;display:flex;align-items:center;justify-content:center;font-size:.9em}
-.tile .t span{top:0}.tile .b span{bottom:0}
-.tile .flap{display:none;z-index:3;backface-visibility:hidden}
-.tile.flipping .flap{display:block}
-.tile.flipping .f1{animation:ft .07s ease-in forwards}
-.tile.flipping .f2{transform:rotateX(90deg);animation:fb .07s ease-out .07s forwards}
-@keyframes ft{to{transform:rotateX(-90deg)}}
-@keyframes fb{to{transform:rotateX(0)}}
-@media (prefers-reduced-motion:reduce){.tile.flipping .f1,.tile.flipping .f2{animation:none}}
-[hidden]{display:none!important}
-</style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>daily challenge · hole in √-1</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Chakra+Petch:ital,wght@0,400;0,500;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        @property --bg {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #10162a
+        }
+
+        @property --grid {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #1c2542
+        }
+
+        @property --ink {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #e9edfa
+        }
+
+        @property --soft {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #8f9bc0
+        }
+
+        @property --card {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #192040
+        }
+
+        @property --imag {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #ff6fa5
+        }
+
+        @property --ok {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #4fd49b
+        }
+
+        @property --line {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #2d3861
+        }
+
+        @property --blue {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #7cc8ff
+        }
+
+        @property --red {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #e5484d
+        }
+
+        @property --tl {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: rgba(255, 255, 255, .3)
+        }
+
+        @property --hole {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #05070f
+        }
+
+        @property --ballstroke {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #9aa6c6
+        }
+
+        @property --dimple {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #c5ccdd
+        }
+
+        @property --yellow {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #ffd54a
+        }
+
+        :root {
+            transition: --bg .4s ease, --grid .4s ease, --ink .4s ease, --soft .4s ease, --card .4s ease, --imag .4s ease, --ok .4s ease, --line .4s ease, --blue .4s ease, --red .4s ease, --tl .4s ease, --hole .4s ease, --ballstroke .4s ease, --dimple .4s ease, --yellow .4s ease;
+        }
+
+        :root.noanim {
+            transition: none
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            :root {
+                transition: none
+            }
+        }
+
+        :root {
+            --bg: #10162a;
+            --grid: #1c2542;
+            --ink: #e9edfa;
+            --soft: #8f9bc0;
+            --card: #192040;
+            --imag: #ff6fa5;
+            --ok: #4fd49b;
+            --line: #2d3861;
+            --blue: #7cc8ff;
+            --red: #e5484d;
+            --tl: rgba(255, 255, 255, .3);
+            --hole: #05070f;
+            --ballstroke: #9aa6c6;
+            --dimple: #c5ccdd;
+            --yellow: #ffd54a;
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px)
+        }
+
+        :root[data-theme="light"] {
+            --bg: #eef1f6;
+            --grid: #d5dbe8;
+            --ink: #14213d;
+            --soft: #5d6b8a;
+            --card: #fff;
+            --imag: #c2185b;
+            --ok: #1b8a5a;
+            --line: #c3cbdd;
+            --blue: #3a9be0;
+            --red: #d32f2f;
+            --tl: rgba(20, 33, 61, .25);
+            --hole: #14213d;
+            --ballstroke: #14213d;
+            --dimple: #9aa6c6;
+            --yellow: #b7791f
+        }
+
+        html {
+            scroll-padding-top: env(safe-area-inset-top, 0px)
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            min-height: 100dvh;
+            background-color: var(--bg);
+            background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 28px 28px;
+            background-position: 0 0;
+            color: var(--ink);
+            font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            text-transform: lowercase;
+            overflow-x: hidden
+        }
+
+        #topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 8;
+            height: calc(38px + env(safe-area-inset-top, 0px));
+            padding: env(safe-area-inset-top, 0px) 12px 0;
+            background: #000;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Chakra Petch', system-ui, sans-serif;
+            text-align: left;
+            text-transform: lowercase;
+            white-space: nowrap
+        }
+
+        body {
+            padding-top: 38px
+        }
+
+        #topbar .logo {
+            flex: 0 0 auto;
+            margin-right: 10px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 17px;
+            letter-spacing: -.01em;
+            text-decoration: none;
+            line-height: 1
+        }
+
+        #topbar .logo small {
+            font-size: .62em;
+            font-weight: 500;
+            color: #cfcfcf;
+            letter-spacing: 0
+        }
+
+        #topbar .tbtn {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 26px;
+            padding: 0 20px;
+            border: 0;
+            border-radius: 0;
+            background: #3b82f6;
+            color: #fff;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 15px;
+            line-height: 1;
+            text-decoration: none;
+            text-transform: lowercase;
+            cursor: pointer
+        }
+
+        #topbar .tbtn:hover {
+            background: #5a95f7
+        }
+
+        #topbar input {
+            flex: 0 1 312px;
+            min-width: 0;
+            height: 26px;
+            padding: 0 8px;
+            border: 2px solid #3b82f6;
+            border-radius: 0;
+            background: #262626;
+            color: #fff;
+            font-family: inherit;
+            font-size: 13px;
+            text-transform: none;
+            outline: 0
+        }
+
+        #topbar input {
+            text-overflow: ellipsis
+        }
+
+        #topbar input::placeholder {
+            color: #8a8a8a;
+            font-style: italic;
+            opacity: 1;
+            text-overflow: ellipsis
+        }
+
+        #topbar input:focus {
+            border-color: #8ab8ff
+        }
+
+        #topbar .logo:focus-visible,
+        #topbar .tbtn:focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 2px
+        }
+
+        @media (max-width:520px) {
+            #topbar {
+                padding-left: 8px;
+                padding-right: 8px;
+                gap: 4px
+            }
+
+            #topbar .logo {
+                margin-right: 2px;
+                font-size: 13px
+            }
+
+            #topbar .logo small {
+                display: none
+            }
+
+            #topbar .tbtn {
+                padding: 0 8px;
+                font-size: 13px
+            }
+
+            #topbar input {
+                font-size: 12px;
+                padding: 0 6px
+            }
+        }
+
+        button,
+        select,
+        option {
+            text-transform: lowercase
+        }
+
+        body {
+            padding-bottom: calc(210px + env(safe-area-inset-bottom, 0px))
+        }
+
+        main {
+            width: fit-content;
+            max-width: 100%;
+            min-width: min(520px, 100%);
+            margin: 0 auto;
+            padding: 20px 16px
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 14px
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -.02em
+        }
+
+        h1 .rad {
+            position: relative;
+            display: inline-block;
+            padding-left: .5em;
+            color: var(--imag);
+            white-space: nowrap;
+            line-height: 1;
+            vertical-align: baseline
+        }
+
+        h1 .rad svg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: .5em;
+            height: 100%;
+            overflow: visible;
+            display: block
+        }
+
+        h1 .vin {
+            position: relative;
+            display: inline-block;
+            line-height: .95;
+            padding: .2em 3px 0 1px;
+            margin-left: -1px
+        }
+
+        h1 .vin::before {
+            content: "";
+            position: absolute;
+            left: -1px;
+            right: 0;
+            top: -1.5px;
+            height: 3px;
+            background: currentColor
+        }
+
+        .sub {
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+            color: var(--soft);
+            margin-top: 4px;
+            margin-bottom: 0;
+            font-size: .95rem
+        }
+
+        #levels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            margin: 14px 0
+        }
+
+        #levels button {
+            width: 34px;
+            height: 34px;
+            border: 2px solid var(--line);
+            background: var(--card);
+            color: var(--ink);
+            font: 700 .9rem inherit;
+            font-family: inherit;
+            cursor: pointer
+        }
+
+        #levels button.cur {
+            border-color: var(--imag);
+            color: var(--imag)
+        }
+
+        #levels button.done {
+            background: var(--ok);
+            border-color: var(--ok);
+            color: #fff
+        }
+
+        .board {
+            background: var(--card);
+            border: 2px solid var(--ink);
+            padding: 18px;
+            box-shadow: 6px 6px 0 var(--ink)
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            gap: 24px;
+            flex-wrap: nowrap
+        }
+
+        .lbl {
+            font-size: .85rem;
+            color: var(--soft);
+            text-align: center
+        }
+
+        .num {
+            display: flex;
+            justify-content: center;
+            gap: .14em;
+            font-size: var(--ns, 3.2rem);
+            font-weight: 800;
+            line-height: 1
+        }
+
+        .full {
+            font-size: .8rem;
+            margin-top: 4px;
+            max-width: 10em;
+            overflow-wrap: anywhere
+        }
+
+        .srow.col { flex-direction: column; align-items: stretch }
+        .seg { display: flex; margin-top: 10px }
+        .seg button { flex: 1 1 0; min-height: 40px; padding: 6px 8px; font-family: inherit; font-weight: 700; font-size: .85rem; border: 1px solid var(--line); margin-left: -1px; background: var(--bg); color: var(--soft); cursor: pointer; text-transform: lowercase }
+        .seg button:first-child { margin-left: 0 }
+        .seg button[aria-checked="true"] { border-color: var(--imag); color: var(--imag); position: relative; z-index: 1 }
+        .sw:disabled { cursor: not-allowed }
+
+        .dec .full {
+            min-height: 1.3em
+        }
+
+        .arrow {
+            font-size: 1.8rem;
+            color: var(--soft)
+        }
+
+        #pips {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 18px 0 6px
+        }
+
+        .pip {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--ink);
+            background: transparent;
+            transition: background .2s
+        }
+
+        .pip.used {
+            background: var(--ink)
+        }
+
+        .pip.over {
+            border-color: var(--imag)
+        }
+
+        .pip.over.used {
+            background: var(--imag)
+        }
+
+        #trail {
+            max-width: 460px;
+            margin-left: auto;
+            margin-right: auto;
+            min-height: 1.6em;
+            text-align: center;
+            color: var(--soft);
+            font-size: .95rem;
+            margin-bottom: 12px;
+            overflow-wrap: anywhere
+        }
+
+        .tile {
+            position: relative;
+            flex: 0 0 auto;
+            width: .8em;
+            height: 1.15em;
+            perspective: 5em;
+            background: var(--bg);
+            border: 1px solid var(--line);
+            color: var(--ink);
+            box-sizing: content-box
+        }
+
+        .tile.nr {
+            width: .5em
+        }
+
+        .goal .tile {
+            color: var(--imag)
+        }
+
+        .tile::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(50% - .5px);
+            height: 1px;
+            background: var(--tl);
+            z-index: 5
+        }
+
+        .tile::before {
+            content: "";
+            position: absolute;
+            left: -4px;
+            right: -4px;
+            top: calc(50% - .08em);
+            height: .16em;
+            z-index: 6;
+            background: linear-gradient(90deg, var(--line) 3px, transparent 3px, transparent calc(100% - 3px), var(--line) calc(100% - 3px))
+        }
+
+        .tile .h {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 50%;
+            overflow: hidden;
+            background: var(--bg)
+        }
+
+        .tile .t {
+            top: 0;
+            transform-origin: bottom
+        }
+
+        .tile .b {
+            bottom: 0;
+            transform-origin: top;
+            background: var(--card);
+            background: color-mix(in srgb, var(--bg) 55%, var(--card))
+        }
+
+        .tile .h span {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 200%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            font-size: .9em;
+            font-weight: 800;
+            letter-spacing: 0
+        }
+
+        .tile .t span {
+            top: 0
+        }
+
+        .tile .b span {
+            bottom: 0
+        }
+
+        .tile .flap {
+            display: none;
+            z-index: 3;
+            backface-visibility: hidden
+        }
+
+        .tile.flipping .flap {
+            display: block
+        }
+
+        .tile.flipping .f1 {
+            animation: ft .07s ease-in forwards
+        }
+
+        .tile.flipping .f2 {
+            transform: rotateX(90deg);
+            animation: fb .07s ease-out .07s forwards
+        }
+
+        @keyframes ft {
+            to {
+                transform: rotateX(-90deg)
+            }
+        }
+
+        @keyframes fb {
+            to {
+                transform: rotateX(0)
+            }
+        }
+
+        /* undo: the same flip played backwards (bottom flap folds up, then the top flap falls back down) */
+        .tile.flipping.rev .f1 {
+            transform: rotateX(-90deg);
+            animation: ftr .07s ease-out .07s forwards
+        }
+
+        .tile.flipping.rev .f2 {
+            transform: none;
+            animation: fbr .07s ease-in forwards
+        }
+
+        @keyframes ftr {
+            to {
+                transform: rotateX(0)
+            }
+        }
+
+        @keyframes fbr {
+            to {
+                transform: rotateX(90deg)
+            }
+        }
+
+        [hidden] {
+            display: none !important
+        }
+
+        .pg { width: 100%; max-width: 520px; margin: 0 auto; padding: 8vh 16px 20px; text-align: center; animation: pgIn .35s ease both }
+        @keyframes pgIn { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
+        .noanim .pg, .noanim.pg { animation: none }
+        body.inmenu { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) }
+        .stboard { margin-top: 16px; padding: 16px 14px }
+        .stgrid { display: flex; justify-content: space-around; gap: 8px; margin: 14px 0 10px }
+        .stg .num { font-size: 1.9rem; margin: 0 }
+        .stboard .tile, .stboard .plain { color: var(--blue) }
+        .stg .lbl { margin-top: 8px }
+        .strow { display: flex; justify-content: space-between; gap: 12px; padding: 9px 4px; border-top: 1px solid var(--line); text-align: left }
+        .strow span:last-child { font-weight: 800 }
+        #dailypg input { min-height: 44px; padding: 8px 10px; width: 150px; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); text-transform: lowercase }
+        #dailypg .tools button, #dailypg .calhead button { min-height: 44px; padding: 8px 16px; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; text-transform: lowercase }
+        #dailypg a { color: var(--blue) }
+        .cal { padding: 14px }
+        .solved { margin-top: 18px; padding: 16px 14px }
+        .sttl { margin: 0 0 2px; font-size: 1.15rem; font-weight: 800 }
+        .solved .num { font-size: 2.3rem; margin: 14px 0 }
+        .solved .tile, .solved .plain { color: var(--blue) }
+        .clockbox .tile, .clockbox .plain { color: var(--ink) }
+        .clockbox .num { margin: 0; font-size: 1.9rem }
+        .clock { display: flex; align-items: flex-start; justify-content: center; gap: 8px; margin-top: 14px }
+        .clock .lbl { margin-top: 8px }
+        .colon { color: var(--imag); font-size: 2.1rem; font-weight: 800; line-height: 1.15 }
+        #dlbd { list-style: none; margin: 4px 0 0; padding: 0; text-align: left }
+        #dlbd li { display: flex; justify-content: space-between; padding: 8px 12px; border-top: 1px solid var(--line) }
+        #dlbd li.me { color: var(--imag); font-weight: 700 }
+        #dailypg .solved .tools button { min-height: 44px; padding: 8px 16px; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; text-transform: lowercase }
+        .calhead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px }
+        .calhead h3 { margin: 0; font-size: 1.7rem; font-weight: 800 }
+        .calhead h3 b { color: var(--imag) }
+        #dailypg .calhead button { width: 44px; padding: 0; font-size: 1.4rem }
+        .calgrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px }
+        .cw { padding: 8px 0; background: var(--line); color: var(--ink); font-size: .9rem }
+        .cw.today { background: var(--ink); color: var(--bg) }
+        .cd { aspect-ratio: 1; position: relative; display: flex; align-items: center; justify-content: center; padding: 0; min-height: 0; font-family: inherit; font-weight: 800; font-size: 1.05rem; border: 1px solid var(--line); background: var(--bg); color: var(--soft); cursor: default }
+        .cd.play { cursor: pointer; color: var(--ink) }
+        .cd.play:hover { border-color: var(--ink) }
+        .cd.miss { border: 2px solid var(--imag); color: var(--imag) }
+        .cd.done { background: var(--blue); border-color: var(--blue); color: var(--bg) }
+        .cd.today { background: var(--ink); border-color: var(--ink); color: var(--bg) }
+        .cd .pips { position: absolute; left: 3px; bottom: 3px; display: flex; gap: 2px }
+        .cd .pips i { width: 5px; height: 5px; background: rgba(0, 0, 0, .35) }
+        .cd .pips i.u { background: #fff }
+        .cd .pips i.o { background: var(--imag) }
+        #dlb { list-style: none; margin: 14px 0 0; padding: 0; text-align: left }
+        #dlb li { display: flex; justify-content: space-between; padding: 8px 12px; border-top: 1px solid var(--line) }
+        #dlb li.me { color: var(--imag); font-weight: 700 }
+        .mopts { display: flex; flex-direction: column; gap: 14px; margin-top: 22px }
+        .mopt { display: block; width: 100%; padding: 18px 16px; text-align: center; font-family: inherit; color: var(--ink); background: var(--card); border: 2px solid var(--blue); box-shadow: 0 4px 0 var(--blue); cursor: pointer; transition: transform .08s, box-shadow .08s, border-color .15s }
+        .mopt b { display: block; font-size: 1.5rem; font-weight: 800 }
+        .mopt span { display: block; margin-top: 4px; font-size: .9rem; color: var(--soft) }
+        .mopt.red { border-color: var(--imag); box-shadow: 0 4px 0 var(--imag) }
+        .mopt.gold { border-color: var(--yellow); box-shadow: 0 4px 0 var(--yellow) }
+        .mopt.green { border-color: var(--ok); box-shadow: 0 4px 0 var(--ok) }
+        .mopt:hover, .mopt.red:hover, .mopt.gold:hover, .mopt.green:hover { border-color: var(--ink); box-shadow: 0 4px 0 var(--ink) }
+        .mopt:active, .mopt.pressed, .mopt.red:active, .mopt.red.pressed, .mopt.gold:active, .mopt.gold.pressed, .mopt.green:active, .mopt.green.pressed { transform: translateY(4px); box-shadow: 0 0 0 var(--ink) }
+        .pgh { margin: 0; font-size: 2rem; font-weight: 800 }
+        .dgroups { display: flex; flex-direction: column; gap: 14px; margin: 22px 0 18px }
+        .dgroup { background: var(--card); border: 2px solid var(--line); padding: 16px }
+        .dgroup h3 { margin: 0 0 8px; font-size: 1.25rem; font-weight: 800 }
+        .soon { color: var(--soft); font-size: .95rem; padding: 14px; border: 1px dashed var(--line) }
+
+        #settings,
+        #scores,
+        #adv,
+        #lb {
+            position: fixed;
+            inset: 0;
+            z-index: 7;
+            display: flex;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: calc(38px + env(safe-area-inset-top, 0px)) 0 calc(20px + env(safe-area-inset-bottom, 0px))
+        }
+
+        #settings.off,
+        #adv.off {
+            transform: translateX(100%)
+        }
+
+        #settings.away {
+            transform: translateX(-100vw)
+        }
+
+        #settings { transform-origin: 50% 6% }
+        #dailypg { animation: none; transform-origin: 50% 6% }
+        #dailypg.away { transform: translateX(-100vw) }
+        #dailypg.awayR { transform: translateX(100vw) }
+        #lbrows { list-style: none; margin: 10px 0 0; padding: 0; text-align: left }
+        #lbrows li { display: flex; justify-content: space-between; padding: 8px 12px; border-top: 1px solid var(--line) }
+        #lbrows li.me { color: var(--imag); font-weight: 700 }
+
+        #scores.offL,
+        #lb.offL {
+            transform: translateX(-100%)
+        }
+
+        #settings .sp,
+        #scores .sp,
+        #adv .sp,
+        #lb .sp {
+            transform-origin: 50% 6%;
+            width: 100%;
+            max-width: 520px;
+            min-width: 0;
+            margin: auto;
+            padding: 20px 12px
+        }
+
+        main {
+            transform-origin: 50% 6%
+        }
+
+        #nlwrap {
+            transition: transform .6s cubic-bezier(.4, 0, .2, 1)
+        }
+
+        main.away,
+        #nlwrap.away {
+            transform: translateX(-100vw)
+        }
+
+        main.awayR,
+        #nlwrap.awayR {
+            transform: translateX(100vw)
+        }
+
+        #settings h2,
+        #scores h2,
+        #adv h2,
+        #lb h2 {
+            margin: 0 0 14px;
+            font-size: 1.6rem;
+            font-weight: 800
+        }
+
+        .srow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            text-align: left;
+            padding: 14px 0;
+            border-top: 1px solid var(--line)
+        }
+
+        .srow b {
+            display: block;
+            font-size: 1.05rem
+        }
+
+        .srow span {
+            color: var(--soft);
+            font-size: .88rem
+        }
+
+        #slist .srow {
+            cursor: pointer;
+            margin: 0 -8px;
+            padding: 14px 8px
+        }
+
+        #slist .srow:hover {
+            background: color-mix(in srgb, var(--bg) 55%, var(--card))
+        }
+
+        #slist .srow:focus-visible {
+            outline: 3px solid var(--imag);
+            outline-offset: -3px
+        }
+
+        #shint {
+            color: var(--soft);
+            font-size: .85rem;
+            margin: -4px 0 12px
+        }
+
+        .sres {
+            flex: 0 0 auto;
+            text-align: right
+        }
+
+        .sres b {
+            font-size: 1.1rem
+        }
+
+        .sres span {
+            display: block
+        }
+
+        .sres b.ok {
+            color: var(--ok)
+        }
+
+        .sres b.bad {
+            color: var(--imag)
+        }
+
+        #sum {
+            color: var(--soft);
+            font-size: .92rem;
+            line-height: 1.5;
+            margin: 0 0 12px
+        }
+
+        #snone {
+            color: var(--soft);
+            padding: 14px 0;
+            border-top: 1px solid var(--line)
+        }
+
+        #slist .dv2 {
+            color: var(--ok)
+        }
+
+        #slist .dv4 {
+            color: var(--yellow)
+        }
+
+        #slist .dv8 {
+            color: var(--blue)
+        }
+
+        #slist .dv6,
+        #slist .mhc {
+            color: var(--imag)
+        }
+
+        #slist .mnorm {
+            color: var(--ink)
+        }
+
+        .sw {
+            flex: 0 0 auto;
+            position: relative;
+            width: 56px;
+            height: 30px;
+            border: 2px solid var(--line);
+            background: var(--bg);
+            cursor: pointer;
+            padding: 0
+        }
+
+        .sw::after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: var(--soft)
+        }
+
+        .sw[aria-checked="true"] {
+            border-color: var(--imag)
+        }
+
+        .sw[aria-checked="true"]::after {
+            left: 29px;
+            background: var(--imag)
+        }
+
+        .num[data-neg]::before {
+            content: "−";
+            align-self: center;
+            margin-right: .04em;
+            font-size: .9em;
+            font-weight: 800;
+            color: var(--ink)
+        }
+
+        .goal .num[data-neg]::before {
+            color: var(--imag)
+        }
+
+        .num .sep {
+            align-self: center;
+            font-size: .9em;
+            font-weight: 800;
+            color: var(--ink);
+            padding: 0 .02em
+        }
+
+        .goal .num .sep {
+            color: var(--imag)
+        }
+
+        .plain {
+            font-weight: 800;
+            line-height: 1
+        }
+
+        .goal .num.plain {
+            color: var(--imag)
+        }
+
+        .noanim * {
+            transition: none !important
+        }
+
+        :root.noui *:not(#nlwrap) { transition: none !important }
+        :root.noui .pg { animation: none }
+        :root.nofade { transition: none }
+        .lnk { flex: 0 0 auto; min-height: 40px; padding: 8px 14px; font-family: inherit; font-weight: 700; font-size: .9rem; border: 1px solid var(--blue); background: var(--bg); color: var(--blue); cursor: pointer }
+        .lnk:hover { border-color: var(--imag); color: var(--imag) }
+
+        #fx {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 6
+        }
+
+        #nlwrap {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 5;
+            padding: 0 12px env(safe-area-inset-bottom, 0px);
+            pointer-events: none
+        }
+
+        #nl {
+            width: 100%;
+            max-width: 1100px;
+            height: 200px;
+            display: block;
+            margin: 0 auto;
+            overflow: visible
+        }
+
+        #nl text {
+            font-family: inherit;
+            fill: var(--soft);
+            font-size: 12px;
+            text-anchor: middle
+        }
+
+        #ops {
+            max-width: 456px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px
+        }
+
+        #ops button {
+            flex: 0 0 100px;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 1.5rem;
+            line-height: 1.1;
+            padding: 14px 8px;
+            border: 2px solid var(--blue);
+            background: var(--bg);
+            color: var(--ink);
+            cursor: pointer;
+            box-shadow: 0 4px 0 var(--blue);
+            transition: transform .08s, box-shadow .08s
+        }
+
+        #ops button:active:not(:disabled) {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 var(--blue)
+        }
+
+        #ops button.pressed:not(:disabled) {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 var(--blue)
+        }
+
+        #ops button small {
+            display: block;
+            font-size: .65rem;
+            font-weight: 700;
+            margin-top: 2px
+        }
+
+        #ops button:disabled {
+            opacity: .35;
+            cursor: not-allowed;
+            transform: translateY(4px);
+            box-shadow: 0 0 0 var(--blue)
+        }
+
+        .hc .board {
+            border-color: var(--imag);
+            box-shadow: 6px 6px 0 var(--imag)
+        }
+
+        .hc #ops button {
+            border-color: var(--imag);
+            box-shadow: 0 4px 0 var(--imag)
+        }
+
+        .hc #ops button:active:not(:disabled),
+        .hc #ops button.pressed:not(:disabled),
+        .hc #ops button:disabled {
+            box-shadow: 0 0 0 var(--imag)
+        }
+
+        #ops button:focus-visible,
+        .tools button:focus-visible,
+        #levels button:focus-visible,
+        #msg button:focus-visible {
+            outline: 3px solid var(--imag);
+            outline-offset: 2px
+        }
+
+        .tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 14px
+        }
+
+        .tools select {
+            font: 700 1rem inherit;
+            font-family: inherit;
+            padding: 8px 12px;
+            border: 2px solid var(--line);
+            background: var(--card);
+            color: var(--ink)
+        }
+
+        .tools button:disabled {
+            opacity: .4;
+            cursor: not-allowed
+        }
+
+        .tools button {
+            font: 700 1rem inherit;
+            font-family: inherit;
+            padding: 8px 18px;
+            border: 2px solid var(--line);
+            background: var(--card);
+            color: var(--ink);
+            cursor: pointer
+        }
+
+        #rand {
+            background: var(--card) !important;
+            border-color: var(--imag) !important;
+            color: var(--imag) !important
+        }
+
+        #rand:disabled {
+            opacity: .4;
+            cursor: not-allowed
+        }
+
+        #modeinfo {
+            margin-top: 16px;
+            font-size: .95rem;
+            font-weight: 700;
+            line-height: 1.5;
+            overflow-wrap: anywhere
+        }
+
+        #modeinfo i {
+            font-style: normal;
+            color: var(--soft);
+            font-weight: 400
+        }
+
+        .dv2 {
+            color: var(--ok)
+        }
+
+        .dv4 {
+            color: var(--yellow)
+        }
+
+        .dv8 {
+            color: var(--blue)
+        }
+
+        .dv6,
+        .mhc {
+            color: var(--imag)
+        }
+
+        .mnorm {
+            color: var(--ink)
+        }
+
+        #msg {
+            max-width: 460px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 8px;
+            text-align: center;
+            min-height: 1.6em;
+            font-weight: 700
+        }
+
+        #msg.win {
+            color: var(--ok)
+        }
+
+        #msg.lose {
+            color: var(--imag)
+        }
+
+        #msg button {
+            margin-top: 8px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 1rem;
+            min-height: 44px;
+            padding: 8px 22px;
+            border: 2px solid var(--blue);
+            background: var(--card);
+            color: var(--blue);
+            cursor: pointer
+        }
+
+        .how button {
+            font: 700 1rem inherit;
+            font-family: inherit;
+            padding: 8px 18px;
+            border: 2px solid var(--line);
+            background: var(--card);
+            color: var(--ink);
+            cursor: pointer
+        }
+
+        #dlg {
+            max-width: 420px;
+            width: calc(100% - 32px);
+            border: 2px solid var(--ink);
+            background: var(--card);
+            color: var(--ink);
+            padding: 20px;
+            font-family: inherit;
+            text-align: center;
+            text-transform: lowercase;
+            box-shadow: 6px 6px 0 var(--ink)
+        }
+
+        #dlg::backdrop {
+            background: rgba(5, 8, 20, .6)
+        }
+
+        #dlg p {
+            margin: 0 0 16px;
+            line-height: 1.5
+        }
+
+        #dlg button {
+            font: 700 1rem inherit;
+            font-family: inherit;
+            padding: 8px 20px;
+            border: 2px solid var(--ink);
+            background: var(--ink);
+            color: var(--bg);
+            cursor: pointer;
+            text-transform: lowercase
+        }
+
+        .how {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 18px;
+            color: var(--soft);
+            font-size: .9rem;
+            text-align: center;
+            line-height: 1.5
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            * {
+                transition: none !important
+            }
+        }
+
+        button {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent
+        }
+
+        .tools button,
+        .tools select,
+        .how button {
+            min-height: 44px
+        }
+
+        #dlg {
+            max-height: 80dvh;
+            overflow: auto
+        }
+
+        @media (max-width:520px) {
+            body {
+                padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px))
+            }
+
+            main {
+                width: 100%;
+                min-width: 0;
+                padding: 12px 12px
+            }
+
+            h1 {
+                font-size: 1.7rem
+            }
+
+            .sub {
+                font-size: .85rem
+            }
+
+            .board {
+                padding: 14px;
+                box-shadow: 4px 4px 0 var(--ink)
+            }
+
+            .hc .board {
+                box-shadow: 4px 4px 0 var(--imag)
+            }
+
+            #ops {
+                gap: 10px
+            }
+
+            #ops button {
+                flex: 0 0 calc(33.333% - 7px);
+                padding: 12px 4px;
+                font-size: 1.4rem
+            }
+
+            #trail {
+                font-size: .85rem
+            }
+
+            #modeinfo {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0 16px;
+                margin-top: 12px
+            }
+        }
+
+        @media (max-width:360px) {
+            #topbar .logo {
+                font-size: 12px
+            }
+
+            #topbar .tbtn {
+                padding: 0 6px;
+                font-size: 12px
+            }
+        }
+
+        /* on phones the number line lives inside the board (see placeNl) instead of being pinned over it */
+        .board #nlwrap {
+            position: static;
+            z-index: auto;
+            padding: 0;
+            margin: 0 -2px 0;
+            pointer-events: auto;
+            transition: none
+        }
+
+        .board #nlwrap.away,
+        .board #nlwrap.awayR {
+            transform: none
+        }
+    </style>
+    <script>try { var q = JSON.parse(localStorage.getItem('hs1') || '{}'); if (q.theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); if (q.hc) document.documentElement.classList.add('hc') } catch (e) { }</script>
 </head>
+
 <body>
-<main>
-  <h1>daily challenge</h1>
-  <p class="sub" id="sub">loading…</p>
-
-  <div class="auth" id="auth">
-    <input id="u" placeholder="username" autocomplete="username">
-    <input id="p" type="password" placeholder="password" autocomplete="current-password">
-    <button id="login">log in</button><button id="reg">register</button>
-  </div>
-  <p class="sub" id="who" hidden><span id="wn"></span> · <a href="#" id="out">log out</a></p>
-
-  <section class="board" id="game" hidden>
-    <div class="row">
-      <div><div class="lbl">you have</div><div class="num" id="cur">0</div></div>
-      <div class="goal"><div class="lbl">goal</div><div class="num" id="goal">0</div></div>
-    </div>
-    <div id="info"></div>
-    <div id="trail"></div>
-    <div id="ops"></div>
-    <div class="tools"><button id="undo">undo</button><button id="restart">restart level</button></div>
-    <div id="msg" role="status"></div>
-  </section>
-
-  <section class="board clockbox">
-    <h3>new daily in</h3>
-    <div class="clock">
-      <div class="cg"><div class="fc" id="ch"></div><div class="lbl">hour</div></div><span class="colon">:</span>
-      <div class="cg"><div class="fc" id="cm"></div><div class="lbl">minute</div></div><span class="colon">:</span>
-      <div class="cg"><div class="fc" id="cs"></div><div class="lbl">second</div></div>
-    </div>
-  </section>
-
-  <h2>today's leaderboard</h2>
-  <ol id="lb"></ol>
-</main>
-
-<script>
-/* point this at your server (the one running server.js) */
-const API = 'http://localhost:3000';
-
-const $ = id => document.getElementById(id);
-const BOUND = 3000;
-
-/* same rules as the server: whole numbers only, anything past ±3000 is "too big" */
-function apply(s, x) {
-  let r;
-  if (s === 'x²') r = x * x;
-  else if (s === 'x³') r = x * x * x;
-  else if (s === '|x|') r = Math.abs(x);
-  else if (s === '−x') r = -x;
-  else if (s === '√x') { if (x < 0) return null; r = Math.round(Math.sqrt(x)); if (r * r !== x) return null; }
-  else if (s === 'rev') { if (x < 0) return null; r = parseInt(String(x).split('').reverse().join(''), 10); }
-  else if (s.startsWith('mod ')) { const k = parseInt(s.slice(4), 10); r = ((x % k) + k) % k; }
-  else {
-    const k = parseInt(s.slice(1), 10), o = s[0];
-    if (o === '+') r = x + k; else if (o === '−') r = x - k; else if (o === '×') r = x * k;
-    else if (o === '÷') { if (x % k) return null; r = x / k; } else return null;
-  }
-  return Math.abs(r) > BOUND ? null : r;
-}
-const why = s => s[0] === '÷' ? 'not whole' : s === '√x' ? 'not a square' : (s.startsWith('mod') || s === 'rev') ? 'whole only' : 'too big';
-
-async function api(path, body) {
-  const r = await fetch(API + path, body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : undefined);
-  const j = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(j.message || 'request failed');
-  return j;
-}
-
-let L = null, cur = 0, hist = [], user = '', saved = false;
-try { user = localStorage.getItem('hs_user') || ''; } catch (e) { }
-
-function setMsg(t, c) { $('msg').textContent = t || ''; $('msg').className = c || ''; }
-
-function render() {
-  const won = cur === L.goal, used = hist.length, over = used - L.par;
-  $('cur').textContent = cur; $('goal').textContent = L.goal;
-  $('info').textContent = `par ${L.par} · ${used} ${used === 1 ? 'move' : 'moves'}` + (over > 0 ? ` · ${over} over par` : '');
-  const tk = t => /^[+−×÷]\d/.test(t) ? t[0] + ' ' + t.slice(1) : t === '−x' ? 'negate' : t;
-  $('trail').textContent = hist.length ? [L.start, ...hist.map(tk)].join(' ') + ' = ' + cur : String(L.start);
-  $('ops').innerHTML = '';
-  L.ops.forEach(o => {
-    const b = document.createElement('button'), v = apply(o, cur);
-    b.textContent = o; b.disabled = won || v === null;
-    if (!won && v === null) b.innerHTML = o + '<small>' + why(o) + '</small>';
-    b.onclick = () => { hist.push(o); cur = v; render(); };
-    $('ops').appendChild(b);
-  });
-  $('undo').disabled = !used || won;
-  if (won && !saved) { saved = true; submit(); }
-}
-
-async function submit() {
-  if (!user) { setMsg(`solved in ${hist.length}. log in to save your score, then restart and solve it again.`, 'win'); saved = false; return; }
-  try {
-    const r = await api('/daily/submit', { username: user, date: L.date, moves: hist.slice() });
-    setMsg(`solved in ${r.moves}${r.moves <= r.par ? ' (par!)' : ''}. your best today: ${r.best}. restart to try for fewer.`, 'win');
-    loadBoard();
-  } catch (e) { setMsg(e.message, 'bad'); }
-}
-
-function restart() { cur = L.start; hist = []; saved = false; setMsg(''); render(); }
-$('undo').onclick = () => { const o = hist.pop(); if (o !== undefined) { cur = L.start; hist.forEach(m => cur = apply(m, cur)); saved = false; setMsg(''); render(); } };
-$('restart').onclick = restart;
-
-async function loadBoard() {
-  try {
-    const j = await api('/daily/leaderboard');
-    $('lb').innerHTML = j.rows.length ? '' : '<li>no scores yet</li>';
-    j.rows.forEach((r, i) => {
-      const li = document.createElement('li'); if (r.username === user) li.className = 'me';
-      li.innerHTML = `<span>${i + 1}. </span>`; li.firstChild.textContent = (i + 1) + '. ' + r.username;
-      const m = document.createElement('span'); m.textContent = r.moves + ' moves'; li.appendChild(m); $('lb').appendChild(li);
-    });
-  } catch (e) { $('lb').innerHTML = '<li>couldn\'t load the leaderboard</li>'; }
-}
-
-function showUser() { $('auth').hidden = !!user; $('who').hidden = !user; $('wn').textContent = 'playing as ' + user; }
-async function auth(path) {
-  const username = $('u').value.trim(), password = $('p').value;
-  if (!username || !password) return setMsg('enter a username and password', 'bad');
-  try {
-    if (path === '/register') await api('/register', { username, password });
-    const j = await api('/login', { username, password });
-    user = j.user; try { localStorage.setItem('hs_user', user); } catch (e) { }
-    $('p').value = ''; showUser(); setMsg(''); loadBoard();
-  } catch (e) { setMsg(e.message, 'bad'); }
-}
-$('login').onclick = () => auth('/login');
-$('reg').onclick = () => auth('/register');
-$('out').onclick = e => { e.preventDefault(); user = ''; try { localStorage.removeItem('hs_user'); } catch (x) { } showUser(); loadBoard(); };
-
-/* flip-clock digits */
-function setFlip(el, text) {
-  [...text].forEach((c, i) => {
-    let t = el.children[i];
-    if (!t) { t = document.createElement('div'); t.className = 'tile'; t.innerHTML = '<div class="h t"><span></span></div><div class="h b"><span></span></div><div class="flap h t f1"><span></span></div><div class="flap h b f2"><span></span></div>'; el.appendChild(t); }
-    const sp = t.querySelectorAll('span'), old = t.dataset.ch;
-    if (old === c) return;
-    clearTimeout(t._tm);
-    if (old === undefined) { sp.forEach(x => x.textContent = c); t.dataset.ch = c; return; }
-    sp[1].textContent = old; sp[0].textContent = c; sp[2].textContent = old; sp[3].textContent = c;
-    t.classList.remove('flipping'); void t.offsetWidth; t.classList.add('flipping'); t.dataset.ch = c;
-    t._tm = setTimeout(() => { sp[1].textContent = c; t.classList.remove('flipping'); }, 160);
-  });
-}
-
-function tick() {
-  if (!L) return;
-  const ms = new Date(L.resetsAt) - Date.now();
-  if (ms <= 0) { init(); return; }
-  const p = n => String(n).padStart(2, '0');
-  $('sub').textContent = L.date;
-  setFlip($('ch'), p(Math.floor(ms / 36e5))); setFlip($('cm'), p(Math.floor(ms / 6e4) % 60)); setFlip($('cs'), p(Math.floor(ms / 1e3) % 60));
-}
-
-async function init() {
-  try {
-    L = await api('/daily');
-    $('game').hidden = false; restart(); tick(); loadBoard();
-  } catch (e) { $('sub').textContent = 'couldn\'t reach the server. check the API address at the top of the script.'; }
-}
-showUser(); init(); setInterval(tick, 1000);
-</script>
+    <nav id="topbar" aria-label="site">
+        <a class="logo" href="/gamedevrg.com/">gamedevrg<small>.com</small></a>
+        <a class="tbtn" href="/gamedevrg.com/">homepage</a>
+        <input id="tsearch" type="search" placeholder="you can type things here. (this is the search bar)"
+            aria-label="search" autocomplete="off">
+        <button class="tbtn" id="tgo" type="button">search</button>
+    </nav>
+    <section id="menu" class="pg" hidden>
+        <header>
+            <h1>hole in <span class="rad"><svg viewBox="0 0 12 20" preserveAspectRatio="none" aria-hidden="true">
+                        <path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="3"
+                            stroke-linejoin="miter" vector-effect="non-scaling-stroke" />
+                    </svg><span class="vin">-1</span></span></h1>
+            <p class="sub">choose how you want to play</p>
+        </header>
+        <div class="mopts">
+            <button class="mopt" id="mopt1"><b>random levels</b><span>endless, freshly generated levels at the difficulty you pick</span></button>
+            <button class="mopt gold" id="moptD"><b>daily levels</b><span>a new challenge every day, plus a calendar of past days</span></button>
+            <button class="mopt green" id="moptS"><b>your stats</b><span>daily streaks, par rate and more</span></button>
+            <button class="mopt red" id="mopt2"><b>main levels</b><span>hand-made levels for each difficulty</span></button>
+        </div>
+    </section>
+    <section id="dailypg" class="pg" hidden>
+        <header>
+            <h2 class="pgh">daily levels</h2>
+            <p class="sub" id="dsub">pick a day to play</p>
+        </header>
+        <div class="tools" id="dauth"><input id="du" placeholder="username" autocomplete="username"><input id="dp" type="password" placeholder="password" autocomplete="current-password"><button id="dlogin">log in</button><button id="dreg">register</button></div>
+        <p class="sub" id="dwho" hidden><span id="dwn"></span> · <a href="#" id="dout">log out</a></p>
+        <div class="board cal">
+            <div class="calhead"><button id="cprev" aria-label="previous month">‹</button><h3 id="ctitle"></h3><button id="cnext" aria-label="next month">›</button></div>
+            <div class="calgrid" id="cgrid"></div>
+        </div>
+        <div class="board solved" id="solvedbox">
+            <h3 class="sttl">number of players who solved this</h3>
+            <div class="lbl" id="ssub">&nbsp;</div>
+            <div class="num" id="sn" aria-label="players who solved today's level"></div>
+            <div class="tools"><button id="sboard">daily leaderboard</button></div>
+        </div>
+        <div class="board solved clockbox">
+            <h3 class="sttl">new daily in</h3>
+            <div class="clock">
+                <div class="cg"><div class="num" id="ch"></div><div class="lbl">hour</div></div><span class="colon">:</span>
+                <div class="cg"><div class="num" id="cm"></div><div class="lbl">minute</div></div><span class="colon">:</span>
+                <div class="cg"><div class="num" id="cs"></div><div class="lbl">second</div></div>
+            </div>
+        </div>
+        <div class="tools"><button id="cmonth">monthly leaderboard</button><button id="dback">play today's level</button></div>
+    </section>
+    <section id="statspg" class="pg" hidden>
+        <header>
+            <h2 class="pgh">your stats</h2>
+            <p class="sub" id="stsub"></p>
+        </header>
+        <div class="board stboard">
+            <h3 class="sttl">daily levels</h3>
+            <div class="stgrid">
+                <div class="stg"><div class="num" id="stn1"></div><div class="lbl">solved</div></div>
+                <div class="stg"><div class="num" id="stn2"></div><div class="lbl">current streak</div></div>
+                <div class="stg"><div class="num" id="stn3"></div><div class="lbl">longest streak</div></div>
+            </div>
+            <div id="strows"></div>
+        </div>
+        <div class="board stboard">
+            <h3 class="sttl">random levels on this device</h3>
+            <div id="strows2"></div>
+        </div>
+        <div class="tools"><button id="stback">back to menu</button></div>
+    </section>
+    <section id="mainlevels" class="pg" hidden>
+        <header>
+            <h2 class="pgh">main levels</h2>
+            <p class="sub">hand-made levels, grouped by difficulty</p>
+        </header>
+        <div class="dgroups">
+            <div class="dgroup"><h3 class="dv2">easy</h3><div class="soon">levels coming soon</div></div>
+            <div class="dgroup"><h3 class="dv4">medium</h3><div class="soon">levels coming soon</div></div>
+            <div class="dgroup"><h3 class="dv6">hard</h3><div class="soon">levels coming soon</div></div>
+            <div class="dgroup"><h3 class="dv8">challenge</h3><div class="soon">levels coming soon</div></div>
+        </div>
+        <div class="tools"><button id="mback">back to menu</button></div>
+    </section>
+    <main>
+        <header>
+            <h1>hole in <span class="rad"><svg viewBox="0 0 12 20" preserveAspectRatio="none" aria-hidden="true">
+                        <path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="3"
+                            stroke-linejoin="miter" vector-effect="non-scaling-stroke" />
+                    </svg><span class="vin">-1</span></span></h1>
+            <p class="sub">reach the goal in par moves or fewer</p>
+        </header>
+        <section class="board">
+            <div class="row">
+                <div>
+                    <div class="lbl">you have</div>
+                    <div class="num" id="cur"></div>
+                    <div class="lbl full" id="curfull"></div>
+                </div>
+                <div class="arrow" aria-hidden="true">⟶</div>
+                <div class="goal">
+                    <div class="lbl">goal</div>
+                    <div class="num" id="goal"></div>
+                    <div class="lbl full" id="goalfull"></div>
+                </div>
+            </div>
+            <div id="pips" aria-live="polite"></div>
+            <div class="lbl" id="left"></div>
+            <div id="trail"></div>
+            <div id="ops"></div>
+            <div class="tools"><button id="undo">undo</button><button id="reset">restart level</button><button
+                    id="rand">give
+                    up</button><button id="skipanim" hidden>skip animation</button></div>
+            <div class="tools"><select id="diff" aria-label="Difficulty">
+                    <option value="2">easy</option>
+                    <option value="4" selected>medium</option>
+                    <option value="6">hard</option>
+                        <option value="8">challenge</option>
+                </select></div>
+            <div id="modeinfo">
+                <div><i>difficulty:</i> <span id="miD"></span></div>
+                <div><i>mode:</i> <span id="miM"></span></div>
+            </div>
+            <div id="msg" role="status"></div>
+            <div class="lbl" id="score"></div>
+        </section>
+        <div class="how"><button id="tomenu">calendar</button><button id="what">what is this?</button><button
+                id="opts">settings</button></div>
+        <dialog id="dlg">
+            <p>every level is freshly generated and gives only the operations you need. par is the fewest moves that can
+                work,
+                and you can keep going past it, but every extra move is one over par. many levels have more than one
+                route. in
+                hardcore mode (settings) you only get 3 undos per level, can't restart, and can't go over par. by default levels use whole numbers, and division only works when the result is whole, so a greyed-out ÷ button means your number doesn't divide evenly. challenge difficulty adds extra operations like |x| (absolute value), √x, x³, negate, mod and digit reverse, and has lots of different solutions. in settings you can switch to decimals (moves like +0.5, and x⁻¹ turns 4 into 0.25) or fractions (division can leave fractions, and x⁻¹ turns 4 into 1/4). in decimals mode you can also allow decimal goals.</p><button
+                id="dx">gotcha</button>
+        </dialog>
+    </main>
+    <section id="scores" hidden>
+        <div class="sp">
+            <div class="board">
+                <h2>scores</h2>
+                <div id="sum"></div>
+                <div id="shint">tap a score to play that level again</div>
+                <div id="slist"></div>
+                <div id="snone" hidden>no scores yet. solve a level and it will show up here.</div>
+                <div class="tools"><button id="sclear">clear scores</button><button id="sback">back</button></div>
+            </div>
+        </div>
+    </section>
+    <section id="settings" hidden>
+        <div class="sp">
+            <div class="board">
+                <h2>settings</h2>
+                <div class="srow">
+                    <div><b>flip tiles</b><span>show your number and the goal as flip-clock tiles</span></div><button
+                        class="sw" id="swFlip" role="switch" aria-checked="true" aria-label="flip tiles"></button>
+                </div>
+                <div class="srow">
+                    <div><b>animations</b><span>tile flips, ball flight, number line zoom and confetti</span></div>
+                    <button class="sw" id="swAnim" role="switch" aria-checked="true" aria-label="animations"></button>
+                </div>
+                <div class="srow" id="rowAdv">
+                    <div><b>advanced animations</b><span>turn individual animations on or off</span></div><button class="lnk" id="advBtn">open</button>
+                </div>
+                <div class="srow col">
+                    <div><b>numbers</b><span>use whole numbers, decimals or fractions. starts a new level</span></div>
+                    <div class="seg" role="radiogroup" aria-label="number type"><button data-m="whole" role="radio" aria-checked="true">whole numbers</button><button data-m="dec" role="radio" aria-checked="false">decimals</button><button data-m="frac" role="radio" aria-checked="false">fractions</button></div>
+                </div>
+                <div class="srow" id="rowGdec">
+                    <div><b>decimal goals</b><span>decimals only: the goal can be a decimal like 3.5, not just a whole number. starts a new level</span></div><button class="sw" id="swGdec" role="switch" aria-checked="false" aria-label="decimal goals"></button>
+                </div>
+                <div class="srow" id="rowGfrac">
+                    <div><b>fraction goals</b><span>fractions only: the goal can be a fraction like 7/4, not just a whole number. starts a new level</span></div><button class="sw" id="swGfrac" role="switch" aria-checked="false" aria-label="fraction goals"></button>
+                </div>
+                <div class="srow">
+                    <div><b>hardcore mode</b><span>only 3 undos per level, no restarting, and you can't go over par</span></div>
+                    <button class="sw" id="swHc" role="switch" aria-checked="false" aria-label="hardcore mode"></button>
+                </div>
+                <div class="srow">
+                    <div><b>light mode</b><span>switch from the default dark look to light</span></div><button
+                        class="sw" id="swTheme" role="switch" aria-checked="false" aria-label="light mode"></button>
+                </div>
+                <div class="tools"><button id="back">back</button></div>
+            </div>
+        </div>
+    </section>
+    <section id="adv" hidden>
+        <div class="sp">
+            <div class="board">
+                <h2>animations</h2>
+                <div class="srow"><div><b>tile flips</b><span>digits flip like a split-flap board</span></div><button class="sw" data-anim="flip" role="switch" aria-checked="true" aria-label="tile flips"></button></div>
+                <div class="srow"><div><b>ball flight</b><span>the ball arcs along the number line and the dotted trail follows it</span></div><button class="sw" data-anim="ball" role="switch" aria-checked="true" aria-label="ball flight"></button></div>
+                <div class="srow"><div><b>number line zoom</b><span>the line slides smoothly to a new scale</span></div><button class="sw" data-anim="zoom" role="switch" aria-checked="true" aria-label="number line zoom"></button></div>
+                <div class="srow"><div><b>confetti</b><span>a burst from the hole when you solve a level</span></div><button class="sw" data-anim="confetti" role="switch" aria-checked="true" aria-label="confetti"></button></div>
+                <div class="srow"><div><b>panel slides and sway</b><span>settings and scores slide in and lean as they move, and the background shifts</span></div><button class="sw" data-anim="slide" role="switch" aria-checked="true" aria-label="panel slides and sway"></button></div>
+                <div class="srow"><div><b>theme fade</b><span>colors fade between dark and light</span></div><button class="sw" data-anim="theme" role="switch" aria-checked="true" aria-label="theme fade"></button></div>
+                <div class="srow"><div><b>button and menu motion</b><span>button presses, hover changes and page fade-ins</span></div><button class="sw" data-anim="ui" role="switch" aria-checked="true" aria-label="button and menu motion"></button></div>
+                <div class="tools"><button id="advBack">back</button></div>
+            </div>
+        </div>
+    </section>
+    <section id="lb" hidden>
+        <div class="sp">
+            <div class="board">
+                <h2 id="lbt">leaderboard</h2>
+                <div class="lbl" id="lbs"></div>
+                <ol id="lbrows"></ol>
+                <div class="tools"><button id="lbback">back</button></div>
+            </div>
+        </div>
+    </section>
+    <canvas id="fx" aria-hidden="true"></canvas>
+    <div id="nlwrap"><svg id="nl" viewBox="0 0 640 200" role="img"
+            aria-label="number line showing your ball, your hits and the hole"></svg></div>
+    <script>
+        const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b] } return a || 1 };
+        let NB = 100000, CAP = 1e9;
+        function F(n, d = 1) { if (d < 0) { n = -n; d = -d } const g = gcd(n, d); n /= g; d /= g; if (Math.abs(n) > NB || d > NB) return null; return { n, d } }
+        const key = x => x.n + '/' + x.d;
+        const term = x => { let d = x.d; while (d % 2 === 0) d /= 2; while (d % 5 === 0) d /= 5; return d === 1 };
+        const fmt = x => {
+            if (x.d === 1) return String(x.n);
+            if (settings.num === 'dec' && term(x)) {
+                let r = Math.abs(x.n) % x.d, t = Math.floor(Math.abs(x.n) / x.d) + '.', k = 0;
+                for (; r && k < 20; k++) { r *= 10; t += Math.floor(r / x.d); r %= x.d; }
+                if (!r) return (x.n < 0 ? '-' : '') + t;
+            }
+            return x.n + '/' + x.d;
+        };
+        const fmtS = x => { const f = fmt(x), i = f.indexOf('.'); return i >= 0 && f.length - i - 1 > 2 ? f.slice(0, i + 3) : f; };
+        const same = (a, b) => a.n === b.n && a.d === b.d;
+        function mk(s, mode) {
+            if (s === 'x²') return { s, f: x => F(x.n * x.n, x.d * x.d) };
+            if (s === '|x|') return { s, f: x => F(Math.abs(x.n), x.d) };
+            if (s === '−x') return { s, f: x => F(-x.n, x.d) };
+            if (s === 'x³') return { s, f: x => F(x.n * x.n * x.n, x.d * x.d * x.d) };
+            if (s === '√x') return { s, f: x => { if (x.n < 0) return null; const a = Math.round(Math.sqrt(x.n)), b = Math.round(Math.sqrt(x.d)); return a * a === x.n && b * b === x.d ? F(a, b) : null } };
+            if (s.startsWith('mod ')) { const k = parseInt(s.slice(4), 10); return { s, f: x => x.d !== 1 ? null : F(((x.n % k) + k) % k) }; }
+            if (s === 'rev') return { s, f: x => x.d !== 1 || x.n < 0 ? null : F(parseInt(String(x.n).split('').reverse().join(''), 10)) };
+            if (s === 'x⁻¹') return { s, f: x => { if (x.n === 0) return null; const r = F(x.d, x.n); return r && (mode !== 'dec' || r.d === 1 || term(r)) ? r : null } };
+            const k = parseFloat(s.slice(1)), o = s[0], q = F(Math.round(k * 10), 10);
+            if (o === '+') return { s, f: x => F(x.n * q.d + q.n * x.d, x.d * q.d) };
+            if (o === '−') return { s, f: x => F(x.n * q.d - q.n * x.d, x.d * q.d) };
+            if (o === '×') return { s, f: x => F(x.n * q.n, x.d * q.d) };
+            if (o === '÷') return { s, f: x => { if (q.n === 0) return null; const r = F(x.n * q.d, x.d * q.n); return r && (r.d === 1 || mode === 'frac' || (mode === 'dec' && term(r))) ? r : null } };
+        }
+        function solve(start, goal, ops) {
+            let seen = new Set([key(start)]), fr = [start];
+            for (let d = 1; d <= 8; d++) {
+                const nx = []; if (seen.size > CAP) return null;
+                for (const n of fr) for (const o of ops) {
+                    const v = o.f(n);
+                    if (!v || seen.has(key(v))) continue;
+                    if (same(v, goal)) return d; seen.add(key(v)); nx.push(v);
+                }
+                fr = nx;
+            }
+            return null;
+        }
+        function countBest(start, goal, ops) {
+            let layer = new Map([[key(start), [start, 1]]]), seen = new Set([key(start)]);
+            for (let d = 1; d <= 8; d++) {
+                const nx = new Map(); if (seen.size > CAP) return 0;
+                for (const [x, c] of layer.values()) for (const o of ops) {
+                    const v = o.f(x);
+                    if (!v || seen.has(key(v))) continue;
+                    const e = nx.get(key(v)); if (e) e[1] += c; else nx.set(key(v), [v, c]);
+                }
+                const g = nx.get(key(goal)); if (g) return g[1];
+                for (const k of nx.keys()) seen.add(k); layer = nx;
+            }
+            return 0;
+        }
+        const $ = id => document.getElementById(id);
+        const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+        function genOp(tier, mode) {
+            const dec = mode === 'dec', more = mode !== 'whole';
+            if (tier === 8) {
+                const r = ri(0, more ? 17 : 16), hh = () => dec && Math.random() < .4, dd = () => { let v; do { v = ri(1, 49) } while (v % 10 === 0); return v / 10 };
+                if (r < 2) return mk('+' + (hh() ? dd() : ri(1, 12)), mode); if (r < 4) return mk('−' + (hh() ? dd() : ri(1, 12)), mode);
+                if (r < 6) return mk('×' + (hh() ? ['0.5', '1.5', '2.5'][ri(0, 2)] : ri(2, 5)), mode); if (r < 8) return mk('÷' + (hh() ? ['0.5', '2.5'][ri(0, 1)] : ri(2, 5)), mode);
+                if (r === 8) return mk('x²', mode); if (r === 9) return mk('|x|', mode); if (r === 10) return mk('√x', mode); if (r === 11) return mk('x³', mode);
+                if (r === 12) return mk('−x', mode); if (r === 13) return mk('mod ' + ri(3, 9), mode); if (r === 14) return mk('rev', mode);
+                return mk(more ? 'x⁻¹' : '|x|', mode);
+            }
+            const t = ri(0, more ? 10 : 9), h = () => dec && Math.random() < .5,
+                dk = () => { let v; do { v = ri(1, 49) } while (v % 10 === 0); return v / 10 }, pk = a => a[ri(0, a.length - 1)];
+            if (t < 2) return mk('+' + (h() ? dk() : ri(1, 9)), mode); if (t < 4) return mk('−' + (h() ? dk() : ri(1, 9)), mode);
+            if (t < 6) return mk('×' + (h() ? pk(['0.5', '1.5', '2.5', '0.2', '0.4']) : ri(2, 5)), mode);
+            if (t < 8) return mk('÷' + (h() ? pk(['0.5', '0.2', '2.5', '0.4']) : ri(2, 5)), mode);
+            if (t === 8 || !more) return mk('x²', mode);
+            return mk('x⁻¹', mode);
+        }
+        const NS = 'http://www.w3.org/2000/svg', val = x => x.n / x.d;
+        function mkTile() {
+            const t = document.createElement('div'); t.className = 'tile'; t.setAttribute('aria-hidden', 'true');
+            t.innerHTML = '<div class="h t"><span></span></div><div class="h b"><span></span></div><div class="flap h t f1"><span></span></div><div class="flap h b f2"><span></span></div>'; return t;
+        }
+        function setTile(t, ch, anim, rev) {
+            const sp = t.querySelectorAll('span'), old = t.dataset.ch; clearTimeout(t._tm);
+            t.classList.toggle('nr', /^[\/\-−.]$/.test(ch));
+            if (old === undefined || !anim || old === ch) { sp.forEach(x => x.textContent = ch); t.dataset.ch = ch; t.classList.remove('flipping', 'rev'); return; }
+            /* sp: 0 static top, 1 static bottom, 2 top flap, 3 bottom flap */
+            if (rev) { sp[0].textContent = old; sp[1].textContent = ch; sp[2].textContent = ch; sp[3].textContent = old; }
+            else { sp[0].textContent = ch; sp[1].textContent = old; sp[2].textContent = old; sp[3].textContent = ch; }
+            t.classList.remove('flipping'); t.classList.toggle('rev', !!rev); void t.offsetWidth; t.classList.add('flipping'); t.dataset.ch = ch;
+            t._tm = setTimeout(() => { sp[0].textContent = ch; sp[1].textContent = ch; t.classList.remove('flipping', 'rev'); }, 160);
+        }
+        let settings = { flip: true, anim: true, theme: 'dark', num: 'whole', gdec: false, gfrac: false, hc: false };
+        try { Object.assign(settings, JSON.parse(localStorage.getItem('hs1') || '{}')) } catch (e) { }
+        settings.anims = Object.assign({ flip: true, ball: true, zoom: true, confetti: true, slide: true, theme: true, ui: true }, settings.anims || {});
+        if (!['whole', 'dec', 'frac'].includes(settings.num)) settings.num = settings.dec ? 'dec' : 'whole';
+        function saveSettings() { try { localStorage.setItem('hs1', JSON.stringify(settings)) } catch (e) { } }
+        let instant = false, flipRev = false, rp = { steps: [], done: 0 };
+        const animOn = k => settings.anim && !instant && (!k || settings.anims[k] !== false) && !matchMedia('(prefers-reduced-motion:reduce)').matches;
+        function setFlip(el, text, label) {
+            if (!settings.flip) { el.removeAttribute('data-neg'); el.classList.add('plain'); el.setAttribute('role', 'img'); el.setAttribute('aria-label', label || text); el.textContent = text; return; }
+            if (el.classList.contains('plain')) { el.classList.remove('plain'); el.innerHTML = ''; }
+            const neg = /^[-−]/.test(text); if (neg) el.setAttribute('data-neg', ''); else el.removeAttribute('data-neg');
+            const chars = [...(neg ? text.slice(1) : text)], an = animOn('flip'), rv = flipRev;
+            el.setAttribute('role', 'img'); el.setAttribute('aria-label', label || text);
+            [...el.childNodes].forEach(n => { if (n.nodeType !== 1) el.removeChild(n); });
+            const mkNode = c => { if (c === '/') { const e = document.createElement('span'); e.className = 'sep'; e.setAttribute('aria-hidden', 'true'); e.textContent = '/'; return e; } const t = mkTile(); setTile(t, ' ', false); return t; };
+            const pat = chars.map(c => c === '/' ? '/' : 'd').join(''), cp = [...el.children].map(k => k.classList.contains('sep') ? '/' : 'd').join('');
+            if (pat !== cp) {
+                if (pat.endsWith(cp)) { for (let i = pat.length - cp.length - 1; i >= 0; i--)el.insertBefore(mkNode(chars[i]), el.firstChild); }
+                else if (cp.endsWith(pat)) { while (el.children.length > pat.length) el.removeChild(el.firstChild); }
+                else { el.innerHTML = ''; chars.forEach(c => el.appendChild(mkNode(c))); }
+            }
+            let n = 0;
+            chars.forEach((c, i) => {
+                if (c === '/') return; const t = el.children[i];
+                clearTimeout(t._st);
+                if (!an) { setTile(t, c, false); return; }
+                if (t.dataset.ch === c) return;
+                const d = n++ * 50;
+                if (d === 0) setTile(t, c, true, rv); else t._st = setTimeout(() => setTile(t, c, true, rv), d);
+            });
+        }
+        let raf = 0, pend = false, view = null, holePos = { x: 0, y: 0 }, fxRaf = 0, fxTimer = 0;
+        function confetti() {
+            if (!animOn('confetti')) return;
+            const c = $('fx'), dpr = window.devicePixelRatio || 1;
+            c.width = innerWidth * dpr; c.height = innerHeight * dpr;
+            const ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
+            const r = $('nl').getBoundingClientRect(), ox = r.left + holePos.x, oy = r.top + holePos.y;
+            const cols = ['#ff6fa5', '#c2185b', '#7cc8ff', (document.documentElement.getAttribute('data-theme') === 'light' ? '#14213d' : '#ffffff'), '#ffd54a', '#4fd49b'];
+            const ps = Array.from({ length: 90 }, () => {
+                const a = -Math.PI / 2 + (Math.random() - .5) * 2.2, sp = 5 + Math.random() * 8;
+                return { x: ox, y: oy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, w: 5 + Math.random() * 5, h: 3 + Math.random() * 4, rot: Math.random() * 6, vr: (Math.random() - .5) * .4, col: cols[ri(0, cols.length - 1)], life: 0, max: 90 + Math.random() * 50 };
+            });
+            cancelAnimationFrame(fxRaf);
+            const tick = () => {
+                ctx.clearRect(0, 0, innerWidth, innerHeight); let alive = 0;
+                for (const p of ps) {
+                    if (p.life >= p.max) continue; alive++; p.life++; p.vy += .28; p.vx *= .985; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+                    ctx.globalAlpha = Math.min(1, (p.max - p.life) / 30); ctx.fillStyle = p.col; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore();
+                }
+                if (alive) fxRaf = requestAnimationFrame(tick); else ctx.clearRect(0, 0, innerWidth, innerHeight);
+            };
+            fxRaf = requestAnimationFrame(tick);
+        }
+        function stopFx() { clearTimeout(fxTimer); cancelAnimationFrame(fxRaf); const c = $('fx'); c.getContext('2d').clearRect(0, 0, c.width, c.height); }
+        function nice(r, n = 6) { const t = r / n, m = Math.pow(10, Math.floor(Math.log10(t))), f = t / m; return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * m }
+        function tf(v) { return String(+v.toFixed(3)) }
+        function draw(vw, bl, vals, g, won) {
+            const W = $('nl').clientWidth || 640, H = W < 520 ? 160 : 200, pad = W < 520 ? 28 : 44, Y = H - 58, R = 7, sp = vw.hi - vw.lo, x = v => pad + (v - vw.lo) / sp * (W - 2 * pad);
+            const hgt = (a, b) => Math.max(4, Math.min(Y - 30, 100, Math.abs(x(b) - x(a)) * .25));
+            let h = `<line x1="10" y1="${Y}" x2="${W - 10}" y2="${Y}" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"/>`;
+            const lands = [];
+            vals.forEach((v, i) => { if (i === vals.length - 1 && bl) return; if (vals.slice(0, i).includes(v)) return; lands.push({ v, i, X: x(v) }); });
+            if (!lands.some(l => l.v === g)) lands.unshift({ v: g, i: -1, X: x(g) });
+            const dg = String(Math.round(Math.max(Math.abs(vw.lo), Math.abs(vw.hi)))).length + (sp < 10 ? 2 : 0) + (vw.lo < 0 ? 1 : 0), st = nice(sp, Math.max(2, Math.min(6, Math.floor((W - 2 * pad) / ((dg * 7.5 + 12) * 1.5))))), /* fewer ticks when labels are wide */
+                lw = l => ((l.i === 0 ? 4 : 0) + tf(l.v).length) * 4 + 4; /* half-width a landing label needs */
+            for (let t = Math.ceil(vw.lo / st) * st; t <= vw.hi + st * 1e-6; t += st) {
+                const X = x(t);
+                if (X < 10 || X > W - 10) continue;
+                h += `<line x1="${X}" y1="${Y - 5}" x2="${X}" y2="${Y + 5}" stroke="var(--blue)" stroke-width="1.5"/>`;
+                if (!lands.some(l => Math.abs(l.X - X) < lw(l) + tf(t).length * 4)) h += `<text x="${X}" y="${Y + 24}" opacity=".7">${tf(t)}</text>`;
+            }
+            const gx = x(g); holePos = { x: gx, y: Y };
+            h += `<ellipse cx="${gx}" cy="${Y}" rx="11" ry="4.5" fill="var(--hole)" stroke="var(--hole)" stroke-width="1.5"/>`;
+            h += `<line x1="${gx}" y1="${Y}" x2="${gx}" y2="${Y - 54}" stroke="var(--ink)" stroke-width="2.5"/><path d="M${gx} ${Y - 54} L${gx + 22} ${Y - 46} L${gx} ${Y - 38}Z" fill="var(--imag)"/>`;
+            for (let i = 0; i < vals.length - 1; i++) {
+                const a = x(vals[i]), b = x(vals[i + 1]), ht = hgt(vals[i], vals[i + 1]), cy = Y - R - 2 * ht, isLast = i === vals.length - 2;
+                const col = isLast ? 'var(--imag)' : 'var(--soft)', op = isLast ? 1 : .55;
+                if (isLast && bl) {
+                    const u = bl.u, qx = a + ((a + b) / 2 - a) * u, qy = (Y - R) + (cy - (Y - R)) * u, ex = a + (b - a) * u, ey = (Y - R) - 4 * ht * u * (1 - u);
+                    h += `<path d="M${a} ${Y - R} Q${qx} ${qy} ${ex} ${ey}" fill="none" stroke="${col}" stroke-width="2" stroke-dasharray="6 5"/>`;
+                }
+                else h += `<path d="M${a} ${Y - R} Q${(a + b) / 2} ${cy} ${b} ${Y - R}" fill="none" stroke="${col}" stroke-width="2" stroke-dasharray="6 5" opacity="${op}"/>`;
+            }
+            const rows = [[], [], []];
+            vals.forEach((v, i) => {
+                if (i === vals.length - 1 && bl) return;
+                h += `<circle cx="${x(v)}" cy="${Y}" r="3" fill="var(--soft)"/>`;
+            });
+            /* place labels by importance (hole, ball, tee, then newest hits) and skip any that can't fit without touching */
+            const lblW = l => ((l.i === 0 ? 4 : 0) + tf(l.v).length) * 8 + 6, pr = l => l.v === g ? 0 : l.i === vals.length - 1 ? 1 : l.i === 0 ? 2 : 3 + vals.length - l.i;
+            [...lands].sort((a, b) => pr(a) - pr(b)).forEach(l => {
+                const w = lblW(l), r = rows.findIndex(row => row.every(q => Math.abs(q.x - l.X) > (q.w + w) / 2));
+                if (r < 0) return; rows[r].push({ x: l.X, w });
+                h += `<text x="${l.X}" y="${Y + 24 + r * 16}" style="font-size:13px;font-weight:700;fill:${l.v === g ? 'var(--imag)' : 'var(--ink)'}">${l.i === 0 ? 'tee ' : ''}${tf(l.v)}</text>`;
+            });
+            const endY = won ? Y - 2 : Y - R; let bx, by;
+            if (bl) { const v = bl.from + (bl.to - bl.from) * bl.u, ht = hgt(bl.from, bl.to); bx = x(v); by = (Y - R) + (endY - (Y - R)) * bl.u - 4 * ht * bl.u * (1 - bl.u); }
+            else { bx = x(vals[vals.length - 1]); by = endY; }
+            h += `<g transform="translate(${bx} ${by})"><circle r="${R}" fill="#fff" stroke="var(--ballstroke)" stroke-width="1.5"/><circle cx="-2" cy="-2" r=".9" fill="var(--dimple)"/><circle cx="2" cy="-1" r=".9" fill="var(--dimple)"/><circle cx="0" cy="2.2" r=".9" fill="var(--dimple)"/></g>`;
+            $('nl').style.height = H + 'px'; $('nl').setAttribute('viewBox', `0 0 ${W} ${H}`); $('nl').innerHTML = h;
+        }
+        function drawLine() {
+            cancelAnimationFrame(raf);
+            const vals = [val(L.start), ...hist.map((h, i) => val(hist[i + 1] ? hist[i + 1].prev : cur))], g = val(L.goal), won = same(cur, L.goal);
+            let lo = Math.min(g, ...vals), hi = Math.max(g, ...vals); if (hi - lo < 1) { lo -= 1; hi += 1 }
+            const tgt = { lo, hi }, hit = pend && vals.length > 1; pend = false;
+            const diff = !view || Math.abs(view.lo - lo) + Math.abs(view.hi - hi) > 1e-9;
+            const hitA = hit && animOn('ball'), zoomA = diff && animOn('zoom');
+            if (!view || (!hitA && !zoomA)) { view = tgt; draw(view, null, vals, g, won); return; }
+            const from = zoomA ? view : tgt, t0 = performance.now(), D = hitA ? 360 : 260, bf = vals[vals.length - 2], bt = vals[vals.length - 1];
+            const step = now => {
+                const t = Math.min((now - t0) / D, 1), e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+                if (t < 1) {
+                    view = { lo: from.lo + (tgt.lo - from.lo) * e, hi: from.hi + (tgt.hi - from.hi) * e };
+                    draw(view, hitA ? { u: t, from: bf, to: bt } : null, vals, g, won); raf = requestAnimationFrame(step);
+                }
+                else { view = tgt; draw(view, null, vals, g, won); }
+            };
+            raf = requestAnimationFrame(step);
+        }
+        let undosUsed = 0, HC_UNDOS = 3, dailyMode = false, dailyDate = '', dailyNote = '';
+        const hcOn = () => settings.hc && !dailyMode;
+        let L = null, cur = null, hist = [], holes = 0, total = 0, counted = false, gaveUp = false, busy = false, timers = [];
+        function stopReplay() { timers.forEach(clearTimeout); timers = []; busy = false; gaveUp = false; }
+        function bestPath(start, goal, ops) {
+            const par = new Map([[key(start), null]]); let fr = [start];
+            for (let d = 0; d < 9; d++) {
+                const nx = [];
+                for (const n of fr) for (const o of ops) {
+                    const v = o.f(n); if (!v || par.has(key(v))) continue;
+                    par.set(key(v), { from: n, o }); if (same(v, goal)) { const path = []; let c = v; while (par.get(key(c))) { const e = par.get(key(c)); path.unshift(e.o); c = e.from; } return path; }
+                    nx.push(v);
+                }
+                fr = nx;
+            }
+            return [];
+        }
+        function skipReplay() {
+            if (!busy) return;
+            timers.forEach(clearTimeout); timers = [];
+            for (let i = rp.done; i < rp.steps.length; i++) { const o = rp.steps[i]; hist.push({ prev: cur, s: o.s }); cur = o.f(cur); }
+            busy = false; pend = false; view = null; instant = true; render(); instant = false;
+        }
+        function giveUp() {
+            if (busy || same(cur, L.goal)) return;
+            stopReplay(); gaveUp = true; busy = true; cur = L.start; hist = []; pend = false; render();
+            const steps = bestPath(L.start, L.goal, L.ops); rp = { steps, done: 0 };
+            if (!steps.length) { busy = false; render(); return; }
+            steps.forEach((o, i) => {
+                timers.push(setTimeout(() => { rp.done = i + 1; hist.push({ prev: cur, s: o.s }); cur = o.f(cur); pend = true; if (i === steps.length - 1) busy = false; render(); }, 400 + i * 600));
+            });
+        }
+        function newLevel() {
+            view = null; stopReplay(); stopFx();
+            const t0 = parseInt($('diff').value, 10);
+            if (genLevel(t0) || (t0 === 8 && genLevel(6))) return;
+            NB = 100000; CAP = 1e9;
+            L = { start: F(1), goal: F(10), ops: [mk('+3'), mk('×2')], limit: 3 }; cur = L.start; hist = []; undosUsed = 0; counted = false; render();
+        }
+        function genLevel(tier) {
+            NB = tier === 8 ? 3000 : 100000; CAP = tier === 8 ? 40000 : 1e9;
+            const tp = tier === 8 ? ri(5, 7) : 0, mode = settings.num, gd = mode === 'dec' && !!settings.gdec, gf = mode === 'frac' && !!settings.gfrac, special = o => o.s === 'x⁻¹' || o.s.includes('.');
+            for (let tries = 0; tries < 3000; tries++) {
+                const pool = []; const n = tier === 8 ? ri(7, 8) : ri(4, 5) + (tier >= 4 ? 1 : 0);
+                while (pool.length < n) { const o = genOp(tier, mode); if (!pool.some(p => p.s === o.s)) pool.push(o); }
+                if (mode !== 'whole' && !pool.some(special)) continue;
+                if (tier === 8 && pool.filter(o => ['|x|', '√x', 'x³', '−x', 'rev', 'x²', 'x⁻¹'].includes(o.s) || o.s.startsWith('mod')).length < 3) continue;
+                const start = F(tier === 8 ? ri(2, 40) : ri(1, tier >= 6 ? 20 : 12)); let v = start; const steps = tier === 8 ? ri(tp, tp + 2) : ri(tier, tier + 1); let ok = true;
+                for (let i = 0; i < steps; i++) {
+                    const o = pool[ri(0, pool.length - 1)]; const r = o.f(v);
+                    if (!r || Math.abs(r.n) > 5000 || r.d > 5000) { ok = false; break; } v = r;
+                }
+                if (!ok || same(v, start)) continue;
+                if (v.d !== 1 && !(gd && term(v) && v.d <= 100) && !(gf && v.d <= 30 && Math.abs(v.n) <= 500)) continue;
+                if ((gd || gf) && v.d === 1 && Math.random() < .6) continue;
+                const par = solve(start, v, pool);
+                if (!par || par < (tier === 8 ? 5 : Math.max(2, tier - 1)) || par > (tier === 8 ? 7 : tier + 1)) continue;
+                if (tier === 8 && tries < 2000 && par !== tp) continue;
+                const need = tier === 8 ? (tries < 1200 ? 6 : tries < 2200 ? 3 : 1) : (tries < 2000 ? 2 : 1);
+                if (need > 1 && countBest(start, v, pool) < need) continue;
+                L = { start, goal: v, ops: pool, limit: par }; cur = start; hist = []; undosUsed = 0; counted = false; render(); return true;
+            }
+            return false;
+        }
+        function updateNs() {
+            if (!L) return;
+            const l1 = fmtS(cur).length, l2 = fmtS(L.goal).length, avail = Math.min(innerWidth, 1400) - 110;
+            const px = avail / ((l1 + l2) + 3);
+            document.querySelector('.board').style.setProperty('--ns', Math.max(1.4, Math.min(3.2, px / 16)) + 'rem');
+        }
+        const whyNot = s => s[0] === '÷' ? 'not whole' : s === 'x⁻¹' ? 'undefined' : s === '√x' ? 'not a square' : (s.startsWith('mod') || s === 'rev') ? 'whole only' : 'too big';
+        function render() {
+            {
+                const dv = $('diff').value, mi = $('miD'), mm = $('miM');
+                mi.textContent = { 2: 'easy', 4: 'medium', 6: 'hard' }[dv] || ''; mi.className = 'dv' + dv;
+                mm.textContent = settings.hc ? 'hardcore' : 'normal'; mm.className = settings.hc ? 'mhc' : 'mnorm';
+            }
+            const used = hist.length, won = same(cur, L.goal), over = used - L.limit;
+            const sc = over <= 0 ? 'par' : (over + ' over par');
+            const full = hcOn() && !won && used >= L.limit;
+            setFlip($('cur'), fmtS(cur), fmt(cur)); setFlip($('goal'), fmtS(L.goal), fmt(L.goal));
+            $('goalfull').textContent = fmtS(L.goal) !== fmt(L.goal) ? fmt(L.goal) : '';
+            $('curfull').textContent = fmtS(cur) !== fmt(cur) ? fmt(cur) : '';
+            document.querySelector('.board').classList.toggle('dec', settings.num === 'dec');
+            updateNs();
+            $('pips').innerHTML = Array.from({ length: Math.max(L.limit, used) }, (_, i) => `<span class="pip${i < used ? ' used' : ''}${i >= L.limit ? ' over' : ''}"></span>`).join('');
+            $('left').textContent = `par ${L.limit} · ${used} ${used === 1 ? 'move' : 'moves'}` + (over > 0 ? ` · ${over} over par` : '');
+            $('left').style.color = over > 0 ? 'var(--imag)' : '';
+            const tk = t => /^[+−×÷][\d.]/.test(t) ? t[0] + ' ' + t.slice(1) : t === '−x' ? 'negate' : t;
+            $('trail').textContent = hist.length ? [fmt(L.start), ...hist.map(h => tk(h.s))].join(' ') + ' = ' + fmt(cur) : fmt(L.start);
+            $('ops').innerHTML = '';
+            L.ops.forEach(o => {
+                const b = document.createElement('button'); b.textContent = o.s;
+                const v = o.f(cur); b.disabled = won || !v || busy || full;
+                if (!won && !v) { const w = whyNot(o.s); b.title = w; b.innerHTML = o.s + '<small>' + w + '</small>'; }
+                b.onclick = () => { hist.push({ prev: cur, s: o.s }); cur = v; pend = true; render(); }; $('ops').appendChild(b);
+            });
+            drawLine();
+            const left = HC_UNDOS - undosUsed;
+            $('undo').disabled = !used || won || busy || (hcOn() && left <= 0);
+            $('undo').textContent = hcOn() ? `undo (${Math.max(left, 0)} left)` : 'undo';
+            $('rand').hidden = $('diff').hidden = dailyMode; $('reset').disabled = hcOn(); $('reset').title = hcOn() ? 'not allowed in hardcore mode' : ''; $('rand').disabled = busy || won;
+            $('skipanim').hidden = !(busy && gaveUp);
+            $('undo').style.display = $('reset').style.display = gaveUp ? 'none' : '';
+            const m = $('msg'); m.className = ''; m.innerHTML = '';
+            if (full && !busy) { m.className = 'lose'; m.textContent = left > 0 ? 'out of moves. undo a move to keep trying, or give up.' : 'out of moves and undos. give up to see the solution.'; }
+            if (won) {
+                if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: !!settings.hc, num: settings.num, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
+                m.className = gaveUp ? 'lose' : 'win';
+                m.innerHTML = dailyMode ? `solved in ${used}: ${sc}.<br><span id="dnote"></span><br><button id="nx">back to calendar</button>` : gaveUp ? `here's the par solution (${used} moves).<br><button id="nx">next level</button>` : `solved in ${used}: ${sc}.<br><button id="nx">next level</button>`;
+                $('nx').onclick = dailyMode ? openDaily : newLevel; $('nx').focus(); if ($('dnote')) $('dnote').textContent = dailyNote;
+            }
+            $('score').textContent = holes ? `${holes} solved · ${total === 0 ? 'even' : '+' + total} over par in total` : '';
+        }
+        function applySettings() {
+            if (settings.theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); else document.documentElement.removeAttribute('data-theme');
+            $('swTheme').setAttribute('aria-checked', settings.theme === 'light');
+            $('swFlip').setAttribute('aria-checked', settings.flip); document.querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-checked', b.dataset.m === settings.num)); $('swGdec').setAttribute('aria-checked', !!settings.gdec); $('swGdec').disabled = settings.num !== 'dec'; $('rowGdec').style.opacity = settings.num === 'dec' ? '' : '.45'; $('swGfrac').setAttribute('aria-checked', !!settings.gfrac); $('swGfrac').disabled = settings.num !== 'frac'; $('rowGfrac').style.opacity = settings.num === 'frac' ? '' : '.45'; $('swHc').setAttribute('aria-checked', !!settings.hc); $('swAnim').setAttribute('aria-checked', settings.anim);
+            document.documentElement.classList.toggle('hc', !!settings.hc); document.body.classList.toggle('noanim', !settings.anim); document.documentElement.classList.toggle('noanim', !settings.anim);
+            document.documentElement.classList.toggle('noui', settings.anims.ui === false); document.documentElement.classList.toggle('nofade', settings.anims.theme === false);
+            document.querySelectorAll('[data-anim]').forEach(b => b.setAttribute('aria-checked', settings.anims[b.dataset.anim] !== false)); $('rowAdv').hidden = !settings.anim;
+        }
+        let decAtOpen = false, ssTimer = 0;
+        const SW_DUR = 600, SW_EZ = 'cubic-bezier(.4,0,.2,1)';
+        function swayAnim(el, kf, dur, ez) { el.getAnimations().forEach(a => a.cancel()); return el.animate(kf, { duration: dur || SW_DUR, easing: ez || SW_EZ }); }
+        function bez(u) {
+            const cx = 1.2, bx = 3 * (.2 - .4) - cx, ax = 1 - cx - bx, by = 3 * (1 - 0) - 0, ay = 1 - by; let t = u;
+            for (let i = 0; i < 8; i++) { const x = ((ax * t + bx) * t + cx) * t - u, d = (3 * ax * t + 2 * bx) * t + cx; if (Math.abs(x) < 1e-5 || Math.abs(d) < 1e-6) break; t -= x / d; }
+            return ((ay * t + by) * t) * t;
+        }
+        /* panel leans into the move, then a soft damped spring carries it back to upright.
+           one continuous simulation, sampled every frame, so there are no joins or jumps */
+        function swayKF(dir, x0, x1, settle) {
+            const Tm = SW_DUR, T = Tm + (settle ? 600 : 0);
+            const A = 4.6, W = 13, Z = .5;            /* peak lean (deg), spring speed, damping */
+            const dt = 1 / 240, step = 4, kf = [];
+            const tf = (x, r) => 'translateX(' + x.toFixed(3) + 'vw) rotate(' + r.toFixed(3) + 'deg)';
+            const vel = u => { const d = .001, a = Math.max(0, u - d), b = Math.min(1, u + d); return (bez(b) - bez(a)) / (b - a); };
+            let vmax = 0; for (let k = 0; k <= 100; k++) vmax = Math.max(vmax, vel(k / 100));
+            let th = 0, om = 0;
+            const n = Math.round(T / 1000 / dt);
+            for (let i = 0; i <= n; i++) {
+                const t = i * dt * 1000, u = Math.min(t / Tm, 1);
+                if (i % step === 0 || i === n) {
+                    const x = x0 + (x1 - x0) * bez(u);
+                    kf.push({ offset: Math.min(t / T, 1), transform: tf(x, i === n && settle ? 0 : th), easing: 'linear' });
+                }
+                const target = t < Tm ? dir * A * vel(u) / vmax : 0;
+                om += (W * W * (target - th) - 2 * Z * W * om) * dt;
+                th += om * dt;
+            }
+            return kf;
+        }
+        function parallax(to) {
+            const b = document.body, from = parseFloat(getComputedStyle(b).backgroundPositionX) || 0;
+            b.style.backgroundPositionX = to + 'px';
+            if (animOn('slide') && from !== to) swayAnim(b, [{ backgroundPositionX: from + 'px' }, { backgroundPositionX: to + 'px' }]);
+        }
+        /* settings sits to the right (game travels left), scores sits to the left (game travels right) */
+        function showPanel(id, on) {
+            const adv = id === 'adv', lb = id === 'lb', st = $(id), sp = st.querySelector('.sp'), mn = adv ? $('settings') : lb ? $('dailypg') : document.querySelector('main'), nw = adv || lb ? null : $('nlwrap'), an = animOn('slide'),
+                d = id === 'scores' || lb ? 1 : -1, away = d < 0 ? 'away' : 'awayR', off = d < 0 ? 'off' : 'offL';
+            clearTimeout(ssTimer);
+            if (on) {
+                if (id === 'settings') decAtOpen = settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac; else if (id === 'scores') renderScores();
+                parallax(d * Math.round(innerWidth * (adv ? .6 : .3)));
+                st.classList.remove('off', 'offL'); st.hidden = false; st.scrollTop = 0;
+                mn.classList.add(away); if (nw) nw.classList.add(away);
+                if (an) {
+                    swayAnim(st, [{ transform: 'translateX(' + (-100 * d) + '%)' }, { transform: 'none' }]);
+                    swayAnim(sp, swayKF(d, 0, 0, true), 1200, 'linear');
+                    swayAnim(mn, swayKF(d, 0, 100 * d, false), SW_DUR, 'linear');
+                }
+                ssTimer = setTimeout(() => { mn.hidden = true; if (nw) nw.hidden = true; }, an ? SW_DUR + 30 : 0);
+            } else {
+                mn.hidden = false; if (nw) nw.hidden = false; parallax(adv ? -Math.round(innerWidth * .3) : 0);
+                if (!adv && !lb) { view = null; if (id === 'settings' && (settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac) !== decAtOpen && !dailyMode) newLevel(); else render(); }
+                getComputedStyle(nw || mn).transform;
+                mn.classList.remove('away', 'awayR'); if (nw) nw.classList.remove('away', 'awayR'); st.classList.add(off);
+                if (an) {
+                    swayAnim(st, [{ transform: 'none' }, { transform: 'translateX(' + (-100 * d) + '%)' }]);
+                    swayAnim(sp, swayKF(-d, 0, 0, false), SW_DUR, 'linear');
+                    swayAnim(mn, swayKF(-d, 100 * d, 0, true), 1200, 'linear');
+                }
+                ssTimer = setTimeout(() => { st.hidden = true; }, an ? SW_DUR + 30 : 0);
+            }
+        }
+        /* saved scores (localStorage) */
+        const SKEY = 'hs1_scores', DN = { 2: 'easy', 4: 'medium', 6: 'hard', 8: 'challenge' };
+        function loadScores() { try { const a = JSON.parse(localStorage.getItem(SKEY) || '[]'); return Array.isArray(a) ? a : [] } catch (e) { return [] } }
+        function saveScore(e) { const a = loadScores(); a.push(e); while (a.length > 300) a.shift(); try { localStorage.setItem(SKEY, JSON.stringify(a)) } catch (x) { } }
+        function renderScores() {
+            const all = loadScores(), list = $('slist'); list.innerHTML = '';
+            const mkEl = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; };
+            $('snone').hidden = all.length > 0; $('sum').hidden = !all.length; $('shint').hidden = !all.length; $('sclear').disabled = !all.length;
+            if (!all.length) return;
+            const atPar = all.filter(e => e.m <= e.par).length, over = all.reduce((x, e) => x + Math.max(e.m - e.par, 0), 0);
+            $('sum').textContent = all.length + ' solved · ' + atPar + ' at par · ' + (over === 0 ? 'even' : '+' + over) + ' over par in total';
+            all.slice().reverse().slice(0, 100).forEach(e => {
+                const row = mkEl('div', 'srow'), l = mkEl('div'), r = mkEl('div', 'sres'), ov = Math.max(e.m - e.par, 0);
+                l.appendChild(mkEl('b', '', e.s + ' → ' + e.g));
+                const sub = mkEl('span');
+                sub.appendChild(mkEl('span', 'dv' + e.d, DN[e.d] || '?')); sub.appendChild(document.createTextNode(' · '));
+                sub.appendChild(mkEl('span', e.hc ? 'mhc' : 'mnorm', e.hc ? 'hardcore' : 'normal'));
+                { const nm = e.num || (e.dec ? 'dec' : 'whole'); if (nm !== 'whole') sub.appendChild(document.createTextNode(' · ' + (nm === 'dec' ? 'decimals' : 'fractions'))); }
+                sub.appendChild(document.createTextNode(' · ' + new Date(e.t).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })));
+                l.appendChild(sub);
+                r.appendChild(mkEl('b', ov ? 'bad' : 'ok', ov ? '+' + ov : 'par'));
+                r.appendChild(mkEl('span', '', e.m + ' / par ' + e.par));
+                row.appendChild(l); row.appendChild(r); list.appendChild(row);
+                row.tabIndex = 0; row.setAttribute('role', 'button'); row.title = 'play this level again';
+                row.onclick = () => replayScore(e);
+                row.onkeydown = ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); replayScore(e); } };
+            });
+        }
+        /* play a saved score again: same start, goal, moves, difficulty and mode */
+        function parseNum(t) {
+            t = String(t).replace('−', '-');
+            if (t.includes('/')) { const [a, b] = t.split('/').map(Number); return F(a, b); }
+            const i = t.indexOf('.'); if (i < 0) return F(parseInt(t, 10));
+            const m = Math.pow(10, t.length - i - 1); return F(Math.round(parseFloat(t) * m), m);
+        }
+        function replayScore(e) {
+            if (!DN[e.d]) return;
+            dailyMode = false;
+            NB = e.d === 8 ? 3000 : 100000;
+            settings.hc = !!e.hc; settings.num = e.num || (e.dec ? 'dec' : 'whole'); saveSettings(); applySettings();
+            $('diff').value = String(e.d);
+            const start = parseNum(e.s), goal = parseNum(e.g);
+            let ops = null;
+            if (start && goal && Array.isArray(e.o)) {
+                try { ops = e.o.map(s => mk(s, settings.num)); } catch (x) { ops = null; }
+                if (ops && (ops.some(o => !o) || solve(start, goal, ops) !== e.par)) ops = null;
+            }
+            if (ops) {
+                stopReplay(); stopFx(); pend = false;
+                L = { start, goal, ops, limit: e.par }; cur = start; hist = []; undosUsed = 0; counted = false;
+            } else newLevel(); /* older scores didn't save their moves, so they get a fresh level at the same difficulty and mode */
+            showPanel('scores', false);
+        }
+        let clrT = 0;
+        $('opts').onclick = () => showPanel('settings', true);
+        $('sback').onclick = () => showPanel('scores', false);
+        $('sclear').onclick = () => {
+            const b = $('sclear'); if (b.dataset.arm) { clearTimeout(clrT); delete b.dataset.arm; b.textContent = 'clear scores'; try { localStorage.removeItem(SKEY) } catch (e) { } renderScores(); return; }
+            b.dataset.arm = '1'; b.textContent = 'tap again to confirm'; clrT = setTimeout(() => { delete b.dataset.arm; b.textContent = 'clear scores'; }, 3000);
+        };
+        $('back').onclick = () => showPanel('settings', false);
+        $('swFlip').onclick = () => { settings.flip = !settings.flip; saveSettings(); applySettings(); };
+        $('swTheme').onclick = () => { settings.theme = settings.theme === 'light' ? 'dark' : 'light'; saveSettings(); applySettings(); };
+        document.querySelectorAll('.seg button').forEach(b => b.onclick = () => { settings.num = b.dataset.m; saveSettings(); applySettings(); });
+        $('advBtn').onclick = () => showPanel('adv', true);
+        $('advBack').onclick = () => showPanel('adv', false);
+        document.querySelectorAll('[data-anim]').forEach(b => b.onclick = () => { settings.anims[b.dataset.anim] = settings.anims[b.dataset.anim] === false; saveSettings(); applySettings(); });
+        $('swGdec').onclick = () => { if (settings.num !== 'dec') return; settings.gdec = !settings.gdec; saveSettings(); applySettings(); };
+        $('swGfrac').onclick = () => { if (settings.num !== 'frac') return; settings.gfrac = !settings.gfrac; saveSettings(); applySettings(); };
+        $('swHc').onclick = () => { settings.hc = !settings.hc; saveSettings(); applySettings(); };
+        $('swAnim').onclick = () => { settings.anim = !settings.anim; saveSettings(); applySettings(); };
+        applySettings();
+        function siteSearch() { const q = $('tsearch').value.trim(); if (!q) return;/* TODO: point this at the site's search page */ }
+        const PH = ['you can type things here. (this is the search bar)', 'this is the search bar.', 'search'];
+        function fitPh() {
+            const i = $('tsearch'), cs = getComputedStyle(i), m = document.createElement('span');
+            m.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;white-space:nowrap;text-transform:none;letter-spacing:normal;font:italic 400 ' + cs.fontSize + ' ' + cs.fontFamily;
+            document.body.appendChild(m);
+            const room = i.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 8;
+            let pick = ''; for (const t of PH) { m.textContent = t; if (m.getBoundingClientRect().width <= room) { pick = t; break; } }
+            m.remove(); if (i.placeholder !== pick) i.placeholder = pick;
+        }
+        fitPh(); addEventListener('resize', fitPh); addEventListener('load', fitPh);
+        if (window.ResizeObserver) new ResizeObserver(fitPh).observe($('tsearch'));
+        if (document.fonts) { document.fonts.ready.then(fitPh); document.fonts.addEventListener('loadingdone', fitPh); document.fonts.load('italic 400 13px "Chakra Petch"').then(fitPh).catch(() => { }); }
+        $('tgo').onclick = siteSearch;
+        $('tsearch').addEventListener('keydown', e => { if (e.key === 'Enter') siteSearch(); });
+        $('what').onclick = () => $('dlg').showModal();
+        $('dx').onclick = () => $('dlg').close();
+        $('dlg').addEventListener('click', e => { if (e.target === $('dlg')) $('dlg').close(); });
+        addEventListener('resize', () => { pend = false; if (L) { updateNs(); drawLine(); } });
+        $('undo').onclick = () => { if (hcOn() && undosUsed >= HC_UNDOS) return; const h = hist.pop(); if (h) { undosUsed++; cur = h.prev; flipRev = true; render(); flipRev = false; } };
+        $('reset').onclick = () => { if (hcOn()) return; stopReplay(); cur = L.start; hist = []; counted = false; dailyNote = ''; render(); };
+        $('rand').onclick = giveUp;
+        $('skipanim').onclick = skipReplay;
+        $('diff').onchange = newLevel;
+        /* phones: number line sits in the board under the numbers; larger screens: pinned along the bottom */
+        const mqPhone = matchMedia('(max-width:520px)');
+        function placeNl() {
+            const nw = $('nlwrap'), pips = $('pips');
+            if (mqPhone.matches) { if (nw.parentNode !== pips.parentNode) pips.parentNode.insertBefore(nw, pips); }
+            else if (nw.parentNode !== document.body) document.body.insertBefore(nw, $('fx').nextSibling);
+        }
+        placeNl();
+        const onMq = () => { placeNl(); view = null; pend = false; if (L) drawLine(); };
+        if (mqPhone.addEventListener) mqPhone.addEventListener('change', onMq); else mqPhone.addListener(onMq);
+        /* touch screens: :active is unreliable (iOS needs a touch listener), so mirror it with a class set on pointerdown */
+        document.addEventListener('touchstart', () => { }, { passive: true });
+        let pressedEl = null;
+        const unpress = () => { if (pressedEl) { pressedEl.classList.remove('pressed'); pressedEl = null; } };
+        document.addEventListener('pointerdown', e => {
+            const b = e.target.closest && e.target.closest('#ops button, .mopt');
+            unpress(); if (b && !b.disabled) { b.classList.add('pressed'); pressedEl = b; }
+        }, true);
+        ['pointerup', 'pointercancel', 'dragend'].forEach(ev => document.addEventListener(ev, unpress, true));
+        function showView(v) {
+            const mn = document.querySelector('main'), nw = $('nlwrap');
+            $('menu').hidden = v !== 'menu'; $('mainlevels').hidden = v !== 'main'; $('dailypg').hidden = v !== 'daily'; $('statspg').hidden = v !== 'stats';
+            mn.hidden = v !== 'random'; nw.hidden = v !== 'random';
+            document.body.classList.toggle('inmenu', v !== 'random');
+            scrollTo(0, 0);
+            if (v === 'random') { view = null; pend = false; if (L) { updateNs(); render(); } }
+        }
+        /* ---------- daily levels (needs the server: server.js + daily.js) ---------- */
+        const API = 'https://gamedevrg-com-backend.onrender.com'; /* change to your server's address */
+        const DSTART = '2026-01-01'; /* must match DAILY_START on the server */
+        let user = '', calY = 0, calM = 0, todayStr = '';
+        try { user = localStorage.getItem('username') || ''; } catch (e) { }
+        async function api(path, body) {
+            const r = await fetch(API + path, body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : undefined);
+            const j = await r.json().catch(() => ({}));
+            if (!r.ok) throw new Error(j.message || 'server answered ' + r.status + ' for ' + path);
+            return j;
+        }
+        const pad = n => String(n).padStart(2, '0'), MN = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+        /* guests can play every daily level; their results stay on this device until they log in */
+        const gLoad = () => { try { return JSON.parse(localStorage.getItem('hs_guest_daily') || '{}'); } catch (e) { return {}; } };
+        const gSave = o => { try { localStorage.setItem('hs_guest_daily', JSON.stringify(o)); } catch (e) { } };
+        async function syncGuest() {
+            const g = gLoad(); let changed = false;
+            for (const d in g) {
+                try { await api('/daily/submit', { username: user, date: d, moves: g[d].m }); delete g[d]; changed = true; }
+                catch (e) { if (/available|Invalid|reach/.test(e.message)) { delete g[d]; changed = true; } }
+            }
+            if (changed) gSave(g);
+        }
+        function showUser() { $('dauth').hidden = !!user; $('dwho').hidden = !user; $('dwn').textContent = 'playing as ' + user; }
+        async function dAuth(reg) {
+            const username = $('du').value.trim(), password = $('dp').value;
+            if (!username || !password) { $('dsub').textContent = 'enter a username and password'; return; }
+            try {
+                if (reg) await api('/register', { username, password });
+                user = (await api('/login', { username, password })).user; try { localStorage.setItem('username', user); } catch (e) { }
+                $('dp').value = ''; showUser(); await syncGuest(); renderCal();
+            } catch (e) { $('dsub').textContent = e.message; }
+        }
+        async function openDaily() {
+            dailyMode = false; showView('daily'); showUser();
+            try {
+                todayStr = (await api('/daily')).date;
+                if (!calY) { calY = +todayStr.slice(0, 4); calM = +todayStr.slice(5, 7) - 1; }
+                $('dsub').textContent = user ? 'pick a day to play' : 'pick a day to play. guests can play too: log in to be on the leaderboard';
+                if (user) await syncGuest();
+            } catch (e) { $('dsub').textContent = "couldn't load the daily level (" + e.message + "). check that the server is running and the API address in the script is right."; }
+            clockTick(); renderCal(); loadStats();
+        }
+        let clockBusy = false;
+        function clockTick() {
+            if ($('dailypg').hidden || !todayStr) return;
+            const [y, m, d] = todayStr.split('-').map(Number), ms = Date.UTC(y, m - 1, d + 1) - Date.now();
+            if (ms <= 0) { if (!clockBusy) { clockBusy = true; openDaily().finally(() => clockBusy = false); } return; }
+            const t = Math.floor(ms / 1000);
+            setFlip($('ch'), pad(Math.floor(t / 3600))); setFlip($('cm'), pad(Math.floor(t / 60) % 60)); setFlip($('cs'), pad(t % 60));
+        }
+        setInterval(clockTick, 1000);
+        async function loadStats() {
+            if (!todayStr) return;
+            const [y, m, d] = todayStr.split('-');
+            try {
+                const j = await api('/daily/stats/' + todayStr);
+                $('ssub').textContent = `${+m}/${+d}/${y}, daily #${j.number}`;
+                setFlip($('sn'), '00000'); setTimeout(() => setFlip($('sn'), String(Math.min(j.solved, 99999)).padStart(5, '0')), 120);
+            } catch (e) { $('ssub').textContent = "couldn't load the stats"; }
+        }
+        async function renderCal() {
+            const ym = calY + '-' + pad(calM + 1); let days = {};
+            $('ctitle').innerHTML = '<b></b> ' + calY; $('ctitle').firstChild.textContent = MN[calM];
+            if (user && todayStr) { try { days = (await api('/daily/month/' + ym + '?username=' + encodeURIComponent(user))).days; } catch (e) { } }
+            else if (!user) { const g = gLoad(); for (const d in g) if (d.startsWith(ym)) days[d] = { moves: g[d].m.length, par: g[d].par }; }
+            const g = $('cgrid'); g.innerHTML = '';
+            const first = new Date(Date.UTC(calY, calM, 1)).getUTCDay(), n = new Date(Date.UTC(calY, calM + 1, 0)).getUTCDate();
+            const tDay = todayStr.slice(0, 7) === ym ? +todayStr.slice(8) : 0;
+            ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].forEach((w, i) => { const c = document.createElement('div'); c.className = 'cw'; c.textContent = w; if (tDay && (first + tDay - 1) % 7 === i) c.classList.add('today'); g.appendChild(c); });
+            for (let i = 0; i < first; i++) g.appendChild(document.createElement('div'));
+            for (let d = 1; d <= n; d++) {
+                const date = ym + '-' + pad(d), b = document.createElement('button'), res = days[date];
+                b.className = 'cd'; b.textContent = d;
+                const ok = todayStr && date <= todayStr && date >= DSTART;
+                if (ok) { b.classList.add('play'); b.onclick = () => playDaily(date); } else b.disabled = true;
+                if (date === todayStr) b.classList.add('today'); else if (res) b.classList.add('done'); else if (ok) b.classList.add('miss');
+                if (res) {
+                    const p = document.createElement('span'); p.className = 'pips';
+                    for (let i = 0; i < Math.max(res.par, res.moves); i++) { const q = document.createElement('i'); q.className = (i < res.moves ? 'u ' : '') + (i >= res.par ? 'o' : ''); p.appendChild(q); }
+                    b.appendChild(p);
+                }
+                g.appendChild(b);
+            }
+        }
+        async function playDaily(date) {
+            try {
+                const lv = await api('/daily/level/' + date);
+                NB = 3000; stopReplay(); stopFx(); pend = false; view = null;
+                L = { start: F(lv.start), goal: F(lv.goal), ops: lv.ops.map(s => mk(s, 'whole')), limit: lv.par };
+                cur = L.start; hist = []; undosUsed = 0; counted = false; dailyNote = ''; dailyMode = true; dailyDate = date;
+                showView('random');
+            } catch (e) { $('dsub').textContent = e.message; }
+        }
+        async function submitDaily() {
+            if (!user) {
+                const g = gLoad(), mv = hist.map(h => h.s), prev = g[dailyDate];
+                if (!prev || mv.length < prev.m.length) { g[dailyDate] = { par: L.limit, m: mv }; gSave(g); }
+                dailyNote = "playing as a guest: this is saved on this device. log in on the calendar page to add your scores to the leaderboard.";
+                return;
+            }
+            dailyNote = 'saving…';
+            try {
+                const r = await api('/daily/submit', { username: user, date: dailyDate, moves: hist.map(h => h.s) });
+                dailyNote = `saved. your best for this day: ${r.best}${r.best <= r.par ? ' (par!)' : ''}. restart to try for fewer.`;
+            } catch (e) { dailyNote = e.message; }
+            if ($('dnote')) $('dnote').textContent = dailyNote;
+        }
+        $('dlogin').onclick = () => dAuth(false); $('dreg').onclick = () => dAuth(true);
+        $('dout').onclick = e => { e.preventDefault(); user = ''; try { localStorage.removeItem('username'); } catch (x) { } showUser(); renderCal(); };
+        $('cprev').onclick = () => { if (--calM < 0) { calM = 11; calY--; } renderCal(); };
+        $('cnext').onclick = () => { if (++calM > 11) { calM = 0; calY++; } renderCal(); };
+        $('dback').onclick = () => playToday();
+        /* leaderboards slide in as their own panel, like settings and scores */
+        async function openLb(kind) {
+            const box = $('lbrows'), day = kind === 'day';
+            $('lbt').textContent = day ? 'daily leaderboard' : 'monthly leaderboard';
+            $('lbs').textContent = day ? (todayStr || '') : MN[calM] + ' ' + calY;
+            box.innerHTML = '<li>loading…</li>'; showPanel('lb', true);
+            try {
+                const j = await api(day ? '/daily/leaderboard' : '/daily/leaderboard/month/' + calY + '-' + pad(calM + 1));
+                box.innerHTML = j.rows.length ? '' : '<li>no scores yet</li>';
+                j.rows.forEach((r, i) => {
+                    const li = document.createElement('li'); if (r.username === user) li.className = 'me';
+                    const a = document.createElement('span'), b = document.createElement('span');
+                    a.textContent = (i + 1) + '. ' + r.username;
+                    b.textContent = day ? r.moves + ' moves' : r.days + (r.days === 1 ? ' day' : ' days') + (r.over ? ' · +' + r.over : '');
+                    li.append(a, b); box.appendChild(li);
+                });
+            } catch (e) { box.innerHTML = "<li>couldn't load the leaderboard</li>"; }
+        }
+        $('cmonth').onclick = () => openLb('month');
+        $('sboard').onclick = () => openLb('day');
+        $('lbback').onclick = () => showPanel('lb', false);
+        /* ---------- account stats ---------- */
+        async function openStats() {
+            showView('stats');
+            let days = {}, today = new Date().toISOString().slice(0, 10);
+            $('stsub').textContent = user ? 'playing as ' + user : 'not logged in: showing results saved on this device';
+            try { today = (await api('/daily')).date; } catch (e) { }
+            if (user) { try { days = (await api('/daily/history?username=' + encodeURIComponent(user))).days; } catch (e) { $('stsub').textContent = "couldn't load your account stats"; } }
+            else { const g = gLoad(); for (const d in g) days[d] = { moves: g[d].m.length, par: g[d].par }; }
+            const ds = Object.keys(days).sort(), n = ds.length, dn = s => Date.UTC(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8)) / 864e5;
+            let longest = 0, run = 0, prev = null;
+            ds.forEach(d => { run = prev !== null && dn(d) - prev === 1 ? run + 1 : 1; longest = Math.max(longest, run); prev = dn(d); });
+            let streak = 0, t = dn(today); if (!days[today]) t--;
+            while (days[new Date(t * 864e5).toISOString().slice(0, 10)]) { streak++; t--; }
+            setFlip($('stn1'), String(n)); setFlip($('stn2'), String(streak)); setFlip($('stn3'), String(longest));
+            const rows = (box, list) => { box.innerHTML = ''; list.forEach(([a, b, c]) => { const r = document.createElement('div'), x = document.createElement('span'), y = document.createElement('span'); r.className = 'strow'; x.textContent = a; if (c) x.className = c; y.textContent = b; r.append(x, y); box.appendChild(r); }); };
+            const atPar = ds.filter(d => days[d].moves <= days[d].par).length, over = ds.reduce((a, d) => a + Math.max(0, days[d].moves - days[d].par), 0), mv = ds.reduce((a, d) => a + days[d].moves, 0);
+            rows($('strows'), [['solved at par', n ? `${atPar} (${Math.round(100 * atPar / n)}%)` : '–'], ['average moves over par', n ? (over / n).toFixed(2) : '–'], ['total moves', n ? mv : '–'], ['first solved', ds[0] || '–'], ['most recent', ds[n - 1] || '–']]);
+            const sc = loadScores(), cnt = k => sc.filter(e => e.d === k).length, so = sc.reduce((a, e) => a + Math.max(0, e.m - e.par), 0);
+            rows($('strows2'), [['levels solved', sc.length], ['solved at par', sc.length ? `${sc.filter(e => e.m <= e.par).length} (${Math.round(100 * sc.filter(e => e.m <= e.par).length / sc.length)}%)` : '–'], ['average moves over par', sc.length ? (so / sc.length).toFixed(2) : '–'], ['hardcore solves', sc.filter(e => e.hc).length], ['easy', cnt(2), 'dv2'], ['medium', cnt(4), 'dv4'], ['hard', cnt(6), 'dv6'], ['challenge', cnt(8), 'dv8']]);
+        }
+        $('moptS').onclick = openStats;
+        $('stback').onclick = openDaily;
+        $('tomenu').onclick = openDaily;
+        /* this page opens straight into today's daily level; the calendar button gives access to past days */
+        async function playToday() {
+            try { todayStr = (await api('/daily')).date; await playDaily(todayStr); } catch (e) { }
+            if (!dailyMode) openDaily();
+        }
+        newLevel();
+        playToday();
+    </script>
 </body>
+
 </html>

@@ -651,6 +651,13 @@
         @keyframes pgIn { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
         .noanim .pg, .noanim.pg { animation: none }
         body.inmenu { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) }
+        .stboard { margin-top: 16px; padding: 16px 14px }
+        .stgrid { display: flex; justify-content: space-around; gap: 8px; margin: 14px 0 10px }
+        .stg .num { font-size: 1.9rem; margin: 0 }
+        .stboard .tile, .stboard .plain { color: var(--blue) }
+        .stg .lbl { margin-top: 8px }
+        .strow { display: flex; justify-content: space-between; gap: 12px; padding: 9px 4px; border-top: 1px solid var(--line); text-align: left }
+        .strow span:last-child { font-weight: 800 }
         #dailypg input { min-height: 44px; padding: 8px 10px; width: 150px; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); text-transform: lowercase }
         #dailypg .tools button, #dailypg .calhead button { min-height: 44px; padding: 8px 16px; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; text-transform: lowercase }
         #dailypg a { color: var(--blue) }
@@ -694,8 +701,9 @@
         .mopt span { display: block; margin-top: 4px; font-size: .9rem; color: var(--soft) }
         .mopt.red { border-color: var(--imag); box-shadow: 0 4px 0 var(--imag) }
         .mopt.gold { border-color: var(--yellow); box-shadow: 0 4px 0 var(--yellow) }
-        .mopt:hover, .mopt.red:hover, .mopt.gold:hover { border-color: var(--ink); box-shadow: 0 4px 0 var(--ink) }
-        .mopt:active, .mopt.pressed, .mopt.red:active, .mopt.red.pressed, .mopt.gold:active, .mopt.gold.pressed { transform: translateY(4px); box-shadow: 0 0 0 var(--ink) }
+        .mopt.green { border-color: var(--ok); box-shadow: 0 4px 0 var(--ok) }
+        .mopt:hover, .mopt.red:hover, .mopt.gold:hover, .mopt.green:hover { border-color: var(--ink); box-shadow: 0 4px 0 var(--ink) }
+        .mopt:active, .mopt.pressed, .mopt.red:active, .mopt.red.pressed, .mopt.gold:active, .mopt.gold.pressed, .mopt.green:active, .mopt.green.pressed { transform: translateY(4px); box-shadow: 0 0 0 var(--ink) }
         .pgh { margin: 0; font-size: 2rem; font-weight: 800 }
         .dgroups { display: flex; flex-direction: column; gap: 14px; margin: 22px 0 18px }
         .dgroup { background: var(--card); border: 2px solid var(--line); padding: 16px }
@@ -704,7 +712,8 @@
 
         #settings,
         #scores,
-        #adv {
+        #adv,
+        #lb {
             position: fixed;
             inset: 0;
             z-index: 7;
@@ -724,14 +733,22 @@
         }
 
         #settings { transform-origin: 50% 6% }
+        #dailypg { animation: none; transform-origin: 50% 6% }
+        #dailypg.away { transform: translateX(-100vw) }
+        #dailypg.awayR { transform: translateX(100vw) }
+        #lbrows { list-style: none; margin: 10px 0 0; padding: 0; text-align: left }
+        #lbrows li { display: flex; justify-content: space-between; padding: 8px 12px; border-top: 1px solid var(--line) }
+        #lbrows li.me { color: var(--imag); font-weight: 700 }
 
-        #scores.offL {
+        #scores.offL,
+        #lb.offL {
             transform: translateX(-100%)
         }
 
         #settings .sp,
         #scores .sp,
-        #adv .sp {
+        #adv .sp,
+        #lb .sp {
             transform-origin: 50% 6%;
             width: 100%;
             max-width: 520px;
@@ -760,7 +777,8 @@
 
         #settings h2,
         #scores h2,
-        #adv h2 {
+        #adv h2,
+        #lb h2 {
             margin: 0 0 14px;
             font-size: 1.6rem;
             font-weight: 800
@@ -1329,6 +1347,7 @@
         <div class="mopts">
             <button class="mopt" id="mopt1"><b>random levels</b><span>endless, freshly generated levels at the difficulty you pick</span></button>
             <button class="mopt gold" id="moptD"><b>daily levels</b><span>a new challenge every day, plus a calendar of past days</span></button>
+            <button class="mopt green" id="moptS"><b>your stats</b><span>daily streaks, par rate and more</span></button>
             <button class="mopt red" id="mopt2"><b>main levels</b><span>hand-made levels for each difficulty</span></button>
         </div>
     </section>
@@ -1348,7 +1367,6 @@
             <div class="lbl" id="ssub">&nbsp;</div>
             <div class="num" id="sn" aria-label="players who solved today's level"></div>
             <div class="tools"><button id="sboard">daily leaderboard</button></div>
-            <ol id="dlbd" hidden></ol>
         </div>
         <div class="board solved clockbox">
             <h3 class="sttl">new daily in</h3>
@@ -1359,7 +1377,26 @@
             </div>
         </div>
         <div class="tools"><button id="cmonth">monthly leaderboard</button><button id="dback">back to menu</button></div>
-        <ol id="dlb" hidden></ol>
+    </section>
+    <section id="statspg" class="pg" hidden>
+        <header>
+            <h2 class="pgh">your stats</h2>
+            <p class="sub" id="stsub"></p>
+        </header>
+        <div class="board stboard">
+            <h3 class="sttl">daily levels</h3>
+            <div class="stgrid">
+                <div class="stg"><div class="num" id="stn1"></div><div class="lbl">solved</div></div>
+                <div class="stg"><div class="num" id="stn2"></div><div class="lbl">current streak</div></div>
+                <div class="stg"><div class="num" id="stn3"></div><div class="lbl">longest streak</div></div>
+            </div>
+            <div id="strows"></div>
+        </div>
+        <div class="board stboard">
+            <h3 class="sttl">random levels on this device</h3>
+            <div id="strows2"></div>
+        </div>
+        <div class="tools"><button id="stback">back to menu</button></div>
     </section>
     <section id="mainlevels" class="pg" hidden>
         <header>
@@ -1488,6 +1525,16 @@
                 <div class="srow"><div><b>theme fade</b><span>colors fade between dark and light</span></div><button class="sw" data-anim="theme" role="switch" aria-checked="true" aria-label="theme fade"></button></div>
                 <div class="srow"><div><b>button and menu motion</b><span>button presses, hover changes and page fade-ins</span></div><button class="sw" data-anim="ui" role="switch" aria-checked="true" aria-label="button and menu motion"></button></div>
                 <div class="tools"><button id="advBack">back</button></div>
+            </div>
+        </div>
+    </section>
+    <section id="lb" hidden>
+        <div class="sp">
+            <div class="board">
+                <h2 id="lbt">leaderboard</h2>
+                <div class="lbl" id="lbs"></div>
+                <ol id="lbrows"></ol>
+                <div class="tools"><button id="lbback">back</button></div>
             </div>
         </div>
     </section>
@@ -1869,8 +1916,8 @@
         }
         /* settings sits to the right (game travels left), scores sits to the left (game travels right) */
         function showPanel(id, on) {
-            const adv = id === 'adv', st = $(id), sp = st.querySelector('.sp'), mn = adv ? $('settings') : document.querySelector('main'), nw = adv ? null : $('nlwrap'), an = animOn('slide'),
-                d = id === 'scores' ? 1 : -1, away = d < 0 ? 'away' : 'awayR', off = d < 0 ? 'off' : 'offL';
+            const adv = id === 'adv', lb = id === 'lb', st = $(id), sp = st.querySelector('.sp'), mn = adv ? $('settings') : lb ? $('dailypg') : document.querySelector('main'), nw = adv || lb ? null : $('nlwrap'), an = animOn('slide'),
+                d = id === 'scores' || lb ? 1 : -1, away = d < 0 ? 'away' : 'awayR', off = d < 0 ? 'off' : 'offL';
             clearTimeout(ssTimer);
             if (on) {
                 if (id === 'settings') decAtOpen = settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac; else if (id === 'scores') renderScores();
@@ -1885,7 +1932,7 @@
                 ssTimer = setTimeout(() => { mn.hidden = true; if (nw) nw.hidden = true; }, an ? SW_DUR + 30 : 0);
             } else {
                 mn.hidden = false; if (nw) nw.hidden = false; parallax(adv ? -Math.round(innerWidth * .3) : 0);
-                if (!adv) { view = null; if (id === 'settings' && (settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac) !== decAtOpen && !dailyMode) newLevel(); else render(); }
+                if (!adv && !lb) { view = null; if (id === 'settings' && (settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac) !== decAtOpen && !dailyMode) newLevel(); else render(); }
                 getComputedStyle(nw || mn).transform;
                 mn.classList.remove('away', 'awayR'); if (nw) nw.classList.remove('away', 'awayR'); st.classList.add(off);
                 if (an) {
@@ -2014,21 +2061,21 @@
         ['pointerup', 'pointercancel', 'dragend'].forEach(ev => document.addEventListener(ev, unpress, true));
         function showView(v) {
             const mn = document.querySelector('main'), nw = $('nlwrap');
-            $('menu').hidden = v !== 'menu'; $('mainlevels').hidden = v !== 'main'; $('dailypg').hidden = v !== 'daily';
+            $('menu').hidden = v !== 'menu'; $('mainlevels').hidden = v !== 'main'; $('dailypg').hidden = v !== 'daily'; $('statspg').hidden = v !== 'stats';
             mn.hidden = v !== 'random'; nw.hidden = v !== 'random';
             document.body.classList.toggle('inmenu', v !== 'random');
             scrollTo(0, 0);
             if (v === 'random') { view = null; pend = false; if (L) { updateNs(); render(); } }
         }
         /* ---------- daily levels (needs the server: server.js + daily.js) ---------- */
-        const API = 'http://localhost:3000'; /* change to your server's address */
+        const API = 'https://gamedevrg-com-backend.onrender.com'; /* change to your server's address */
         const DSTART = '2026-01-01'; /* must match DAILY_START on the server */
         let user = '', calY = 0, calM = 0, todayStr = '';
-        try { user = localStorage.getItem('hs_user') || ''; } catch (e) { }
+        try { user = localStorage.getItem('username') || ''; } catch (e) { }
         async function api(path, body) {
             const r = await fetch(API + path, body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : undefined);
             const j = await r.json().catch(() => ({}));
-            if (!r.ok) throw new Error(j.message || 'request failed');
+            if (!r.ok) throw new Error(j.message || 'server answered ' + r.status + ' for ' + path);
             return j;
         }
         const pad = n => String(n).padStart(2, '0'), MN = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
@@ -2049,18 +2096,18 @@
             if (!username || !password) { $('dsub').textContent = 'enter a username and password'; return; }
             try {
                 if (reg) await api('/register', { username, password });
-                user = (await api('/login', { username, password })).user; try { localStorage.setItem('hs_user', user); } catch (e) { }
+                user = (await api('/login', { username, password })).user; try { localStorage.setItem('username', user); } catch (e) { }
                 $('dp').value = ''; showUser(); await syncGuest(); renderCal();
             } catch (e) { $('dsub').textContent = e.message; }
         }
         async function openDaily() {
-            dailyMode = false; showView('daily'); showUser(); $('dlb').hidden = true;
+            dailyMode = false; showView('daily'); showUser();
             try {
                 todayStr = (await api('/daily')).date;
                 if (!calY) { calY = +todayStr.slice(0, 4); calM = +todayStr.slice(5, 7) - 1; }
                 $('dsub').textContent = user ? 'pick a day to play' : 'pick a day to play. guests can play too: log in to be on the leaderboard';
                 if (user) await syncGuest();
-            } catch (e) { $('dsub').textContent = "couldn't reach the server. check the API address in the script."; }
+            } catch (e) { $('dsub').textContent = "couldn't load the daily level (" + e.message + "). check that the server is running and the API address in the script is right."; }
             clockTick(); renderCal(); loadStats();
         }
         let clockBusy = false;
@@ -2129,26 +2176,53 @@
             if ($('dnote')) $('dnote').textContent = dailyNote;
         }
         $('dlogin').onclick = () => dAuth(false); $('dreg').onclick = () => dAuth(true);
-        $('dout').onclick = e => { e.preventDefault(); user = ''; try { localStorage.removeItem('hs_user'); } catch (x) { } showUser(); renderCal(); };
+        $('dout').onclick = e => { e.preventDefault(); user = ''; try { localStorage.removeItem('username'); } catch (x) { } showUser(); renderCal(); };
         $('cprev').onclick = () => { if (--calM < 0) { calM = 11; calY--; } renderCal(); };
         $('cnext').onclick = () => { if (++calM > 11) { calM = 0; calY++; } renderCal(); };
         $('dback').onclick = () => showView('menu');
-        $('cmonth').onclick = async () => {
-            const box = $('dlb'); if (!box.hidden) { box.hidden = true; return; }
+        /* leaderboards slide in as their own panel, like settings and scores */
+        async function openLb(kind) {
+            const box = $('lbrows'), day = kind === 'day';
+            $('lbt').textContent = day ? 'daily leaderboard' : 'monthly leaderboard';
+            $('lbs').textContent = day ? (todayStr || '') : MN[calM] + ' ' + calY;
+            box.innerHTML = '<li>loading…</li>'; showPanel('lb', true);
             try {
-                const j = await api('/daily/leaderboard/month/' + calY + '-' + pad(calM + 1)); box.innerHTML = j.rows.length ? '' : '<li>no scores yet</li>';
-                j.rows.forEach((r, i) => { const li = document.createElement('li'); if (r.username === user) li.className = 'me'; const a = document.createElement('span'), b = document.createElement('span'); a.textContent = (i + 1) + '. ' + r.username; b.textContent = r.days + (r.days === 1 ? ' day' : ' days') + (r.over ? ' · +' + r.over : ''); li.append(a, b); box.appendChild(li); });
+                const j = await api(day ? '/daily/leaderboard' : '/daily/leaderboard/month/' + calY + '-' + pad(calM + 1));
+                box.innerHTML = j.rows.length ? '' : '<li>no scores yet</li>';
+                j.rows.forEach((r, i) => {
+                    const li = document.createElement('li'); if (r.username === user) li.className = 'me';
+                    const a = document.createElement('span'), b = document.createElement('span');
+                    a.textContent = (i + 1) + '. ' + r.username;
+                    b.textContent = day ? r.moves + ' moves' : r.days + (r.days === 1 ? ' day' : ' days') + (r.over ? ' · +' + r.over : '');
+                    li.append(a, b); box.appendChild(li);
+                });
             } catch (e) { box.innerHTML = "<li>couldn't load the leaderboard</li>"; }
-            box.hidden = false;
-        };
-        $('sboard').onclick = async () => {
-            const box = $('dlbd'); if (!box.hidden) { box.hidden = true; return; }
-            try {
-                const j = await api('/daily/leaderboard'); box.innerHTML = j.rows.length ? '' : '<li>no scores yet</li>';
-                j.rows.forEach((r, i) => { const li = document.createElement('li'); if (r.username === user) li.className = 'me'; const a = document.createElement('span'), b = document.createElement('span'); a.textContent = (i + 1) + '. ' + r.username; b.textContent = r.moves + ' moves'; li.append(a, b); box.appendChild(li); });
-            } catch (e) { box.innerHTML = "<li>couldn't load the leaderboard</li>"; }
-            box.hidden = false;
-        };
+        }
+        $('cmonth').onclick = () => openLb('month');
+        $('sboard').onclick = () => openLb('day');
+        $('lbback').onclick = () => showPanel('lb', false);
+        /* ---------- account stats ---------- */
+        async function openStats() {
+            showView('stats');
+            let days = {}, today = new Date().toISOString().slice(0, 10);
+            $('stsub').textContent = user ? 'playing as ' + user : 'not logged in: showing results saved on this device';
+            try { today = (await api('/daily')).date; } catch (e) { }
+            if (user) { try { days = (await api('/daily/history?username=' + encodeURIComponent(user))).days; } catch (e) { $('stsub').textContent = "couldn't load your account stats"; } }
+            else { const g = gLoad(); for (const d in g) days[d] = { moves: g[d].m.length, par: g[d].par }; }
+            const ds = Object.keys(days).sort(), n = ds.length, dn = s => Date.UTC(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8)) / 864e5;
+            let longest = 0, run = 0, prev = null;
+            ds.forEach(d => { run = prev !== null && dn(d) - prev === 1 ? run + 1 : 1; longest = Math.max(longest, run); prev = dn(d); });
+            let streak = 0, t = dn(today); if (!days[today]) t--;
+            while (days[new Date(t * 864e5).toISOString().slice(0, 10)]) { streak++; t--; }
+            setFlip($('stn1'), String(n)); setFlip($('stn2'), String(streak)); setFlip($('stn3'), String(longest));
+            const rows = (box, list) => { box.innerHTML = ''; list.forEach(([a, b, c]) => { const r = document.createElement('div'), x = document.createElement('span'), y = document.createElement('span'); r.className = 'strow'; x.textContent = a; if (c) x.className = c; y.textContent = b; r.append(x, y); box.appendChild(r); }); };
+            const atPar = ds.filter(d => days[d].moves <= days[d].par).length, over = ds.reduce((a, d) => a + Math.max(0, days[d].moves - days[d].par), 0), mv = ds.reduce((a, d) => a + days[d].moves, 0);
+            rows($('strows'), [['solved at par', n ? `${atPar} (${Math.round(100 * atPar / n)}%)` : '–'], ['average moves over par', n ? (over / n).toFixed(2) : '–'], ['total moves', n ? mv : '–'], ['first solved', ds[0] || '–'], ['most recent', ds[n - 1] || '–']]);
+            const sc = loadScores(), cnt = k => sc.filter(e => e.d === k).length, so = sc.reduce((a, e) => a + Math.max(0, e.m - e.par), 0);
+            rows($('strows2'), [['levels solved', sc.length], ['solved at par', sc.length ? `${sc.filter(e => e.m <= e.par).length} (${Math.round(100 * sc.filter(e => e.m <= e.par).length / sc.length)}%)` : '–'], ['average moves over par', sc.length ? (so / sc.length).toFixed(2) : '–'], ['hardcore solves', sc.filter(e => e.hc).length], ['easy', cnt(2), 'dv2'], ['medium', cnt(4), 'dv4'], ['hard', cnt(6), 'dv6'], ['challenge', cnt(8), 'dv8']]);
+        }
+        $('moptS').onclick = openStats;
+        $('stback').onclick = () => showView('menu');
         $('moptD').onclick = openDaily;
         $('mopt1').onclick = () => { if (dailyMode) { dailyMode = false; newLevel(); } showView('random'); };
         $('mopt2').onclick = () => showView('main');
