@@ -449,45 +449,12 @@
             overflow-wrap: anywhere
         }
 
-        .srow.col {
-            flex-direction: column;
-            align-items: stretch
-        }
-
-        .seg {
-            display: flex;
-            margin-top: 10px
-        }
-
-        .seg button {
-            flex: 1 1 0;
-            min-height: 40px;
-            padding: 6px 8px;
-            font-family: inherit;
-            font-weight: 700;
-            font-size: .85rem;
-            border: 1px solid var(--line);
-            margin-left: -1px;
-            background: var(--bg);
-            color: var(--soft);
-            cursor: pointer;
-            text-transform: lowercase
-        }
-
-        .seg button:first-child {
-            margin-left: 0
-        }
-
-        .seg button[aria-checked="true"] {
-            border-color: var(--imag);
-            color: var(--imag);
-            position: relative;
-            z-index: 1
-        }
-
-        .sw:disabled {
-            cursor: not-allowed
-        }
+        .srow.col { flex-direction: column; align-items: stretch }
+        .seg { display: flex; margin-top: 10px }
+        .seg button { flex: 1 1 0; min-height: 40px; padding: 6px 8px; font-family: inherit; font-weight: 700; font-size: .85rem; border: 1px solid var(--line); margin-left: -1px; background: var(--bg); color: var(--soft); cursor: pointer; text-transform: lowercase }
+        .seg button:first-child { margin-left: 0 }
+        .seg button[aria-checked="true"] { border-color: var(--imag); color: var(--imag); position: relative; z-index: 1 }
+        .sw:disabled { cursor: not-allowed }
 
         .dec .full {
             min-height: 1.3em
@@ -680,110 +647,60 @@
             display: none !important
         }
 
-        .pg {
-            width: 100%;
-            max-width: 520px;
-            margin: 0 auto;
-            padding: 8vh 16px 20px;
-            text-align: center;
-            animation: pgIn .35s ease both
-        }
-
-        @keyframes pgIn {
-            from {
-                opacity: 0;
-                transform: translateY(8px)
-            }
-
-            to {
-                opacity: 1;
-                transform: none
-            }
-        }
-
-        .noanim .pg,
-        .noanim.pg {
-            animation: none
-        }
-
-        body.inmenu {
-            padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px))
-        }
-
-        .mopts {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            margin-top: 22px
-        }
-
-        .mopt {
-            display: block;
-            width: 100%;
-            padding: 18px 16px;
-            text-align: center;
-            font-family: inherit;
-            color: var(--ink);
-            background: var(--card);
-            border: 2px solid var(--blue);
-            box-shadow: 0 4px 0 var(--blue);
-            cursor: pointer;
-            transition: transform .08s, box-shadow .08s, border-color .15s
-        }
-
-        .mopt b {
-            display: block;
-            font-size: 1.5rem;
-            font-weight: 800
-        }
-
-        .mopt span {
-            display: block;
-            margin-top: 4px;
-            font-size: .9rem;
-            color: var(--soft)
-        }
-
-        .mopt:hover {
-            border-color: var(--imag)
-        }
-
-        .mopt:active {
-            transform: translateY(4px);
-            box-shadow: 0 0 0 var(--blue)
-        }
-
-        .pgh {
-            margin: 0;
-            font-size: 2rem;
-            font-weight: 800
-        }
-
-        .dgroups {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            margin: 22px 0 18px
-        }
-
-        .dgroup {
-            background: var(--card);
-            border: 2px solid var(--line);
-            padding: 16px
-        }
-
-        .dgroup h3 {
-            margin: 0 0 8px;
-            font-size: 1.25rem;
-            font-weight: 800
-        }
-
-        .soon {
-            color: var(--soft);
-            font-size: .95rem;
-            padding: 14px;
-            border: 1px dashed var(--line)
-        }
+        .pg { width: 100%; max-width: 520px; margin: 0 auto; padding: 8vh 16px 20px; text-align: center; animation: pgIn .35s ease both }
+        @keyframes pgIn { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
+        .noanim .pg, .noanim.pg { animation: none }
+        body.inmenu { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) }
+        #dailypg input { min-height: 44px; padding: 8px 10px; width: 150px; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); text-transform: lowercase }
+        #dailypg .tools button, #dailypg .calhead button { min-height: 44px; padding: 8px 16px; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; text-transform: lowercase }
+        #dailypg a { color: var(--blue) }
+        .cal { padding: 14px }
+        .solved { margin-top: 18px; padding: 16px 14px }
+        .sttl { margin: 0 0 2px; font-size: 1.15rem; font-weight: 800 }
+        .solved .num { font-size: 2.3rem; margin: 14px 0 }
+        .solved .tile, .solved .plain { color: var(--blue) }
+        .clockbox .tile, .clockbox .plain { color: var(--ink) }
+        .clockbox .num { margin: 0; font-size: 1.9rem }
+        .clock { display: flex; align-items: flex-start; justify-content: center; gap: 8px; margin-top: 14px }
+        .clock .lbl { margin-top: 8px }
+        .colon { color: var(--imag); font-size: 2.1rem; font-weight: 800; line-height: 1.15 }
+        #dlbd { list-style: none; margin: 4px 0 0; padding: 0; text-align: left }
+        #dlbd li { display: flex; justify-content: space-between; padding: 8px 12px; border-top: 1px solid var(--line) }
+        #dlbd li.me { color: var(--imag); font-weight: 700 }
+        #dailypg .solved .tools button { min-height: 44px; padding: 8px 16px; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; text-transform: lowercase }
+        .calhead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px }
+        .calhead h3 { margin: 0; font-size: 1.7rem; font-weight: 800 }
+        .calhead h3 b { color: var(--imag) }
+        #dailypg .calhead button { width: 44px; padding: 0; font-size: 1.4rem }
+        .calgrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px }
+        .cw { padding: 8px 0; background: var(--line); color: var(--ink); font-size: .9rem }
+        .cw.today { background: var(--ink); color: var(--bg) }
+        .cd { aspect-ratio: 1; position: relative; display: flex; align-items: center; justify-content: center; padding: 0; min-height: 0; font-family: inherit; font-weight: 800; font-size: 1.05rem; border: 1px solid var(--line); background: var(--bg); color: var(--soft); cursor: default }
+        .cd.play { cursor: pointer; color: var(--ink) }
+        .cd.play:hover { border-color: var(--ink) }
+        .cd.miss { border: 2px solid var(--imag); color: var(--imag) }
+        .cd.done { background: var(--blue); border-color: var(--blue); color: var(--bg) }
+        .cd.today { background: var(--ink); border-color: var(--ink); color: var(--bg) }
+        .cd .pips { position: absolute; left: 3px; bottom: 3px; display: flex; gap: 2px }
+        .cd .pips i { width: 5px; height: 5px; background: rgba(0, 0, 0, .35) }
+        .cd .pips i.u { background: #fff }
+        .cd .pips i.o { background: var(--imag) }
+        #dlb { list-style: none; margin: 14px 0 0; padding: 0; text-align: left }
+        #dlb li { display: flex; justify-content: space-between; padding: 8px 12px; border-top: 1px solid var(--line) }
+        #dlb li.me { color: var(--imag); font-weight: 700 }
+        .mopts { display: flex; flex-direction: column; gap: 14px; margin-top: 22px }
+        .mopt { display: block; width: 100%; padding: 18px 16px; text-align: center; font-family: inherit; color: var(--ink); background: var(--card); border: 2px solid var(--blue); box-shadow: 0 4px 0 var(--blue); cursor: pointer; transition: transform .08s, box-shadow .08s, border-color .15s }
+        .mopt b { display: block; font-size: 1.5rem; font-weight: 800 }
+        .mopt span { display: block; margin-top: 4px; font-size: .9rem; color: var(--soft) }
+        .mopt.red { border-color: var(--imag); box-shadow: 0 4px 0 var(--imag) }
+        .mopt.gold { border-color: var(--yellow); box-shadow: 0 4px 0 var(--yellow) }
+        .mopt:hover, .mopt.red:hover, .mopt.gold:hover { border-color: var(--ink); box-shadow: 0 4px 0 var(--ink) }
+        .mopt:active, .mopt.pressed, .mopt.red:active, .mopt.red.pressed, .mopt.gold:active, .mopt.gold.pressed { transform: translateY(4px); box-shadow: 0 0 0 var(--ink) }
+        .pgh { margin: 0; font-size: 2rem; font-weight: 800 }
+        .dgroups { display: flex; flex-direction: column; gap: 14px; margin: 22px 0 18px }
+        .dgroup { background: var(--card); border: 2px solid var(--line); padding: 16px }
+        .dgroup h3 { margin: 0 0 8px; font-size: 1.25rem; font-weight: 800 }
+        .soon { color: var(--soft); font-size: .95rem; padding: 14px; border: 1px dashed var(--line) }
 
         #settings,
         #scores,
@@ -806,9 +723,7 @@
             transform: translateX(-100vw)
         }
 
-        #settings {
-            transform-origin: 50% 6%
-        }
+        #settings { transform-origin: 50% 6% }
 
         #scores.offL {
             transform: translateX(-100%)
@@ -934,6 +849,10 @@
             color: var(--yellow)
         }
 
+        #slist .dv8 {
+            color: var(--blue)
+        }
+
         #slist .dv6,
         #slist .mhc {
             color: var(--imag)
@@ -1011,35 +930,11 @@
             transition: none !important
         }
 
-        :root.noui *:not(#nlwrap) {
-            transition: none !important
-        }
-
-        :root.noui .pg {
-            animation: none
-        }
-
-        :root.nofade {
-            transition: none
-        }
-
-        .lnk {
-            flex: 0 0 auto;
-            min-height: 40px;
-            padding: 8px 14px;
-            font-family: inherit;
-            font-weight: 700;
-            font-size: .9rem;
-            border: 1px solid var(--blue);
-            background: var(--bg);
-            color: var(--blue);
-            cursor: pointer
-        }
-
-        .lnk:hover {
-            border-color: var(--imag);
-            color: var(--imag)
-        }
+        :root.noui *:not(#nlwrap) { transition: none !important }
+        :root.noui .pg { animation: none }
+        :root.nofade { transition: none }
+        .lnk { flex: 0 0 auto; min-height: 40px; padding: 8px 14px; font-family: inherit; font-weight: 700; font-size: .9rem; border: 1px solid var(--blue); background: var(--bg); color: var(--blue); cursor: pointer }
+        .lnk:hover { border-color: var(--imag); color: var(--imag) }
 
         #fx {
             position: fixed;
@@ -1106,6 +1001,11 @@
             box-shadow: 0 0 0 var(--blue)
         }
 
+        #ops button.pressed:not(:disabled) {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 var(--blue)
+        }
+
         #ops button small {
             display: block;
             font-size: .65rem;
@@ -1131,6 +1031,7 @@
         }
 
         .hc #ops button:active:not(:disabled),
+        .hc #ops button.pressed:not(:disabled),
         .hc #ops button:disabled {
             box-shadow: 0 0 0 var(--imag)
         }
@@ -1206,6 +1107,10 @@
 
         .dv4 {
             color: var(--yellow)
+        }
+
+        .dv8 {
+            color: var(--blue)
         }
 
         .dv6,
@@ -1422,10 +1327,39 @@
             <p class="sub">choose how you want to play</p>
         </header>
         <div class="mopts">
-            <button class="mopt" id="mopt1"><b>random levels</b><span>endless, freshly generated levels at the
-                    difficulty you pick</span></button>
-            <button class="mopt" id="mopt2"><b>main levels</b><span>hand-made levels for each difficulty</span></button>
+            <button class="mopt" id="mopt1"><b>random levels</b><span>endless, freshly generated levels at the difficulty you pick</span></button>
+            <button class="mopt gold" id="moptD"><b>daily levels</b><span>a new challenge every day, plus a calendar of past days</span></button>
+            <button class="mopt red" id="mopt2"><b>main levels</b><span>hand-made levels for each difficulty</span></button>
         </div>
+    </section>
+    <section id="dailypg" class="pg" hidden>
+        <header>
+            <h2 class="pgh">daily levels</h2>
+            <p class="sub" id="dsub">pick a day to play</p>
+        </header>
+        <div class="tools" id="dauth"><input id="du" placeholder="username" autocomplete="username"><input id="dp" type="password" placeholder="password" autocomplete="current-password"><button id="dlogin">log in</button><button id="dreg">register</button></div>
+        <p class="sub" id="dwho" hidden><span id="dwn"></span> · <a href="#" id="dout">log out</a></p>
+        <div class="board cal">
+            <div class="calhead"><button id="cprev" aria-label="previous month">‹</button><h3 id="ctitle"></h3><button id="cnext" aria-label="next month">›</button></div>
+            <div class="calgrid" id="cgrid"></div>
+        </div>
+        <div class="board solved" id="solvedbox">
+            <h3 class="sttl">number of players who solved this</h3>
+            <div class="lbl" id="ssub">&nbsp;</div>
+            <div class="num" id="sn" aria-label="players who solved today's level"></div>
+            <div class="tools"><button id="sboard">daily leaderboard</button></div>
+            <ol id="dlbd" hidden></ol>
+        </div>
+        <div class="board solved clockbox">
+            <h3 class="sttl">new daily in</h3>
+            <div class="clock">
+                <div class="cg"><div class="num" id="ch"></div><div class="lbl">hour</div></div><span class="colon">:</span>
+                <div class="cg"><div class="num" id="cm"></div><div class="lbl">minute</div></div><span class="colon">:</span>
+                <div class="cg"><div class="num" id="cs"></div><div class="lbl">second</div></div>
+            </div>
+        </div>
+        <div class="tools"><button id="cmonth">monthly leaderboard</button><button id="dback">back to menu</button></div>
+        <ol id="dlb" hidden></ol>
     </section>
     <section id="mainlevels" class="pg" hidden>
         <header>
@@ -1433,18 +1367,10 @@
             <p class="sub">hand-made levels, grouped by difficulty</p>
         </header>
         <div class="dgroups">
-            <div class="dgroup">
-                <h3 class="dv2">easy</h3>
-                <div class="soon">levels coming soon</div>
-            </div>
-            <div class="dgroup">
-                <h3 class="dv4">medium</h3>
-                <div class="soon">levels coming soon</div>
-            </div>
-            <div class="dgroup">
-                <h3 class="dv6">hard</h3>
-                <div class="soon">levels coming soon</div>
-            </div>
+            <div class="dgroup"><h3 class="dv2">easy</h3><div class="soon">levels coming soon</div></div>
+            <div class="dgroup"><h3 class="dv4">medium</h3><div class="soon">levels coming soon</div></div>
+            <div class="dgroup"><h3 class="dv6">hard</h3><div class="soon">levels coming soon</div></div>
+            <div class="dgroup"><h3 class="dv8">challenge</h3><div class="soon">levels coming soon</div></div>
         </div>
         <div class="tools"><button id="mback">back to menu</button></div>
     </section>
@@ -1481,6 +1407,7 @@
                     <option value="2">easy</option>
                     <option value="4" selected>medium</option>
                     <option value="6">hard</option>
+                        <option value="8">challenge</option>
                 </select></div>
             <div id="modeinfo">
                 <div><i>difficulty:</i> <span id="miD"></span></div>
@@ -1489,18 +1416,15 @@
             <div id="msg" role="status"></div>
             <div class="lbl" id="score"></div>
         </section>
-        <div class="how"><button id="tomenu">main menu</button><button id="sc">scores</button><button id="what">what is
-                this?</button><button id="opts">settings</button></div>
+        <div class="how"><button id="tomenu">main menu</button><button id="sc">scores</button><button id="what">what is this?</button><button
+                id="opts">settings</button></div>
         <dialog id="dlg">
             <p>every level is freshly generated and gives only the operations you need. par is the fewest moves that can
                 work,
                 and you can keep going past it, but every extra move is one over par. many levels have more than one
                 route. in
-                hardcore mode (settings) you only get 3 undos per level and can't restart. by default levels use whole
-                numbers, and division only works when the result is whole, so a greyed-out ÷ button means your number
-                doesn't divide evenly. in settings you can switch to decimals (moves like +0.5, and x⁻¹ turns 4 into
-                0.25) or fractions (division can leave fractions, and x⁻¹ turns 4 into 1/4). in decimals mode you can
-                also allow decimal goals.</p><button id="dx">gotcha</button>
+                hardcore mode (settings) you only get 3 undos per level, can't restart, and can't go over par. by default levels use whole numbers, and division only works when the result is whole, so a greyed-out ÷ button means your number doesn't divide evenly. challenge difficulty adds extra operations like |x| (absolute value), √x, x³, negate, mod and digit reverse, and has lots of different solutions. in settings you can switch to decimals (moves like +0.5, and x⁻¹ turns 4 into 0.25) or fractions (division can leave fractions, and x⁻¹ turns 4 into 1/4). in decimals mode you can also allow decimal goals.</p><button
+                id="dx">gotcha</button>
         </dialog>
     </main>
     <section id="scores" hidden>
@@ -1528,28 +1452,20 @@
                     <button class="sw" id="swAnim" role="switch" aria-checked="true" aria-label="animations"></button>
                 </div>
                 <div class="srow" id="rowAdv">
-                    <div><b>advanced animations</b><span>turn individual animations on or off</span></div><button
-                        class="lnk" id="advBtn">open</button>
+                    <div><b>advanced animations</b><span>turn individual animations on or off</span></div><button class="lnk" id="advBtn">open</button>
                 </div>
                 <div class="srow col">
                     <div><b>numbers</b><span>use whole numbers, decimals or fractions. starts a new level</span></div>
-                    <div class="seg" role="radiogroup" aria-label="number type"><button data-m="whole" role="radio"
-                            aria-checked="true">whole numbers</button><button data-m="dec" role="radio"
-                            aria-checked="false">decimals</button><button data-m="frac" role="radio"
-                            aria-checked="false">fractions</button></div>
+                    <div class="seg" role="radiogroup" aria-label="number type"><button data-m="whole" role="radio" aria-checked="true">whole numbers</button><button data-m="dec" role="radio" aria-checked="false">decimals</button><button data-m="frac" role="radio" aria-checked="false">fractions</button></div>
                 </div>
                 <div class="srow" id="rowGdec">
-                    <div><b>decimal goals</b><span>decimals only: the goal can be a decimal like 3.5, not just a whole
-                            number. starts a new level</span></div><button class="sw" id="swGdec" role="switch"
-                        aria-checked="false" aria-label="decimal goals"></button>
+                    <div><b>decimal goals</b><span>decimals only: the goal can be a decimal like 3.5, not just a whole number. starts a new level</span></div><button class="sw" id="swGdec" role="switch" aria-checked="false" aria-label="decimal goals"></button>
                 </div>
                 <div class="srow" id="rowGfrac">
-                    <div><b>fraction goals</b><span>fractions only: the goal can be a fraction like 7/4, not just a
-                            whole number. starts a new level</span></div><button class="sw" id="swGfrac" role="switch"
-                        aria-checked="false" aria-label="fraction goals"></button>
+                    <div><b>fraction goals</b><span>fractions only: the goal can be a fraction like 7/4, not just a whole number. starts a new level</span></div><button class="sw" id="swGfrac" role="switch" aria-checked="false" aria-label="fraction goals"></button>
                 </div>
                 <div class="srow">
-                    <div><b>hardcore mode</b><span>only 3 undos per level, and you can't restart a level</span></div>
+                    <div><b>hardcore mode</b><span>only 3 undos per level, no restarting, and you can't go over par</span></div>
                     <button class="sw" id="swHc" role="switch" aria-checked="false" aria-label="hardcore mode"></button>
                 </div>
                 <div class="srow">
@@ -1564,39 +1480,13 @@
         <div class="sp">
             <div class="board">
                 <h2>animations</h2>
-                <div class="srow">
-                    <div><b>tile flips</b><span>digits flip like a split-flap board</span></div><button class="sw"
-                        data-anim="flip" role="switch" aria-checked="true" aria-label="tile flips"></button>
-                </div>
-                <div class="srow">
-                    <div><b>ball flight</b><span>the ball arcs along the number line and the dotted trail follows
-                            it</span></div><button class="sw" data-anim="ball" role="switch" aria-checked="true"
-                        aria-label="ball flight"></button>
-                </div>
-                <div class="srow">
-                    <div><b>number line zoom</b><span>the line slides smoothly to a new scale</span></div><button
-                        class="sw" data-anim="zoom" role="switch" aria-checked="true"
-                        aria-label="number line zoom"></button>
-                </div>
-                <div class="srow">
-                    <div><b>confetti</b><span>a burst from the hole when you solve a level</span></div><button
-                        class="sw" data-anim="confetti" role="switch" aria-checked="true"
-                        aria-label="confetti"></button>
-                </div>
-                <div class="srow">
-                    <div><b>panel slides and sway</b><span>settings and scores slide in and lean as they move, and the
-                            background shifts</span></div><button class="sw" data-anim="slide" role="switch"
-                        aria-checked="true" aria-label="panel slides and sway"></button>
-                </div>
-                <div class="srow">
-                    <div><b>theme fade</b><span>colors fade between dark and light</span></div><button class="sw"
-                        data-anim="theme" role="switch" aria-checked="true" aria-label="theme fade"></button>
-                </div>
-                <div class="srow">
-                    <div><b>button and menu motion</b><span>button presses, hover changes and page fade-ins</span></div>
-                    <button class="sw" data-anim="ui" role="switch" aria-checked="true"
-                        aria-label="button and menu motion"></button>
-                </div>
+                <div class="srow"><div><b>tile flips</b><span>digits flip like a split-flap board</span></div><button class="sw" data-anim="flip" role="switch" aria-checked="true" aria-label="tile flips"></button></div>
+                <div class="srow"><div><b>ball flight</b><span>the ball arcs along the number line and the dotted trail follows it</span></div><button class="sw" data-anim="ball" role="switch" aria-checked="true" aria-label="ball flight"></button></div>
+                <div class="srow"><div><b>number line zoom</b><span>the line slides smoothly to a new scale</span></div><button class="sw" data-anim="zoom" role="switch" aria-checked="true" aria-label="number line zoom"></button></div>
+                <div class="srow"><div><b>confetti</b><span>a burst from the hole when you solve a level</span></div><button class="sw" data-anim="confetti" role="switch" aria-checked="true" aria-label="confetti"></button></div>
+                <div class="srow"><div><b>panel slides and sway</b><span>settings and scores slide in and lean as they move, and the background shifts</span></div><button class="sw" data-anim="slide" role="switch" aria-checked="true" aria-label="panel slides and sway"></button></div>
+                <div class="srow"><div><b>theme fade</b><span>colors fade between dark and light</span></div><button class="sw" data-anim="theme" role="switch" aria-checked="true" aria-label="theme fade"></button></div>
+                <div class="srow"><div><b>button and menu motion</b><span>button presses, hover changes and page fade-ins</span></div><button class="sw" data-anim="ui" role="switch" aria-checked="true" aria-label="button and menu motion"></button></div>
                 <div class="tools"><button id="advBack">back</button></div>
             </div>
         </div>
@@ -1606,7 +1496,8 @@
             aria-label="number line showing your ball, your hits and the hole"></svg></div>
     <script>
         const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b] } return a || 1 };
-        function F(n, d = 1) { if (d < 0) { n = -n; d = -d } const g = gcd(n, d); n /= g; d /= g; if (Math.abs(n) > 100000 || d > 100000) return null; return { n, d } }
+        let NB = 100000, CAP = 1e9;
+        function F(n, d = 1) { if (d < 0) { n = -n; d = -d } const g = gcd(n, d); n /= g; d /= g; if (Math.abs(n) > NB || d > NB) return null; return { n, d } }
         const key = x => x.n + '/' + x.d;
         const term = x => { let d = x.d; while (d % 2 === 0) d /= 2; while (d % 5 === 0) d /= 5; return d === 1 };
         const fmt = x => {
@@ -1622,6 +1513,12 @@
         const same = (a, b) => a.n === b.n && a.d === b.d;
         function mk(s, mode) {
             if (s === 'x²') return { s, f: x => F(x.n * x.n, x.d * x.d) };
+            if (s === '|x|') return { s, f: x => F(Math.abs(x.n), x.d) };
+            if (s === '−x') return { s, f: x => F(-x.n, x.d) };
+            if (s === 'x³') return { s, f: x => F(x.n * x.n * x.n, x.d * x.d * x.d) };
+            if (s === '√x') return { s, f: x => { if (x.n < 0) return null; const a = Math.round(Math.sqrt(x.n)), b = Math.round(Math.sqrt(x.d)); return a * a === x.n && b * b === x.d ? F(a, b) : null } };
+            if (s.startsWith('mod ')) { const k = parseInt(s.slice(4), 10); return { s, f: x => x.d !== 1 ? null : F(((x.n % k) + k) % k) }; }
+            if (s === 'rev') return { s, f: x => x.d !== 1 || x.n < 0 ? null : F(parseInt(String(x.n).split('').reverse().join(''), 10)) };
             if (s === 'x⁻¹') return { s, f: x => { if (x.n === 0) return null; const r = F(x.d, x.n); return r && (mode !== 'dec' || r.d === 1 || term(r)) ? r : null } };
             const k = parseFloat(s.slice(1)), o = s[0], q = F(Math.round(k * 10), 10);
             if (o === '+') return { s, f: x => F(x.n * q.d + q.n * x.d, x.d * q.d) };
@@ -1632,7 +1529,7 @@
         function solve(start, goal, ops) {
             let seen = new Set([key(start)]), fr = [start];
             for (let d = 1; d <= 8; d++) {
-                const nx = [];
+                const nx = []; if (seen.size > CAP) return null;
                 for (const n of fr) for (const o of ops) {
                     const v = o.f(n);
                     if (!v || seen.has(key(v))) continue;
@@ -1645,7 +1542,7 @@
         function countBest(start, goal, ops) {
             let layer = new Map([[key(start), [start, 1]]]), seen = new Set([key(start)]);
             for (let d = 1; d <= 8; d++) {
-                const nx = new Map();
+                const nx = new Map(); if (seen.size > CAP) return 0;
                 for (const [x, c] of layer.values()) for (const o of ops) {
                     const v = o.f(x);
                     if (!v || seen.has(key(v))) continue;
@@ -1660,6 +1557,14 @@
         const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
         function genOp(tier, mode) {
             const dec = mode === 'dec', more = mode !== 'whole';
+            if (tier === 8) {
+                const r = ri(0, more ? 17 : 16), hh = () => dec && Math.random() < .4, dd = () => { let v; do { v = ri(1, 49) } while (v % 10 === 0); return v / 10 };
+                if (r < 2) return mk('+' + (hh() ? dd() : ri(1, 12)), mode); if (r < 4) return mk('−' + (hh() ? dd() : ri(1, 12)), mode);
+                if (r < 6) return mk('×' + (hh() ? ['0.5', '1.5', '2.5'][ri(0, 2)] : ri(2, 5)), mode); if (r < 8) return mk('÷' + (hh() ? ['0.5', '2.5'][ri(0, 1)] : ri(2, 5)), mode);
+                if (r === 8) return mk('x²', mode); if (r === 9) return mk('|x|', mode); if (r === 10) return mk('√x', mode); if (r === 11) return mk('x³', mode);
+                if (r === 12) return mk('−x', mode); if (r === 13) return mk('mod ' + ri(3, 9), mode); if (r === 14) return mk('rev', mode);
+                return mk(more ? 'x⁻¹' : '|x|', mode);
+            }
             const t = ri(0, more ? 10 : 9), h = () => dec && Math.random() < .5,
                 dk = () => { let v; do { v = ri(1, 49) } while (v % 10 === 0); return v / 10 }, pk = a => a[ri(0, a.length - 1)];
             if (t < 2) return mk('+' + (h() ? dk() : ri(1, 9)), mode); if (t < 4) return mk('−' + (h() ? dk() : ri(1, 9)), mode);
@@ -1804,7 +1709,8 @@
             };
             raf = requestAnimationFrame(step);
         }
-        let undosUsed = 0, HC_UNDOS = 3;
+        let undosUsed = 0, HC_UNDOS = 3, dailyMode = false, dailyDate = '', dailyNote = '';
+        const hcOn = () => settings.hc && !dailyMode;
         let L = null, cur = null, hist = [], holes = 0, total = 0, counted = false, gaveUp = false, busy = false, timers = [];
         function stopReplay() { timers.forEach(clearTimeout); timers = []; busy = false; gaveUp = false; }
         function bestPath(start, goal, ops) {
@@ -1837,12 +1743,20 @@
         }
         function newLevel() {
             view = null; stopReplay(); stopFx();
-            const tier = parseInt($('diff').value, 10), mode = settings.num, gd = mode === 'dec' && !!settings.gdec, gf = mode === 'frac' && !!settings.gfrac, special = o => o.s === 'x⁻¹' || o.s.includes('.');
+            const t0 = parseInt($('diff').value, 10);
+            if (genLevel(t0) || (t0 === 8 && genLevel(6))) return;
+            NB = 100000; CAP = 1e9;
+            L = { start: F(1), goal: F(10), ops: [mk('+3'), mk('×2')], limit: 3 }; cur = L.start; hist = []; undosUsed = 0; counted = false; render();
+        }
+        function genLevel(tier) {
+            NB = tier === 8 ? 3000 : 100000; CAP = tier === 8 ? 40000 : 1e9;
+            const tp = tier === 8 ? ri(5, 7) : 0, mode = settings.num, gd = mode === 'dec' && !!settings.gdec, gf = mode === 'frac' && !!settings.gfrac, special = o => o.s === 'x⁻¹' || o.s.includes('.');
             for (let tries = 0; tries < 3000; tries++) {
-                const pool = []; const n = ri(4, 5) + (tier >= 4 ? 1 : 0);
+                const pool = []; const n = tier === 8 ? ri(7, 8) : ri(4, 5) + (tier >= 4 ? 1 : 0);
                 while (pool.length < n) { const o = genOp(tier, mode); if (!pool.some(p => p.s === o.s)) pool.push(o); }
                 if (mode !== 'whole' && !pool.some(special)) continue;
-                const start = F(ri(1, tier >= 6 ? 20 : 12)); let v = start; const steps = ri(tier, tier + 1); let ok = true;
+                if (tier === 8 && pool.filter(o => ['|x|', '√x', 'x³', '−x', 'rev', 'x²', 'x⁻¹'].includes(o.s) || o.s.startsWith('mod')).length < 3) continue;
+                const start = F(tier === 8 ? ri(2, 40) : ri(1, tier >= 6 ? 20 : 12)); let v = start; const steps = tier === 8 ? ri(tp, tp + 2) : ri(tier, tier + 1); let ok = true;
                 for (let i = 0; i < steps; i++) {
                     const o = pool[ri(0, pool.length - 1)]; const r = o.f(v);
                     if (!r || Math.abs(r.n) > 5000 || r.d > 5000) { ok = false; break; } v = r;
@@ -1851,11 +1765,13 @@
                 if (v.d !== 1 && !(gd && term(v) && v.d <= 100) && !(gf && v.d <= 30 && Math.abs(v.n) <= 500)) continue;
                 if ((gd || gf) && v.d === 1 && Math.random() < .6) continue;
                 const par = solve(start, v, pool);
-                if (!par || par < Math.max(2, tier - 1) || par > tier + 1) continue;
-                if (tries < 2000 && countBest(start, v, pool) < 2) continue;
-                L = { start, goal: v, ops: pool, limit: par }; cur = start; hist = []; undosUsed = 0; counted = false; render(); return;
+                if (!par || par < (tier === 8 ? 5 : Math.max(2, tier - 1)) || par > (tier === 8 ? 7 : tier + 1)) continue;
+                if (tier === 8 && tries < 2000 && par !== tp) continue;
+                const need = tier === 8 ? (tries < 1200 ? 6 : tries < 2200 ? 3 : 1) : (tries < 2000 ? 2 : 1);
+                if (need > 1 && countBest(start, v, pool) < need) continue;
+                L = { start, goal: v, ops: pool, limit: par }; cur = start; hist = []; undosUsed = 0; counted = false; render(); return true;
             }
-            L = { start: F(1), goal: F(10), ops: [mk('+3'), mk('×2')], limit: 3 }; cur = L.start; hist = []; undosUsed = 0; counted = false; render();
+            return false;
         }
         function updateNs() {
             if (!L) return;
@@ -1863,6 +1779,7 @@
             const px = avail / ((l1 + l2) + 3);
             document.querySelector('.board').style.setProperty('--ns', Math.max(1.4, Math.min(3.2, px / 16)) + 'rem');
         }
+        const whyNot = s => s[0] === '÷' ? 'not whole' : s === 'x⁻¹' ? 'undefined' : s === '√x' ? 'not a square' : (s.startsWith('mod') || s === 'rev') ? 'whole only' : 'too big';
         function render() {
             {
                 const dv = $('diff').value, mi = $('miD'), mm = $('miM');
@@ -1871,6 +1788,7 @@
             }
             const used = hist.length, won = same(cur, L.goal), over = used - L.limit;
             const sc = over <= 0 ? 'par' : (over + ' over par');
+            const full = hcOn() && !won && used >= L.limit;
             setFlip($('cur'), fmtS(cur), fmt(cur)); setFlip($('goal'), fmtS(L.goal), fmt(L.goal));
             $('goalfull').textContent = fmtS(L.goal) !== fmt(L.goal) ? fmt(L.goal) : '';
             $('curfull').textContent = fmtS(cur) !== fmt(cur) ? fmt(cur) : '';
@@ -1879,28 +1797,29 @@
             $('pips').innerHTML = Array.from({ length: Math.max(L.limit, used) }, (_, i) => `<span class="pip${i < used ? ' used' : ''}${i >= L.limit ? ' over' : ''}"></span>`).join('');
             $('left').textContent = `par ${L.limit} · ${used} ${used === 1 ? 'move' : 'moves'}` + (over > 0 ? ` · ${over} over par` : '');
             $('left').style.color = over > 0 ? 'var(--imag)' : '';
-            const tk = t => /^[+−×÷]/.test(t) ? t[0] + ' ' + t.slice(1) : t;
+            const tk = t => /^[+−×÷][\d.]/.test(t) ? t[0] + ' ' + t.slice(1) : t === '−x' ? 'negate' : t;
             $('trail').textContent = hist.length ? [fmt(L.start), ...hist.map(h => tk(h.s))].join(' ') + ' = ' + fmt(cur) : fmt(L.start);
             $('ops').innerHTML = '';
             L.ops.forEach(o => {
                 const b = document.createElement('button'); b.textContent = o.s;
-                const v = o.f(cur); b.disabled = won || !v || busy;
-                if (!won && !v) { b.title = o.s[0] === '÷' ? 'needs a whole-number result' : 'not possible here'; b.innerHTML = o.s + '<small>' + (o.s[0] === '÷' ? 'not whole' : o.s === 'x⁻¹' ? 'undefined' : 'too big') + '</small>'; }
+                const v = o.f(cur); b.disabled = won || !v || busy || full;
+                if (!won && !v) { const w = whyNot(o.s); b.title = w; b.innerHTML = o.s + '<small>' + w + '</small>'; }
                 b.onclick = () => { hist.push({ prev: cur, s: o.s }); cur = v; pend = true; render(); }; $('ops').appendChild(b);
             });
             drawLine();
             const left = HC_UNDOS - undosUsed;
-            $('undo').disabled = !used || won || busy || (settings.hc && left <= 0);
-            $('undo').textContent = settings.hc ? `undo (${Math.max(left, 0)} left)` : 'undo';
-            $('reset').disabled = settings.hc; $('reset').title = settings.hc ? 'not allowed in hardcore mode' : ''; $('rand').disabled = busy || won;
+            $('undo').disabled = !used || won || busy || (hcOn() && left <= 0);
+            $('undo').textContent = hcOn() ? `undo (${Math.max(left, 0)} left)` : 'undo';
+            $('rand').hidden = $('diff').hidden = dailyMode; $('reset').disabled = hcOn(); $('reset').title = hcOn() ? 'not allowed in hardcore mode' : ''; $('rand').disabled = busy || won;
             $('skipanim').hidden = !(busy && gaveUp);
             $('undo').style.display = $('reset').style.display = gaveUp ? 'none' : '';
             const m = $('msg'); m.className = ''; m.innerHTML = '';
+            if (full && !busy) { m.className = 'lose'; m.textContent = left > 0 ? 'out of moves. undo a move to keep trying, or give up.' : 'out of moves and undos. give up to see the solution.'; }
             if (won) {
-                if (!counted && !gaveUp) { counted = true; holes++; total += Math.max(over, 0); saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: !!settings.hc, num: settings.num, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s) }); clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
+                if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: !!settings.hc, num: settings.num, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
                 m.className = gaveUp ? 'lose' : 'win';
-                m.innerHTML = gaveUp ? `here's the par solution (${used} moves).<br><button id="nx">next level</button>` : `solved in ${used}: ${sc}.<br><button id="nx">next level</button>`;
-                $('nx').onclick = newLevel; $('nx').focus();
+                m.innerHTML = dailyMode ? `solved in ${used}: ${sc}.<br><span id="dnote"></span><br><button id="nx">back to calendar</button>` : gaveUp ? `here's the par solution (${used} moves).<br><button id="nx">next level</button>` : `solved in ${used}: ${sc}.<br><button id="nx">next level</button>`;
+                $('nx').onclick = dailyMode ? openDaily : newLevel; $('nx').focus(); if ($('dnote')) $('dnote').textContent = dailyNote;
             }
             $('score').textContent = holes ? `${holes} solved · ${total === 0 ? 'even' : '+' + total} over par in total` : '';
         }
@@ -1966,7 +1885,7 @@
                 ssTimer = setTimeout(() => { mn.hidden = true; if (nw) nw.hidden = true; }, an ? SW_DUR + 30 : 0);
             } else {
                 mn.hidden = false; if (nw) nw.hidden = false; parallax(adv ? -Math.round(innerWidth * .3) : 0);
-                if (!adv) { view = null; if (id === 'settings' && (settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac) !== decAtOpen) newLevel(); else render(); }
+                if (!adv) { view = null; if (id === 'settings' && (settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac) !== decAtOpen && !dailyMode) newLevel(); else render(); }
                 getComputedStyle(nw || mn).transform;
                 mn.classList.remove('away', 'awayR'); if (nw) nw.classList.remove('away', 'awayR'); st.classList.add(off);
                 if (an) {
@@ -1978,7 +1897,7 @@
             }
         }
         /* saved scores (localStorage) */
-        const SKEY = 'hs1_scores', DN = { 2: 'easy', 4: 'medium', 6: 'hard' };
+        const SKEY = 'hs1_scores', DN = { 2: 'easy', 4: 'medium', 6: 'hard', 8: 'challenge' };
         function loadScores() { try { const a = JSON.parse(localStorage.getItem(SKEY) || '[]'); return Array.isArray(a) ? a : [] } catch (e) { return [] } }
         function saveScore(e) { const a = loadScores(); a.push(e); while (a.length > 300) a.shift(); try { localStorage.setItem(SKEY, JSON.stringify(a)) } catch (x) { } }
         function renderScores() {
@@ -2014,6 +1933,8 @@
         }
         function replayScore(e) {
             if (!DN[e.d]) return;
+            dailyMode = false;
+            NB = e.d === 8 ? 3000 : 100000;
             settings.hc = !!e.hc; settings.num = e.num || (e.dec ? 'dec' : 'whole'); saveSettings(); applySettings();
             $('diff').value = String(e.d);
             const start = parseNum(e.s), goal = parseNum(e.g);
@@ -2067,8 +1988,8 @@
         $('dx').onclick = () => $('dlg').close();
         $('dlg').addEventListener('click', e => { if (e.target === $('dlg')) $('dlg').close(); });
         addEventListener('resize', () => { pend = false; if (L) { updateNs(); drawLine(); } });
-        $('undo').onclick = () => { if (settings.hc && undosUsed >= HC_UNDOS) return; const h = hist.pop(); if (h) { undosUsed++; cur = h.prev; flipRev = true; render(); flipRev = false; } };
-        $('reset').onclick = () => { if (settings.hc) return; stopReplay(); cur = L.start; hist = []; render(); };
+        $('undo').onclick = () => { if (hcOn() && undosUsed >= HC_UNDOS) return; const h = hist.pop(); if (h) { undosUsed++; cur = h.prev; flipRev = true; render(); flipRev = false; } };
+        $('reset').onclick = () => { if (hcOn()) return; stopReplay(); cur = L.start; hist = []; counted = false; dailyNote = ''; render(); };
         $('rand').onclick = giveUp;
         $('skipanim').onclick = skipReplay;
         $('diff').onchange = newLevel;
@@ -2082,15 +2003,154 @@
         placeNl();
         const onMq = () => { placeNl(); view = null; pend = false; if (L) drawLine(); };
         if (mqPhone.addEventListener) mqPhone.addEventListener('change', onMq); else mqPhone.addListener(onMq);
+        /* touch screens: :active is unreliable (iOS needs a touch listener), so mirror it with a class set on pointerdown */
+        document.addEventListener('touchstart', () => { }, { passive: true });
+        let pressedEl = null;
+        const unpress = () => { if (pressedEl) { pressedEl.classList.remove('pressed'); pressedEl = null; } };
+        document.addEventListener('pointerdown', e => {
+            const b = e.target.closest && e.target.closest('#ops button, .mopt');
+            unpress(); if (b && !b.disabled) { b.classList.add('pressed'); pressedEl = b; }
+        }, true);
+        ['pointerup', 'pointercancel', 'dragend'].forEach(ev => document.addEventListener(ev, unpress, true));
         function showView(v) {
             const mn = document.querySelector('main'), nw = $('nlwrap');
-            $('menu').hidden = v !== 'menu'; $('mainlevels').hidden = v !== 'main';
+            $('menu').hidden = v !== 'menu'; $('mainlevels').hidden = v !== 'main'; $('dailypg').hidden = v !== 'daily';
             mn.hidden = v !== 'random'; nw.hidden = v !== 'random';
             document.body.classList.toggle('inmenu', v !== 'random');
             scrollTo(0, 0);
             if (v === 'random') { view = null; pend = false; if (L) { updateNs(); render(); } }
         }
-        $('mopt1').onclick = () => showView('random');
+        /* ---------- daily levels (needs the server: server.js + daily.js) ---------- */
+        const API = 'http://localhost:3000'; /* change to your server's address */
+        const DSTART = '2026-01-01'; /* must match DAILY_START on the server */
+        let user = '', calY = 0, calM = 0, todayStr = '';
+        try { user = localStorage.getItem('hs_user') || ''; } catch (e) { }
+        async function api(path, body) {
+            const r = await fetch(API + path, body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : undefined);
+            const j = await r.json().catch(() => ({}));
+            if (!r.ok) throw new Error(j.message || 'request failed');
+            return j;
+        }
+        const pad = n => String(n).padStart(2, '0'), MN = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+        /* guests can play every daily level; their results stay on this device until they log in */
+        const gLoad = () => { try { return JSON.parse(localStorage.getItem('hs_guest_daily') || '{}'); } catch (e) { return {}; } };
+        const gSave = o => { try { localStorage.setItem('hs_guest_daily', JSON.stringify(o)); } catch (e) { } };
+        async function syncGuest() {
+            const g = gLoad(); let changed = false;
+            for (const d in g) {
+                try { await api('/daily/submit', { username: user, date: d, moves: g[d].m }); delete g[d]; changed = true; }
+                catch (e) { if (/available|Invalid|reach/.test(e.message)) { delete g[d]; changed = true; } }
+            }
+            if (changed) gSave(g);
+        }
+        function showUser() { $('dauth').hidden = !!user; $('dwho').hidden = !user; $('dwn').textContent = 'playing as ' + user; }
+        async function dAuth(reg) {
+            const username = $('du').value.trim(), password = $('dp').value;
+            if (!username || !password) { $('dsub').textContent = 'enter a username and password'; return; }
+            try {
+                if (reg) await api('/register', { username, password });
+                user = (await api('/login', { username, password })).user; try { localStorage.setItem('hs_user', user); } catch (e) { }
+                $('dp').value = ''; showUser(); await syncGuest(); renderCal();
+            } catch (e) { $('dsub').textContent = e.message; }
+        }
+        async function openDaily() {
+            dailyMode = false; showView('daily'); showUser(); $('dlb').hidden = true;
+            try {
+                todayStr = (await api('/daily')).date;
+                if (!calY) { calY = +todayStr.slice(0, 4); calM = +todayStr.slice(5, 7) - 1; }
+                $('dsub').textContent = user ? 'pick a day to play' : 'pick a day to play. guests can play too: log in to be on the leaderboard';
+                if (user) await syncGuest();
+            } catch (e) { $('dsub').textContent = "couldn't reach the server. check the API address in the script."; }
+            clockTick(); renderCal(); loadStats();
+        }
+        let clockBusy = false;
+        function clockTick() {
+            if ($('dailypg').hidden || !todayStr) return;
+            const [y, m, d] = todayStr.split('-').map(Number), ms = Date.UTC(y, m - 1, d + 1) - Date.now();
+            if (ms <= 0) { if (!clockBusy) { clockBusy = true; openDaily().finally(() => clockBusy = false); } return; }
+            const t = Math.floor(ms / 1000);
+            setFlip($('ch'), pad(Math.floor(t / 3600))); setFlip($('cm'), pad(Math.floor(t / 60) % 60)); setFlip($('cs'), pad(t % 60));
+        }
+        setInterval(clockTick, 1000);
+        async function loadStats() {
+            if (!todayStr) return;
+            const [y, m, d] = todayStr.split('-');
+            try {
+                const j = await api('/daily/stats/' + todayStr);
+                $('ssub').textContent = `${+m}/${+d}/${y}, daily #${j.number}`;
+                setFlip($('sn'), '00000'); setTimeout(() => setFlip($('sn'), String(Math.min(j.solved, 99999)).padStart(5, '0')), 120);
+            } catch (e) { $('ssub').textContent = "couldn't load the stats"; }
+        }
+        async function renderCal() {
+            const ym = calY + '-' + pad(calM + 1); let days = {};
+            $('ctitle').innerHTML = '<b></b> ' + calY; $('ctitle').firstChild.textContent = MN[calM];
+            if (user && todayStr) { try { days = (await api('/daily/month/' + ym + '?username=' + encodeURIComponent(user))).days; } catch (e) { } }
+            else if (!user) { const g = gLoad(); for (const d in g) if (d.startsWith(ym)) days[d] = { moves: g[d].m.length, par: g[d].par }; }
+            const g = $('cgrid'); g.innerHTML = '';
+            const first = new Date(Date.UTC(calY, calM, 1)).getUTCDay(), n = new Date(Date.UTC(calY, calM + 1, 0)).getUTCDate();
+            const tDay = todayStr.slice(0, 7) === ym ? +todayStr.slice(8) : 0;
+            ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].forEach((w, i) => { const c = document.createElement('div'); c.className = 'cw'; c.textContent = w; if (tDay && (first + tDay - 1) % 7 === i) c.classList.add('today'); g.appendChild(c); });
+            for (let i = 0; i < first; i++) g.appendChild(document.createElement('div'));
+            for (let d = 1; d <= n; d++) {
+                const date = ym + '-' + pad(d), b = document.createElement('button'), res = days[date];
+                b.className = 'cd'; b.textContent = d;
+                const ok = todayStr && date <= todayStr && date >= DSTART;
+                if (ok) { b.classList.add('play'); b.onclick = () => playDaily(date); } else b.disabled = true;
+                if (date === todayStr) b.classList.add('today'); else if (res) b.classList.add('done'); else if (ok) b.classList.add('miss');
+                if (res) {
+                    const p = document.createElement('span'); p.className = 'pips';
+                    for (let i = 0; i < Math.max(res.par, res.moves); i++) { const q = document.createElement('i'); q.className = (i < res.moves ? 'u ' : '') + (i >= res.par ? 'o' : ''); p.appendChild(q); }
+                    b.appendChild(p);
+                }
+                g.appendChild(b);
+            }
+        }
+        async function playDaily(date) {
+            try {
+                const lv = await api('/daily/level/' + date);
+                NB = 3000; stopReplay(); stopFx(); pend = false; view = null;
+                L = { start: F(lv.start), goal: F(lv.goal), ops: lv.ops.map(s => mk(s, 'whole')), limit: lv.par };
+                cur = L.start; hist = []; undosUsed = 0; counted = false; dailyNote = ''; dailyMode = true; dailyDate = date;
+                showView('random');
+            } catch (e) { $('dsub').textContent = e.message; }
+        }
+        async function submitDaily() {
+            if (!user) {
+                const g = gLoad(), mv = hist.map(h => h.s), prev = g[dailyDate];
+                if (!prev || mv.length < prev.m.length) { g[dailyDate] = { par: L.limit, m: mv }; gSave(g); }
+                dailyNote = "playing as a guest: this is saved on this device. log in on the calendar page to add your scores to the leaderboard.";
+                return;
+            }
+            dailyNote = 'saving…';
+            try {
+                const r = await api('/daily/submit', { username: user, date: dailyDate, moves: hist.map(h => h.s) });
+                dailyNote = `saved. your best for this day: ${r.best}${r.best <= r.par ? ' (par!)' : ''}. restart to try for fewer.`;
+            } catch (e) { dailyNote = e.message; }
+            if ($('dnote')) $('dnote').textContent = dailyNote;
+        }
+        $('dlogin').onclick = () => dAuth(false); $('dreg').onclick = () => dAuth(true);
+        $('dout').onclick = e => { e.preventDefault(); user = ''; try { localStorage.removeItem('hs_user'); } catch (x) { } showUser(); renderCal(); };
+        $('cprev').onclick = () => { if (--calM < 0) { calM = 11; calY--; } renderCal(); };
+        $('cnext').onclick = () => { if (++calM > 11) { calM = 0; calY++; } renderCal(); };
+        $('dback').onclick = () => showView('menu');
+        $('cmonth').onclick = async () => {
+            const box = $('dlb'); if (!box.hidden) { box.hidden = true; return; }
+            try {
+                const j = await api('/daily/leaderboard/month/' + calY + '-' + pad(calM + 1)); box.innerHTML = j.rows.length ? '' : '<li>no scores yet</li>';
+                j.rows.forEach((r, i) => { const li = document.createElement('li'); if (r.username === user) li.className = 'me'; const a = document.createElement('span'), b = document.createElement('span'); a.textContent = (i + 1) + '. ' + r.username; b.textContent = r.days + (r.days === 1 ? ' day' : ' days') + (r.over ? ' · +' + r.over : ''); li.append(a, b); box.appendChild(li); });
+            } catch (e) { box.innerHTML = "<li>couldn't load the leaderboard</li>"; }
+            box.hidden = false;
+        };
+        $('sboard').onclick = async () => {
+            const box = $('dlbd'); if (!box.hidden) { box.hidden = true; return; }
+            try {
+                const j = await api('/daily/leaderboard'); box.innerHTML = j.rows.length ? '' : '<li>no scores yet</li>';
+                j.rows.forEach((r, i) => { const li = document.createElement('li'); if (r.username === user) li.className = 'me'; const a = document.createElement('span'), b = document.createElement('span'); a.textContent = (i + 1) + '. ' + r.username; b.textContent = r.moves + ' moves'; li.append(a, b); box.appendChild(li); });
+            } catch (e) { box.innerHTML = "<li>couldn't load the leaderboard</li>"; }
+            box.hidden = false;
+        };
+        $('moptD').onclick = openDaily;
+        $('mopt1').onclick = () => { if (dailyMode) { dailyMode = false; newLevel(); } showView('random'); };
         $('mopt2').onclick = () => showView('main');
         $('mback').onclick = () => showView('menu');
         $('tomenu').onclick = () => showView('menu');

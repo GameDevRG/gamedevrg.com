@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>daily challenge · hole in √-1</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#10162a;--grid:#1c2542;--ink:#e9edfa;--soft:#8f9bc0;--card:#192040;--imag:#ff6fa5;--ok:#4fd49b;--line:#2d3861;--blue:#7cc8ff}
+*{box-sizing:border-box}
+body{margin:0;min-height:100dvh;background:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:28px 28px;color:var(--ink);font-family:'Bricolage Grotesque',system-ui,sans-serif;text-align:center;text-transform:lowercase}
+main{max-width:520px;margin:0 auto;padding:24px 14px 40px}
+h1{margin:0;font-size:2rem;font-weight:800}
+.sub{color:var(--soft);margin:4px 0 14px;font-size:.95rem}
+button,input{font-family:inherit;font-size:1rem;text-transform:lowercase}
+button{min-height:44px;padding:8px 16px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+button:disabled{opacity:.4;cursor:not-allowed}
+input{min-height:44px;padding:8px 10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:150px}
+.auth,.tools{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.board{background:var(--card);border:2px solid var(--ink);padding:18px;box-shadow:6px 6px 0 var(--ink)}
+.row{display:flex;align-items:center;justify-content:space-around;gap:16px}
+.lbl{color:var(--soft);font-size:.85rem}
+.num{font-size:3.2rem;font-weight:800;line-height:1.1;border:1px solid var(--line);background:var(--bg);padding:2px 14px;min-width:90px}
+.goal .num{color:var(--imag)}
+#info{margin:14px 0 4px;color:var(--soft)}
+#trail{min-height:1.5em;color:var(--soft);font-size:.95rem;margin-bottom:12px;overflow-wrap:anywhere}
+#ops{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-bottom:16px}
+#ops button{flex:0 0 100px;font-weight:800;font-size:1.4rem;line-height:1.1;padding:14px 6px;border:2px solid var(--blue);box-shadow:0 4px 0 var(--blue)}
+#ops button:active:not(:disabled){transform:translateY(4px);box-shadow:none}
+#ops button:disabled{transform:translateY(4px);box-shadow:none}
+#ops small{display:block;font-size:.65rem;font-weight:700}
+#msg{min-height:3em;font-weight:700;margin-top:12px}
+#msg.win{color:var(--ok)}#msg.bad{color:var(--imag)}
+h2{font-size:1.2rem;margin:26px 0 8px}
+ol{list-style:none;margin:0;padding:0;text-align:left}
+li{display:flex;justify-content:space-between;padding:8px 12px;border-top:1px solid var(--line)}
+li.me{color:var(--imag);font-weight:700}
+a{color:var(--blue)}
+.clockbox{margin-top:18px;padding:16px 14px}
+.clockbox h3{margin:0;font-size:1.15rem;font-weight:800}
+.clock{display:flex;align-items:flex-start;justify-content:center;gap:8px;margin-top:14px}
+.cg .lbl{margin-top:8px}
+.colon{color:var(--imag);font-size:2.1rem;font-weight:800;line-height:1.15}
+.fc{display:flex;gap:.14em;font-size:1.9rem;font-weight:800;line-height:1}
+.tile{position:relative;width:.8em;height:1.15em;perspective:5em;background:var(--bg);border:1px solid var(--line);color:var(--ink)}
+.tile::after{content:"";position:absolute;left:0;right:0;top:calc(50% - .5px);height:1px;background:rgba(255,255,255,.3);z-index:5}
+.tile::before{content:"";position:absolute;left:-4px;right:-4px;top:calc(50% - .08em);height:.16em;z-index:6;background:linear-gradient(90deg,var(--line) 3px,transparent 3px,transparent calc(100% - 3px),var(--line) calc(100% - 3px))}
+.tile .h{position:absolute;left:0;right:0;height:50%;overflow:hidden;background:var(--bg)}
+.tile .t{top:0;transform-origin:bottom}
+.tile .b{bottom:0;transform-origin:top;background:color-mix(in srgb,var(--bg) 55%,var(--card))}
+.tile .h span{position:absolute;left:0;right:0;height:200%;display:flex;align-items:center;justify-content:center;font-size:.9em}
+.tile .t span{top:0}.tile .b span{bottom:0}
+.tile .flap{display:none;z-index:3;backface-visibility:hidden}
+.tile.flipping .flap{display:block}
+.tile.flipping .f1{animation:ft .07s ease-in forwards}
+.tile.flipping .f2{transform:rotateX(90deg);animation:fb .07s ease-out .07s forwards}
+@keyframes ft{to{transform:rotateX(-90deg)}}
+@keyframes fb{to{transform:rotateX(0)}}
+@media (prefers-reduced-motion:reduce){.tile.flipping .f1,.tile.flipping .f2{animation:none}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <h1>daily challenge</h1>
+  <p class="sub" id="sub">loading…</p>
+
+  <div class="auth" id="auth">
+    <input id="u" placeholder="username" autocomplete="username">
+    <input id="p" type="password" placeholder="password" autocomplete="current-password">
+    <button id="login">log in</button><button id="reg">register</button>
+  </div>
+  <p class="sub" id="who" hidden><span id="wn"></span> · <a href="#" id="out">log out</a></p>
+
+  <section class="board" id="game" hidden>
+    <div class="row">
+      <div><div class="lbl">you have</div><div class="num" id="cur">0</div></div>
+      <div class="goal"><div class="lbl">goal</div><div class="num" id="goal">0</div></div>
+    </div>
+    <div id="info"></div>
+    <div id="trail"></div>
+    <div id="ops"></div>
+    <div class="tools"><button id="undo">undo</button><button id="restart">restart level</button></div>
+    <div id="msg" role="status"></div>
+  </section>
+
+  <section class="board clockbox">
+    <h3>new daily in</h3>
+    <div class="clock">
+      <div class="cg"><div class="fc" id="ch"></div><div class="lbl">hour</div></div><span class="colon">:</span>
+      <div class="cg"><div class="fc" id="cm"></div><div class="lbl">minute</div></div><span class="colon">:</span>
+      <div class="cg"><div class="fc" id="cs"></div><div class="lbl">second</div></div>
+    </div>
+  </section>
+
+  <h2>today's leaderboard</h2>
+  <ol id="lb"></ol>
+</main>
+
+<script>
+/* point this at your server (the one running server.js) */
+const API = 'http://localhost:3000';
+
+const $ = id => document.getElementById(id);
+const BOUND = 3000;
+
+/* same rules as the server: whole numbers only, anything past ±3000 is "too big" */
+function apply(s, x) {
+  let r;
+  if (s === 'x²') r = x * x;
+  else if (s === 'x³') r = x * x * x;
+  else if (s === '|x|') r = Math.abs(x);
+  else if (s === '−x') r = -x;
+  else if (s === '√x') { if (x < 0) return null; r = Math.round(Math.sqrt(x)); if (r * r !== x) return null; }
+  else if (s === 'rev') { if (x < 0) return null; r = parseInt(String(x).split('').reverse().join(''), 10); }
+  else if (s.startsWith('mod ')) { const k = parseInt(s.slice(4), 10); r = ((x % k) + k) % k; }
+  else {
+    const k = parseInt(s.slice(1), 10), o = s[0];
+    if (o === '+') r = x + k; else if (o === '−') r = x - k; else if (o === '×') r = x * k;
+    else if (o === '÷') { if (x % k) return null; r = x / k; } else return null;
+  }
+  return Math.abs(r) > BOUND ? null : r;
+}
+const why = s => s[0] === '÷' ? 'not whole' : s === '√x' ? 'not a square' : (s.startsWith('mod') || s === 'rev') ? 'whole only' : 'too big';
+
+async function api(path, body) {
+  const r = await fetch(API + path, body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : undefined);
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.message || 'request failed');
+  return j;
+}
+
+let L = null, cur = 0, hist = [], user = '', saved = false;
+try { user = localStorage.getItem('hs_user') || ''; } catch (e) { }
+
+function setMsg(t, c) { $('msg').textContent = t || ''; $('msg').className = c || ''; }
+
+function render() {
+  const won = cur === L.goal, used = hist.length, over = used - L.par;
+  $('cur').textContent = cur; $('goal').textContent = L.goal;
+  $('info').textContent = `par ${L.par} · ${used} ${used === 1 ? 'move' : 'moves'}` + (over > 0 ? ` · ${over} over par` : '');
+  const tk = t => /^[+−×÷]\d/.test(t) ? t[0] + ' ' + t.slice(1) : t === '−x' ? 'negate' : t;
+  $('trail').textContent = hist.length ? [L.start, ...hist.map(tk)].join(' ') + ' = ' + cur : String(L.start);
+  $('ops').innerHTML = '';
+  L.ops.forEach(o => {
+    const b = document.createElement('button'), v = apply(o, cur);
+    b.textContent = o; b.disabled = won || v === null;
+    if (!won && v === null) b.innerHTML = o + '<small>' + why(o) + '</small>';
+    b.onclick = () => { hist.push(o); cur = v; render(); };
+    $('ops').appendChild(b);
+  });
+  $('undo').disabled = !used || won;
+  if (won && !saved) { saved = true; submit(); }
+}
+
+async function submit() {
+  if (!user) { setMsg(`solved in ${hist.length}. log in to save your score, then restart and solve it again.`, 'win'); saved = false; return; }
+  try {
+    const r = await api('/daily/submit', { username: user, date: L.date, moves: hist.slice() });
+    setMsg(`solved in ${r.moves}${r.moves <= r.par ? ' (par!)' : ''}. your best today: ${r.best}. restart to try for fewer.`, 'win');
+    loadBoard();
+  } catch (e) { setMsg(e.message, 'bad'); }
+}
+
+function restart() { cur = L.start; hist = []; saved = false; setMsg(''); render(); }
+$('undo').onclick = () => { const o = hist.pop(); if (o !== undefined) { cur = L.start; hist.forEach(m => cur = apply(m, cur)); saved = false; setMsg(''); render(); } };
+$('restart').onclick = restart;
+
+async function loadBoard() {
+  try {
+    const j = await api('/daily/leaderboard');
+    $('lb').innerHTML = j.rows.length ? '' : '<li>no scores yet</li>';
+    j.rows.forEach((r, i) => {
+      const li = document.createElement('li'); if (r.username === user) li.className = 'me';
+      li.innerHTML = `<span>${i + 1}. </span>`; li.firstChild.textContent = (i + 1) + '. ' + r.username;
+      const m = document.createElement('span'); m.textContent = r.moves + ' moves'; li.appendChild(m); $('lb').appendChild(li);
+    });
+  } catch (e) { $('lb').innerHTML = '<li>couldn\'t load the leaderboard</li>'; }
+}
+
+function showUser() { $('auth').hidden = !!user; $('who').hidden = !user; $('wn').textContent = 'playing as ' + user; }
+async function auth(path) {
+  const username = $('u').value.trim(), password = $('p').value;
+  if (!username || !password) return setMsg('enter a username and password', 'bad');
+  try {
+    if (path === '/register') await api('/register', { username, password });
+    const j = await api('/login', { username, password });
+    user = j.user; try { localStorage.setItem('hs_user', user); } catch (e) { }
+    $('p').value = ''; showUser(); setMsg(''); loadBoard();
+  } catch (e) { setMsg(e.message, 'bad'); }
+}
+$('login').onclick = () => auth('/login');
+$('reg').onclick = () => auth('/register');
+$('out').onclick = e => { e.preventDefault(); user = ''; try { localStorage.removeItem('hs_user'); } catch (x) { } showUser(); loadBoard(); };
+
+/* flip-clock digits */
+function setFlip(el, text) {
+  [...text].forEach((c, i) => {
+    let t = el.children[i];
+    if (!t) { t = document.createElement('div'); t.className = 'tile'; t.innerHTML = '<div class="h t"><span></span></div><div class="h b"><span></span></div><div class="flap h t f1"><span></span></div><div class="flap h b f2"><span></span></div>'; el.appendChild(t); }
+    const sp = t.querySelectorAll('span'), old = t.dataset.ch;
+    if (old === c) return;
+    clearTimeout(t._tm);
+    if (old === undefined) { sp.forEach(x => x.textContent = c); t.dataset.ch = c; return; }
+    sp[1].textContent = old; sp[0].textContent = c; sp[2].textContent = old; sp[3].textContent = c;
+    t.classList.remove('flipping'); void t.offsetWidth; t.classList.add('flipping'); t.dataset.ch = c;
+    t._tm = setTimeout(() => { sp[1].textContent = c; t.classList.remove('flipping'); }, 160);
+  });
+}
+
+function tick() {
+  if (!L) return;
+  const ms = new Date(L.resetsAt) - Date.now();
+  if (ms <= 0) { init(); return; }
+  const p = n => String(n).padStart(2, '0');
+  $('sub').textContent = L.date;
+  setFlip($('ch'), p(Math.floor(ms / 36e5))); setFlip($('cm'), p(Math.floor(ms / 6e4) % 60)); setFlip($('cs'), p(Math.floor(ms / 1e3) % 60));
+}
+
+async function init() {
+  try {
+    L = await api('/daily');
+    $('game').hidden = false; restart(); tick(); loadBoard();
+  } catch (e) { $('sub').textContent = 'couldn\'t reach the server. check the API address at the top of the script.'; }
+}
+showUser(); init(); setInterval(tick, 1000);
+</script>
+</body>
+</html>
