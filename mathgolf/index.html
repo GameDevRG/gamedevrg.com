@@ -129,6 +129,7 @@
             --ballstroke: #9aa6c6;
             --dimple: #c5ccdd;
             --yellow: #ffd54a;
+            --gold: #ffe08a;
             box-sizing: border-box;
             padding-top: env(safe-area-inset-top, 0px);
             padding-bottom: env(safe-area-inset-bottom, 0px)
@@ -149,7 +150,8 @@
             --hole: #14213d;
             --ballstroke: #14213d;
             --dimple: #9aa6c6;
-            --yellow: #b7791f
+            --yellow: #b7791f;
+            --gold: #e0a526
         }
 
         html {
@@ -700,10 +702,12 @@
         .mopt b { display: block; font-size: 1.5rem; font-weight: 800 }
         .mopt span { display: block; margin-top: 4px; font-size: .9rem; color: var(--soft) }
         .mopt.red { border-color: var(--imag); box-shadow: 0 4px 0 var(--imag) }
-        .mopt.gold { border-color: var(--yellow); box-shadow: 0 4px 0 var(--yellow) }
+        .mopt.gold { border-color: var(--gold); box-shadow: 0 4px 0 var(--gold) }
         .mopt.green { border-color: var(--ok); box-shadow: 0 4px 0 var(--ok) }
-        .mopt:hover, .mopt.red:hover, .mopt.gold:hover, .mopt.green:hover { border-color: var(--ink); box-shadow: 0 4px 0 var(--ink) }
-        .mopt:active, .mopt.pressed, .mopt.red:active, .mopt.red.pressed, .mopt.gold:active, .mopt.gold.pressed, .mopt.green:active, .mopt.green.pressed { transform: translateY(4px); box-shadow: 0 0 0 var(--ink) }
+        .mopt.white { border-color: #fff; box-shadow: 0 4px 0 #fff }
+        :root[data-theme="light"] .mopt.white { border-color: #c9d0e0; box-shadow: 0 4px 0 #c9d0e0 }
+        .mopt:hover, .mopt.red:hover, .mopt.gold:hover, .mopt.green:hover, .mopt.white:hover, :root[data-theme="light"] .mopt.white:hover { border-color: var(--ink); box-shadow: 0 4px 0 var(--ink) }
+        .mopt:active, .mopt.pressed, .mopt.white:active, .mopt.white.pressed, :root[data-theme="light"] .mopt.white:active, :root[data-theme="light"] .mopt.white.pressed, .mopt.red:active, .mopt.red.pressed, .mopt.gold:active, .mopt.gold.pressed, .mopt.green:active, .mopt.green.pressed { transform: translateY(4px); box-shadow: 0 0 0 var(--ink) }
         .pgh { margin: 0; font-size: 2rem; font-weight: 800 }
         .dgroups { display: flex; flex-direction: column; gap: 14px; margin: 22px 0 18px }
         .dgroup { background: var(--card); border: 2px solid var(--line); padding: 16px }
@@ -1347,7 +1351,7 @@
         <div class="mopts">
             <button class="mopt" id="mopt1"><b>random levels</b><span>endless, freshly generated levels at the difficulty you pick</span></button>
             <button class="mopt gold" id="moptD"><b>daily levels</b><span>a new challenge every day, plus a calendar of past days</span></button>
-            <button class="mopt green" id="moptS"><b>your stats</b><span>daily streaks, par rate and more</span></button>
+            <button class="mopt white" id="moptS"><b>your stats</b><span>daily streaks, par rate and more</span></button>
             <button class="mopt red" id="mopt2"><b>main levels</b><span>hand-made levels for each difficulty</span></button>
         </div>
     </section>
@@ -1456,8 +1460,8 @@
         <div class="how"><button id="tomenu">main menu</button><button id="sc">scores</button><button id="what">what is this?</button><button
                 id="opts">settings</button></div>
         <dialog id="dlg">
-            <p>every level is freshly generated and gives only the operations you need. par is the fewest moves that can
-                work,
+            <p>every level is freshly generated and gives only the operations you need. par is a number of moves that is
+                guaranteed to work (on challenge there is often a shorter route, so you can beat par),
                 and you can keep going past it, but every extra move is one over par. many levels have more than one
                 route. in
                 hardcore mode (settings) you only get 3 undos per level, can't restart, and can't go over par. by default levels use whole numbers, and division only works when the result is whole, so a greyed-out ÷ button means your number doesn't divide evenly. challenge difficulty adds extra operations like |x| (absolute value), √x, x³, negate, mod and digit reverse, and has lots of different solutions. in settings you can switch to decimals (moves like +0.5, and x⁻¹ turns 4 into 0.25) or fractions (division can leave fractions, and x⁻¹ turns 4 into 1/4). in decimals mode you can also allow decimal goals.</p><button
@@ -1803,7 +1807,7 @@
                 while (pool.length < n) { const o = genOp(tier, mode); if (!pool.some(p => p.s === o.s)) pool.push(o); }
                 if (mode !== 'whole' && !pool.some(special)) continue;
                 if (tier === 8 && pool.filter(o => ['|x|', '√x', 'x³', '−x', 'rev', 'x²', 'x⁻¹'].includes(o.s) || o.s.startsWith('mod')).length < 3) continue;
-                const start = F(tier === 8 ? ri(2, 40) : ri(1, tier >= 6 ? 20 : 12)); let v = start; const steps = tier === 8 ? ri(tp, tp + 2) : ri(tier, tier + 1); let ok = true;
+                const start = F(tier === 8 ? ri(2, 40) : ri(1, tier >= 6 ? 20 : 12)); let v = start; const steps = tier === 8 ? tp : ri(tier, tier + 1); let ok = true;
                 for (let i = 0; i < steps; i++) {
                     const o = pool[ri(0, pool.length - 1)]; const r = o.f(v);
                     if (!r || Math.abs(r.n) > 5000 || r.d > 5000) { ok = false; break; } v = r;
@@ -1812,11 +1816,14 @@
                 if (v.d !== 1 && !(gd && term(v) && v.d <= 100) && !(gf && v.d <= 30 && Math.abs(v.n) <= 500)) continue;
                 if ((gd || gf) && v.d === 1 && Math.random() < .6) continue;
                 const par = solve(start, v, pool);
-                if (!par || par < (tier === 8 ? 5 : Math.max(2, tier - 1)) || par > (tier === 8 ? 7 : tier + 1)) continue;
-                if (tier === 8 && tries < 2000 && par !== tp) continue;
-                const need = tier === 8 ? (tries < 1200 ? 6 : tries < 2200 ? 3 : 1) : (tries < 2000 ? 2 : 1);
+                if (tier === 8) {
+                    /* challenge: par = the planted route (always reachable); a shorter route must also exist */
+                    if (!par || par >= tp || par < Math.max(3, tp - 2)) continue;
+                    if (tries < 1800 && par !== tp - 1) continue; /* prefer exactly 1 under par */
+                } else if (!par || par < Math.max(2, tier - 1) || par > tier + 1) continue;
+                const need = tier === 8 ? (tries < 1200 ? 2 : 1) : (tries < 2000 ? 2 : 1);
                 if (need > 1 && countBest(start, v, pool) < need) continue;
-                L = { start, goal: v, ops: pool, limit: par }; cur = start; hist = []; undosUsed = 0; counted = false; render(); return true;
+                L = { start, goal: v, ops: pool, limit: tier === 8 ? tp : par }; cur = start; hist = []; undosUsed = 0; counted = false; render(); return true;
             }
             return false;
         }
@@ -1834,7 +1841,7 @@
                 mm.textContent = settings.hc ? 'hardcore' : 'normal'; mm.className = settings.hc ? 'mhc' : 'mnorm';
             }
             const used = hist.length, won = same(cur, L.goal), over = used - L.limit;
-            const sc = over <= 0 ? 'par' : (over + ' over par');
+            const sc = over < 0 ? (-over + ' under par') : over === 0 ? 'par' : (over + ' over par');
             const full = hcOn() && !won && used >= L.limit;
             setFlip($('cur'), fmtS(cur), fmt(cur)); setFlip($('goal'), fmtS(L.goal), fmt(L.goal));
             $('goalfull').textContent = fmtS(L.goal) !== fmt(L.goal) ? fmt(L.goal) : '';
@@ -1865,7 +1872,7 @@
             if (won) {
                 if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: !!settings.hc, num: settings.num, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
                 m.className = gaveUp ? 'lose' : 'win';
-                m.innerHTML = dailyMode ? `solved in ${used}: ${sc}.<br><span id="dnote"></span><br><button id="nx">back to calendar</button>` : gaveUp ? `here's the par solution (${used} moves).<br><button id="nx">next level</button>` : `solved in ${used}: ${sc}.<br><button id="nx">next level</button>`;
+                m.innerHTML = dailyMode ? `solved in ${used}: ${sc}.<br><span id="dnote"></span><br><button id="nx">back to calendar</button>` : gaveUp ? `here's ${used < L.limit ? 'a solution under par' : 'the par solution'} (${used} moves).<br><button id="nx">next level</button>` : `solved in ${used}: ${sc}.<br><button id="nx">next level</button>`;
                 $('nx').onclick = dailyMode ? openDaily : newLevel; $('nx').focus(); if ($('dnote')) $('dnote').textContent = dailyNote;
             }
             $('score').textContent = holes ? `${holes} solved · ${total === 0 ? 'even' : '+' + total} over par in total` : '';
@@ -1988,7 +1995,7 @@
             let ops = null;
             if (start && goal && Array.isArray(e.o)) {
                 try { ops = e.o.map(s => mk(s, settings.num)); } catch (x) { ops = null; }
-                if (ops && (ops.some(o => !o) || solve(start, goal, ops) !== e.par)) ops = null;
+                if (ops && (ops.some(o => !o) || (e.d === 8 ? !(solve(start, goal, ops) <= e.par) : solve(start, goal, ops) !== e.par))) ops = null;
             }
             if (ops) {
                 stopReplay(); stopFx(); pend = false;
@@ -2223,7 +2230,7 @@
         }
         $('moptS').onclick = openStats;
         $('stback').onclick = () => showView('menu');
-        $('moptD').onclick = openDaily;
+        $('moptD').onclick = () => { location.href = '/mathgolf/daily/'; };
         $('mopt1').onclick = () => { if (dailyMode) { dailyMode = false; newLevel(); } showView('random'); };
         $('mopt2').onclick = () => showView('main');
         $('mback').onclick = () => showView('menu');
