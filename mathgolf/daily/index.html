@@ -690,6 +690,7 @@
         .cd.done { background: var(--blue); border-color: var(--blue); color: var(--bg) }
         .cd.late { background: var(--bg); border: 2px solid var(--blue); color: var(--blue) }
         .cd.today { background: var(--ink); border-color: var(--ink); color: var(--bg) }
+        .cd .mv { position: absolute; right: 4px; bottom: 2px; font-size: .7rem; font-weight: 700; line-height: 1; opacity: .9 }
         .cd .pips { position: absolute; left: 3px; bottom: 3px; display: flex; gap: 2px }
         .cd .pips i { width: 5px; height: 5px; background: rgba(0, 0, 0, .35) }
         .cd .pips i.u { background: #fff }
@@ -1360,7 +1361,7 @@
         <div class="mopts">
             <button class="mopt" id="mopt1"><b>random levels</b><span>endless, freshly generated levels at the difficulty you pick</span></button>
             <button class="mopt gold" id="moptD"><b>daily levels</b><span>a new challenge every day, plus a calendar of past days</span></button>
-            <button class="mopt green" id="moptS"><b>your stats</b><span>daily streaks, par rate and more</span></button>
+            <button class="mopt green" id="moptS"><b>your stats</b><span>daily streaks and more</span></button>
             <button class="mopt red" id="mopt2"><b>main levels</b><span>hand-made levels for each difficulty</span></button>
         </div>
     </section>
@@ -1439,7 +1440,7 @@
                             stroke-linejoin="miter" vector-effect="non-scaling-stroke" />
                     </svg><span class="vin">-1</span></span></h1>
             <p class="sub" id="dlvl" hidden></p>
-            <p class="sub">reach the goal in par moves or fewer</p>
+            <p class="sub" id="psub">reach the goal in par moves or fewer</p>
         </header>
         <section class="board">
             <div class="row">
@@ -1855,7 +1856,8 @@
                 mi.textContent = { 2: 'easy', 4: 'medium', 6: 'hard' }[dv] || ''; mi.className = 'dv' + dv;
                 mm.textContent = settings.hc ? 'hardcore' : 'normal'; mm.className = settings.hc ? 'mhc' : 'mnorm';
             }
-            const used = hist.length, won = same(cur, L.goal), over = used - L.limit;
+            const used = hist.length, won = same(cur, L.goal), over = dailyMode ? 0 : used - L.limit; /* daily levels have no par */
+            $('psub').textContent = dailyMode ? 'reach the goal in as few moves as you can' : 'reach the goal in par moves or fewer';
             const sc = over <= 0 ? 'par' : (over + ' over par');
             const full = hcOn() && !won && used >= L.limit;
             setFlip($('cur'), fmtS(cur), fmt(cur)); setFlip($('goal'), fmtS(L.goal), fmt(L.goal));
@@ -1863,8 +1865,8 @@
             $('curfull').textContent = fmtS(cur) !== fmt(cur) ? fmt(cur) : '';
             document.querySelector('.board').classList.toggle('dec', settings.num === 'dec');
             updateNs();
-            $('pips').innerHTML = Array.from({ length: Math.max(L.limit, used) }, (_, i) => `<span class="pip${i < used ? ' used' : ''}${i >= L.limit ? ' over' : ''}"></span>`).join('');
-            $('left').textContent = `par ${L.limit} · ${used} ${used === 1 ? 'move' : 'moves'}` + (over > 0 ? ` · ${over} over par` : '');
+            $('pips').innerHTML = dailyMode ? '' : Array.from({ length: Math.max(L.limit, used) }, (_, i) => `<span class="pip${i < used ? ' used' : ''}${i >= L.limit ? ' over' : ''}"></span>`).join('');
+            $('left').textContent = dailyMode ? `${used} ${used === 1 ? 'move' : 'moves'}` : `par ${L.limit} · ${used} ${used === 1 ? 'move' : 'moves'}` + (over > 0 ? ` · ${over} over par` : '');
             $('left').style.color = over > 0 ? 'var(--imag)' : '';
             const tk = t => /^[+−×÷][\d.]/.test(t) ? t[0] + ' ' + t.slice(1) : t === '−x' ? 'negate' : t;
             $('trail').textContent = hist.length ? [fmt(L.start), ...hist.map(h => tk(h.s))].join(' ') + ' = ' + fmt(cur) : fmt(L.start);
@@ -1888,7 +1890,7 @@
             if (won) {
                 if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: !!settings.hc, num: settings.num, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
                 m.className = gaveUp ? 'lose' : 'win';
-                m.innerHTML = dailyMode ? `solved in ${used}: ${sc}.<br><span id="dnote"></span><br><button id="nx">back to calendar</button>` : gaveUp ? `here's the par solution (${used} moves).<br><button id="nx">next level</button>` : `solved in ${used}: ${sc}.<br><button id="nx">next level</button>`;
+                m.innerHTML = dailyMode ? `solved in ${used} ${used === 1 ? 'move' : 'moves'}.<br><span id="dnote"></span><br><button id="nx">back to calendar</button>` : gaveUp ? `here's the par solution (${used} moves).<br><button id="nx">next level</button>` : `solved in ${used}: ${sc}.<br><button id="nx">next level</button>`;
                 $('nx').onclick = dailyMode ? openDaily : newLevel; $('nx').focus(); if ($('dnote')) $('dnote').textContent = dailyNote;
             }
             $('score').textContent = holes ? `${holes} solved · ${total === 0 ? 'even' : '+' + total} over par in total` : '';
@@ -2145,7 +2147,7 @@
         async function loadStreaks() {
             let days = {};
             if (user) { try { days = (await api('/daily/history?username=' + encodeURIComponent(user))).days; } catch (e) { $('streakbar').hidden = true; return; } }
-            else { const g = gLoad(); for (const d in g) days[d] = { moves: g[d].m.length, par: g[d].par, late: !!g[d].late }; }
+            else { const g = gLoad(); for (const d in g) days[d] = { moves: g[d].m.length, late: !!g[d].late }; }
             const r = calcStreaks(days, todayStr || pacToday());
             $('sk1').textContent = r.streak; $('sk2').textContent = r.longest; $('streakbar').hidden = false;
         }
@@ -2202,7 +2204,7 @@
             const ym = calY + '-' + pad(calM + 1); let days = {};
             $('ctitle').innerHTML = '<b></b> ' + calY; $('ctitle').firstChild.textContent = MN[calM];
             if (user && todayStr) { try { days = (await api('/daily/month/' + ym + '?username=' + encodeURIComponent(user))).days; } catch (e) { } }
-            else if (!user) { const g = gLoad(); for (const d in g) if (d.startsWith(ym)) days[d] = { moves: g[d].m.length, par: g[d].par, late: !!g[d].late }; }
+            else if (!user) { const g = gLoad(); for (const d in g) if (d.startsWith(ym)) days[d] = { moves: g[d].m.length, late: !!g[d].late }; }
             const g = $('cgrid'); g.innerHTML = '';
             const first = new Date(Date.UTC(calY, calM, 1)).getUTCDay(), n = new Date(Date.UTC(calY, calM + 1, 0)).getUTCDate();
             const tDay = todayStr.slice(0, 7) === ym ? +todayStr.slice(8) : 0;
@@ -2215,8 +2217,7 @@
                 if (ok) { b.classList.add('play'); b.onclick = () => playDaily(date); } else b.disabled = true;
                 if (date === todayStr) b.classList.add('today'); else if (res) b.classList.add(res.late ? 'late' : 'done'); else if (ok) b.classList.add('miss');
                 if (res) {
-                    const p = document.createElement('span'); p.className = 'pips';
-                    for (let i = 0; i < Math.max(res.par, res.moves); i++) { const q = document.createElement('i'); q.className = (i < res.moves ? 'u ' : '') + (i >= res.par ? 'o' : ''); p.appendChild(q); }
+                    const p = document.createElement('span'); p.className = 'mv'; p.textContent = res.moves; p.title = res.moves + (res.moves === 1 ? ' move' : ' moves');
                     b.appendChild(p);
                 }
                 g.appendChild(b);
@@ -2240,7 +2241,7 @@
                 const md = lv.mode === 'whole' ? 'whole' : 'frac', cv = v => typeof v === 'object' ? F(v.n, v.d) : F(v);
                 NB = 3000; settings.num = md; /* in memory only, so fractions show as 7/4 whatever the main game is set to */
                 stopReplay(); stopFx(); pend = false; view = null;
-                L = { start: cv(lv.start), goal: cv(lv.goal), ops: lv.ops.map(s => mk(s, md)), limit: lv.par };
+                L = { start: cv(lv.start), goal: cv(lv.goal), ops: lv.ops.map(s => mk(s, md)), limit: 999 }; /* no par in daily levels */
                 cur = L.start; hist = []; undosUsed = 0; counted = false; dailyNote = ''; dailyMode = true; dailyDate = date;
                 showView('random');
                 loadDailySolved();
@@ -2249,14 +2250,14 @@
         async function submitDaily() {
             if (!user) {
                 const g = gLoad(), mv = hist.map(h => h.s), prev = g[dailyDate];
-                if (!prev || mv.length < prev.m.length) { g[dailyDate] = { par: L.limit, m: mv, late: prev ? !!prev.late : dailyDate < todayStr }; gSave(g); }
+                if (!prev || mv.length < prev.m.length) { g[dailyDate] = { m: mv, late: prev ? !!prev.late : dailyDate < todayStr }; gSave(g); }
                 dailyNote = "playing as a guest: this is saved on this device. log in on the calendar page to add your scores to the leaderboard.";
                 return;
             }
             dailyNote = 'saving…';
             try {
                 const r = await api('/daily/submit', { username: user, date: dailyDate, moves: hist.map(h => h.s) });
-                dailyNote = `saved. your best for this day: ${r.best}${r.best <= r.par ? ' (par!)' : ''}. restart to try for fewer.`;
+                dailyNote = `saved. your best for this day: ${r.best} ${r.best === 1 ? 'move' : 'moves'}. restart to try for fewer.`;
             } catch (e) { dailyNote = e.message; }
             loadDailySolved();
             if ($('dnote')) $('dnote').textContent = dailyNote;
@@ -2278,7 +2279,7 @@
                     const li = document.createElement('li'); if (r.username === user) li.className = 'me';
                     const a = document.createElement('span'), b = document.createElement('span');
                     a.textContent = (i + 1) + '. ' + r.username;
-                    b.textContent = day ? r.moves + ' moves' : r.days + (r.days === 1 ? ' day' : ' days') + (r.over ? ' · +' + r.over : '');
+                    b.textContent = day ? r.moves + ' moves' : r.days + (r.days === 1 ? ' day' : ' days') + (r.moves ? ' · ' + r.moves + (r.moves === 1 ? ' move' : ' moves') : '');
                     li.append(a, b); box.appendChild(li);
                 });
             } catch (e) { box.innerHTML = "<li>couldn't load the leaderboard</li>"; }
@@ -2293,12 +2294,12 @@
             $('stsub').textContent = user ? 'playing as ' + user : 'not logged in: showing results saved on this device';
             try { today = (await loadToday()).date; } catch (e) { }
             if (user) { try { days = (await api('/daily/history?username=' + encodeURIComponent(user))).days; } catch (e) { $('stsub').textContent = "couldn't load your account stats"; } }
-            else { const g = gLoad(); for (const d in g) days[d] = { moves: g[d].m.length, par: g[d].par, late: !!g[d].late }; }
+            else { const g = gLoad(); for (const d in g) days[d] = { moves: g[d].m.length, late: !!g[d].late }; }
             const ds = Object.keys(days).sort(), n = ds.length, { streak, longest } = calcStreaks(days, today);
             setFlip($('stn1'), String(n)); setFlip($('stn2'), String(streak)); setFlip($('stn3'), String(longest));
             const rows = (box, list) => { box.innerHTML = ''; list.forEach(([a, b, c]) => { const r = document.createElement('div'), x = document.createElement('span'), y = document.createElement('span'); r.className = 'strow'; x.textContent = a; if (c) x.className = c; y.textContent = b; r.append(x, y); box.appendChild(r); }); };
-            const atPar = ds.filter(d => days[d].moves <= days[d].par).length, over = ds.reduce((a, d) => a + Math.max(0, days[d].moves - days[d].par), 0), mv = ds.reduce((a, d) => a + days[d].moves, 0);
-            rows($('strows'), [['solved at par', n ? `${atPar} (${Math.round(100 * atPar / n)}%)` : '–'], ['average moves over par', n ? (over / n).toFixed(2) : '–'], ['total moves', n ? mv : '–'], ['first solved', ds[0] || '–'], ['most recent', ds[n - 1] || '–']]);
+            const mv = ds.reduce((a, d) => a + days[d].moves, 0);
+            rows($('strows'), [['average moves per level', n ? (mv / n).toFixed(1) : '–'], ['total moves', n ? mv : '–'], ['fewest moves', n ? Math.min(...ds.map(d => days[d].moves)) : '–'], ['first solved', ds[0] || '–'], ['most recent', ds[n - 1] || '–']]);
             const sc = loadScores(), cnt = k => sc.filter(e => e.d === k).length, so = sc.reduce((a, e) => a + Math.max(0, e.m - e.par), 0);
             rows($('strows2'), [['levels solved', sc.length], ['solved at par', sc.length ? `${sc.filter(e => e.m <= e.par).length} (${Math.round(100 * sc.filter(e => e.m <= e.par).length / sc.length)}%)` : '–'], ['average moves over par', sc.length ? (so / sc.length).toFixed(2) : '–'], ['hardcore solves', sc.filter(e => e.hc).length], ['easy', cnt(2), 'dv2'], ['medium', cnt(4), 'dv4'], ['hard', cnt(6), 'dv6'], ['challenge', cnt(8), 'dv8']]);
         }
