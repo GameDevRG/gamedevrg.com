@@ -451,12 +451,45 @@
             overflow-wrap: anywhere
         }
 
-        .srow.col { flex-direction: column; align-items: stretch }
-        .seg { display: flex; margin-top: 10px }
-        .seg button { flex: 1 1 0; min-height: 40px; padding: 6px 8px; font-family: inherit; font-weight: 700; font-size: .85rem; border: 1px solid var(--line); margin-left: -1px; background: var(--bg); color: var(--soft); cursor: pointer; text-transform: lowercase }
-        .seg button:first-child { margin-left: 0 }
-        .seg button[aria-checked="true"] { border-color: var(--imag); color: var(--imag); position: relative; z-index: 1 }
-        .sw:disabled { cursor: not-allowed }
+        .srow.col {
+            flex-direction: column;
+            align-items: stretch
+        }
+
+        .seg {
+            display: flex;
+            margin-top: 10px
+        }
+
+        .seg button {
+            flex: 1 1 0;
+            min-height: 40px;
+            padding: 6px 8px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: .85rem;
+            border: 1px solid var(--line);
+            margin-left: -1px;
+            background: var(--bg);
+            color: var(--soft);
+            cursor: pointer;
+            text-transform: lowercase
+        }
+
+        .seg button:first-child {
+            margin-left: 0
+        }
+
+        .seg button[aria-checked="true"] {
+            border-color: var(--imag);
+            color: var(--imag);
+            position: relative;
+            z-index: 1
+        }
+
+        .sw:disabled {
+            cursor: not-allowed
+        }
 
         .dec .full {
             min-height: 1.3em
@@ -505,19 +538,80 @@
             margin-bottom: 12px;
             overflow-wrap: anywhere
         }
-        #trail { font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", "Times New Roman", serif; font-size: 1.3rem; line-height: 2; color: var(--ink) }
-        #trail .op, #trail .pr { color: var(--soft) }
-        #trail .op { margin: 0 .04em }
-        #trail .pr { font-size: 1.15em }
-        #trail b { font-weight: 700 }
-        #trail sup { font-size: .68em; line-height: 0; vertical-align: .55em; margin-left: .05em }
-        #trail .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .8em; line-height: 1.2; margin: 0 .15em }
-        #trail .fr > span { padding: 0 .2em }
-        #trail .fr > span:first-child { border-bottom: 1.5px solid currentColor }
-        #trail .sqw { display: inline-flex; align-items: stretch; vertical-align: middle; line-height: 1.3; margin: 0 .05em }
-        #trail .sq { width: .75em; flex: none; overflow: visible }
-        #trail .rd { border-top: 1.6px solid currentColor; padding: .05em .12em 0 .06em; margin-left: -1px }
-        #trail .ab { margin: 0 .08em; font-size: 1.05em }
+
+        #trail {
+            font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", "Times New Roman", serif;
+            font-size: 1.3rem;
+            line-height: 2;
+            color: var(--ink)
+        }
+
+        #trail .op,
+        #trail .pr {
+            color: var(--soft)
+        }
+
+        #trail .op {
+            margin: 0 .04em
+        }
+
+        #trail .pr {
+            font-size: 1.15em
+        }
+
+        #trail b {
+            font-weight: 700
+        }
+
+        #trail sup {
+            font-size: .68em;
+            line-height: 0;
+            vertical-align: .55em;
+            margin-left: .05em
+        }
+
+        #trail .fr {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            text-align: center;
+            font-size: .8em;
+            line-height: 1.2;
+            margin: 0 .15em
+        }
+
+        #trail .fr>span {
+            padding: 0 .2em
+        }
+
+        #trail .fr>span:first-child {
+            border-bottom: 1.5px solid currentColor
+        }
+
+        #trail .sqw {
+            display: inline-flex;
+            align-items: stretch;
+            vertical-align: middle;
+            line-height: 1.3;
+            margin: 0 .05em
+        }
+
+        #trail .sq {
+            width: .75em;
+            flex: none;
+            overflow: visible
+        }
+
+        #trail .rd {
+            border-top: 1.6px solid currentColor;
+            padding: .05em .12em 0 .06em;
+            margin-left: -1px
+        }
+
+        #trail .ab {
+            margin: 0 .08em;
+            font-size: 1.05em
+        }
 
         .tile {
             position: relative;
@@ -662,72 +756,444 @@
             display: none !important
         }
 
-        .pg { width: 100%; max-width: 520px; margin: 0 auto; padding: 8vh 16px 20px; text-align: center; animation: pgIn .35s ease both }
-        .pg { transform-origin: 50% 6% }
-        @keyframes pgIn { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
-        .noanim .pg, .noanim.pg { animation: none }
-        body.inmenu { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) }
-        .stboard { margin-top: 16px; padding: 16px 14px }
-        .stgrid { display: flex; justify-content: space-around; gap: 8px; margin: 14px 0 10px }
-        .stg .num { font-size: 1.9rem; margin: 0 }
-        .stboard .tile, .stboard .plain { color: var(--blue) }
-        .stg .lbl { margin-top: 8px }
-        .strow { display: flex; justify-content: space-between; gap: 12px; padding: 9px 4px; border-top: 1px solid var(--line); text-align: left }
-        .strow span:last-child { font-weight: 800 }
-        #dailypg input { min-height: 44px; padding: 8px 10px; width: 150px; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); text-transform: lowercase }
-        #dailypg .tools button, #dailypg .calhead button { min-height: 44px; padding: 8px 16px; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; text-transform: lowercase }
-        #dailypg a { color: var(--blue) }
-        .cal { padding: 14px }
-        .solved { margin-top: 18px; padding: 16px 14px }
-        .sttl { margin: 0 0 2px; font-size: 1.15rem; font-weight: 800 }
-        .solved .num { font-size: 2.3rem; margin: 14px 0 }
-        .solved .tile, .solved .plain { color: var(--blue) }
-        .clockbox .tile, .clockbox .plain { color: var(--ink) }
-        .clockbox .num { margin: 0; font-size: 1.9rem }
-        .clock { display: flex; align-items: flex-start; justify-content: center; gap: 8px; margin-top: 14px }
-        .clock .lbl { margin-top: 8px }
-        .colon { color: var(--imag); font-size: 2.1rem; font-weight: 800; line-height: 1.15 }
-        #dlbd { list-style: none; margin: 4px 0 0; padding: 0; text-align: left }
-        #dlbd li { display: flex; justify-content: space-between; padding: 8px 12px; border-top: 1px solid var(--line) }
-        #dlbd li.me { color: var(--imag); font-weight: 700 }
-        #dailypg .solved .tools button { min-height: 44px; padding: 8px 16px; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; text-transform: lowercase }
-        .calhead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px }
-        .calhead h3 { margin: 0; font-size: 1.7rem; font-weight: 800 }
-        .calhead h3 b { color: var(--imag) }
-        #dailypg .calhead button { width: 44px; padding: 0; font-size: 1.4rem }
-        .calgrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px }
-        .cw { padding: 8px 0; background: var(--line); color: var(--ink); font-size: .9rem }
-        .cw.today { background: var(--ink); color: var(--bg) }
-        .cd { aspect-ratio: 1; position: relative; display: flex; align-items: center; justify-content: center; padding: 0; min-height: 0; font-family: inherit; font-weight: 800; font-size: 1.05rem; border: 1px solid var(--line); background: var(--bg); color: var(--soft); cursor: default }
-        .cd.play { cursor: pointer; color: var(--ink) }
-        .cd.play:hover { border-color: var(--ink) }
-        .cd.miss { border: 2px solid var(--imag); color: var(--imag) }
-        .cd.done { background: var(--blue); border-color: var(--blue); color: var(--bg) }
-        .cd.today { background: var(--ink); border-color: var(--ink); color: var(--bg) }
-        .cd .mv { position: absolute; right: 4px; bottom: 2px; font-size: .7rem; font-weight: 700; line-height: 1; opacity: .9 }
-        .cd .pips { position: absolute; left: 3px; bottom: 3px; display: flex; gap: 2px }
-        .cd .pips i { width: 5px; height: 5px; background: rgba(0, 0, 0, .35) }
-        .cd .pips i.u { background: #fff }
-        .cd .pips i.o { background: var(--imag) }
-        #dlb { list-style: none; margin: 14px 0 0; padding: 0; text-align: left }
-        #dlb li { display: flex; justify-content: space-between; padding: 8px 12px; border-top: 1px solid var(--line) }
-        #dlb li.me { color: var(--imag); font-weight: 700 }
-        .mopts { display: flex; flex-direction: column; gap: 14px; margin-top: 22px }
-        .mopt { display: block; width: 100%; padding: 18px 16px; text-align: center; font-family: inherit; color: var(--ink); background: var(--card); border: 2px solid var(--blue); box-shadow: 0 4px 0 var(--blue); cursor: pointer; transition: transform .08s, box-shadow .08s, border-color .15s }
-        .mopt b { display: block; font-size: 1.5rem; font-weight: 800 }
-        .mopt span { display: block; margin-top: 4px; font-size: .9rem; color: var(--soft) }
-        .mopt.red { border-color: var(--imag); box-shadow: 0 4px 0 var(--imag) }
-        .mopt.gold { border-color: var(--gold); box-shadow: 0 4px 0 var(--gold) }
-        .mopt.green { border-color: var(--ok); box-shadow: 0 4px 0 var(--ok) }
-        .mopt.white { border-color: #fff; box-shadow: 0 4px 0 #fff }
-        :root[data-theme="light"] .mopt.white { border-color: #c9d0e0; box-shadow: 0 4px 0 #c9d0e0 }
-        .mopt:hover, .mopt.red:hover, .mopt.gold:hover, .mopt.green:hover, .mopt.white:hover, :root[data-theme="light"] .mopt.white:hover { border-color: var(--ink); box-shadow: 0 4px 0 var(--ink) }
-        .mopt:active, .mopt.pressed, .mopt.white:active, .mopt.white.pressed, :root[data-theme="light"] .mopt.white:active, :root[data-theme="light"] .mopt.white.pressed, .mopt.red:active, .mopt.red.pressed, .mopt.gold:active, .mopt.gold.pressed, .mopt.green:active, .mopt.green.pressed { transform: translateY(4px); box-shadow: 0 0 0 var(--ink) }
-        .pgh { margin: 0; font-size: 2rem; font-weight: 800 }
-        .dgroups { display: flex; flex-direction: column; gap: 14px; margin: 22px 0 18px }
-        .dgroup { background: var(--card); border: 2px solid var(--line); padding: 16px }
-        .dgroup h3 { margin: 0 0 8px; font-size: 1.25rem; font-weight: 800 }
-        .soon { color: var(--soft); font-size: .95rem; padding: 14px; border: 1px dashed var(--line) }
+        .pg {
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 8vh 16px 20px;
+            text-align: center;
+            animation: pgIn .35s ease both
+        }
+
+        .pg {
+            transform-origin: 50% 6%
+        }
+
+        @keyframes pgIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        .noanim .pg,
+        .noanim.pg {
+            animation: none
+        }
+
+        body.inmenu {
+            padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px))
+        }
+
+        .stboard {
+            margin-top: 16px;
+            padding: 16px 14px
+        }
+
+        .stgrid {
+            display: flex;
+            justify-content: space-around;
+            gap: 8px;
+            margin: 14px 0 10px
+        }
+
+        .stg .num {
+            font-size: 1.9rem;
+            margin: 0
+        }
+
+        .stboard .tile,
+        .stboard .plain {
+            color: var(--blue)
+        }
+
+        .stg .lbl {
+            margin-top: 8px
+        }
+
+        .strow {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 9px 4px;
+            border-top: 1px solid var(--line);
+            text-align: left
+        }
+
+        .strow span:last-child {
+            font-weight: 800
+        }
+
+        #dailypg input {
+            min-height: 44px;
+            padding: 8px 10px;
+            width: 150px;
+            font-family: inherit;
+            font-size: 1rem;
+            border: 1px solid var(--line);
+            background: var(--bg);
+            color: var(--ink);
+            text-transform: lowercase
+        }
+
+        #dailypg .tools button,
+        #dailypg .calhead button {
+            min-height: 44px;
+            padding: 8px 16px;
+            font-family: inherit;
+            font-size: 1rem;
+            border: 1px solid var(--line);
+            background: var(--bg);
+            color: var(--ink);
+            cursor: pointer;
+            text-transform: lowercase
+        }
+
+        #dailypg a {
+            color: var(--blue)
+        }
+
+        .cal {
+            padding: 14px
+        }
+
+        .solved {
+            margin-top: 18px;
+            padding: 16px 14px
+        }
+
+        .sttl {
+            margin: 0 0 2px;
+            font-size: 1.15rem;
+            font-weight: 800
+        }
+
+        .solved .num {
+            font-size: 2.3rem;
+            margin: 14px 0
+        }
+
+        .solved .tile,
+        .solved .plain {
+            color: var(--blue)
+        }
+
+        .clockbox .tile,
+        .clockbox .plain {
+            color: var(--ink)
+        }
+
+        .clockbox .num {
+            margin: 0;
+            font-size: 1.9rem
+        }
+
+        .clock {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 14px
+        }
+
+        .clock .lbl {
+            margin-top: 8px
+        }
+
+        .colon {
+            color: var(--imag);
+            font-size: 2.1rem;
+            font-weight: 800;
+            line-height: 1.15
+        }
+
+        #dlbd {
+            list-style: none;
+            margin: 4px 0 0;
+            padding: 0;
+            text-align: left
+        }
+
+        #dlbd li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-top: 1px solid var(--line)
+        }
+
+        #dlbd li.me {
+            color: var(--imag);
+            font-weight: 700
+        }
+
+        #dailypg .solved .tools button {
+            min-height: 44px;
+            padding: 8px 16px;
+            font-family: inherit;
+            font-size: 1rem;
+            border: 1px solid var(--line);
+            background: var(--bg);
+            color: var(--ink);
+            cursor: pointer;
+            text-transform: lowercase
+        }
+
+        .calhead {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px
+        }
+
+        .calhead h3 {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: 800
+        }
+
+        .calhead h3 b {
+            color: var(--imag)
+        }
+
+        #dailypg .calhead button {
+            width: 44px;
+            padding: 0;
+            font-size: 1.4rem
+        }
+
+        .calgrid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px
+        }
+
+        .cw {
+            padding: 8px 0;
+            background: var(--line);
+            color: var(--ink);
+            font-size: .9rem
+        }
+
+        .cw.today {
+            background: var(--ink);
+            color: var(--bg)
+        }
+
+        .cd {
+            aspect-ratio: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            min-height: 0;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 1.05rem;
+            border: 1px solid var(--line);
+            background: var(--bg);
+            color: var(--soft);
+            cursor: default
+        }
+
+        .cd.play {
+            cursor: pointer;
+            color: var(--ink)
+        }
+
+        .cd.play:hover {
+            border-color: var(--ink)
+        }
+
+        .cd.miss {
+            border: 2px solid var(--imag);
+            color: var(--imag)
+        }
+
+        .cd.done {
+            background: var(--blue);
+            border-color: var(--blue);
+            color: var(--bg)
+        }
+
+        .cd.today {
+            background: var(--ink);
+            border-color: var(--ink);
+            color: var(--bg)
+        }
+
+        .cd .mv {
+            position: absolute;
+            right: 4px;
+            bottom: 2px;
+            font-size: .7rem;
+            font-weight: 700;
+            line-height: 1;
+            opacity: .9
+        }
+
+        .cd .pips {
+            position: absolute;
+            left: 3px;
+            bottom: 3px;
+            display: flex;
+            gap: 2px
+        }
+
+        .cd .pips i {
+            width: 5px;
+            height: 5px;
+            background: rgba(0, 0, 0, .35)
+        }
+
+        .cd .pips i.u {
+            background: #fff
+        }
+
+        .cd .pips i.o {
+            background: var(--imag)
+        }
+
+        #dlb {
+            list-style: none;
+            margin: 14px 0 0;
+            padding: 0;
+            text-align: left
+        }
+
+        #dlb li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-top: 1px solid var(--line)
+        }
+
+        #dlb li.me {
+            color: var(--imag);
+            font-weight: 700
+        }
+
+        .mopts {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 22px
+        }
+
+        .mopt {
+            display: block;
+            width: 100%;
+            padding: 18px 16px;
+            text-align: center;
+            font-family: inherit;
+            color: var(--ink);
+            background: var(--card);
+            border: 2px solid var(--blue);
+            box-shadow: 0 4px 0 var(--blue);
+            cursor: pointer;
+            transition: transform .08s, box-shadow .08s, border-color .15s
+        }
+
+        .mopt b {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 800
+        }
+
+        .mopt span {
+            display: block;
+            margin-top: 4px;
+            font-size: .9rem;
+            color: var(--soft)
+        }
+
+        .mopt.red {
+            border-color: var(--imag);
+            box-shadow: 0 4px 0 var(--imag)
+        }
+
+        .mopt.gold {
+            border-color: var(--gold);
+            box-shadow: 0 4px 0 var(--gold)
+        }
+
+        .mopt.green {
+            border-color: var(--ok);
+            box-shadow: 0 4px 0 var(--ok)
+        }
+
+        .mopt.white {
+            border-color: #fff;
+            box-shadow: 0 4px 0 #fff
+        }
+
+        :root[data-theme="light"] .mopt.white {
+            border-color: #c9d0e0;
+            box-shadow: 0 4px 0 #c9d0e0
+        }
+
+        .mopt:hover,
+        .mopt.red:hover,
+        .mopt.gold:hover,
+        .mopt.green:hover,
+        .mopt.white:hover,
+        :root[data-theme="light"] .mopt.white:hover {
+            border-color: var(--ink);
+            box-shadow: 0 4px 0 var(--ink)
+        }
+
+        .mopt:active,
+        .mopt.pressed,
+        .mopt.white:active,
+        .mopt.white.pressed,
+        :root[data-theme="light"] .mopt.white:active,
+        :root[data-theme="light"] .mopt.white.pressed,
+        .mopt.red:active,
+        .mopt.red.pressed,
+        .mopt.gold:active,
+        .mopt.gold.pressed,
+        .mopt.green:active,
+        .mopt.green.pressed {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 var(--ink)
+        }
+
+        .pgh {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 800
+        }
+
+        .dgroups {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin: 22px 0 18px
+        }
+
+        .dgroup {
+            background: var(--card);
+            border: 2px solid var(--line);
+            padding: 16px
+        }
+
+        .dgroup h3 {
+            margin: 0 0 8px;
+            font-size: 1.25rem;
+            font-weight: 800
+        }
+
+        .soon {
+            color: var(--soft);
+            font-size: .95rem;
+            padding: 14px;
+            border: 1px dashed var(--line)
+        }
 
         #settings,
         #scores,
@@ -751,13 +1217,41 @@
             transform: translateX(-100vw)
         }
 
-        #settings { transform-origin: 50% 6% }
-        #dailypg { animation: none; transform-origin: 50% 6% }
-        #dailypg.away { transform: translateX(-100vw) }
-        #dailypg.awayR { transform: translateX(100vw) }
-        #lbrows { list-style: none; margin: 10px 0 0; padding: 0; text-align: left }
-        #lbrows li { display: flex; justify-content: space-between; padding: 8px 12px; border-top: 1px solid var(--line) }
-        #lbrows li.me { color: var(--imag); font-weight: 700 }
+        #settings {
+            transform-origin: 50% 6%
+        }
+
+        #dailypg {
+            animation: none;
+            transform-origin: 50% 6%
+        }
+
+        #dailypg.away {
+            transform: translateX(-100vw)
+        }
+
+        #dailypg.awayR {
+            transform: translateX(100vw)
+        }
+
+        #lbrows {
+            list-style: none;
+            margin: 10px 0 0;
+            padding: 0;
+            text-align: left
+        }
+
+        #lbrows li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-top: 1px solid var(--line)
+        }
+
+        #lbrows li.me {
+            color: var(--imag);
+            font-weight: 700
+        }
 
         #scores.offL,
         #lb.offL {
@@ -967,11 +1461,35 @@
             transition: none !important
         }
 
-        :root.noui *:not(#nlwrap) { transition: none !important }
-        :root.noui .pg { animation: none }
-        :root.nofade { transition: none }
-        .lnk { flex: 0 0 auto; min-height: 40px; padding: 8px 14px; font-family: inherit; font-weight: 700; font-size: .9rem; border: 1px solid var(--blue); background: var(--bg); color: var(--blue); cursor: pointer }
-        .lnk:hover { border-color: var(--imag); color: var(--imag) }
+        :root.noui *:not(#nlwrap) {
+            transition: none !important
+        }
+
+        :root.noui .pg {
+            animation: none
+        }
+
+        :root.nofade {
+            transition: none
+        }
+
+        .lnk {
+            flex: 0 0 auto;
+            min-height: 40px;
+            padding: 8px 14px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: .9rem;
+            border: 1px solid var(--blue);
+            background: var(--bg);
+            color: var(--blue);
+            cursor: pointer
+        }
+
+        .lnk:hover {
+            border-color: var(--imag);
+            color: var(--imag)
+        }
 
         #fx {
             position: fixed;
@@ -1343,11 +1861,167 @@
         .board #nlwrap.awayR {
             transform: none
         }
+
+        /* ---------- menu polish ---------- */
+        #menu h1 {
+            font-size: clamp(2.4rem, 9vw, 3.4rem);
+            line-height: 1.1
+        }
+
+        #menu .sub {
+            margin-top: 8px;
+            font-size: 1.05rem
+        }
+
+        #menu .mopts {
+            margin-top: 32px;
+            gap: 16px
+        }
+
+        .mopt {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            padding: 18px 20px;
+            position: relative
+        }
+
+        .mopt::after {
+            content: "\2192";
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            font-weight: 800;
+            opacity: 0;
+            transition: opacity .15s, right .15s
+        }
+
+        .mopt:hover::after,
+        .mopt:focus-visible::after {
+            opacity: .8;
+            right: 14px
+        }
+
+        .mopt:hover:not(:active):not(.pressed) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 var(--ink)
+        }
+
+        .mopt:focus-visible {
+            outline: 3px solid var(--ink);
+            outline-offset: 3px
+        }
+
+        .mopt b {
+            letter-spacing: -.01em
+        }
+
+        .mopt span {
+            line-height: 1.35
+        }
+
+        #menu .mopt {
+            animation: moptIn .4s cubic-bezier(.2, .7, .2, 1) both
+        }
+
+        #menu .mopt:nth-child(1) {
+            animation-delay: .05s
+        }
+
+        #menu .mopt:nth-child(2) {
+            animation-delay: .12s
+        }
+
+        #menu .mopt:nth-child(3) {
+            animation-delay: .19s
+        }
+
+        #menu .mopt:nth-child(4) {
+            animation-delay: .26s
+        }
+
+        @keyframes moptIn {
+            from {
+                opacity: 0;
+                transform: translateY(14px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        .noanim #menu .mopt,
+        :root.noui #menu .mopt {
+            animation: none
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            #menu .mopt {
+                animation: none
+            }
+
+            .mopt::after {
+                transition: none
+            }
+        }
+
+        /* loading spinner */
+        .spin {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            border: 3px solid var(--line);
+            border-top-color: var(--ink);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+            vertical-align: middle
+        }
+
+        li.spinwrap {
+            list-style: none;
+            text-align: center;
+            padding: 14px 0
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            .spin {
+                animation-duration: 2.4s
+            }
+        }
+
+        /* fractions on operation buttons */
+        #ops button .fr {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            text-align: center;
+            font-size: .75em;
+            line-height: 1.15;
+            margin: 0 .1em 0 .12em
+        }
+
+        #ops button .fr>span {
+            padding: 0 .2em
+        }
+
+        #ops button .fr>span:first-child {
+            border-bottom: 2px solid currentColor
+        }
     </style>
     <script>try { var q = JSON.parse(localStorage.getItem('hs1') || '{}'); if (q.theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); if (q.hc) document.documentElement.classList.add('hc') } catch (e) { }</script>
 </head>
 
-<body>
+<body class="inmenu">
     <nav id="topbar" aria-label="site">
         <a class="logo" href="/gamedevrg.com/">gamedevrg<small>.com</small></a>
         <a class="tbtn" href="/gamedevrg.com/">homepage</a>
@@ -1355,7 +2029,7 @@
             aria-label="search" autocomplete="off">
         <button class="tbtn" id="tgo" type="button">search</button>
     </nav>
-    <section id="menu" class="pg" hidden>
+    <section id="menu" class="pg">
         <header>
             <h1>hole in <span class="rad"><svg viewBox="0 0 12 20" preserveAspectRatio="none" aria-hidden="true">
                         <path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="3"
@@ -1364,10 +2038,13 @@
             <p class="sub">choose how you want to play</p>
         </header>
         <div class="mopts">
-            <button class="mopt" id="mopt1"><b>random levels</b><span>endless, freshly generated levels at the difficulty you pick</span></button>
-            <button class="mopt gold" id="moptD"><b>daily levels</b><span>a new challenge every day, plus a calendar of past days</span></button>
+            <button class="mopt" id="mopt1"><b>random levels</b><span>endless, freshly generated levels at the
+                    difficulty you pick</span></button>
+            <button class="mopt gold" id="moptD"><b>daily levels</b><span>a new challenge every day, plus a calendar of
+                    past days</span></button>
             <button class="mopt white" id="moptS"><b>your stats</b><span>daily streaks and more</span></button>
-            <button class="mopt red" id="mopt2"><b>main levels</b><span>hand-made levels for each difficulty</span></button>
+            <button class="mopt red" id="mopt2"><b>main levels</b><span>hand-made levels for each
+                    difficulty</span></button>
         </div>
     </section>
     <section id="dailypg" class="pg" hidden>
@@ -1375,10 +2052,14 @@
             <h2 class="pgh">daily levels</h2>
             <p class="sub" id="dsub">pick a day to play</p>
         </header>
-        <div class="tools" id="dauth"><input id="du" placeholder="username" autocomplete="username"><input id="dp" type="password" placeholder="password" autocomplete="current-password"><button id="dlogin">log in</button><button id="dreg">register</button></div>
+        <div class="tools" id="dauth"><input id="du" placeholder="username" autocomplete="username"><input id="dp"
+                type="password" placeholder="password" autocomplete="current-password"><button id="dlogin">log
+                in</button><button id="dreg">register</button></div>
         <p class="sub" id="dwho" hidden><span id="dwn"></span></p>
         <div class="board cal">
-            <div class="calhead"><button id="cprev" aria-label="previous month">‹</button><h3 id="ctitle"></h3><button id="cnext" aria-label="next month">›</button></div>
+            <div class="calhead"><button id="cprev" aria-label="previous month">‹</button>
+                <h3 id="ctitle"></h3><button id="cnext" aria-label="next month">›</button>
+            </div>
             <div class="calgrid" id="cgrid"></div>
         </div>
         <div class="board solved" id="solvedbox">
@@ -1390,12 +2071,22 @@
         <div class="board solved clockbox">
             <h3 class="sttl">new daily in</h3>
             <div class="clock">
-                <div class="cg"><div class="num" id="ch"></div><div class="lbl">hour</div></div><span class="colon">:</span>
-                <div class="cg"><div class="num" id="cm"></div><div class="lbl">minute</div></div><span class="colon">:</span>
-                <div class="cg"><div class="num" id="cs"></div><div class="lbl">second</div></div>
+                <div class="cg">
+                    <div class="num" id="ch"></div>
+                    <div class="lbl">hour</div>
+                </div><span class="colon">:</span>
+                <div class="cg">
+                    <div class="num" id="cm"></div>
+                    <div class="lbl">minute</div>
+                </div><span class="colon">:</span>
+                <div class="cg">
+                    <div class="num" id="cs"></div>
+                    <div class="lbl">second</div>
+                </div>
             </div>
         </div>
-        <div class="tools"><button id="cmonth">monthly leaderboard</button><button id="dback">back to menu</button></div>
+        <div class="tools"><button id="cmonth">monthly leaderboard</button><button id="dback">back to menu</button>
+        </div>
     </section>
     <section id="statspg" class="pg" hidden>
         <header>
@@ -1405,9 +2096,18 @@
         <div class="board stboard">
             <h3 class="sttl">daily levels</h3>
             <div class="stgrid">
-                <div class="stg"><div class="num" id="stn1"></div><div class="lbl">solved</div></div>
-                <div class="stg"><div class="num" id="stn2"></div><div class="lbl">current streak</div></div>
-                <div class="stg"><div class="num" id="stn3"></div><div class="lbl">longest streak</div></div>
+                <div class="stg">
+                    <div class="num" id="stn1"></div>
+                    <div class="lbl">solved</div>
+                </div>
+                <div class="stg">
+                    <div class="num" id="stn2"></div>
+                    <div class="lbl">current streak</div>
+                </div>
+                <div class="stg">
+                    <div class="num" id="stn3"></div>
+                    <div class="lbl">longest streak</div>
+                </div>
             </div>
             <div id="strows"></div>
         </div>
@@ -1423,14 +2123,26 @@
             <p class="sub">hand-made levels, grouped by difficulty</p>
         </header>
         <div class="dgroups">
-            <div class="dgroup"><h3 class="dv2">easy</h3><div class="soon">levels coming soon</div></div>
-            <div class="dgroup"><h3 class="dv4">medium</h3><div class="soon">levels coming soon</div></div>
-            <div class="dgroup"><h3 class="dv6">hard</h3><div class="soon">levels coming soon</div></div>
-            <div class="dgroup"><h3 class="dv8">challenge</h3><div class="soon">levels coming soon</div></div>
+            <div class="dgroup">
+                <h3 class="dv2">easy</h3>
+                <div class="soon">levels coming soon</div>
+            </div>
+            <div class="dgroup">
+                <h3 class="dv4">medium</h3>
+                <div class="soon">levels coming soon</div>
+            </div>
+            <div class="dgroup">
+                <h3 class="dv6">hard</h3>
+                <div class="soon">levels coming soon</div>
+            </div>
+            <div class="dgroup">
+                <h3 class="dv8">challenge</h3>
+                <div class="soon">levels coming soon</div>
+            </div>
         </div>
         <div class="tools"><button id="mback">back to menu</button></div>
     </section>
-    <main>
+    <main hidden>
         <header>
             <h1>hole in <span class="rad"><svg viewBox="0 0 12 20" preserveAspectRatio="none" aria-hidden="true">
                         <path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="3"
@@ -1464,7 +2176,7 @@
                     <option value="2">easy</option>
                     <option value="4" selected>medium</option>
                     <option value="6">hard</option>
-                        <option value="8">challenge</option>
+                    <option value="8">challenge</option>
                 </select></div>
             <div id="modeinfo">
                 <div><i>difficulty:</i> <span id="miD"></span></div>
@@ -1473,14 +2185,22 @@
             <div id="msg" role="status"></div>
             <div class="lbl" id="score"></div>
         </section>
-        <div class="how"><button id="tomenu">main menu</button><button id="lbplay" hidden>leaderboard</button><button id="sc">scores</button><button id="what">what is this?</button><button
-                id="opts">settings</button></div>
+        <div class="how"><button id="tomenu">main menu</button><button id="lbplay" hidden>leaderboard</button><button
+                id="sc">scores</button><button id="what">what is this?</button><button id="opts">settings</button></div>
         <dialog id="dlg">
             <p>every level is freshly generated and gives only the operations you need. par is a number of moves that is
                 guaranteed to work (on challenge there is often a shorter route, so you can beat par),
                 and you can keep going past it, but every extra move is one over par. many levels have more than one
                 route. in
-                hardcore mode (settings) you only get 3 undos per level, can't restart, and can't go over par. by default levels use whole numbers, and division only works when the result is whole, so a greyed-out ÷ button means your number doesn't divide evenly. challenge difficulty adds extra operations like |x| (absolute value), √x, x³, negate, mod and digit reverse, and has lots of different solutions. in settings you can switch to decimals (moves like +0.5, and x⁻¹ turns 4 into 0.25) or fractions (division can leave fractions, and x⁻¹ turns 4 into 1/4). in decimals mode you can also allow decimal goals.</p><button
+                hardcore mode (settings) you only get 3 undos per level, can't restart, and can't go over par. by
+                default levels use whole numbers, and division only works when the result is whole, so a greyed-out ÷
+                button means your number doesn't divide evenly. challenge difficulty adds extra operations like |x|
+                (absolute value), √x, x³, negate, mod and digit reverse, and has lots of different solutions. in
+                settings you can switch to decimals (moves like +0.5, and x⁻¹ turns 4 into 0.25) or fractions (division
+                can leave fractions, and x⁻¹ turns 4 into 1/4). in decimals mode you can also allow decimal goals.
+                there's also a setting to let √x work on numbers that aren't perfect squares: it gives a root like 2√3.
+                a root can be multiplied, divided, negated, squared, cubed or inverted, but not added to or subtracted
+                from a plain number, so you have to square it back out. goals are never roots.</p><button
                 id="dx">gotcha</button>
         </dialog>
     </main>
@@ -1509,20 +2229,35 @@
                     <button class="sw" id="swAnim" role="switch" aria-checked="true" aria-label="animations"></button>
                 </div>
                 <div class="srow" id="rowAdv">
-                    <div><b>advanced animations</b><span>turn individual animations on or off</span></div><button class="lnk" id="advBtn">open</button>
+                    <div><b>advanced animations</b><span>turn individual animations on or off</span></div><button
+                        class="lnk" id="advBtn">open</button>
                 </div>
                 <div class="srow col">
                     <div><b>numbers</b><span>use whole numbers, decimals or fractions. starts a new level</span></div>
-                    <div class="seg" role="radiogroup" aria-label="number type"><button data-m="whole" role="radio" aria-checked="true">whole numbers</button><button data-m="dec" role="radio" aria-checked="false">decimals</button><button data-m="frac" role="radio" aria-checked="false">fractions</button></div>
+                    <div class="seg" role="radiogroup" aria-label="number type"><button data-m="whole" role="radio"
+                            aria-checked="true">whole numbers</button><button data-m="dec" role="radio"
+                            aria-checked="false">decimals</button><button data-m="frac" role="radio"
+                            aria-checked="false">fractions</button></div>
                 </div>
                 <div class="srow" id="rowGdec">
-                    <div><b>decimal goals</b><span>decimals only: the goal can be a decimal like 3.5, not just a whole number. starts a new level</span></div><button class="sw" id="swGdec" role="switch" aria-checked="false" aria-label="decimal goals"></button>
+                    <div><b>decimal goals</b><span>decimals only: the goal can be a decimal like 3.5, not just a whole
+                            number. starts a new level</span></div><button class="sw" id="swGdec" role="switch"
+                        aria-checked="false" aria-label="decimal goals"></button>
                 </div>
                 <div class="srow" id="rowGfrac">
-                    <div><b>fraction goals</b><span>fractions only: the goal can be a fraction like 7/4, not just a whole number. starts a new level</span></div><button class="sw" id="swGfrac" role="switch" aria-checked="false" aria-label="fraction goals"></button>
+                    <div><b>fraction goals</b><span>fractions only: the goal can be a fraction like 7/4, not just a
+                            whole number. starts a new level</span></div><button class="sw" id="swGfrac" role="switch"
+                        aria-checked="false" aria-label="fraction goals"></button>
+                </div>
+                <div class="srow" id="rowRoots">
+                    <div><b>roots of non-squares</b><span>√x works on any number, not just perfect squares, and gives a
+                            root like 2√3. you can't add to a root, so square it back out. goals are never roots. starts
+                            a new level</span></div><button class="sw" id="swRoots" role="switch" aria-checked="false"
+                        aria-label="roots of non-squares"></button>
                 </div>
                 <div class="srow">
-                    <div><b>hardcore mode</b><span>only 3 undos per level, no restarting, and you can't go over par</span></div>
+                    <div><b>hardcore mode</b><span>only 3 undos per level, no restarting, and you can't go over
+                            par</span></div>
                     <button class="sw" id="swHc" role="switch" aria-checked="false" aria-label="hardcore mode"></button>
                 </div>
                 <div class="srow">
@@ -1537,13 +2272,39 @@
         <div class="sp">
             <div class="board">
                 <h2>animations</h2>
-                <div class="srow"><div><b>tile flips</b><span>digits flip like a split-flap board</span></div><button class="sw" data-anim="flip" role="switch" aria-checked="true" aria-label="tile flips"></button></div>
-                <div class="srow"><div><b>ball flight</b><span>the ball arcs along the number line and the dotted trail follows it</span></div><button class="sw" data-anim="ball" role="switch" aria-checked="true" aria-label="ball flight"></button></div>
-                <div class="srow"><div><b>number line zoom</b><span>the line slides smoothly to a new scale</span></div><button class="sw" data-anim="zoom" role="switch" aria-checked="true" aria-label="number line zoom"></button></div>
-                <div class="srow"><div><b>confetti</b><span>a burst from the hole when you solve a level</span></div><button class="sw" data-anim="confetti" role="switch" aria-checked="true" aria-label="confetti"></button></div>
-                <div class="srow"><div><b>panel slides and sway</b><span>settings and scores slide in and lean as they move, and the background shifts</span></div><button class="sw" data-anim="slide" role="switch" aria-checked="true" aria-label="panel slides and sway"></button></div>
-                <div class="srow"><div><b>theme fade</b><span>colors fade between dark and light</span></div><button class="sw" data-anim="theme" role="switch" aria-checked="true" aria-label="theme fade"></button></div>
-                <div class="srow"><div><b>button and menu motion</b><span>button presses, hover changes and page fade-ins</span></div><button class="sw" data-anim="ui" role="switch" aria-checked="true" aria-label="button and menu motion"></button></div>
+                <div class="srow">
+                    <div><b>tile flips</b><span>digits flip like a split-flap board</span></div><button class="sw"
+                        data-anim="flip" role="switch" aria-checked="true" aria-label="tile flips"></button>
+                </div>
+                <div class="srow">
+                    <div><b>ball flight</b><span>the ball arcs along the number line and the dotted trail follows
+                            it</span></div><button class="sw" data-anim="ball" role="switch" aria-checked="true"
+                        aria-label="ball flight"></button>
+                </div>
+                <div class="srow">
+                    <div><b>number line zoom</b><span>the line slides smoothly to a new scale</span></div><button
+                        class="sw" data-anim="zoom" role="switch" aria-checked="true"
+                        aria-label="number line zoom"></button>
+                </div>
+                <div class="srow">
+                    <div><b>confetti</b><span>a burst from the hole when you solve a level</span></div><button
+                        class="sw" data-anim="confetti" role="switch" aria-checked="true"
+                        aria-label="confetti"></button>
+                </div>
+                <div class="srow">
+                    <div><b>panel slides and sway</b><span>settings and scores slide in and lean as they move, and the
+                            background shifts</span></div><button class="sw" data-anim="slide" role="switch"
+                        aria-checked="true" aria-label="panel slides and sway"></button>
+                </div>
+                <div class="srow">
+                    <div><b>theme fade</b><span>colors fade between dark and light</span></div><button class="sw"
+                        data-anim="theme" role="switch" aria-checked="true" aria-label="theme fade"></button>
+                </div>
+                <div class="srow">
+                    <div><b>button and menu motion</b><span>button presses, hover changes and page fade-ins</span></div>
+                    <button class="sw" data-anim="ui" role="switch" aria-checked="true"
+                        aria-label="button and menu motion"></button>
+                </div>
                 <div class="tools"><button id="advBack">back</button></div>
             </div>
         </div>
@@ -1559,15 +2320,20 @@
         </div>
     </section>
     <canvas id="fx" aria-hidden="true"></canvas>
-    <div id="nlwrap"><svg id="nl" viewBox="0 0 640 200" role="img"
+    <div id="nlwrap" hidden><svg id="nl" viewBox="0 0 640 200" role="img"
             aria-label="number line showing your ball, your hits and the hole"></svg></div>
     <script>
         const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b] } return a || 1 };
-        let NB = 100000, CAP = 1e9;
-        function F(n, d = 1) { if (d < 0) { n = -n; d = -d } const g = gcd(n, d); n /= g; d /= g; if (Math.abs(n) > NB || d > NB) return null; return { n, d } }
-        const key = x => x.n + '/' + x.d;
+        let NB = 100000, CAP = 1e9; const BMAX = 200;
+        /* a number is {n, d, b}: the value (n/d)·√b where b has no square factor (b = 1 is a plain fraction). roots like 2√3 only appear when "roots of non-squares" is on */
+        function F(n, d = 1, b = 1) { if (d < 0) { n = -n; d = -d } if (n === 0) b = 1; const g = gcd(n, d); n /= g; d /= g; if (Math.abs(n) > NB || d > NB || b > BMAX) return null; return { n, d, b } }
+        const sqfC = new Map();
+        /* m = k²·r with r having no square factor: returns [k, r] */
+        function sqf(m) { let c = sqfC.get(m); if (c) return c; let k = 1, r = m; for (let p = 2; p * p <= r; p++) while (r % (p * p) === 0) { r /= p * p; k *= p } c = [k, r]; sqfC.set(m, c); return c }
+        const key = x => x.n + '/' + x.d + (x.b > 1 ? 'r' + x.b : '');
         const term = x => { let d = x.d; while (d % 2 === 0) d /= 2; while (d % 5 === 0) d /= 5; return d === 1 };
         const fmt = x => {
+            if (x.b > 1) { const a = Math.abs(x.n); return (x.n < 0 ? '-' : '') + (a === 1 ? '' : a) + '√' + x.b + (x.d > 1 ? '/' + x.d : ''); } /* a root like 2√3 or √3/2 */
             if (x.d === 1) return String(x.n);
             if (settings.num === 'dec' && term(x)) {
                 let r = Math.abs(x.n) % x.d, t = Math.floor(Math.abs(x.n) / x.d) + '.', k = 0;
@@ -1577,21 +2343,21 @@
             return x.n + '/' + x.d;
         };
         const fmtS = x => { const f = fmt(x), i = f.indexOf('.'); return i >= 0 && f.length - i - 1 > 2 ? f.slice(0, i + 3) : f; };
-        const same = (a, b) => a.n === b.n && a.d === b.d;
-        function mk(s, mode) {
-            if (s === 'x²') return { s, f: x => F(x.n * x.n, x.d * x.d) };
-            if (s === '|x|') return { s, f: x => F(Math.abs(x.n), x.d) };
-            if (s === '−x') return { s, f: x => F(-x.n, x.d) };
-            if (s === 'x³') return { s, f: x => F(x.n * x.n * x.n, x.d * x.d * x.d) };
-            if (s === '√x') return { s, f: x => { if (x.n < 0) return null; const a = Math.round(Math.sqrt(x.n)), b = Math.round(Math.sqrt(x.d)); return a * a === x.n && b * b === x.d ? F(a, b) : null } };
-            if (s.startsWith('mod ')) { const k = parseInt(s.slice(4), 10); return { s, f: x => x.d !== 1 ? null : F(((x.n % k) + k) % k) }; }
-            if (s === 'rev') return { s, f: x => x.d !== 1 || x.n < 0 ? null : F(parseInt(String(x.n).split('').reverse().join(''), 10)) };
-            if (s === 'x⁻¹') return { s, f: x => { if (x.n === 0) return null; const r = F(x.d, x.n); return r && (mode !== 'dec' || r.d === 1 || term(r)) ? r : null } };
+        const same = (a, b) => a.n === b.n && a.d === b.d && (a.b || 1) === (b.b || 1);
+        function mk(s, mode, roots = !!settings.roots) {
+            if (s === 'x²') return { s, f: x => F(x.n * x.n * x.b, x.d * x.d) };
+            if (s === '|x|') return { s, f: x => F(Math.abs(x.n), x.d, x.b) };
+            if (s === '−x') return { s, f: x => F(-x.n, x.d, x.b) };
+            if (s === 'x³') return { s, f: x => F(x.n * x.n * x.n * x.b, x.d * x.d * x.d, x.b) };
+            if (s === '√x') return { s, f: x => { if (x.n < 0 || x.b > 1) return null; if (x.n === 0) return x; const [k, r] = sqf(x.n * x.d); return r > 1 && !roots ? null : F(k, x.d, r) } }; /* a non-square gives a root like 2√3 when roots are on */
+            if (s.startsWith('mod ')) { const k = parseInt(s.slice(4), 10); return { s, f: x => x.d !== 1 || x.b > 1 ? null : F(((x.n % k) + k) % k) }; }
+            if (s === 'rev') return { s, f: x => x.d !== 1 || x.b > 1 || x.n < 0 ? null : F(parseInt(String(x.n).split('').reverse().join(''), 10)) };
+            if (s === 'x⁻¹') return { s, f: x => { if (x.n === 0) return null; const r = F(x.d, x.n * x.b, x.b); return r && (mode !== 'dec' || r.d === 1 || term(r)) ? r : null } };
             const qs = s.slice(1), o = s[0], q = qs.includes('/') ? F(+qs.split('/')[0], +qs.split('/')[1]) : F(Math.round(parseFloat(qs) * 10), 10); /* the number can be whole, a decimal or a fraction (always kept in lowest terms) */
-            if (o === '+') return { s, f: x => F(x.n * q.d + q.n * x.d, x.d * q.d) };
-            if (o === '−') return { s, f: x => F(x.n * q.d - q.n * x.d, x.d * q.d) };
-            if (o === '×') return { s, f: x => F(x.n * q.n, x.d * q.d) };
-            if (o === '÷') return { s, f: x => { if (q.n === 0) return null; const r = F(x.n * q.d, x.d * q.n); return r && (r.d === 1 || mode === 'frac' || (mode === 'dec' && term(r))) ? r : null } };
+            if (o === '+') return { s, f: x => x.b > 1 ? null : F(x.n * q.d + q.n * x.d, x.d * q.d) };
+            if (o === '−') return { s, f: x => x.b > 1 ? null : F(x.n * q.d - q.n * x.d, x.d * q.d) };
+            if (o === '×') return { s, f: x => F(x.n * q.n, x.d * q.d, x.b) };
+            if (o === '÷') return { s, f: x => { if (q.n === 0) return null; const r = F(x.n * q.d, x.d * q.n, x.b); return r && (r.d === 1 || mode === 'frac' || (mode === 'dec' && term(r))) ? r : null } };
         }
         function solve(start, goal, ops) {
             let seen = new Set([key(start)]), fr = [start];
@@ -1623,9 +2389,10 @@
         const $ = id => document.getElementById(id);
         const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
         function genOp(tier, mode) {
-            const dec = mode === 'dec', more = mode !== 'whole';
+            const dec = mode === 'dec', more = mode !== 'whole', roots = !!settings.roots;
             if (tier === 8) {
-                let r; do r = ri(0, more ? 17 : 16); while (r === 14); const hh = () => dec && Math.random() < .4, hf = () => mode === 'frac' && Math.random() < .35, fq = () => { let d, n; do { d = ri(2, 5); n = ri(1, d * 3) } while (gcd(n, d) !== 1); return n + '/' + d }, dd = () => { let v; do { v = ri(1, 49) } while (v % 10 === 0); return v / 10 };
+                let r; do r = ri(0, more ? (roots ? 18 : 17) : (roots ? 17 : 16)); while (r === 14);
+                if (roots && r === (more ? 18 : 17)) return mk('√x', mode, true); /* with roots on, √x is a little more common */ const hh = () => dec && Math.random() < .4, hf = () => mode === 'frac' && Math.random() < .35, fq = () => { let d, n; do { d = ri(2, 5); n = ri(1, d * 3) } while (gcd(n, d) !== 1); return n + '/' + d }, dd = () => { let v; do { v = ri(1, 49) } while (v % 10 === 0); return v / 10 };
                 if (r < 2) return mk('+' + (hh() ? dd() : hf() ? fq() : ri(1, 12)), mode); if (r < 4) return mk('−' + (hh() ? dd() : hf() ? fq() : ri(1, 12)), mode);
                 if (r < 6) return mk('×' + (hh() ? ['0.5', '1.5', '2.5'][ri(0, 2)] : hf() ? fq() : ri(2, 5)), mode); if (r < 8) return mk('÷' + (hh() ? ['0.5', '2.5'][ri(0, 1)] : hf() ? fq() : ri(2, 5)), mode);
                 if (r === 8) return mk('x²', mode); if (r === 9) return mk('|x|', mode); if (r === 10) return mk('√x', mode); if (r === 11) return mk('x³', mode);
@@ -1636,10 +2403,11 @@
             if (t < 2) return mk('+' + (h() ? dk() : ri(1, 9)), mode); if (t < 4) return mk('−' + (h() ? dk() : ri(1, 9)), mode);
             if (t < 6) return mk('×' + (h() ? pk(['0.5', '1.5', '2.5', '0.2', '0.4']) : ri(2, 5)), mode);
             if (t < 8) return mk('÷' + (h() ? pk(['0.5', '0.2', '2.5', '0.4']) : ri(2, 5)), mode);
+            if (roots && t >= 8 && Math.random() < .5) return mk('√x', mode, true);
             if (t === 8 || !more) return mk('x²', mode);
             return mk('x⁻¹', mode);
         }
-        const NS = 'http://www.w3.org/2000/svg', val = x => x.n / x.d;
+        const NS = 'http://www.w3.org/2000/svg', val = x => x.n / x.d * Math.sqrt(x.b || 1);
         function mkTile() {
             const t = document.createElement('div'); t.className = 'tile'; t.setAttribute('aria-hidden', 'true');
             t.innerHTML = '<div class="h t"><span></span></div><div class="h b"><span></span></div><div class="flap h t f1"><span></span></div><div class="flap h b f2"><span></span></div>'; return t;
@@ -1654,7 +2422,7 @@
             t.classList.remove('flipping'); t.classList.toggle('rev', !!rev); void t.offsetWidth; t.classList.add('flipping'); t.dataset.ch = ch;
             t._tm = setTimeout(() => { sp[0].textContent = ch; sp[1].textContent = ch; t.classList.remove('flipping', 'rev'); }, 160);
         }
-        let settings = { flip: true, anim: true, theme: 'dark', num: 'whole', gdec: false, gfrac: false, hc: false };
+        let settings = { flip: true, anim: true, theme: 'dark', num: 'whole', gdec: false, gfrac: false, roots: false, hc: false };
         try { Object.assign(settings, JSON.parse(localStorage.getItem('hs1') || '{}')) } catch (e) { }
         settings.anims = Object.assign({ flip: true, ball: true, zoom: true, confetti: true, slide: true, theme: true, ui: true }, settings.anims || {});
         if (!['whole', 'dec', 'frac'].includes(settings.num)) settings.num = settings.dec ? 'dec' : 'whole';
@@ -1816,18 +2584,23 @@
         }
         function genLevel(tier) {
             NB = tier === 8 ? 3000 : 100000; CAP = tier === 8 ? 40000 : 1e9;
-            const tp = tier === 8 ? ri(5, 7) : 0, mode = settings.num, gd = mode === 'dec' && !!settings.gdec, gf = mode === 'frac' && !!settings.gfrac, special = o => o.s === 'x⁻¹' || o.s.includes('.') || o.s.includes('/');
+            const tp = tier === 8 ? ri(5, 7) : 0, mode = settings.num, roots = !!settings.roots, wantRoot = roots && Math.random() < .4, gd = mode === 'dec' && !!settings.gdec, gf = mode === 'frac' && !!settings.gfrac, special = o => o.s === 'x⁻¹' || o.s.includes('.') || o.s.includes('/');
             for (let tries = 0; tries < 3000; tries++) {
-                const pool = []; const n = tier === 8 ? ri(7, 8) : ri(4, 5) + (tier >= 4 ? 1 : 0);
+                /* with roots on, about 4 levels in 10 are built around a root: the planted route goes √x → (× ÷ −x |x| x³) → x² so it comes back out as a plain number */
+                const plant = wantRoot && tries < 1800, pool = plant ? [mk('√x', mode, true), mk('x²', mode)] : []; const n = tier === 8 ? ri(7, 8) : ri(4, 5) + (tier >= 4 ? 1 : 0);
                 while (pool.length < n) { const o = genOp(tier, mode); if (!pool.some(p => p.s === o.s)) pool.push(o); }
                 if (mode !== 'whole' && !pool.some(special)) continue;
                 if (tier === 8 && pool.filter(o => ['|x|', '√x', 'x³', '−x', 'rev', 'x²', 'x⁻¹'].includes(o.s) || o.s.startsWith('mod')).length < 3) continue;
                 const start = F(tier === 8 ? ri(2, 40) : ri(1, tier >= 6 ? 20 : 12)); let v = start; const steps = tier === 8 ? tp : ri(tier, tier + 1); let ok = true;
+                const friendly = pool.filter(o => /^[×÷]/.test(o.s) || ['−x', '|x|', 'x³'].includes(o.s)); /* moves a root survives */
+                if (plant && (steps < 3 || !friendly.length)) continue;
+                const rp = plant ? ri(0, steps - 3) : -1, rq = plant ? ri(rp + 2, steps - 1) : -1;
                 for (let i = 0; i < steps; i++) {
-                    const o = pool[ri(0, pool.length - 1)]; const r = o.f(v);
-                    if (!r || Math.abs(r.n) > 5000 || r.d > 5000) { ok = false; break; } v = r;
+                    const o = plant && i === rp ? pool[0] : plant && i === rq ? pool[1] : plant && i > rp && i < rq ? friendly[ri(0, friendly.length - 1)] : pool[ri(0, pool.length - 1)]; const r = o.f(v);
+                    if (!r || Math.abs(r.n) > 5000 || r.d > 5000 || (plant && i === rp && !(r.b > 1))) { ok = false; break; } v = r;
                 }
                 if (!ok || same(v, start)) continue;
+                if (v.b > 1) continue; /* a goal is never a root (the route can go through one) */
                 if (v.d !== 1 && !(gd && term(v) && v.d <= 100) && !(gf && v.d <= 30 && Math.abs(v.n) <= 500)) continue;
                 if ((gd || gf) && v.d === 1 && Math.random() < .6) continue;
                 const par = solve(start, v, pool);
@@ -1836,6 +2609,7 @@
                     if (!par || par >= tp || par < Math.max(3, tp - 2)) continue;
                     if (tries < 1800 && par !== tp - 1) continue; /* prefer exactly 1 under par */
                 } else if (!par || par < Math.max(2, tier - 1) || par > tier + 1) continue;
+                if (plant && tries < 900) { const alt = solve(start, v, pool.map(o => mk(o.s, mode, false))); if (alt && alt <= par) continue; } /* the root has to be needed for the shortest route */
                 const need = tier === 8 ? (tries < 1200 ? 2 : 1) : (tries < 2000 ? 2 : 1);
                 if (need > 1 && countBest(start, v, pool) < need) continue;
                 L = { start, goal: v, ops: pool, limit: tier === 8 ? tp : par }; cur = start; hist = []; undosUsed = 0; counted = false; render(); return true;
@@ -1848,11 +2622,14 @@
             const px = avail / ((l1 + l2) + 3);
             document.querySelector('.board').style.setProperty('--ns', Math.max(1.4, Math.min(3.2, px / 16)) + 'rem');
         }
-        const whyNot = s => s[0] === '÷' ? 'not whole' : s === 'x⁻¹' ? 'undefined' : s === '√x' ? 'not a square' : (s.startsWith('mod') || s === 'rev') ? 'whole only' : 'too big';
+        const whyNot = s => (cur && cur.b > 1 && /^[+−]\d/.test(s)) ? "can't add to a root" : (cur && cur.b > 1 && s === '√x') ? 'already a root' : s[0] === '÷' ? (settings.num === 'frac' ? 'too big' : 'not whole') : s === 'x⁻¹' ? 'undefined' : s === '√x' ? (settings.roots ? 'negative' : 'not a square') : (s.startsWith('mod') || s === 'rev') ? 'whole only' : 'too big';
         /* ---- the trail, drawn as a real math expression: parentheses where order matters, stacked fractions, powers, roots, bars ---- */
         const mEsc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+        const mRad = h => '<span class="sqw"><svg class="sq" viewBox="0 0 12 20" preserveAspectRatio="none" aria-hidden="true"><path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/></svg><span class="rd">' + h + '</span></span>';
         const mNum = t => {
             t = String(t).replace(/^-/, '−');
+            const rm = /^(−?)(\d*)√(\d+)(?:\/(\d+))?$/.exec(t);
+            if (rm) { const top = rm[2] + mRad(rm[3]); return rm[1] + (rm[4] ? '<span class="fr"><span>' + top + '</span><span>' + rm[4] + '</span></span>' : top); }
             const m = /^(−?)(\d+)\/(\d+)$/.exec(t);
             return m ? m[1] + '<span class="fr"><span>' + m[2] + '</span><span>' + m[3] + '</span></span>' : mEsc(t);
         };
@@ -1904,9 +2681,9 @@
             $('trail').innerHTML = trailHTML(); $('trail').setAttribute('aria-label', hist.length ? [fmt(L.start), ...hist.map(h => tk(h.s))].join(' ') + ' = ' + fmt(cur) : fmt(L.start));
             $('ops').innerHTML = '';
             L.ops.forEach(o => {
-                const b = document.createElement('button'); b.textContent = o.s;
+                const b = document.createElement('button'), fr = /^([+−×÷])(−?\d+\/\d+)$/.exec(o.s), lab = fr ? fr[1] + mNum(fr[2]) : null; if (lab) { b.innerHTML = lab; b.setAttribute('aria-label', o.s); } else b.textContent = o.s;
                 const v = o.f(cur); b.disabled = won || !v || busy || full;
-                if (!won && !v) { const w = whyNot(o.s); b.title = w; b.innerHTML = o.s + '<small>' + w + '</small>'; }
+                if (!won && !v) { const w = whyNot(o.s); b.title = w; b.innerHTML = (lab || o.s) + '<small>' + w + '</small>'; }
                 b.onclick = () => { hist.push({ prev: cur, s: o.s }); cur = v; pend = true; render(); }; $('ops').appendChild(b);
             });
             drawLine();
@@ -1920,7 +2697,7 @@
             const m = $('msg'); m.className = ''; m.innerHTML = '';
             if (full && !busy) { m.className = 'lose'; m.textContent = left > 0 ? 'out of moves. undo a move to keep trying, or give up.' : 'out of moves and undos. give up to see the solution.'; }
             if (won) {
-                if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: !!settings.hc, num: settings.num, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
+                if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: !!settings.hc, num: settings.num, r: !!settings.roots, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
                 m.className = gaveUp ? 'lose' : 'win';
                 m.innerHTML = dailyMode ? `solved in ${used} ${used === 1 ? 'move' : 'moves'}.<br><span id="dnote"></span><br><button id="nx">back to calendar</button>` : gaveUp ? `here's ${used < L.limit ? 'a solution under par' : 'the par solution'} (${used} moves).<br><button id="nx">next level</button>` : `solved in ${used}: ${sc}.<br><button id="nx">next level</button>`;
                 $('nx').onclick = dailyMode ? openDaily : newLevel; $('nx').focus(); if ($('dnote')) $('dnote').textContent = dailyNote;
@@ -1930,14 +2707,15 @@
         function applySettings() {
             if (settings.theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); else document.documentElement.removeAttribute('data-theme');
             $('swTheme').setAttribute('aria-checked', settings.theme === 'light');
-            $('swFlip').setAttribute('aria-checked', settings.flip); document.querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-checked', b.dataset.m === settings.num)); $('swGdec').setAttribute('aria-checked', !!settings.gdec); $('swGdec').disabled = settings.num !== 'dec'; $('rowGdec').style.opacity = settings.num === 'dec' ? '' : '.45'; $('swGfrac').setAttribute('aria-checked', !!settings.gfrac); $('swGfrac').disabled = settings.num !== 'frac'; $('rowGfrac').style.opacity = settings.num === 'frac' ? '' : '.45'; $('swHc').setAttribute('aria-checked', !!settings.hc); $('swAnim').setAttribute('aria-checked', settings.anim);
+            $('swFlip').setAttribute('aria-checked', settings.flip); document.querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-checked', b.dataset.m === settings.num)); $('swGdec').setAttribute('aria-checked', !!settings.gdec); $('swGdec').disabled = settings.num !== 'dec'; $('rowGdec').style.opacity = settings.num === 'dec' ? '' : '.45'; $('swGfrac').setAttribute('aria-checked', !!settings.gfrac); $('swGfrac').disabled = settings.num !== 'frac'; $('rowGfrac').style.opacity = settings.num === 'frac' ? '' : '.45'; $('swHc').setAttribute('aria-checked', !!settings.hc); $('swRoots').setAttribute('aria-checked', !!settings.roots); $('swAnim').setAttribute('aria-checked', settings.anim);
             document.documentElement.classList.toggle('hc', !!settings.hc); document.body.classList.toggle('noanim', !settings.anim); document.documentElement.classList.toggle('noanim', !settings.anim);
             document.documentElement.classList.toggle('noui', settings.anims.ui === false); document.documentElement.classList.toggle('nofade', settings.anims.theme === false);
             document.querySelectorAll('[data-anim]').forEach(b => b.setAttribute('aria-checked', settings.anims[b.dataset.anim] !== false)); $('rowAdv').hidden = !settings.anim;
         }
         let decAtOpen = false, ssTimer = 0;
         const SW_DUR = 600, SW_EZ = 'cubic-bezier(.4,0,.2,1)';
-        function swayAnim(el, kf, dur, ez) { el.getAnimations().forEach(a => a.cancel()); return el.animate(kf, { duration: dur || SW_DUR, easing: ez || SW_EZ }); }
+        function swayAnim(el, kf, dur, ez, hold) { el.getAnimations().forEach(a => a.cancel()); return el.animate(kf, { duration: dur || SW_DUR, easing: ez || SW_EZ, fill: hold ? 'forwards' : 'none' }); }
+        const dropAnims = (...els) => els.forEach(e => e && e.getAnimations().forEach(a => a.cancel()));
         function bez(u) {
             const cx = 1.2, bx = 3 * (.2 - .4) - cx, ax = 1 - cx - bx, by = 3 * (1 - 0) - 0, ay = 1 - by; let t = u;
             for (let i = 0; i < 8; i++) { const x = ((ax * t + bx) * t + cx) * t - u, d = (3 * ax * t + 2 * bx) * t + cx; if (Math.abs(x) < 1e-5 || Math.abs(d) < 1e-6) break; t -= x / d; }
@@ -1977,27 +2755,27 @@
                 d = id === 'scores' || lb ? 1 : -1, away = d < 0 ? 'away' : 'awayR', off = d < 0 ? 'off' : 'offL';
             clearTimeout(ssTimer);
             if (on) {
-                if (id === 'settings') decAtOpen = settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac; else if (id === 'scores') renderScores();
+                if (id === 'settings') decAtOpen = settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac + '|' + !!settings.roots; else if (id === 'scores') renderScores();
                 parallax(bgBase + d * Math.round(innerWidth * (adv ? .6 : .3)));
                 st.classList.remove('off', 'offL'); st.hidden = false; st.scrollTop = 0;
                 mn.classList.add(away); if (nw) nw.classList.add(away);
                 if (an) {
                     swayAnim(st, [{ transform: 'translateX(' + (-100 * d) + '%)' }, { transform: 'none' }]);
                     swayAnim(sp, swayKF(d, 0, 0, true), 1200, 'linear');
-                    swayAnim(mn, swayKF(d, 0, 100 * d, false), SW_DUR, 'linear');
+                    swayAnim(mn, swayKF(d, 0, 100 * d, false), SW_DUR, 'linear', true);
                 }
-                ssTimer = setTimeout(() => { mn.hidden = true; if (nw) nw.hidden = true; }, an ? SW_DUR + 30 : 0);
+                ssTimer = setTimeout(() => { mn.hidden = true; if (nw) nw.hidden = true; dropAnims(mn, nw); }, an ? SW_DUR + 30 : 0);
             } else {
                 mn.hidden = false; if (nw) nw.hidden = false; parallax(adv ? bgBase - Math.round(innerWidth * .3) : bgBase);
-                if (!adv && (!lb || dailyMode)) { view = null; if (id === 'settings' && (settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac) !== decAtOpen && !dailyMode) newLevel(); else render(); }
+                if (!adv && (!lb || dailyMode)) { view = null; if (id === 'settings' && (settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac + '|' + !!settings.roots) !== decAtOpen && !dailyMode) newLevel(); else render(); }
                 getComputedStyle(nw || mn).transform;
                 mn.classList.remove('away', 'awayR'); if (nw) nw.classList.remove('away', 'awayR'); st.classList.add(off);
                 if (an) {
-                    swayAnim(st, [{ transform: 'none' }, { transform: 'translateX(' + (-100 * d) + '%)' }]);
+                    swayAnim(st, [{ transform: 'none' }, { transform: 'translateX(' + (-100 * d) + '%)' }], 0, 0, true);
                     swayAnim(sp, swayKF(-d, 0, 0, false), SW_DUR, 'linear');
                     swayAnim(mn, swayKF(-d, 100 * d, 0, true), 1200, 'linear');
                 }
-                ssTimer = setTimeout(() => { st.hidden = true; }, an ? SW_DUR + 30 : 0);
+                ssTimer = setTimeout(() => { st.hidden = true; dropAnims(st); }, an ? SW_DUR + 30 : 0);
             }
         }
         /* saved scores (localStorage) */
@@ -2018,6 +2796,7 @@
                 sub.appendChild(mkEl('span', 'dv' + e.d, DN[e.d] || '?')); sub.appendChild(document.createTextNode(' · '));
                 sub.appendChild(mkEl('span', e.hc ? 'mhc' : 'mnorm', e.hc ? 'hardcore' : 'normal'));
                 { const nm = e.num || (e.dec ? 'dec' : 'whole'); if (nm !== 'whole') sub.appendChild(document.createTextNode(' · ' + (nm === 'dec' ? 'decimals' : 'fractions'))); }
+                if (e.r) sub.appendChild(document.createTextNode(' · roots'));
                 sub.appendChild(document.createTextNode(' · ' + new Date(e.t).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })));
                 l.appendChild(sub);
                 r.appendChild(mkEl('b', ov ? 'bad' : 'ok', ov ? '+' + ov : 'par'));
@@ -2039,7 +2818,7 @@
             if (!DN[e.d]) return;
             dailyMode = false;
             NB = e.d === 8 ? 3000 : 100000;
-            settings.hc = !!e.hc; settings.num = e.num || (e.dec ? 'dec' : 'whole'); saveSettings(); applySettings();
+            settings.hc = !!e.hc; settings.roots = !!e.r; settings.num = e.num || (e.dec ? 'dec' : 'whole'); saveSettings(); applySettings();
             $('diff').value = String(e.d);
             const start = parseNum(e.s), goal = parseNum(e.g);
             let ops = null;
@@ -2070,6 +2849,7 @@
         document.querySelectorAll('[data-anim]').forEach(b => b.onclick = () => { settings.anims[b.dataset.anim] = settings.anims[b.dataset.anim] === false; saveSettings(); applySettings(); });
         $('swGdec').onclick = () => { if (settings.num !== 'dec') return; settings.gdec = !settings.gdec; saveSettings(); applySettings(); };
         $('swGfrac').onclick = () => { if (settings.num !== 'frac') return; settings.gfrac = !settings.gfrac; saveSettings(); applySettings(); };
+        $('swRoots').onclick = () => { settings.roots = !settings.roots; saveSettings(); applySettings(); };
         $('swHc').onclick = () => { settings.hc = !settings.hc; saveSettings(); applySettings(); };
         $('swAnim').onclick = () => { settings.anim = !settings.anim; saveSettings(); applySettings(); };
         applySettings();
@@ -2146,7 +2926,7 @@
             scrollTo(0, 0);
             if (an) {
                 const d = v === 'menu' ? 1 : -1, ins = viewEls(v);
-                movers(outs).forEach(e => swayAnim(e, swayKF(d, 0, 100 * d, false), SW_DUR, 'linear'));
+                movers(outs).forEach(e => swayAnim(e, swayKF(d, 0, 100 * d, false), SW_DUR, 'linear', true));
                 movers(ins).forEach(e => { e.style.animation = 'none'; swayAnim(e, swayKF(d, -100 * d, 0, true), 1200, 'linear'); });
                 bgBase = v === 'menu' ? 0 : -Math.round(innerWidth * .3); parallax(bgBase);
                 const cleanOuts = () => outs.forEach(e => {
@@ -2248,7 +3028,7 @@
             try {
                 const lv = await api('/daily/level/' + date);
                 NB = 3000; stopReplay(); stopFx(); pend = false; view = null;
-                L = { start: F(lv.start), goal: F(lv.goal), ops: lv.ops.map(s => mk(s, 'whole')), limit: 999 };
+                L = { start: F(lv.start), goal: F(lv.goal), ops: lv.ops.map(s => mk(s, 'whole', false)), limit: 999 };
                 cur = L.start; hist = []; undosUsed = 0; counted = false; dailyNote = ''; dailyMode = true; dailyDate = date;
                 showView('random');
             } catch (e) { $('dsub').textContent = e.message; }
@@ -2276,7 +3056,7 @@
             const box = $('lbrows'), day = kind === 'day' || kind === 'date';
             $('lbt').textContent = day ? 'daily leaderboard' : 'monthly leaderboard';
             $('lbs').textContent = kind === 'date' ? (+dailyDate.slice(5, 7)) + '/' + (+dailyDate.slice(8)) + '/' + dailyDate.slice(0, 4) : day ? (todayStr || '') : MN[calM] + ' ' + calY;
-            box.innerHTML = '<li>loading…</li>'; showPanel('lb', true);
+            box.innerHTML = '<li class="spinwrap"><span class="spin" role="status" aria-label="loading"></span></li>'; showPanel('lb', true);
             try {
                 const j = await api(kind === 'date' ? '/daily/leaderboard/' + dailyDate : day ? '/daily/leaderboard' : '/daily/leaderboard/month/' + calY + '-' + pad(calM + 1));
                 box.innerHTML = j.rows.length ? '' : '<li>no scores yet</li>';

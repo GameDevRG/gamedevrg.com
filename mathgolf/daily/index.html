@@ -449,12 +449,45 @@
             overflow-wrap: anywhere
         }
 
-        .srow.col { flex-direction: column; align-items: stretch }
-        .seg { display: flex; margin-top: 10px }
-        .seg button { flex: 1 1 0; min-height: 40px; padding: 6px 8px; font-family: inherit; font-weight: 700; font-size: .85rem; border: 1px solid var(--line); margin-left: -1px; background: var(--bg); color: var(--soft); cursor: pointer; text-transform: lowercase }
-        .seg button:first-child { margin-left: 0 }
-        .seg button[aria-checked="true"] { border-color: var(--imag); color: var(--imag); position: relative; z-index: 1 }
-        .sw:disabled { cursor: not-allowed }
+        .srow.col {
+            flex-direction: column;
+            align-items: stretch
+        }
+
+        .seg {
+            display: flex;
+            margin-top: 10px
+        }
+
+        .seg button {
+            flex: 1 1 0;
+            min-height: 40px;
+            padding: 6px 8px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: .85rem;
+            border: 1px solid var(--line);
+            margin-left: -1px;
+            background: var(--bg);
+            color: var(--soft);
+            cursor: pointer;
+            text-transform: lowercase
+        }
+
+        .seg button:first-child {
+            margin-left: 0
+        }
+
+        .seg button[aria-checked="true"] {
+            border-color: var(--imag);
+            color: var(--imag);
+            position: relative;
+            z-index: 1
+        }
+
+        .sw:disabled {
+            cursor: not-allowed
+        }
 
         .dec .full {
             min-height: 1.3em
@@ -503,19 +536,80 @@
             margin-bottom: 12px;
             overflow-wrap: anywhere
         }
-        #trail { font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", "Times New Roman", serif; font-size: 1.3rem; line-height: 2; color: var(--ink) }
-        #trail .op, #trail .pr { color: var(--soft) }
-        #trail .op { margin: 0 .04em }
-        #trail .pr { font-size: 1.15em }
-        #trail b { font-weight: 700 }
-        #trail sup { font-size: .68em; line-height: 0; vertical-align: .55em; margin-left: .05em }
-        #trail .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .8em; line-height: 1.2; margin: 0 .15em }
-        #trail .fr > span { padding: 0 .2em }
-        #trail .fr > span:first-child { border-bottom: 1.5px solid currentColor }
-        #trail .sqw { display: inline-flex; align-items: stretch; vertical-align: middle; line-height: 1.3; margin: 0 .05em }
-        #trail .sq { width: .75em; flex: none; overflow: visible }
-        #trail .rd { border-top: 1.6px solid currentColor; padding: .05em .12em 0 .06em; margin-left: -1px }
-        #trail .ab { margin: 0 .08em; font-size: 1.05em }
+
+        #trail {
+            font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", "Times New Roman", serif;
+            font-size: 1.3rem;
+            line-height: 2;
+            color: var(--ink)
+        }
+
+        #trail .op,
+        #trail .pr {
+            color: var(--soft)
+        }
+
+        #trail .op {
+            margin: 0 .04em
+        }
+
+        #trail .pr {
+            font-size: 1.15em
+        }
+
+        #trail b {
+            font-weight: 700
+        }
+
+        #trail sup {
+            font-size: .68em;
+            line-height: 0;
+            vertical-align: .55em;
+            margin-left: .05em
+        }
+
+        #trail .fr {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            text-align: center;
+            font-size: .8em;
+            line-height: 1.2;
+            margin: 0 .15em
+        }
+
+        #trail .fr>span {
+            padding: 0 .2em
+        }
+
+        #trail .fr>span:first-child {
+            border-bottom: 1.5px solid currentColor
+        }
+
+        #trail .sqw {
+            display: inline-flex;
+            align-items: stretch;
+            vertical-align: middle;
+            line-height: 1.3;
+            margin: 0 .05em
+        }
+
+        #trail .sq {
+            width: .75em;
+            flex: none;
+            overflow: visible
+        }
+
+        #trail .rd {
+            border-top: 1.6px solid currentColor;
+            padding: .05em .12em 0 .06em;
+            margin-left: -1px
+        }
+
+        #trail .ab {
+            margin: 0 .08em;
+            font-size: 1.05em
+        }
 
         .tile {
             position: relative;
@@ -660,81 +754,496 @@
             display: none !important
         }
 
-        .pg { width: 100%; max-width: 520px; margin: 0 auto; padding: 8vh 16px 20px; text-align: center; animation: pgIn .35s ease both }
-        .pg { transform-origin: 50% 6% }
-        @keyframes pgIn { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
-        .noanim .pg, .noanim.pg { animation: none }
-        body.inmenu { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) }
-        .stboard { margin-top: 16px; padding: 16px 14px }
-        .stgrid { display: flex; justify-content: space-around; gap: 8px; margin: 14px 0 10px }
-        .stg .num { font-size: 1.9rem; margin: 0 }
-        .stboard .tile, .stboard .plain { color: var(--blue) }
-        .stg .lbl { margin-top: 8px }
-        .strow { display: flex; justify-content: space-between; gap: 12px; padding: 9px 4px; border-top: 1px solid var(--line); text-align: left }
-        .strow span:last-child { font-weight: 800 }
-        #dailypg input { min-height: 44px; padding: 8px 10px; width: 150px; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); text-transform: lowercase }
-        #dailypg .tools button, #dailypg .calhead button { min-height: 44px; padding: 8px 16px; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; text-transform: lowercase }
-        #dailypg a { color: var(--blue) }
-        .cal { padding: 14px }
-        .solved { margin-top: 18px; padding: 16px 14px }
-        .sttl { margin: 0 0 2px; font-size: 1.15rem; font-weight: 800 }
-        .solved .num { font-size: 2.3rem; margin: 14px 0 }
-        .solved .tile, .solved .plain { color: var(--blue) }
-        .clockbox .tile, .clockbox .plain { color: var(--ink) }
-        .clockbox .num { margin: 0; font-size: 1.9rem }
-        .clock { display: flex; align-items: flex-start; justify-content: center; gap: 8px; margin-top: 14px }
-        .clock .lbl { margin-top: 8px }
-        .colon { color: var(--imag); font-size: 2.1rem; font-weight: 800; line-height: 1.15 }
-        #dlbd { list-style: none; margin: 4px 0 0; padding: 0; text-align: left }
-        #dlbd li { display: flex; justify-content: space-between; padding: 8px 12px; border-top: 1px solid var(--line) }
-        #dlbd li.me { color: var(--imag); font-weight: 700 }
-        #dailypg .solved .tools button { min-height: 44px; padding: 8px 16px; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; text-transform: lowercase }
-        .calhead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px }
-        .calhead h3 { margin: 0; font-size: 1.7rem; font-weight: 800 }
-        .calhead h3 b { color: var(--imag) }
-        #dailypg .calhead button { width: 44px; padding: 0; font-size: 1.4rem }
-        .calgrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px }
-        .cw { padding: 8px 0; background: var(--line); color: var(--ink); font-size: .9rem }
-        .cw.today { background: var(--ink); color: var(--bg) }
-        .cd { aspect-ratio: 1; position: relative; display: flex; align-items: center; justify-content: center; padding: 0; min-height: 0; font-family: inherit; font-weight: 800; font-size: 1.05rem; border: 1px solid var(--line); background: var(--bg); color: var(--soft); cursor: default }
-        .cd.play { cursor: pointer; color: var(--ink) }
-        .cd.play:hover { border-color: var(--ink) }
-        .cd.miss { border: 2px solid var(--imag); color: var(--imag) }
-        .cd.done { background: var(--blue); border-color: var(--blue); color: var(--bg) }
-        .cd.late { background: var(--bg); border: 2px solid var(--blue); color: var(--blue) }
-        .cd.today { background: var(--ink); border-color: var(--ink); color: var(--bg) }
-        .cd .mv { position: absolute; right: 4px; bottom: 2px; font-size: .7rem; font-weight: 700; line-height: 1; opacity: .9 }
-        .cd .pips { position: absolute; left: 3px; bottom: 3px; display: flex; gap: 2px }
-        .cd .pips i { width: 5px; height: 5px; background: rgba(0, 0, 0, .35) }
-        .cd .pips i.u { background: #fff }
-        .cd.today .pips i.u, .cd.late .pips i.u { background: var(--blue) }
-        .cd .pips i.o { background: var(--imag) }
-        #dlb { list-style: none; margin: 14px 0 0; padding: 0; text-align: left }
-        #dlb li { display: flex; justify-content: space-between; padding: 8px 12px; border-top: 1px solid var(--line) }
-        #dlb li.me { color: var(--imag); font-weight: 700 }
-        .streakbar { display: flex; justify-content: center; gap: 22px; margin: 12px 0; color: var(--soft); font-size: .95rem }
-        .streakbar b { color: var(--blue); font-size: 1.25rem; margin-left: 4px }
-        .calkey { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; margin-top: 14px; font-size: .85rem; color: var(--soft) }
-        .calkey span { display: inline-flex; align-items: center; gap: 6px }
-        .calkey i { display: inline-block; width: 14px; height: 14px; border: 1px solid var(--line); background: var(--bg) }
-        .calkey i.k-done { background: var(--blue); border-color: var(--blue) }
-        .calkey i.k-late { border: 2px solid var(--blue) }
-        .calkey i.k-miss { border: 2px solid var(--imag) }
-        .calkey i.k-today { background: var(--ink); border-color: var(--ink) }
-        .mopts { display: flex; flex-direction: column; gap: 14px; margin-top: 22px }
-        .mopt { display: block; width: 100%; padding: 18px 16px; text-align: center; font-family: inherit; color: var(--ink); background: var(--card); border: 2px solid var(--blue); box-shadow: 0 4px 0 var(--blue); cursor: pointer; transition: transform .08s, box-shadow .08s, border-color .15s }
-        .mopt b { display: block; font-size: 1.5rem; font-weight: 800 }
-        .mopt span { display: block; margin-top: 4px; font-size: .9rem; color: var(--soft) }
-        .mopt.red { border-color: var(--imag); box-shadow: 0 4px 0 var(--imag) }
-        .mopt.gold { border-color: var(--yellow); box-shadow: 0 4px 0 var(--yellow) }
-        .mopt.green { border-color: var(--ok); box-shadow: 0 4px 0 var(--ok) }
-        .mopt:hover, .mopt.red:hover, .mopt.gold:hover, .mopt.green:hover { border-color: var(--ink); box-shadow: 0 4px 0 var(--ink) }
-        .mopt:active, .mopt.pressed, .mopt.red:active, .mopt.red.pressed, .mopt.gold:active, .mopt.gold.pressed, .mopt.green:active, .mopt.green.pressed { transform: translateY(4px); box-shadow: 0 0 0 var(--ink) }
-        .pgh { margin: 0; font-size: 2rem; font-weight: 800 }
-        .dgroups { display: flex; flex-direction: column; gap: 14px; margin: 22px 0 18px }
-        .dgroup { background: var(--card); border: 2px solid var(--line); padding: 16px }
-        .dgroup h3 { margin: 0 0 8px; font-size: 1.25rem; font-weight: 800 }
-        .soon { color: var(--soft); font-size: .95rem; padding: 14px; border: 1px dashed var(--line) }
+        .pg {
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 8vh 16px 20px;
+            text-align: center;
+            animation: pgIn .35s ease both
+        }
+
+        .pg {
+            transform-origin: 50% 6%
+        }
+
+        @keyframes pgIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        .noanim .pg,
+        .noanim.pg {
+            animation: none
+        }
+
+        body.inmenu {
+            padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px))
+        }
+
+        .stboard {
+            margin-top: 16px;
+            padding: 16px 14px
+        }
+
+        .stgrid {
+            display: flex;
+            justify-content: space-around;
+            gap: 8px;
+            margin: 14px 0 10px
+        }
+
+        .stg .num {
+            font-size: 1.9rem;
+            margin: 0
+        }
+
+        .stboard .tile,
+        .stboard .plain {
+            color: var(--blue)
+        }
+
+        .stg .lbl {
+            margin-top: 8px
+        }
+
+        .strow {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 9px 4px;
+            border-top: 1px solid var(--line);
+            text-align: left
+        }
+
+        .strow span:last-child {
+            font-weight: 800
+        }
+
+        #dailypg input {
+            min-height: 44px;
+            padding: 8px 10px;
+            width: 150px;
+            font-family: inherit;
+            font-size: 1rem;
+            border: 1px solid var(--line);
+            background: var(--bg);
+            color: var(--ink);
+            text-transform: lowercase
+        }
+
+        #dailypg .tools button,
+        #dailypg .calhead button {
+            min-height: 44px;
+            padding: 8px 16px;
+            font-family: inherit;
+            font-size: 1rem;
+            border: 1px solid var(--line);
+            background: var(--bg);
+            color: var(--ink);
+            cursor: pointer;
+            text-transform: lowercase
+        }
+
+        #dailypg a {
+            color: var(--blue)
+        }
+
+        .cal {
+            padding: 14px
+        }
+
+        .solved {
+            margin-top: 18px;
+            padding: 16px 14px
+        }
+
+        .sttl {
+            margin: 0 0 2px;
+            font-size: 1.15rem;
+            font-weight: 800
+        }
+
+        .solved .num {
+            font-size: 2.3rem;
+            margin: 14px 0
+        }
+
+        .solved .tile,
+        .solved .plain {
+            color: var(--blue)
+        }
+
+        .clockbox .tile,
+        .clockbox .plain {
+            color: var(--ink)
+        }
+
+        .clockbox .num {
+            margin: 0;
+            font-size: 1.9rem
+        }
+
+        .clock {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 14px
+        }
+
+        .clock .lbl {
+            margin-top: 8px
+        }
+
+        .colon {
+            color: var(--imag);
+            font-size: 2.1rem;
+            font-weight: 800;
+            line-height: 1.15
+        }
+
+        #dlbd {
+            list-style: none;
+            margin: 4px 0 0;
+            padding: 0;
+            text-align: left
+        }
+
+        #dlbd li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-top: 1px solid var(--line)
+        }
+
+        #dlbd li.me {
+            color: var(--imag);
+            font-weight: 700
+        }
+
+        #dailypg .solved .tools button {
+            min-height: 44px;
+            padding: 8px 16px;
+            font-family: inherit;
+            font-size: 1rem;
+            border: 1px solid var(--line);
+            background: var(--bg);
+            color: var(--ink);
+            cursor: pointer;
+            text-transform: lowercase
+        }
+
+        .calhead {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px
+        }
+
+        .calhead h3 {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: 800
+        }
+
+        .calhead h3 b {
+            color: var(--imag)
+        }
+
+        #dailypg .calhead button {
+            width: 44px;
+            padding: 0;
+            font-size: 1.4rem
+        }
+
+        .calgrid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px
+        }
+
+        .cw {
+            padding: 8px 0;
+            background: var(--line);
+            color: var(--ink);
+            font-size: .9rem
+        }
+
+        .cw.today {
+            background: var(--ink);
+            color: var(--bg)
+        }
+
+        .cd {
+            aspect-ratio: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            min-height: 0;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 1.05rem;
+            border: 1px solid var(--line);
+            background: var(--bg);
+            color: var(--soft);
+            cursor: default
+        }
+
+        .cd.play {
+            cursor: pointer;
+            color: var(--ink)
+        }
+
+        .cd.play:hover {
+            border-color: var(--ink)
+        }
+
+        .cd.miss {
+            border: 2px solid var(--imag);
+            color: var(--imag)
+        }
+
+        .cd.done {
+            background: var(--blue);
+            border-color: var(--blue);
+            color: var(--bg)
+        }
+
+        .cd.late {
+            background: var(--bg);
+            border: 2px solid var(--blue);
+            color: var(--blue)
+        }
+
+        .cd.today {
+            background: var(--ink);
+            border-color: var(--ink);
+            color: var(--bg)
+        }
+
+        .cd .mv {
+            position: absolute;
+            right: 4px;
+            bottom: 2px;
+            font-size: .7rem;
+            font-weight: 700;
+            line-height: 1;
+            opacity: .9
+        }
+
+        .cd .pips {
+            position: absolute;
+            left: 3px;
+            bottom: 3px;
+            display: flex;
+            gap: 2px
+        }
+
+        .cd .pips i {
+            width: 5px;
+            height: 5px;
+            background: rgba(0, 0, 0, .35)
+        }
+
+        .cd .pips i.u {
+            background: #fff
+        }
+
+        .cd.today .pips i.u,
+        .cd.late .pips i.u {
+            background: var(--blue)
+        }
+
+        .cd .pips i.o {
+            background: var(--imag)
+        }
+
+        #dlb {
+            list-style: none;
+            margin: 14px 0 0;
+            padding: 0;
+            text-align: left
+        }
+
+        #dlb li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-top: 1px solid var(--line)
+        }
+
+        #dlb li.me {
+            color: var(--imag);
+            font-weight: 700
+        }
+
+        .streakbar {
+            display: flex;
+            justify-content: center;
+            gap: 22px;
+            margin: 12px 0;
+            color: var(--soft);
+            font-size: .95rem
+        }
+
+        .streakbar b {
+            color: var(--blue);
+            font-size: 1.25rem;
+            margin-left: 4px
+        }
+
+        .calkey {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px 18px;
+            margin-top: 14px;
+            font-size: .85rem;
+            color: var(--soft)
+        }
+
+        .calkey span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .calkey i {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 1px solid var(--line);
+            background: var(--bg)
+        }
+
+        .calkey i.k-done {
+            background: var(--blue);
+            border-color: var(--blue)
+        }
+
+        .calkey i.k-late {
+            border: 2px solid var(--blue)
+        }
+
+        .calkey i.k-miss {
+            border: 2px solid var(--imag)
+        }
+
+        .calkey i.k-today {
+            background: var(--ink);
+            border-color: var(--ink)
+        }
+
+        .mopts {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 22px
+        }
+
+        .mopt {
+            display: block;
+            width: 100%;
+            padding: 18px 16px;
+            text-align: center;
+            font-family: inherit;
+            color: var(--ink);
+            background: var(--card);
+            border: 2px solid var(--blue);
+            box-shadow: 0 4px 0 var(--blue);
+            cursor: pointer;
+            transition: transform .08s, box-shadow .08s, border-color .15s
+        }
+
+        .mopt b {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 800
+        }
+
+        .mopt span {
+            display: block;
+            margin-top: 4px;
+            font-size: .9rem;
+            color: var(--soft)
+        }
+
+        .mopt.red {
+            border-color: var(--imag);
+            box-shadow: 0 4px 0 var(--imag)
+        }
+
+        .mopt.gold {
+            border-color: var(--yellow);
+            box-shadow: 0 4px 0 var(--yellow)
+        }
+
+        .mopt.green {
+            border-color: var(--ok);
+            box-shadow: 0 4px 0 var(--ok)
+        }
+
+        .mopt:hover,
+        .mopt.red:hover,
+        .mopt.gold:hover,
+        .mopt.green:hover {
+            border-color: var(--ink);
+            box-shadow: 0 4px 0 var(--ink)
+        }
+
+        .mopt:active,
+        .mopt.pressed,
+        .mopt.red:active,
+        .mopt.red.pressed,
+        .mopt.gold:active,
+        .mopt.gold.pressed,
+        .mopt.green:active,
+        .mopt.green.pressed {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 var(--ink)
+        }
+
+        .pgh {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 800
+        }
+
+        .dgroups {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin: 22px 0 18px
+        }
+
+        .dgroup {
+            background: var(--card);
+            border: 2px solid var(--line);
+            padding: 16px
+        }
+
+        .dgroup h3 {
+            margin: 0 0 8px;
+            font-size: 1.25rem;
+            font-weight: 800
+        }
+
+        .soon {
+            color: var(--soft);
+            font-size: .95rem;
+            padding: 14px;
+            border: 1px dashed var(--line)
+        }
 
         #settings,
         #scores,
@@ -758,13 +1267,41 @@
             transform: translateX(-100vw)
         }
 
-        #settings { transform-origin: 50% 6% }
-        #dailypg { animation: none; transform-origin: 50% 6% }
-        #dailypg.away { transform: translateX(-100vw) }
-        #dailypg.awayR { transform: translateX(100vw) }
-        #lbrows { list-style: none; margin: 10px 0 0; padding: 0; text-align: left }
-        #lbrows li { display: flex; justify-content: space-between; padding: 8px 12px; border-top: 1px solid var(--line) }
-        #lbrows li.me { color: var(--imag); font-weight: 700 }
+        #settings {
+            transform-origin: 50% 6%
+        }
+
+        #dailypg {
+            animation: none;
+            transform-origin: 50% 6%
+        }
+
+        #dailypg.away {
+            transform: translateX(-100vw)
+        }
+
+        #dailypg.awayR {
+            transform: translateX(100vw)
+        }
+
+        #lbrows {
+            list-style: none;
+            margin: 10px 0 0;
+            padding: 0;
+            text-align: left
+        }
+
+        #lbrows li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-top: 1px solid var(--line)
+        }
+
+        #lbrows li.me {
+            color: var(--imag);
+            font-weight: 700
+        }
 
         #scores.offL,
         #lb.offL {
@@ -974,12 +1511,41 @@
             transition: none !important
         }
 
-        :root.noui *:not(#nlwrap) { transition: none !important }
-        :root.noui .pg { animation: none }
-        :root.nofade { transition: none }
-        .lnk { flex: 0 0 auto; min-height: 40px; padding: 8px 14px; font-family: inherit; font-weight: 700; font-size: .9rem; border: 1px solid var(--blue); background: var(--bg); color: var(--blue); cursor: pointer }
-        a.lnk { display: inline-flex; align-items: center; text-decoration: none }
-        .lnk:hover { border-color: var(--imag); color: var(--imag) }
+        :root.noui *:not(#nlwrap) {
+            transition: none !important
+        }
+
+        :root.noui .pg {
+            animation: none
+        }
+
+        :root.nofade {
+            transition: none
+        }
+
+        .lnk {
+            flex: 0 0 auto;
+            min-height: 40px;
+            padding: 8px 14px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: .9rem;
+            border: 1px solid var(--blue);
+            background: var(--bg);
+            color: var(--blue);
+            cursor: pointer
+        }
+
+        a.lnk {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none
+        }
+
+        .lnk:hover {
+            border-color: var(--imag);
+            color: var(--imag)
+        }
 
         #fx {
             position: fixed;
@@ -1351,6 +1917,55 @@
         .board #nlwrap.awayR {
             transform: none
         }
+
+        /* loading spinner */
+        .spin {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            border: 3px solid var(--line);
+            border-top-color: var(--ink);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+            vertical-align: middle
+        }
+
+        li.spinwrap {
+            list-style: none;
+            text-align: center;
+            padding: 14px 0
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            .spin {
+                animation-duration: 2.4s
+            }
+        }
+
+        /* fractions on operation buttons */
+        #ops button .fr {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            text-align: center;
+            font-size: .75em;
+            line-height: 1.15;
+            margin: 0 .1em 0 .12em
+        }
+
+        #ops button .fr>span {
+            padding: 0 .2em
+        }
+
+        #ops button .fr>span:first-child {
+            border-bottom: 2px solid currentColor
+        }
     </style>
     <script>try { var q = JSON.parse(localStorage.getItem('hs1') || '{}'); if (q.theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); if (q.hc) document.documentElement.classList.add('hc') } catch (e) { }</script>
 </head>
@@ -1372,10 +1987,13 @@
             <p class="sub">choose how you want to play</p>
         </header>
         <div class="mopts">
-            <button class="mopt" id="mopt1"><b>random levels</b><span>endless, freshly generated levels at the difficulty you pick</span></button>
-            <button class="mopt gold" id="moptD"><b>daily levels</b><span>a new challenge every day, plus a calendar of past days</span></button>
+            <button class="mopt" id="mopt1"><b>random levels</b><span>endless, freshly generated levels at the
+                    difficulty you pick</span></button>
+            <button class="mopt gold" id="moptD"><b>daily levels</b><span>a new challenge every day, plus a calendar of
+                    past days</span></button>
             <button class="mopt green" id="moptS"><b>your stats</b><span>daily streaks and more</span></button>
-            <button class="mopt red" id="mopt2"><b>main levels</b><span>hand-made levels for each difficulty</span></button>
+            <button class="mopt red" id="mopt2"><b>main levels</b><span>hand-made levels for each
+                    difficulty</span></button>
         </div>
     </section>
     <section id="dailypg" class="pg" hidden>
@@ -1385,9 +2003,12 @@
         </header>
         <div class="tools" id="dauth"><a class="lnk" href="../../account/?from=daily">sign in to gamedevrg.com</a></div>
         <p class="sub" id="dwho" hidden><span id="dwn"></span></p>
-        <div class="streakbar" id="streakbar" hidden><span>current streak <b id="sk1">0</b></span><span>longest streak <b id="sk2">0</b></span></div>
+        <div class="streakbar" id="streakbar" hidden><span>current streak <b id="sk1">0</b></span><span>longest streak
+                <b id="sk2">0</b></span></div>
         <div class="board cal">
-            <div class="calhead"><button id="cprev" aria-label="previous month">‹</button><h3 id="ctitle"></h3><button id="cnext" aria-label="next month">›</button></div>
+            <div class="calhead"><button id="cprev" aria-label="previous month">‹</button>
+                <h3 id="ctitle"></h3><button id="cnext" aria-label="next month">›</button>
+            </div>
             <div class="calgrid" id="cgrid"></div>
             <div class="calkey" aria-label="calendar key">
                 <span><i class="k-done"></i>solved on the day</span>
@@ -1405,12 +2026,22 @@
         <div class="board solved clockbox">
             <h3 class="sttl">new daily in</h3>
             <div class="clock">
-                <div class="cg"><div class="num" id="ch"></div><div class="lbl">hour</div></div><span class="colon">:</span>
-                <div class="cg"><div class="num" id="cm"></div><div class="lbl">minute</div></div><span class="colon">:</span>
-                <div class="cg"><div class="num" id="cs"></div><div class="lbl">second</div></div>
+                <div class="cg">
+                    <div class="num" id="ch"></div>
+                    <div class="lbl">hour</div>
+                </div><span class="colon">:</span>
+                <div class="cg">
+                    <div class="num" id="cm"></div>
+                    <div class="lbl">minute</div>
+                </div><span class="colon">:</span>
+                <div class="cg">
+                    <div class="num" id="cs"></div>
+                    <div class="lbl">second</div>
+                </div>
             </div>
         </div>
-        <div class="tools"><button id="cmonth">monthly leaderboard</button><button id="dback">play today's level</button></div>
+        <div class="tools"><button id="cmonth">monthly leaderboard</button><button id="dback">play today's
+                level</button></div>
     </section>
     <section id="statspg" class="pg" hidden>
         <header>
@@ -1420,9 +2051,18 @@
         <div class="board stboard">
             <h3 class="sttl">daily levels</h3>
             <div class="stgrid">
-                <div class="stg"><div class="num" id="stn1"></div><div class="lbl">solved</div></div>
-                <div class="stg"><div class="num" id="stn2"></div><div class="lbl">current streak</div></div>
-                <div class="stg"><div class="num" id="stn3"></div><div class="lbl">longest streak</div></div>
+                <div class="stg">
+                    <div class="num" id="stn1"></div>
+                    <div class="lbl">solved</div>
+                </div>
+                <div class="stg">
+                    <div class="num" id="stn2"></div>
+                    <div class="lbl">current streak</div>
+                </div>
+                <div class="stg">
+                    <div class="num" id="stn3"></div>
+                    <div class="lbl">longest streak</div>
+                </div>
             </div>
             <div class="lbl">streaks count levels solved on their own day</div>
             <div id="strows"></div>
@@ -1439,10 +2079,22 @@
             <p class="sub">hand-made levels, grouped by difficulty</p>
         </header>
         <div class="dgroups">
-            <div class="dgroup"><h3 class="dv2">easy</h3><div class="soon">levels coming soon</div></div>
-            <div class="dgroup"><h3 class="dv4">medium</h3><div class="soon">levels coming soon</div></div>
-            <div class="dgroup"><h3 class="dv6">hard</h3><div class="soon">levels coming soon</div></div>
-            <div class="dgroup"><h3 class="dv8">challenge</h3><div class="soon">levels coming soon</div></div>
+            <div class="dgroup">
+                <h3 class="dv2">easy</h3>
+                <div class="soon">levels coming soon</div>
+            </div>
+            <div class="dgroup">
+                <h3 class="dv4">medium</h3>
+                <div class="soon">levels coming soon</div>
+            </div>
+            <div class="dgroup">
+                <h3 class="dv6">hard</h3>
+                <div class="soon">levels coming soon</div>
+            </div>
+            <div class="dgroup">
+                <h3 class="dv8">challenge</h3>
+                <div class="soon">levels coming soon</div>
+            </div>
         </div>
         <div class="tools"><button id="mback">back to menu</button></div>
     </section>
@@ -1481,7 +2133,7 @@
                     <option value="2">easy</option>
                     <option value="4" selected>medium</option>
                     <option value="6">hard</option>
-                        <option value="8">challenge</option>
+                    <option value="8">challenge</option>
                 </select></div>
             <div id="modeinfo">
                 <div><i>difficulty:</i> <span id="miD"></span></div>
@@ -1490,15 +2142,20 @@
             <div id="msg" role="status"></div>
             <div class="lbl" id="score"></div>
         </section>
-        <div class="how"><button id="tomenu">calendar</button><button id="lbplay" hidden>leaderboard</button><button id="what">what is this?</button><button
-                id="opts">settings</button></div>
+        <div class="how"><button id="tomenu">calendar</button><button id="lbplay" hidden>leaderboard</button><button
+                id="what">what is this?</button><button id="opts">settings</button></div>
         <dialog id="dlg">
             <p>every level is freshly generated and gives only the operations you need. par is the fewest moves that can
                 work,
                 and you can keep going past it, but every extra move is one over par. many levels have more than one
                 route. in
-                hardcore mode (settings) you only get 3 undos per level, can't restart, and can't go over par. by default levels use whole numbers, and division only works when the result is whole, so a greyed-out ÷ button means your number doesn't divide evenly. challenge difficulty adds extra operations like |x| (absolute value), √x, x³, negate, mod and digit reverse, and has lots of different solutions. in settings you can switch to decimals (moves like +0.5, and x⁻¹ turns 4 into 0.25) or fractions (division can leave fractions, and x⁻¹ turns 4 into 1/4). in decimals mode you can also allow decimal goals.</p><button
-                id="dx">gotcha</button>
+                hardcore mode (settings) you only get 3 undos per level, can't restart, and can't go over par. by
+                default levels use whole numbers, and division only works when the result is whole, so a greyed-out ÷
+                button means your number doesn't divide evenly. challenge difficulty adds extra operations like |x|
+                (absolute value), √x, x³, negate, mod and digit reverse, and has lots of different solutions. in
+                settings you can switch to decimals (moves like +0.5, and x⁻¹ turns 4 into 0.25) or fractions (division
+                can leave fractions, and x⁻¹ turns 4 into 1/4). in decimals mode you can also allow decimal goals.</p>
+            <button id="dx">gotcha</button>
         </dialog>
     </main>
     <section id="scores" hidden>
@@ -1526,20 +2183,29 @@
                     <button class="sw" id="swAnim" role="switch" aria-checked="true" aria-label="animations"></button>
                 </div>
                 <div class="srow" id="rowAdv">
-                    <div><b>advanced animations</b><span>turn individual animations on or off</span></div><button class="lnk" id="advBtn">open</button>
+                    <div><b>advanced animations</b><span>turn individual animations on or off</span></div><button
+                        class="lnk" id="advBtn">open</button>
                 </div>
                 <div class="srow col">
                     <div><b>numbers</b><span>use whole numbers, decimals or fractions. starts a new level</span></div>
-                    <div class="seg" role="radiogroup" aria-label="number type"><button data-m="whole" role="radio" aria-checked="true">whole numbers</button><button data-m="dec" role="radio" aria-checked="false">decimals</button><button data-m="frac" role="radio" aria-checked="false">fractions</button></div>
+                    <div class="seg" role="radiogroup" aria-label="number type"><button data-m="whole" role="radio"
+                            aria-checked="true">whole numbers</button><button data-m="dec" role="radio"
+                            aria-checked="false">decimals</button><button data-m="frac" role="radio"
+                            aria-checked="false">fractions</button></div>
                 </div>
                 <div class="srow" id="rowGdec">
-                    <div><b>decimal goals</b><span>decimals only: the goal can be a decimal like 3.5, not just a whole number. starts a new level</span></div><button class="sw" id="swGdec" role="switch" aria-checked="false" aria-label="decimal goals"></button>
+                    <div><b>decimal goals</b><span>decimals only: the goal can be a decimal like 3.5, not just a whole
+                            number. starts a new level</span></div><button class="sw" id="swGdec" role="switch"
+                        aria-checked="false" aria-label="decimal goals"></button>
                 </div>
                 <div class="srow" id="rowGfrac">
-                    <div><b>fraction goals</b><span>fractions only: the goal can be a fraction like 7/4, not just a whole number. starts a new level</span></div><button class="sw" id="swGfrac" role="switch" aria-checked="false" aria-label="fraction goals"></button>
+                    <div><b>fraction goals</b><span>fractions only: the goal can be a fraction like 7/4, not just a
+                            whole number. starts a new level</span></div><button class="sw" id="swGfrac" role="switch"
+                        aria-checked="false" aria-label="fraction goals"></button>
                 </div>
                 <div class="srow">
-                    <div><b>hardcore mode</b><span>only 3 undos per level, no restarting, and you can't go over par</span></div>
+                    <div><b>hardcore mode</b><span>only 3 undos per level, no restarting, and you can't go over
+                            par</span></div>
                     <button class="sw" id="swHc" role="switch" aria-checked="false" aria-label="hardcore mode"></button>
                 </div>
                 <div class="srow">
@@ -1554,13 +2220,39 @@
         <div class="sp">
             <div class="board">
                 <h2>animations</h2>
-                <div class="srow"><div><b>tile flips</b><span>digits flip like a split-flap board</span></div><button class="sw" data-anim="flip" role="switch" aria-checked="true" aria-label="tile flips"></button></div>
-                <div class="srow"><div><b>ball flight</b><span>the ball arcs along the number line and the dotted trail follows it</span></div><button class="sw" data-anim="ball" role="switch" aria-checked="true" aria-label="ball flight"></button></div>
-                <div class="srow"><div><b>number line zoom</b><span>the line slides smoothly to a new scale</span></div><button class="sw" data-anim="zoom" role="switch" aria-checked="true" aria-label="number line zoom"></button></div>
-                <div class="srow"><div><b>confetti</b><span>a burst from the hole when you solve a level</span></div><button class="sw" data-anim="confetti" role="switch" aria-checked="true" aria-label="confetti"></button></div>
-                <div class="srow"><div><b>panel slides and sway</b><span>settings and scores slide in and lean as they move, and the background shifts</span></div><button class="sw" data-anim="slide" role="switch" aria-checked="true" aria-label="panel slides and sway"></button></div>
-                <div class="srow"><div><b>theme fade</b><span>colors fade between dark and light</span></div><button class="sw" data-anim="theme" role="switch" aria-checked="true" aria-label="theme fade"></button></div>
-                <div class="srow"><div><b>button and menu motion</b><span>button presses, hover changes and page fade-ins</span></div><button class="sw" data-anim="ui" role="switch" aria-checked="true" aria-label="button and menu motion"></button></div>
+                <div class="srow">
+                    <div><b>tile flips</b><span>digits flip like a split-flap board</span></div><button class="sw"
+                        data-anim="flip" role="switch" aria-checked="true" aria-label="tile flips"></button>
+                </div>
+                <div class="srow">
+                    <div><b>ball flight</b><span>the ball arcs along the number line and the dotted trail follows
+                            it</span></div><button class="sw" data-anim="ball" role="switch" aria-checked="true"
+                        aria-label="ball flight"></button>
+                </div>
+                <div class="srow">
+                    <div><b>number line zoom</b><span>the line slides smoothly to a new scale</span></div><button
+                        class="sw" data-anim="zoom" role="switch" aria-checked="true"
+                        aria-label="number line zoom"></button>
+                </div>
+                <div class="srow">
+                    <div><b>confetti</b><span>a burst from the hole when you solve a level</span></div><button
+                        class="sw" data-anim="confetti" role="switch" aria-checked="true"
+                        aria-label="confetti"></button>
+                </div>
+                <div class="srow">
+                    <div><b>panel slides and sway</b><span>settings and scores slide in and lean as they move, and the
+                            background shifts</span></div><button class="sw" data-anim="slide" role="switch"
+                        aria-checked="true" aria-label="panel slides and sway"></button>
+                </div>
+                <div class="srow">
+                    <div><b>theme fade</b><span>colors fade between dark and light</span></div><button class="sw"
+                        data-anim="theme" role="switch" aria-checked="true" aria-label="theme fade"></button>
+                </div>
+                <div class="srow">
+                    <div><b>button and menu motion</b><span>button presses, hover changes and page fade-ins</span></div>
+                    <button class="sw" data-anim="ui" role="switch" aria-checked="true"
+                        aria-label="button and menu motion"></button>
+                </div>
                 <div class="tools"><button id="advBack">back</button></div>
             </div>
         </div>
@@ -1927,9 +2619,9 @@
             $('trail').innerHTML = trailHTML(); $('trail').setAttribute('aria-label', hist.length ? [fmt(L.start), ...hist.map(h => tk(h.s))].join(' ') + ' = ' + fmt(cur) : fmt(L.start));
             $('ops').innerHTML = '';
             L.ops.forEach(o => {
-                const b = document.createElement('button'); b.textContent = o.s;
+                const b = document.createElement('button'), fr = /^([+−×÷])(−?\d+\/\d+)$/.exec(o.s), lab = fr ? fr[1] + mNum(fr[2]) : null; if (lab) { b.innerHTML = lab; b.setAttribute('aria-label', o.s); } else b.textContent = o.s;
                 const v = o.f(cur); b.disabled = won || !v || busy || full;
-                if (!won && !v) { const w = whyNot(o.s); b.title = w; b.innerHTML = o.s + '<small>' + w + '</small>'; }
+                if (!won && !v) { const w = whyNot(o.s); b.title = w; b.innerHTML = (lab || o.s) + '<small>' + w + '</small>'; }
                 b.onclick = () => { hist.push({ prev: cur, s: o.s }); cur = v; pend = true; render(); }; $('ops').appendChild(b);
             });
             drawLine();
@@ -1960,7 +2652,8 @@
         }
         let decAtOpen = false, ssTimer = 0;
         const SW_DUR = 600, SW_EZ = 'cubic-bezier(.4,0,.2,1)';
-        function swayAnim(el, kf, dur, ez) { el.getAnimations().forEach(a => a.cancel()); return el.animate(kf, { duration: dur || SW_DUR, easing: ez || SW_EZ }); }
+        function swayAnim(el, kf, dur, ez, hold) { el.getAnimations().forEach(a => a.cancel()); return el.animate(kf, { duration: dur || SW_DUR, easing: ez || SW_EZ, fill: hold ? 'forwards' : 'none' }); }
+        const dropAnims = (...els) => els.forEach(e => e && e.getAnimations().forEach(a => a.cancel()));
         function bez(u) {
             const cx = 1.2, bx = 3 * (.2 - .4) - cx, ax = 1 - cx - bx, by = 3 * (1 - 0) - 0, ay = 1 - by; let t = u;
             for (let i = 0; i < 8; i++) { const x = ((ax * t + bx) * t + cx) * t - u, d = (3 * ax * t + 2 * bx) * t + cx; if (Math.abs(x) < 1e-5 || Math.abs(d) < 1e-6) break; t -= x / d; }
@@ -2007,20 +2700,20 @@
                 if (an) {
                     swayAnim(st, [{ transform: 'translateX(' + (-100 * d) + '%)' }, { transform: 'none' }]);
                     swayAnim(sp, swayKF(d, 0, 0, true), 1200, 'linear');
-                    swayAnim(mn, swayKF(d, 0, 100 * d, false), SW_DUR, 'linear');
+                    swayAnim(mn, swayKF(d, 0, 100 * d, false), SW_DUR, 'linear', true);
                 }
-                ssTimer = setTimeout(() => { mn.hidden = true; if (nw) nw.hidden = true; }, an ? SW_DUR + 30 : 0);
+                ssTimer = setTimeout(() => { mn.hidden = true; if (nw) nw.hidden = true; dropAnims(mn, nw); }, an ? SW_DUR + 30 : 0);
             } else {
                 mn.hidden = false; if (nw) nw.hidden = false; parallax(adv ? bgBase - Math.round(innerWidth * .3) : bgBase);
                 if (!adv && (!lb || dailyMode)) { view = null; if (id === 'settings' && (settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac) !== decAtOpen && !dailyMode) newLevel(); else render(); }
                 getComputedStyle(nw || mn).transform;
                 mn.classList.remove('away', 'awayR'); if (nw) nw.classList.remove('away', 'awayR'); st.classList.add(off);
                 if (an) {
-                    swayAnim(st, [{ transform: 'none' }, { transform: 'translateX(' + (-100 * d) + '%)' }]);
+                    swayAnim(st, [{ transform: 'none' }, { transform: 'translateX(' + (-100 * d) + '%)' }], 0, 0, true);
                     swayAnim(sp, swayKF(-d, 0, 0, false), SW_DUR, 'linear');
                     swayAnim(mn, swayKF(-d, 100 * d, 0, true), 1200, 'linear');
                 }
-                ssTimer = setTimeout(() => { st.hidden = true; }, an ? SW_DUR + 30 : 0);
+                ssTimer = setTimeout(() => { st.hidden = true; dropAnims(st); }, an ? SW_DUR + 30 : 0);
             }
         }
         /* saved scores (localStorage) */
@@ -2168,7 +2861,7 @@
             scrollTo(0, 0);
             if (an) {
                 const d = v === 'menu' ? 1 : -1, ins = viewEls(v);
-                movers(outs).forEach(e => swayAnim(e, swayKF(d, 0, 100 * d, false), SW_DUR, 'linear'));
+                movers(outs).forEach(e => swayAnim(e, swayKF(d, 0, 100 * d, false), SW_DUR, 'linear', true));
                 movers(ins).forEach(e => { e.style.animation = 'none'; swayAnim(e, swayKF(d, -100 * d, 0, true), 1200, 'linear'); });
                 bgBase = v === 'menu' ? 0 : -Math.round(innerWidth * .3); parallax(bgBase);
                 const cleanOuts = () => outs.forEach(e => {
@@ -2325,7 +3018,7 @@
             const box = $('lbrows'), day = kind === 'day' || kind === 'date';
             $('lbt').textContent = day ? 'daily leaderboard' : 'monthly leaderboard';
             $('lbs').textContent = kind === 'date' ? (+dailyDate.slice(5, 7)) + '/' + (+dailyDate.slice(8)) + '/' + dailyDate.slice(0, 4) : day ? (todayStr || '') : MN[calM] + ' ' + calY;
-            box.innerHTML = '<li>loading…</li>'; showPanel('lb', true);
+            box.innerHTML = '<li class="spinwrap"><span class="spin" role="status" aria-label="loading"></span></li>'; showPanel('lb', true);
             try {
                 const j = await api(kind === 'date' ? '/daily/leaderboard/' + dailyDate : day ? '/daily/leaderboard' : '/daily/leaderboard/month/' + calY + '-' + pad(calM + 1));
                 box.innerHTML = j.rows.length ? '' : '<li>no scores yet</li>';
