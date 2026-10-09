@@ -503,6 +503,19 @@
             margin-bottom: 12px;
             overflow-wrap: anywhere
         }
+        #trail { font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", "Times New Roman", serif; font-size: 1.3rem; line-height: 2; color: var(--ink) }
+        #trail .op, #trail .pr { color: var(--soft) }
+        #trail .op { margin: 0 .04em }
+        #trail .pr { font-size: 1.15em }
+        #trail b { font-weight: 700 }
+        #trail sup { font-size: .68em; line-height: 0; vertical-align: .55em; margin-left: .05em }
+        #trail .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .8em; line-height: 1.2; margin: 0 .15em }
+        #trail .fr > span { padding: 0 .2em }
+        #trail .fr > span:first-child { border-bottom: 1.5px solid currentColor }
+        #trail .sqw { display: inline-flex; align-items: stretch; vertical-align: middle; line-height: 1.3; margin: 0 .05em }
+        #trail .sq { width: .75em; flex: none; overflow: visible }
+        #trail .rd { border-top: 1.6px solid currentColor; padding: .05em .12em 0 .06em; margin-left: -1px }
+        #trail .ab { margin: 0 .08em; font-size: 1.05em }
 
         .tile {
             position: relative;
@@ -1301,7 +1314,7 @@
             }
 
             #trail {
-                font-size: .85rem
+                font-size: 1.05rem
             }
 
             #modeinfo {
@@ -1371,7 +1384,7 @@
             <p class="sub" id="dsub">pick a day to play</p>
         </header>
         <div class="tools" id="dauth"><a class="lnk" href="../../account/?from=daily">sign in to gamedevrg.com</a></div>
-        <p class="sub" id="dwho" hidden><span id="dwn"></span> · <a href="#" id="dout">log out</a></p>
+        <p class="sub" id="dwho" hidden><span id="dwn"></span></p>
         <div class="streakbar" id="streakbar" hidden><span>current streak <b id="sk1">0</b></span><span>longest streak <b id="sk2">0</b></span></div>
         <div class="board cal">
             <div class="calhead"><button id="cprev" aria-label="previous month">‹</button><h3 id="ctitle"></h3><button id="cnext" aria-label="next month">›</button></div>
@@ -1477,7 +1490,7 @@
             <div id="msg" role="status"></div>
             <div class="lbl" id="score"></div>
         </section>
-        <div class="how"><button id="tomenu">calendar</button><button id="what">what is this?</button><button
+        <div class="how"><button id="tomenu">calendar</button><button id="lbplay" hidden>leaderboard</button><button id="what">what is this?</button><button
                 id="opts">settings</button></div>
         <dialog id="dlg">
             <p>every level is freshly generated and gives only the operations you need. par is the fewest moves that can
@@ -1567,11 +1580,15 @@
             aria-label="number line showing your ball, your hits and the hole"></svg></div>
     <script>
         const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b] } return a || 1 };
-        let NB = 100000, CAP = 1e9;
-        function F(n, d = 1) { if (d < 0) { n = -n; d = -d } const g = gcd(n, d); n /= g; d /= g; if (Math.abs(n) > NB || d > NB) return null; return { n, d } }
-        const key = x => x.n + '/' + x.d;
+        let NB = 100000, CAP = 1e9; const BMAX = 200;
+        function F(n, d = 1, b = 1) { if (d < 0) { n = -n; d = -d } if (n === 0) b = 1; const g = gcd(n, d); n /= g; d /= g; if (Math.abs(n) > NB || d > NB || b > BMAX) return null; return { n, d, b } }
+        const sqfC = new Map();
+        /* m = k²·r with r having no square factor: returns [k, r] */
+        function sqf(m) { let c = sqfC.get(m); if (c) return c; let k = 1, r = m; for (let p = 2; p * p <= r; p++) while (r % (p * p) === 0) { r /= p * p; k *= p } c = [k, r]; sqfC.set(m, c); return c }
+        const key = x => x.n + '/' + x.d + (x.b > 1 ? 'r' + x.b : '');
         const term = x => { let d = x.d; while (d % 2 === 0) d /= 2; while (d % 5 === 0) d /= 5; return d === 1 };
         const fmt = x => {
+            if (x.b > 1) { const a = Math.abs(x.n); return (x.n < 0 ? '-' : '') + (a === 1 ? '' : a) + '√' + x.b + (x.d > 1 ? '/' + x.d : ''); } /* a root like 2√3 or √3/2 */
             if (x.d === 1) return String(x.n);
             if (settings.num === 'dec' && term(x)) {
                 let r = Math.abs(x.n) % x.d, t = Math.floor(Math.abs(x.n) / x.d) + '.', k = 0;
@@ -1581,21 +1598,22 @@
             return x.n + '/' + x.d;
         };
         const fmtS = x => { const f = fmt(x), i = f.indexOf('.'); return i >= 0 && f.length - i - 1 > 2 ? f.slice(0, i + 3) : f; };
-        const same = (a, b) => a.n === b.n && a.d === b.d;
+        const same = (a, b) => a.n === b.n && a.d === b.d && (a.b || 1) === (b.b || 1);
         function mk(s, mode) {
-            if (s === 'x²') return { s, f: x => F(x.n * x.n, x.d * x.d) };
-            if (s === '|x|') return { s, f: x => F(Math.abs(x.n), x.d) };
-            if (s === '−x') return { s, f: x => F(-x.n, x.d) };
-            if (s === 'x³') return { s, f: x => F(x.n * x.n * x.n, x.d * x.d * x.d) };
-            if (s === '√x') return { s, f: x => { if (x.n < 0) return null; const a = Math.round(Math.sqrt(x.n)), b = Math.round(Math.sqrt(x.d)); return a * a === x.n && b * b === x.d ? F(a, b) : null } };
-            if (s.startsWith('mod ')) { const k = parseInt(s.slice(4), 10); return { s, f: x => x.d !== 1 ? null : F(((x.n % k) + k) % k) }; }
-            if (s === 'rev') return { s, f: x => x.d !== 1 || x.n < 0 ? null : F(parseInt(String(x.n).split('').reverse().join(''), 10)) };
-            if (s === 'x⁻¹') return { s, f: x => { if (x.n === 0) return null; const r = F(x.d, x.n); return r && (mode !== 'dec' || r.d === 1 || term(r)) ? r : null } };
+            /* numbers can be a root like 2√3 = {n:2, d:1, b:3} (value n/d·√b, b with no square factor); in fractions mode √x of a non-square gives one */
+            if (s === 'x²') return { s, f: x => F(x.n * x.n * x.b, x.d * x.d) };
+            if (s === '|x|') return { s, f: x => F(Math.abs(x.n), x.d, x.b) };
+            if (s === '−x') return { s, f: x => F(-x.n, x.d, x.b) };
+            if (s === 'x³') return { s, f: x => F(x.n * x.n * x.n * x.b, x.d * x.d * x.d, x.b) };
+            if (s === '√x') return { s, f: x => { if (x.n < 0 || x.b > 1) return null; if (x.n === 0) return x; const [k, r] = sqf(x.n * x.d); return r > 1 && mode !== 'frac' ? null : F(k, x.d, r) } };
+            if (s.startsWith('mod ')) { const k = parseInt(s.slice(4), 10); return { s, f: x => x.d !== 1 || x.b > 1 ? null : F(((x.n % k) + k) % k) }; }
+            if (s === 'rev') return { s, f: x => x.d !== 1 || x.b > 1 || x.n < 0 ? null : F(parseInt(String(x.n).split('').reverse().join(''), 10)) };
+            if (s === 'x⁻¹') return { s, f: x => { if (x.n === 0) return null; const r = F(x.d, x.n * x.b, x.b); return r && (mode !== 'dec' || r.d === 1 || term(r)) ? r : null } };
             const qs = s.slice(1), o = s[0], q = qs.includes('/') ? F(+qs.split('/')[0], +qs.split('/')[1]) : F(Math.round(parseFloat(qs) * 10), 10); /* the number can be whole, a decimal or a fraction (always kept in lowest terms) */
-            if (o === '+') return { s, f: x => F(x.n * q.d + q.n * x.d, x.d * q.d) };
-            if (o === '−') return { s, f: x => F(x.n * q.d - q.n * x.d, x.d * q.d) };
-            if (o === '×') return { s, f: x => F(x.n * q.n, x.d * q.d) };
-            if (o === '÷') return { s, f: x => { if (q.n === 0) return null; const r = F(x.n * q.d, x.d * q.n); return r && (r.d === 1 || mode === 'frac' || (mode === 'dec' && term(r))) ? r : null } };
+            if (o === '+') return { s, f: x => x.b > 1 ? null : F(x.n * q.d + q.n * x.d, x.d * q.d) };
+            if (o === '−') return { s, f: x => x.b > 1 ? null : F(x.n * q.d - q.n * x.d, x.d * q.d) };
+            if (o === '×') return { s, f: x => F(x.n * q.n, x.d * q.d, x.b) };
+            if (o === '÷') return { s, f: x => { if (q.n === 0) return null; const r = F(x.n * q.d, x.d * q.n, x.b); return r && (r.d === 1 || mode === 'frac' || (mode === 'dec' && term(r))) ? r : null } };
         }
         function solve(start, goal, ops) {
             let seen = new Set([key(start)]), fr = [start];
@@ -1643,7 +1661,7 @@
             if (t === 8 || !more) return mk('x²', mode);
             return mk('x⁻¹', mode);
         }
-        const NS = 'http://www.w3.org/2000/svg', val = x => x.n / x.d;
+        const NS = 'http://www.w3.org/2000/svg', val = x => x.n / x.d * Math.sqrt(x.b || 1);
         function mkTile() {
             const t = document.createElement('div'); t.className = 'tile'; t.setAttribute('aria-hidden', 'true');
             t.innerHTML = '<div class="h t"><span></span></div><div class="h b"><span></span></div><div class="flap h t f1"><span></span></div><div class="flap h b f2"><span></span></div>'; return t;
@@ -1832,6 +1850,7 @@
                     if (!r || Math.abs(r.n) > 5000 || r.d > 5000) { ok = false; break; } v = r;
                 }
                 if (!ok || same(v, start)) continue;
+                if (v.b > 1) continue; /* a goal is never a root (the path can go through one) */
                 if (v.d !== 1 && !(gd && term(v) && v.d <= 100) && !(gf && v.d <= 30 && Math.abs(v.n) <= 500)) continue;
                 if ((gd || gf) && v.d === 1 && Math.random() < .6) continue;
                 const par = solve(start, v, pool);
@@ -1849,7 +1868,42 @@
             const px = avail / ((l1 + l2) + 3);
             document.querySelector('.board').style.setProperty('--ns', Math.max(1.4, Math.min(3.2, px / 16)) + 'rem');
         }
-        const whyNot = s => s[0] === '÷' ? (settings.num === 'frac' ? 'too big' : 'not whole') : s === 'x⁻¹' ? 'undefined' : s === '√x' ? 'not a square' : (s.startsWith('mod') || s === 'rev') ? 'whole only' : 'too big';
+        const whyNot = s => (cur && cur.b > 1 && /^[+−]\d/.test(s)) ? "can't add to a root" : (cur && cur.b > 1 && s === '√x') ? 'already a root' : s[0] === '÷' ? (settings.num === 'frac' ? 'too big' : 'not whole') : s === 'x⁻¹' ? 'undefined' : s === '√x' ? (settings.num === 'frac' ? 'negative' : 'not a square') : (s.startsWith('mod') || s === 'rev') ? 'whole only' : 'too big';
+        /* ---- the trail, drawn as a real math expression: parentheses where order matters, stacked fractions, powers, roots, bars ---- */
+        const mEsc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+        const mRad = h => '<span class="sqw"><svg class="sq" viewBox="0 0 12 20" preserveAspectRatio="none" aria-hidden="true"><path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/></svg><span class="rd">' + h + '</span></span>';
+        const mNum = t => {
+            t = String(t).replace(/^-/, '−');
+            const rm = /^(−?)(\d*)√(\d+)(?:\/(\d+))?$/.exec(t);
+            if (rm) { const top = rm[2] + mRad(rm[3]); return rm[1] + (rm[4] ? '<span class="fr"><span>' + top + '</span><span>' + rm[4] + '</span></span>' : top); }
+            const m = /^(−?)(\d+)\/(\d+)$/.exec(t);
+            return m ? m[1] + '<span class="fr"><span>' + m[2] + '</span><span>' + m[3] + '</span></span>' : mEsc(t);
+        };
+        /* precedence: 0 mod, 1 + − (and negation), 2 × ÷ (and fractions), 3 powers, 4 single pieces (numbers, |x|, √x) */
+        const mPar = h => '<span class="pr">(</span>' + h + '<span class="pr">)</span>';
+        const mWrap = (e, min) => e.p < min ? mPar(e.h) : e.h;
+        const mOp = c => ' <span class="op">' + c + '</span> ';
+        function mStep(e, s) {
+            if (s === 'x²') return { h: mWrap(e, 4) + '<sup>2</sup>', p: 3 };
+            if (s === 'x³') return { h: mWrap(e, 4) + '<sup>3</sup>', p: 3 };
+            if (s === 'x⁻¹') return { h: mWrap(e, 4) + '<sup>−1</sup>', p: 3 };
+            if (s === '|x|') return { h: '<span class="ab">|</span>' + e.h + '<span class="ab">|</span>', p: 4 };
+            if (s === '√x') return { h: mRad(e.h), p: 4 };
+            if (s === '−x') return { h: '−' + mWrap(e, 4), p: 1 };
+            if (s === 'rev') return { h: 'rev' + mPar(e.h), p: 4 };
+            if (s.startsWith('mod ')) return { h: mWrap(e, 3) + mOp('mod') + mEsc(s.slice(4)), p: 0 };
+            const k = mNum(s.slice(1)), o = s[0];
+            if (o === '+' || o === '−') return { h: mWrap(e, 1) + mOp(o) + k, p: 1 };
+            if (o === '×' || o === '÷') return { h: mWrap(e, 2) + mOp(o) + k, p: 2 };
+            return { h: mWrap(e, 4) + mOp(mEsc(s)), p: 0 };
+        }
+        function trailHTML() {
+            const st = fmt(L.start);
+            let e = { h: mNum(st), p: /^-/.test(st) ? 1 : st.includes('/') ? 2 : 4 };
+            if (!hist.length) return e.h;
+            hist.forEach(h => { e = mStep(e, h.s); });
+            return e.h + ' <span class="op">=</span> <b>' + mNum(fmt(cur)) + '</b>';
+        }
         function render() {
             {
                 const dv = $('diff').value, mi = $('miD'), mm = $('miM');
@@ -1857,6 +1911,7 @@
                 mm.textContent = settings.hc ? 'hardcore' : 'normal'; mm.className = settings.hc ? 'mhc' : 'mnorm';
             }
             const used = hist.length, won = same(cur, L.goal), over = dailyMode ? 0 : used - L.limit; /* daily levels have no par */
+            $('lbplay').hidden = !dailyMode;
             $('psub').textContent = dailyMode ? 'reach the goal in as few moves as you can' : 'reach the goal in par moves or fewer';
             const sc = over <= 0 ? 'par' : (over + ' over par');
             const full = hcOn() && !won && used >= L.limit;
@@ -1869,7 +1924,7 @@
             $('left').textContent = dailyMode ? `${used} ${used === 1 ? 'move' : 'moves'}` : `par ${L.limit} · ${used} ${used === 1 ? 'move' : 'moves'}` + (over > 0 ? ` · ${over} over par` : '');
             $('left').style.color = over > 0 ? 'var(--imag)' : '';
             const tk = t => /^[+−×÷][\d.]/.test(t) ? t[0] + ' ' + t.slice(1) : t === '−x' ? 'negate' : t;
-            $('trail').textContent = hist.length ? [fmt(L.start), ...hist.map(h => tk(h.s))].join(' ') + ' = ' + fmt(cur) : fmt(L.start);
+            $('trail').innerHTML = trailHTML(); $('trail').setAttribute('aria-label', hist.length ? [fmt(L.start), ...hist.map(h => tk(h.s))].join(' ') + ' = ' + fmt(cur) : fmt(L.start));
             $('ops').innerHTML = '';
             L.ops.forEach(o => {
                 const b = document.createElement('button'); b.textContent = o.s;
@@ -1941,7 +1996,7 @@
         }
         /* settings sits to the right (game travels left), scores sits to the left (game travels right) */
         function showPanel(id, on) {
-            const adv = id === 'adv', lb = id === 'lb', st = $(id), sp = st.querySelector('.sp'), mn = adv ? $('settings') : lb ? $('dailypg') : document.querySelector('main'), nw = adv || lb ? null : $('nlwrap'), an = animOn('slide'),
+            const adv = id === 'adv', lb = id === 'lb', st = $(id), sp = st.querySelector('.sp'), mn = adv ? $('settings') : lb && !dailyMode ? $('dailypg') : document.querySelector('main'), nw = adv || (lb && !dailyMode) ? null : $('nlwrap'), an = animOn('slide'),
                 d = id === 'scores' || lb ? 1 : -1, away = d < 0 ? 'away' : 'awayR', off = d < 0 ? 'off' : 'offL';
             clearTimeout(ssTimer);
             if (on) {
@@ -1957,7 +2012,7 @@
                 ssTimer = setTimeout(() => { mn.hidden = true; if (nw) nw.hidden = true; }, an ? SW_DUR + 30 : 0);
             } else {
                 mn.hidden = false; if (nw) nw.hidden = false; parallax(adv ? bgBase - Math.round(innerWidth * .3) : bgBase);
-                if (!adv && !lb) { view = null; if (id === 'settings' && (settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac) !== decAtOpen && !dailyMode) newLevel(); else render(); }
+                if (!adv && (!lb || dailyMode)) { view = null; if (id === 'settings' && (settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac) !== decAtOpen && !dailyMode) newLevel(); else render(); }
                 getComputedStyle(nw || mn).transform;
                 mn.classList.remove('away', 'awayR'); if (nw) nw.classList.remove('away', 'awayR'); st.classList.add(off);
                 if (an) {
@@ -2238,7 +2293,7 @@
             try {
                 const lv = await api('/daily/level/' + date);
                 /* daily levels are fractions levels: start and goal arrive as {n, d} (older whole-number days arrive as plain numbers) */
-                const md = lv.mode === 'whole' ? 'whole' : 'frac', cv = v => typeof v === 'object' ? F(v.n, v.d) : F(v);
+                const md = lv.mode === 'whole' ? 'whole' : 'frac', cv = v => typeof v === 'object' ? F(v.n, v.d, v.b || 1) : F(v);
                 NB = 3000; settings.num = md; /* in memory only, so fractions show as 7/4 whatever the main game is set to */
                 stopReplay(); stopFx(); pend = false; view = null;
                 L = { start: cv(lv.start), goal: cv(lv.goal), ops: lv.ops.map(s => mk(s, md)), limit: 999 }; /* no par in daily levels */
@@ -2257,23 +2312,22 @@
             dailyNote = 'saving…';
             try {
                 const r = await api('/daily/submit', { username: user, date: dailyDate, moves: hist.map(h => h.s) });
-                dailyNote = `saved. your best for this day: ${r.best} ${r.best === 1 ? 'move' : 'moves'}. restart to try for fewer.`;
+                dailyNote = `saved. your best for this day: ${r.best} ${r.best === 1 ? 'move' : 'moves'}. restart to try for fewer.` + (r.onTime === false ? ' that day is over, so this is not on its leaderboard.' : '');
             } catch (e) { dailyNote = e.message; }
             loadDailySolved();
             if ($('dnote')) $('dnote').textContent = dailyNote;
         }
-        $('dout').onclick = e => { e.preventDefault(); user = ''; try { localStorage.removeItem('username'); } catch (x) { } showUser(); renderCal(); };
         $('cprev').onclick = () => { if (--calM < 0) { calM = 11; calY--; } renderCal(); };
         $('cnext').onclick = () => { if (++calM > 11) { calM = 0; calY++; } renderCal(); };
         $('dback').onclick = () => playToday();
         /* leaderboards slide in as their own panel, like settings and scores */
         async function openLb(kind) {
-            const box = $('lbrows'), day = kind === 'day';
+            const box = $('lbrows'), day = kind === 'day' || kind === 'date';
             $('lbt').textContent = day ? 'daily leaderboard' : 'monthly leaderboard';
-            $('lbs').textContent = day ? (todayStr || '') : MN[calM] + ' ' + calY;
+            $('lbs').textContent = kind === 'date' ? (+dailyDate.slice(5, 7)) + '/' + (+dailyDate.slice(8)) + '/' + dailyDate.slice(0, 4) : day ? (todayStr || '') : MN[calM] + ' ' + calY;
             box.innerHTML = '<li>loading…</li>'; showPanel('lb', true);
             try {
-                const j = await api(day ? '/daily/leaderboard' : '/daily/leaderboard/month/' + calY + '-' + pad(calM + 1));
+                const j = await api(kind === 'date' ? '/daily/leaderboard/' + dailyDate : day ? '/daily/leaderboard' : '/daily/leaderboard/month/' + calY + '-' + pad(calM + 1));
                 box.innerHTML = j.rows.length ? '' : '<li>no scores yet</li>';
                 j.rows.forEach((r, i) => {
                     const li = document.createElement('li'); if (r.username === user) li.className = 'me';
@@ -2286,6 +2340,7 @@
         }
         $('cmonth').onclick = () => openLb('month');
         $('sboard').onclick = () => openLb('day');
+        $('lbplay').onclick = () => openLb('date');
         $('lbback').onclick = () => showPanel('lb', false);
         /* ---------- account stats ---------- */
         async function openStats() {

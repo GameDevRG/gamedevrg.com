@@ -505,6 +505,19 @@
             margin-bottom: 12px;
             overflow-wrap: anywhere
         }
+        #trail { font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", "Times New Roman", serif; font-size: 1.3rem; line-height: 2; color: var(--ink) }
+        #trail .op, #trail .pr { color: var(--soft) }
+        #trail .op { margin: 0 .04em }
+        #trail .pr { font-size: 1.15em }
+        #trail b { font-weight: 700 }
+        #trail sup { font-size: .68em; line-height: 0; vertical-align: .55em; margin-left: .05em }
+        #trail .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .8em; line-height: 1.2; margin: 0 .15em }
+        #trail .fr > span { padding: 0 .2em }
+        #trail .fr > span:first-child { border-bottom: 1.5px solid currentColor }
+        #trail .sqw { display: inline-flex; align-items: stretch; vertical-align: middle; line-height: 1.3; margin: 0 .05em }
+        #trail .sq { width: .75em; flex: none; overflow: visible }
+        #trail .rd { border-top: 1.6px solid currentColor; padding: .05em .12em 0 .06em; margin-left: -1px }
+        #trail .ab { margin: 0 .08em; font-size: 1.05em }
 
         .tile {
             position: relative;
@@ -1293,7 +1306,7 @@
             }
 
             #trail {
-                font-size: .85rem
+                font-size: 1.05rem
             }
 
             #modeinfo {
@@ -1363,7 +1376,7 @@
             <p class="sub" id="dsub">pick a day to play</p>
         </header>
         <div class="tools" id="dauth"><input id="du" placeholder="username" autocomplete="username"><input id="dp" type="password" placeholder="password" autocomplete="current-password"><button id="dlogin">log in</button><button id="dreg">register</button></div>
-        <p class="sub" id="dwho" hidden><span id="dwn"></span> · <a href="#" id="dout">log out</a></p>
+        <p class="sub" id="dwho" hidden><span id="dwn"></span></p>
         <div class="board cal">
             <div class="calhead"><button id="cprev" aria-label="previous month">‹</button><h3 id="ctitle"></h3><button id="cnext" aria-label="next month">›</button></div>
             <div class="calgrid" id="cgrid"></div>
@@ -1460,7 +1473,7 @@
             <div id="msg" role="status"></div>
             <div class="lbl" id="score"></div>
         </section>
-        <div class="how"><button id="tomenu">main menu</button><button id="sc">scores</button><button id="what">what is this?</button><button
+        <div class="how"><button id="tomenu">main menu</button><button id="lbplay" hidden>leaderboard</button><button id="sc">scores</button><button id="what">what is this?</button><button
                 id="opts">settings</button></div>
         <dialog id="dlg">
             <p>every level is freshly generated and gives only the operations you need. par is a number of moves that is
@@ -1836,6 +1849,38 @@
             document.querySelector('.board').style.setProperty('--ns', Math.max(1.4, Math.min(3.2, px / 16)) + 'rem');
         }
         const whyNot = s => s[0] === '÷' ? 'not whole' : s === 'x⁻¹' ? 'undefined' : s === '√x' ? 'not a square' : (s.startsWith('mod') || s === 'rev') ? 'whole only' : 'too big';
+        /* ---- the trail, drawn as a real math expression: parentheses where order matters, stacked fractions, powers, roots, bars ---- */
+        const mEsc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+        const mNum = t => {
+            t = String(t).replace(/^-/, '−');
+            const m = /^(−?)(\d+)\/(\d+)$/.exec(t);
+            return m ? m[1] + '<span class="fr"><span>' + m[2] + '</span><span>' + m[3] + '</span></span>' : mEsc(t);
+        };
+        /* precedence: 0 mod, 1 + − (and negation), 2 × ÷ (and fractions), 3 powers, 4 single pieces (numbers, |x|, √x) */
+        const mPar = h => '<span class="pr">(</span>' + h + '<span class="pr">)</span>';
+        const mWrap = (e, min) => e.p < min ? mPar(e.h) : e.h;
+        const mOp = c => ' <span class="op">' + c + '</span> ';
+        function mStep(e, s) {
+            if (s === 'x²') return { h: mWrap(e, 4) + '<sup>2</sup>', p: 3 };
+            if (s === 'x³') return { h: mWrap(e, 4) + '<sup>3</sup>', p: 3 };
+            if (s === 'x⁻¹') return { h: mWrap(e, 4) + '<sup>−1</sup>', p: 3 };
+            if (s === '|x|') return { h: '<span class="ab">|</span>' + e.h + '<span class="ab">|</span>', p: 4 };
+            if (s === '√x') return { h: '<span class="sqw"><svg class="sq" viewBox="0 0 12 20" preserveAspectRatio="none" aria-hidden="true"><path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/></svg><span class="rd">' + e.h + '</span></span>', p: 4 };
+            if (s === '−x') return { h: '−' + mWrap(e, 4), p: 1 };
+            if (s === 'rev') return { h: 'rev' + mPar(e.h), p: 4 };
+            if (s.startsWith('mod ')) return { h: mWrap(e, 3) + mOp('mod') + mEsc(s.slice(4)), p: 0 };
+            const k = mNum(s.slice(1)), o = s[0];
+            if (o === '+' || o === '−') return { h: mWrap(e, 1) + mOp(o) + k, p: 1 };
+            if (o === '×' || o === '÷') return { h: mWrap(e, 2) + mOp(o) + k, p: 2 };
+            return { h: mWrap(e, 4) + mOp(mEsc(s)), p: 0 };
+        }
+        function trailHTML() {
+            const st = fmt(L.start);
+            let e = { h: mNum(st), p: /^-/.test(st) ? 1 : st.includes('/') ? 2 : 4 };
+            if (!hist.length) return e.h;
+            hist.forEach(h => { e = mStep(e, h.s); });
+            return e.h + ' <span class="op">=</span> <b>' + mNum(fmt(cur)) + '</b>';
+        }
         function render() {
             {
                 const dv = $('diff').value, mi = $('miD'), mm = $('miM');
@@ -1843,6 +1888,7 @@
                 mm.textContent = settings.hc ? 'hardcore' : 'normal'; mm.className = settings.hc ? 'mhc' : 'mnorm';
             }
             const used = hist.length, won = same(cur, L.goal), over = dailyMode ? 0 : used - L.limit; /* daily levels have no par */
+            $('lbplay').hidden = !dailyMode;
             $('psub').textContent = dailyMode ? 'reach the goal in as few moves as you can' : 'reach the goal in par moves or fewer';
             const sc = over < 0 ? (-over + ' under par') : over === 0 ? 'par' : (over + ' over par');
             const full = hcOn() && !won && used >= L.limit;
@@ -1855,7 +1901,7 @@
             $('left').textContent = dailyMode ? `${used} ${used === 1 ? 'move' : 'moves'}` : `par ${L.limit} · ${used} ${used === 1 ? 'move' : 'moves'}` + (over > 0 ? ` · ${over} over par` : '');
             $('left').style.color = over > 0 ? 'var(--imag)' : '';
             const tk = t => /^[+−×÷][\d.]/.test(t) ? t[0] + ' ' + t.slice(1) : t === '−x' ? 'negate' : t;
-            $('trail').textContent = hist.length ? [fmt(L.start), ...hist.map(h => tk(h.s))].join(' ') + ' = ' + fmt(cur) : fmt(L.start);
+            $('trail').innerHTML = trailHTML(); $('trail').setAttribute('aria-label', hist.length ? [fmt(L.start), ...hist.map(h => tk(h.s))].join(' ') + ' = ' + fmt(cur) : fmt(L.start));
             $('ops').innerHTML = '';
             L.ops.forEach(o => {
                 const b = document.createElement('button'); b.textContent = o.s;
@@ -1927,7 +1973,7 @@
         }
         /* settings sits to the right (game travels left), scores sits to the left (game travels right) */
         function showPanel(id, on) {
-            const adv = id === 'adv', lb = id === 'lb', st = $(id), sp = st.querySelector('.sp'), mn = adv ? $('settings') : lb ? $('dailypg') : document.querySelector('main'), nw = adv || lb ? null : $('nlwrap'), an = animOn('slide'),
+            const adv = id === 'adv', lb = id === 'lb', st = $(id), sp = st.querySelector('.sp'), mn = adv ? $('settings') : lb && !dailyMode ? $('dailypg') : document.querySelector('main'), nw = adv || (lb && !dailyMode) ? null : $('nlwrap'), an = animOn('slide'),
                 d = id === 'scores' || lb ? 1 : -1, away = d < 0 ? 'away' : 'awayR', off = d < 0 ? 'off' : 'offL';
             clearTimeout(ssTimer);
             if (on) {
@@ -1943,7 +1989,7 @@
                 ssTimer = setTimeout(() => { mn.hidden = true; if (nw) nw.hidden = true; }, an ? SW_DUR + 30 : 0);
             } else {
                 mn.hidden = false; if (nw) nw.hidden = false; parallax(adv ? bgBase - Math.round(innerWidth * .3) : bgBase);
-                if (!adv && !lb) { view = null; if (id === 'settings' && (settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac) !== decAtOpen && !dailyMode) newLevel(); else render(); }
+                if (!adv && (!lb || dailyMode)) { view = null; if (id === 'settings' && (settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac) !== decAtOpen && !dailyMode) newLevel(); else render(); }
                 getComputedStyle(nw || mn).transform;
                 mn.classList.remove('away', 'awayR'); if (nw) nw.classList.remove('away', 'awayR'); st.classList.add(off);
                 if (an) {
@@ -2217,23 +2263,22 @@
             dailyNote = 'saving…';
             try {
                 const r = await api('/daily/submit', { username: user, date: dailyDate, moves: hist.map(h => h.s) });
-                dailyNote = `saved. your best for this day: ${r.best} ${r.best === 1 ? 'move' : 'moves'}. restart to try for fewer.`;
+                dailyNote = `saved. your best for this day: ${r.best} ${r.best === 1 ? 'move' : 'moves'}. restart to try for fewer.` + (r.onTime === false ? ' that day is over, so this is not on its leaderboard.' : '');
             } catch (e) { dailyNote = e.message; }
             if ($('dnote')) $('dnote').textContent = dailyNote;
         }
         $('dlogin').onclick = () => dAuth(false); $('dreg').onclick = () => dAuth(true);
-        $('dout').onclick = e => { e.preventDefault(); user = ''; try { localStorage.removeItem('username'); } catch (x) { } showUser(); renderCal(); };
         $('cprev').onclick = () => { if (--calM < 0) { calM = 11; calY--; } renderCal(); };
         $('cnext').onclick = () => { if (++calM > 11) { calM = 0; calY++; } renderCal(); };
         $('dback').onclick = () => showView('menu');
         /* leaderboards slide in as their own panel, like settings and scores */
         async function openLb(kind) {
-            const box = $('lbrows'), day = kind === 'day';
+            const box = $('lbrows'), day = kind === 'day' || kind === 'date';
             $('lbt').textContent = day ? 'daily leaderboard' : 'monthly leaderboard';
-            $('lbs').textContent = day ? (todayStr || '') : MN[calM] + ' ' + calY;
+            $('lbs').textContent = kind === 'date' ? (+dailyDate.slice(5, 7)) + '/' + (+dailyDate.slice(8)) + '/' + dailyDate.slice(0, 4) : day ? (todayStr || '') : MN[calM] + ' ' + calY;
             box.innerHTML = '<li>loading…</li>'; showPanel('lb', true);
             try {
-                const j = await api(day ? '/daily/leaderboard' : '/daily/leaderboard/month/' + calY + '-' + pad(calM + 1));
+                const j = await api(kind === 'date' ? '/daily/leaderboard/' + dailyDate : day ? '/daily/leaderboard' : '/daily/leaderboard/month/' + calY + '-' + pad(calM + 1));
                 box.innerHTML = j.rows.length ? '' : '<li>no scores yet</li>';
                 j.rows.forEach((r, i) => {
                     const li = document.createElement('li'); if (r.username === user) li.className = 'me';
@@ -2246,6 +2291,7 @@
         }
         $('cmonth').onclick = () => openLb('month');
         $('sboard').onclick = () => openLb('day');
+        $('lbplay').onclick = () => openLb('date');
         $('lbback').onclick = () => showPanel('lb', false);
         /* ---------- account stats ---------- */
         async function openStats() {
