@@ -650,6 +650,7 @@
         }
 
         .pg { width: 100%; max-width: 520px; margin: 0 auto; padding: 8vh 16px 20px; text-align: center; animation: pgIn .35s ease both }
+        .pg { transform-origin: 50% 6% }
         @keyframes pgIn { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
         .noanim .pg, .noanim.pg { animation: none }
         body.inmenu { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) }
@@ -1421,6 +1422,7 @@
                         <path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="3"
                             stroke-linejoin="miter" vector-effect="non-scaling-stroke" />
                     </svg><span class="vin">-1</span></span></h1>
+            <p class="sub" id="dlvl" hidden></p>
             <p class="sub">reach the goal in par moves or fewer</p>
         </header>
         <section class="board">
@@ -1571,7 +1573,7 @@
             if (s.startsWith('mod ')) { const k = parseInt(s.slice(4), 10); return { s, f: x => x.d !== 1 ? null : F(((x.n % k) + k) % k) }; }
             if (s === 'rev') return { s, f: x => x.d !== 1 || x.n < 0 ? null : F(parseInt(String(x.n).split('').reverse().join(''), 10)) };
             if (s === 'x⁻¹') return { s, f: x => { if (x.n === 0) return null; const r = F(x.d, x.n); return r && (mode !== 'dec' || r.d === 1 || term(r)) ? r : null } };
-            const k = parseFloat(s.slice(1)), o = s[0], q = F(Math.round(k * 10), 10);
+            const qs = s.slice(1), o = s[0], q = qs.includes('/') ? F(+qs.split('/')[0], +qs.split('/')[1]) : F(Math.round(parseFloat(qs) * 10), 10); /* the number can be whole, a decimal or a fraction (always kept in lowest terms) */
             if (o === '+') return { s, f: x => F(x.n * q.d + q.n * x.d, x.d * q.d) };
             if (o === '−') return { s, f: x => F(x.n * q.d - q.n * x.d, x.d * q.d) };
             if (o === '×') return { s, f: x => F(x.n * q.n, x.d * q.d) };
@@ -1609,12 +1611,11 @@
         function genOp(tier, mode) {
             const dec = mode === 'dec', more = mode !== 'whole';
             if (tier === 8) {
-                const r = ri(0, more ? 17 : 16), hh = () => dec && Math.random() < .4, dd = () => { let v; do { v = ri(1, 49) } while (v % 10 === 0); return v / 10 };
-                if (r < 2) return mk('+' + (hh() ? dd() : ri(1, 12)), mode); if (r < 4) return mk('−' + (hh() ? dd() : ri(1, 12)), mode);
-                if (r < 6) return mk('×' + (hh() ? ['0.5', '1.5', '2.5'][ri(0, 2)] : ri(2, 5)), mode); if (r < 8) return mk('÷' + (hh() ? ['0.5', '2.5'][ri(0, 1)] : ri(2, 5)), mode);
+                let r; do r = ri(0, more ? 17 : 16); while (r === 14); const hh = () => dec && Math.random() < .4, hf = () => mode === 'frac' && Math.random() < .35, fq = () => { let d, n; do { d = ri(2, 5); n = ri(1, d * 3) } while (gcd(n, d) !== 1); return n + '/' + d }, dd = () => { let v; do { v = ri(1, 49) } while (v % 10 === 0); return v / 10 };
+                if (r < 2) return mk('+' + (hh() ? dd() : hf() ? fq() : ri(1, 12)), mode); if (r < 4) return mk('−' + (hh() ? dd() : hf() ? fq() : ri(1, 12)), mode);
+                if (r < 6) return mk('×' + (hh() ? ['0.5', '1.5', '2.5'][ri(0, 2)] : hf() ? fq() : ri(2, 5)), mode); if (r < 8) return mk('÷' + (hh() ? ['0.5', '2.5'][ri(0, 1)] : hf() ? fq() : ri(2, 5)), mode);
                 if (r === 8) return mk('x²', mode); if (r === 9) return mk('|x|', mode); if (r === 10) return mk('√x', mode); if (r === 11) return mk('x³', mode);
-                if (r === 12) return mk('−x', mode); if (r === 13) return mk('mod ' + ri(3, 9), mode); if (r === 14) return mk('rev', mode);
-                return mk(more ? 'x⁻¹' : '|x|', mode);
+                if (r === 12) return mk('−x', mode); if (r === 13) return mk('mod ' + ri(3, 9), mode); return mk(more ? 'x⁻¹' : '|x|', mode);
             }
             const t = ri(0, more ? 10 : 9), h = () => dec && Math.random() < .5,
                 dk = () => { let v; do { v = ri(1, 49) } while (v % 10 === 0); return v / 10 }, pk = a => a[ri(0, a.length - 1)];
@@ -1801,7 +1802,7 @@
         }
         function genLevel(tier) {
             NB = tier === 8 ? 3000 : 100000; CAP = tier === 8 ? 40000 : 1e9;
-            const tp = tier === 8 ? ri(5, 7) : 0, mode = settings.num, gd = mode === 'dec' && !!settings.gdec, gf = mode === 'frac' && !!settings.gfrac, special = o => o.s === 'x⁻¹' || o.s.includes('.');
+            const tp = tier === 8 ? ri(5, 7) : 0, mode = settings.num, gd = mode === 'dec' && !!settings.gdec, gf = mode === 'frac' && !!settings.gfrac, special = o => o.s === 'x⁻¹' || o.s.includes('.') || o.s.includes('/');
             for (let tries = 0; tries < 3000; tries++) {
                 const pool = []; const n = tier === 8 ? ri(7, 8) : ri(4, 5) + (tier >= 4 ? 1 : 0);
                 while (pool.length < n) { const o = genOp(tier, mode); if (!pool.some(p => p.s === o.s)) pool.push(o); }
@@ -1864,6 +1865,7 @@
             const left = HC_UNDOS - undosUsed;
             $('undo').disabled = !used || won || busy || (hcOn() && left <= 0);
             $('undo').textContent = hcOn() ? `undo (${Math.max(left, 0)} left)` : 'undo';
+            { const dl = $('dlvl'), p = dailyDate.split('-'); dl.hidden = !dailyMode || p.length !== 3; if (!dl.hidden) dl.textContent = 'daily level ' + (+p[1]) + '/' + (+p[2]) + '/' + p[0]; }
             $('rand').hidden = $('diff').hidden = dailyMode; $('reset').disabled = hcOn(); $('reset').title = hcOn() ? 'not allowed in hardcore mode' : ''; $('rand').disabled = busy || won;
             $('skipanim').hidden = !(busy && gaveUp);
             $('undo').style.display = $('reset').style.display = gaveUp ? 'none' : '';
@@ -1928,7 +1930,7 @@
             clearTimeout(ssTimer);
             if (on) {
                 if (id === 'settings') decAtOpen = settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac; else if (id === 'scores') renderScores();
-                parallax(d * Math.round(innerWidth * (adv ? .6 : .3)));
+                parallax(bgBase + d * Math.round(innerWidth * (adv ? .6 : .3)));
                 st.classList.remove('off', 'offL'); st.hidden = false; st.scrollTop = 0;
                 mn.classList.add(away); if (nw) nw.classList.add(away);
                 if (an) {
@@ -1938,7 +1940,7 @@
                 }
                 ssTimer = setTimeout(() => { mn.hidden = true; if (nw) nw.hidden = true; }, an ? SW_DUR + 30 : 0);
             } else {
-                mn.hidden = false; if (nw) nw.hidden = false; parallax(adv ? -Math.round(innerWidth * .3) : 0);
+                mn.hidden = false; if (nw) nw.hidden = false; parallax(adv ? bgBase - Math.round(innerWidth * .3) : bgBase);
                 if (!adv && !lb) { view = null; if (id === 'settings' && (settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac) !== decAtOpen && !dailyMode) newLevel(); else render(); }
                 getComputedStyle(nw || mn).transform;
                 mn.classList.remove('away', 'awayR'); if (nw) nw.classList.remove('away', 'awayR'); st.classList.add(off);
@@ -2066,12 +2068,48 @@
             unpress(); if (b && !b.disabled) { b.classList.add('pressed'); pressedEl = b; }
         }, true);
         ['pointerup', 'pointercancel', 'dragend'].forEach(ev => document.addEventListener(ev, unpress, true));
+        /* menu <-> pages slide and lean like the settings and scores panels:
+           going deeper (menu -> a page) slides left, going back to the menu slides right */
+        let curView = null, bgBase = 0, transEnd = null, outTimer = 0, inTimer = 0;
+        function viewEls(v) {
+            const nw = $('nlwrap');
+            if (v === 'random') return [document.querySelector('main'), nw];
+            return [$({ menu: 'menu', main: 'mainlevels', daily: 'dailypg', stats: 'statspg' }[v])];
+        }
+        /* on phones the number line sits inside the board, so it moves with it and needs no animation of its own */
+        const movers = els => els.filter(e => e !== $('nlwrap') || e.parentNode === document.body);
         function showView(v) {
-            const mn = document.querySelector('main'), nw = $('nlwrap');
+            if (transEnd) transEnd();
+            const mn = document.querySelector('main'), nw = $('nlwrap'), prev = curView, an = animOn('slide') && prev && prev !== v;
+            let outs = [];
+            if (an) {
+                /* keep the page we're leaving on screen, frozen where it is, while it slides away */
+                outs = viewEls(prev);
+                outs.forEach(e => {
+                    if (e === nw) return;
+                    const r = e.getBoundingClientRect(), st = e.style;
+                    st.position = 'fixed'; st.left = r.left + 'px'; st.top = r.top + 'px'; st.width = r.width + 'px'; st.margin = '0';
+                });
+            }
             $('menu').hidden = v !== 'menu'; $('mainlevels').hidden = v !== 'main'; $('dailypg').hidden = v !== 'daily'; $('statspg').hidden = v !== 'stats';
             mn.hidden = v !== 'random'; nw.hidden = v !== 'random';
+            outs.forEach(e => { e.hidden = false; });
             document.body.classList.toggle('inmenu', v !== 'random');
             scrollTo(0, 0);
+            if (an) {
+                const d = v === 'menu' ? 1 : -1, ins = viewEls(v);
+                movers(outs).forEach(e => swayAnim(e, swayKF(d, 0, 100 * d, false), SW_DUR, 'linear'));
+                movers(ins).forEach(e => { e.style.animation = 'none'; swayAnim(e, swayKF(d, -100 * d, 0, true), 1200, 'linear'); });
+                bgBase = v === 'menu' ? 0 : -Math.round(innerWidth * .3); parallax(bgBase);
+                const cleanOuts = () => outs.forEach(e => {
+                    e.getAnimations().forEach(a => a.cancel()); e.hidden = true;
+                    const st = e.style; st.position = st.left = st.top = st.width = st.margin = '';
+                });
+                transEnd = () => { clearTimeout(outTimer); clearTimeout(inTimer); cleanOuts(); ins.forEach(e => e.getAnimations().forEach(a => a.cancel())); transEnd = null; };
+                outTimer = setTimeout(cleanOuts, SW_DUR + 30);
+                inTimer = setTimeout(() => { transEnd = null; }, 1230);
+            } else if (prev !== v) { bgBase = v === 'menu' ? 0 : -Math.round(innerWidth * .3); }
+            curView = v;
             if (v === 'random') { view = null; pend = false; if (L) { updateNs(); render(); } }
         }
         /* ---------- daily levels (needs the server: server.js + daily.js) ---------- */
