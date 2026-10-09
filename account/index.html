@@ -129,6 +129,18 @@
                 <h1 class="settings-title" data-i18n="signIn">sign in</h1>
             </div>
 
+            <!-- shown only when the page is opened from the daily levels page (?from=daily) -->
+            <a id="dailyBack" href="../mathgolf/daily/" style="
+                display:none;
+                margin-bottom:25px;
+                padding:10px;
+                text-align:center;
+                text-decoration:none;
+                background:#3b82f6;
+                color:white;
+                font-weight:600;
+            ">◁ back to daily levels</a>
+
             <!-- LOGIN VIEW a-->
             <div id="loginView">
 
@@ -225,11 +237,20 @@
     </div>
 
     <script>
+        /* opened from the daily levels page: its link ends in ?from=daily */
+        const fromDaily = new URLSearchParams(location.search).get("from") === "daily";
+        if (fromDaily) document.getElementById("dailyBack").style.display = "block";
+
         function checkIfAlreadyLoggedIn() {
             const loggedIn = localStorage.getItem("loggedIn");
             const user = localStorage.getItem("username");
 
             if (loggedIn === "true" && user) {
+                if (fromDaily) {
+                    // stay here so the back button is usable
+                    document.getElementById("status").textContent = "✅ already logged in as " + user;
+                    return;
+                }
                 // already logged in → go to dashboard
                 window.location.href = "dashboard.html";
             }
@@ -286,12 +307,15 @@
 
         const savedLang = localStorage.getItem("lang") || "en";
         applyLanguage(savedLang);
-        document.getElementById("languageSelect").value = savedLang;
-        document.getElementById("languageSelect").addEventListener("change", (e) => {
-            const lang = e.target.value;
-            localStorage.setItem("lang", lang);
-            applyLanguage(lang);
-        });
+        const langSelect = document.getElementById("languageSelect");
+        if (langSelect) {
+            langSelect.value = savedLang;
+            langSelect.addEventListener("change", (e) => {
+                const lang = e.target.value;
+                localStorage.setItem("lang", lang);
+                applyLanguage(lang);
+            });
+        }
 
         /* LOGIN FUNCTION */
         async function loginUser() {
@@ -324,6 +348,7 @@
 
                 localStorage.setItem("loggedIn", "true");
                 localStorage.setItem("username", username);
+                if (fromDaily) return; // stay here: use the back button to return to the daily levels
                 window.location.href = "dashboard.html";
 
             } catch (err) {

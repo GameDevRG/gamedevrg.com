@@ -952,6 +952,7 @@
         :root.noui .pg { animation: none }
         :root.nofade { transition: none }
         .lnk { flex: 0 0 auto; min-height: 40px; padding: 8px 14px; font-family: inherit; font-weight: 700; font-size: .9rem; border: 1px solid var(--blue); background: var(--bg); color: var(--blue); cursor: pointer }
+        a.lnk { display: inline-flex; align-items: center; text-decoration: none }
         .lnk:hover { border-color: var(--imag); color: var(--imag) }
 
         #fx {
@@ -1356,7 +1357,7 @@
             <h2 class="pgh">daily levels</h2>
             <p class="sub" id="dsub">pick a day to play</p>
         </header>
-        <div class="tools" id="dauth"><input id="du" placeholder="username" autocomplete="username"><input id="dp" type="password" placeholder="password" autocomplete="current-password"><button id="dlogin">log in</button><button id="dreg">register</button></div>
+        <div class="tools" id="dauth"><a class="lnk" href="../../account/?from=daily">log in or register</a></div>
         <p class="sub" id="dwho" hidden><span id="dwn"></span> · <a href="#" id="dout">log out</a></p>
         <div class="board cal">
             <div class="calhead"><button id="cprev" aria-label="previous month">‹</button><h3 id="ctitle"></h3><button id="cnext" aria-label="next month">›</button></div>
@@ -1435,6 +1436,7 @@
             </div>
             <div id="pips" aria-live="polite"></div>
             <div class="lbl" id="left"></div>
+            <div class="lbl" id="dsolved" hidden></div>
             <div id="trail"></div>
             <div id="ops"></div>
             <div class="tools"><button id="undo">undo</button><button id="reset">restart level</button><button
@@ -2090,15 +2092,6 @@
             if (changed) gSave(g);
         }
         function showUser() { $('dauth').hidden = !!user; $('dwho').hidden = !user; $('dwn').textContent = 'playing as ' + user; }
-        async function dAuth(reg) {
-            const username = $('du').value.trim(), password = $('dp').value;
-            if (!username || !password) { $('dsub').textContent = 'enter a username and password'; return; }
-            try {
-                if (reg) await api('/register', { username, password });
-                user = (await api('/login', { username, password })).user; try { localStorage.setItem('username', user); } catch (e) { }
-                $('dp').value = ''; showUser(); await syncGuest(); renderCal();
-            } catch (e) { $('dsub').textContent = e.message; }
-        }
         async function openDaily() {
             dailyMode = false; showView('daily'); showUser();
             try {
@@ -2151,6 +2144,17 @@
                 g.appendChild(b);
             }
         }
+        async function loadDailySolved() {
+            const el = $('dsolved');
+            if (!dailyMode) { el.hidden = true; return; }
+            const date = dailyDate;
+            el.hidden = false; el.textContent = '';
+            try {
+                const j = await api('/daily/stats/' + date);
+                if (dailyMode && dailyDate === date)
+                    el.textContent = j.solved === 1 ? '1 player has solved this level' : j.solved + ' players have solved this level';
+            } catch (e) { el.hidden = true; }
+        }
         async function playDaily(date) {
             try {
                 const lv = await api('/daily/level/' + date);
@@ -2158,6 +2162,7 @@
                 L = { start: F(lv.start), goal: F(lv.goal), ops: lv.ops.map(s => mk(s, 'whole')), limit: lv.par };
                 cur = L.start; hist = []; undosUsed = 0; counted = false; dailyNote = ''; dailyMode = true; dailyDate = date;
                 showView('random');
+                loadDailySolved();
             } catch (e) { $('dsub').textContent = e.message; }
         }
         async function submitDaily() {
@@ -2172,9 +2177,9 @@
                 const r = await api('/daily/submit', { username: user, date: dailyDate, moves: hist.map(h => h.s) });
                 dailyNote = `saved. your best for this day: ${r.best}${r.best <= r.par ? ' (par!)' : ''}. restart to try for fewer.`;
             } catch (e) { dailyNote = e.message; }
+            loadDailySolved();
             if ($('dnote')) $('dnote').textContent = dailyNote;
         }
-        $('dlogin').onclick = () => dAuth(false); $('dreg').onclick = () => dAuth(true);
         $('dout').onclick = e => { e.preventDefault(); user = ''; try { localStorage.removeItem('username'); } catch (x) { } showUser(); renderCal(); };
         $('cprev').onclick = () => { if (--calM < 0) { calM = 11; calY--; } renderCal(); };
         $('cnext').onclick = () => { if (++calM > 11) { calM = 0; calY++; } renderCal(); };
@@ -2229,7 +2234,10 @@
             if (!dailyMode) openDaily();
         }
         newLevel();
-        playToday();
+        (async () => {
+            if (user) { try { await syncGuest(); } catch (e) { } }
+            playToday();
+        })();
     </script>
 </body>
 
