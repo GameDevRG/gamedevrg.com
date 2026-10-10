@@ -496,8 +496,43 @@
                 <button type="button" class="btn secondary" id="refreshBtn" data-i18n="refreshLogin">refresh login</button>
                 <button type="button" class="btn primary" id="dataBtn" aria-expanded="false" aria-controls="dataPanel"
                     data-i18n="viewData">view account data</button>
+                <button type="button" class="btn secondary" id="editBtn" aria-expanded="false" aria-controls="editPanel"
+                    data-i18n="editAccount">edit account</button>
                 <button type="button" class="btn danger" id="logoutBtn" data-i18n="logOut">log out</button>
             </div>
+
+            <section class="data" id="editPanel" hidden>
+                <form id="editForm">
+                    <div class="field">
+                        <label for="editUsername" data-i18n="username">username</label>
+                        <input id="editUsername" type="text" autocomplete="username" autocapitalize="none"
+                            spellcheck="false" required>
+                    </div>
+                    <div class="field">
+                        <label for="editNewPw" data-i18n="newPassword">new password (leave blank to keep the current one)</label>
+                        <div class="input-wrap has-reveal">
+                            <input id="editNewPw" type="password" autocomplete="new-password">
+                            <button type="button" class="reveal" data-reveal="editNewPw" aria-pressed="false"></button>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="editConfirm" data-i18n="confirmNewPassword">confirm new password</label>
+                        <div class="input-wrap has-reveal">
+                            <input id="editConfirm" type="password" autocomplete="new-password">
+                            <button type="button" class="reveal" data-reveal="editConfirm" aria-pressed="false"></button>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="editCurrentPw" data-i18n="currentPassword">current password (needed to save changes)</label>
+                        <div class="input-wrap has-reveal">
+                            <input id="editCurrentPw" type="password" autocomplete="current-password" required>
+                            <button type="button" class="reveal" data-reveal="editCurrentPw" aria-pressed="false"></button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn primary" id="saveBtn" data-i18n="saveChanges">save changes</button>
+                </form>
+                <p class="msg" id="editMsg" role="status" aria-live="polite"></p>
+            </section>
 
             <section class="data" id="dataPanel" hidden>
                 <form id="dataForm">
@@ -558,7 +593,8 @@
                 noScores: "no leaderboard scores yet", noDaily: "no daily levels solved yet", rawData: "raw data",
                 serverDownTitle: "can't reach the server",
                 serverDownBody: "the server didn't respond. It may be waking up from sleep, or your connection may be down. Check your connection and try again in a moment.",
-                close: "close", tryAgain: "try again"
+                close: "close", tryAgain: "try again",
+                editAccount: "edit account", closeEdit: "close editor", newPassword: "new password (leave blank to keep the current one)", confirmNewPassword: "confirm new password", currentPassword: "current password (needed to save changes)", saveChanges: "save changes", enterUsername: "enter a username", nothingChanged: "nothing to change yet", updated: "account updated"
             },
             es: {
                 signIn: "iniciar sesión", logIn: "entrar", createAccount: "crear cuenta",
@@ -583,7 +619,8 @@
                 noScores: "aún no hay puntuaciones", noDaily: "aún no has resuelto niveles diarios", rawData: "datos sin procesar",
                 serverDownTitle: "no se puede conectar con el servidor",
                 serverDownBody: "el servidor no respondió. Puede estar despertando o tu conexión puede estar caída. Revisa tu conexión e inténtalo de nuevo en un momento.",
-                close: "cerrar", tryAgain: "reintentar"
+                close: "cerrar", tryAgain: "reintentar",
+                editAccount: "editar cuenta", closeEdit: "cerrar edición", newPassword: "nueva contraseña (déjalo en blanco para conservar la actual)", confirmNewPassword: "confirmar nueva contraseña", currentPassword: "contraseña actual (necesaria para guardar los cambios)", saveChanges: "guardar cambios", enterUsername: "ingrese un nombre de usuario", nothingChanged: "aún no hay nada que cambiar", updated: "cuenta actualizada"
             },
             ja: {
                 signIn: "サインイン", logIn: "ログイン", createAccount: "アカウント作成",
@@ -608,7 +645,8 @@
                 noScores: "ランキングスコアはまだありません", noDaily: "クリアしたデイリーレベルはまだありません", rawData: "生データ",
                 serverDownTitle: "サーバーに接続できません",
                 serverDownBody: "サーバーから応答がありません。サーバーが起動中か、接続が切れている可能性があります。接続を確認して、少し待ってからもう一度お試しください。",
-                close: "閉じる", tryAgain: "再試行"
+                close: "閉じる", tryAgain: "再試行",
+                editAccount: "アカウントを編集", closeEdit: "編集を閉じる", newPassword: "新しいパスワード（変更しない場合は空欄）", confirmNewPassword: "新しいパスワード（確認）", currentPassword: "現在のパスワード（変更の保存に必要）", saveChanges: "変更を保存", enterUsername: "ユーザー名を入力してください", nothingChanged: "変更する内容がありません", updated: "アカウントを更新しました"
             },
             zh: {
                 signIn: "登录", logIn: "登录", createAccount: "创建账户",
@@ -633,7 +671,8 @@
                 noScores: "暂无排行榜成绩", noDaily: "暂未完成每日关卡", rawData: "原始数据",
                 serverDownTitle: "无法连接服务器",
                 serverDownBody: "服务器没有响应。它可能正在唤醒，或者你的网络已断开。请检查网络，稍后再试。",
-                close: "关闭", tryAgain: "重试"
+                close: "关闭", tryAgain: "重试",
+                editAccount: "编辑账户", closeEdit: "关闭编辑", newPassword: "新密码（留空则保持不变）", confirmNewPassword: "确认新密码", currentPassword: "当前密码（保存更改时需要）", saveChanges: "保存更改", enterUsername: "请输入用户名", nothingChanged: "还没有要更改的内容", updated: "账户已更新"
             }
         };
 
@@ -725,6 +764,7 @@
             $("authView").hidden = false;
             $("panel").classList.remove("wide");
             closeData();
+            closeEdit();
             setTab("login");
             setMsg($("authMsg"), msg, kind);
         }
@@ -886,6 +926,7 @@
 
         $("dataBtn").onclick = () => {
             if ($("dataPanel").hidden) {
+                closeEdit();
                 $("dataPanel").hidden = false;
                 $("dataBtn").setAttribute("aria-expanded", "true");
                 setI18n($("dataBtn"), "hideData");
@@ -894,6 +935,62 @@
                 closeData();
             }
         };
+
+        /* ---------- edit account (username / password) ---------- */
+        function closeEdit() {
+            $("editPanel").hidden = true;
+            $("editBtn").setAttribute("aria-expanded", "false");
+            setI18n($("editBtn"), "editAccount");
+            $("editForm").reset();
+            setMsg($("editMsg"), "");
+        }
+
+        $("editBtn").onclick = () => {
+            if ($("editPanel").hidden) {
+                closeData();
+                $("editPanel").hidden = false;
+                $("editBtn").setAttribute("aria-expanded", "true");
+                setI18n($("editBtn"), "closeEdit");
+                $("editUsername").value = localStorage.getItem("username");
+                $("editUsername").focus();
+            } else {
+                closeEdit();
+            }
+        };
+
+        $("editForm").addEventListener("submit", async e => {
+            e.preventDefault();
+            const current = localStorage.getItem("username");
+            const newName = $("editUsername").value;
+            const newPw = $("editNewPw").value;
+
+            if (!newName) return setMsg($("editMsg"), t("enterUsername"), "err");
+            if (newPw !== $("editConfirm").value) return setMsg($("editMsg"), t("mismatch"), "err");
+            if (newName === current && !newPw) return setMsg($("editMsg"), t("nothingChanged"), "err");
+
+            const body = { username: current, password: $("editCurrentPw").value };
+            if (newName !== current) body.newUsername = newName;
+            if (newPw) body.newPassword = newPw;
+
+            $("saveBtn").disabled = true;
+            setMsg($("editMsg"), t("loading"));
+            try {
+                const r = await api("/account/update", body, () => setMsg($("editMsg"), t("wakeUp")));
+                if (!r.ok) return setMsg($("editMsg"), r.data.message || t("serverError"), "err");
+
+                localStorage.setItem("username", r.data.username);
+                $("usernameDisplay").textContent = r.data.username;
+                $("editUsername").value = r.data.username;
+                ["editNewPw", "editConfirm", "editCurrentPw"].forEach(id => { $(id).value = ""; });
+                setMsg($("editMsg"), t("updated"), "ok");
+            } catch (err) {
+                console.error(err);
+                setMsg($("editMsg"), t("serverError"), "err");
+                showServerDown($("editForm"));
+            } finally {
+                $("saveBtn").disabled = false;
+            }
+        });
 
         const PAC = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles", year: "numeric", month: "2-digit", day: "2-digit" });
 
