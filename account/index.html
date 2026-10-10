@@ -430,7 +430,7 @@
 <body>
     <main class="panel" id="panel">
 
-        <a class="btn secondary back" id="backLink" href="index.html" data-i18n="back">◁ back</a>
+        <a class="btn secondary back" id="backLink" href="../">◁</a>
 
         <!-- ===== SIGNED OUT: log in / create account ===== -->
         <section id="authView">
@@ -594,6 +594,7 @@
                 serverDownTitle: "can't reach the server",
                 serverDownBody: "the server didn't respond. It may be waking up from sleep, or your connection may be down. Check your connection and try again in a moment.",
                 close: "close", tryAgain: "try again",
+                returnTo: "◁ return to {name}", dailyName: "daily levels", homeName: "home",
                 editAccount: "edit account", closeEdit: "close editor", newPassword: "new password (leave blank to keep the current one)", confirmNewPassword: "confirm new password", currentPassword: "current password (needed to save changes)", saveChanges: "save changes", enterUsername: "enter a username", nothingChanged: "nothing to change yet", updated: "account updated"
             },
             es: {
@@ -620,6 +621,7 @@
                 serverDownTitle: "no se puede conectar con el servidor",
                 serverDownBody: "el servidor no respondió. Puede estar despertando o tu conexión puede estar caída. Revisa tu conexión e inténtalo de nuevo en un momento.",
                 close: "cerrar", tryAgain: "reintentar",
+                returnTo: "◁ volver a {name}", dailyName: "niveles diarios", homeName: "inicio",
                 editAccount: "editar cuenta", closeEdit: "cerrar edición", newPassword: "nueva contraseña (déjalo en blanco para conservar la actual)", confirmNewPassword: "confirmar nueva contraseña", currentPassword: "contraseña actual (necesaria para guardar los cambios)", saveChanges: "guardar cambios", enterUsername: "ingrese un nombre de usuario", nothingChanged: "aún no hay nada que cambiar", updated: "cuenta actualizada"
             },
             ja: {
@@ -646,6 +648,7 @@
                 serverDownTitle: "サーバーに接続できません",
                 serverDownBody: "サーバーから応答がありません。サーバーが起動中か、接続が切れている可能性があります。接続を確認して、少し待ってからもう一度お試しください。",
                 close: "閉じる", tryAgain: "再試行",
+                returnTo: "◁ {name}に戻る", dailyName: "デイリーレベル", homeName: "ホーム",
                 editAccount: "アカウントを編集", closeEdit: "編集を閉じる", newPassword: "新しいパスワード（変更しない場合は空欄）", confirmNewPassword: "新しいパスワード（確認）", currentPassword: "現在のパスワード（変更の保存に必要）", saveChanges: "変更を保存", enterUsername: "ユーザー名を入力してください", nothingChanged: "変更する内容がありません", updated: "アカウントを更新しました"
             },
             zh: {
@@ -672,6 +675,7 @@
                 serverDownTitle: "无法连接服务器",
                 serverDownBody: "服务器没有响应。它可能正在唤醒，或者你的网络已断开。请检查网络，稍后再试。",
                 close: "关闭", tryAgain: "重试",
+                returnTo: "◁ 返回{name}", dailyName: "每日关卡", homeName: "首页",
                 editAccount: "编辑账户", closeEdit: "关闭编辑", newPassword: "新密码（留空则保持不变）", confirmNewPassword: "确认新密码", currentPassword: "当前密码（保存更改时需要）", saveChanges: "保存更改", enterUsername: "请输入用户名", nothingChanged: "还没有要更改的内容", updated: "账户已更新"
             }
         };
@@ -1049,8 +1053,29 @@
         }
 
         /* ---------- start ---------- */
-        setI18n($("backLink"), fromDaily ? "backDaily" : "back");
-        $("backLink").href = fromDaily ? "../mathgolf/daily/" : "index.html";
+        /* back button: return to the page that sent you here, or the site home */
+        function backTarget() {
+            if (fromDaily) return { href: "../mathgolf/daily/", name: t("dailyName") };
+            try {
+                const ref = new URL(document.referrer);
+                const here = location.pathname.replace(/[^/]*$/, "");   /* the account folder, e.g. /gamedevrg.com/account/ */
+                const root = here.replace(/[^/]+\/$/, "");              /* its parent: the site home */
+                const path = ref.pathname.replace(/index\.html?$/i, "");
+                if (document.referrer && ref.origin === location.origin && !path.startsWith(here)) {
+                    if (path !== root) {
+                        const last = decodeURIComponent(path.split("/").filter(Boolean).pop() || "")
+                            .replace(/\.html?$/i, "").replace(/[-_]+/g, " ");
+                        if (last) return { href: ref.href, name: last === "daily" ? t("dailyName") : last };
+                    }
+                    return { href: ref.origin + root, name: t("homeName") };
+                }
+            } catch (e) { }
+            return { href: "../", name: t("homeName") };
+        }
+
+        const back = backTarget();
+        $("backLink").href = back.href;
+        $("backLink").textContent = t("returnTo").replace("{name}", back.name);
         applyLanguage();
 
         if (localStorage.getItem("loggedIn") === "true" && localStorage.getItem("username")) {
