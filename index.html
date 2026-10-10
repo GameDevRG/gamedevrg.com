@@ -3,7 +3,23 @@
 
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 	<title>gamedevrg.com</title>
+
+	<!-- decides desktop or mobile mode before anything is drawn.
+	     phones (narrow screens) get the mobile menu; add ?mode=mobile or ?mode=desktop to the url to force one. -->
+	<script>
+		(function () {
+			var forced = new URLSearchParams(location.search).get("mode");
+			window.isMobileMode = function () {
+				if (forced === "mobile") return true;
+				if (forced === "desktop") return false;
+				return matchMedia("(max-width: 700px), (pointer: coarse) and (max-height: 500px)").matches;
+			};
+			if (window.isMobileMode()) document.documentElement.classList.add("mobile");
+		})();
+	</script>
+
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link
@@ -343,10 +359,206 @@
 			color: #ffffff77;
 			font-weight: 300;
 		}
+
+		/* ================= MOBILE MODE ================= */
+
+		/* the mobile menu is only shown in mobile mode; the physics menu is only shown on desktop */
+		#mobileMenu {
+			display: none;
+		}
+
+		html.mobile #topBar,
+		html.mobile #backgroundText,
+		html.mobile .desktop-only {
+			display: none;
+		}
+
+		html.mobile body {
+			overflow: auto;
+			min-height: 100vh;
+			min-height: 100dvh;
+			-webkit-text-size-adjust: 100%;
+		}
+
+		html.mobile #mobileMenu {
+			display: flex;
+			flex-direction: column;
+			min-height: 100vh;
+			min-height: 100dvh;
+		}
+
+		/* logo on blue */
+		.m-hero {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			min-height: 36vh;
+			min-height: 36dvh;
+			padding: calc(24px + env(safe-area-inset-top)) 16px 24px;
+			background: #3b82f6;
+		}
+
+		#mLogo {
+			width: 88%;
+			max-width: 480px;
+			height: auto;
+			opacity: 0.85;
+		}
+
+		/* search strip */
+		.m-searchwrap {
+			position: relative;
+			padding: 8px;
+			background: #ffffff;
+		}
+
+		.m-search {
+			display: flex;
+			gap: 8px;
+		}
+
+		#mSearchBox {
+			flex: 1;
+			min-width: 0;
+			height: 48px;
+			box-sizing: border-box;
+			padding: 0 12px;
+			border: 3px solid #3b82f6;
+			border-radius: 0;
+			background: #000000;
+			color: #ffffff;
+			font: italic 400 18px "Chakra Petch", sans-serif;
+			outline: none;
+		}
+
+		#mSearchBox::placeholder {
+			color: #3b82f6;
+			opacity: 1;
+		}
+
+		#mSearchBox:focus {
+			box-shadow: 0 0 0 2px #93c5fd;
+		}
+
+		#mSearchBtn {
+			flex: 0 0 32%;
+			height: 48px;
+			box-sizing: border-box;
+			border: 3px solid #3b82f6;
+			border-radius: 0;
+			background: #cfe0fc;
+			color: #3b82f6;
+			font: 400 18px "Chakra Petch", sans-serif;
+			cursor: pointer;
+		}
+
+		#mSearchBtn:focus-visible {
+			outline: 2px solid #1d4ed8;
+			outline-offset: 2px;
+		}
+
+		/* search suggestions drop down over the menu */
+		#mResults {
+			position: absolute;
+			top: 100%;
+			left: 0;
+			right: 0;
+			z-index: 20;
+			background: #000000;
+			box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+		}
+
+		#mResults:empty {
+			display: none;
+		}
+
+		.m-result {
+			display: block;
+			width: 100%;
+			padding: 14px 16px;
+			border: 0;
+			border-top: 1px solid rgba(255, 255, 255, 0.12);
+			border-radius: 0;
+			background: transparent;
+			color: #ffffff;
+			font: 500 17px "Chakra Petch", sans-serif;
+			text-align: left;
+			cursor: pointer;
+		}
+
+		.m-result.none {
+			color: #94a3b8;
+			cursor: default;
+		}
+
+		/* dark panel with the menu */
+		.m-panel {
+			flex: 1;
+			padding: 18px 14px calc(28px + env(safe-area-inset-bottom));
+			background: linear-gradient(145deg, #0a3a70, #000000 75%);
+		}
+
+		.m-welcome {
+			margin: 0 0 16px;
+			text-align: center;
+			color: #ffffff;
+			font-size: 16px;
+			font-weight: 400;
+		}
+
+		#mButtons {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+		}
+
+		.m-btn {
+			width: 100%;
+			min-height: 52px;
+			padding: 10px;
+			border: 1px solid #3b82f6;
+			border-radius: 0;
+			background: rgba(59, 130, 246, 0.25);
+			color: #ffffff;
+			font: 700 18px "Chakra Petch", sans-serif;
+			cursor: pointer;
+			-webkit-tap-highlight-color: transparent;
+		}
+
+		.m-btn:active {
+			background: rgba(59, 130, 246, 0.5);
+		}
+
+		.m-btn:focus-visible {
+			outline: 2px solid #ffffff;
+			outline-offset: 2px;
+		}
+
+		/* settings popup on phones */
+		html.mobile #settingsOverlay {
+			height: 100vh;
+			height: 100dvh;
+		}
+
+		html.mobile #settingsBox {
+			position: relative;
+			width: calc(100% - 24px);
+			max-height: 85vh;
+			max-height: 85dvh;
+			box-sizing: border-box;
+			padding: 56px 18px 24px;
+			background: linear-gradient(145deg, #002155, #000000);
+		}
+
+		html.mobile .close-btn {
+			top: 10px;
+			right: 10px;
+		}
 	</style>
 </head>
 
 <body>
+	<!-- ===== DESKTOP: search bar on top, physics buttons ===== -->
 	<div id="topBar">
 		<p style="color: #ffffff;"><strong>gamedevrg</strong><small>.com</small></p>
 		<div class="searchWrap">
@@ -356,7 +568,27 @@
 		<button id="searchButton" onclick="doSearch()">search</button>
 	</div>
 
+	<!-- ===== MOBILE: logo, search, list of menu buttons ===== -->
+	<div id="mobileMenu">
+		<header class="m-hero">
+			<img id="mLogo" src="gamedevrgdotcom logo (1).png" alt="gamedevrg.com">
+		</header>
 
+		<div class="m-searchwrap">
+			<form class="m-search" id="mSearchForm" autocomplete="off">
+				<input id="mSearchBox" type="text" enterkeyhint="search" autocapitalize="none" autocomplete="off"
+					spellcheck="false" data-i18n-placeholder="searchPlaceholder" placeholder="search the website"
+					aria-label="search the website">
+				<button type="submit" id="mSearchBtn" data-i18n="submit">submit</button>
+			</form>
+			<div id="mResults"></div>
+		</div>
+
+		<main class="m-panel">
+			<p class="m-welcome" data-i18n="welcome">welcome to my (very) awesome website</p>
+			<nav id="mButtons"></nav>
+		</main>
+	</div>
 
 	<div id="settingsOverlay">
 		<div id="settingsBox">
@@ -365,7 +597,7 @@
 				<h1 class="settings-title" data-i18n="settingsTitle">settings</h1>
 			</div>
 
-			<div class="settings-section">
+			<div class="settings-section desktop-only">
 				<h3 style="color: #94a3b8; margin: 0 0 15px 0; font-size: 16px;" data-i18n="physics">physics</h3>
 				<div class="setting-item">
 					<span class="setting-label" data-i18n="gravity">gravity</span>
@@ -385,7 +617,7 @@
 
 			<div class="settings-section">
 				<h3 style="color: #94a3b8; margin: 0 0 15px 0; font-size: 16px;" data-i18n="display">display</h3>
-				<div class="setting-item">
+				<div class="setting-item desktop-only">
 					<span class="setting-label" data-i18n="textSize">text size</span>
 					<div class="slider-container">
 						<input type="range" class="slider" id="glowSlider" min="0" max="2" step="0.1" value="1">
@@ -406,7 +638,7 @@
 
 			</div>
 
-			<div class="settings-section">
+			<div class="settings-section desktop-only">
 				<h3 style="color: #94a3b8; margin: 0 0 15px 0; font-size: 16px;" data-i18n="stuffYou">stuff you probably
 					do not need to
 					change</h3>
@@ -427,19 +659,8 @@
 	</div>
 
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
 	<script>
-		const { Engine, Render, Runner, Bodies, World, Mouse, MouseConstraint, Events, Query } = Matter;
-
-		const engine = Engine.create();
-		const world = engine.world;
-
-		let settings = {
-			gravity: 1.0,
-			bounce: 0.5,
-			glow: 1.0,
-			tapThreshold: 200
-		};
+		const IS_MOBILE = document.documentElement.classList.contains("mobile");
 
 		// LANAUGAES STUFF IG
 
@@ -473,7 +694,11 @@
 				home_account: "my account",
 				home_fractal: "fractalengine",
 
-				welcome: "welcome to my (very) awesome website"
+				welcome: "welcome to my (very) awesome website",
+
+				searchPlaceholder: "search the website",
+				submit: "submit",
+				noResults: "nothing found"
 			},
 			es: { // spanish
 				settingsTitle: "configuración",
@@ -500,8 +725,14 @@
 				home_news: "noticias",
 				home_resume: "currículum",
 				home_settings: "configuración",
+				home_account: "mi cuenta",
+				home_fractal: "fractalengine",
 
-				welcome: "bienvenido a mi sitio web (muy) increíble"
+				welcome: "bienvenido a mi sitio web (muy) increíble",
+
+				searchPlaceholder: "buscar en el sitio web",
+				submit: "enviar",
+				noResults: "no se encontró nada"
 			},
 			ja: { // japanese
 				settingsTitle: "設定",
@@ -529,8 +760,13 @@
 				home_resume: "履歴書",
 				home_settings: "設定",
 				home_account: "アカウント",
+				home_fractal: "fractalengine",
 
-				welcome: "ようこそ、私の（とても）すごいウェブサイトへ"
+				welcome: "ようこそ、私の（とても）すごいウェブサイトへ",
+
+				searchPlaceholder: "サイトを検索",
+				submit: "送信",
+				noResults: "見つかりませんでした"
 			},
 			zh: { // chinese
 				settingsTitle: "设置",
@@ -557,87 +793,49 @@
 				home_news: "新闻",
 				home_resume: "简历",
 				home_settings: "设置",
+				home_account: "我的账户",
+				home_fractal: "fractalengine",
 
-				welcome: "欢迎来到我的（非常）很棒的网站"
+				welcome: "欢迎来到我的（非常）很棒的网站",
+
+				searchPlaceholder: "搜索网站",
+				submit: "提交",
+				noResults: "没有找到结果"
 			},
 		};
-		function applyLanguage(lang) {
-			const elements = document.querySelectorAll("[data-i18n]");
 
-			elements.forEach(el => {
-				const key = el.getAttribute("data-i18n");
-				if (translations[lang][key]) {
-					el.textContent = translations[lang][key];
-				}
+		let currentLang = localStorage.getItem("lang");
+		if (!translations[currentLang]) currentLang = "en";
+
+		function t(key) {
+			return translations[currentLang]?.[key] || translations.en[key] || key;
+		}
+
+		function applyLanguage(lang) {
+			currentLang = translations[lang] ? lang : "en";
+
+			document.querySelectorAll("[data-i18n]").forEach(el => {
+				const value = t(el.getAttribute("data-i18n"));
+				if (value) el.textContent = value;
+			});
+
+			document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+				const placeholder = t(el.getAttribute("data-i18n-placeholder"));
+				el.placeholder = placeholder;
+				el.setAttribute("aria-label", placeholder);
 			});
 		}
 
-		const savedLang = localStorage.getItem("lang") || "en";
-		applyLanguage(savedLang);
-		document.getElementById("languageSelect").value = savedLang;
-		document.getElementById("languageSelect").addEventListener("change", (e) => {
+		const languageSelect = document.getElementById("languageSelect");
+		languageSelect.value = currentLang;
+		languageSelect.addEventListener("change", (e) => {
 			const lang = e.target.value;
 			localStorage.setItem("lang", lang);
 			applyLanguage(lang);
 		});
 
-		function t(key) {
-			return translations[savedLang]?.[key] || key;
-		}
 
-
-		// RENDERER SECTION
-
-
-		const render = Render.create({
-			element: document.body,
-			engine: engine,
-			options: {
-				width: window.innerWidth,
-				height: window.innerHeight,
-				wireframes: false,
-				background: 'transparent',
-				showAngleIndicator: false,
-				showVelocity: false
-			}
-		});
-
-		Render.run(render);
-		const runner = Runner.create();
-		Runner.run(runner, engine);
-
-		// black border thing
-		const ground = Bodies.rectangle(window.innerWidth / 2, window.innerHeight - 30, window.innerWidth, 60, {
-			isStatic: true,
-			render: { fillStyle: 'rgba(0,0,0,1)' }
-		});
-		const leftWall = Bodies.rectangle(30, window.innerHeight / 2, 60, window.innerHeight, {
-			isStatic: true,
-			render: { fillStyle: 'rgba(0,0,0,1)' }
-		});
-		const rightWall = Bodies.rectangle(window.innerWidth - 30, window.innerHeight / 2, 60, window.innerHeight, {
-			isStatic: true,
-			render: { fillStyle: 'rgba(0,0,0,1)' }
-		});
-		const ceiling = Bodies.rectangle(window.innerWidth / 2, 30, window.innerWidth, 60, {
-			isStatic: true,
-			render: { fillStyle: 'rgba(0,0,0,1)' }
-		});
-
-		World.add(world, [ground, leftWall, rightWall, ceiling]);
-
-		// Mouse - DISABLED by default for tap priority
-		const mouse = Mouse.create(render.canvas);
-		const mouseConstraint = MouseConstraint.create(engine, {
-			mouse: mouse,
-			constraint: {
-				stiffness: 0.2,
-				render: { visible: false }
-			}
-		});
-
-		mouseConstraint.constraint.pointA = null;
-		World.add(world, mouseConstraint);
+		// MENU ITEMS (shared by the desktop buttons and the mobile list)
 
 		const labels = [
 			"home_basalt",
@@ -652,104 +850,6 @@
 			"home_fractal"
 		];
 
-
-		const buttonBodies = [];
-
-		labels.forEach((text, i) => {
-			const width = 180 + Math.random() * 120;
-			const height = 50;
-			const centerX = window.innerWidth / 2;
-			const centerY = window.innerHeight / 2;
-
-			const body = Bodies.rectangle(
-				centerX + (Math.random() - 0.5) * 200,
-				centerY + (Math.random() - 0.5) * 100 - 100,
-				width, height,
-				{
-					restitution: settings.bounce,
-					friction: 1,
-					velocity: {
-						x: (Math.random() - 0.5) * 10,
-						y: (Math.random() - 0.5) * 5
-					},
-					render: {
-						fillStyle: '#ffffff',
-					},
-					label: text,
-					isButton: true
-				}
-			);
-
-			World.add(world, body);
-			buttonBodies.push(body);
-		});
-
-		let clickStartTime = 0;
-		let clickStartPos = { x: 0, y: 0 };
-		let isLongPress = false;
-		let longPressTimer = null;
-
-		render.canvas.addEventListener('mousedown', (event) => {
-			const bodies = Query.point(buttonBodies, mouse.position);
-			const isOverButton = bodies.length > 0 && bodies[0].isButton;
-
-			clickStartTime = Date.now();
-			clickStartPos = { x: mouse.position.x, y: mouse.position.y };
-			isLongPress = false;
-
-			// Long press (500ms) enables dragging
-			longPressTimer = setTimeout(() => {
-				if (!isLongPress && isOverButton) {
-					isLongPress = true;
-					enableDragging();
-				}
-			}, 500);
-		});
-
-		render.canvas.addEventListener('mousemove', (event) => {
-			if (clickStartTime === 0) return;
-
-			const dx = mouse.position.x - clickStartPos.x;
-			const dy = mouse.position.y - clickStartPos.y;
-			const distance = Math.sqrt(dx * dx + dy * dy);
-
-			if (!isLongPress && distance > 20) {
-				isLongPress = true;
-				enableDragging();
-			}
-		});
-
-		render.canvas.addEventListener('mouseup', (event) => {
-			const elapsed = Date.now() - clickStartTime;
-
-			if (!isLongPress && elapsed < settings.tapThreshold) {
-				const bodies = Query.point(buttonBodies, mouse.position);
-				if (bodies.length > 0) {
-					const body = bodies[0];
-					if (body.isButton && body.label) {
-						handleButtonClick(body.label);
-						disableDragging(); // Reset
-						clearTimeout(longPressTimer);
-						return;
-					}
-				}
-			}
-
-			// Reset
-			clearTimeout(longPressTimer);
-			clickStartTime = 0;
-			isLongPress = false;
-			disableDragging();
-		});
-
-		function enableDragging() {
-			mouseConstraint.constraint.pointA = { x: mouse.position.x, y: mouse.position.y };
-		}
-
-		function disableDragging() {
-			mouseConstraint.constraint.pointA = null;
-		}
-
 		function handleButtonClick(label) {
 			console.log(`Clicked: ${label}`);
 
@@ -762,11 +862,11 @@
 			} else if (label === "home_fractal") {
 				window.location.href = "fractalengine/";
 			} else {
-				alert(`Opening: ${label}`);
+				alert(`Opening: ${t(label)}`);
 			}
 		}
 
-		// Settings functions (same as before)
+		// Settings functions
 		function openSettings() {
 			document.getElementById('settingsOverlay').style.display = 'flex';
 			document.body.style.overflow = 'hidden';
@@ -774,31 +874,9 @@
 
 		function closeSettings() {
 			document.getElementById('settingsOverlay').style.display = 'none';
-			document.body.style.overflow = 'hidden';
+			// desktop never scrolls; on phones the page scrolls again once settings close
+			document.body.style.overflow = IS_MOBILE ? '' : 'hidden';
 		}
-
-		// Settings controls
-		document.getElementById('gravitySlider').addEventListener('input', (e) => {
-			settings.gravity = parseFloat(e.target.value);
-			document.getElementById('gravityValue').textContent = settings.gravity.toFixed(1);
-			engine.world.gravity.y = settings.gravity;
-		});
-
-		document.getElementById('bounceSlider').addEventListener('input', (e) => {
-			settings.bounce = parseFloat(e.target.value);
-			document.getElementById('bounceValue').textContent = settings.bounce.toFixed(1);
-			buttonBodies.forEach(body => body.restitution = settings.bounce);
-		});
-
-		document.getElementById('glowSlider').addEventListener('input', (e) => {
-			settings.glow = parseFloat(e.target.value);
-			document.getElementById('glowValue').textContent = settings.glow.toFixed(1);
-		});
-
-		document.getElementById('tapSlider').addEventListener('input', (e) => {
-			settings.tapThreshold = parseInt(e.target.value);
-			document.getElementById('tapValue').textContent = settings.tapThreshold + 'ms';
-		});
 
 		document.getElementById('settingsOverlay').addEventListener('click', (e) => {
 			if (e.target === e.currentTarget) closeSettings();
@@ -808,45 +886,298 @@
 			if (e.key === 'Escape') closeSettings();
 		});
 
-		// ext stufes
-		Events.on(render, 'afterRender', () => {
-			const ctx = render.context;
-			ctx.save();
-			ctx.font = `bold ${14 * settings.glow}px "Chakra Petch", sans-serif`;
-			ctx.textAlign = 'center';
-			ctx.textBaseline = 'middle';
-			ctx.shadowColor = `rgba(29, 78, 216, ${0.7 * settings.glow})`;
-			ctx.shadowBlur = 6 * settings.glow;
 
-			buttonBodies.forEach(body => {
-				if (body.label && body.isButton) {
-					ctx.save();
-					ctx.translate(body.position.x, body.position.y);
-					ctx.rotate(body.angle);
+		// ================= MOBILE MENU =================
 
-					ctx.fillStyle = '#000';
-					ctx.fillText(t(body.label), 0, 0);
-					ctx.restore();
+		function startMobile() {
+			const buttons = document.getElementById("mButtons");
+			labels.forEach(label => {
+				const btn = document.createElement("button");
+				btn.type = "button";
+				btn.className = "m-btn";
+				btn.setAttribute("data-i18n", label);
+				btn.onclick = () => handleButtonClick(label);
+				buttons.appendChild(btn);
+			});
+
+			const form = document.getElementById("mSearchForm");
+			const box = document.getElementById("mSearchBox");
+			const results = document.getElementById("mResults");
+
+			const matches = q => labels.filter(l => t(l).toLowerCase().includes(q));
+			const clearResults = () => { results.innerHTML = ""; };
+
+			// suggestions while typing
+			box.addEventListener("input", () => {
+				const q = box.value.trim().toLowerCase();
+				clearResults();
+				if (!q) return;
+
+				matches(q).slice(0, 5).forEach(label => {
+					const item = document.createElement("button");
+					item.type = "button";
+					item.className = "m-result";
+					item.textContent = t(label);
+					item.onclick = () => {
+						clearResults();
+						box.value = "";
+						handleButtonClick(label);
+					};
+					results.appendChild(item);
+				});
+			});
+
+			// submit: open the first match
+			form.addEventListener("submit", e => {
+				e.preventDefault();
+				const q = box.value.trim().toLowerCase();
+				if (!q) return;
+
+				const found = matches(q);
+				clearResults();
+				if (found.length) {
+					box.blur();
+					handleButtonClick(found[0]);
+				} else {
+					const none = document.createElement("div");
+					none.className = "m-result none";
+					none.textContent = t("noResults");
+					results.appendChild(none);
 				}
 			});
-			ctx.restore();
-		});
 
-
-
-		// Resize🥀🥀🥀🥀🥀🥀🥀🥀🥀🥀🥀🥀🥀🥀🥀🥀
-		window.addEventListener('resize', () => {
-			Render.lookAt(render, {
-				min: { x: 0, y: 0 },
-				max: { x: window.innerWidth, y: window.innerHeight }
+			// tapping anywhere else closes the suggestions
+			document.addEventListener("click", e => {
+				if (!e.target.closest(".m-searchwrap")) clearResults();
 			});
-			render.canvas.width = window.innerWidth;
-			render.canvas.height = window.innerHeight;
-			Matter.Mouse.setOffset(mouse, { x: 0, y: 0 });
-		});
+		}
 
 
+		// ================= DESKTOP: physics menu =================
 
+		function startDesktop() {
+			const { Engine, Render, Runner, Bodies, World, Mouse, MouseConstraint, Events, Query } = Matter;
+
+			const engine = Engine.create();
+			const world = engine.world;
+
+			let settings = {
+				gravity: 1.0,
+				bounce: 0.5,
+				glow: 1.0,
+				tapThreshold: 200
+			};
+
+			// RENDERER SECTION
+
+			const render = Render.create({
+				element: document.body,
+				engine: engine,
+				options: {
+					width: window.innerWidth,
+					height: window.innerHeight,
+					wireframes: false,
+					background: 'transparent',
+					showAngleIndicator: false,
+					showVelocity: false
+				}
+			});
+
+			Render.run(render);
+			const runner = Runner.create();
+			Runner.run(runner, engine);
+
+			// black border thing
+			const ground = Bodies.rectangle(window.innerWidth / 2, window.innerHeight - 30, window.innerWidth, 60, {
+				isStatic: true,
+				render: { fillStyle: 'rgba(0,0,0,1)' }
+			});
+			const leftWall = Bodies.rectangle(30, window.innerHeight / 2, 60, window.innerHeight, {
+				isStatic: true,
+				render: { fillStyle: 'rgba(0,0,0,1)' }
+			});
+			const rightWall = Bodies.rectangle(window.innerWidth - 30, window.innerHeight / 2, 60, window.innerHeight, {
+				isStatic: true,
+				render: { fillStyle: 'rgba(0,0,0,1)' }
+			});
+			const ceiling = Bodies.rectangle(window.innerWidth / 2, 30, window.innerWidth, 60, {
+				isStatic: true,
+				render: { fillStyle: 'rgba(0,0,0,1)' }
+			});
+
+			World.add(world, [ground, leftWall, rightWall, ceiling]);
+
+			// Mouse - DISABLED by default for tap priority
+			const mouse = Mouse.create(render.canvas);
+			const mouseConstraint = MouseConstraint.create(engine, {
+				mouse: mouse,
+				constraint: {
+					stiffness: 0.2,
+					render: { visible: false }
+				}
+			});
+
+			mouseConstraint.constraint.pointA = null;
+			World.add(world, mouseConstraint);
+
+			const buttonBodies = [];
+
+			labels.forEach((text, i) => {
+				const width = 180 + Math.random() * 120;
+				const height = 50;
+				const centerX = window.innerWidth / 2;
+				const centerY = window.innerHeight / 2;
+
+				const body = Bodies.rectangle(
+					centerX + (Math.random() - 0.5) * 200,
+					centerY + (Math.random() - 0.5) * 100 - 100,
+					width, height,
+					{
+						restitution: settings.bounce,
+						friction: 1,
+						velocity: {
+							x: (Math.random() - 0.5) * 10,
+							y: (Math.random() - 0.5) * 5
+						},
+						render: {
+							fillStyle: '#ffffff',
+						},
+						label: text,
+						isButton: true
+					}
+				);
+
+				World.add(world, body);
+				buttonBodies.push(body);
+			});
+
+			let clickStartTime = 0;
+			let clickStartPos = { x: 0, y: 0 };
+			let isLongPress = false;
+			let longPressTimer = null;
+
+			render.canvas.addEventListener('mousedown', (event) => {
+				const bodies = Query.point(buttonBodies, mouse.position);
+				const isOverButton = bodies.length > 0 && bodies[0].isButton;
+
+				clickStartTime = Date.now();
+				clickStartPos = { x: mouse.position.x, y: mouse.position.y };
+				isLongPress = false;
+
+				// Long press (500ms) enables dragging
+				longPressTimer = setTimeout(() => {
+					if (!isLongPress && isOverButton) {
+						isLongPress = true;
+						enableDragging();
+					}
+				}, 500);
+			});
+
+			render.canvas.addEventListener('mousemove', (event) => {
+				if (clickStartTime === 0) return;
+
+				const dx = mouse.position.x - clickStartPos.x;
+				const dy = mouse.position.y - clickStartPos.y;
+				const distance = Math.sqrt(dx * dx + dy * dy);
+
+				if (!isLongPress && distance > 20) {
+					isLongPress = true;
+					enableDragging();
+				}
+			});
+
+			render.canvas.addEventListener('mouseup', (event) => {
+				const elapsed = Date.now() - clickStartTime;
+
+				if (!isLongPress && elapsed < settings.tapThreshold) {
+					const bodies = Query.point(buttonBodies, mouse.position);
+					if (bodies.length > 0) {
+						const body = bodies[0];
+						if (body.isButton && body.label) {
+							handleButtonClick(body.label);
+							disableDragging(); // Reset
+							clearTimeout(longPressTimer);
+							return;
+						}
+					}
+				}
+
+				// Reset
+				clearTimeout(longPressTimer);
+				clickStartTime = 0;
+				isLongPress = false;
+				disableDragging();
+			});
+
+			function enableDragging() {
+				mouseConstraint.constraint.pointA = { x: mouse.position.x, y: mouse.position.y };
+			}
+
+			function disableDragging() {
+				mouseConstraint.constraint.pointA = null;
+			}
+
+			// Settings controls
+			document.getElementById('gravitySlider').addEventListener('input', (e) => {
+				settings.gravity = parseFloat(e.target.value);
+				document.getElementById('gravityValue').textContent = settings.gravity.toFixed(1);
+				engine.world.gravity.y = settings.gravity;
+			});
+
+			document.getElementById('bounceSlider').addEventListener('input', (e) => {
+				settings.bounce = parseFloat(e.target.value);
+				document.getElementById('bounceValue').textContent = settings.bounce.toFixed(1);
+				buttonBodies.forEach(body => body.restitution = settings.bounce);
+			});
+
+			document.getElementById('glowSlider').addEventListener('input', (e) => {
+				settings.glow = parseFloat(e.target.value);
+				document.getElementById('glowValue').textContent = settings.glow.toFixed(1);
+			});
+
+			document.getElementById('tapSlider').addEventListener('input', (e) => {
+				settings.tapThreshold = parseInt(e.target.value);
+				document.getElementById('tapValue').textContent = settings.tapThreshold + 'ms';
+			});
+
+			// ext stufes
+			Events.on(render, 'afterRender', () => {
+				const ctx = render.context;
+				ctx.save();
+				ctx.font = `bold ${14 * settings.glow}px "Chakra Petch", sans-serif`;
+				ctx.textAlign = 'center';
+				ctx.textBaseline = 'middle';
+				ctx.shadowColor = `rgba(29, 78, 216, ${0.7 * settings.glow})`;
+				ctx.shadowBlur = 6 * settings.glow;
+
+				buttonBodies.forEach(body => {
+					if (body.label && body.isButton) {
+						ctx.save();
+						ctx.translate(body.position.x, body.position.y);
+						ctx.rotate(body.angle);
+
+						ctx.fillStyle = '#000';
+						ctx.fillText(t(body.label), 0, 0);
+						ctx.restore();
+					}
+				});
+				ctx.restore();
+			});
+
+			// Resize
+			window.addEventListener('resize', () => {
+				Render.lookAt(render, {
+					min: { x: 0, y: 0 },
+					max: { x: window.innerWidth, y: window.innerHeight }
+				});
+				render.canvas.width = window.innerWidth;
+				render.canvas.height = window.innerHeight;
+				Matter.Mouse.setOffset(mouse, { x: 0, y: 0 });
+			});
+		}
+
+
+		// ================= DESKTOP: search bar =================
 
 		let searchItems = [
 			t("home_basalt"),
@@ -894,9 +1225,28 @@
 		});
 
 
+		// ================= START =================
 
+		applyLanguage(currentLang);
 
+		if (IS_MOBILE) {
+			startMobile();
+			applyLanguage(currentLang); // label the menu buttons that were just created
+		} else {
+			const matterScript = document.createElement("script");
+			matterScript.src = "https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js";
+			matterScript.onload = startDesktop;
+			document.head.appendChild(matterScript);
+		}
 
+		// switch between the two layouts when the window crosses the phone breakpoint (e.g. rotating a tablet)
+		let modeTimer;
+		window.addEventListener("resize", () => {
+			clearTimeout(modeTimer);
+			modeTimer = setTimeout(() => {
+				if (window.isMobileMode() !== IS_MOBILE) location.reload();
+			}, 250);
+		});
 	</script>
 </body>
 
