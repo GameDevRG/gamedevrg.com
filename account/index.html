@@ -3,409 +3,962 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>gamedevrg.com/account</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: #3b82f6;
-            font-family: "Chakra Petch", sans-serif;
+        :root {
+            --blue: #3b82f6;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --red: #f87171;
+            --green: #22c55e;
+            --amber: #fbbf24;
+            --line: rgba(255, 255, 255, 0.1);
         }
 
-        #settingsOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(15, 23, 42, 0);
+        * {
+            box-sizing: border-box;
+        }
 
+        [hidden] {
+            display: none !important;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+            background: var(--blue);
+            font-family: "Chakra Petch", sans-serif;
+            color: var(--text);
         }
 
-        #settingsBox {
-            background: linear-gradient(145deg, #002155, #000000);
+        :focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 2px;
+        }
 
-            border-radius: 0px;
-            padding: 40px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
+        /* ---------- panel ---------- */
+        .panel {
+            width: 100%;
+            max-width: 920px;
+            padding: 32px;
+            background: linear-gradient(145deg, #002155, #000000);
+            border: 1px solid var(--line);
             box-shadow:
                 0 25px 50px -12px rgba(0, 0, 0, 0.7),
-                0 0 0 1px rgba(255, 255, 255, 0.1),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
         }
 
-        .settings-header {
-            text-align: center;
-            margin-bottom: 30px;
+        .panel.wide {
+            max-width: 1280px;
         }
 
-        .settings-title {
-            font-size: 28px;
-            font-weight: 700;
-            background: #3b82f6;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        h1,
+        h2 {
             margin: 0;
         }
 
-        .settings-section {
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        .title {
+            margin-bottom: 24px;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--blue);
+            text-align: center;
         }
 
-        .settings-section:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
+        /* ---------- buttons ---------- */
+        .btn {
+            display: block;
+            width: 100%;
+            min-height: 46px;
+            padding: 12px;
+            border: 1px solid transparent;
+            font: inherit;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            cursor: pointer;
         }
 
-        .setting-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: wait;
         }
 
-        .setting-item:last-child {
-            margin-bottom: 0;
+        .primary {
+            background: var(--blue);
         }
 
-        .setting-label {
+        .secondary {
+            background: transparent;
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        .success {
+            background: var(--green);
+        }
+
+        .danger {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.4);
+            color: var(--red);
+        }
+
+        .danger:hover:not(:disabled) {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .back {
+            display: inline-block;
+            width: auto;
+            min-height: 0;
+            margin-bottom: 24px;
+            padding: 8px 14px;
             font-weight: 500;
-            color: #e2e8f0;
+            font-size: 15px;
+        }
+
+        /* ---------- tabs ---------- */
+        .tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin-bottom: 24px;
+            border: 1px solid var(--blue);
+        }
+
+        .tab {
+            padding: 12px 8px;
+            border: 0;
+            background: transparent;
+            color: var(--blue);
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .tab[aria-selected="true"] {
+            background: var(--blue);
+            color: #fff;
+        }
+
+        /* ---------- form fields ---------- */
+        .field {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .input-wrap {
+            position: relative;
         }
 
         input {
-            background: rgb(0, 0, 0);
-            color: #e2e8f0;
-
-            border: 2px solid #3b82f6;
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--blue);
+            border-radius: 0;
+            background: #000;
+            color: var(--text);
+            font: inherit;
+            font-size: 16px;
+            /* 16px stops iOS zooming into the field */
         }
 
-        .close-btn {
+        .has-reveal input {
+            padding-right: 52px;
+        }
+
+        .reveal {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.4);
-            color: #f87171;
-            border-radius: 0px;
-            padding: 8px 16px;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: var(--blue);
             cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
         }
 
-        .close-btn:hover {
-            background: rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
-            transform: scale(1.05);
+        .reveal:hover {
+            color: #fff;
+        }
+
+        .reveal svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .msg {
+            min-height: 1.4em;
+            margin: 14px 0 0;
+            font-size: 15px;
+            overflow-wrap: anywhere;
+        }
+
+        .msg.err {
+            color: var(--red);
+        }
+
+        .msg.ok {
+            color: #86efac;
+        }
+
+        /* ---------- account view ---------- */
+        .welcome {
+            font-size: 20px;
+            font-weight: 400;
+            opacity: 0.7;
+            margin-bottom: 6px;
+        }
+
+        .username {
+            margin-bottom: 24px;
+            font-size: clamp(32px, 10vw, 48px);
+            font-weight: 700;
+            line-height: 1.1;
+            color: var(--blue);
+            overflow-wrap: anywhere;
+        }
+
+        .status {
+            margin-bottom: 24px;
+            padding: 10px 12px;
+            border: 1px solid var(--line);
+            border-left: 3px solid var(--blue);
+            background: rgba(255, 255, 255, 0.04);
+            font-size: 15px;
+            overflow-wrap: anywhere;
+        }
+
+        .status.ok {
+            border-left-color: var(--green);
+        }
+
+        .status.warn {
+            border-left-color: var(--amber);
+        }
+
+        .status.err {
+            border-left-color: var(--red);
+        }
+
+        .status small {
+            display: block;
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* ---------- account data ---------- */
+        .data {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--line);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat {
+            padding: 12px;
+            border: 1px solid var(--line);
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .stat b {
+            display: block;
+            font-size: 28px;
+            color: var(--blue);
+        }
+
+        .sub {
+            margin: 0 0 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        .empty {
+            margin: 0 0 24px;
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        .tablewrap {
+            margin-bottom: 24px;
+            overflow-x: auto;
+            border: 1px solid var(--line);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th {
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        details summary {
+            padding: 4px 0 10px;
+            color: var(--muted);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        pre {
+            max-height: 320px;
+            margin: 0;
+            padding: 12px;
+            overflow: auto;
+            border: 1px solid var(--line);
+            background: #000;
+            font-size: 13px;
+        }
+
+        /* ---------- server unreachable popup ---------- */
+        dialog {
+            width: calc(100% - 32px);
+            max-width: 420px;
+            padding: 28px;
+            border: 1px solid var(--line);
+            border-radius: 0;
+            background: linear-gradient(145deg, #002155, #000000);
+            color: var(--text);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        dialog h2 {
+            margin-bottom: 10px;
+            font-size: 22px;
+            color: var(--red);
+        }
+
+        dialog p {
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .dialog-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 22px;
+        }
+
+        .dialog-actions .btn {
+            flex: 1;
+        }
+
+        /* ---------- mobile ---------- */
+        @media (max-width: 480px) {
+            .panel {
+                padding: 24px 18px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .stat b {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div id="settingsOverlay">
-        <div id="settingsBox">
+    <main class="panel" id="panel">
 
-            <button class="close-btn" onclick="closeSettings()">◁ back</button>
+        <a class="btn secondary back" id="backLink" href="index.html" data-i18n="back">◁ back</a>
 
-            <div class="settings-header">
-                <h1 class="settings-title" data-i18n="signIn">sign in</h1>
+        <!-- ===== SIGNED OUT: log in / create account ===== -->
+        <section id="authView">
+            <h1 class="title" id="authTitle" data-i18n="signIn">sign in</h1>
+
+            <div class="tabs" role="tablist">
+                <button type="button" class="tab" id="tabLogin" role="tab" aria-selected="true"
+                    data-i18n="logIn">log in</button>
+                <button type="button" class="tab" id="tabRegister" role="tab" aria-selected="false"
+                    data-i18n="createAccount">create account</button>
             </div>
 
-            <!-- shown only when the page is opened from the daily levels page (?from=daily) -->
-            <a id="dailyBack" href="../mathgolf/daily/" style="
-                display:none;
-                margin-bottom:25px;
-                padding:10px;
-                text-align:center;
-                text-decoration:none;
-                background:#3b82f6;
-                color:white;
-                font-weight:600;
-            ">◁ back to daily levels</a>
-
-            <!-- LOGIN VIEW a-->
-            <div id="loginView">
-
-                <div class="settings-section">
-                    <h3 style="color:#94a3b8; font-size:16px; margin-bottom:15px;" data-i18n="enterLogIn">
-                        enter log in information here
-                    </h3>
-
-                    <div class="setting-item">
-                        <span class="setting-label">username</span>
-                        <input id="username" type="text">
-                    </div>
-
-                    <div class="setting-item">
-                        <span class="setting-label">password</span>
-                        <input id="password" type="password">
+            <form id="loginForm">
+                <div class="field">
+                    <label for="username" data-i18n="username">username</label>
+                    <input id="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false"
+                        required>
+                </div>
+                <div class="field">
+                    <label for="password" data-i18n="password">password</label>
+                    <div class="input-wrap has-reveal">
+                        <input id="password" type="password" autocomplete="current-password" required>
+                        <button type="button" class="reveal" data-reveal="password" aria-pressed="false"></button>
                     </div>
                 </div>
+                <button type="submit" class="btn primary" id="loginBtn" data-i18n="logIn">log in</button>
+            </form>
 
-                <div id="loginButtons">
-                    <button onclick="loginUser()" style="
-        padding:10px;
-        background:#3b82f6;
-        border:none;
-        color:white;
-        font-weight:600;
-        cursor:pointer;
-    ">
-                        log in
-                    </button>
-
-                    <button onclick="switchToRegister()" style="
-        padding:8px;
-        background:transparent;
-        border:1px solid #3b82f6;
-        color:#3b82f6;
-        cursor:pointer;
-    ">
-                        create account
-                    </button>
-
-                    <p id="status" style="color:white; margin:0;"></p>
+            <form id="registerForm" hidden>
+                <div class="field">
+                    <label for="regUsername" data-i18n="username">username</label>
+                    <input id="regUsername" type="text" autocomplete="username" autocapitalize="none"
+                        spellcheck="false" required>
                 </div>
+                <div class="field">
+                    <label for="regPassword" data-i18n="password">password</label>
+                    <div class="input-wrap has-reveal">
+                        <input id="regPassword" type="password" autocomplete="new-password" required>
+                        <button type="button" class="reveal" data-reveal="regPassword" aria-pressed="false"></button>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="regConfirm" data-i18n="confirmPassword">confirm password</label>
+                    <div class="input-wrap has-reveal">
+                        <input id="regConfirm" type="password" autocomplete="new-password" required>
+                        <button type="button" class="reveal" data-reveal="regConfirm" aria-pressed="false"></button>
+                    </div>
+                </div>
+                <button type="submit" class="btn success" id="registerBtn" data-i18n="register">register</button>
+            </form>
 
+            <p class="msg" id="authMsg" role="status" aria-live="polite"></p>
+        </section>
+
+        <!-- ===== SIGNED IN: account ===== -->
+        <section id="accountView" hidden>
+            <h1 class="welcome" data-i18n="welcomeBack">welcome back,</h1>
+            <div class="username" id="usernameDisplay"></div>
+
+            <div class="status" id="status" role="status" aria-live="polite"></div>
+
+            <div class="actions">
+                <button type="button" class="btn secondary" id="refreshBtn" data-i18n="refreshLogin">refresh login</button>
+                <button type="button" class="btn primary" id="dataBtn" aria-expanded="false" aria-controls="dataPanel"
+                    data-i18n="viewData">view account data</button>
+                <button type="button" class="btn danger" id="logoutBtn" data-i18n="logOut">log out</button>
             </div>
 
-            <!-- REGISTER VIEW -->
-            <div id="registerBox" style="display:none;">
-
-                <div class="settings-section">
-                    <h3 style="color:#94a3b8; font-size:16px; margin-bottom:15px;">
-                        create account
-                    </h3>
-
-                    <div class="setting-item">
-                        <span class="setting-label">username</span>
-                        <input id="regUsername" type="text">
+            <section class="data" id="dataPanel" hidden>
+                <form id="dataForm">
+                    <div class="field">
+                        <label for="dataPw" data-i18n="dataPrompt">enter your password to view your data</label>
+                        <div class="input-wrap has-reveal">
+                            <input id="dataPw" type="password" autocomplete="current-password" required>
+                            <button type="button" class="reveal" data-reveal="dataPw" aria-pressed="false"></button>
+                        </div>
                     </div>
+                    <button type="submit" class="btn primary" id="loadBtn" data-i18n="loadData">load data</button>
+                </form>
+                <p class="msg" id="dataMsg" role="status" aria-live="polite"></p>
+                <div id="dataResult" hidden></div>
+            </section>
+        </section>
 
-                    <div class="setting-item">
-                        <span class="setting-label">password</span>
-                        <input id="regPassword" type="password">
-                    </div>
-                </div>
+    </main>
 
-                <div style="display:flex; flex-direction:column; gap:10px;">
-                    <button onclick="registerUser()" style="
-                    padding:10px;
-                    background:#22c55e;
-                    border:none;
-                    color:white;
-                    font-weight:600;
-                    cursor:pointer;
-                ">
-                        register
-                    </button>
-
-                    <button onclick="switchToLogin()" style="
-                    padding:8px;
-                    background:transparent;
-                    border:1px solid #3b82f6;
-                    color:#3b82f6;
-                    cursor:pointer;
-                ">
-                        back to login
-                    </button>
-
-                    <p id="regStatus" style="color:white; margin:0;"></p>
-                </div>
-
-            </div>
-
+    <dialog id="serverDialog" aria-labelledby="serverDialogTitle">
+        <h2 id="serverDialogTitle" data-i18n="serverDownTitle">can't reach the server</h2>
+        <p data-i18n="serverDownBody">the server didn't respond. It may be waking up from sleep, or your connection may be down. Check your connection and try again in a moment.</p>
+        <div class="dialog-actions">
+            <button type="button" class="btn secondary" id="serverClose" data-i18n="close">close</button>
+            <button type="button" class="btn primary" id="serverRetry" data-i18n="tryAgain">try again</button>
         </div>
-    </div>
+    </dialog>
 
     <script>
+        const API = "https://gamedevrg-com-backend.onrender.com";
+        const $ = id => document.getElementById(id);
+
         /* opened from the daily levels page: its link ends in ?from=daily */
         const fromDaily = new URLSearchParams(location.search).get("from") === "daily";
-        if (fromDaily) document.getElementById("dailyBack").style.display = "block";
 
-        function checkIfAlreadyLoggedIn() {
-            const loggedIn = localStorage.getItem("loggedIn");
-            const user = localStorage.getItem("username");
+        /* ---------- translations ---------- */
+        const translations = {
+            en: {
+                signIn: "sign in", logIn: "log in", createAccount: "create account",
+                username: "username", password: "password", confirmPassword: "confirm password",
+                register: "register", show: "show", hide: "hide",
+                loggingIn: "logging in...", creating: "creating account...",
+                mismatch: "passwords don't match", fillAll: "enter a username and password",
+                created: "account created, log in below",
+                wakeUp: "waking the server up, this can take up to a minute...",
+                serverError: "server error",
+                back: "◁ back", backDaily: "◁ back to daily levels",
+                welcomeBack: "welcome back,", refreshLogin: "refresh login",
+                checking: "checking your account...",
+                confirmed: "account confirmed, you're logged in", checkedAt: "checked at",
+                notFound: "this account no longer exists on the server, so you've been logged out",
+                unreachable: "couldn't reach the server, so your login hasn't been verified",
+                viewData: "view account data", hideData: "hide account data", logOut: "log out",
+                dataPrompt: "enter your password to view your data", loadData: "load data", loading: "loading...",
+                leaderboardScores: "leaderboard scores", dailySolved: "daily levels solved",
+                leaderboard: "leaderboard", bestTime: "best time",
+                date: "date", moves: "moves", par: "par", result: "result", onTime: "on time", late: "late",
+                noScores: "no leaderboard scores yet", noDaily: "no daily levels solved yet", rawData: "raw data",
+                serverDownTitle: "can't reach the server",
+                serverDownBody: "the server didn't respond. It may be waking up from sleep, or your connection may be down. Check your connection and try again in a moment.",
+                close: "close", tryAgain: "try again"
+            },
+            es: {
+                signIn: "iniciar sesión", logIn: "entrar", createAccount: "crear cuenta",
+                username: "nombre de usuario", password: "contraseña", confirmPassword: "confirmar contraseña",
+                register: "registrarse", show: "mostrar", hide: "ocultar",
+                loggingIn: "iniciando sesión...", creating: "creando cuenta...",
+                mismatch: "las contraseñas no coinciden", fillAll: "ingrese un nombre de usuario y una contraseña",
+                created: "cuenta creada, inicia sesión abajo",
+                wakeUp: "despertando el servidor, puede tardar hasta un minuto...",
+                serverError: "error del servidor",
+                back: "◁ volver", backDaily: "◁ volver a los niveles diarios",
+                welcomeBack: "bienvenido de nuevo,", refreshLogin: "actualizar sesión",
+                checking: "comprobando tu cuenta...",
+                confirmed: "cuenta confirmada, has iniciado sesión", checkedAt: "comprobado a las",
+                notFound: "esta cuenta ya no existe en el servidor, así que se cerró tu sesión",
+                unreachable: "no se pudo conectar con el servidor, tu sesión no se verificó",
+                viewData: "ver datos de la cuenta", hideData: "ocultar datos de la cuenta", logOut: "cerrar sesión",
+                dataPrompt: "ingresa tu contraseña para ver tus datos", loadData: "cargar datos", loading: "cargando...",
+                leaderboardScores: "puntuaciones de clasificación", dailySolved: "niveles diarios resueltos",
+                leaderboard: "clasificación", bestTime: "mejor tiempo",
+                date: "fecha", moves: "movimientos", par: "par", result: "resultado", onTime: "a tiempo", late: "tarde",
+                noScores: "aún no hay puntuaciones", noDaily: "aún no has resuelto niveles diarios", rawData: "datos sin procesar",
+                serverDownTitle: "no se puede conectar con el servidor",
+                serverDownBody: "el servidor no respondió. Puede estar despertando o tu conexión puede estar caída. Revisa tu conexión e inténtalo de nuevo en un momento.",
+                close: "cerrar", tryAgain: "reintentar"
+            },
+            ja: {
+                signIn: "サインイン", logIn: "ログイン", createAccount: "アカウント作成",
+                username: "ユーザー名", password: "パスワード", confirmPassword: "パスワード（確認）",
+                register: "登録", show: "表示", hide: "非表示",
+                loggingIn: "ログイン中...", creating: "アカウントを作成中...",
+                mismatch: "パスワードが一致しません", fillAll: "ユーザー名とパスワードを入力してください",
+                created: "アカウントを作成しました。下からログインしてください",
+                wakeUp: "サーバーを起動中です。最大1分かかります...",
+                serverError: "サーバーエラー",
+                back: "◁ 戻る", backDaily: "◁ デイリーレベルに戻る",
+                welcomeBack: "おかえりなさい、", refreshLogin: "ログインを更新",
+                checking: "アカウントを確認中...",
+                confirmed: "アカウントを確認しました。ログイン中です", checkedAt: "確認時刻",
+                notFound: "このアカウントはサーバーに存在しないため、ログアウトしました",
+                unreachable: "サーバーに接続できず、ログインを確認できませんでした",
+                viewData: "アカウントデータを見る", hideData: "アカウントデータを隠す", logOut: "ログアウト",
+                dataPrompt: "データを見るにはパスワードを入力してください", loadData: "データを読み込む", loading: "読み込み中...",
+                leaderboardScores: "ランキングスコア", dailySolved: "クリアしたデイリーレベル",
+                leaderboard: "ランキング", bestTime: "ベストタイム",
+                date: "日付", moves: "手数", par: "パー", result: "結果", onTime: "当日", late: "後日",
+                noScores: "ランキングスコアはまだありません", noDaily: "クリアしたデイリーレベルはまだありません", rawData: "生データ",
+                serverDownTitle: "サーバーに接続できません",
+                serverDownBody: "サーバーから応答がありません。サーバーが起動中か、接続が切れている可能性があります。接続を確認して、少し待ってからもう一度お試しください。",
+                close: "閉じる", tryAgain: "再試行"
+            },
+            zh: {
+                signIn: "登录", logIn: "登录", createAccount: "创建账户",
+                username: "用户名", password: "密码", confirmPassword: "确认密码",
+                register: "注册", show: "显示", hide: "隐藏",
+                loggingIn: "登录中...", creating: "正在创建账户...",
+                mismatch: "两次输入的密码不一致", fillAll: "请输入用户名和密码",
+                created: "账户已创建，请在下方登录",
+                wakeUp: "正在唤醒服务器，最多需要一分钟...",
+                serverError: "服务器错误",
+                back: "◁ 返回", backDaily: "◁ 返回每日关卡",
+                welcomeBack: "欢迎回来，", refreshLogin: "刷新登录",
+                checking: "正在检查你的账户...",
+                confirmed: "账户已确认，你已登录", checkedAt: "检查时间",
+                notFound: "服务器上已不存在此账户，你已退出登录",
+                unreachable: "无法连接服务器，未能验证你的登录",
+                viewData: "查看账户数据", hideData: "隐藏账户数据", logOut: "退出登录",
+                dataPrompt: "输入密码以查看你的数据", loadData: "加载数据", loading: "加载中...",
+                leaderboardScores: "排行榜成绩", dailySolved: "已完成的每日关卡",
+                leaderboard: "排行榜", bestTime: "最佳时间",
+                date: "日期", moves: "步数", par: "标准杆", result: "结果", onTime: "当天", late: "补做",
+                noScores: "暂无排行榜成绩", noDaily: "暂未完成每日关卡", rawData: "原始数据",
+                serverDownTitle: "无法连接服务器",
+                serverDownBody: "服务器没有响应。它可能正在唤醒，或者你的网络已断开。请检查网络，稍后再试。",
+                close: "关闭", tryAgain: "重试"
+            }
+        };
 
-            if (loggedIn === "true" && user) {
-                if (fromDaily) {
-                    // stay here so the back button is usable
-                    document.getElementById("status").textContent = "✅ already logged in as " + user;
-                    return;
-                }
-                // already logged in → go to dashboard
-                window.location.href = "dashboard.html";
+        const lang = translations[localStorage.getItem("lang")] ? localStorage.getItem("lang") : "en";
+        const t = key => translations[lang][key] || translations.en[key] || key;
+
+        function applyLanguage() {
+            document.documentElement.lang = lang;
+            document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
+        }
+
+        function setI18n(el, key) {
+            el.dataset.i18n = key;
+            el.textContent = t(key);
+        }
+
+        /* ---------- helpers ---------- */
+        function setMsg(el, text, kind) {
+            el.textContent = text || "";
+            el.className = "msg" + (kind ? " " + kind : "");
+        }
+
+        function setStatus(kind, text, sub) {
+            const s = $("status");
+            s.className = "status " + kind;
+            s.textContent = text;
+            if (sub) {
+                const small = document.createElement("small");
+                small.textContent = sub;
+                s.appendChild(small);
             }
         }
 
-        // run immediately on page load
-        checkIfAlreadyLoggedIn();
-        let mode = "login";
-
-        function closeSettings() {
-            window.location.href = "index.html";
-        }
-
-        const translations = {
-            en: { // english
-                signIn: "sign in",
-                username: "username",
-                password: "password",
-                enterLogIn: "enter log in information here",
-                back: "◁ back"
-            },
-            es: { // spanish
-                signIn: "iniciar sesión",
-                username: "nombre de usuario",
-                password: "contraseña",
-                enterLogIn: "ingrese la información de inicio de sesión aquí",
-                back: "◁ volver"
-            },
-            ja: { // japanese
-                signIn: "サインイン",
-                username: "ユーザー名",
-                password: "パスワード",
-                enterLogIn: "ここにログイン情報を入力してください",
-                back: "◁ 戻る"
-            },
-            zh: { // chinese
-                signIn: "登录",
-                username: "用户名",
-                password: "密码",
-                enterLogIn: "在此输入登录信息",
-                back: "◁ 返回"
-            },
-        };
-        function applyLanguage(lang) {
-            const elements = document.querySelectorAll("[data-i18n]");
-
-            elements.forEach(el => {
-                const key = el.getAttribute("data-i18n");
-                if (translations[lang][key]) {
-                    el.textContent = translations[lang][key];
-                }
-            });
-        }
-
-        const savedLang = localStorage.getItem("lang") || "en";
-        applyLanguage(savedLang);
-        const langSelect = document.getElementById("languageSelect");
-        if (langSelect) {
-            langSelect.value = savedLang;
-            langSelect.addEventListener("change", (e) => {
-                const lang = e.target.value;
-                localStorage.setItem("lang", lang);
-                applyLanguage(lang);
-            });
-        }
-
-        /* LOGIN FUNCTION */
-        async function loginUser() {
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-            const status = document.getElementById("status");
-
-            status.textContent = "logging in...";
-
+        /* POST to the backend. onSlow fires if the server takes >5s (free hosting sleeps when idle). */
+        async function api(path, body, onSlow) {
+            const ctrl = new AbortController();
+            const kill = setTimeout(() => ctrl.abort(), 60000);
+            const slow = onSlow ? setTimeout(onSlow, 5000) : null;
             try {
-                const res = await fetch("https://gamedevrg-com-backend.onrender.com/login", {
+                const res = await fetch(API + path, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        username,
-                        password
-                    })
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body),
+                    signal: ctrl.signal
                 });
+                /* 502/503/504 come from the host while the server is asleep or down */
+                if (res.status === 502 || res.status === 503 || res.status === 504) throw new Error("server unreachable");
+                let data = null;
+                try { data = await res.json(); } catch (e) { }
+                return { ok: res.ok, status: res.status, data: data || {} };
+            } finally {
+                clearTimeout(kill);
+                if (slow) clearTimeout(slow);
+            }
+        }
 
-                const data = await res.json();
+        function el(tag, cls, text) {
+            const e = document.createElement(tag);
+            if (cls) e.className = cls;
+            if (text != null) e.textContent = text;
+            return e;
+        }
 
-                if (!res.ok) {
-                    status.textContent = "❌ " + data.message;
-                    return;
-                }
+        function makeTable(headers, rows) {
+            const wrap = el("div", "tablewrap");
+            const tb = el("table");
+            const head = el("tr");
+            headers.forEach(h => { const th = el("th", null, h); th.scope = "col"; head.appendChild(th); });
+            tb.appendChild(el("thead")).appendChild(head);
+            const body = el("tbody");
+            rows.forEach(r => {
+                const tr = el("tr");
+                r.forEach(c => tr.appendChild(el("td", null, c)));
+                body.appendChild(tr);
+            });
+            tb.appendChild(body);
+            wrap.appendChild(tb);
+            return wrap;
+        }
 
-                status.textContent = "✅ " + data.message;
+        /* ---------- views ---------- */
+        function clearLogin() {
+            localStorage.removeItem("loggedIn");
+            localStorage.removeItem("username");
+        }
+
+        function showAuth(msg, kind) {
+            $("accountView").hidden = true;
+            $("authView").hidden = false;
+            $("panel").classList.remove("wide");
+            closeData();
+            setTab("login");
+            setMsg($("authMsg"), msg, kind);
+        }
+
+        function showAccount() {
+            $("authView").hidden = true;
+            $("accountView").hidden = false;
+            $("panel").classList.add("wide");
+            $("usernameDisplay").textContent = localStorage.getItem("username");
+            checkAccount();
+        }
+
+        function setTab(name) {
+            const login = name === "login";
+            $("loginForm").hidden = !login;
+            $("registerForm").hidden = login;
+            $("tabLogin").setAttribute("aria-selected", login);
+            $("tabRegister").setAttribute("aria-selected", !login);
+            setI18n($("authTitle"), login ? "signIn" : "createAccount");
+            setMsg($("authMsg"), "");
+        }
+
+        $("tabLogin").onclick = () => setTab("login");
+        $("tabRegister").onclick = () => {
+            /* carry over whatever was already typed (never into confirm password) */
+            if ($("username").value) $("regUsername").value = $("username").value;
+            if ($("password").value) $("regPassword").value = $("password").value;
+            setTab("register");
+        };
+
+        /* show / hide password buttons (eye icons) */
+        const EYE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+        const EYE_OFF = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.94 17.94A10.9 10.9 0 0 1 12 19c-7 0-11-7-11-7a19.8 19.8 0 0 1 5.06-5.94"/><path d="M9.9 4.24A10.4 10.4 0 0 1 12 5c7 0 11 7 11 7a19.9 19.9 0 0 1-3.17 4.19"/><path d="M14.12 14.12A3 3 0 1 1 9.88 9.88"/><path d="M1 1l22 22"/></svg>';
+
+        document.querySelectorAll("[data-reveal]").forEach(btn => {
+            btn.innerHTML = EYE;
+            btn.setAttribute("aria-label", t("show"));
+            btn.addEventListener("click", () => {
+                const input = $(btn.dataset.reveal);
+                const show = input.type === "password";
+                input.type = show ? "text" : "password";
+                btn.innerHTML = show ? EYE_OFF : EYE;
+                btn.setAttribute("aria-label", t(show ? "hide" : "show"));
+                btn.setAttribute("aria-pressed", show);
+            });
+        });
+
+        /* ---------- popup when the server can't be reached ---------- */
+        let retryForm = null;
+
+        function showServerDown(form) {
+            retryForm = form;
+            if (!$("serverDialog").open) $("serverDialog").showModal();
+        }
+
+        $("serverClose").onclick = () => $("serverDialog").close();
+        $("serverRetry").onclick = () => {
+            $("serverDialog").close();
+            if (retryForm) retryForm.requestSubmit();
+        };
+
+        /* ---------- log in ---------- */
+        $("loginForm").addEventListener("submit", async e => {
+            e.preventDefault();
+            const username = $("username").value;
+            const password = $("password").value;
+            if (!username || !password) return setMsg($("authMsg"), t("fillAll"), "err");
+
+            $("loginBtn").disabled = true;
+            setMsg($("authMsg"), t("loggingIn"));
+            try {
+                const r = await api("/login", { username, password }, () => setMsg($("authMsg"), t("wakeUp")));
+                if (!r.ok) return setMsg($("authMsg"), (r.data.message || t("serverError")), "err");
 
                 localStorage.setItem("loggedIn", "true");
                 localStorage.setItem("username", username);
-                if (fromDaily) return; // stay here: use the back button to return to the daily levels
-                window.location.href = "dashboard.html";
-
+                $("password").value = "";
+                showAccount();
             } catch (err) {
-                status.textContent = "❌ server error";
                 console.error(err);
+                setMsg($("authMsg"), t("serverError"), "err");
+                showServerDown($("loginForm"));
+            } finally {
+                $("loginBtn").disabled = false;
             }
-        }
+        });
 
-        function switchToRegister() {
-            document.getElementById("loginView").style.display = "none";
-            document.getElementById("registerBox").style.display = "block";
+        /* ---------- create account (with password confirmation) ---------- */
+        $("registerForm").addEventListener("submit", async e => {
+            e.preventDefault();
+            const username = $("regUsername").value;
+            const password = $("regPassword").value;
+            const confirm = $("regConfirm").value;
+            if (!username || !password) return setMsg($("authMsg"), t("fillAll"), "err");
+            if (password !== confirm) return setMsg($("authMsg"), t("mismatch"), "err");
 
-            document.getElementById("loginButtons").style.display = "none";
-        }
-
-        function switchToLogin() {
-            document.getElementById("registerBox").style.display = "none";
-            document.getElementById("loginView").style.display = "block";
-
-            document.getElementById("loginButtons").style.display = "flex";
-        }
-
-
-        async function registerUser() {
-            const username = document.getElementById("regUsername").value;
-            const password = document.getElementById("regPassword").value;
-            const status = document.getElementById("regStatus");
-
-            status.textContent = "creating account...";
-
+            $("registerBtn").disabled = true;
+            setMsg($("authMsg"), t("creating"));
             try {
-                const res = await fetch("https://gamedevrg-com-backend.onrender.com/register", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        username,
-                        password
-                    })
-                });
+                const r = await api("/register", { username, password }, () => setMsg($("authMsg"), t("wakeUp")));
+                if (!r.ok) return setMsg($("authMsg"), (r.data.message || t("serverError")), "err");
 
-                const data = await res.json();
-
-                if (!res.ok) {
-                    status.textContent = "❌ " + data.message;
-                    return;
-                }
-
-                status.textContent = "✅ account created!";
+                $("registerForm").reset();
+                setTab("login");
+                $("username").value = username;
+                $("password").focus();
+                setMsg($("authMsg"), t("created"), "ok");
             } catch (err) {
-                status.textContent = "❌ server error";
                 console.error(err);
+                setMsg($("authMsg"), t("serverError"), "err");
+                showServerDown($("registerForm"));
+            } finally {
+                $("registerBtn").disabled = false;
+            }
+        });
+
+        /* ---------- refresh login: does this account still exist on the server? ---------- */
+        async function checkAccount() {
+            const username = localStorage.getItem("username");
+            $("refreshBtn").disabled = true;
+            setStatus("busy", t("checking"));
+            try {
+                const r = await api("/account/check", { username }, () => setStatus("busy", t("wakeUp")));
+                if (r.ok && r.data.exists === true) {
+                    const time = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+                    setStatus("ok", t("confirmed"), t("checkedAt") + " " + time);
+                } else if (r.ok && r.data.exists === false) {
+                    clearLogin();
+                    showAuth(t("notFound"), "err");
+                } else {
+                    setStatus("warn", t("unreachable"));
+                }
+            } catch (err) {
+                console.error(err);
+                setStatus("warn", t("unreachable"));
+            } finally {
+                $("refreshBtn").disabled = false;
             }
         }
 
+        $("refreshBtn").onclick = checkAccount;
 
+        /* ---------- log out ---------- */
+        $("logoutBtn").onclick = () => {
+            clearLogin();
+            showAuth();
+        };
+
+        /* ---------- view account data ---------- */
+        function closeData() {
+            $("dataPanel").hidden = true;
+            $("dataBtn").setAttribute("aria-expanded", "false");
+            setI18n($("dataBtn"), "viewData");
+            $("dataResult").hidden = true;
+            $("dataResult").replaceChildren();
+            $("dataPw").value = "";
+            setMsg($("dataMsg"), "");
+        }
+
+        $("dataBtn").onclick = () => {
+            if ($("dataPanel").hidden) {
+                $("dataPanel").hidden = false;
+                $("dataBtn").setAttribute("aria-expanded", "true");
+                setI18n($("dataBtn"), "hideData");
+                $("dataPw").focus();
+            } else {
+                closeData();
+            }
+        };
+
+        const PAC = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles", year: "numeric", month: "2-digit", day: "2-digit" });
+
+        $("dataForm").addEventListener("submit", async e => {
+            e.preventDefault();
+            const username = localStorage.getItem("username");
+            $("loadBtn").disabled = true;
+            setMsg($("dataMsg"), t("loading"));
+            try {
+                const r = await api("/account/data", { username, password: $("dataPw").value }, () => setMsg($("dataMsg"), t("wakeUp")));
+                if (!r.ok) return setMsg($("dataMsg"), (r.data.message || t("serverError")), "err");
+                $("dataPw").value = "";
+                setMsg($("dataMsg"), "");
+                renderData(r.data.account || {});
+            } catch (err) {
+                console.error(err);
+                setMsg($("dataMsg"), t("serverError"), "err");
+            } finally {
+                $("loadBtn").disabled = false;
+            }
+        });
+
+        function renderData(account) {
+            const scores = Object.entries(account.scores || {});
+            const daily = Object.entries(account.daily || {}).sort((a, b) => b[0].localeCompare(a[0]));
+            const out = $("dataResult");
+            out.replaceChildren();
+
+            const stats = el("div", "stats");
+            [[scores.length, "leaderboardScores"], [daily.length, "dailySolved"]].forEach(([n, key]) => {
+                const s = el("div", "stat", t(key));
+                s.prepend(el("b", null, n));
+                stats.appendChild(s);
+            });
+            out.appendChild(stats);
+
+            out.appendChild(el("h2", "sub", t("leaderboardScores")));
+            out.appendChild(scores.length
+                ? makeTable([t("leaderboard"), t("bestTime")], scores.map(([name, time]) => [name, time]))
+                : el("p", "empty", t("noScores")));
+
+            out.appendChild(el("h2", "sub", t("dailySolved")));
+            out.appendChild(daily.length
+                ? makeTable([t("date"), t("moves"), t("par"), t("result")], daily.map(([d, x]) => {
+                    const late = PAC.format(new Date(x.first || x.at)) > d;
+                    return [d, x.moves, x.par != null ? x.par : "–", late ? t("late") : t("onTime")];
+                }))
+                : el("p", "empty", t("noDaily")));
+
+            const details = el("details");
+            details.appendChild(el("summary", null, t("rawData")));
+            details.appendChild(el("pre", null, JSON.stringify(account, null, 2)));
+            out.appendChild(details);
+
+            out.hidden = false;
+        }
+
+        /* ---------- start ---------- */
+        setI18n($("backLink"), fromDaily ? "backDaily" : "back");
+        $("backLink").href = fromDaily ? "../mathgolf/daily/" : "index.html";
+        applyLanguage();
+
+        if (localStorage.getItem("loggedIn") === "true" && localStorage.getItem("username")) {
+            showAccount();
+        }
     </script>
 </body>
 
