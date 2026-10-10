@@ -427,8 +427,16 @@
             flex-wrap: nowrap
         }
 
-        .row.stack { flex-direction: column; gap: 12px }
-        .row.stack .arrow { transform: rotate(90deg); line-height: 1 }
+        .row.stack {
+            flex-direction: column;
+            gap: 12px
+        }
+
+        .row.stack .arrow {
+            transform: rotate(90deg);
+            line-height: 1
+        }
+
         .lbl {
             font-size: .85rem;
             color: var(--soft);
@@ -451,13 +459,53 @@
             overflow-wrap: anywhere
         }
 
-        .srow.col { flex-direction: column; align-items: stretch }
-        .seg { display: flex; margin-top: 10px }
-        .seg button { flex: 1 1 0; min-height: 40px; padding: 6px 8px; font-family: inherit; font-weight: 700; font-size: .85rem; border: 1px solid var(--line); margin-left: -1px; background: var(--bg); color: var(--soft); cursor: pointer; text-transform: lowercase }
-        .seg button:first-child { margin-left: 0 }
-        .seg button small { display: block; margin-top: 2px; font-size: .7rem; font-weight: 500; color: var(--soft) }
-        .seg button[aria-checked="true"] { border-color: var(--imag); color: var(--imag); position: relative; z-index: 1 }
-        .sw:disabled { cursor: not-allowed }
+        .srow.col {
+            flex-direction: column;
+            align-items: stretch
+        }
+
+        .seg {
+            display: flex;
+            margin-top: 10px
+        }
+
+        .seg button {
+            flex: 1 1 0;
+            min-height: 40px;
+            padding: 6px 8px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: .85rem;
+            border: 1px solid var(--line);
+            margin-left: -1px;
+            background: var(--bg);
+            color: var(--soft);
+            cursor: pointer;
+            text-transform: lowercase
+        }
+
+        .seg button:first-child {
+            margin-left: 0
+        }
+
+        .seg button small {
+            display: block;
+            margin-top: 2px;
+            font-size: .7rem;
+            font-weight: 500;
+            color: var(--soft)
+        }
+
+        .seg button[aria-checked="true"] {
+            border-color: var(--imag);
+            color: var(--imag);
+            position: relative;
+            z-index: 1
+        }
+
+        .sw:disabled {
+            cursor: not-allowed
+        }
 
         .dec .full {
             min-height: 1.3em
@@ -506,22 +554,98 @@
             margin-bottom: 12px;
             overflow-wrap: anywhere
         }
-        #trail { font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", "Times New Roman", serif; font-size: 1.3rem; line-height: 2; color: var(--ink) }
-        #trail .op, #trail .pr { color: var(--soft) }
-        #trail .op { margin: 0 .04em }
-        #trail .pr { font-size: 1.15em }
-        #trail b { font-weight: 700 }
-        #trail sup { font-size: .68em; line-height: 0; vertical-align: .55em; margin-left: .05em }
-        #trail .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .8em; line-height: 1.2; margin: 0 .15em }
-        #trail .fr > span { padding: 0 .2em }
-        #ops .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .7em; line-height: 1.15; margin-left: .12em }
-        #ops .fr > span { padding: 0 .2em }
-        #ops .fr > span:first-child { border-bottom: 2px solid currentColor }
-        #trail .fr > span:first-child { border-bottom: 1.5px solid currentColor }
-        #trail .sqw { display: inline-flex; align-items: stretch; vertical-align: middle; line-height: 1.3; margin: 0 .05em }
-        #trail .sq { width: .75em; flex: none; overflow: visible }
-        #trail .rd { border-top: 1.6px solid currentColor; padding: .05em .12em 0 .06em; margin-left: -1px }
-        #trail .ab { margin: 0 .08em; font-size: 1.05em }
+
+        #trail {
+            font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", "Times New Roman", serif;
+            font-size: 1.3rem;
+            line-height: 2;
+            color: var(--ink)
+        }
+
+        #trail .op,
+        #trail .pr {
+            color: var(--soft)
+        }
+
+        #trail .op {
+            margin: 0 .04em
+        }
+
+        #trail .pr {
+            font-size: 1.15em
+        }
+
+        #trail b {
+            font-weight: 700
+        }
+
+        #trail sup {
+            font-size: .68em;
+            line-height: 0;
+            vertical-align: .55em;
+            margin-left: .05em
+        }
+
+        #trail .fr {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            text-align: center;
+            font-size: .8em;
+            line-height: 1.2;
+            margin: 0 .15em
+        }
+
+        #trail .fr>span {
+            padding: 0 .2em
+        }
+
+        #ops .fr {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            text-align: center;
+            font-size: .7em;
+            line-height: 1.15;
+            margin-left: .12em
+        }
+
+        #ops .fr>span {
+            padding: 0 .2em
+        }
+
+        #ops .fr>span:first-child {
+            border-bottom: 2px solid currentColor
+        }
+
+        #trail .fr>span:first-child {
+            border-bottom: 1.5px solid currentColor
+        }
+
+        #trail .sqw {
+            display: inline-flex;
+            align-items: stretch;
+            vertical-align: middle;
+            line-height: 1.3;
+            margin: 0 .05em
+        }
+
+        #trail .sq {
+            width: .75em;
+            flex: none;
+            overflow: visible
+        }
+
+        #trail .rd {
+            border-top: 1.6px solid currentColor;
+            padding: .05em .12em 0 .06em;
+            margin-left: -1px
+        }
+
+        #trail .ab {
+            margin: 0 .08em;
+            font-size: 1.05em
+        }
 
         .tile {
             position: relative;
@@ -666,81 +790,496 @@
             display: none !important
         }
 
-        .pg { width: 100%; max-width: 520px; margin: 0 auto; padding: 8vh 16px 20px; text-align: center; animation: pgIn .35s ease both }
-        .pg { transform-origin: 50% 6% }
-        @keyframes pgIn { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
-        .noanim .pg, .noanim.pg { animation: none }
-        body.inmenu { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) }
-        .stboard { margin-top: 16px; padding: 16px 14px }
-        .stgrid { display: flex; justify-content: space-around; gap: 8px; margin: 14px 0 10px }
-        .stg .num { font-size: 1.9rem; margin: 0 }
-        .stboard .tile, .stboard .plain { color: var(--blue) }
-        .stg .lbl { margin-top: 8px }
-        .strow { display: flex; justify-content: space-between; gap: 12px; padding: 9px 4px; border-top: 1px solid var(--line); text-align: left }
-        .strow span:last-child { font-weight: 800 }
-        #dailypg input { min-height: 44px; padding: 8px 10px; width: 150px; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); text-transform: lowercase }
-        #dailypg .tools button, #dailypg .calhead button { min-height: 44px; padding: 8px 16px; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; text-transform: lowercase }
-        #dailypg a { color: var(--blue) }
-        .cal { padding: 14px }
-        .solved { margin-top: 18px; padding: 16px 14px }
-        .sttl { margin: 0 0 2px; font-size: 1.15rem; font-weight: 800 }
-        .solved .num { font-size: 2.3rem; margin: 14px 0 }
-        .solved .tile, .solved .plain { color: var(--blue) }
-        .clockbox .tile, .clockbox .plain { color: var(--ink) }
-        .clockbox .num { margin: 0; font-size: 1.9rem }
-        .clock { display: flex; align-items: flex-start; justify-content: center; gap: 8px; margin-top: 14px }
-        .clock .lbl { margin-top: 8px }
-        .colon { color: var(--imag); font-size: 2.1rem; font-weight: 800; line-height: 1.15 }
-        #dlbd { list-style: none; margin: 4px 0 0; padding: 0; text-align: left }
-        #dlbd li { display: flex; justify-content: space-between; padding: 8px 12px; border-top: 1px solid var(--line) }
-        #dlbd li.me { color: var(--imag); font-weight: 700 }
-        #dailypg .solved .tools button { min-height: 44px; padding: 8px 16px; font-family: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; text-transform: lowercase }
-        .calhead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px }
-        .calhead h3 { margin: 0; font-size: 1.7rem; font-weight: 800 }
-        .calhead h3 b { color: var(--imag) }
-        #dailypg .calhead button { width: 44px; padding: 0; font-size: 1.4rem }
-        .calgrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px }
-        .cw { padding: 8px 0; background: var(--line); color: var(--ink); font-size: .9rem }
-        .cw.today { background: var(--ink); color: var(--bg) }
-        .cd { aspect-ratio: 1; position: relative; display: flex; align-items: center; justify-content: center; padding: 0; min-height: 0; font-family: inherit; font-weight: 800; font-size: 1.05rem; border: 1px solid var(--line); background: var(--bg); color: var(--soft); cursor: default }
-        .cd.play { cursor: pointer; color: var(--ink) }
-        .cd.play:hover { border-color: var(--ink) }
-        .cd.miss { border: 2px solid var(--imag); color: var(--imag) }
-        .cd.done { background: var(--blue); border-color: var(--blue); color: var(--bg) }
-        .cd.late { background: var(--bg); border: 2px solid var(--blue); color: var(--blue) }
-        .cd.today { background: var(--ink); border-color: var(--ink); color: var(--bg) }
-        .cd .mv { position: absolute; right: 4px; bottom: 2px; font-size: .7rem; font-weight: 700; line-height: 1; opacity: .9 }
-        .cd .pips { position: absolute; left: 3px; bottom: 3px; display: flex; gap: 2px }
-        .cd .pips i { width: 5px; height: 5px; background: rgba(0, 0, 0, .35) }
-        .cd .pips i.u { background: #fff }
-        .cd.today .pips i.u, .cd.late .pips i.u { background: var(--blue) }
-        .cd .pips i.o { background: var(--imag) }
-        #dlb { list-style: none; margin: 14px 0 0; padding: 0; text-align: left }
-        #dlb li { display: flex; justify-content: space-between; padding: 8px 12px; border-top: 1px solid var(--line) }
-        #dlb li.me { color: var(--imag); font-weight: 700 }
-        .streakbar { display: flex; justify-content: center; gap: 22px; margin: 12px 0; color: var(--soft); font-size: .95rem }
-        .streakbar b { color: var(--blue); font-size: 1.25rem; margin-left: 4px }
-        .calkey { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; margin-top: 14px; font-size: .85rem; color: var(--soft) }
-        .calkey span { display: inline-flex; align-items: center; gap: 6px }
-        .calkey i { display: inline-block; width: 14px; height: 14px; border: 1px solid var(--line); background: var(--bg) }
-        .calkey i.k-done { background: var(--blue); border-color: var(--blue) }
-        .calkey i.k-late { border: 2px solid var(--blue) }
-        .calkey i.k-miss { border: 2px solid var(--imag) }
-        .calkey i.k-today { background: var(--ink); border-color: var(--ink) }
-        .mopts { display: flex; flex-direction: column; gap: 14px; margin-top: 22px }
-        .mopt { display: block; width: 100%; padding: 18px 16px; text-align: center; font-family: inherit; color: var(--ink); background: var(--card); border: 2px solid var(--blue); box-shadow: 0 4px 0 var(--blue); cursor: pointer; transition: transform .08s, box-shadow .08s, border-color .15s }
-        .mopt b { display: block; font-size: 1.5rem; font-weight: 800 }
-        .mopt span { display: block; margin-top: 4px; font-size: .9rem; color: var(--soft) }
-        .mopt.red { border-color: var(--imag); box-shadow: 0 4px 0 var(--imag) }
-        .mopt.gold { border-color: var(--yellow); box-shadow: 0 4px 0 var(--yellow) }
-        .mopt.green { border-color: var(--ok); box-shadow: 0 4px 0 var(--ok) }
-        .mopt:hover, .mopt.red:hover, .mopt.gold:hover, .mopt.green:hover { border-color: var(--ink); box-shadow: 0 4px 0 var(--ink) }
-        .mopt:active, .mopt.pressed, .mopt.red:active, .mopt.red.pressed, .mopt.gold:active, .mopt.gold.pressed, .mopt.green:active, .mopt.green.pressed { transform: translateY(4px); box-shadow: 0 0 0 var(--ink) }
-        .pgh { margin: 0; font-size: 2rem; font-weight: 800 }
-        .dgroups { display: flex; flex-direction: column; gap: 14px; margin: 22px 0 18px }
-        .dgroup { background: var(--card); border: 2px solid var(--line); padding: 16px }
-        .dgroup h3 { margin: 0 0 8px; font-size: 1.25rem; font-weight: 800 }
-        .soon { color: var(--soft); font-size: .95rem; padding: 14px; border: 1px dashed var(--line) }
+        .pg {
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 8vh 16px 20px;
+            text-align: center;
+            animation: pgIn .35s ease both
+        }
+
+        .pg {
+            transform-origin: 50% 6%
+        }
+
+        @keyframes pgIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        .noanim .pg,
+        .noanim.pg {
+            animation: none
+        }
+
+        body.inmenu {
+            padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px))
+        }
+
+        .stboard {
+            margin-top: 16px;
+            padding: 16px 14px
+        }
+
+        .stgrid {
+            display: flex;
+            justify-content: space-around;
+            gap: 8px;
+            margin: 14px 0 10px
+        }
+
+        .stg .num {
+            font-size: 1.9rem;
+            margin: 0
+        }
+
+        .stboard .tile,
+        .stboard .plain {
+            color: var(--blue)
+        }
+
+        .stg .lbl {
+            margin-top: 8px
+        }
+
+        .strow {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 9px 4px;
+            border-top: 1px solid var(--line);
+            text-align: left
+        }
+
+        .strow span:last-child {
+            font-weight: 800
+        }
+
+        #dailypg input {
+            min-height: 44px;
+            padding: 8px 10px;
+            width: 150px;
+            font-family: inherit;
+            font-size: 1rem;
+            border: 1px solid var(--line);
+            background: var(--bg);
+            color: var(--ink);
+            text-transform: lowercase
+        }
+
+        #dailypg .tools button,
+        #dailypg .calhead button {
+            min-height: 44px;
+            padding: 8px 16px;
+            font-family: inherit;
+            font-size: 1rem;
+            border: 1px solid var(--line);
+            background: var(--bg);
+            color: var(--ink);
+            cursor: pointer;
+            text-transform: lowercase
+        }
+
+        #dailypg a {
+            color: var(--blue)
+        }
+
+        .cal {
+            padding: 14px
+        }
+
+        .solved {
+            margin-top: 18px;
+            padding: 16px 14px
+        }
+
+        .sttl {
+            margin: 0 0 2px;
+            font-size: 1.15rem;
+            font-weight: 800
+        }
+
+        .solved .num {
+            font-size: 2.3rem;
+            margin: 14px 0
+        }
+
+        .solved .tile,
+        .solved .plain {
+            color: var(--blue)
+        }
+
+        .clockbox .tile,
+        .clockbox .plain {
+            color: var(--ink)
+        }
+
+        .clockbox .num {
+            margin: 0;
+            font-size: 1.9rem
+        }
+
+        .clock {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 14px
+        }
+
+        .clock .lbl {
+            margin-top: 8px
+        }
+
+        .colon {
+            color: var(--imag);
+            font-size: 2.1rem;
+            font-weight: 800;
+            line-height: 1.15
+        }
+
+        #dlbd {
+            list-style: none;
+            margin: 4px 0 0;
+            padding: 0;
+            text-align: left
+        }
+
+        #dlbd li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-top: 1px solid var(--line)
+        }
+
+        #dlbd li.me {
+            color: var(--imag);
+            font-weight: 700
+        }
+
+        #dailypg .solved .tools button {
+            min-height: 44px;
+            padding: 8px 16px;
+            font-family: inherit;
+            font-size: 1rem;
+            border: 1px solid var(--line);
+            background: var(--bg);
+            color: var(--ink);
+            cursor: pointer;
+            text-transform: lowercase
+        }
+
+        .calhead {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px
+        }
+
+        .calhead h3 {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: 800
+        }
+
+        .calhead h3 b {
+            color: var(--imag)
+        }
+
+        #dailypg .calhead button {
+            width: 44px;
+            padding: 0;
+            font-size: 1.4rem
+        }
+
+        .calgrid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px
+        }
+
+        .cw {
+            padding: 8px 0;
+            background: var(--line);
+            color: var(--ink);
+            font-size: .9rem
+        }
+
+        .cw.today {
+            background: var(--ink);
+            color: var(--bg)
+        }
+
+        .cd {
+            aspect-ratio: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            min-height: 0;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 1.05rem;
+            border: 1px solid var(--line);
+            background: var(--bg);
+            color: var(--soft);
+            cursor: default
+        }
+
+        .cd.play {
+            cursor: pointer;
+            color: var(--ink)
+        }
+
+        .cd.play:hover {
+            border-color: var(--ink)
+        }
+
+        .cd.miss {
+            border: 2px solid var(--imag);
+            color: var(--imag)
+        }
+
+        .cd.done {
+            background: var(--blue);
+            border-color: var(--blue);
+            color: var(--bg)
+        }
+
+        .cd.late {
+            background: var(--bg);
+            border: 2px solid var(--blue);
+            color: var(--blue)
+        }
+
+        .cd.today {
+            background: var(--ink);
+            border-color: var(--ink);
+            color: var(--bg)
+        }
+
+        .cd .mv {
+            position: absolute;
+            right: 4px;
+            bottom: 2px;
+            font-size: .7rem;
+            font-weight: 700;
+            line-height: 1;
+            opacity: .9
+        }
+
+        .cd .pips {
+            position: absolute;
+            left: 3px;
+            bottom: 3px;
+            display: flex;
+            gap: 2px
+        }
+
+        .cd .pips i {
+            width: 5px;
+            height: 5px;
+            background: rgba(0, 0, 0, .35)
+        }
+
+        .cd .pips i.u {
+            background: #fff
+        }
+
+        .cd.today .pips i.u,
+        .cd.late .pips i.u {
+            background: var(--blue)
+        }
+
+        .cd .pips i.o {
+            background: var(--imag)
+        }
+
+        #dlb {
+            list-style: none;
+            margin: 14px 0 0;
+            padding: 0;
+            text-align: left
+        }
+
+        #dlb li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-top: 1px solid var(--line)
+        }
+
+        #dlb li.me {
+            color: var(--imag);
+            font-weight: 700
+        }
+
+        .streakbar {
+            display: flex;
+            justify-content: center;
+            gap: 22px;
+            margin: 12px 0;
+            color: var(--soft);
+            font-size: .95rem
+        }
+
+        .streakbar b {
+            color: var(--blue);
+            font-size: 1.25rem;
+            margin-left: 4px
+        }
+
+        .calkey {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px 18px;
+            margin-top: 14px;
+            font-size: .85rem;
+            color: var(--soft)
+        }
+
+        .calkey span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .calkey i {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 1px solid var(--line);
+            background: var(--bg)
+        }
+
+        .calkey i.k-done {
+            background: var(--blue);
+            border-color: var(--blue)
+        }
+
+        .calkey i.k-late {
+            border: 2px solid var(--blue)
+        }
+
+        .calkey i.k-miss {
+            border: 2px solid var(--imag)
+        }
+
+        .calkey i.k-today {
+            background: var(--ink);
+            border-color: var(--ink)
+        }
+
+        .mopts {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 22px
+        }
+
+        .mopt {
+            display: block;
+            width: 100%;
+            padding: 18px 16px;
+            text-align: center;
+            font-family: inherit;
+            color: var(--ink);
+            background: var(--card);
+            border: 2px solid var(--blue);
+            box-shadow: 0 4px 0 var(--blue);
+            cursor: pointer;
+            transition: transform .08s, box-shadow .08s, border-color .15s
+        }
+
+        .mopt b {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 800
+        }
+
+        .mopt span {
+            display: block;
+            margin-top: 4px;
+            font-size: .9rem;
+            color: var(--soft)
+        }
+
+        .mopt.red {
+            border-color: var(--imag);
+            box-shadow: 0 4px 0 var(--imag)
+        }
+
+        .mopt.gold {
+            border-color: var(--yellow);
+            box-shadow: 0 4px 0 var(--yellow)
+        }
+
+        .mopt.green {
+            border-color: var(--ok);
+            box-shadow: 0 4px 0 var(--ok)
+        }
+
+        .mopt:hover,
+        .mopt.red:hover,
+        .mopt.gold:hover,
+        .mopt.green:hover {
+            border-color: var(--ink);
+            box-shadow: 0 4px 0 var(--ink)
+        }
+
+        .mopt:active,
+        .mopt.pressed,
+        .mopt.red:active,
+        .mopt.red.pressed,
+        .mopt.gold:active,
+        .mopt.gold.pressed,
+        .mopt.green:active,
+        .mopt.green.pressed {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 var(--ink)
+        }
+
+        .pgh {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 800
+        }
+
+        .dgroups {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin: 22px 0 18px
+        }
+
+        .dgroup {
+            background: var(--card);
+            border: 2px solid var(--line);
+            padding: 16px
+        }
+
+        .dgroup h3 {
+            margin: 0 0 8px;
+            font-size: 1.25rem;
+            font-weight: 800
+        }
+
+        .soon {
+            color: var(--soft);
+            font-size: .95rem;
+            padding: 14px;
+            border: 1px dashed var(--line)
+        }
 
         #settings,
         #scores,
@@ -764,16 +1303,55 @@
             transform: translateX(-100vw)
         }
 
-        #settings { transform-origin: 50% 6% }
-        #dailypg { animation: none; transform-origin: 50% 6% }
-        #dailypg.away { transform: translateX(-100vw) }
-        #dailypg.awayR { transform: translateX(100vw) }
-        #settings.frommenu .gameonly, #settings.indaily .nodaily { display: none }
-        #menu { animation: none; transform-origin: 50% 6% }
-        #menu.away { transform: translateX(-100vw) }
-        #lbrows { list-style: none; margin: 10px 0 0; padding: 0; text-align: left }
-        #lbrows li { display: flex; justify-content: space-between; padding: 8px 12px; border-top: 1px solid var(--line) }
-        #lbrows li.me { color: var(--imag); font-weight: 700 }
+        #settings {
+            transform-origin: 50% 6%
+        }
+
+        #dailypg {
+            animation: none;
+            transform-origin: 50% 6%
+        }
+
+        #dailypg.away {
+            transform: translateX(-100vw)
+        }
+
+        #dailypg.awayR {
+            transform: translateX(100vw)
+        }
+
+        #settings.frommenu .gameonly,
+        #settings.indaily .nodaily {
+            display: none
+        }
+
+        #menu {
+            animation: none;
+            transform-origin: 50% 6%
+        }
+
+        #menu.away {
+            transform: translateX(-100vw)
+        }
+
+        #lbrows {
+            list-style: none;
+            margin: 10px 0 0;
+            padding: 0;
+            text-align: left
+        }
+
+        #lbrows li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-top: 1px solid var(--line)
+        }
+
+        #lbrows li.me {
+            color: var(--imag);
+            font-weight: 700
+        }
 
         #scores.offL,
         #lb.offL {
@@ -983,12 +1561,41 @@
             transition: none !important
         }
 
-        :root.noui *:not(#nlwrap) { transition: none !important }
-        :root.noui .pg { animation: none }
-        :root.nofade { transition: none }
-        .lnk { flex: 0 0 auto; min-height: 40px; padding: 8px 14px; font-family: inherit; font-weight: 700; font-size: .9rem; border: 1px solid var(--blue); background: var(--bg); color: var(--blue); cursor: pointer }
-        a.lnk { display: inline-flex; align-items: center; text-decoration: none }
-        .lnk:hover { border-color: var(--imag); color: var(--imag) }
+        :root.noui *:not(#nlwrap) {
+            transition: none !important
+        }
+
+        :root.noui .pg {
+            animation: none
+        }
+
+        :root.nofade {
+            transition: none
+        }
+
+        .lnk {
+            flex: 0 0 auto;
+            min-height: 40px;
+            padding: 8px 14px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: .9rem;
+            border: 1px solid var(--blue);
+            background: var(--bg);
+            color: var(--blue);
+            cursor: pointer
+        }
+
+        a.lnk {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none
+        }
+
+        .lnk:hover {
+            border-color: var(--imag);
+            color: var(--imag)
+        }
 
         #fx {
             position: fixed;
@@ -1360,99 +1967,427 @@
         .board #nlwrap.awayR {
             transform: none
         }
-    
+
         /* loading spinner */
-        .spin { display: inline-block; width: 28px; height: 28px; border: 3px solid var(--line); border-top-color: var(--ink); border-radius: 50%; animation: spin .8s linear infinite; vertical-align: middle }
-        li.spinwrap { list-style: none; text-align: center; padding: 14px 0 }
-        @keyframes spin { to { transform: rotate(360deg) } }
-        @media (prefers-reduced-motion:reduce) { .spin { animation-duration: 2.4s } }
-    
+        .spin {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            border: 3px solid var(--line);
+            border-top-color: var(--ink);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+            vertical-align: middle
+        }
+
+        li.spinwrap {
+            list-style: none;
+            text-align: center;
+            padding: 14px 0
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            .spin {
+                animation-duration: 2.4s
+            }
+        }
+
 
         /* ---------- extra motion (all of it follows the animation settings and reduced motion) ---------- */
-        @keyframes rise { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: none } }
-        @keyframes popIn { from { opacity: 0; transform: scale(.92) translateY(6px) } to { opacity: 1; transform: none } }
-        @keyframes cdIn { from { opacity: 0; transform: scale(.7) } to { opacity: 1; transform: none } }
-        @keyframes bdFade { from { opacity: 0 } to { opacity: 1 } }
-        @keyframes winPulse { 0% { transform: scale(1) } 40% { transform: scale(1.1) } 100% { transform: scale(1) } }
-        .sw { transition: border-color .2s, background .2s }
-        .sw::after { transition: left .24s cubic-bezier(.3, 1.5, .5, 1), background .2s }
-        :root.noui .sw::after, .noanim .sw::after { transition: none }
-        .mopt, .tools button, .how button, .lnk, .calhead button, .cd { transition: transform .12s ease, border-color .15s, background-color .15s, box-shadow .15s }
-        .mopt:active, .tools button:active:not(:disabled), .how button:active, .lnk:active, .calhead button:active, .cd.play:active { transform: scale(.96) }
+        @keyframes rise {
+            from {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(.92) translateY(6px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        @keyframes cdIn {
+            from {
+                opacity: 0;
+                transform: scale(.7)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        @keyframes bdFade {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes winPulse {
+            0% {
+                transform: scale(1)
+            }
+
+            40% {
+                transform: scale(1.1)
+            }
+
+            100% {
+                transform: scale(1)
+            }
+        }
+
+        .sw {
+            transition: border-color .2s, background .2s
+        }
+
+        .sw::after {
+            transition: left .24s cubic-bezier(.3, 1.5, .5, 1), background .2s
+        }
+
+        :root.noui .sw::after,
+        .noanim .sw::after {
+            transition: none
+        }
+
+        .mopt,
+        .tools button,
+        .how button,
+        .lnk,
+        .calhead button,
+        .cd {
+            transition: transform .12s ease, border-color .15s, background-color .15s, box-shadow .15s
+        }
+
+        .mopt:active,
+        .tools button:active:not(:disabled),
+        .how button:active,
+        .lnk:active,
+        .calhead button:active,
+        .cd.play:active {
+            transform: scale(.96)
+        }
+
         @media (prefers-reduced-motion: no-preference) {
-        :root:not(.noui):not(.noanim) dialog[open] { animation: popIn .28s cubic-bezier(.2, .8, .2, 1) backwards }
-        :root:not(.noui):not(.noanim) dialog[open]::backdrop { animation: bdFade .28s ease backwards }
-        :root:not(.noui):not(.noanim) #menu .mopt { animation: rise .45s cubic-bezier(.2, .8, .2, 1) backwards }
-        :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(1) { animation-delay: 120ms }
-        :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(2) { animation-delay: 180ms }
-        :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(3) { animation-delay: 240ms }
-        :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(4) { animation-delay: 300ms }
-        :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(5) { animation-delay: 360ms }
-        :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(6) { animation-delay: 420ms }
-        :root:not(.noui):not(.noanim) .dgroup { animation: rise .45s cubic-bezier(.2, .8, .2, 1) backwards }
-        :root:not(.noui):not(.noanim) .dgroup:nth-child(1) { animation-delay: 100ms }
-        :root:not(.noui):not(.noanim) .dgroup:nth-child(2) { animation-delay: 170ms }
-        :root:not(.noui):not(.noanim) .dgroup:nth-child(3) { animation-delay: 240ms }
-        :root:not(.noui):not(.noanim) .dgroup:nth-child(4) { animation-delay: 310ms }
-        :root:not(.noui):not(.noanim) #lbrows li, :root:not(.noui):not(.noanim) #dlbd li, :root:not(.noui):not(.noanim) #slist .srow { animation: rise .35s cubic-bezier(.2, .8, .2, 1) backwards }
-        :root:not(.noui):not(.noanim) #lbrows li:nth-child(2) { animation-delay: 35ms }
-        :root:not(.noui):not(.noanim) #lbrows li:nth-child(3) { animation-delay: 70ms }
-        :root:not(.noui):not(.noanim) #lbrows li:nth-child(4) { animation-delay: 105ms }
-        :root:not(.noui):not(.noanim) #lbrows li:nth-child(5) { animation-delay: 140ms }
-        :root:not(.noui):not(.noanim) #lbrows li:nth-child(6) { animation-delay: 175ms }
-        :root:not(.noui):not(.noanim) #lbrows li:nth-child(7) { animation-delay: 210ms }
-        :root:not(.noui):not(.noanim) #lbrows li:nth-child(8) { animation-delay: 245ms }
-        :root:not(.noui):not(.noanim) #lbrows li:nth-child(9) { animation-delay: 280ms }
-        :root:not(.noui):not(.noanim) #lbrows li:nth-child(10) { animation-delay: 315ms }
-        :root:not(.noui):not(.noanim) #dlbd li:nth-child(2) { animation-delay: 35ms }
-        :root:not(.noui):not(.noanim) #dlbd li:nth-child(3) { animation-delay: 70ms }
-        :root:not(.noui):not(.noanim) #dlbd li:nth-child(4) { animation-delay: 105ms }
-        :root:not(.noui):not(.noanim) #dlbd li:nth-child(5) { animation-delay: 140ms }
-        :root:not(.noui):not(.noanim) #dlbd li:nth-child(6) { animation-delay: 175ms }
-        :root:not(.noui):not(.noanim) #dlbd li:nth-child(7) { animation-delay: 210ms }
-        :root:not(.noui):not(.noanim) #dlbd li:nth-child(8) { animation-delay: 245ms }
-        :root:not(.noui):not(.noanim) #dlbd li:nth-child(9) { animation-delay: 280ms }
-        :root:not(.noui):not(.noanim) #dlbd li:nth-child(10) { animation-delay: 315ms }
-        :root:not(.noui):not(.noanim) #slist .srow:nth-child(2) { animation-delay: 35ms }
-        :root:not(.noui):not(.noanim) #slist .srow:nth-child(3) { animation-delay: 70ms }
-        :root:not(.noui):not(.noanim) #slist .srow:nth-child(4) { animation-delay: 105ms }
-        :root:not(.noui):not(.noanim) #slist .srow:nth-child(5) { animation-delay: 140ms }
-        :root:not(.noui):not(.noanim) #slist .srow:nth-child(6) { animation-delay: 175ms }
-        :root:not(.noui):not(.noanim) #slist .srow:nth-child(7) { animation-delay: 210ms }
-        :root:not(.noui):not(.noanim) #slist .srow:nth-child(8) { animation-delay: 245ms }
-        :root:not(.noui):not(.noanim) #slist .srow:nth-child(9) { animation-delay: 280ms }
-        :root:not(.noui):not(.noanim) #slist .srow:nth-child(10) { animation-delay: 315ms }
-        :root:not(.noui):not(.noanim) .calgrid.pop .cd { animation: cdIn .32s cubic-bezier(.2, .8, .2, 1) backwards; animation-delay: calc(var(--d, 0) * 14ms) }
-        :root:not(.noui):not(.noanim) #msg.win, :root:not(.noui):not(.noanim) #msg.lose { animation: popIn .4s cubic-bezier(.2, .8, .2, 1) backwards }
-        :root:not(.noui):not(.noanim) #cur.winp { animation: winPulse .6s ease .45s backwards }
+            :root:not(.noui):not(.noanim) dialog[open] {
+                animation: popIn .28s cubic-bezier(.2, .8, .2, 1) backwards
+            }
+
+            :root:not(.noui):not(.noanim) dialog[open]::backdrop {
+                animation: bdFade .28s ease backwards
+            }
+
+            :root:not(.noui):not(.noanim) #menu .mopt {
+                animation: rise .45s cubic-bezier(.2, .8, .2, 1) backwards
+            }
+
+            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(1) {
+                animation-delay: 120ms
+            }
+
+            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(2) {
+                animation-delay: 180ms
+            }
+
+            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(3) {
+                animation-delay: 240ms
+            }
+
+            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(4) {
+                animation-delay: 300ms
+            }
+
+            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(5) {
+                animation-delay: 360ms
+            }
+
+            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(6) {
+                animation-delay: 420ms
+            }
+
+            :root:not(.noui):not(.noanim) .dgroup {
+                animation: rise .45s cubic-bezier(.2, .8, .2, 1) backwards
+            }
+
+            :root:not(.noui):not(.noanim) .dgroup:nth-child(1) {
+                animation-delay: 100ms
+            }
+
+            :root:not(.noui):not(.noanim) .dgroup:nth-child(2) {
+                animation-delay: 170ms
+            }
+
+            :root:not(.noui):not(.noanim) .dgroup:nth-child(3) {
+                animation-delay: 240ms
+            }
+
+            :root:not(.noui):not(.noanim) .dgroup:nth-child(4) {
+                animation-delay: 310ms
+            }
+
+            :root:not(.noui):not(.noanim) #lbrows li,
+            :root:not(.noui):not(.noanim) #dlbd li,
+            :root:not(.noui):not(.noanim) #slist .srow {
+                animation: rise .35s cubic-bezier(.2, .8, .2, 1) backwards
+            }
+
+            :root:not(.noui):not(.noanim) #lbrows li:nth-child(2) {
+                animation-delay: 35ms
+            }
+
+            :root:not(.noui):not(.noanim) #lbrows li:nth-child(3) {
+                animation-delay: 70ms
+            }
+
+            :root:not(.noui):not(.noanim) #lbrows li:nth-child(4) {
+                animation-delay: 105ms
+            }
+
+            :root:not(.noui):not(.noanim) #lbrows li:nth-child(5) {
+                animation-delay: 140ms
+            }
+
+            :root:not(.noui):not(.noanim) #lbrows li:nth-child(6) {
+                animation-delay: 175ms
+            }
+
+            :root:not(.noui):not(.noanim) #lbrows li:nth-child(7) {
+                animation-delay: 210ms
+            }
+
+            :root:not(.noui):not(.noanim) #lbrows li:nth-child(8) {
+                animation-delay: 245ms
+            }
+
+            :root:not(.noui):not(.noanim) #lbrows li:nth-child(9) {
+                animation-delay: 280ms
+            }
+
+            :root:not(.noui):not(.noanim) #lbrows li:nth-child(10) {
+                animation-delay: 315ms
+            }
+
+            :root:not(.noui):not(.noanim) #dlbd li:nth-child(2) {
+                animation-delay: 35ms
+            }
+
+            :root:not(.noui):not(.noanim) #dlbd li:nth-child(3) {
+                animation-delay: 70ms
+            }
+
+            :root:not(.noui):not(.noanim) #dlbd li:nth-child(4) {
+                animation-delay: 105ms
+            }
+
+            :root:not(.noui):not(.noanim) #dlbd li:nth-child(5) {
+                animation-delay: 140ms
+            }
+
+            :root:not(.noui):not(.noanim) #dlbd li:nth-child(6) {
+                animation-delay: 175ms
+            }
+
+            :root:not(.noui):not(.noanim) #dlbd li:nth-child(7) {
+                animation-delay: 210ms
+            }
+
+            :root:not(.noui):not(.noanim) #dlbd li:nth-child(8) {
+                animation-delay: 245ms
+            }
+
+            :root:not(.noui):not(.noanim) #dlbd li:nth-child(9) {
+                animation-delay: 280ms
+            }
+
+            :root:not(.noui):not(.noanim) #dlbd li:nth-child(10) {
+                animation-delay: 315ms
+            }
+
+            :root:not(.noui):not(.noanim) #slist .srow:nth-child(2) {
+                animation-delay: 35ms
+            }
+
+            :root:not(.noui):not(.noanim) #slist .srow:nth-child(3) {
+                animation-delay: 70ms
+            }
+
+            :root:not(.noui):not(.noanim) #slist .srow:nth-child(4) {
+                animation-delay: 105ms
+            }
+
+            :root:not(.noui):not(.noanim) #slist .srow:nth-child(5) {
+                animation-delay: 140ms
+            }
+
+            :root:not(.noui):not(.noanim) #slist .srow:nth-child(6) {
+                animation-delay: 175ms
+            }
+
+            :root:not(.noui):not(.noanim) #slist .srow:nth-child(7) {
+                animation-delay: 210ms
+            }
+
+            :root:not(.noui):not(.noanim) #slist .srow:nth-child(8) {
+                animation-delay: 245ms
+            }
+
+            :root:not(.noui):not(.noanim) #slist .srow:nth-child(9) {
+                animation-delay: 280ms
+            }
+
+            :root:not(.noui):not(.noanim) #slist .srow:nth-child(10) {
+                animation-delay: 315ms
+            }
+
+            :root:not(.noui):not(.noanim) .calgrid.pop .cd {
+                animation: cdIn .32s cubic-bezier(.2, .8, .2, 1) backwards;
+                animation-delay: calc(var(--d, 0) * 14ms)
+            }
+
+            :root:not(.noui):not(.noanim) #msg.win,
+            :root:not(.noui):not(.noanim) #msg.lose {
+                animation: popIn .4s cubic-bezier(.2, .8, .2, 1) backwards
+            }
+
+            :root:not(.noui):not(.noanim) #cur.winp {
+                animation: winPulse .6s ease .45s backwards
+            }
         }
 
         /* japanese: dela gothic one for the big text, noto sans jp for everything else.
            latin letters and digits stay in bricolage grotesque, so numbers look the same in every language */
-        :lang(ja) body { font-family: 'Bricolage Grotesque', 'Noto Sans JP', system-ui, sans-serif }
-        :lang(ja) #topbar { font-family: 'Chakra Petch', 'Noto Sans JP', system-ui, sans-serif }
-        :lang(ja) h1, :lang(ja) h2, :lang(ja) h3, :lang(ja) .pgh, :lang(ja) .sttl, :lang(ja) .mopt b, :lang(ja) .dgroup h3, :lang(ja) .calhead h3 {
+        :lang(ja) body {
+            font-family: 'Bricolage Grotesque', 'Noto Sans JP', system-ui, sans-serif
+        }
+
+        :lang(ja) #topbar {
+            font-family: 'Chakra Petch', 'Noto Sans JP', system-ui, sans-serif
+        }
+
+        :lang(ja) h1,
+        :lang(ja) h2,
+        :lang(ja) h3,
+        :lang(ja) .pgh,
+        :lang(ja) .sttl,
+        :lang(ja) .mopt b,
+        :lang(ja) .dgroup h3,
+        :lang(ja) .calhead h3 {
             font-family: 'Bricolage Grotesque', 'Dela Gothic One', system-ui, sans-serif;
             font-weight: 400;
             font-synthesis: none
         }
-        :lang(ja) h1 *, :lang(ja) .mopt b *, :lang(ja) .calhead h3 b { font-weight: 400 }
-    
+
+        :lang(ja) h1 *,
+        :lang(ja) .mopt b *,
+        :lang(ja) .calhead h3 b {
+            font-weight: 400
+        }
+
         /* connection error popup */
-        #netdlg { max-width: 380px; width: calc(100% - 32px); border: 2px solid var(--ink); background: var(--card); color: var(--ink); padding: 22px 20px 20px; font-family: inherit; text-align: center; text-transform: lowercase; box-shadow: 6px 6px 0 var(--ink) }
-        #netdlg::backdrop { background: rgba(5, 8, 20, .6) }
-        #netdlg h3 { margin: 0 0 12px; font-size: 1.9rem; font-weight: 700; line-height: 1.2; text-transform: none; white-space: nowrap }
-        #netdlg p { margin: 0 0 18px; line-height: 1.5 }
-        #netdlg button { font: 700 1rem inherit; font-family: inherit; padding: 8px 24px; border: 2px solid var(--ink); background: var(--ink); color: var(--bg); cursor: pointer; text-transform: lowercase }
-    
-/* scrollbars: square thumb in the page's own colours (follows the light/dark theme through the variables) */
-*::-webkit-scrollbar { width: 14px; height: 14px }
-*::-webkit-scrollbar-track, *::-webkit-scrollbar-corner { background: var(--bg) }
-*::-webkit-scrollbar-thumb { background: var(--line); background-clip: padding-box; border: 3px solid var(--bg); border-radius: 0; min-height: 40px; min-width: 40px }
-*::-webkit-scrollbar-thumb:hover { background: var(--soft); background-clip: padding-box }
-*::-webkit-scrollbar-thumb:active { background: var(--blue); background-clip: padding-box }
-@supports not selector(::-webkit-scrollbar) { * { scrollbar-width: thin; scrollbar-color: var(--line) var(--bg) } } /* firefox */
-</style>
+        #netdlg {
+            max-width: 380px;
+            width: calc(100% - 32px);
+            border: 2px solid var(--ink);
+            background: var(--card);
+            color: var(--ink);
+            padding: 22px 20px 20px;
+            font-family: inherit;
+            text-align: center;
+            text-transform: lowercase;
+            box-shadow: 6px 6px 0 var(--ink)
+        }
+
+        #netdlg::backdrop {
+            background: rgba(5, 8, 20, .6)
+        }
+
+        #netdlg h3 {
+            margin: 0 0 12px;
+            font-size: 1.9rem;
+            font-weight: 700;
+            line-height: 1.2;
+            text-transform: none;
+            white-space: nowrap
+        }
+
+        #netdlg p {
+            margin: 0 0 18px;
+            line-height: 1.5
+        }
+
+        #netdlg button {
+            font: 700 1rem inherit;
+            font-family: inherit;
+            padding: 8px 24px;
+            border: 2px solid var(--ink);
+            background: var(--ink);
+            color: var(--bg);
+            cursor: pointer;
+            text-transform: lowercase
+        }
+
+        /* scrollbars: square thumb in the page's own colours (follows the light/dark theme through the variables) */
+        *::-webkit-scrollbar {
+            width: 14px;
+            height: 14px
+        }
+
+        *::-webkit-scrollbar-track,
+        *::-webkit-scrollbar-corner {
+            background: var(--bg)
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background: var(--line);
+            background-clip: padding-box;
+            border: 3px solid var(--bg);
+            border-radius: 0;
+            min-height: 40px;
+            min-width: 40px
+        }
+
+        *::-webkit-scrollbar-thumb:hover {
+            background: var(--soft);
+            background-clip: padding-box
+        }
+
+        *::-webkit-scrollbar-thumb:active {
+            background: var(--blue);
+            background-clip: padding-box
+        }
+
+        @supports not selector(::-webkit-scrollbar) {
+            * {
+                scrollbar-width: thin;
+                scrollbar-color: var(--line) var(--bg)
+            }
+        }
+
+        /* firefox */
+    </style>
     <script>try { var q = JSON.parse(localStorage.getItem('hs1') || '{}'); if (q.theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); if (q.hc) document.documentElement.classList.add('hc') } catch (e) { }</script>
 </head>
 
@@ -1466,17 +2401,21 @@
     </nav>
     <section id="menu" class="pg" hidden>
         <header>
-            <h1><span data-i="holein">hole in</span> <span class="rad"><svg viewBox="0 0 12 20" preserveAspectRatio="none" aria-hidden="true">
+            <h1><span data-i="holein">hole in</span> <span class="rad"><svg viewBox="0 0 12 20"
+                        preserveAspectRatio="none" aria-hidden="true">
                         <path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="3"
                             stroke-linejoin="miter" vector-effect="non-scaling-stroke" />
                     </svg><span class="vin">-1</span></span></h1>
             <p class="sub">choose how you want to play</p>
         </header>
         <div class="mopts">
-            <button class="mopt" id="mopt1"><b>random levels</b><span>endless, freshly generated levels at the difficulty you pick</span></button>
-            <button class="mopt gold" id="moptD"><b>daily levels</b><span>a new challenge every day, plus a calendar of past days</span></button>
+            <button class="mopt" id="mopt1"><b>random levels</b><span>endless, freshly generated levels at the
+                    difficulty you pick</span></button>
+            <button class="mopt gold" id="moptD"><b>daily levels</b><span>a new challenge every day, plus a calendar of
+                    past days</span></button>
             <button class="mopt green" id="moptS"><b>your stats</b><span>daily streaks and more</span></button>
-            <button class="mopt red" id="mopt2"><b>main levels</b><span>hand-made levels for each difficulty</span></button>
+            <button class="mopt red" id="mopt2"><b>main levels</b><span>hand-made levels for each
+                    difficulty</span></button>
         </div>
         <div class="tools"><button id="mset">settings</button></div>
     </section>
@@ -1487,9 +2426,12 @@
         </header>
         <div class="tools" id="dauth"><a class="lnk" href="../../account/?from=daily">sign in to gamedevrg.com</a></div>
         <p class="sub" id="dwho" hidden><span id="dwn"></span></p>
-        <div class="streakbar" id="streakbar" hidden><span>current streak <b id="sk1">0</b></span><span>longest streak <b id="sk2">0</b></span></div>
+        <div class="streakbar" id="streakbar" hidden><span>current streak <b id="sk1">0</b></span><span>longest streak
+                <b id="sk2">0</b></span></div>
         <div class="board cal">
-            <div class="calhead"><button id="cprev" aria-label="previous month">‹</button><h3 id="ctitle"></h3><button id="cnext" aria-label="next month">›</button></div>
+            <div class="calhead"><button id="cprev" aria-label="previous month">‹</button>
+                <h3 id="ctitle"></h3><button id="cnext" aria-label="next month">›</button>
+            </div>
             <div class="calgrid" id="cgrid"></div>
             <div class="calkey" aria-label="calendar key">
                 <span><i class="k-done"></i>solved on time</span>
@@ -1507,12 +2449,22 @@
         <div class="board solved clockbox">
             <h3 class="sttl">new daily in</h3>
             <div class="clock">
-                <div class="cg"><div class="num" id="ch"></div><div class="lbl">hour</div></div><span class="colon">:</span>
-                <div class="cg"><div class="num" id="cm"></div><div class="lbl">minute</div></div><span class="colon">:</span>
-                <div class="cg"><div class="num" id="cs"></div><div class="lbl">second</div></div>
+                <div class="cg">
+                    <div class="num" id="ch"></div>
+                    <div class="lbl">hour</div>
+                </div><span class="colon">:</span>
+                <div class="cg">
+                    <div class="num" id="cm"></div>
+                    <div class="lbl">minute</div>
+                </div><span class="colon">:</span>
+                <div class="cg">
+                    <div class="num" id="cs"></div>
+                    <div class="lbl">second</div>
+                </div>
             </div>
         </div>
-        <div class="tools"><button id="cmonth">monthly leaderboard</button><button id="dback">play today's level</button><button id="dmenu">main menu</button></div>
+        <div class="tools"><button id="cmonth">monthly leaderboard</button><button id="dback">play today's
+                level</button><button id="dmenu">main menu</button></div>
     </section>
     <section id="statspg" class="pg" hidden>
         <header>
@@ -1522,9 +2474,18 @@
         <div class="board stboard">
             <h3 class="sttl">daily levels</h3>
             <div class="stgrid">
-                <div class="stg"><div class="num" id="stn1"></div><div class="lbl">solved</div></div>
-                <div class="stg"><div class="num" id="stn2"></div><div class="lbl">current streak</div></div>
-                <div class="stg"><div class="num" id="stn3"></div><div class="lbl">longest streak</div></div>
+                <div class="stg">
+                    <div class="num" id="stn1"></div>
+                    <div class="lbl">solved</div>
+                </div>
+                <div class="stg">
+                    <div class="num" id="stn2"></div>
+                    <div class="lbl">current streak</div>
+                </div>
+                <div class="stg">
+                    <div class="num" id="stn3"></div>
+                    <div class="lbl">longest streak</div>
+                </div>
             </div>
             <div class="lbl">streaks count levels solved on their own day</div>
             <div id="strows"></div>
@@ -1541,16 +2502,29 @@
             <p class="sub">hand-made levels, grouped by difficulty</p>
         </header>
         <div class="dgroups">
-            <div class="dgroup"><h3 class="dv2">easy</h3><div class="soon">levels coming soon</div></div>
-            <div class="dgroup"><h3 class="dv4">medium</h3><div class="soon">levels coming soon</div></div>
-            <div class="dgroup"><h3 class="dv6">hard</h3><div class="soon">levels coming soon</div></div>
-            <div class="dgroup"><h3 class="dv8">challenge</h3><div class="soon">levels coming soon</div></div>
+            <div class="dgroup">
+                <h3 class="dv2">easy</h3>
+                <div class="soon">levels coming soon</div>
+            </div>
+            <div class="dgroup">
+                <h3 class="dv4">medium</h3>
+                <div class="soon">levels coming soon</div>
+            </div>
+            <div class="dgroup">
+                <h3 class="dv6">hard</h3>
+                <div class="soon">levels coming soon</div>
+            </div>
+            <div class="dgroup">
+                <h3 class="dv8">challenge</h3>
+                <div class="soon">levels coming soon</div>
+            </div>
         </div>
         <div class="tools"><button id="mback">back to menu</button></div>
     </section>
     <main>
         <header>
-            <h1><span data-i="holein">hole in</span> <span class="rad"><svg viewBox="0 0 12 20" preserveAspectRatio="none" aria-hidden="true">
+            <h1><span data-i="holein">hole in</span> <span class="rad"><svg viewBox="0 0 12 20"
+                        preserveAspectRatio="none" aria-hidden="true">
                         <path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="3"
                             stroke-linejoin="miter" vector-effect="non-scaling-stroke" />
                     </svg><span class="vin">-1</span></span></h1>
@@ -1578,12 +2552,13 @@
             <div id="ops"></div>
             <div class="tools"><button id="undo">undo</button><button id="reset">restart level</button><button
                     id="rand">give
-                    up</button><button id="sharelv">copy link</button><button id="skipanim" hidden>skip animation</button></div>
+                    up</button><button id="sharelv">copy link</button><button id="skipanim" hidden>skip
+                    animation</button></div>
             <div class="tools"><select id="diff" aria-label="Difficulty">
                     <option value="2">easy</option>
                     <option value="4" selected>medium</option>
                     <option value="6">hard</option>
-                        <option value="8">challenge</option>
+                    <option value="8">challenge</option>
                 </select></div>
             <div id="modeinfo">
                 <div><i>difficulty:</i> <span id="miD"></span></div>
@@ -1592,14 +2567,20 @@
             <div id="msg" role="status"></div>
             <div class="lbl" id="score"></div>
         </section>
-        <div class="how"><button id="tomenu">calendar</button><button id="tomain">main menu</button><button id="lbplay" hidden>leaderboard</button><button id="what">what is this?</button><button
-                id="opts">settings</button></div>
+        <div class="how"><button id="tomenu">calendar</button><button id="tomain">main menu</button><button id="lbplay"
+                hidden>leaderboard</button><button id="what">what is this?</button><button id="opts">settings</button>
+        </div>
         <dialog id="dlg">
             <p>every level is freshly generated and gives only the operations you need. par is the fewest moves that can
                 work,
                 and you can keep going past it, but every extra move is one over par. many levels have more than one
                 route. in
-                hardcore mode (settings) you only get 3 undos per level, can't restart, and can't go over par. by default levels use whole numbers, and division only works when the result is whole, so a greyed-out ÷ button means your number doesn't divide evenly. challenge difficulty adds extra operations like |x| (absolute value), √x, x³, negate and mod, and has lots of different solutions. in settings you can switch to decimals (moves like +0.5, and x⁻¹ turns 4 into 0.25) or fractions (division can leave fractions, and x⁻¹ turns 4 into 1/4). in decimals mode you can also allow decimal goals.</p><button
+                hardcore mode (settings) you only get 3 undos per level, can't restart, and can't go over par. by
+                default levels use whole numbers, and division only works when the result is whole, so a greyed-out ÷
+                button means your number doesn't divide evenly. challenge difficulty adds extra operations like |x|
+                (absolute value), √x, x³, negate and mod, and has lots of different solutions. in settings you can
+                switch to decimals (moves like +0.5, and x⁻¹ turns 4 into 0.25) or fractions (division can leave
+                fractions, and x⁻¹ turns 4 into 1/4). in decimals mode you can also allow decimal goals.</p><button
                 id="dx">gotcha</button>
         </dialog>
     </main>
@@ -1628,23 +2609,35 @@
                     <button class="sw" id="swAnim" role="switch" aria-checked="true" aria-label="animations"></button>
                 </div>
                 <div class="srow" id="rowAdv">
-                    <div><b>advanced animations</b><span>turn individual animations on or off</span></div><button class="lnk" id="advBtn">open</button>
+                    <div><b>advanced animations</b><span>turn individual animations on or off</span></div><button
+                        class="lnk" id="advBtn">open</button>
                 </div>
                 <div class="srow col gameonly">
                     <div><b>numbers</b><span>use whole numbers, decimals or fractions. starts a new level</span></div>
-                    <div class="seg" id="numSeg" role="radiogroup" aria-label="number type"><button data-m="whole" role="radio" aria-checked="true">whole numbers</button><button data-m="dec" role="radio" aria-checked="false">decimals</button><button data-m="frac" role="radio" aria-checked="false">fractions</button></div>
+                    <div class="seg" id="numSeg" role="radiogroup" aria-label="number type"><button data-m="whole"
+                            role="radio" aria-checked="true">whole numbers</button><button data-m="dec" role="radio"
+                            aria-checked="false">decimals</button><button data-m="frac" role="radio"
+                            aria-checked="false">fractions</button></div>
                 </div>
                 <div class="srow gameonly nodaily" id="rowGdec">
-                    <div><b>decimal goals</b><span>decimals only: the goal can be a decimal like 3.5, not just a whole number. starts a new level</span></div><button class="sw" id="swGdec" role="switch" aria-checked="false" aria-label="decimal goals"></button>
+                    <div><b>decimal goals</b><span>decimals only: the goal can be a decimal like 3.5, not just a whole
+                            number. starts a new level</span></div><button class="sw" id="swGdec" role="switch"
+                        aria-checked="false" aria-label="decimal goals"></button>
                 </div>
                 <div class="srow gameonly nodaily" id="rowGfrac">
-                    <div><b>fraction goals</b><span>fractions only: the goal can be a fraction like 7/4, not just a whole number. starts a new level</span></div><button class="sw" id="swGfrac" role="switch" aria-checked="false" aria-label="fraction goals"></button>
+                    <div><b>fraction goals</b><span>fractions only: the goal can be a fraction like 7/4, not just a
+                            whole number. starts a new level</span></div><button class="sw" id="swGfrac" role="switch"
+                        aria-checked="false" aria-label="fraction goals"></button>
                 </div>
                 <div class="srow gameonly nodaily" id="rowRoots">
-                    <div><b>roots of non-squares</b><span>allow √ on numbers that aren't perfect squares, giving roots like √2 or 3√5. fractions already allow it. starts a new level</span></div><button class="sw" id="swRoots" role="switch" aria-checked="false" aria-label="roots of non-squares"></button>
+                    <div><b>roots of non-squares</b><span>allow √ on numbers that aren't perfect squares, giving roots
+                            like √2 or 3√5. fractions already allow it. starts a new level</span></div><button
+                        class="sw" id="swRoots" role="switch" aria-checked="false"
+                        aria-label="roots of non-squares"></button>
                 </div>
                 <div class="srow gameonly nodaily">
-                    <div><b>hardcore mode</b><span>only 3 undos per level, no restarting, and you can't go over par</span></div>
+                    <div><b>hardcore mode</b><span>only 3 undos per level, no restarting, and you can't go over
+                            par</span></div>
                     <button class="sw" id="swHc" role="switch" aria-checked="false" aria-label="hardcore mode"></button>
                 </div>
                 <div class="srow">
@@ -1653,7 +2646,12 @@
                 </div>
                 <div class="srow col">
                     <div><b>language</b><span>pick the language the game speaks</span></div>
-                    <div class="seg" id="langSeg" role="radiogroup" aria-label="language"><button data-l="en" role="radio" aria-checked="true">English<small data-i="lang_en"></small></button><button data-l="es" role="radio" aria-checked="false">Español<small data-i="lang_es"></small></button><button data-l="ja" role="radio" aria-checked="false">日本語<small data-i="lang_ja"></small></button><button data-l="zh" role="radio" aria-checked="false">中文<small data-i="lang_zh"></small></button></div>
+                    <div class="seg" id="langSeg" role="radiogroup" aria-label="language"><button data-l="en"
+                            role="radio" aria-checked="true">English<small data-i="lang_en"></small></button><button
+                            data-l="es" role="radio" aria-checked="false">Español<small
+                                data-i="lang_es"></small></button><button data-l="ja" role="radio"
+                            aria-checked="false">日本語<small data-i="lang_ja"></small></button><button data-l="zh"
+                            role="radio" aria-checked="false">中文<small data-i="lang_zh"></small></button></div>
                 </div>
                 <div class="tools"><button id="back">back</button></div>
             </div>
@@ -1663,13 +2661,39 @@
         <div class="sp">
             <div class="board">
                 <h2>animations</h2>
-                <div class="srow"><div><b>tile flips</b><span>digits flip like a split-flap board</span></div><button class="sw" data-anim="flip" role="switch" aria-checked="true" aria-label="tile flips"></button></div>
-                <div class="srow"><div><b>ball flight</b><span>the ball arcs along the number line and the dotted trail follows it</span></div><button class="sw" data-anim="ball" role="switch" aria-checked="true" aria-label="ball flight"></button></div>
-                <div class="srow"><div><b>number line zoom</b><span>the line slides smoothly to a new scale</span></div><button class="sw" data-anim="zoom" role="switch" aria-checked="true" aria-label="number line zoom"></button></div>
-                <div class="srow"><div><b>confetti</b><span>a burst from the hole when you solve a level</span></div><button class="sw" data-anim="confetti" role="switch" aria-checked="true" aria-label="confetti"></button></div>
-                <div class="srow"><div><b>panel slides and sway</b><span>settings and scores slide in and lean as they move, and the background shifts</span></div><button class="sw" data-anim="slide" role="switch" aria-checked="true" aria-label="panel slides and sway"></button></div>
-                <div class="srow"><div><b>theme fade</b><span>colors fade between dark and light</span></div><button class="sw" data-anim="theme" role="switch" aria-checked="true" aria-label="theme fade"></button></div>
-                <div class="srow"><div><b>button and menu motion</b><span>button presses, hover changes and page fade-ins</span></div><button class="sw" data-anim="ui" role="switch" aria-checked="true" aria-label="button and menu motion"></button></div>
+                <div class="srow">
+                    <div><b>tile flips</b><span>digits flip like a split-flap board</span></div><button class="sw"
+                        data-anim="flip" role="switch" aria-checked="true" aria-label="tile flips"></button>
+                </div>
+                <div class="srow">
+                    <div><b>ball flight</b><span>the ball arcs along the number line and the dotted trail follows
+                            it</span></div><button class="sw" data-anim="ball" role="switch" aria-checked="true"
+                        aria-label="ball flight"></button>
+                </div>
+                <div class="srow">
+                    <div><b>number line zoom</b><span>the line slides smoothly to a new scale</span></div><button
+                        class="sw" data-anim="zoom" role="switch" aria-checked="true"
+                        aria-label="number line zoom"></button>
+                </div>
+                <div class="srow">
+                    <div><b>confetti</b><span>a burst from the hole when you solve a level</span></div><button
+                        class="sw" data-anim="confetti" role="switch" aria-checked="true"
+                        aria-label="confetti"></button>
+                </div>
+                <div class="srow">
+                    <div><b>panel slides and sway</b><span>settings and scores slide in and lean as they move, and the
+                            background shifts</span></div><button class="sw" data-anim="slide" role="switch"
+                        aria-checked="true" aria-label="panel slides and sway"></button>
+                </div>
+                <div class="srow">
+                    <div><b>theme fade</b><span>colors fade between dark and light</span></div><button class="sw"
+                        data-anim="theme" role="switch" aria-checked="true" aria-label="theme fade"></button>
+                </div>
+                <div class="srow">
+                    <div><b>button and menu motion</b><span>button presses, hover changes and page fade-ins</span></div>
+                    <button class="sw" data-anim="ui" role="switch" aria-checked="true"
+                        aria-label="button and menu motion"></button>
+                </div>
                 <div class="tools"><button id="advBack">back</button></div>
             </div>
         </div>
@@ -1722,7 +2746,7 @@
             if (s === '√x') { const rt = ROOTS || mode === 'frac'; return { s, f: x => { if (x.n < 0 || x.b > 1) return null; if (x.n === 0) return x; const [k, r] = sqf(x.n * x.d); return r > 1 && !rt ? null : F(k, x.d, r) } }; }
             if (s.startsWith('mod ')) { const k = parseInt(s.slice(4), 10); return { s, f: x => x.d !== 1 || x.b > 1 ? null : F(((x.n % k) + k) % k) }; }
             if (s === 'x⁻¹') return { s, f: x => { if (x.n === 0) return null; const r = F(x.d, x.n * x.b, x.b); return r && (mode !== 'dec' || r.d === 1 || term(r)) ? r : null } };
-            const qs = s.slice(1), o = s[0], q = qs.includes('/') ? F(+qs.split('/')[0], +qs.split('/')[1]) : F(Math.round(parseFloat(qs) * 10), 10); /* the number can be whole, a decimal or a fraction (always kept in lowest terms) */
+            const qs0 = s.slice(1), ng = (s[0] === '×' || s[0] === '÷') && qs0[0] === '−', qs = ng ? qs0.slice(1) : qs0, o = s[0], q1 = qs.includes('/') ? F(+qs.split('/')[0], +qs.split('/')[1]) : F(Math.round(parseFloat(qs) * 10), 10), q = ng ? F(-q1.n, q1.d) : q1; /* × and ÷ can take a negative number, like ×−2 */ /* the number can be whole, a decimal or a fraction (always kept in lowest terms) */
             if (o === '+') return { s, f: x => x.b > 1 ? null : F(x.n * q.d + q.n * x.d, x.d * q.d) };
             if (o === '−') return { s, f: x => x.b > 1 ? null : F(x.n * q.d - q.n * x.d, x.d * q.d) };
             if (o === '×') return { s, f: x => F(x.n * q.n, x.d * q.d, x.b) };
@@ -1793,675 +2817,675 @@
         /* ---------- languages: the choice lives in localStorage "lang" (same key as the homepage) ---------- */
         const LANGS = ['en', 'es', 'ja', 'zh'];
         const I18N = {
- "en": {
-  "holein": "hole in",
-  "homepage": "homepage",
-  "search": "search",
-  "ph1": "you can type things here. (this is the search bar)",
-  "ph2": "this is the search bar.",
-  "aria_site": "site",
-  "menu_sub": "choose how you want to play",
-  "m_random_b": "random levels",
-  "m_random_d": "endless, freshly generated levels at the difficulty you pick",
-  "m_daily_b": "daily levels",
-  "m_daily_d": "a new challenge every day, plus a calendar of past days",
-  "m_stats_b": "your stats",
-  "m_stats_d": "daily streaks and more",
-  "m_main_b": "main levels",
-  "m_main_d": "hand-made levels for each difficulty",
-  "pickday": "pick a day to play",
-  "pickday_guest": "pick a day to play. guests can play too: log in to be on the leaderboard",
-  "username": "username",
-  "password": "password",
-  "login": "log in",
-  "register": "register",
-  "solved_title": "number of players who solved this",
-  "aria_solved": "players who solved today's level",
-  "newdaily": "new daily in",
-  "hour": "hour",
-  "minute": "minute",
-  "second": "second",
-  "dboard": "daily leaderboard",
-  "mboard": "monthly leaderboard",
-  "back_menu": "back to menu",
-  "aria_prev": "previous month",
-  "aria_next": "next month",
-  "st_solved": "solved",
-  "st_cur": "current streak",
-  "st_long": "longest streak",
-  "st_dev": "random levels on this device",
-  "playing_as": "playing as {u}",
-  "not_logged": "not logged in: showing results saved on this device",
-  "acct_err": "couldn't load your account stats",
-  "st_avg": "average moves per level",
-  "st_total": "total moves",
-  "st_fewest": "fewest moves",
-  "st_first": "first solved",
-  "st_recent": "most recent",
-  "st_lv": "levels solved",
-  "st_atpar": "solved at par",
-  "st_avgover": "average moves over par",
-  "st_hc": "hardcore solves",
-  "main_sub": "hand-made levels, grouped by difficulty",
-  "soon": "levels coming soon",
-  "d_easy": "easy",
-  "d_medium": "medium",
-  "d_hard": "hard",
-  "d_challenge": "challenge",
-  "hardcore": "hardcore",
-  "normal": "normal",
-  "youhave": "you have",
-  "goal": "goal",
-  "psub_par": "reach the goal in par moves or fewer",
-  "psub_daily": "reach the goal in as few moves as you can",
-  "undo": "undo",
-  "undo_hc": "undo ({n} left)",
-  "restart": "restart level",
-  "giveup": "give up",
-  "skipanim": "skip animation",
-  "aria_diff": "Difficulty",
-  "diff_lbl": "difficulty:",
-  "mode_lbl": "mode:",
-  "mainmenu": "main menu",
-  "leaderboard": "leaderboard",
-  "scores": "scores",
-  "what": "what is this?",
-  "settings": "settings",
-  "gotcha": "gotcha",
-  "dlg_p": "every level is freshly generated and gives only the operations you need. par is a number of moves that is guaranteed to work (on challenge there is often a shorter route, so you can beat par), and you can keep going past it, but every extra move is one over par. many levels have more than one route. in hardcore mode (settings) you only get 3 undos per level, can't restart, and can't go over par. by default levels use whole numbers, and division only works when the result is whole, so a greyed-out ÷ button means your number doesn't divide evenly. challenge difficulty adds extra operations like |x| (absolute value), √x, x³, negate and mod, and has lots of different solutions. in settings you can switch to decimals (moves like +0.5, and x⁻¹ turns 4 into 0.25) or fractions (division can leave fractions, and x⁻¹ turns 4 into 1/4). in decimals mode you can also allow decimal goals.",
-  "scores_hint": "tap a score to play that level again",
-  "scores_none": "no scores yet. solve a level and it will show up here.",
-  "clear_scores": "clear scores",
-  "tap_confirm": "tap again to confirm",
-  "back": "back",
-  "flip_b": "flip tiles",
-  "flip_d": "show your number and the goal as flip-clock tiles",
-  "anim_b": "animations",
-  "anim_d": "tile flips, ball flight, number line zoom and confetti",
-  "adv_b": "advanced animations",
-  "adv_d": "turn individual animations on or off",
-  "open": "open",
-  "num_b": "numbers",
-  "num_d": "use whole numbers, decimals or fractions. starts a new level",
-  "aria_numtype": "number type",
-  "n_whole": "whole numbers",
-  "n_dec": "decimals",
-  "n_frac": "fractions",
-  "gdec_b": "decimal goals",
-  "gdec_d": "decimals only: the goal can be a decimal like 3.5, not just a whole number. starts a new level",
-  "gfrac_b": "fraction goals",
-  "gfrac_d": "fractions only: the goal can be a fraction like 7/4, not just a whole number. starts a new level",
-  "share_b": "copy link",
-  "share_ok": "link copied",
-  "roots_b": "roots of non-squares",
-  "roots_d": "allow √ on numbers that aren't perfect squares, giving roots like √2 or 3√5. fractions already allow it. starts a new level",
-  "hc_b": "hardcore mode",
-  "hc_d": "only 3 undos per level, no restarting, and you can't go over par",
-  "theme_b": "light mode",
-  "theme_d": "switch from the default dark look to light",
-  "language": "language",
-  "language_d": "pick the language the game speaks",
-  "a_flip_b": "tile flips",
-  "a_flip_d": "digits flip like a split-flap board",
-  "a_ball_b": "ball flight",
-  "a_ball_d": "the ball arcs along the number line and the dotted trail follows it",
-  "a_zoom_b": "number line zoom",
-  "a_zoom_d": "the line slides smoothly to a new scale",
-  "a_conf_b": "confetti",
-  "a_conf_d": "a burst from the hole when you solve a level",
-  "a_slide_b": "panel slides and sway",
-  "a_slide_d": "settings and scores slide in and lean as they move, and the background shifts",
-  "a_theme_b": "theme fade",
-  "a_theme_d": "colors fade between dark and light",
-  "a_ui_b": "button and menu motion",
-  "a_ui_d": "button presses, hover changes and page fade-ins",
-  "aria_nl": "number line showing your ball, your hits and the hole",
-  "tee": "tee",
-  "negate": "negate",
-  "why_div": "not whole",
-  "why_undef": "undefined",
-  "why_sqrt": "not a square",
-  "why_whole": "whole only",
-  "why_big": "too big",
-  "why_root_add": "can't add to a root",
-  "why_root_already": "already a root",
-  "why_neg": "negative",
-  "dlvl": "daily level {d}",
-  "hc_no": "not allowed in hardcore mode",
-  "lose1": "out of moves. undo a move to keep trying, or give up.",
-  "lose2": "out of moves and undos. give up to see the solution.",
-  "win_daily": "solved in {m}.",
-  "back_cal": "back to calendar",
-  "give_under": "here's a solution under par ({m}).",
-  "give_par": "here's the par solution ({m}).",
-  "next_level": "next level",
-  "win": "solved in {n}: {sc}.",
-  "sc_under": "{n} under par",
-  "sc_par": "par",
-  "sc_over": "{n} over par",
-  "par_left": "par {p} · {m}",
-  "score_even": "{h} solved · even over par in total",
-  "score_over": "{h} solved · +{x} over par in total",
-  "sum_even": "{n} solved · {a} at par · even over par in total",
-  "sum_over": "{n} solved · {a} at par · +{x} over par in total",
-  "res_line": "{m} / par {p}",
-  "play_again": "play this level again",
-  "guest_note": "playing as a guest: this is saved on this device. log in on the calendar page to add your scores to the leaderboard.",
-  "saving": "saving…",
-  "saved": "saved. your best for this day: {m}. restart to try for fewer.",
-  "saved_late": "that day is over, so this is not on its leaderboard.",
-  "enter_creds": "enter a username and password",
-  "daily_err": "couldn't load the daily level ({e}). check that the server is running and the API address in the script is right.",
-  "net_msg": "can't connect to the servers. check your connection or try again in a little while",
-  "net_ok": "ok",
-  "ssub": "{date}, daily #{n}",
-  "stats_err": "couldn't load the stats",
-  "loading": "loading…",
-  "lb_none": "no scores yet",
-  "lb_err": "couldn't load the leaderboard"
- },
- "es": {
-  "holein": "hoyo en",
-  "homepage": "inicio",
-  "search": "buscar",
-  "ph1": "puedes escribir cosas aquí. (esta es la barra de búsqueda)",
-  "ph2": "esta es la barra de búsqueda.",
-  "aria_site": "sitio",
-  "menu_sub": "elige cómo quieres jugar",
-  "m_random_b": "niveles aleatorios",
-  "m_random_d": "niveles sin fin, recién hechos, con la dificultad que elijas",
-  "m_daily_b": "niveles diarios",
-  "m_daily_d": "un reto nuevo cada día, y un calendario con los días pasados",
-  "m_stats_b": "tus estadísticas",
-  "m_stats_d": "rachas diarias y más",
-  "m_main_b": "niveles principales",
-  "m_main_d": "niveles hechos a mano para cada dificultad",
-  "pickday": "elige un día para jugar",
-  "pickday_guest": "elige un día para jugar. los invitados también pueden jugar: inicia sesión para salir en la clasificación",
-  "username": "usuario",
-  "password": "contraseña",
-  "login": "iniciar sesión",
-  "register": "registrarse",
-  "solved_title": "jugadores que lo han resuelto",
-  "aria_solved": "jugadores que resolvieron el nivel de hoy",
-  "newdaily": "nuevo nivel diario en",
-  "hour": "hora",
-  "minute": "minuto",
-  "second": "segundo",
-  "dboard": "clasificación diaria",
-  "mboard": "clasificación mensual",
-  "back_menu": "volver al menú",
-  "aria_prev": "mes anterior",
-  "aria_next": "mes siguiente",
-  "st_solved": "resueltos",
-  "st_cur": "racha actual",
-  "st_long": "racha más larga",
-  "st_dev": "niveles aleatorios en este dispositivo",
-  "playing_as": "jugando como {u}",
-  "not_logged": "no has iniciado sesión: mostrando resultados guardados en este dispositivo",
-  "acct_err": "no pude cargar las estadísticas de tu cuenta",
-  "st_avg": "movimientos promedio por nivel",
-  "st_total": "movimientos en total",
-  "st_fewest": "menos movimientos",
-  "st_first": "primer nivel resuelto",
-  "st_recent": "más reciente",
-  "st_lv": "niveles resueltos",
-  "st_atpar": "resueltos en par",
-  "st_avgover": "movimientos promedio sobre par",
-  "st_hc": "resueltos en hardcore",
-  "main_sub": "niveles hechos a mano, agrupados por dificultad",
-  "soon": "niveles próximamente",
-  "d_easy": "fácil",
-  "d_medium": "medio",
-  "d_hard": "difícil",
-  "d_challenge": "desafío",
-  "hardcore": "hardcore",
-  "normal": "normal",
-  "youhave": "tienes",
-  "goal": "meta",
-  "psub_par": "llega a la meta en par movimientos o menos",
-  "psub_daily": "llega a la meta con los menos movimientos que puedas",
-  "undo": "deshacer",
-  "undo_hc": "deshacer (quedan {n})",
-  "restart": "reiniciar nivel",
-  "giveup": "rendirme",
-  "skipanim": "saltar animación",
-  "aria_diff": "Dificultad",
-  "diff_lbl": "dificultad:",
-  "mode_lbl": "modo:",
-  "mainmenu": "menú principal",
-  "leaderboard": "clasificación",
-  "scores": "puntuaciones",
-  "what": "¿qué es esto?",
-  "settings": "ajustes",
-  "gotcha": "¡entendido!",
-  "dlg_p": "cada nivel se genera al momento y te da solo las operaciones que necesitas. el par es un número de movimientos que seguro funciona (en desafío suele haber un camino más corto, así que puedes mejorar el par), y puedes seguir más allá, pero cada movimiento extra cuenta como uno sobre par. muchos niveles tienen más de un camino. en el modo hardcore (ajustes) solo tienes 3 deshacer por nivel, no puedes reiniciar y no puedes pasarte del par. por defecto los niveles usan números enteros, y la división solo funciona cuando el resultado es entero, así que un botón ÷ en gris significa que tu número no se divide exacto. la dificultad desafío añade operaciones extra como |x| (valor absoluto), √x, x³, negar y mod, y tiene un montón de soluciones distintas. en ajustes puedes cambiar a decimales (movimientos como +0.5, y x⁻¹ convierte 4 en 0.25) o a fracciones (la división puede dejar fracciones, y x⁻¹ convierte 4 en 1/4). en modo decimales también puedes permitir metas decimales.",
-  "scores_hint": "toca una puntuación para jugar ese nivel otra vez",
-  "scores_none": "aún no hay puntuaciones. resuelve un nivel y aparecerá aquí.",
-  "clear_scores": "borrar puntuaciones",
-  "tap_confirm": "toca otra vez para confirmar",
-  "back": "atrás",
-  "flip_b": "fichas giratorias",
-  "flip_d": "muestra tu número y la meta como fichas de reloj flip",
-  "anim_b": "animaciones",
-  "anim_d": "giros de fichas, vuelo de la bola, zoom de la recta numérica y confeti",
-  "adv_b": "animaciones avanzadas",
-  "adv_d": "activa o desactiva cada animación por separado",
-  "open": "abrir",
-  "num_b": "números",
-  "num_d": "usa enteros, decimales o fracciones. empieza un nivel nuevo",
-  "aria_numtype": "tipo de número",
-  "n_whole": "enteros",
-  "n_dec": "decimales",
-  "n_frac": "fracciones",
-  "gdec_b": "metas decimales",
-  "gdec_d": "solo decimales: la meta puede ser un decimal como 3.5, no solo un entero. empieza un nivel nuevo",
-  "gfrac_b": "metas fraccionarias",
-  "gfrac_d": "solo fracciones: la meta puede ser una fracción como 7/4, no solo un entero. empieza un nivel nuevo",
-  "share_b": "copiar enlace",
-  "share_ok": "enlace copiado",
-  "roots_b": "raíces de no cuadrados",
-  "roots_d": "permite √ en números que no son cuadrados perfectos, con raíces como √2 o 3√5. las fracciones ya lo permiten. empieza un nivel nuevo",
-  "hc_b": "modo hardcore",
-  "hc_d": "solo 3 deshacer por nivel, sin reiniciar, y no puedes pasarte del par",
-  "theme_b": "modo claro",
-  "theme_d": "cambia del aspecto oscuro por defecto al claro",
-  "language": "idioma",
-  "language_d": "elige el idioma en el que habla el juego",
-  "a_flip_b": "giros de fichas",
-  "a_flip_d": "los dígitos giran como en un panel de estación",
-  "a_ball_b": "vuelo de la bola",
-  "a_ball_d": "la bola hace un arco sobre la recta numérica y el rastro punteado la sigue",
-  "a_zoom_b": "zoom de la recta numérica",
-  "a_zoom_d": "la recta se desliza suavemente a una escala nueva",
-  "a_conf_b": "confeti",
-  "a_conf_d": "una explosión desde el hoyo cuando resuelves un nivel",
-  "a_slide_b": "deslizamiento y vaivén de paneles",
-  "a_slide_d": "ajustes y puntuaciones se deslizan e inclinan al moverse, y el fondo se desplaza",
-  "a_theme_b": "transición de tema",
-  "a_theme_d": "los colores se funden entre oscuro y claro",
-  "a_ui_b": "movimiento de botones y menús",
-  "a_ui_d": "pulsaciones de botones, cambios al pasar el cursor y aparición suave de páginas",
-  "aria_nl": "recta numérica con tu bola, tus golpes y el hoyo",
-  "tee": "salida",
-  "negate": "negar",
-  "why_div": "no entero",
-  "why_undef": "indefinido",
-  "why_sqrt": "no es cuadrado",
-  "why_whole": "solo enteros",
-  "why_big": "demasiado grande",
-  "why_root_add": "no se puede sumar a una raíz",
-  "why_root_already": "ya es una raíz",
-  "why_neg": "negativo",
-  "dlvl": "nivel diario {d}",
-  "hc_no": "no permitido en modo hardcore",
-  "lose1": "te quedaste sin movimientos. deshaz uno para seguir intentándolo, o ríndete.",
-  "lose2": "sin movimientos ni deshacer. ríndete para ver la solución.",
-  "win_daily": "resuelto en {m}.",
-  "back_cal": "volver al calendario",
-  "give_under": "aquí tienes una solución por debajo del par ({m}).",
-  "give_par": "aquí está la solución del par ({m}).",
-  "next_level": "siguiente nivel",
-  "win": "resuelto en {n}: {sc}.",
-  "sc_under": "{n} bajo par",
-  "sc_par": "par",
-  "sc_over": "{n} sobre par",
-  "par_left": "par {p} · {m}",
-  "score_even": "{h} resueltos · a la par en total",
-  "score_over": "{h} resueltos · +{x} sobre par en total",
-  "sum_even": "{n} resueltos · {a} en par · a la par en total",
-  "sum_over": "{n} resueltos · {a} en par · +{x} sobre par en total",
-  "res_line": "{m} / par {p}",
-  "play_again": "jugar este nivel otra vez",
-  "guest_note": "jugando como invitado: se guarda en este dispositivo. inicia sesión en la página del calendario para añadir tus puntuaciones a la clasificación.",
-  "saving": "guardando…",
-  "saved": "guardado. tu mejor resultado de este día: {m}. reinicia para intentar con menos.",
-  "saved_late": "ese día ya terminó, así que no aparece en su clasificación.",
-  "enter_creds": "escribe un usuario y una contraseña",
-  "daily_err": "no pude cargar el nivel diario ({e}). comprueba que el servidor esté funcionando y que la dirección de la API del script sea correcta.",
-  "net_msg": "no se puede conectar con los servidores. comprueba tu conexión o inténtalo de nuevo en un rato",
-  "net_ok": "ok",
-  "ssub": "{date}, diario n.º {n}",
-  "stats_err": "no pude cargar las estadísticas",
-  "loading": "cargando…",
-  "lb_none": "aún no hay puntuaciones",
-  "lb_err": "no pude cargar la clasificación"
- },
- "ja": {
-  "holein": "ホールイン",
-  "homepage": "ホーム",
-  "search": "検索",
-  "ph1": "ここに何か入力できます。（これは検索バーです）",
-  "ph2": "これは検索バーです。",
-  "aria_site": "サイト",
-  "menu_sub": "遊び方を選んでね",
-  "m_random_b": "ランダムレベル",
-  "m_random_d": "選んだ難易度で、できたてのレベルが無限に遊べる",
-  "m_daily_b": "デイリーレベル",
-  "m_daily_d": "毎日新しいチャレンジ。過去の日はカレンダーから遊べる",
-  "m_stats_b": "あなたの記録",
-  "m_stats_d": "連続記録などなど",
-  "m_main_b": "メインレベル",
-  "m_main_d": "難易度ごとの手作りレベル",
-  "pickday": "遊ぶ日を選んでね",
-  "pickday_guest": "遊ぶ日を選んでね。ゲストでも遊べるよ。ランキングに載るにはログインしてね",
-  "username": "ユーザー名",
-  "password": "パスワード",
-  "login": "ログイン",
-  "register": "新規登録",
-  "solved_title": "このレベルを解いた人数",
-  "aria_solved": "今日のレベルを解いた人数",
-  "newdaily": "次のデイリーまで",
-  "hour": "時間",
-  "minute": "分",
-  "second": "秒",
-  "dboard": "デイリーランキング",
-  "mboard": "月間ランキング",
-  "back_menu": "メニューに戻る",
-  "aria_prev": "前の月",
-  "aria_next": "次の月",
-  "st_solved": "解いた数",
-  "st_cur": "現在の連続記録",
-  "st_long": "最長連続記録",
-  "st_dev": "この端末のランダムレベル",
-  "playing_as": "{u}としてプレイ中",
-  "not_logged": "ログインしていません。この端末に保存された結果を表示中",
-  "acct_err": "アカウントの記録を読み込めませんでした",
-  "st_avg": "1レベルあたりの平均手数",
-  "st_total": "合計手数",
-  "st_fewest": "最少手数",
-  "st_first": "初めて解いた日",
-  "st_recent": "直近",
-  "st_lv": "解いたレベル数",
-  "st_atpar": "パーで解いた数",
-  "st_avgover": "パーを超えた平均手数",
-  "st_hc": "ハードコアで解いた数",
-  "main_sub": "難易度ごとにまとめた手作りレベル",
-  "soon": "レベルは近日公開！",
-  "d_easy": "簡単",
-  "d_medium": "普通",
-  "d_hard": "難しい",
-  "d_challenge": "チャレンジ",
-  "hardcore": "ハードコア",
-  "normal": "ノーマル",
-  "youhave": "いまの数",
-  "goal": "ゴール",
-  "psub_par": "パー以下の手数でゴールしよう",
-  "psub_daily": "できるだけ少ない手数でゴールしよう",
-  "undo": "元に戻す",
-  "undo_hc": "元に戻す（残り{n}回）",
-  "restart": "レベルをやり直す",
-  "giveup": "あきらめる",
-  "skipanim": "アニメをスキップ",
-  "aria_diff": "難易度",
-  "diff_lbl": "難易度：",
-  "mode_lbl": "モード：",
-  "mainmenu": "メインメニュー",
-  "leaderboard": "ランキング",
-  "scores": "スコア",
-  "what": "これは何？",
-  "settings": "設定",
-  "gotcha": "わかった！",
-  "dlg_p": "どのレベルもその場で作られて、必要な演算だけが用意されます。パーは「これだけあれば必ずゴールできる」手数のこと（チャレンジでは、もっと短いルートがあることも多いので、パーより少なく解けるかも）。パーを超えても続けられますが、1手増えるごとに1オーバーです。ルートがいくつもあるレベルもたくさん。ハードコアモード（設定）では、1レベルにつき「元に戻す」は3回まで、やり直しもできず、パーを超えることもできません。ふだんのレベルは整数だけで、割り算は答えが整数になるときだけ使えるので、÷ボタンがグレーなら、その数はきれいに割り切れないということです。チャレンジでは |x|（絶対値）、√x、x³、符号反転、modなどの演算が加わり、解き方もいろいろ。設定で小数（+0.5 のような手があって、x⁻¹ は 4 を 0.25 にします）や分数（割り算で分数が残ることも。x⁻¹ は 4 を 1/4 にします）に切り替えられます。小数モードでは、ゴールも小数にできます。",
-  "scores_hint": "スコアをタップすると、そのレベルをもう一度遊べます",
-  "scores_none": "まだスコアがありません。レベルを解くとここに表示されます。",
-  "clear_scores": "スコアを消す",
-  "tap_confirm": "もう一度タップで確定",
-  "back": "戻る",
-  "flip_b": "フリップタイル",
-  "flip_d": "あなたの数とゴールを、パタパタ時計みたいなタイルで表示",
-  "anim_b": "アニメーション",
-  "anim_d": "タイルのフリップ、ボールの飛行、数直線のズーム、紙吹雪",
-  "adv_b": "アニメーションの詳細",
-  "adv_d": "アニメーションを1つずつオン・オフ",
-  "open": "開く",
-  "num_b": "数の種類",
-  "num_d": "整数・小数・分数から選べます。新しいレベルが始まります",
-  "aria_numtype": "数の種類",
-  "n_whole": "整数",
-  "n_dec": "小数",
-  "n_frac": "分数",
-  "gdec_b": "小数のゴール",
-  "gdec_d": "小数モード専用：ゴールが整数だけでなく、3.5 のような小数になることも。新しいレベルが始まります",
-  "gfrac_b": "分数のゴール",
-  "gfrac_d": "分数モード専用：ゴールが整数だけでなく、7/4 のような分数になることも。新しいレベルが始まります",
-  "share_b": "リンクをコピー",
-  "share_ok": "コピーしました",
-  "roots_b": "平方数以外の平方根",
-  "roots_d": "平方数でない数にも√を使えます（√2 や 3√5 など）。分数モードでは常に使えます。新しいレベルが始まります",
-  "hc_b": "ハードコアモード",
-  "hc_d": "「元に戻す」は1レベル3回まで、やり直し不可、パーオーバーも不可",
-  "theme_b": "ライトモード",
-  "theme_d": "標準のダークから、明るい見た目に切り替え",
-  "language": "言語",
-  "language_d": "ゲームが話す言葉を選んでね",
-  "a_flip_b": "タイルのフリップ",
-  "a_flip_d": "数字がパタパタ式の案内板みたいにめくれる",
-  "a_ball_b": "ボールの飛行",
-  "a_ball_d": "ボールが数直線の上を弧を描いて飛び、点線の軌跡があとを追う",
-  "a_zoom_b": "数直線のズーム",
-  "a_zoom_d": "数直線がなめらかに新しい目盛りへ",
-  "a_conf_b": "紙吹雪",
-  "a_conf_d": "レベルをクリアすると、穴からぱっと舞い上がる",
-  "a_slide_b": "パネルのスライドと揺れ",
-  "a_slide_d": "設定とスコアが傾きながらスライドして入ってきて、背景もずれる",
-  "a_theme_b": "テーマのフェード",
-  "a_theme_d": "色が暗いと明るいの間でなめらかに変わる",
-  "a_ui_b": "ボタンとメニューの動き",
-  "a_ui_d": "ボタンを押したとき、ホバー時の変化、ページのフェードイン",
-  "aria_nl": "あなたのボール、打った位置、穴を示す数直線",
-  "tee": "ティー",
-  "negate": "符号反転",
-  "why_div": "割り切れない",
-  "why_undef": "定義なし",
-  "why_sqrt": "平方数じゃない",
-  "why_whole": "整数のみ",
-  "why_big": "大きすぎ",
-  "why_root_add": "根号には足せない",
-  "why_root_already": "すでに根号",
-  "why_neg": "負の数",
-  "dlvl": "デイリーレベル {d}",
-  "hc_no": "ハードコアモードでは使えません",
-  "lose1": "手数切れです。1手戻して続けるか、あきらめましょう。",
-  "lose2": "手数も「元に戻す」も使い切りました。あきらめると答えが見られます。",
-  "win_daily": "{m}で解けました。",
-  "back_cal": "カレンダーに戻る",
-  "give_under": "パーより少ない解法です（{m}）。",
-  "give_par": "パーどおりの解法です（{m}）。",
-  "next_level": "次のレベル",
-  "win": "{n}手で解けた：{sc}。",
-  "sc_under": "{n}アンダー",
-  "sc_par": "パー",
-  "sc_over": "{n}オーバー",
-  "par_left": "パー{p} · {m}",
-  "score_even": "{h}クリア · 合計イーブンパー",
-  "score_over": "{h}クリア · 合計 +{x} オーバー",
-  "sum_even": "{n}クリア · パー達成 {a} · 合計イーブンパー",
-  "sum_over": "{n}クリア · パー達成 {a} · 合計 +{x} オーバー",
-  "res_line": "{m} / パー{p}",
-  "play_again": "このレベルをもう一度遊ぶ",
-  "guest_note": "ゲストとしてプレイ中：結果はこの端末に保存されます。カレンダーのページでログインすると、スコアをランキングに載せられます。",
-  "saving": "保存中…",
-  "saved": "保存しました。この日のベスト：{m}。もっと少ない手数に挑戦するなら、やり直してね。",
-  "saved_late": "その日はもう終わっているので、その日のランキングには載りません。",
-  "enter_creds": "ユーザー名とパスワードを入力してね",
-  "daily_err": "デイリーレベルを読み込めませんでした（{e}）。サーバーが動いているか、スクリプト内のAPIアドレスが正しいか確認してね。",
-  "net_msg": "サーバーに接続できません。通信環境を確認するか、しばらくしてからもう一度試してね。",
-  "net_ok": "OK",
-  "ssub": "{date}、デイリー #{n}",
-  "stats_err": "統計を読み込めませんでした",
-  "loading": "読み込み中…",
-  "lb_none": "まだスコアがありません",
-  "lb_err": "ランキングを読み込めませんでした"
- },
- "zh": {
-  "holein": "一杆进",
-  "homepage": "首页",
-  "search": "搜索",
-  "ph1": "你可以在这里打字。（这是搜索栏）",
-  "ph2": "这是搜索栏。",
-  "aria_site": "站点",
-  "menu_sub": "选一种玩法吧",
-  "m_random_b": "随机关卡",
-  "m_random_d": "按你选的难度，源源不断的全新关卡",
-  "m_daily_b": "每日关卡",
-  "m_daily_d": "每天一个新挑战，还有往日关卡的日历",
-  "m_stats_b": "你的统计",
-  "m_stats_d": "连续天数等等",
-  "m_main_b": "主线关卡",
-  "m_main_d": "每个难度都有手工打造的关卡",
-  "pickday": "选一天来玩吧",
-  "pickday_guest": "选一天来玩吧。游客也能玩：登录后才能上排行榜",
-  "username": "用户名",
-  "password": "密码",
-  "login": "登录",
-  "register": "注册",
-  "solved_title": "已解出此关的玩家数",
-  "aria_solved": "解出今日关卡的玩家数",
-  "newdaily": "距下一个每日关卡",
-  "hour": "时",
-  "minute": "分",
-  "second": "秒",
-  "dboard": "每日排行榜",
-  "mboard": "每月排行榜",
-  "back_menu": "回到菜单",
-  "aria_prev": "上个月",
-  "aria_next": "下个月",
-  "st_solved": "已解出",
-  "st_cur": "当前连续",
-  "st_long": "最长连续",
-  "st_dev": "本设备上的随机关卡",
-  "playing_as": "当前玩家：{u}",
-  "not_logged": "未登录：显示保存在本设备上的成绩",
-  "acct_err": "没能加载你的账号统计",
-  "st_avg": "每关平均步数",
-  "st_total": "总步数",
-  "st_fewest": "最少步数",
-  "st_first": "首次解出",
-  "st_recent": "最近一次",
-  "st_lv": "已解关卡",
-  "st_atpar": "打出标准杆",
-  "st_avgover": "平均超出标准杆步数",
-  "st_hc": "硬核模式解出",
-  "main_sub": "手工打造的关卡，按难度分组",
-  "soon": "关卡即将上线",
-  "d_easy": "简单",
-  "d_medium": "中等",
-  "d_hard": "困难",
-  "d_challenge": "挑战",
-  "hardcore": "硬核",
-  "normal": "普通",
-  "youhave": "你现在是",
-  "goal": "目标",
-  "psub_par": "用标准杆步数或更少的步数到达目标",
-  "psub_daily": "用尽量少的步数到达目标",
-  "undo": "撤销",
-  "undo_hc": "撤销（还剩{n}次）",
-  "restart": "重新开始本关",
-  "giveup": "放弃",
-  "skipanim": "跳过动画",
-  "aria_diff": "难度",
-  "diff_lbl": "难度：",
-  "mode_lbl": "模式：",
-  "mainmenu": "主菜单",
-  "leaderboard": "排行榜",
-  "scores": "成绩",
-  "what": "这是什么？",
-  "settings": "设置",
-  "gotcha": "明白了",
-  "dlg_p": "每一关都是现场生成的，只给你需要的运算。标准杆是一个保证能通关的步数（挑战难度里往往还有更短的路线，所以你可以打破标准杆），超过了也能继续玩，只是每多一步就算超出标准杆一步。很多关卡不止一条路线。硬核模式（在设置里）下，每关只有 3 次撤销，不能重新开始，也不能超出标准杆。默认关卡只用整数，除法只有在结果是整数时才能用，所以灰掉的 ÷ 按钮就表示你的数除不尽。挑战难度会加入 |x|（绝对值）、√x、x³、取负和取模等额外运算，解法也五花八门。在设置里可以切换成小数（比如 +0.5，x⁻¹ 会把 4 变成 0.25）或分数（除法可以留下分数，x⁻¹ 会把 4 变成 1/4）。小数模式下还可以让目标也是小数。",
-  "scores_hint": "点一下成绩，就能再玩一次那一关",
-  "scores_none": "还没有成绩。解出一关，它就会出现在这里。",
-  "clear_scores": "清除成绩",
-  "tap_confirm": "再点一次确认",
-  "back": "返回",
-  "flip_b": "翻页牌",
-  "flip_d": "把你的数字和目标显示成翻页时钟的样子",
-  "anim_b": "动画",
-  "anim_d": "翻牌、球的飞行、数轴缩放和彩纸",
-  "adv_b": "高级动画",
-  "adv_d": "单独开关每一种动画",
-  "open": "打开",
-  "num_b": "数字类型",
-  "num_d": "使用整数、小数或分数。会开始新的一关",
-  "aria_numtype": "数字类型",
-  "n_whole": "整数",
-  "n_dec": "小数",
-  "n_frac": "分数",
-  "gdec_b": "小数目标",
-  "gdec_d": "仅小数模式：目标可以是像 3.5 这样的小数，不只是整数。会开始新的一关",
-  "gfrac_b": "分数目标",
-  "gfrac_d": "仅分数模式：目标可以是像 7/4 这样的分数，不只是整数。会开始新的一关",
-  "share_b": "复制链接",
-  "share_ok": "已复制",
-  "roots_b": "非平方数的平方根",
-  "roots_d": "允许对非平方数使用√，得到 √2 或 3√5 这样的根号。分数模式下始终允许。会开始新关卡",
-  "hc_b": "硬核模式",
-  "hc_d": "每关只能撤销 3 次，不能重新开始，也不能超出标准杆",
-  "theme_b": "浅色模式",
-  "theme_d": "从默认的深色外观切换成浅色",
-  "language": "语言",
-  "language_d": "选一种游戏说的语言",
-  "a_flip_b": "翻牌",
-  "a_flip_d": "数字像翻板显示屏一样翻动",
-  "a_ball_b": "球的飞行",
-  "a_ball_d": "球沿着数轴划出弧线，虚线轨迹紧随其后",
-  "a_zoom_b": "数轴缩放",
-  "a_zoom_d": "数轴会平滑地滑到新的刻度",
-  "a_conf_b": "彩纸",
-  "a_conf_d": "解出一关时，从洞里喷出一阵彩纸",
-  "a_slide_b": "面板滑动和摇摆",
-  "a_slide_d": "设置和成绩面板滑入时会倾斜摇摆，背景也跟着移动",
-  "a_theme_b": "主题渐变",
-  "a_theme_d": "颜色在深色和浅色之间渐变",
-  "a_ui_b": "按钮和菜单动效",
-  "a_ui_d": "按钮按下、悬停变化和页面淡入",
-  "aria_nl": "显示你的球、你的击球点和球洞的数轴",
-  "tee": "发球点",
-  "negate": "取负",
-  "why_div": "除不尽",
-  "why_undef": "无定义",
-  "why_sqrt": "不是平方数",
-  "why_whole": "仅限整数",
-  "why_big": "太大",
-  "why_root_add": "不能加到根号上",
-  "why_root_already": "已经是根号",
-  "why_neg": "负数",
-  "dlvl": "每日关卡 {d}",
-  "hc_no": "硬核模式下不可用",
-  "lose1": "步数用完了。撤销一步继续试，或者放弃吧。",
-  "lose2": "步数和撤销次数都用完了。放弃就能看到答案。",
-  "win_daily": "{m}解出。",
-  "back_cal": "回到日历",
-  "give_under": "这是一个低于标准杆的解法（{m}）。",
-  "give_par": "这是标准杆解法（{m}）。",
-  "next_level": "下一关",
-  "win": "{n} 步解出：{sc}。",
-  "sc_under": "低于标准杆 {n} 步",
-  "sc_par": "标准杆",
-  "sc_over": "超出标准杆 {n} 步",
-  "par_left": "标准杆 {p} · {m}",
-  "score_even": "已解出 {h} 关 · 总共平标准杆",
-  "score_over": "已解出 {h} 关 · 总共超出标准杆 {x} 步",
-  "sum_even": "已解出 {n} 关 · {a} 关打出标准杆 · 总共平标准杆",
-  "sum_over": "已解出 {n} 关 · {a} 关打出标准杆 · 总共超出标准杆 {x} 步",
-  "res_line": "{m} / 标准杆 {p}",
-  "play_again": "再玩这一关",
-  "guest_note": "正在以游客身份游玩：成绩保存在本设备上。到日历页面登录，就能把成绩加入排行榜。",
-  "saving": "保存中…",
-  "saved": "已保存。这一天你的最好成绩：{m}。重新开始，试试更少的步数吧。",
-  "saved_late": "那一天已经结束了，所以不会出现在当天的排行榜上。",
-  "enter_creds": "请输入用户名和密码",
-  "daily_err": "没能加载每日关卡（{e}）。请检查服务器是否在运行，以及脚本里的 API 地址是否正确。",
-  "net_msg": "无法连接到服务器。请检查网络连接，或稍后再试。",
-  "net_ok": "好的",
-  "ssub": "{date}，每日第 {n} 关",
-  "stats_err": "没能加载统计",
-  "loading": "加载中…",
-  "lb_none": "还没有成绩",
-  "lb_err": "没能加载排行榜"
- }
-};
+            "en": {
+                "holein": "hole in",
+                "homepage": "homepage",
+                "search": "search",
+                "ph1": "you can type things here. (this is the search bar)",
+                "ph2": "this is the search bar.",
+                "aria_site": "site",
+                "menu_sub": "choose how you want to play",
+                "m_random_b": "random levels",
+                "m_random_d": "endless, freshly generated levels at the difficulty you pick",
+                "m_daily_b": "daily levels",
+                "m_daily_d": "a new challenge every day, plus a calendar of past days",
+                "m_stats_b": "your stats",
+                "m_stats_d": "daily streaks and more",
+                "m_main_b": "main levels",
+                "m_main_d": "hand-made levels for each difficulty",
+                "pickday": "pick a day to play",
+                "pickday_guest": "pick a day to play. guests can play too: log in to be on the leaderboard",
+                "username": "username",
+                "password": "password",
+                "login": "log in",
+                "register": "register",
+                "solved_title": "number of players who solved this",
+                "aria_solved": "players who solved today's level",
+                "newdaily": "new daily in",
+                "hour": "hour",
+                "minute": "minute",
+                "second": "second",
+                "dboard": "daily leaderboard",
+                "mboard": "monthly leaderboard",
+                "back_menu": "back to menu",
+                "aria_prev": "previous month",
+                "aria_next": "next month",
+                "st_solved": "solved",
+                "st_cur": "current streak",
+                "st_long": "longest streak",
+                "st_dev": "random levels on this device",
+                "playing_as": "playing as {u}",
+                "not_logged": "not logged in: showing results saved on this device",
+                "acct_err": "couldn't load your account stats",
+                "st_avg": "average moves per level",
+                "st_total": "total moves",
+                "st_fewest": "fewest moves",
+                "st_first": "first solved",
+                "st_recent": "most recent",
+                "st_lv": "levels solved",
+                "st_atpar": "solved at par",
+                "st_avgover": "average moves over par",
+                "st_hc": "hardcore solves",
+                "main_sub": "hand-made levels, grouped by difficulty",
+                "soon": "levels coming soon",
+                "d_easy": "easy",
+                "d_medium": "medium",
+                "d_hard": "hard",
+                "d_challenge": "challenge",
+                "hardcore": "hardcore",
+                "normal": "normal",
+                "youhave": "you have",
+                "goal": "goal",
+                "psub_par": "reach the goal in par moves or fewer",
+                "psub_daily": "reach the goal in as few moves as you can",
+                "undo": "undo",
+                "undo_hc": "undo ({n} left)",
+                "restart": "restart level",
+                "giveup": "give up",
+                "skipanim": "skip animation",
+                "aria_diff": "Difficulty",
+                "diff_lbl": "difficulty:",
+                "mode_lbl": "mode:",
+                "mainmenu": "main menu",
+                "leaderboard": "leaderboard",
+                "scores": "scores",
+                "what": "what is this?",
+                "settings": "settings",
+                "gotcha": "gotcha",
+                "dlg_p": "every level is freshly generated and gives only the operations you need. par is a number of moves that is guaranteed to work (on challenge there is often a shorter route, so you can beat par), and you can keep going past it, but every extra move is one over par. many levels have more than one route. in hardcore mode (settings) you only get 3 undos per level, can't restart, and can't go over par. by default levels use whole numbers, and division only works when the result is whole, so a greyed-out ÷ button means your number doesn't divide evenly. challenge difficulty adds extra operations like |x| (absolute value), √x, x³, negate and mod, and has lots of different solutions. in settings you can switch to decimals (moves like +0.5, and x⁻¹ turns 4 into 0.25) or fractions (division can leave fractions, and x⁻¹ turns 4 into 1/4). in decimals mode you can also allow decimal goals.",
+                "scores_hint": "tap a score to play that level again",
+                "scores_none": "no scores yet. solve a level and it will show up here.",
+                "clear_scores": "clear scores",
+                "tap_confirm": "tap again to confirm",
+                "back": "back",
+                "flip_b": "flip tiles",
+                "flip_d": "show your number and the goal as flip-clock tiles",
+                "anim_b": "animations",
+                "anim_d": "tile flips, ball flight, number line zoom and confetti",
+                "adv_b": "advanced animations",
+                "adv_d": "turn individual animations on or off",
+                "open": "open",
+                "num_b": "numbers",
+                "num_d": "use whole numbers, decimals or fractions. starts a new level",
+                "aria_numtype": "number type",
+                "n_whole": "whole numbers",
+                "n_dec": "decimals",
+                "n_frac": "fractions",
+                "gdec_b": "decimal goals",
+                "gdec_d": "decimals only: the goal can be a decimal like 3.5, not just a whole number. starts a new level",
+                "gfrac_b": "fraction goals",
+                "gfrac_d": "fractions only: the goal can be a fraction like 7/4, not just a whole number. starts a new level",
+                "share_b": "copy link",
+                "share_ok": "link copied",
+                "roots_b": "roots of non-squares",
+                "roots_d": "allow √ on numbers that aren't perfect squares, giving roots like √2 or 3√5. fractions already allow it. starts a new level",
+                "hc_b": "hardcore mode",
+                "hc_d": "only 3 undos per level, no restarting, and you can't go over par",
+                "theme_b": "light mode",
+                "theme_d": "switch from the default dark look to light",
+                "language": "language",
+                "language_d": "pick the language the game speaks",
+                "a_flip_b": "tile flips",
+                "a_flip_d": "digits flip like a split-flap board",
+                "a_ball_b": "ball flight",
+                "a_ball_d": "the ball arcs along the number line and the dotted trail follows it",
+                "a_zoom_b": "number line zoom",
+                "a_zoom_d": "the line slides smoothly to a new scale",
+                "a_conf_b": "confetti",
+                "a_conf_d": "a burst from the hole when you solve a level",
+                "a_slide_b": "panel slides and sway",
+                "a_slide_d": "settings and scores slide in and lean as they move, and the background shifts",
+                "a_theme_b": "theme fade",
+                "a_theme_d": "colors fade between dark and light",
+                "a_ui_b": "button and menu motion",
+                "a_ui_d": "button presses, hover changes and page fade-ins",
+                "aria_nl": "number line showing your ball, your hits and the hole",
+                "tee": "tee",
+                "negate": "negate",
+                "why_div": "not whole",
+                "why_undef": "undefined",
+                "why_sqrt": "not a square",
+                "why_whole": "whole only",
+                "why_big": "too big",
+                "why_root_add": "can't add to a root",
+                "why_root_already": "already a root",
+                "why_neg": "negative",
+                "dlvl": "daily level {d}",
+                "hc_no": "not allowed in hardcore mode",
+                "lose1": "out of moves. undo a move to keep trying, or give up.",
+                "lose2": "out of moves and undos. give up to see the solution.",
+                "win_daily": "solved in {m}.",
+                "back_cal": "back to calendar",
+                "give_under": "here's a solution under par ({m}).",
+                "give_par": "here's the par solution ({m}).",
+                "next_level": "next level",
+                "win": "solved in {n}: {sc}.",
+                "sc_under": "{n} under par",
+                "sc_par": "par",
+                "sc_over": "{n} over par",
+                "par_left": "par {p} · {m}",
+                "score_even": "{h} solved · even over par in total",
+                "score_over": "{h} solved · +{x} over par in total",
+                "sum_even": "{n} solved · {a} at par · even over par in total",
+                "sum_over": "{n} solved · {a} at par · +{x} over par in total",
+                "res_line": "{m} / par {p}",
+                "play_again": "play this level again",
+                "guest_note": "playing as a guest: this is saved on this device. log in on the calendar page to add your scores to the leaderboard.",
+                "saving": "saving…",
+                "saved": "saved. your best for this day: {m}. restart to try for fewer.",
+                "saved_late": "that day is over, so this is not on its leaderboard.",
+                "enter_creds": "enter a username and password",
+                "daily_err": "couldn't load the daily level ({e}). check that the server is running and the API address in the script is right.",
+                "net_msg": "can't connect to the servers. check your connection or try again in a little while",
+                "net_ok": "ok",
+                "ssub": "{date}, daily #{n}",
+                "stats_err": "couldn't load the stats",
+                "loading": "loading…",
+                "lb_none": "no scores yet",
+                "lb_err": "couldn't load the leaderboard"
+            },
+            "es": {
+                "holein": "hoyo en",
+                "homepage": "inicio",
+                "search": "buscar",
+                "ph1": "puedes escribir cosas aquí. (esta es la barra de búsqueda)",
+                "ph2": "esta es la barra de búsqueda.",
+                "aria_site": "sitio",
+                "menu_sub": "elige cómo quieres jugar",
+                "m_random_b": "niveles aleatorios",
+                "m_random_d": "niveles sin fin, recién hechos, con la dificultad que elijas",
+                "m_daily_b": "niveles diarios",
+                "m_daily_d": "un reto nuevo cada día, y un calendario con los días pasados",
+                "m_stats_b": "tus estadísticas",
+                "m_stats_d": "rachas diarias y más",
+                "m_main_b": "niveles principales",
+                "m_main_d": "niveles hechos a mano para cada dificultad",
+                "pickday": "elige un día para jugar",
+                "pickday_guest": "elige un día para jugar. los invitados también pueden jugar: inicia sesión para salir en la clasificación",
+                "username": "usuario",
+                "password": "contraseña",
+                "login": "iniciar sesión",
+                "register": "registrarse",
+                "solved_title": "jugadores que lo han resuelto",
+                "aria_solved": "jugadores que resolvieron el nivel de hoy",
+                "newdaily": "nuevo nivel diario en",
+                "hour": "hora",
+                "minute": "minuto",
+                "second": "segundo",
+                "dboard": "clasificación diaria",
+                "mboard": "clasificación mensual",
+                "back_menu": "volver al menú",
+                "aria_prev": "mes anterior",
+                "aria_next": "mes siguiente",
+                "st_solved": "resueltos",
+                "st_cur": "racha actual",
+                "st_long": "racha más larga",
+                "st_dev": "niveles aleatorios en este dispositivo",
+                "playing_as": "jugando como {u}",
+                "not_logged": "no has iniciado sesión: mostrando resultados guardados en este dispositivo",
+                "acct_err": "no pude cargar las estadísticas de tu cuenta",
+                "st_avg": "movimientos promedio por nivel",
+                "st_total": "movimientos en total",
+                "st_fewest": "menos movimientos",
+                "st_first": "primer nivel resuelto",
+                "st_recent": "más reciente",
+                "st_lv": "niveles resueltos",
+                "st_atpar": "resueltos en par",
+                "st_avgover": "movimientos promedio sobre par",
+                "st_hc": "resueltos en hardcore",
+                "main_sub": "niveles hechos a mano, agrupados por dificultad",
+                "soon": "niveles próximamente",
+                "d_easy": "fácil",
+                "d_medium": "medio",
+                "d_hard": "difícil",
+                "d_challenge": "desafío",
+                "hardcore": "hardcore",
+                "normal": "normal",
+                "youhave": "tienes",
+                "goal": "meta",
+                "psub_par": "llega a la meta en par movimientos o menos",
+                "psub_daily": "llega a la meta con los menos movimientos que puedas",
+                "undo": "deshacer",
+                "undo_hc": "deshacer (quedan {n})",
+                "restart": "reiniciar nivel",
+                "giveup": "rendirme",
+                "skipanim": "saltar animación",
+                "aria_diff": "Dificultad",
+                "diff_lbl": "dificultad:",
+                "mode_lbl": "modo:",
+                "mainmenu": "menú principal",
+                "leaderboard": "clasificación",
+                "scores": "puntuaciones",
+                "what": "¿qué es esto?",
+                "settings": "ajustes",
+                "gotcha": "¡entendido!",
+                "dlg_p": "cada nivel se genera al momento y te da solo las operaciones que necesitas. el par es un número de movimientos que seguro funciona (en desafío suele haber un camino más corto, así que puedes mejorar el par), y puedes seguir más allá, pero cada movimiento extra cuenta como uno sobre par. muchos niveles tienen más de un camino. en el modo hardcore (ajustes) solo tienes 3 deshacer por nivel, no puedes reiniciar y no puedes pasarte del par. por defecto los niveles usan números enteros, y la división solo funciona cuando el resultado es entero, así que un botón ÷ en gris significa que tu número no se divide exacto. la dificultad desafío añade operaciones extra como |x| (valor absoluto), √x, x³, negar y mod, y tiene un montón de soluciones distintas. en ajustes puedes cambiar a decimales (movimientos como +0.5, y x⁻¹ convierte 4 en 0.25) o a fracciones (la división puede dejar fracciones, y x⁻¹ convierte 4 en 1/4). en modo decimales también puedes permitir metas decimales.",
+                "scores_hint": "toca una puntuación para jugar ese nivel otra vez",
+                "scores_none": "aún no hay puntuaciones. resuelve un nivel y aparecerá aquí.",
+                "clear_scores": "borrar puntuaciones",
+                "tap_confirm": "toca otra vez para confirmar",
+                "back": "atrás",
+                "flip_b": "fichas giratorias",
+                "flip_d": "muestra tu número y la meta como fichas de reloj flip",
+                "anim_b": "animaciones",
+                "anim_d": "giros de fichas, vuelo de la bola, zoom de la recta numérica y confeti",
+                "adv_b": "animaciones avanzadas",
+                "adv_d": "activa o desactiva cada animación por separado",
+                "open": "abrir",
+                "num_b": "números",
+                "num_d": "usa enteros, decimales o fracciones. empieza un nivel nuevo",
+                "aria_numtype": "tipo de número",
+                "n_whole": "enteros",
+                "n_dec": "decimales",
+                "n_frac": "fracciones",
+                "gdec_b": "metas decimales",
+                "gdec_d": "solo decimales: la meta puede ser un decimal como 3.5, no solo un entero. empieza un nivel nuevo",
+                "gfrac_b": "metas fraccionarias",
+                "gfrac_d": "solo fracciones: la meta puede ser una fracción como 7/4, no solo un entero. empieza un nivel nuevo",
+                "share_b": "copiar enlace",
+                "share_ok": "enlace copiado",
+                "roots_b": "raíces de no cuadrados",
+                "roots_d": "permite √ en números que no son cuadrados perfectos, con raíces como √2 o 3√5. las fracciones ya lo permiten. empieza un nivel nuevo",
+                "hc_b": "modo hardcore",
+                "hc_d": "solo 3 deshacer por nivel, sin reiniciar, y no puedes pasarte del par",
+                "theme_b": "modo claro",
+                "theme_d": "cambia del aspecto oscuro por defecto al claro",
+                "language": "idioma",
+                "language_d": "elige el idioma en el que habla el juego",
+                "a_flip_b": "giros de fichas",
+                "a_flip_d": "los dígitos giran como en un panel de estación",
+                "a_ball_b": "vuelo de la bola",
+                "a_ball_d": "la bola hace un arco sobre la recta numérica y el rastro punteado la sigue",
+                "a_zoom_b": "zoom de la recta numérica",
+                "a_zoom_d": "la recta se desliza suavemente a una escala nueva",
+                "a_conf_b": "confeti",
+                "a_conf_d": "una explosión desde el hoyo cuando resuelves un nivel",
+                "a_slide_b": "deslizamiento y vaivén de paneles",
+                "a_slide_d": "ajustes y puntuaciones se deslizan e inclinan al moverse, y el fondo se desplaza",
+                "a_theme_b": "transición de tema",
+                "a_theme_d": "los colores se funden entre oscuro y claro",
+                "a_ui_b": "movimiento de botones y menús",
+                "a_ui_d": "pulsaciones de botones, cambios al pasar el cursor y aparición suave de páginas",
+                "aria_nl": "recta numérica con tu bola, tus golpes y el hoyo",
+                "tee": "salida",
+                "negate": "negar",
+                "why_div": "no entero",
+                "why_undef": "indefinido",
+                "why_sqrt": "no es cuadrado",
+                "why_whole": "solo enteros",
+                "why_big": "demasiado grande",
+                "why_root_add": "no se puede sumar a una raíz",
+                "why_root_already": "ya es una raíz",
+                "why_neg": "negativo",
+                "dlvl": "nivel diario {d}",
+                "hc_no": "no permitido en modo hardcore",
+                "lose1": "te quedaste sin movimientos. deshaz uno para seguir intentándolo, o ríndete.",
+                "lose2": "sin movimientos ni deshacer. ríndete para ver la solución.",
+                "win_daily": "resuelto en {m}.",
+                "back_cal": "volver al calendario",
+                "give_under": "aquí tienes una solución por debajo del par ({m}).",
+                "give_par": "aquí está la solución del par ({m}).",
+                "next_level": "siguiente nivel",
+                "win": "resuelto en {n}: {sc}.",
+                "sc_under": "{n} bajo par",
+                "sc_par": "par",
+                "sc_over": "{n} sobre par",
+                "par_left": "par {p} · {m}",
+                "score_even": "{h} resueltos · a la par en total",
+                "score_over": "{h} resueltos · +{x} sobre par en total",
+                "sum_even": "{n} resueltos · {a} en par · a la par en total",
+                "sum_over": "{n} resueltos · {a} en par · +{x} sobre par en total",
+                "res_line": "{m} / par {p}",
+                "play_again": "jugar este nivel otra vez",
+                "guest_note": "jugando como invitado: se guarda en este dispositivo. inicia sesión en la página del calendario para añadir tus puntuaciones a la clasificación.",
+                "saving": "guardando…",
+                "saved": "guardado. tu mejor resultado de este día: {m}. reinicia para intentar con menos.",
+                "saved_late": "ese día ya terminó, así que no aparece en su clasificación.",
+                "enter_creds": "escribe un usuario y una contraseña",
+                "daily_err": "no pude cargar el nivel diario ({e}). comprueba que el servidor esté funcionando y que la dirección de la API del script sea correcta.",
+                "net_msg": "no se puede conectar con los servidores. comprueba tu conexión o inténtalo de nuevo en un rato",
+                "net_ok": "ok",
+                "ssub": "{date}, diario n.º {n}",
+                "stats_err": "no pude cargar las estadísticas",
+                "loading": "cargando…",
+                "lb_none": "aún no hay puntuaciones",
+                "lb_err": "no pude cargar la clasificación"
+            },
+            "ja": {
+                "holein": "ホールイン",
+                "homepage": "ホーム",
+                "search": "検索",
+                "ph1": "ここに何か入力できます。（これは検索バーです）",
+                "ph2": "これは検索バーです。",
+                "aria_site": "サイト",
+                "menu_sub": "遊び方を選んでね",
+                "m_random_b": "ランダムレベル",
+                "m_random_d": "選んだ難易度で、できたてのレベルが無限に遊べる",
+                "m_daily_b": "デイリーレベル",
+                "m_daily_d": "毎日新しいチャレンジ。過去の日はカレンダーから遊べる",
+                "m_stats_b": "あなたの記録",
+                "m_stats_d": "連続記録などなど",
+                "m_main_b": "メインレベル",
+                "m_main_d": "難易度ごとの手作りレベル",
+                "pickday": "遊ぶ日を選んでね",
+                "pickday_guest": "遊ぶ日を選んでね。ゲストでも遊べるよ。ランキングに載るにはログインしてね",
+                "username": "ユーザー名",
+                "password": "パスワード",
+                "login": "ログイン",
+                "register": "新規登録",
+                "solved_title": "このレベルを解いた人数",
+                "aria_solved": "今日のレベルを解いた人数",
+                "newdaily": "次のデイリーまで",
+                "hour": "時間",
+                "minute": "分",
+                "second": "秒",
+                "dboard": "デイリーランキング",
+                "mboard": "月間ランキング",
+                "back_menu": "メニューに戻る",
+                "aria_prev": "前の月",
+                "aria_next": "次の月",
+                "st_solved": "解いた数",
+                "st_cur": "現在の連続記録",
+                "st_long": "最長連続記録",
+                "st_dev": "この端末のランダムレベル",
+                "playing_as": "{u}としてプレイ中",
+                "not_logged": "ログインしていません。この端末に保存された結果を表示中",
+                "acct_err": "アカウントの記録を読み込めませんでした",
+                "st_avg": "1レベルあたりの平均手数",
+                "st_total": "合計手数",
+                "st_fewest": "最少手数",
+                "st_first": "初めて解いた日",
+                "st_recent": "直近",
+                "st_lv": "解いたレベル数",
+                "st_atpar": "パーで解いた数",
+                "st_avgover": "パーを超えた平均手数",
+                "st_hc": "ハードコアで解いた数",
+                "main_sub": "難易度ごとにまとめた手作りレベル",
+                "soon": "レベルは近日公開！",
+                "d_easy": "簡単",
+                "d_medium": "普通",
+                "d_hard": "難しい",
+                "d_challenge": "チャレンジ",
+                "hardcore": "ハードコア",
+                "normal": "ノーマル",
+                "youhave": "いまの数",
+                "goal": "ゴール",
+                "psub_par": "パー以下の手数でゴールしよう",
+                "psub_daily": "できるだけ少ない手数でゴールしよう",
+                "undo": "元に戻す",
+                "undo_hc": "元に戻す（残り{n}回）",
+                "restart": "レベルをやり直す",
+                "giveup": "あきらめる",
+                "skipanim": "アニメをスキップ",
+                "aria_diff": "難易度",
+                "diff_lbl": "難易度：",
+                "mode_lbl": "モード：",
+                "mainmenu": "メインメニュー",
+                "leaderboard": "ランキング",
+                "scores": "スコア",
+                "what": "これは何？",
+                "settings": "設定",
+                "gotcha": "わかった！",
+                "dlg_p": "どのレベルもその場で作られて、必要な演算だけが用意されます。パーは「これだけあれば必ずゴールできる」手数のこと（チャレンジでは、もっと短いルートがあることも多いので、パーより少なく解けるかも）。パーを超えても続けられますが、1手増えるごとに1オーバーです。ルートがいくつもあるレベルもたくさん。ハードコアモード（設定）では、1レベルにつき「元に戻す」は3回まで、やり直しもできず、パーを超えることもできません。ふだんのレベルは整数だけで、割り算は答えが整数になるときだけ使えるので、÷ボタンがグレーなら、その数はきれいに割り切れないということです。チャレンジでは |x|（絶対値）、√x、x³、符号反転、modなどの演算が加わり、解き方もいろいろ。設定で小数（+0.5 のような手があって、x⁻¹ は 4 を 0.25 にします）や分数（割り算で分数が残ることも。x⁻¹ は 4 を 1/4 にします）に切り替えられます。小数モードでは、ゴールも小数にできます。",
+                "scores_hint": "スコアをタップすると、そのレベルをもう一度遊べます",
+                "scores_none": "まだスコアがありません。レベルを解くとここに表示されます。",
+                "clear_scores": "スコアを消す",
+                "tap_confirm": "もう一度タップで確定",
+                "back": "戻る",
+                "flip_b": "フリップタイル",
+                "flip_d": "あなたの数とゴールを、パタパタ時計みたいなタイルで表示",
+                "anim_b": "アニメーション",
+                "anim_d": "タイルのフリップ、ボールの飛行、数直線のズーム、紙吹雪",
+                "adv_b": "アニメーションの詳細",
+                "adv_d": "アニメーションを1つずつオン・オフ",
+                "open": "開く",
+                "num_b": "数の種類",
+                "num_d": "整数・小数・分数から選べます。新しいレベルが始まります",
+                "aria_numtype": "数の種類",
+                "n_whole": "整数",
+                "n_dec": "小数",
+                "n_frac": "分数",
+                "gdec_b": "小数のゴール",
+                "gdec_d": "小数モード専用：ゴールが整数だけでなく、3.5 のような小数になることも。新しいレベルが始まります",
+                "gfrac_b": "分数のゴール",
+                "gfrac_d": "分数モード専用：ゴールが整数だけでなく、7/4 のような分数になることも。新しいレベルが始まります",
+                "share_b": "リンクをコピー",
+                "share_ok": "コピーしました",
+                "roots_b": "平方数以外の平方根",
+                "roots_d": "平方数でない数にも√を使えます（√2 や 3√5 など）。分数モードでは常に使えます。新しいレベルが始まります",
+                "hc_b": "ハードコアモード",
+                "hc_d": "「元に戻す」は1レベル3回まで、やり直し不可、パーオーバーも不可",
+                "theme_b": "ライトモード",
+                "theme_d": "標準のダークから、明るい見た目に切り替え",
+                "language": "言語",
+                "language_d": "ゲームが話す言葉を選んでね",
+                "a_flip_b": "タイルのフリップ",
+                "a_flip_d": "数字がパタパタ式の案内板みたいにめくれる",
+                "a_ball_b": "ボールの飛行",
+                "a_ball_d": "ボールが数直線の上を弧を描いて飛び、点線の軌跡があとを追う",
+                "a_zoom_b": "数直線のズーム",
+                "a_zoom_d": "数直線がなめらかに新しい目盛りへ",
+                "a_conf_b": "紙吹雪",
+                "a_conf_d": "レベルをクリアすると、穴からぱっと舞い上がる",
+                "a_slide_b": "パネルのスライドと揺れ",
+                "a_slide_d": "設定とスコアが傾きながらスライドして入ってきて、背景もずれる",
+                "a_theme_b": "テーマのフェード",
+                "a_theme_d": "色が暗いと明るいの間でなめらかに変わる",
+                "a_ui_b": "ボタンとメニューの動き",
+                "a_ui_d": "ボタンを押したとき、ホバー時の変化、ページのフェードイン",
+                "aria_nl": "あなたのボール、打った位置、穴を示す数直線",
+                "tee": "ティー",
+                "negate": "符号反転",
+                "why_div": "割り切れない",
+                "why_undef": "定義なし",
+                "why_sqrt": "平方数じゃない",
+                "why_whole": "整数のみ",
+                "why_big": "大きすぎ",
+                "why_root_add": "根号には足せない",
+                "why_root_already": "すでに根号",
+                "why_neg": "負の数",
+                "dlvl": "デイリーレベル {d}",
+                "hc_no": "ハードコアモードでは使えません",
+                "lose1": "手数切れです。1手戻して続けるか、あきらめましょう。",
+                "lose2": "手数も「元に戻す」も使い切りました。あきらめると答えが見られます。",
+                "win_daily": "{m}で解けました。",
+                "back_cal": "カレンダーに戻る",
+                "give_under": "パーより少ない解法です（{m}）。",
+                "give_par": "パーどおりの解法です（{m}）。",
+                "next_level": "次のレベル",
+                "win": "{n}手で解けた：{sc}。",
+                "sc_under": "{n}アンダー",
+                "sc_par": "パー",
+                "sc_over": "{n}オーバー",
+                "par_left": "パー{p} · {m}",
+                "score_even": "{h}クリア · 合計イーブンパー",
+                "score_over": "{h}クリア · 合計 +{x} オーバー",
+                "sum_even": "{n}クリア · パー達成 {a} · 合計イーブンパー",
+                "sum_over": "{n}クリア · パー達成 {a} · 合計 +{x} オーバー",
+                "res_line": "{m} / パー{p}",
+                "play_again": "このレベルをもう一度遊ぶ",
+                "guest_note": "ゲストとしてプレイ中：結果はこの端末に保存されます。カレンダーのページでログインすると、スコアをランキングに載せられます。",
+                "saving": "保存中…",
+                "saved": "保存しました。この日のベスト：{m}。もっと少ない手数に挑戦するなら、やり直してね。",
+                "saved_late": "その日はもう終わっているので、その日のランキングには載りません。",
+                "enter_creds": "ユーザー名とパスワードを入力してね",
+                "daily_err": "デイリーレベルを読み込めませんでした（{e}）。サーバーが動いているか、スクリプト内のAPIアドレスが正しいか確認してね。",
+                "net_msg": "サーバーに接続できません。通信環境を確認するか、しばらくしてからもう一度試してね。",
+                "net_ok": "OK",
+                "ssub": "{date}、デイリー #{n}",
+                "stats_err": "統計を読み込めませんでした",
+                "loading": "読み込み中…",
+                "lb_none": "まだスコアがありません",
+                "lb_err": "ランキングを読み込めませんでした"
+            },
+            "zh": {
+                "holein": "一杆进",
+                "homepage": "首页",
+                "search": "搜索",
+                "ph1": "你可以在这里打字。（这是搜索栏）",
+                "ph2": "这是搜索栏。",
+                "aria_site": "站点",
+                "menu_sub": "选一种玩法吧",
+                "m_random_b": "随机关卡",
+                "m_random_d": "按你选的难度，源源不断的全新关卡",
+                "m_daily_b": "每日关卡",
+                "m_daily_d": "每天一个新挑战，还有往日关卡的日历",
+                "m_stats_b": "你的统计",
+                "m_stats_d": "连续天数等等",
+                "m_main_b": "主线关卡",
+                "m_main_d": "每个难度都有手工打造的关卡",
+                "pickday": "选一天来玩吧",
+                "pickday_guest": "选一天来玩吧。游客也能玩：登录后才能上排行榜",
+                "username": "用户名",
+                "password": "密码",
+                "login": "登录",
+                "register": "注册",
+                "solved_title": "已解出此关的玩家数",
+                "aria_solved": "解出今日关卡的玩家数",
+                "newdaily": "距下一个每日关卡",
+                "hour": "时",
+                "minute": "分",
+                "second": "秒",
+                "dboard": "每日排行榜",
+                "mboard": "每月排行榜",
+                "back_menu": "回到菜单",
+                "aria_prev": "上个月",
+                "aria_next": "下个月",
+                "st_solved": "已解出",
+                "st_cur": "当前连续",
+                "st_long": "最长连续",
+                "st_dev": "本设备上的随机关卡",
+                "playing_as": "当前玩家：{u}",
+                "not_logged": "未登录：显示保存在本设备上的成绩",
+                "acct_err": "没能加载你的账号统计",
+                "st_avg": "每关平均步数",
+                "st_total": "总步数",
+                "st_fewest": "最少步数",
+                "st_first": "首次解出",
+                "st_recent": "最近一次",
+                "st_lv": "已解关卡",
+                "st_atpar": "打出标准杆",
+                "st_avgover": "平均超出标准杆步数",
+                "st_hc": "硬核模式解出",
+                "main_sub": "手工打造的关卡，按难度分组",
+                "soon": "关卡即将上线",
+                "d_easy": "简单",
+                "d_medium": "中等",
+                "d_hard": "困难",
+                "d_challenge": "挑战",
+                "hardcore": "硬核",
+                "normal": "普通",
+                "youhave": "你现在是",
+                "goal": "目标",
+                "psub_par": "用标准杆步数或更少的步数到达目标",
+                "psub_daily": "用尽量少的步数到达目标",
+                "undo": "撤销",
+                "undo_hc": "撤销（还剩{n}次）",
+                "restart": "重新开始本关",
+                "giveup": "放弃",
+                "skipanim": "跳过动画",
+                "aria_diff": "难度",
+                "diff_lbl": "难度：",
+                "mode_lbl": "模式：",
+                "mainmenu": "主菜单",
+                "leaderboard": "排行榜",
+                "scores": "成绩",
+                "what": "这是什么？",
+                "settings": "设置",
+                "gotcha": "明白了",
+                "dlg_p": "每一关都是现场生成的，只给你需要的运算。标准杆是一个保证能通关的步数（挑战难度里往往还有更短的路线，所以你可以打破标准杆），超过了也能继续玩，只是每多一步就算超出标准杆一步。很多关卡不止一条路线。硬核模式（在设置里）下，每关只有 3 次撤销，不能重新开始，也不能超出标准杆。默认关卡只用整数，除法只有在结果是整数时才能用，所以灰掉的 ÷ 按钮就表示你的数除不尽。挑战难度会加入 |x|（绝对值）、√x、x³、取负和取模等额外运算，解法也五花八门。在设置里可以切换成小数（比如 +0.5，x⁻¹ 会把 4 变成 0.25）或分数（除法可以留下分数，x⁻¹ 会把 4 变成 1/4）。小数模式下还可以让目标也是小数。",
+                "scores_hint": "点一下成绩，就能再玩一次那一关",
+                "scores_none": "还没有成绩。解出一关，它就会出现在这里。",
+                "clear_scores": "清除成绩",
+                "tap_confirm": "再点一次确认",
+                "back": "返回",
+                "flip_b": "翻页牌",
+                "flip_d": "把你的数字和目标显示成翻页时钟的样子",
+                "anim_b": "动画",
+                "anim_d": "翻牌、球的飞行、数轴缩放和彩纸",
+                "adv_b": "高级动画",
+                "adv_d": "单独开关每一种动画",
+                "open": "打开",
+                "num_b": "数字类型",
+                "num_d": "使用整数、小数或分数。会开始新的一关",
+                "aria_numtype": "数字类型",
+                "n_whole": "整数",
+                "n_dec": "小数",
+                "n_frac": "分数",
+                "gdec_b": "小数目标",
+                "gdec_d": "仅小数模式：目标可以是像 3.5 这样的小数，不只是整数。会开始新的一关",
+                "gfrac_b": "分数目标",
+                "gfrac_d": "仅分数模式：目标可以是像 7/4 这样的分数，不只是整数。会开始新的一关",
+                "share_b": "复制链接",
+                "share_ok": "已复制",
+                "roots_b": "非平方数的平方根",
+                "roots_d": "允许对非平方数使用√，得到 √2 或 3√5 这样的根号。分数模式下始终允许。会开始新关卡",
+                "hc_b": "硬核模式",
+                "hc_d": "每关只能撤销 3 次，不能重新开始，也不能超出标准杆",
+                "theme_b": "浅色模式",
+                "theme_d": "从默认的深色外观切换成浅色",
+                "language": "语言",
+                "language_d": "选一种游戏说的语言",
+                "a_flip_b": "翻牌",
+                "a_flip_d": "数字像翻板显示屏一样翻动",
+                "a_ball_b": "球的飞行",
+                "a_ball_d": "球沿着数轴划出弧线，虚线轨迹紧随其后",
+                "a_zoom_b": "数轴缩放",
+                "a_zoom_d": "数轴会平滑地滑到新的刻度",
+                "a_conf_b": "彩纸",
+                "a_conf_d": "解出一关时，从洞里喷出一阵彩纸",
+                "a_slide_b": "面板滑动和摇摆",
+                "a_slide_d": "设置和成绩面板滑入时会倾斜摇摆，背景也跟着移动",
+                "a_theme_b": "主题渐变",
+                "a_theme_d": "颜色在深色和浅色之间渐变",
+                "a_ui_b": "按钮和菜单动效",
+                "a_ui_d": "按钮按下、悬停变化和页面淡入",
+                "aria_nl": "显示你的球、你的击球点和球洞的数轴",
+                "tee": "发球点",
+                "negate": "取负",
+                "why_div": "除不尽",
+                "why_undef": "无定义",
+                "why_sqrt": "不是平方数",
+                "why_whole": "仅限整数",
+                "why_big": "太大",
+                "why_root_add": "不能加到根号上",
+                "why_root_already": "已经是根号",
+                "why_neg": "负数",
+                "dlvl": "每日关卡 {d}",
+                "hc_no": "硬核模式下不可用",
+                "lose1": "步数用完了。撤销一步继续试，或者放弃吧。",
+                "lose2": "步数和撤销次数都用完了。放弃就能看到答案。",
+                "win_daily": "{m}解出。",
+                "back_cal": "回到日历",
+                "give_under": "这是一个低于标准杆的解法（{m}）。",
+                "give_par": "这是标准杆解法（{m}）。",
+                "next_level": "下一关",
+                "win": "{n} 步解出：{sc}。",
+                "sc_under": "低于标准杆 {n} 步",
+                "sc_par": "标准杆",
+                "sc_over": "超出标准杆 {n} 步",
+                "par_left": "标准杆 {p} · {m}",
+                "score_even": "已解出 {h} 关 · 总共平标准杆",
+                "score_over": "已解出 {h} 关 · 总共超出标准杆 {x} 步",
+                "sum_even": "已解出 {n} 关 · {a} 关打出标准杆 · 总共平标准杆",
+                "sum_over": "已解出 {n} 关 · {a} 关打出标准杆 · 总共超出标准杆 {x} 步",
+                "res_line": "{m} / 标准杆 {p}",
+                "play_again": "再玩这一关",
+                "guest_note": "正在以游客身份游玩：成绩保存在本设备上。到日历页面登录，就能把成绩加入排行榜。",
+                "saving": "保存中…",
+                "saved": "已保存。这一天你的最好成绩：{m}。重新开始，试试更少的步数吧。",
+                "saved_late": "那一天已经结束了，所以不会出现在当天的排行榜上。",
+                "enter_creds": "请输入用户名和密码",
+                "daily_err": "没能加载每日关卡（{e}）。请检查服务器是否在运行，以及脚本里的 API 地址是否正确。",
+                "net_msg": "无法连接到服务器。请检查网络连接，或稍后再试。",
+                "net_ok": "好的",
+                "ssub": "{date}，每日第 {n} 关",
+                "stats_err": "没能加载统计",
+                "loading": "加载中…",
+                "lb_none": "还没有成绩",
+                "lb_err": "没能加载排行榜"
+            }
+        };
         /* strings that depend on a number or a count */
         I18N.en.moves = o => o.n + ' ' + (o.n === 1 ? 'move' : 'moves');
         I18N.es.moves = o => o.n + ' ' + (o.n === 1 ? 'movimiento' : 'movimientos');
@@ -2684,7 +3708,8 @@
             ROOTS = false; NB = 100000; CAP = 1e9;
             L = { start: F(1), goal: F(10), ops: [mk('+3'), mk('×2')], limit: 3 }; cur = L.start; hist = []; undosUsed = 0; counted = false; render();
         }
-        function genLevel(tier) { ROOTS = !!settings.roots;
+        function genLevel(tier) {
+            ROOTS = !!settings.roots;
             NB = tier === 8 ? 3000 : 100000; CAP = tier === 8 ? 40000 : 1e9;
             const tp = tier === 8 ? ri(5, 7) : 0, mode = settings.num, gd = mode === 'dec' && !!settings.gdec, gf = mode === 'frac' && !!settings.gfrac, special = o => o.s === 'x⁻¹' || o.s.includes('.') || o.s.includes('/');
             for (let tries = 0; tries < 3000; tries++) {
@@ -2985,7 +4010,7 @@
         /* a link that opens exactly this level (same numbers, operations, par, number type and roots setting) on the custom level page */
         const SH_URL = 'https://gamedevrg.github.io/gamedevrg.com/mathgolf/custom/?level=', SH_OPC = { '+': 'p', '−': 'm', '×': 'x', '÷': 'd' }, SH_FIX = { 'x²': 'sq', '|x|': 'ab', '−x': 'ng', 'x³': 'cu', '√x': 'rt', 'x⁻¹': 'iv' }, SH_MC = { whole: 'w', dec: 'd', frac: 'f' };
         function levelLink() {
-            const opEnc = s => SH_FIX[s] || (s.startsWith('mod ') ? 'o' + s.slice(4) : SH_OPC[s[0]] + s.slice(1)), num = x => fmt(x).replace('−', '-');
+            const opEnc = s => SH_FIX[s] || (s.startsWith('mod ') ? 'o' + s.slice(4) : SH_OPC[s[0]] + s.slice(1).replace('−', '-')), num = x => fmt(x).replace('−', '-');
             const parts = [num(L.start), num(L.goal), Math.max(1, Math.min(99, L.limit)), SH_MC[settings.num], L.ops.map(o => opEnc(o.s)).join(',')];
             if (ROOTS && settings.num !== 'frac') parts.push('r');
             return SH_URL + btoa(parts.join(';')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -3051,10 +4076,12 @@
                 movers(ins).forEach(e => { e.style.animation = 'none'; swayAnim(e, swayKF(d, -100 * d, 0, true), 1200, 'linear'); });
                 bgBase = v === 'menu' ? 0 : (v === 'stats' ? 1 : -1) * Math.round(innerWidth * .3); parallax(bgBase);
                 let cleaned = false;
-                const cleanOuts = () => { if (cleaned) return; cleaned = true; outs.forEach(e => {
-                    e.getAnimations().forEach(a => a.cancel()); e.hidden = true;
-                    const st = e.style; st.position = st.left = st.top = st.width = st.margin = '';
-                }); };
+                const cleanOuts = () => {
+                    if (cleaned) return; cleaned = true; outs.forEach(e => {
+                        e.getAnimations().forEach(a => a.cancel()); e.hidden = true;
+                        const st = e.style; st.position = st.left = st.top = st.width = st.margin = '';
+                    });
+                };
                 Promise.allSettled(outAnims.map(a => a.finished)).then(cleanOuts); /* hide the old page the moment its slide ends, in the same frame */
                 transEnd = () => { clearTimeout(outTimer); clearTimeout(inTimer); cleanOuts(); ins.forEach(e => e.getAnimations().forEach(a => a.cancel())); transEnd = null; };
                 outTimer = setTimeout(cleanOuts, SW_DUR + 500); /* only a fallback */
@@ -3258,15 +4285,15 @@
             playToday();
         })();
     </script>
-<script>
-/* parallax: the grid scrolls at half speed (shifted down by the other half), unless motion is reduced or animations are off */
-(() => {
-    const r = document.documentElement, b = document.body, F = .5; let q = 0;
-    if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-    const u = () => { q = 0; b.style.backgroundPositionY = (r.classList.contains('noanim') ? 0 : window.scrollY * (1 - F)) + 'px'; };
-    addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(u); }, { passive: true });
-})();
-</script>
+    <script>
+        /* parallax: the grid scrolls at half speed (shifted down by the other half), unless motion is reduced or animations are off */
+        (() => {
+            const r = document.documentElement, b = document.body, F = .5; let q = 0;
+            if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+            const u = () => { q = 0; b.style.backgroundPositionY = (r.classList.contains('noanim') ? 0 : window.scrollY * (1 - F)) + 'px'; };
+            addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(u); }, { passive: true });
+        })();
+    </script>
 </body>
 
 </html>

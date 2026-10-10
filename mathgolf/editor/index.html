@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>level editor · hole in √-1</title>
-<link
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>level editor · hole in √-1</title>
+    <link
         href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Chakra+Petch:ital,wght@0,400;0,500;0,700;1,400&family=Dela+Gothic+One&family=Noto+Sans+JP:wght@400;500;700&display=swap"
         rel="stylesheet">
-<style>
+    <style>
         :root {
             --bg: #10162a;
             --grid: #1c2542;
@@ -29,7 +30,8 @@
             padding-top: env(safe-area-inset-top, 0px);
             padding-bottom: env(safe-area-inset-bottom, 0px)
         }
-:root[data-theme="light"] {
+
+        :root[data-theme="light"] {
             --bg: #eef1f6;
             --grid: #d5dbe8;
             --ink: #14213d;
@@ -47,118 +49,1256 @@
             --yellow: #b7791f;
             --gold: #e0a526
         }
-body { margin: 0; min-height: 100dvh; background-color: var(--bg); background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 28px 28px; color: var(--ink); font-family: 'Bricolage Grotesque', system-ui, sans-serif; text-align: center; text-transform: lowercase; overflow-x: hidden }
-* { box-sizing: border-box }
-.pg { width: 100%; max-width: 520px; margin: 0 auto; padding: 6vh 16px calc(40px + env(safe-area-inset-bottom, 0px)) }
-header { margin-bottom: 18px }
-h1 { margin: 0; font-size: 2rem; font-weight: 800; letter-spacing: -.02em }
-h1 .rad { position: relative; display: inline-block; padding-left: .5em; color: var(--imag); white-space: nowrap; line-height: 1; vertical-align: baseline }
-h1 .rad svg { position: absolute; left: 0; top: 0; width: .5em; height: 100%; overflow: visible; display: block }
-h1 .vin { position: relative; display: inline-block; line-height: .95; padding: .2em 3px 0 1px; margin-left: -1px }
-h1 .vin::before { content: ""; position: absolute; left: -1px; right: 0; top: -1.5px; height: 3px; background: currentColor }
-.sub { color: var(--soft); margin: 4px 0 0; font-size: .95rem }
-html { scroll-padding-top: 220px }
-.board { position: sticky; top: 0; z-index: 20; background: var(--card); border: 2px solid var(--ink); padding: 12px 16px 14px; box-shadow: 6px 6px 0 var(--ink); margin-bottom: 22px }
-@media (max-height: 560px) { .board { position: static } html { scroll-padding-top: 0 } }
-.prow { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: 12px; text-align: center }
-.prow .arrow { margin-top: 1.3rem; padding: 0 6px; line-height: 1 }
-.lbl { font-size: .85rem; color: var(--soft) }
-.arrow { font-size: 2rem; color: var(--soft) }
-.srow { display: flex; align-items: center; gap: 12px; margin-top: 10px }
-.board > .srow { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); align-items: center }
-.stat { flex: 1 1 0; min-width: 0; text-align: left } .stat .linkbtn:not([hidden]) { display: block; margin-top: 2px; padding: 4px 0; font-size: .82rem }
-#rtbox { margin-top: 8px }
-.srow a.btn { flex: 0 0 auto; padding: 8px 14px }
-#status { margin: 0; flex: 0 0 auto; min-width: 0; font-size: .9rem; line-height: 1.25; text-align: left; font-weight: 700; color: var(--imag) } #status.ok { color: var(--ok) }
-#chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 2px 0 12px; min-height: 2.2rem; align-items: stretch }
-#chips:empty::before { content: "no operations yet. type one below to add it"; color: var(--soft); font-size: .9rem }
-.opb { display: inline-flex; align-items: center; padding: 8px 18px; font-family: inherit; color: var(--ink); text-transform: none; cursor: pointer; font-weight: 800; font-size: 1.2rem; line-height: 1.1; border: 2px solid var(--blue); background: var(--bg); box-shadow: 0 3px 0 var(--blue) }
-.opb:active, .opb:focus-visible { border-color: var(--imag); box-shadow: 0 3px 0 var(--imag); color: var(--imag); outline: none }
-@media (hover: hover) { .opb:hover { border-color: var(--imag); box-shadow: 0 3px 0 var(--imag); color: var(--imag) } }
-.opb.pv, .opb.pv:hover, .opb.pv:active { cursor: default; border-color: var(--blue); box-shadow: 0 3px 0 var(--blue); color: var(--ink) }
-.opb.bad { border-color: var(--imag); box-shadow: 0 3px 0 var(--imag); color: var(--imag) }
-.dgroups { display: flex; flex-direction: column; gap: 14px }
-.dgroup { background: var(--card); border: 2px solid var(--line); padding: 16px }
-.dgroup h3 { margin: 0 0 10px; font-size: 1.25rem; font-weight: 800; display: flex; align-items: baseline; justify-content: center; gap: 8px } .dgroup h3 small { color: var(--soft); font-weight: 500; font-size: .85rem }
-.dgroup label { display: block; font-size: .85rem; color: var(--soft); margin-bottom: 4px }
-.rtopt { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 12px; padding: 10px 12px; border: 1px solid var(--line); background: var(--bg); text-align: left }
-.rtopt b { display: block; font-size: .98rem } .rtopt small { display: block; margin-top: 2px; color: var(--soft); font-size: .82rem; font-weight: 500; line-height: 1.3 }
-.rtopt.off { opacity: .5 }
-.sw { flex: 0 0 auto; position: relative; width: 56px; height: 30px; border: 2px solid var(--line); background: var(--bg); cursor: pointer; padding: 0 } .sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: var(--soft); transition: left .2s } .sw[aria-checked="true"] { border-color: var(--imag) } .sw[aria-checked="true"]::after { left: 29px; background: var(--imag) } .sw:disabled { cursor: not-allowed } .sw:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px }
-.seg { display: flex } .seg button { flex: 1 1 0; min-height: 42px; padding: 6px 8px; font-family: inherit; font-weight: 700; font-size: .95rem; border: 1px solid var(--line); margin-left: -1px; background: var(--bg); color: var(--soft); cursor: pointer; text-transform: lowercase }
-.seg button:first-child { margin-left: 0 } .seg button[aria-checked="true"] { border-color: var(--imag); color: var(--imag); position: relative; z-index: 1 }
-.sg { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: end; margin-top: 14px }
-#swap { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; font-family: inherit; font-size: 1.2rem; font-weight: 700; border: 2px solid var(--line); background: var(--bg); color: var(--soft); cursor: pointer }
-input { width: 100%; min-width: 0; font-family: inherit; font-size: 1.1rem; font-weight: 700; text-align: center; padding: 9px 10px; border: 2px solid var(--line); border-radius: 0; background: var(--bg); color: var(--ink); text-transform: none; -webkit-appearance: none; appearance: none }
-input.bad { border-color: var(--imag) } input.need { border-color: var(--imag) } input:disabled { opacity: .5 }
-.numrow { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px }
-.dgroup .numrow label { margin: 0 }
-.addrow { display: flex; gap: 6px; align-items: stretch } .addrow .addbtn { align-self: stretch; box-sizing: border-box }
-input::placeholder { color: var(--soft); opacity: .7; font-weight: 600 }
-.addrow input { flex: 1 1 auto; min-width: 0; text-align: left; padding-left: 12px; padding-right: 6px }
-.addbtn { flex: 0 0 auto; min-width: 68px; min-height: 44px; padding: 8px 16px; font-family: inherit; font-size: 1rem; font-weight: 700; text-transform: lowercase; border: 2px solid var(--blue); background: var(--bg); color: var(--ink); box-shadow: 0 3px 0 var(--blue); transform: translateY(-2px); cursor: pointer; transition: transform .1s, box-shadow .1s, opacity .1s }
-#rndop { min-width: 44px; padding: 8px 8px; display: inline-flex; align-items: center; justify-content: center }
-.addbtn:active:not(:disabled) { transform: none; box-shadow: 0 1px 0 var(--blue) } /* pushed in = flush with the input; raised = lifted 2px above it */
-.addbtn:disabled { transform: none; box-shadow: 0 1px 0 var(--blue); opacity: .4; color: var(--soft); cursor: not-allowed }
-.synrow { display: grid; grid-template-columns: 76px 1fr; gap: 10px; align-items: center; width: 100%; padding: 6px 4px; border: 0; border-bottom: 1px solid var(--line); background: none; font-family: inherit; text-align: left; color: var(--ink); cursor: pointer }
-.synrow:last-of-type { border-bottom: 0 }
-.synrow .opb { justify-content: center; padding: 4px 8px; font-size: 1rem; pointer-events: none; border-color: var(--blue); box-shadow: 0 3px 0 var(--blue); color: var(--ink) }
-.synrow span.t { font-size: .9rem; color: var(--soft); line-height: 1.35 } .synrow:hover span.t { color: var(--ink) }
-#syn { margin-top: 6px; padding: 8px 12px 10px; border: 2px solid var(--line); background: var(--bg) }
-#syn p { margin: 8px 0 0; font-size: .85rem; color: var(--soft); line-height: 1.4 }
-.prevrow { display: flex; align-items: center; justify-content: center; min-height: 3.4rem; margin-top: 12px }
-.prevrow:empty::before { content: "preview"; color: var(--soft); font-size: .85rem; opacity: .6 }
-.opb .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .7em; line-height: 1.15; margin-left: .12em } .opb .fr > span { padding: 0 .2em } .opb .fr > span:first-child { border-bottom: 2px solid currentColor }
-.opb.pv { padding: 8px 18px } .opb.pv.bad, .opb.pv.bad:hover, .opb.pv.bad:active { border-color: var(--imag); box-shadow: 0 3px 0 var(--imag); color: var(--imag) } /* a preview that can't be added yet */ .opb.pv.dup { opacity: .45 }
-.pad { display: grid; grid-template-columns: repeat(auto-fit, minmax(74px, 1fr)); gap: 8px }
-#fixed { grid-template-columns: repeat(auto-fit, minmax(62px, 1fr)); margin-top: 6px }
-.pad button { min-height: 44px; padding: 8px 4px; font-family: inherit; font-size: 1rem; font-weight: 700; white-space: nowrap; text-transform: none; border: 2px solid var(--blue); background: var(--bg); color: var(--ink); box-shadow: 0 3px 0 var(--blue); cursor: pointer }
-.pad button:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--blue) }
-.pad button:disabled { opacity: .35; cursor: not-allowed; box-shadow: none }
-.pad button[aria-pressed="true"] { background: var(--blue); color: var(--bg) }
-.hint { margin: 10px 0 12px; min-height: 1.3em; font-size: .85rem; color: var(--soft) } .hint.err { color: var(--imag) } .hint.need { color: var(--imag) }
-.stepper { display: flex; align-items: center; justify-content: center; gap: 18px }
-.stepper button { width: 48px; height: 48px; padding: 0; font-family: inherit; font-size: 1.5rem; font-weight: 700; border: 2px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer }
-.stepper button:disabled { opacity: .35; cursor: not-allowed }
-.stepper.sm { gap: 10px }
-.stepper.sm button { width: 40px; height: 40px; font-size: 1.3rem }
-.stepper .num { --ns: 2.2rem; min-width: 1.9em }
-.stepper.sm .num { --ns: 1.7rem }
-.tools { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 12px }
-.tools button, a.btn { min-height: 44px; padding: 10px 18px; font-family: inherit; font-size: 1rem; font-weight: 700; border: 2px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; text-decoration: none; text-transform: lowercase; display: inline-flex; align-items: center; justify-content: center }
-.tools button:disabled { opacity: .4; cursor: not-allowed }
-a.btn.go { gap: 8px; position: relative; border-color: var(--c); color: var(--c); background: var(--bg); box-shadow: 0 3px 0 var(--c) } a.btn.go:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--c) }
-a.btn.go.ok { --c: var(--blue) }
-a.btn.go.warn { --c: var(--yellow) }
-a.btn.go.off { --c: var(--red); opacity: .45; filter: grayscale(.6); pointer-events: none; box-shadow: none; transform: none }
-a.btn.go[data-tip]::after { content: attr(data-tip); position: absolute; right: 0; top: calc(100% + 12px); white-space: nowrap; padding: 5px 10px; border: 2px solid var(--ink); border-radius: 0; background: var(--card); color: var(--ink); font-size: .85rem; font-weight: 700; z-index: 30; opacity: 0; pointer-events: none; transition: opacity .12s }
-a.btn.go[data-tip]::before { content: ""; position: absolute; right: 18px; top: calc(100% + 8px); width: 10px; height: 10px; border-top: 2px solid var(--ink); border-left: 2px solid var(--ink); background: var(--card); transform: rotate(45deg); z-index: 31; opacity: 0; pointer-events: none; transition: opacity .12s }
-a.btn.go[data-tip]:hover::after, a.btn.go[data-tip]:hover::before, a.btn.go[data-tip]:focus-visible::after, a.btn.go[data-tip]:focus-visible::before { opacity: 1 }
-#sollist { margin-top: 10px; text-align: left; max-height: 420px; overflow-y: auto; overscroll-behavior: contain }
-#sollist:empty { display: none }
-#sollist h4 { margin: 14px 0 8px; font-size: .95rem; font-weight: 800; color: var(--soft) } #sollist h4:first-child { margin-top: 0 }
-#sollist ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px }
-#rtbox { margin-top: 6px; text-align: left } #rtbox .route { background: var(--card) } #rtbox .solnote { margin: 6px 0 0 }
-.route { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; padding: 8px 10px; background: var(--bg); border: 1px solid var(--line); font-weight: 800 }
-.route .o { padding: 1px 7px; border: 1px solid var(--blue); font-size: .85rem; color: var(--blue) }
-.route .v.lt { color: var(--blue) }
-.route .v.eq { color: var(--ink) }
-.route .v.gt { color: var(--red) }
-.solnote { margin: 10px 0 0; font-size: .85rem; color: var(--soft) }
-.linkbtn { font-family: inherit; font-size: .85rem; font-weight: 500; color: var(--soft); background: none; border: 0; text-decoration: underline; text-transform: lowercase; cursor: pointer; padding: 6px 8px }
-.linkbtn[hidden] { display: none }
-.center { text-align: center; margin: -6px 0 8px }
-button:focus-visible, a.btn:focus-visible, input:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px }
-#toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); max-width: calc(100% - 32px); padding: 8px 16px; background: var(--card); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-weight: 700; z-index: 50; opacity: 0; pointer-events: none; transition: opacity .15s }
-#toast.show { opacity: 1 }
-#impdlg { width: min(92vw, 420px); max-width: 420px; padding: 20px 18px 18px; border: 2px solid var(--ink); background: var(--card); color: var(--ink); box-shadow: 4px 4px 0 var(--ink); text-align: center; text-transform: lowercase; font-family: inherit }
-#impdlg::backdrop { background: rgba(5, 7, 15, .6) }
-#impdlg h3 { margin: 0 0 6px; font-size: 1.15rem; font-weight: 800 }
-#impdlg p.hint { margin: 6px 0 4px; min-height: 2.6em }
-#impdlg .tools { margin-top: 8px }
-#impdlg .tools button.go { border-color: var(--blue); box-shadow: 0 3px 0 var(--blue) }
-#impdlg .tools button.go:disabled { box-shadow: none }
-@media (prefers-reduced-motion: no-preference) { .dgroup, .board { animation: rise .45s cubic-bezier(.2, .8, .2, 1) backwards } .dgroup:nth-child(2) { animation-delay: .06s } .dgroup:nth-child(3) { animation-delay: .12s } .dgroup:nth-child(4) { animation-delay: .18s } @keyframes rise { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: none } } }
+
+        body {
+            margin: 0;
+            min-height: 100dvh;
+            background-color: var(--bg);
+            background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 28px 28px;
+            color: var(--ink);
+            font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+            text-align: center;
+            text-transform: lowercase;
+            overflow-x: hidden
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        .pg {
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 6vh 16px calc(40px + env(safe-area-inset-bottom, 0px))
+        }
+
+        header {
+            margin-bottom: 18px
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -.02em
+        }
+
+        h1 .rad {
+            position: relative;
+            display: inline-block;
+            padding-left: .5em;
+            color: var(--imag);
+            white-space: nowrap;
+            line-height: 1;
+            vertical-align: baseline
+        }
+
+        h1 .rad svg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: .5em;
+            height: 100%;
+            overflow: visible;
+            display: block
+        }
+
+        h1 .vin {
+            position: relative;
+            display: inline-block;
+            line-height: .95;
+            padding: .2em 3px 0 1px;
+            margin-left: -1px
+        }
+
+        h1 .vin::before {
+            content: "";
+            position: absolute;
+            left: -1px;
+            right: 0;
+            top: -1.5px;
+            height: 3px;
+            background: currentColor
+        }
+
+        .sub {
+            color: var(--soft);
+            margin: 4px 0 0;
+            font-size: .95rem
+        }
+
+        html {
+            scroll-padding-top: 258px
+        }
+
+        .board {
+            position: sticky;
+            top: calc(38px + env(safe-area-inset-top, 0px));
+            z-index: 20;
+            background: var(--card);
+            border: 2px solid var(--ink);
+            padding: 12px 16px 14px;
+            box-shadow: 6px 6px 0 var(--ink);
+            margin-bottom: 22px
+        }
+
+        @media (max-height: 560px) {
+            .board {
+                position: static
+            }
+
+            html {
+                scroll-padding-top: 0
+            }
+        }
+
+        .prow {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            column-gap: 12px;
+            text-align: center
+        }
+
+        .prow .arrow {
+            margin-top: 1.3rem;
+            padding: 0 6px;
+            line-height: 1
+        }
+
+        .lbl {
+            font-size: .85rem;
+            color: var(--soft)
+        }
+
+        .arrow {
+            font-size: 2rem;
+            color: var(--soft)
+        }
+
+        .srow {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 10px
+        }
+
+        .board>.srow {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid var(--line);
+            align-items: center
+        }
+
+        .stat {
+            flex: 1 1 0;
+            min-width: 0;
+            text-align: left
+        }
+
+        .stat .linkbtn:not([hidden]) {
+            display: block;
+            margin-top: 2px;
+            padding: 4px 0;
+            font-size: .82rem
+        }
+
+        #rtbox {
+            margin-top: 8px
+        }
+
+        .srow a.btn {
+            flex: 0 0 auto;
+            padding: 8px 14px
+        }
+
+        #status {
+            margin: 0;
+            flex: 0 0 auto;
+            min-width: 0;
+            font-size: .9rem;
+            line-height: 1.25;
+            text-align: left;
+            font-weight: 700;
+            color: var(--imag)
+        }
+
+        #status.ok {
+            color: var(--ok)
+        }
+
+        #chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 2px 0 12px;
+            min-height: 2.2rem;
+            align-items: stretch
+        }
+
+        #chips:empty::before {
+            content: "no operations yet. type one below to add it";
+            color: var(--soft);
+            font-size: .9rem
+        }
+
+        .opb {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 18px;
+            font-family: inherit;
+            color: var(--ink);
+            text-transform: none;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 1.2rem;
+            line-height: 1.1;
+            border: 2px solid var(--blue);
+            background: var(--bg);
+            box-shadow: 0 3px 0 var(--blue)
+        }
+
+        .opb:active,
+        .opb:focus-visible {
+            border-color: var(--imag);
+            box-shadow: 0 3px 0 var(--imag);
+            color: var(--imag);
+            outline: none
+        }
+
+        @media (hover: hover) {
+            .opb:hover {
+                border-color: var(--imag);
+                box-shadow: 0 3px 0 var(--imag);
+                color: var(--imag)
+            }
+        }
+
+        .opb.pv,
+        .opb.pv:hover,
+        .opb.pv:active {
+            cursor: default;
+            border-color: var(--blue);
+            box-shadow: 0 3px 0 var(--blue);
+            color: var(--ink)
+        }
+
+        .opb.bad {
+            border-color: var(--imag);
+            box-shadow: 0 3px 0 var(--imag);
+            color: var(--imag)
+        }
+
+        .dgroups {
+            display: flex;
+            flex-direction: column;
+            gap: 14px
+        }
+
+        .dgroup {
+            background: var(--card);
+            border: 2px solid var(--line);
+            padding: 16px
+        }
+
+        .dgroup h3 {
+            margin: 0 0 10px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 8px
+        }
+
+        .dgroup h3 small {
+            color: var(--soft);
+            font-weight: 500;
+            font-size: .85rem
+        }
+
+        .dgroup label {
+            display: block;
+            font-size: .85rem;
+            color: var(--soft);
+            margin-bottom: 4px
+        }
+
+        .rtopt {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-top: 12px;
+            padding: 10px 12px;
+            border: 1px solid var(--line);
+            background: var(--bg);
+            text-align: left
+        }
+
+        .rtopt b {
+            display: block;
+            font-size: .98rem
+        }
+
+        .rtopt small {
+            display: block;
+            margin-top: 2px;
+            color: var(--soft);
+            font-size: .82rem;
+            font-weight: 500;
+            line-height: 1.3
+        }
+
+        .rtopt.off {
+            opacity: .5
+        }
+
+        #diffseg {
+            margin-top: 2px
+        }
+
+        #diffseg button {
+            flex: 1 1 auto;
+            padding: 6px 4px;
+            font-size: .88rem;
+            min-width: 0
+        }
+
+        @media (max-width: 390px) {
+            #diffseg button {
+                font-size: .78rem
+            }
+        }
+
+        @media (max-width: 340px) {
+            #diffseg button {
+                font-size: .7rem;
+                padding: 6px 1px
+            }
+        }
+
+        #diffseg button[data-d="0"][aria-checked="true"] {
+            border-color: var(--soft);
+            color: var(--ink)
+        }
+
+        #diffseg button[data-d="2"][aria-checked="true"] {
+            border-color: var(--ok);
+            color: var(--ok)
+        }
+
+        #diffseg button[data-d="4"][aria-checked="true"] {
+            border-color: var(--yellow);
+            color: var(--yellow)
+        }
+
+        #diffseg button[data-d="8"][aria-checked="true"] {
+            border-color: var(--blue);
+            color: var(--blue)
+        }
+
+        .dgroup .fld+label {
+            margin-top: 12px
+        }
+
+        .sw {
+            flex: 0 0 auto;
+            position: relative;
+            width: 56px;
+            height: 30px;
+            border: 2px solid var(--line);
+            background: var(--bg);
+            cursor: pointer;
+            padding: 0
+        }
+
+        .sw::after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: var(--soft);
+            transition: left .2s
+        }
+
+        .sw[aria-checked="true"] {
+            border-color: var(--imag)
+        }
+
+        .sw[aria-checked="true"]::after {
+            left: 29px;
+            background: var(--imag)
+        }
+
+        .sw:disabled {
+            cursor: not-allowed
+        }
+
+        .sw:focus-visible {
+            outline: 3px solid var(--ink);
+            outline-offset: 2px
+        }
+
+        .seg {
+            display: flex
+        }
+
+        .seg button {
+            flex: 1 1 0;
+            min-height: 42px;
+            padding: 6px 8px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: .95rem;
+            border: 1px solid var(--line);
+            margin-left: -1px;
+            background: var(--bg);
+            color: var(--soft);
+            cursor: pointer;
+            text-transform: lowercase
+        }
+
+        .seg button:first-child {
+            margin-left: 0
+        }
+
+        .seg button[aria-checked="true"] {
+            border-color: var(--imag);
+            color: var(--imag);
+            position: relative;
+            z-index: 1
+        }
+
+        .sg {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 8px;
+            align-items: end;
+            margin-top: 14px
+        }
+
+        #swap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            font-family: inherit;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: 2px solid var(--line);
+            background: var(--bg);
+            color: var(--soft);
+            cursor: pointer
+        }
+
+        input {
+            width: 100%;
+            min-width: 0;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-align: center;
+            padding: 9px 10px;
+            border: 2px solid var(--line);
+            border-radius: 0;
+            background: var(--bg);
+            color: var(--ink);
+            text-transform: none;
+            -webkit-appearance: none;
+            appearance: none
+        }
+
+        input.bad {
+            border-color: var(--imag)
+        }
+
+        input.need {
+            border-color: var(--imag)
+        }
+
+        input:disabled {
+            opacity: .5
+        }
+
+        .numrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 12px
+        }
+
+        .dgroup .numrow label {
+            margin: 0
+        }
+
+        .addrow {
+            display: flex;
+            gap: 6px;
+            align-items: stretch
+        }
+
+        .addrow .addbtn {
+            align-self: stretch;
+            box-sizing: border-box
+        }
+
+        input::placeholder {
+            color: var(--soft);
+            opacity: .7;
+            font-weight: 600
+        }
+
+        .addrow input {
+            flex: 1 1 auto;
+            min-width: 0;
+            text-align: left;
+            padding-left: 12px;
+            padding-right: 6px
+        }
+
+        .addbtn {
+            flex: 0 0 auto;
+            min-width: 68px;
+            min-height: 44px;
+            padding: 8px 16px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: lowercase;
+            border: 2px solid var(--blue);
+            background: var(--bg);
+            color: var(--ink);
+            box-shadow: 0 3px 0 var(--blue);
+            transform: translateY(-2px);
+            cursor: pointer;
+            transition: transform .1s, box-shadow .1s, opacity .1s
+        }
+
+        #rndop {
+            min-width: 44px;
+            padding: 8px 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .addbtn:active:not(:disabled) {
+            transform: none;
+            box-shadow: 0 1px 0 var(--blue)
+        }
+
+        /* pushed in = flush with the input; raised = lifted 2px above it */
+        .addbtn:disabled {
+            transform: none;
+            box-shadow: 0 1px 0 var(--blue);
+            opacity: .4;
+            color: var(--soft);
+            cursor: not-allowed
+        }
+
+        .synrow {
+            display: grid;
+            grid-template-columns: 76px 1fr;
+            gap: 10px;
+            align-items: center;
+            width: 100%;
+            padding: 6px 4px;
+            border: 0;
+            border-bottom: 1px solid var(--line);
+            background: none;
+            font-family: inherit;
+            text-align: left;
+            color: var(--ink);
+            cursor: pointer
+        }
+
+        .synrow:last-of-type {
+            border-bottom: 0
+        }
+
+        .synrow .opb {
+            justify-content: center;
+            padding: 4px 8px;
+            font-size: 1rem;
+            pointer-events: none;
+            border-color: var(--blue);
+            box-shadow: 0 3px 0 var(--blue);
+            color: var(--ink)
+        }
+
+        .synrow span.t {
+            font-size: .9rem;
+            color: var(--soft);
+            line-height: 1.35
+        }
+
+        .synrow:hover span.t {
+            color: var(--ink)
+        }
+
+        #syn {
+            margin-top: 6px;
+            padding: 8px 12px 10px;
+            border: 2px solid var(--line);
+            background: var(--bg)
+        }
+
+        #syn p {
+            margin: 8px 0 0;
+            font-size: .85rem;
+            color: var(--soft);
+            line-height: 1.4
+        }
+
+        .prevrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 3.4rem;
+            margin-top: 12px
+        }
+
+        .prevrow:empty::before {
+            content: "preview";
+            color: var(--soft);
+            font-size: .85rem;
+            opacity: .6
+        }
+
+        .opb .fr {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            text-align: center;
+            font-size: .7em;
+            line-height: 1.15;
+            margin-left: .12em
+        }
+
+        .opb .fr>span {
+            padding: 0 .2em
+        }
+
+        .opb .fr>span:first-child {
+            border-bottom: 2px solid currentColor
+        }
+
+        .opb.pv {
+            padding: 8px 18px
+        }
+
+        .opb.pv.bad,
+        .opb.pv.bad:hover,
+        .opb.pv.bad:active {
+            border-color: var(--imag);
+            box-shadow: 0 3px 0 var(--imag);
+            color: var(--imag)
+        }
+
+        /* a preview that can't be added yet */
+        .opb.pv.dup {
+            opacity: .45
+        }
+
+        .pad {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(74px, 1fr));
+            gap: 8px
+        }
+
+        #fixed {
+            grid-template-columns: repeat(auto-fit, minmax(62px, 1fr));
+            margin-top: 6px
+        }
+
+        .pad button {
+            min-height: 44px;
+            padding: 8px 4px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            white-space: nowrap;
+            text-transform: none;
+            border: 2px solid var(--blue);
+            background: var(--bg);
+            color: var(--ink);
+            box-shadow: 0 3px 0 var(--blue);
+            cursor: pointer
+        }
+
+        .pad button:active:not(:disabled) {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 var(--blue)
+        }
+
+        .pad button:disabled {
+            opacity: .35;
+            cursor: not-allowed;
+            box-shadow: none
+        }
+
+        .pad button[aria-pressed="true"] {
+            background: var(--blue);
+            color: var(--bg)
+        }
+
+        .hint {
+            margin: 10px 0 12px;
+            min-height: 1.3em;
+            font-size: .85rem;
+            color: var(--soft)
+        }
+
+        .hint.err {
+            color: var(--imag)
+        }
+
+        .hint.need {
+            color: var(--imag)
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px
+        }
+
+        .stepper button {
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            font-family: inherit;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border: 2px solid var(--line);
+            background: var(--bg);
+            color: var(--ink);
+            cursor: pointer
+        }
+
+        .stepper button:disabled {
+            opacity: .35;
+            cursor: not-allowed
+        }
+
+        .stepper.sm {
+            gap: 10px
+        }
+
+        .stepper.sm button {
+            width: 40px;
+            height: 40px;
+            font-size: 1.3rem
+        }
+
+        .stepper .num {
+            --ns: 2.2rem;
+            min-width: 1.9em
+        }
+
+        .stepper.sm .num {
+            --ns: 1.7rem
+        }
+
+        .tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 12px
+        }
+
+        .tools button,
+        a.btn {
+            min-height: 44px;
+            padding: 10px 18px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            border: 2px solid var(--line);
+            background: var(--card);
+            color: var(--ink);
+            cursor: pointer;
+            text-decoration: none;
+            text-transform: lowercase;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .tools button:disabled {
+            opacity: .4;
+            cursor: not-allowed
+        }
+
+        a.btn.go {
+            gap: 8px;
+            position: relative;
+            border-color: var(--c);
+            color: var(--c);
+            background: var(--bg);
+            box-shadow: 0 3px 0 var(--c)
+        }
+
+        a.btn.go:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 var(--c)
+        }
+
+        a.btn.go.ok {
+            --c: var(--blue)
+        }
+
+        a.btn.go.warn {
+            --c: var(--yellow)
+        }
+
+        a.btn.go.off {
+            --c: var(--red);
+            opacity: .45;
+            filter: grayscale(.6);
+            pointer-events: none;
+            box-shadow: none;
+            transform: none
+        }
+
+        a.btn.go[data-tip]::after {
+            content: attr(data-tip);
+            position: absolute;
+            right: 0;
+            top: calc(100% + 12px);
+            white-space: nowrap;
+            padding: 5px 10px;
+            border: 2px solid var(--ink);
+            border-radius: 0;
+            background: var(--card);
+            color: var(--ink);
+            font-size: .85rem;
+            font-weight: 700;
+            z-index: 30;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .12s
+        }
+
+        a.btn.go[data-tip]::before {
+            content: "";
+            position: absolute;
+            right: 18px;
+            top: calc(100% + 8px);
+            width: 10px;
+            height: 10px;
+            border-top: 2px solid var(--ink);
+            border-left: 2px solid var(--ink);
+            background: var(--card);
+            transform: rotate(45deg);
+            z-index: 31;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .12s
+        }
+
+        a.btn.go[data-tip]:hover::after,
+        a.btn.go[data-tip]:hover::before,
+        a.btn.go[data-tip]:focus-visible::after,
+        a.btn.go[data-tip]:focus-visible::before {
+            opacity: 1
+        }
+
+        #sollist {
+            margin-top: 10px;
+            text-align: left;
+            max-height: 420px;
+            overflow-y: auto;
+            overscroll-behavior: contain
+        }
+
+        #sollist:empty {
+            display: none
+        }
+
+        #sollist h4 {
+            margin: 14px 0 8px;
+            font-size: .95rem;
+            font-weight: 800;
+            color: var(--soft)
+        }
+
+        #sollist h4:first-child {
+            margin-top: 0
+        }
+
+        #sollist ol {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px
+        }
+
+        #rtbox {
+            margin-top: 6px;
+            text-align: left
+        }
+
+        #rtbox .route {
+            background: var(--card)
+        }
+
+        #rtbox .solnote {
+            margin: 6px 0 0
+        }
+
+        .route {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 4px 8px;
+            padding: 8px 10px;
+            background: var(--bg);
+            border: 1px solid var(--line);
+            font-weight: 800
+        }
+
+        .route .o {
+            padding: 1px 7px;
+            border: 1px solid var(--blue);
+            font-size: .85rem;
+            color: var(--blue)
+        }
+
+        .route .v.lt {
+            color: var(--blue)
+        }
+
+        .route .v.eq {
+            color: var(--ink)
+        }
+
+        .route .v.gt {
+            color: var(--red)
+        }
+
+        .solnote {
+            margin: 10px 0 0;
+            font-size: .85rem;
+            color: var(--soft)
+        }
+
+        .linkbtn {
+            font-family: inherit;
+            font-size: .85rem;
+            font-weight: 500;
+            color: var(--soft);
+            background: none;
+            border: 0;
+            text-decoration: underline;
+            text-transform: lowercase;
+            cursor: pointer;
+            padding: 6px 8px
+        }
+
+        .linkbtn[hidden] {
+            display: none
+        }
+
+        /* site top bar (same as the other pages) */
+        #topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 40;
+            height: calc(38px + env(safe-area-inset-top, 0px));
+            padding: env(safe-area-inset-top, 0px) 12px 0;
+            background: #000;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Chakra Petch', system-ui, sans-serif;
+            text-align: left;
+            text-transform: lowercase;
+            white-space: nowrap
+        }
+
+        body {
+            padding-top: 38px
+        }
+
+        #topbar .logo {
+            flex: 0 0 auto;
+            margin-right: 10px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 17px;
+            letter-spacing: -.01em;
+            text-decoration: none;
+            line-height: 1
+        }
+
+        #topbar .logo small {
+            font-size: .62em;
+            font-weight: 500;
+            color: #cfcfcf;
+            letter-spacing: 0
+        }
+
+        #topbar .tbtn {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: auto;
+            height: 26px;
+            padding: 0 20px;
+            border: 0;
+            border-radius: 0;
+            background: #3b82f6;
+            color: #fff;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 15px;
+            line-height: 1;
+            text-decoration: none;
+            text-transform: lowercase;
+            cursor: pointer
+        }
+
+        #topbar .tbtn:hover {
+            background: #5a95f7
+        }
+
+        #topbar input {
+            flex: 0 1 312px;
+            width: auto;
+            min-width: 0;
+            height: 26px;
+            padding: 0 8px;
+            border: 2px solid #3b82f6;
+            border-radius: 0;
+            background: #262626;
+            color: #fff;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 400;
+            text-align: left;
+            text-transform: none;
+            text-overflow: ellipsis;
+            outline: 0
+        }
+
+        #topbar input::placeholder {
+            color: #8a8a8a;
+            font-style: italic;
+            opacity: 1;
+            text-overflow: ellipsis
+        }
+
+        #topbar input:focus {
+            border-color: #8ab8ff
+        }
+
+        #topbar #tacct {
+            margin-left: auto
+        }
+
+        #topbar .twho {
+            flex: 0 1 auto;
+            min-width: 0;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #cfcfcf;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none
+        }
+
+        #topbar .twho b {
+            color: #fff;
+            font-weight: 700
+        }
+
+        #topbar .twho:hover {
+            text-decoration: underline
+        }
+
+        @media (max-width: 520px) {
+            #topbar .twho {
+                max-width: 96px;
+                font-size: 12px
+            }
+        }
+
+        #topbar .logo:focus-visible,
+        #topbar .tbtn:focus-visible,
+        #topbar .twho:focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 2px
+        }
+
+        @media (max-width: 520px) {
+            #topbar {
+                padding-left: 8px;
+                padding-right: 8px;
+                gap: 4px
+            }
+
+            #topbar .logo {
+                margin-right: 2px;
+                font-size: 13px
+            }
+
+            #topbar .logo small {
+                display: none
+            }
+
+            #topbar .tbtn {
+                padding: 0 8px;
+                font-size: 13px
+            }
+
+            #topbar input {
+                font-size: 12px;
+                padding: 0 6px
+            }
+        }
+
+        .authrow {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px
+        }
+
+        .authrow .linkbtn {
+            padding: 4px 0;
+            font-size: .82rem
+        }
+
+        .authrow .hint {
+            margin: 0;
+            min-height: 0;
+            font-size: .82rem
+        }
+
+        .center {
+            text-align: center;
+            margin: -6px 0 8px
+        }
+
+        button:focus-visible,
+        a.btn:focus-visible,
+        input:focus-visible {
+            outline: 3px solid var(--ink);
+            outline-offset: 2px
+        }
+
+        #toast {
+            position: fixed;
+            left: 50%;
+            bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+            transform: translateX(-50%);
+            max-width: calc(100% - 32px);
+            padding: 8px 16px;
+            background: var(--card);
+            border: 2px solid var(--ink);
+            box-shadow: 3px 3px 0 var(--ink);
+            font-weight: 700;
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .15s
+        }
+
+        #toast.show {
+            opacity: 1
+        }
+
+        #impdlg {
+            width: min(92vw, 420px);
+            max-width: 420px;
+            padding: 20px 18px 18px;
+            border: 2px solid var(--ink);
+            background: var(--card);
+            color: var(--ink);
+            box-shadow: 4px 4px 0 var(--ink);
+            text-align: center;
+            text-transform: lowercase;
+            font-family: inherit
+        }
+
+        #impdlg::backdrop {
+            background: rgba(5, 7, 15, .6)
+        }
+
+        #impdlg h3 {
+            margin: 0 0 6px;
+            font-size: 1.15rem;
+            font-weight: 800
+        }
+
+        #impdlg p.hint {
+            margin: 6px 0 4px;
+            min-height: 2.6em
+        }
+
+        #impdlg .tools {
+            margin-top: 8px
+        }
+
+        #impdlg .tools button.go {
+            border-color: var(--blue);
+            box-shadow: 0 3px 0 var(--blue)
+        }
+
+        #impdlg .tools button.go:disabled {
+            box-shadow: none
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+
+            .dgroup,
+            .board {
+                animation: rise .45s cubic-bezier(.2, .8, .2, 1) backwards
+            }
+
+            .dgroup:nth-child(2) {
+                animation-delay: .06s
+            }
+
+            .dgroup:nth-child(3) {
+                animation-delay: .12s
+            }
+
+            .dgroup:nth-child(4) {
+                animation-delay: .18s
+            }
+
+            @keyframes rise {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px)
+                }
+
+                to {
+                    opacity: 1;
+                    transform: none
+                }
+            }
+        }
+
         .tile {
             position: relative;
             flex: 0 0 auto;
@@ -342,63 +1482,198 @@ button:focus-visible, a.btn:focus-visible, input:focus-visible { outline: 3px so
         }
 
 
-/* scrollbars: square thumb in the page's own colours (follows the light/dark theme through the variables) */
-*::-webkit-scrollbar { width: 14px; height: 14px }
-*::-webkit-scrollbar-track, *::-webkit-scrollbar-corner { background: var(--bg) }
-*::-webkit-scrollbar-thumb { background: var(--line); background-clip: padding-box; border: 3px solid var(--bg); border-radius: 0; min-height: 40px; min-width: 40px }
-*::-webkit-scrollbar-thumb:hover { background: var(--soft); background-clip: padding-box }
-*::-webkit-scrollbar-thumb:active { background: var(--blue); background-clip: padding-box }
-@supports not selector(::-webkit-scrollbar) { * { scrollbar-width: thin; scrollbar-color: var(--line) var(--bg) } } /* firefox */
-</style>
+        /* scrollbars: square thumb in the page's own colours (follows the light/dark theme through the variables) */
+        *::-webkit-scrollbar {
+            width: 14px;
+            height: 14px
+        }
+
+        *::-webkit-scrollbar-track,
+        *::-webkit-scrollbar-corner {
+            background: var(--bg)
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background: var(--line);
+            background-clip: padding-box;
+            border: 3px solid var(--bg);
+            border-radius: 0;
+            min-height: 40px;
+            min-width: 40px
+        }
+
+        *::-webkit-scrollbar-thumb:hover {
+            background: var(--soft);
+            background-clip: padding-box
+        }
+
+        *::-webkit-scrollbar-thumb:active {
+            background: var(--blue);
+            background-clip: padding-box
+        }
+
+        @supports not selector(::-webkit-scrollbar) {
+            * {
+                scrollbar-width: thin;
+                scrollbar-color: var(--line) var(--bg)
+            }
+        }
+
+        /* firefox */
+    </style>
 </head>
+
 <body>
-<main class="pg">
-<header><h1>hole in <span class="rad"><svg viewBox="0 0 12 20" preserveAspectRatio="none" aria-hidden="true"><path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="miter" vector-effect="non-scaling-stroke" /></svg><span class="vin">-1</span></span></h1>
-<p class="sub">level editor: build a level, then share the link or code</p></header>
-<section class="board" aria-label="level preview">
-<div class="prow"><div><div class="lbl">you have</div><div class="num" id="pvs">1</div></div><div class="arrow" aria-hidden="true">⟶</div><div class="goal"><div class="lbl">goal</div><div class="num" id="pvg">10</div></div></div>
-<div class="srow"><div class="stat"><p id="status" aria-live="polite">…</p><button class="linkbtn" id="rtbtn" aria-expanded="false" aria-controls="rtbox" hidden>view shortest route</button></div><a class="btn go" id="play" href="#"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 1.5v13l11-6.5z" fill="currentColor"/></svg>playtest</a></div>
-<div id="rtbox" hidden></div>
-</section>
-<div class="dgroups">
-<section class="dgroup"><h3>numbers</h3>
-<div class="seg" id="modes" role="radiogroup" aria-label="number type">
-<button data-m="whole" role="radio" aria-checked="true">whole</button><button data-m="dec" role="radio" aria-checked="false">decimals</button><button data-m="frac" role="radio" aria-checked="false">fractions</button></div>
-<div class="rtopt" id="rtrow"><div><b>roots of non-squares</b><small id="rtnote">allow √ on numbers that aren't perfect squares, like √2 or 3√5</small></div><button class="sw" id="roots" role="switch" aria-checked="false" aria-label="roots of non-squares"></button></div>
-<div class="sg"><div><label for="s">you start with</label><input id="s" value="1" autocomplete="off"></div>
-<button id="swap" aria-label="swap start and goal" title="swap start and goal"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M2 5h11M10 2l3 3-3 3M14 11H3M6 8l-3 3 3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter"/></svg></button>
-<div><label for="g">goal</label><input id="g" value="10" autocomplete="off"></div></div></section>
-<section class="dgroup"><h3>operations <small id="cnt"></small></h3>
-<div id="chips" aria-live="polite"></div>
-<div class="center"><button class="linkbtn" id="clr" hidden>clear all</button></div>
-<div class="addrow"><input id="opn" placeholder="e.g. +2, sqrt" aria-label="type an operation" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done"><button class="addbtn" id="addop" disabled>add</button><button class="addbtn" id="rndop" title="add a random operation" aria-label="add a random operation"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17"/><rect x="6.8" y="6.8" width="2.4" height="2.4" fill="currentColor" stroke="none"/><rect x="14.8" y="6.8" width="2.4" height="2.4" fill="currentColor" stroke="none"/><rect x="10.8" y="10.8" width="2.4" height="2.4" fill="currentColor" stroke="none"/><rect x="6.8" y="14.8" width="2.4" height="2.4" fill="currentColor" stroke="none"/><rect x="14.8" y="14.8" width="2.4" height="2.4" fill="currentColor" stroke="none"/></svg></button></div>
-<div class="prevrow" id="prev" aria-live="polite"></div>
-<p class="hint" id="hint"></p>
-<div class="center"><button class="linkbtn" id="synbtn" aria-expanded="false" aria-controls="syn">show all syntax</button></div>
-<div id="syn" hidden></div></section>
-<section class="dgroup"><h3>par</h3>
-<div class="stepper"><button id="pm" aria-label="one fewer move">−</button><div class="num" id="par">?</div><button id="pp" aria-label="one more move">+</button></div>
-<p class="hint" id="parhint"></p></section>
-<section class="dgroup"><h3>solutions <small id="solcnt"></small></h3>
-<p class="hint" style="margin-top:0">every route that reaches the goal in up to the move count below. the goal is blue under par, white at par and red over par</p>
-<div class="stepper sm"><span class="lbl">routes up to</span><button id="sm" aria-label="search one fewer move">−</button><div class="num" id="solmax">8</div><button id="sp" aria-label="search one more move">+</button><span class="lbl">moves</span></div>
-<div class="tools"><button id="sol">find all solutions</button></div>
-<div id="sollist" role="region" aria-label="solutions" tabindex="0"></div></section>
-<section class="dgroup"><h3>share</h3>
-<label for="code">level code</label><input id="code" placeholder="paste a code or link here to load it" autocomplete="off" spellcheck="false">
-<div class="tools"><button id="cc">copy code</button><button id="cl">copy link</button></div></section>
-</div>
-<div class="tools"><button id="new">new level</button><button id="imp">import level</button><a class="btn" href="../">main menu</a></div>
-</main>
-<dialog id="impdlg" aria-labelledby="imptl">
-<h3 id="imptl">import a level</h3>
-<p class="hint" id="imphint" style="margin-top:0">paste a level code or a level link. this replaces the level you're editing</p>
-<input id="impin" placeholder="level code or link" aria-label="level code or link" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go">
-<p class="hint" id="imperr" aria-live="polite"></p>
-<div class="tools"><button id="impgo" class="go" disabled>load level</button><button id="impx">cancel</button></div>
-</dialog>
-<div id="toast" role="status" aria-live="polite"></div>
-<script>
+    <nav id="topbar" aria-label="site">
+        <a class="logo" href="/gamedevrg.com/">gamedevrg<small>.com</small></a>
+        <a class="tbtn" href="/gamedevrg.com/">homepage</a>
+        <input id="tsearch" type="search" placeholder="you can type things here. (this is the search bar)"
+            aria-label="search" autocomplete="off">
+        <button class="tbtn" id="tgo" type="button">search</button>
+        <a class="tbtn" id="tacct" href="../../account/?from=editor">log in</a>
+    </nav>
+    <main class="pg">
+        <header>
+            <h1>hole in <span class="rad"><svg viewBox="0 0 12 20" preserveAspectRatio="none" aria-hidden="true">
+                        <path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="3"
+                            stroke-linejoin="miter" vector-effect="non-scaling-stroke" />
+                    </svg><span class="vin">-1</span></span></h1>
+            <p class="sub">level editor: build a level, then share the link or code</p>
+        </header>
+        <section class="board" aria-label="level preview">
+            <div class="prow">
+                <div>
+                    <div class="lbl">you have</div>
+                    <div class="num" id="pvs">1</div>
+                </div>
+                <div class="arrow" aria-hidden="true">⟶</div>
+                <div class="goal">
+                    <div class="lbl">goal</div>
+                    <div class="num" id="pvg">10</div>
+                </div>
+            </div>
+            <div class="srow">
+                <div class="stat">
+                    <p id="status" aria-live="polite">…</p><button class="linkbtn" id="vfy" hidden>verify it
+                        yourself</button><button class="linkbtn" id="rtbtn" aria-expanded="false" aria-controls="rtbox"
+                        hidden>view shortest route</button>
+                </div><a class="btn go" id="play" href="#"><svg viewBox="0 0 16 16" width="14" height="14"
+                        aria-hidden="true">
+                        <path d="M3 1.5v13l11-6.5z" fill="currentColor" />
+                    </svg>playtest</a>
+            </div>
+            <div id="rtbox" hidden></div>
+        </section>
+        <div class="dgroups">
+            <section class="dgroup">
+                <h3>about this level</h3>
+                <label for="ttl">title</label><input id="ttl" class="fld" maxlength="40" placeholder="optional"
+                    autocomplete="off" spellcheck="false">
+                <label for="aut">author</label><input id="aut" class="fld" maxlength="24" placeholder="optional"
+                    autocomplete="off" spellcheck="false">
+                <div class="authrow"><button class="linkbtn" id="authref" type="button">refresh login</button><span
+                        class="hint" id="authnote" role="status"></span></div>
+                <label id="dflbl">difficulty</label>
+                <div class="seg" id="diffseg" role="radiogroup" aria-labelledby="dflbl"><button data-d="0" role="radio"
+                        aria-checked="true">none</button><button data-d="2" role="radio"
+                        aria-checked="false">easy</button><button data-d="4" role="radio"
+                        aria-checked="false">medium</button><button data-d="6" role="radio"
+                        aria-checked="false">hard</button><button data-d="8" role="radio"
+                        aria-checked="false">challenge</button></div>
+                <p class="hint" style="margin-bottom:0">players see these above the level. all three are optional</p>
+                <div class="rtopt" id="hcrow">
+                    <div><b>force hardcore mode</b><small id="hcnote">players get only 3 undos, can't restart and can't
+                            go over par, whatever their own settings are</small></div><button class="sw" id="hc"
+                        role="switch" aria-checked="false" aria-label="force hardcore mode"></button>
+                </div>
+            </section>
+            <section class="dgroup">
+                <h3>numbers</h3>
+                <div class="seg" id="modes" role="radiogroup" aria-label="number type">
+                    <button data-m="whole" role="radio" aria-checked="true">whole</button><button data-m="dec"
+                        role="radio" aria-checked="false">decimals</button><button data-m="frac" role="radio"
+                        aria-checked="false">fractions</button>
+                </div>
+                <div class="rtopt" id="rtrow">
+                    <div><b>roots of non-squares</b><small id="rtnote">allow √ on numbers that aren't perfect squares,
+                            like √2 or 3√5</small></div><button class="sw" id="roots" role="switch" aria-checked="false"
+                        aria-label="roots of non-squares"></button>
+                </div>
+                <div class="sg">
+                    <div><label for="s">you start with</label><input id="s" value="1" autocomplete="off"></div>
+                    <button id="swap" aria-label="swap start and goal" title="swap start and goal"><svg
+                            viewBox="0 0 16 16" width="18" height="18" aria-hidden="true">
+                            <path d="M2 5h11M10 2l3 3-3 3M14 11H3M6 8l-3 3 3 3" fill="none" stroke="currentColor"
+                                stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter" />
+                        </svg></button>
+                    <div><label for="g">goal</label><input id="g" value="10" autocomplete="off"></div>
+                </div>
+            </section>
+            <section class="dgroup">
+                <h3>operations <small id="cnt"></small></h3>
+                <div id="chips" aria-live="polite"></div>
+                <div class="center"><button class="linkbtn" id="clr" hidden>clear all</button></div>
+                <div class="addrow"><input id="opn" placeholder="e.g. +2, sqrt" aria-label="type an operation"
+                        autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
+                        enterkeyhint="done"><button class="addbtn" id="addop" disabled>add</button><button
+                        class="addbtn" id="rndop" title="add a random operation"
+                        aria-label="add a random operation"><svg viewBox="0 0 24 24" width="22" height="22" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"
+                            aria-hidden="true">
+                            <rect x="3.5" y="3.5" width="17" height="17" />
+                            <rect x="6.8" y="6.8" width="2.4" height="2.4" fill="currentColor" stroke="none" />
+                            <rect x="14.8" y="6.8" width="2.4" height="2.4" fill="currentColor" stroke="none" />
+                            <rect x="10.8" y="10.8" width="2.4" height="2.4" fill="currentColor" stroke="none" />
+                            <rect x="6.8" y="14.8" width="2.4" height="2.4" fill="currentColor" stroke="none" />
+                            <rect x="14.8" y="14.8" width="2.4" height="2.4" fill="currentColor" stroke="none" />
+                        </svg></button></div>
+                <div class="prevrow" id="prev" aria-live="polite"></div>
+                <p class="hint" id="hint"></p>
+                <div class="center"><button class="linkbtn" id="synbtn" aria-expanded="false" aria-controls="syn">show
+                        all syntax</button></div>
+                <div id="syn" hidden></div>
+            </section>
+            <section class="dgroup">
+                <h3>par</h3>
+                <div class="stepper"><button id="pm" aria-label="one fewer move">−</button>
+                    <div class="num" id="par">?</div><button id="pp" aria-label="one more move">+</button>
+                </div>
+                <p class="hint" id="parhint"></p>
+            </section>
+            <section class="dgroup">
+                <h3>solutions <small id="solcnt"></small></h3>
+                <p class="hint" style="margin-top:0">every route that reaches the goal in up to the move count below.
+                    the goal is blue under par, white at par and red over par</p>
+                <div class="stepper sm"><span class="lbl">routes up to</span><button id="sm"
+                        aria-label="search one fewer move">−</button>
+                    <div class="num" id="solmax">8</div><button id="sp"
+                        aria-label="search one more move">+</button><span class="lbl">moves</span>
+                </div>
+                <div class="tools"><button id="sol">find all solutions</button></div>
+                <div id="sollist" role="region" aria-label="solutions" tabindex="0"></div>
+            </section>
+            <section class="dgroup">
+                <h3>share</h3>
+                <label for="code">level code</label><input id="code" placeholder="paste a code or link here to load it"
+                    autocomplete="off" spellcheck="false">
+                <div class="tools"><button id="cc">copy code</button><button id="cl">copy link</button></div>
+            </section>
+        </div>
+        <div class="tools"><button id="new">new level</button><button id="imp">import level</button><a class="btn"
+                href="../">main menu</a></div>
+    </main>
+    <dialog id="impdlg" aria-labelledby="imptl">
+        <h3 id="imptl">import a level</h3>
+        <p class="hint" id="imphint" style="margin-top:0">paste a level code or a level link. this replaces the level
+            you're editing</p>
+        <input id="impin" placeholder="level code or link" aria-label="level code or link" autocomplete="off"
+            autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go">
+        <p class="hint" id="imperr" aria-live="polite"></p>
+        <div class="tools"><button id="impgo" class="go" disabled>load level</button><button id="impx">cancel</button>
+        </div>
+    </dialog>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <script>
         const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b] } return a || 1 };
         let NB = 100000, CAP = 1e9, ROOTS = false; const BMAX = 200; /* ROOTS: allow √ of non-squares (the checkbox under the number type) */
         function F(n, d = 1, b = 1) { if (d < 0) { n = -n; d = -d } if (n === 0) b = 1; const g = gcd(n, d); n /= g; d /= g; if (Math.abs(n) > NB || d > NB || b > BMAX) return null; return { n, d, b } }
@@ -417,7 +1692,7 @@ button:focus-visible, a.btn:focus-visible, input:focus-visible { outline: 3px so
             if (s === '√x') { const rt = ROOTS || mode === 'frac'; return { s, f: x => { if (x.n < 0 || x.b > 1) return null; if (x.n === 0) return x; const [k, r] = sqf(x.n * x.d); return r > 1 && !rt ? null : F(k, x.d, r) } }; }
             if (s.startsWith('mod ')) { const k = parseInt(s.slice(4), 10); return { s, f: x => x.d !== 1 || x.b > 1 ? null : F(((x.n % k) + k) % k) }; }
             if (s === 'x⁻¹') return { s, f: x => { if (x.n === 0) return null; const r = F(x.d, x.n * x.b, x.b); return r && (mode !== 'dec' || r.d === 1 || term(r)) ? r : null } };
-            const qs = s.slice(1), o = s[0], q = qs.includes('/') ? F(+qs.split('/')[0], +qs.split('/')[1]) : F(Math.round(parseFloat(qs) * 10), 10); /* the number can be whole, a decimal or a fraction (always kept in lowest terms) */
+            const qs0 = s.slice(1), ng = (s[0] === '×' || s[0] === '÷') && qs0[0] === '−', qs = ng ? qs0.slice(1) : qs0, o = s[0], q1 = qs.includes('/') ? F(+qs.split('/')[0], +qs.split('/')[1]) : F(Math.round(parseFloat(qs) * 10), 10), q = ng ? F(-q1.n, q1.d) : q1; /* × and ÷ can take a negative number, like ×−2 */ /* the number can be whole, a decimal or a fraction (always kept in lowest terms) */
             if (o === '+') return { s, f: x => x.b > 1 ? null : F(x.n * q.d + q.n * x.d, x.d * q.d) };
             if (o === '−') return { s, f: x => x.b > 1 ? null : F(x.n * q.d - q.n * x.d, x.d * q.d) };
             if (o === '×') return { s, f: x => F(x.n * q.n, x.d * q.d, x.b) };
@@ -442,7 +1717,7 @@ button:focus-visible, a.btn:focus-visible, input:focus-visible { outline: 3px so
             const i = t.indexOf('.'); if (i < 0) return F(parseInt(t, 10));
             const m = Math.pow(10, t.length - i - 1); return F(Math.round(parseFloat(t) * m), m);
         }
-function mkTile() {
+        function mkTile() {
             const t = document.createElement('div'); t.className = 'tile'; t.setAttribute('aria-hidden', 'true');
             t.innerHTML = '<div class="h t"><span></span></div><div class="h b"><span></span></div><div class="flap h t f1"><span></span></div><div class="flap h b f2"><span></span></div>'; return t;
         }
@@ -458,338 +1733,368 @@ function mkTile() {
         }
 
 
-const OPC = { '+': 'p', '−': 'm', '×': 'x', '÷': 'd' }, FIX = { 'x²': 'sq', '|x|': 'ab', '−x': 'ng', 'x³': 'cu', '√x': 'rt', 'x⁻¹': 'iv' }, MC = { whole: 'w', dec: 'd', frac: 'f' };
-const b64e = s => btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-const b64d = s => atob(s.replace(/-/g, '+').replace(/_/g, '/'));
-const opEnc = s => FIX[s] || (s.startsWith('mod ') ? 'o' + s.slice(4) : OPC[s[0]] + s.slice(1));
-function opDec(t) { for (const k in FIX) if (FIX[k] === t) return k; if (t[0] === 'o') return 'mod ' + t.slice(1); const c = Object.keys(OPC).find(k => OPC[k] === t[0]); return c ? c + t.slice(1) : null; }
-const encodeLevel = v => b64e([v.s, v.g, v.p, MC[v.n], v.o.map(opEnc).join(',')].concat(v.rt ? ['r'] : []).join(';'));
-function decodeLevel(code) {
-    try {
-        const [s, g, p, n, o, rf] = b64d(String(code).trim()).split(';'), mode = Object.keys(MC).find(k => MC[k] === n), ops = o.split(',').map(opDec);
-        const numOk = t => /^-?\d+(\.\d+)?(\/\d+)?$/.test(t) && !/\/0+$/.test(t), argOk = t => /^\d+(\.\d)?(\/\d+)?$/.test(t) && !/\/0+$/.test(t) && +t.split('/')[0] > 0;
-        if ((rf !== undefined && rf !== 'r') || !mode || !numOk(s) || !numOk(g) || !/^\d{1,2}$/.test(p) || +p < 1 || ops.length < 1) return null;
-        if (ops.some(x => !x || (/^[+−×÷]/.test(x) && !argOk(x.slice(1))) || (x.startsWith('mod ') && !/^\d{1,2}$/.test(x.slice(4)) || x === 'mod 0' || x === 'mod 1'))) return null;
-        return { s, g, p: +p, n: mode, o: ops, rt: rf === 'r' };
-    } catch (e) { return null; }
-}
-
-function setFlip(el, text) {
-    const neg = /^[-−]/.test(text); el.toggleAttribute('data-neg', neg); el.setAttribute('role', 'img'); el.setAttribute('aria-label', text);
-    const chars = [...(neg ? text.slice(1) : text)], pat = chars.map(c => c === '/' ? '/' : 'd').join(''), cp = [...el.children].map(k => k.classList.contains('sep') ? '/' : 'd').join(''), fresh = pat !== cp;
-    if (fresh) { el.innerHTML = ''; chars.forEach(c => { if (c === '/') { const e = document.createElement('span'); e.className = 'sep'; e.setAttribute('aria-hidden', 'true'); e.textContent = '/'; el.appendChild(e); } else { const t = mkTile(); setTile(t, ' ', false); el.appendChild(t); } }); }
-    const an = !fresh && !(window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches); let n = 0;
-    chars.forEach((c, i) => { if (c === '/') return; const t = el.children[i]; clearTimeout(t._st); if (t.dataset.ch === c) return; const d = n++ * 50; if (d === 0) setTile(t, c, an); else t._st = setTimeout(() => setTile(t, c, an), d); });
-}
-function solveCap(start, goal, ops, cap) {
-    let seen = new Set([key(start)]), fr = [start];
-    for (let d = 1; d <= 8; d++) {
-        const nx = [];
-        for (const n of fr) for (const o of ops) {
-            const v = o.f(n);
-            if (!v || seen.has(key(v))) continue;
-            if (same(v, goal)) return d; seen.add(key(v)); nx.push(v);
-            if (seen.size > cap) return -1;
+        const OPC = { '+': 'p', '−': 'm', '×': 'x', '÷': 'd' }, FIX = { 'x²': 'sq', '|x|': 'ab', '−x': 'ng', 'x³': 'cu', '√x': 'rt', 'x⁻¹': 'iv' }, MC = { whole: 'w', dec: 'd', frac: 'f' };
+        const b64e = s => btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        const b64d = s => atob(s.replace(/-/g, '+').replace(/_/g, '/'));
+        const opEnc = s => FIX[s] || (s.startsWith('mod ') ? 'o' + s.slice(4) : OPC[s[0]] + s.slice(1).replace('−', '-'));
+        function opDec(t) { for (const k in FIX) if (FIX[k] === t) return k; if (t[0] === 'o') return 'mod ' + t.slice(1); const c = Object.keys(OPC).find(k => OPC[k] === t[0]); return c ? c + (/^[×÷]$/.test(c) ? t.slice(1).replace(/^-/, '−') : t.slice(1)) : null; }
+        /* code = start;goal;par;number type;ops[;flags[;difficulty[;title[;author]]]]  (flags: r = roots, h = forced hardcore; difficulty: 2 easy, 4 medium, 6 hard, 8 challenge; title and author are URL-escaped; trailing empty fields are left off) */
+        const encodeLevel = v => { const f = [v.s, v.g, v.p, MC[v.n], v.o.map(opEnc).join(','), (v.rt ? 'r' : '') + (v.hc ? 'h' : ''), v.dv ? String(v.dv) : '', v.t ? encodeURIComponent(v.t) : '', v.a ? encodeURIComponent(v.a) : '']; while (f.length > 5 && f[f.length - 1] === '') f.pop(); return b64e(f.join(';')); };
+        function decodeLevel(code) {
+            try {
+                const parts = b64d(String(code).trim()).split(';'), [s, g, p, n, o, rf, dv, tt, au] = parts, mode = Object.keys(MC).find(k => MC[k] === n), ops = o.split(',').map(opDec);
+                const numOk = t => /^-?\d+(\.\d+)?(\/\d+)?$/.test(t) && !/\/0+$/.test(t), argOk = t => /^\d+(\.\d)?(\/\d+)?$/.test(t) && !/\/0+$/.test(t) && +t.split('/')[0] > 0;
+                if (parts.length > 9 || (rf !== undefined && !/^(r|h|rh)?$/.test(rf)) || (rf === '' && parts.length === 6) || (dv !== undefined && !/^[2468]?$/.test(dv)) || !mode || !numOk(s) || !numOk(g) || !/^\d{1,2}$/.test(p) || +p < 1 || ops.length < 1) return null;
+                if (ops.some(x => !x || (/^[+−×÷]/.test(x) && !argOk(/^[×÷]−/.test(x) ? x.slice(2) : x.slice(1))) || (x.startsWith('mod ') && !/^\d{1,2}$/.test(x.slice(4)) || x === 'mod 0' || x === 'mod 1'))) return null;
+                const t = tt ? decodeURIComponent(tt) : '', a = au ? decodeURIComponent(au) : '';
+                if (Array.from(t).length > 40 || Array.from(a).length > 24 || /[\u0000-\u001f\u007f]/.test(t + a)) return null;
+                return { s, g, p: +p, n: mode, o: ops, rt: !!rf && rf.includes('r'), hc: !!rf && rf.includes('h'), dv: dv ? +dv : 0, t: t.trim(), a: a.trim() };
+            } catch (e) { return null; }
         }
-        fr = nx;
-    }
-    return null;
-}
-const LIVE = 'https://gamedevrg.github.io/gamedevrg.com/mathgolf/custom/?level=';
-const $ = id => document.getElementById(id);
-try { if ((JSON.parse(localStorage.getItem('hs1') || '{}')).theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) { }
-const ICON_PLAY = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 1.5v13l11-6.5z" fill="currentColor"/></svg>', ICON_WARN = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 1.8 15 14H1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="miter"/><path d="M8 6.2v3.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"/><rect x="7" y="11" width="2" height="2" fill="currentColor"/></svg>';
-const DRAFT = 'lvdraft', FIXED = ['x²', '|x|', '−x', 'x³', '√x', 'x⁻¹'];
-let mode = 'whole', ops = [], code = '', slack = 0, wantPar = null, curMin = null, curPar = 1, curUnsolvable = false;
-const numRe = () => mode === 'frac' ? /^-?\d+(\/\d+)?$/ : mode === 'dec' ? /^-?\d+(\.\d{1,2})?$/ : /^-?\d+$/;
-const argRe = () => mode === 'frac' ? /^\d+(\/\d+)?$/ : mode === 'dec' ? /^\d+(\.\d)?$/ : /^\d+$/;
-const okNum = (t, re) => re.test(t) && !/\/0+$/.test(t) && Math.abs(parseFloat(t)) < 1e6;
-/* operation boxes: a fraction operand like ÷1/2 is drawn as a stacked fraction, like the buttons in the game */
-const opEsc = t => String(t).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
-const opLabel = t => { const m = /^([+−×÷])(−?\d+)\/(\d+)$/.exec(t); return m ? m[1] + '<span class="fr"><span>' + m[2] + '</span><span>' + m[3] + '</span></span>' : opEsc(t); };
-const normArg = t => t.replace(/^0+(?=\d)/, '').replace(/^(\d+)\.0$/, '$1');
-/* typed text -> an operation. returns null (empty), {wait} (unfinished), {err} or {s} */
-const OPKEY = { '+': '+', '-': '−', '*': '×', x: '×', '×': '×', '÷': '÷', ':': '÷', '/': '÷', '%': 'mod' };
-const FIXALIAS = {
-    'x²': 'x²', 'x^2': 'x²', '^2': 'x²', '²': 'x²', 'x**2': 'x²', 'sq': 'x²', 'square': 'x²', 'squared': 'x²',
-    'x³': 'x³', 'x^3': 'x³', '^3': 'x³', '³': 'x³', 'x**3': 'x³', 'cube': 'x³', 'cubed': 'x³',
-    '|x|': '|x|', 'abs': '|x|', 'absolute': '|x|', 'abs(x)': '|x|',
-    '-x': '−x', 'neg': '−x', 'negate': '−x', 'negative': '−x',
-    '√x': '√x', '√': '√x', 'sqrt': '√x', 'sqrtx': '√x', 'sqrt(x)': '√x', 'root': '√x', 'squareroot': '√x', '√(x)': '√x',
-    'x⁻¹': 'x⁻¹', 'x^-1': 'x⁻¹', '^-1': 'x⁻¹', '⁻¹': 'x⁻¹', '1/x': 'x⁻¹', 'inv': 'x⁻¹', 'inverse': 'x⁻¹', 'recip': 'x⁻¹', 'reciprocal': 'x⁻¹'
-};
-function parseOp(raw) {
-    const t = raw.toLowerCase().replace(/[\s\u00a0]+/g, '').replace(/[−–—]/g, '-');
-    if (!t) return null;
-    if (FIXALIAS[t]) return { s: FIXALIAS[t] };
-    if (t === 'mod' || t === 'm' || /^[+\-*x×÷:\/%]$/.test(t)) return { wait: true };
-    let o, arg;
-    const mm = t.match(/^(?:mod|%)(.*)$/);
-    if (mm) { o = 'mod'; arg = mm[1]; }
-    else if (OPKEY[t[0]] && t[0] !== '%') { o = OPKEY[t[0]]; arg = t.slice(1); }
-    else return { err: "i don't know that one. try +2, ×3, mod 5, sqrt or square" };
-    arg = arg.replace(/^\./, '0.');
-    if (o === 'mod') return /^\d{1,2}$/.test(arg) && +arg >= 2 ? { s: 'mod ' + +arg } : { err: 'mod needs a whole number from 2 to 99' };
-    if (!/^\d+([./]\d+)?$/.test(arg)) return { err: 'put a number after ' + o + ', like ' + o + '2' };
-    if (!okNum(arg, argRe()) || !(parseFloat(arg.split('/')[0]) > 0)) {
-        if (/\/0+$/.test(arg)) return { err: "can't divide by zero" };
-        if (/^0+(\.0+)?(\/\d+)?$/.test(arg)) return { err: 'use a number above 0' };
-        /* a fine operation that just needs another number type: keep the preview and ask for the switch (not an error) */
-        if (arg.includes('/') && mode !== 'frac') return { s: o + normArg(arg), need: 'fractions need the "fractions" number type above' };
-        if (arg.includes('.') && mode === 'whole' && /^\d+\.\d$/.test(arg)) return { s: o + normArg(arg), need: 'decimals need the "decimals" number type above' };
-        return { err: mode === 'whole' ? 'use a whole number above 0' : mode === 'dec' ? 'use a number above 0 with at most 1 decimal' : 'use a whole number or a fraction like 3/4' };
-    }
-    return { s: o + normArg(arg) };
-}
-/* is this operation allowed in the current number type? */
-function opOk(s) {
-    if (FIXED.includes(s)) return true;
-    if (s.startsWith('mod ')) return /^\d{1,2}$/.test(s.slice(4)) && +s.slice(4) >= 2;
-    const t = s.slice(1); return argRe().test(t) && !/\/0+$/.test(t) && parseFloat(t.split('/')[0]) > 0;
-}
 
-let tt = 0;
-function toast(t, good) { const el = $('toast'); el.textContent = t; el.style.color = good ? 'var(--ok)' : 'var(--imag)'; el.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => el.classList.remove('show'), 2200); }
-function toggleOp(s) { const i = ops.indexOf(s); if (i >= 0) { ops.splice(i, 1); toast('removed ' + s); } else ops.push(s); upd(); }
-
-let cur = null; /* what the box currently parses to */
-function examples() { return mode === 'dec' ? '+2   −1.5   ×0.5   sqrt   square' : mode === 'frac' ? '+1/2   −3/4   ×2   ÷1/3   sqrt   square' : '+2   ×3   ÷4   mod 5   sqrt   square'; }
-function syncAdder() {
-    const raw = $('opn').value; cur = parseOp(raw);
-    const h = $('hint'), pv = $('prev'), btn = $('addop'); h.classList.remove('err', 'need'); $('opn').classList.toggle('bad', !!(cur && cur.err)); $('opn').classList.toggle('need', !!(cur && cur.need));
-    const s = cur && cur.s, dup = !!s && !cur.need && ops.includes(s);
-    pv.innerHTML = s ? '<span class="opb pv' + (dup ? ' dup' : '') + (cur.need ? ' bad' : '') + '">' + opLabel(s) + '</span>' : '';
-    btn.disabled = !s || dup || !!cur.need; btn.textContent = dup ? 'added' : 'add';
-    if (!cur) h.textContent = 'try ' + examples();
-    else if (cur.wait) h.textContent = 'keep typing...';
-    else if (cur.need) { h.classList.add('need'); h.textContent = cur.need; }
-    else if (cur.err) { h.classList.add('err'); h.textContent = cur.err; }
-    else h.textContent = dup ? s + ' is already added' : 'press enter to add ' + s;
-}
-function addTyped() {
-    if (!cur || !cur.s || cur.need) return syncAdder();
-    if (ops.includes(cur.s)) return toast(cur.s + ' is already added');
-    const s = cur.s; ops.push(s); $('opn').value = ''; upd();
-    if (!matchMedia('(pointer:coarse)').matches) $('opn').focus(); /* keep typing on desktop, don't pop the keyboard back up on phones */
-}
-$('opn').oninput = syncAdder;
-$('opn').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); addTyped(); } };
-$('addop').onclick = addTyped;
-/* a random operation that fits the current number type and isn't already in the list */
-function randomOp() {
-    const pick = a => a[Math.floor(Math.random() * a.length)];
-    const nums = (lo) => {
-        const w = []; for (let i = lo; i <= 9; i++) w.push(String(i));
-        if (mode === 'dec') for (let i = lo; i <= 9; i++) w.push(i + '.5'); /* one decimal at most */
-        if (mode === 'frac') for (const d of [2, 3, 4]) for (let n = 1; n <= 2 * d + 1; n++) if (gcd(n, d) === 1 && n / d >= (lo > 1 ? 1.5 : 0)) w.push(n + '/' + d);
-        return w;
-    };
-    const kinds = ['+', '−', '×', '÷', 'mod', 'fixed', 'fixed']; /* fixed ones (square, root, ...) are about a third of the picks */
-    for (let tries = 0; tries < 200; tries++) {
-        const k = pick(kinds); let s;
-        if (k === 'fixed') s = pick(FIXED);
-        else if (k === 'mod') s = 'mod ' + pick(['2', '3', '4', '5', '6', '7', '8', '9']);
-        else s = k + normArg(pick(nums(k === '+' || k === '−' ? 1 : 2)));
-        if (opOk(s) && !ops.includes(s)) return s;
-    }
-    return null;
-}
-$('rndop').onclick = () => { const s = randomOp(); if (!s) return toast('no new operation to add'); ops.push(s); upd(); };
-const SYN = [
-    ['+2', 'add', '+2'], ['−3', 'subtract', '-3 or −3'], ['×3', 'multiply', '*3, x3 or ×3'], ['÷3', 'divide', '/3, :3 or ÷3'], ['mod 5', 'remainder', 'mod 5, mod5 or %5'],
-    ['x²', 'square', 'x², x^2, ^2, sq or square'], ['x³', 'cube', 'x³, x^3, ^3 or cube'], ['|x|', 'absolute value', '|x|, abs or absolute'],
-    ['−x', 'negate', '-x, neg, negate or negative'], ['√x', 'square root', '√x, √, sqrt, root or squareroot'],
-    ['x⁻¹', 'reciprocal', 'x⁻¹, x^-1, 1/x, inv, inverse, recip or reciprocal']];
-const SYNFILL = ['+2', '-3', '*3', '/3', 'mod 5', 'square', 'cube', 'abs', '-x', 'sqrt', 'inv'];
-$('syn').innerHTML = SYN.map((r, i) => '<button type="button" class="synrow" data-i="' + i + '" title="click to try ' + SYNFILL[i] + '"><span class="opb">' + r[0] + '</span><span class="t"><b>' + r[1] + '</b><br>' + r[2] + '</span></button>').join('') +
-    '<p>numbers: whole (3), decimals (1.5, one decimal) or fractions (1/2), depending on the number type. they must be above 0. spaces and capitals are ignored. click a row to try it.</p>';
-$('synbtn').onclick = () => { const o = $('syn').hidden; $('syn').hidden = !o; $('synbtn').textContent = o ? 'hide syntax' : 'show all syntax'; $('synbtn').setAttribute('aria-expanded', o); };
-document.querySelectorAll('.synrow').forEach(b => b.onclick = () => { $('opn').value = SYNFILL[+b.dataset.i]; syncAdder(); if (!matchMedia('(pointer:coarse)').matches) $('opn').focus(); });
-function syncMode() {
-    document.querySelectorAll('[data-m]').forEach(x => x.setAttribute('aria-checked', x.dataset.m === mode));
-    const fr = mode === 'frac'; $('roots').setAttribute('aria-checked', ROOTS || fr); $('roots').disabled = fr; $('rtrow').classList.toggle('off', fr);
-    $('rtnote').textContent = fr ? 'fractions already allow this' : "allow √ on numbers that aren't perfect squares, like √2 or 3√5";
-}
-$('roots').onclick = () => { if (mode === 'frac') return; ROOTS = !ROOTS; syncMode(); upd(); };
-document.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { mode = b.dataset.m; syncMode(); upd(); });
-['s', 'g'].forEach(id => $(id).oninput = upd);
-$('s').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('g').focus(); } };
-$('g').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('opn').focus(); } };
-['s', 'g', 'opn', 'code'].forEach(id => $(id).onfocus = () => setTimeout(() => $(id).select(), 0));
-$('swap').onclick = () => { const a = $('s').value; $('s').value = $('g').value; $('g').value = a; upd(); };
-/* moves allowed is "shortest route + spare moves", so it follows the level as you edit it */
-$('pp').onclick = () => { slack++; upd(); };
-$('pm').onclick = () => { if (slack > 0) slack--; upd(); };
-
-function saveDraft() { try { localStorage.setItem(DRAFT, JSON.stringify({ n: mode, rt: ROOTS, s: $('s').value, g: $('g').value, o: ops, p: curMin === null ? wantPar : curMin + slack })); } catch (e) { } }
-function upd() {
-    $('chips').innerHTML = ops.map((s, i) => '<button type="button" class="opb' + (opOk(s) ? '' : ' bad') + '" data-x="' + i + '" aria-label="remove ' + s + '" title="click to remove">' + opLabel(s) + '</button>').join('');
-    document.querySelectorAll('[data-x]').forEach(b => b.onclick = () => { ops.splice(+b.dataset.x, 1); upd(); });
-    $('cnt').textContent = ops.length ? '(' + ops.length + ')' : '';
-    $('clr').hidden = ops.length < 2;
-    const st = $('s').value.trim().replace('−', '-'), go = $('g').value.trim().replace('−', '-'), sOk = okNum(st, numRe()), gOk = okNum(go, numRe());
-    setFlip($('pvs'), sOk ? st : '?'); setFlip($('pvg'), gOk ? go : '?'); $('pvs').closest('.board').style.setProperty('--ns', Math.max(1.2, Math.min(2.6, 120 / (Math.max(st.length, go.length, 1) * 13.8))) + 'rem'); $('s').classList.toggle('bad', !sOk); $('g').classList.toggle('bad', !gOk);
-    const S = $('status'); let min = null, playable = false, unsolvable = false; code = '';
-    S.className = 'no';
-    if (!sOk || !gOk) S.textContent = 'start and goal need to be valid ' + (mode === 'whole' ? 'whole numbers' : mode === 'dec' ? 'numbers (up to 2 decimals)' : 'numbers or fractions');
-    else if (!ops.length) S.textContent = 'add at least one operation';
-    else if (ops.some(s => !opOk(s))) S.textContent = 'switch the number type or remove the red operations';
-    else {
-        const a = parseNum(st), b = parseNum(go), os = ops.map(s => mk(s, mode));
-        if (!a || !b || os.some(o => !o)) S.textContent = 'those numbers are too big';
-        else if (same(a, b)) S.textContent = 'the start and the goal are the same number';
-        else { playable = true; min = solveCap(a, b, os, 400000); if (min === -1) { min = null; S.textContent = 'too many possibilities to check. try removing some operations'; } else if (min === null) { unsolvable = true; S.textContent = 'no way to reach the goal in 8 moves or fewer with these operations'; } else { S.className = 'ok'; S.textContent = 'solvable! shortest route: ' + min + (min === 1 ? ' move' : ' moves'); } }
-    }
-    curMin = min;
-    syncRoute();
-    if (min === null) { setFlip($('par'), '?'); $('parhint').textContent = unsolvable ? 'no solution yet, so there is no shortest route to base this on' : 'needs a valid, solvable level first'; $('pm').disabled = $('pp').disabled = true; }
-    else {
-        if (wantPar !== null) { slack = Math.max(0, wantPar - min); wantPar = null; }
-        slack = Math.max(0, Math.min(slack, 20 - min));
-        const p = min + slack; setFlip($('par'), String(p));
-        $('parhint').textContent = slack === 0 ? 'exactly the shortest route (hardest)' : slack + ' spare ' + (slack === 1 ? 'move' : 'moves') + ' on top of the shortest route (' + min + ')';
-        $('pm').disabled = slack === 0; $('pp').disabled = p >= 20;
-        code = encodeLevel({ s: st, g: go, p, n: mode, o: ops, rt: ROOTS && mode !== 'frac' });
-    }
-    curPar = min !== null ? min + slack : Math.max(1, Math.min(20, wantPar !== null ? wantPar : 5)); curUnsolvable = unsolvable;
-    /* no solution (or too many states to check): par can't follow a shortest route, but the level can still be played */
-    if (min === null && playable) code = encodeLevel({ s: st, g: go, p: Math.max(1, Math.min(20, wantPar !== null ? wantPar : 5)), n: mode, o: ops, rt: ROOTS && mode !== 'frac' });
-    $('code').value = code; $('cc').disabled = $('cl').disabled = !code;
-    const pl = $('play'), ps = !code ? 'off' : unsolvable ? 'warn' : 'ok';
-    pl.className = 'btn go ' + ps; pl.innerHTML = (ps === 'warn' ? ICON_WARN : ICON_PLAY) + 'playtest'; pl.setAttribute('aria-disabled', ps === 'off'); pl.setAttribute('href', code ? '../custom/?level=' + code + '&from=editor' : '#');
-    if (ps === 'warn') { pl.dataset.tip = 'your level has no solution.'; pl.setAttribute('aria-label', 'playtest. your level has no solution.'); } else { delete pl.dataset.tip; pl.removeAttribute('aria-label'); }
-    $('sol').disabled = ps === 'off'; clearSolutions(); syncAdder(); saveDraft();
-}
-$('play').onclick = e => { if (!code) e.preventDefault(); };
-
-/* for every move count L up to maxLen, find the routes of exactly L moves (shortest first). a route ends the moment it hits the goal and never repeats a number.
-   each length keeps its first capLen routes but still counts the rest, so no move count gets crowded out by shorter ones */
-function findSolutions(start, goal, os, maxLen, capLen, capNodes) {
-    const groups = [], path = [], seen = new Set([key(start)]);
-    for (let L = 1; L <= maxLen; L++) {
-        const g = { len: L, routes: [], total: 0, exact: true }; let nodes = 0, stopped = false;
-        const dfs = (x, depth) => {
-            for (const o of os) {
-                if (stopped) return;
-                if (++nodes > capNodes) { stopped = true; return; }
-                const v = o.f(x); if (!v) continue;
-                if (same(v, goal)) { if (depth + 1 === L) { g.total++; if (g.routes.length < capLen) g.routes.push(path.concat({ s: o.s, v })); } continue; }
-                const k = key(v); if (depth + 1 >= L || seen.has(k)) continue;
-                seen.add(k); path.push({ s: o.s, v }); dfs(v, depth + 1); path.pop(); seen.delete(k);
+        function setFlip(el, text, dirAware) {
+            const prev = el.getAttribute('aria-label'), rev = !!dirAware && /^\d+$/.test(prev || '') && /^\d+$/.test(text) && +text < +prev; /* a counter that goes down flips the other way */
+            const neg = /^[-−]/.test(text); el.toggleAttribute('data-neg', neg); el.setAttribute('role', 'img'); el.setAttribute('aria-label', text);
+            const chars = [...(neg ? text.slice(1) : text)], pat = chars.map(c => c === '/' ? '/' : 'd').join(''), cp = [...el.children].map(k => k.classList.contains('sep') ? '/' : 'd').join(''), fresh = pat !== cp;
+            if (fresh) { el.innerHTML = ''; chars.forEach(c => { if (c === '/') { const e = document.createElement('span'); e.className = 'sep'; e.setAttribute('aria-hidden', 'true'); e.textContent = '/'; el.appendChild(e); } else { const t = mkTile(); setTile(t, ' ', false); el.appendChild(t); } }); }
+            const an = !fresh && !(window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches); let n = 0;
+            chars.forEach((c, i) => { if (c === '/') return; const t = el.children[i]; clearTimeout(t._st); if (t.dataset.ch === c) return; const d = n++ * 50; if (d === 0) setTile(t, c, an, rev); else t._st = setTimeout(() => setTile(t, c, an, rev), d); });
+        }
+        function solveCap(start, goal, ops, cap) {
+            let seen = new Set([key(start)]), fr = [start];
+            for (let d = 1; fr.length; d++) {
+                const nx = [];
+                for (const n of fr) for (const o of ops) {
+                    const v = o.f(n);
+                    if (!v || seen.has(key(v))) continue;
+                    if (same(v, goal)) return d > 99 ? -2 : d; seen.add(key(v)); nx.push(v);
+                    if (seen.size > cap) return -1;
+                }
+                fr = nx;
             }
+            return null; /* every reachable number was checked: the goal can't be reached */
+        }
+        const LIVE = 'https://gamedevrg.github.io/gamedevrg.com/mathgolf/custom/?level=';
+        const $ = id => document.getElementById(id);
+        try { if ((JSON.parse(localStorage.getItem('hs1') || '{}')).theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) { }
+        const ICON_PLAY = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 1.5v13l11-6.5z" fill="currentColor"/></svg>', ICON_WARN = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 1.8 15 14H1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="miter"/><path d="M8 6.2v3.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"/><rect x="7" y="11" width="2" height="2" fill="currentColor"/></svg>';
+        const DRAFT = 'lvdraft', FIXED = ['x²', '|x|', '−x', 'x³', '√x', 'x⁻¹'];
+        let HC = false; /* force hardcore mode */
+        /* the signed-in account name (the account page stores it as localStorage "username"); new levels start with it as the author, and it can still be edited */
+        const acctName = () => { try { return Array.from((localStorage.getItem('username') || '').trim()).slice(0, 24).join(''); } catch (e) { return ''; } };
+        /* levels the search couldn't settle, but that you solved by hand in a playtest: VER = { k: which level, m: moves you used } */
+        let VER = null, pendingVer = null, curVer = false;
+        const verKey = (st, go) => [st, go, mode, ops.join(','), ROOTS && mode !== 'frac' ? 1 : 0].join('|');
+        let MT = { t: '', a: '', dv: 0 }, lastLv = null; /* title, author, difficulty (0 = not set) */
+        const metaObj = () => ({ dv: MT.dv, t: MT.t.trim(), a: MT.a.trim() });
+        let mode = 'whole', ops = [], code = '', slack = 0, wantPar = null, curMin = null, curPar = 1, curUnsolvable = false;
+        const numRe = () => mode === 'frac' ? /^-?\d+(\/\d+)?$/ : mode === 'dec' ? /^-?\d+(\.\d{1,2})?$/ : /^-?\d+$/;
+        const argRe = () => mode === 'frac' ? /^\d+(\/\d+)?$/ : mode === 'dec' ? /^\d+(\.\d)?$/ : /^\d+$/;
+        const okNum = (t, re) => re.test(t) && !/\/0+$/.test(t) && Math.abs(parseFloat(t)) < 1e6;
+        /* operation boxes: a fraction operand like ÷1/2 is drawn as a stacked fraction, like the buttons in the game */
+        const opEsc = t => String(t).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+        const opLabel = t => { const m = /^([+−×÷])(−?\d+)\/(\d+)$/.exec(t); return m ? m[1] + '<span class="fr"><span>' + m[2] + '</span><span>' + m[3] + '</span></span>' : opEsc(t); };
+        const normArg = t => t.replace(/^0+(?=\d)/, '').replace(/^(\d+)\.0$/, '$1');
+        /* typed text -> an operation. returns null (empty), {wait} (unfinished), {err} or {s} */
+        const OPKEY = { '+': '+', '-': '−', '*': '×', x: '×', '×': '×', '÷': '÷', ':': '÷', '/': '÷', '%': 'mod' };
+        const FIXALIAS = {
+            'x²': 'x²', 'x^2': 'x²', '^2': 'x²', '²': 'x²', 'x**2': 'x²', 'sq': 'x²', 'square': 'x²', 'squared': 'x²',
+            'x³': 'x³', 'x^3': 'x³', '^3': 'x³', '³': 'x³', 'x**3': 'x³', 'cube': 'x³', 'cubed': 'x³',
+            '|x|': '|x|', 'abs': '|x|', 'absolute': '|x|', 'abs(x)': '|x|',
+            '-x': '−x', 'neg': '−x', 'negate': '−x', 'negative': '−x',
+            '√x': '√x', '√': '√x', 'sqrt': '√x', 'sqrtx': '√x', 'sqrt(x)': '√x', 'root': '√x', 'squareroot': '√x', '√(x)': '√x',
+            'x⁻¹': 'x⁻¹', 'x^-1': 'x⁻¹', '^-1': 'x⁻¹', '⁻¹': 'x⁻¹', '1/x': 'x⁻¹', 'inv': 'x⁻¹', 'inverse': 'x⁻¹', 'recip': 'x⁻¹', 'reciprocal': 'x⁻¹'
         };
-        dfs(start, 0);
-        if (stopped) { g.exact = false; if (g.total) groups.push(g); return { groups, stoppedAt: L }; }
-        if (g.total) groups.push(g);
-    }
-    return { groups, stoppedAt: null };
-}
-let routeShown = false;
-/* the shortest route, as start -> operation -> value -> ... -> goal */
-function renderRoute() {
-    const box = $('rtbox'), a = parseNum($('s').value.trim().replace('−', '-')), b = parseNum($('g').value.trim().replace('−', '-')), os = ops.map(s => mk(s, mode));
-    if (!a || !b || os.some(o => !o) || curMin === null) { box.hidden = true; return; }
-    const r = findSolutions(a, b, os, curMin, 1, 300000), route = r.groups.length && r.groups[0].routes[0];
-    const fmt = x => x.b > 1 ? surdFmt(x) : (x.d === 1 ? String(x.n) : mode === 'frac' ? x.n + '/' + x.d : String(+(x.n / x.d).toFixed(6))).replace('-', '−');
-    box.innerHTML = route ? '<div class="route"><span class="v">' + fmt(a) + '</span>' + route.map(st => '<span class="o">' + st.s + '</span><span class="v">' + fmt(st.v) + '</span>').join('') + '</div>' : '<p class="solnote">could not rebuild the route. try the solutions list below.</p>';
-    box.hidden = false;
-}
-function syncRoute() {
-    const btn = $('rtbtn'); btn.hidden = curMin === null;
-    if (curMin === null) routeShown = false;
-    btn.textContent = routeShown ? 'hide shortest route' : 'view shortest route'; btn.setAttribute('aria-expanded', routeShown);
-    if (routeShown) renderRoute(); else $('rtbox').hidden = true;
-}
-$('rtbtn').onclick = () => { routeShown = !routeShown; syncRoute(); };
-let solMax = null, solShown = false; /* solMax stays null until you change it, so the default follows par */
-const solLimit = () => solMax !== null ? solMax : Math.max(8, curPar);
-function syncSolMax() { const n = solLimit(); setFlip($('solmax'), String(n)); $('sm').disabled = n <= 1; $('sp').disabled = n >= 20; }
-function clearSolutions() { $('sollist').innerHTML = ''; $('solcnt').textContent = ''; solShown = false; syncSolMax(); }
-function showSolutions() {
-    const list = $('sollist'), maxLen = solLimit(), capLen = 60; solShown = true;
-    if (curUnsolvable && maxLen <= 8) { $('solcnt').textContent = '(0)'; list.innerHTML = "<p class=\"solnote\">no routes. the goal can't be reached in 8 moves or fewer with these operations.</p>"; return; }
-    const a = parseNum($('s').value.trim().replace('−', '-')), b = parseNum($('g').value.trim().replace('−', '-')), os = ops.map(s => mk(s, mode));
-    if (!a || !b || os.some(o => !o)) return;
-    const r = findSolutions(a, b, os, maxLen, capLen, 300000);
-    const fmt = x => x.b > 1 ? surdFmt(x) : (x.d === 1 ? String(x.n) : mode === 'frac' ? x.n + '/' + x.d : String(+(x.n / x.d).toFixed(6))).replace('-', '−');
-    const sum = r.groups.reduce((n, g) => n + g.total, 0), partial = r.groups.some(g => !g.exact) || r.stoppedAt !== null;
-    $('solcnt').textContent = '(' + sum + (partial ? '+' : '') + ')';
-    const first = r.groups.length ? r.groups[0].len : 0; let html = '';
-    r.groups.forEach(g => {
-        const tags = [g.len === first ? 'shortest' : '', g.len === curPar ? 'par' : ''].filter(Boolean).join(', '), more = g.exact ? '' : '+';
-        html += '<h4>' + g.len + (g.len === 1 ? ' move' : ' moves') + (tags ? ' (' + tags + ')' : '') + ', ' + g.total + more + (g.total === 1 && !more ? ' route' : ' routes') + '</h4><ol>';
-        const rel = g.len < curPar ? 'lt' : g.len === curPar ? 'eq' : 'gt'; /* under par, at par, over par */
-        g.routes.forEach(route => { html += '<li class="route"><span class="v">' + fmt(a) + '</span>' + route.map((st, i) => '<span class="o">' + st.s + '</span><span class="v' + (i === route.length - 1 ? ' ' + rel : '') + '">' + fmt(st.v) + '</span>').join('') + '</li>'; });
-        html += '</ol>';
-        if (g.total > g.routes.length) html += '<p class="solnote">showing the first ' + g.routes.length + ' of ' + g.total + more + '.</p>';
-    });
-    if (r.stoppedAt !== null) html += '<p class="solnote">stopped at ' + r.stoppedAt + ' moves because there are too many routes to search. try a lower move count or remove some operations.</p>';
-    else if (!r.groups.length) html = '<p class="solnote">no routes found within ' + maxLen + (maxLen === 1 ? ' move.' : ' moves.') + '</p>';
-    list.innerHTML = html; list.scrollTop = 0;
-}
-$('sol').onclick = showSolutions;
-$('sm').onclick = () => { solMax = Math.max(1, solLimit() - 1); syncSolMax(); if (solShown) showSolutions(); };
-$('sp').onclick = () => { solMax = Math.min(20, solLimit() + 1); syncSolMax(); if (solShown) showSolutions(); };
+        function parseOp(raw) {
+            const t = raw.toLowerCase().replace(/[\s\u00a0]+/g, '').replace(/[−–—]/g, '-');
+            if (!t) return null;
+            if (FIXALIAS[t]) return { s: FIXALIAS[t] };
+            if (t === 'mod' || t === 'm' || /^[+\-*x×÷:\/%]$/.test(t)) return { wait: true };
+            let o, arg;
+            const mm = t.match(/^(?:mod|%)(.*)$/);
+            if (mm) { o = 'mod'; arg = mm[1]; }
+            else if (OPKEY[t[0]] && t[0] !== '%') { o = OPKEY[t[0]]; arg = t.slice(1); }
+            else return { err: "i don't know that one. try +2, ×3, mod 5, sqrt or square" };
+            let sg = ''; if ((o === '×' || o === '÷') && arg[0] === '-') { sg = '−'; arg = arg.slice(1); if (!arg) return { wait: true }; } /* ×-2 means times negative 2 */
+            arg = arg.replace(/^\./, '0.');
+            if (o === 'mod') return /^\d{1,2}$/.test(arg) && +arg >= 2 ? { s: 'mod ' + +arg } : { err: 'mod needs a whole number from 2 to 99' };
+            if (!/^\d+([./]\d+)?$/.test(arg)) return { err: 'put a number after ' + o + ', like ' + o + '2' };
+            if (!okNum(arg, argRe()) || !(parseFloat(arg.split('/')[0]) > 0)) {
+                if (/\/0+$/.test(arg)) return { err: "can't divide by zero" };
+                if (/^0+(\.0+)?(\/\d+)?$/.test(arg)) return { err: 'use a number above 0' };
+                /* a fine operation that just needs another number type: keep the preview and ask for the switch (not an error) */
+                if (arg.includes('/') && mode !== 'frac') return { s: o + sg + normArg(arg), need: 'fractions need the "fractions" number type above' };
+                if (arg.includes('.') && mode === 'whole' && /^\d+\.\d$/.test(arg)) return { s: o + sg + normArg(arg), need: 'decimals need the "decimals" number type above' };
+                return { err: mode === 'whole' ? 'use a whole number above 0' : mode === 'dec' ? 'use a number above 0 with at most 1 decimal' : 'use a whole number or a fraction like 3/4' };
+            }
+            return { s: o + sg + normArg(arg) };
+        }
+        /* is this operation allowed in the current number type? */
+        function opOk(s) {
+            if (FIXED.includes(s)) return true;
+            if (s.startsWith('mod ')) return /^\d{1,2}$/.test(s.slice(4)) && +s.slice(4) >= 2;
+            let t = s.slice(1); if (/^[×÷]−/.test(s)) t = t.slice(1); return argRe().test(t) && !/\/0+$/.test(t) && parseFloat(t.split('/')[0]) > 0;
+        }
 
-async function copy(t, label) { try { await navigator.clipboard.writeText(t); } catch (e) { const x = document.createElement('textarea'); x.value = t; document.body.appendChild(x); x.select(); try { document.execCommand('copy'); } catch (z) { } x.remove(); } toast(label + ' copied', true); }
-$('cc').onclick = () => code && copy(code, 'code'); $('cl').onclick = () => code && copy(LIVE + code, 'link');
+        let tt = 0;
+        function toast(t, good) { const el = $('toast'); el.textContent = t; el.style.color = good ? 'var(--ok)' : 'var(--imag)'; el.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => el.classList.remove('show'), 2200); }
+        function toggleOp(s) { const i = ops.indexOf(s); if (i >= 0) { ops.splice(i, 1); toast('removed ' + s); } else ops.push(s); upd(); }
 
-/* paste a level code (or a full level link) into the code box to edit that level */
-function loadLevel(lv) { mode = lv.n; ROOTS = !!lv.rt; ops = lv.o.slice(); $('s').value = lv.s; $('g').value = lv.g; wantPar = lv.p; syncMode(); upd(); }
-const levelFrom = v => { const m = v.match(/[?&]level=([^&#\s]+)/); return decodeLevel(m ? m[1] : v); };
-$('code').oninput = () => {
-    const v = $('code').value.trim(); if (v === code) return;
-    const lv = v && levelFrom(v); $('code').classList.toggle('bad', !!v && !lv);
-    if (lv) { loadLevel(lv); $('code').classList.remove('bad'); toast('level loaded', true); }
-};
-$('code').onblur = () => { $('code').classList.remove('bad'); $('code').value = code; };
+        let cur = null; /* what the box currently parses to */
+        function examples() { return mode === 'dec' ? '+2   −1.5   ×0.5   sqrt   square' : mode === 'frac' ? '+1/2   −3/4   ×2   ÷1/3   sqrt   square' : '+2   ×3   ×−2   ÷4   mod 5   sqrt   square'; }
+        function syncAdder() {
+            const raw = $('opn').value; cur = parseOp(raw);
+            const h = $('hint'), pv = $('prev'), btn = $('addop'); h.classList.remove('err', 'need'); $('opn').classList.toggle('bad', !!(cur && cur.err)); $('opn').classList.toggle('need', !!(cur && cur.need));
+            const s = cur && cur.s, dup = !!s && !cur.need && ops.includes(s);
+            pv.innerHTML = s ? '<span class="opb pv' + (dup ? ' dup' : '') + (cur.need ? ' bad' : '') + '">' + opLabel(s) + '</span>' : '';
+            btn.disabled = !s || dup || !!cur.need; btn.textContent = dup ? 'added' : 'add';
+            if (!cur) h.textContent = 'try ' + examples();
+            else if (cur.wait) h.textContent = 'keep typing...';
+            else if (cur.need) { h.classList.add('need'); h.textContent = cur.need; }
+            else if (cur.err) { h.classList.add('err'); h.textContent = cur.err; }
+            else h.textContent = dup ? s + ' is already added' : 'press enter to add ' + s;
+        }
+        function addTyped() {
+            if (!cur || !cur.s || cur.need) return syncAdder();
+            if (ops.includes(cur.s)) return toast(cur.s + ' is already added');
+            const s = cur.s; ops.push(s); $('opn').value = ''; upd();
+            if (!matchMedia('(pointer:coarse)').matches) $('opn').focus(); /* keep typing on desktop, don't pop the keyboard back up on phones */
+        }
+        $('opn').oninput = syncAdder;
+        $('opn').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); addTyped(); } };
+        $('addop').onclick = addTyped;
+        /* a random operation that fits the current number type and isn't already in the list */
+        function randomOp() {
+            const pick = a => a[Math.floor(Math.random() * a.length)];
+            const nums = (lo) => {
+                const w = []; for (let i = lo; i <= 9; i++) w.push(String(i));
+                if (mode === 'dec') for (let i = lo; i <= 9; i++) w.push(i + '.5'); /* one decimal at most */
+                if (mode === 'frac') for (const d of [2, 3, 4]) for (let n = 1; n <= 2 * d + 1; n++) if (gcd(n, d) === 1 && n / d >= (lo > 1 ? 1.5 : 0)) w.push(n + '/' + d);
+                return w;
+            };
+            const kinds = ['+', '−', '×', '÷', 'mod', 'fixed', 'fixed']; /* fixed ones (square, root, ...) are about a third of the picks */
+            for (let tries = 0; tries < 200; tries++) {
+                const k = pick(kinds); let s;
+                if (k === 'fixed') s = pick(FIXED);
+                else if (k === 'mod') s = 'mod ' + pick(['2', '3', '4', '5', '6', '7', '8', '9']);
+                else s = k + normArg(pick(nums(k === '+' || k === '−' ? 1 : 2)));
+                if (opOk(s) && !ops.includes(s)) return s;
+            }
+            return null;
+        }
+        $('rndop').onclick = () => { const s = randomOp(); if (!s) return toast('no new operation to add'); ops.push(s); upd(); };
+        const SYN = [
+            ['+2', 'add', '+2'], ['−3', 'subtract', '-3 or −3'], ['×3', 'multiply', '*3, x3 or ×3'], ['÷3', 'divide', '/3, :3 or ÷3'], ['mod 5', 'remainder', 'mod 5, mod5 or %5'],
+            ['x²', 'square', 'x², x^2, ^2, sq or square'], ['x³', 'cube', 'x³, x^3, ^3 or cube'], ['|x|', 'absolute value', '|x|, abs or absolute'],
+            ['−x', 'negate', '-x, neg, negate or negative'], ['√x', 'square root', '√x, √, sqrt, root or squareroot'],
+            ['x⁻¹', 'reciprocal', 'x⁻¹, x^-1, 1/x, inv, inverse, recip or reciprocal']];
+        const SYNFILL = ['+2', '-3', '*3', '/3', 'mod 5', 'square', 'cube', 'abs', '-x', 'sqrt', 'inv'];
+        $('syn').innerHTML = SYN.map((r, i) => '<button type="button" class="synrow" data-i="' + i + '" title="click to try ' + SYNFILL[i] + '"><span class="opb">' + r[0] + '</span><span class="t"><b>' + r[1] + '</b><br>' + r[2] + '</span></button>').join('') +
+            '<p>numbers: whole (3), decimals (1.5, one decimal) or fractions (1/2), depending on the number type. they must be above 0. spaces and capitals are ignored. click a row to try it.</p>';
+        $('synbtn').onclick = () => { const o = $('syn').hidden; $('syn').hidden = !o; $('synbtn').textContent = o ? 'hide syntax' : 'show all syntax'; $('synbtn').setAttribute('aria-expanded', o); };
+        document.querySelectorAll('.synrow').forEach(b => b.onclick = () => { $('opn').value = SYNFILL[+b.dataset.i]; syncAdder(); if (!matchMedia('(pointer:coarse)').matches) $('opn').focus(); });
+        function syncMode() {
+            document.querySelectorAll('[data-m]').forEach(x => x.setAttribute('aria-checked', x.dataset.m === mode));
+            const fr = mode === 'frac'; $('roots').setAttribute('aria-checked', ROOTS || fr); $('roots').disabled = fr; $('rtrow').classList.toggle('off', fr); $('hc').setAttribute('aria-checked', HC); syncMeta();
+            $('rtnote').textContent = fr ? 'fractions already allow this' : "allow √ on numbers that aren't perfect squares, like √2 or 3√5";
+        }
+        $('hc').onclick = () => { HC = !HC; syncMode(); upd(); };
+        function syncMeta() { if ($('ttl').value !== MT.t) $('ttl').value = MT.t; if ($('aut').value !== MT.a) $('aut').value = MT.a; document.querySelectorAll('[data-d]').forEach(b => b.setAttribute('aria-checked', +b.dataset.d === MT.dv)); }
+        /* title / author / difficulty only change the code, so they skip the solver */
+        function metaChanged() { if (lastLv) { code = encodeLevel(Object.assign({}, lastLv, metaObj())); $('code').value = code; $('play').setAttribute('href', '../custom/?level=' + code + '&from=editor'); } saveDraft(); }
+        $('ttl').oninput = () => { MT.t = $('ttl').value; metaChanged(); };
+        /* top bar search (same placeholder behaviour as the other pages: nothing to search yet) */
+        { const go = () => { const q = $('tsearch').value.trim(); if (!q) return; /* TODO: point this at the site's search page */ }; $('tgo').onclick = go; $('tsearch').addEventListener('keydown', e => { if (e.key === 'Enter') go(); }); }
+        /* top bar: who is signed in (the account page stores the name as localStorage "username"), or a log in button */
+        function showAcct() { const a = $('tacct'), n = acctName(); if (n) { a.className = 'twho'; a.replaceChildren('signed in as ', Object.assign(document.createElement('b'), { textContent: n })); a.title = n; } else { a.className = 'tbtn'; a.textContent = 'log in'; a.removeAttribute('title'); } }
+        showAcct(); addEventListener('focus', showAcct); addEventListener('storage', showAcct); addEventListener('pageshow', showAcct);
+        $('aut').oninput = () => { MT.a = $('aut').value; metaChanged(); };
+        /* re-read the signed-in account name (e.g. after signing in on another tab) and put it in the author field */
+        $('authref').onclick = () => { const n = acctName(), note = $('authnote'); if (n) { MT.a = n; syncMeta(); metaChanged(); note.textContent = 'signed in as ' + n; } else note.textContent = 'not signed in. sign in on the account page, then tap again'; };
+        document.querySelectorAll('[data-d]').forEach(b => b.onclick = () => { MT.dv = +b.dataset.d; syncMeta(); metaChanged(); });
+        $('roots').onclick = () => { if (mode === 'frac') return; ROOTS = !ROOTS; syncMode(); upd(); };
+        document.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { mode = b.dataset.m; syncMode(); upd(); });
+        ['s', 'g'].forEach(id => $(id).oninput = upd);
+        $('s').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('g').focus(); } };
+        $('g').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('opn').focus(); } };
+        ['s', 'g', 'opn', 'code'].forEach(id => $(id).onfocus = () => setTimeout(() => $(id).select(), 0));
+        $('swap').onclick = () => { const a = $('s').value; $('s').value = $('g').value; $('g').value = a; upd(); };
+        /* moves allowed is "shortest route + spare moves", so it follows the level as you edit it */
+        $('pp').onclick = () => { slack++; upd(); };
+        $('pm').onclick = () => { if (slack > 0) slack--; upd(); };
 
-/* import button (bottom row): opens a box for a level code or link, checks it as you type, then loads it into the editor */
-{
-    const dlg = $('impdlg'), inp = $('impin'), go = $('impgo'), err = $('imperr');
-    const check = () => { const v = inp.value.trim(), lv = v ? levelFrom(v) : null; inp.classList.toggle('bad', !!v && !lv); err.textContent = v && !lv ? "that isn't a valid level code or link" : ''; err.classList.toggle('err', !!v && !lv); go.disabled = !lv; return lv; };
-    const open = async () => {
-        inp.value = ''; check(); dlg.showModal();
-        /* if the clipboard already holds a level code or link, offer it ready to load (silently skipped when the browser asks or blocks) */
-        try { if (navigator.clipboard && navigator.clipboard.readText && navigator.permissions) { const st = await navigator.permissions.query({ name: 'clipboard-read' }); if (st.state === 'granted') { const c = (await navigator.clipboard.readText()).trim(); if (c && levelFrom(c) && !inp.value) { inp.value = c; check(); } } } } catch (e) { }
-        inp.focus(); inp.select();
-    };
-    const load = () => {
-        const lv = check(); if (!lv) { inp.focus(); return; }
-        dlg.close(); loadLevel(lv); toast('level loaded', true);
-        try { scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth' }); } catch (e) { scrollTo(0, 0); }
-    };
-    $('imp').onclick = open;
-    inp.oninput = check;
-    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); load(); } });
-    go.onclick = load;
-    $('impx').onclick = () => dlg.close();
-    dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
-}
+        function saveDraft() { try { localStorage.setItem(DRAFT, JSON.stringify({ n: mode, rt: ROOTS, hc: HC, t: MT.t, a: MT.a, dv: MT.dv, s: $('s').value, g: $('g').value, o: ops, p: curMin === null ? wantPar : curMin + slack, vk: VER && VER.k, vm: VER && VER.m })); } catch (e) { } }
+        function upd() {
+            $('chips').innerHTML = ops.map((s, i) => '<button type="button" class="opb' + (opOk(s) ? '' : ' bad') + '" data-x="' + i + '" aria-label="remove ' + s + '" title="click to remove">' + opLabel(s) + '</button>').join('');
+            document.querySelectorAll('[data-x]').forEach(b => b.onclick = () => { ops.splice(+b.dataset.x, 1); upd(); });
+            $('cnt').textContent = ops.length ? '(' + ops.length + ')' : '';
+            $('clr').hidden = ops.length < 2;
+            const st = $('s').value.trim().replace('−', '-'), go = $('g').value.trim().replace('−', '-'), sOk = okNum(st, numRe()), gOk = okNum(go, numRe());
+            setFlip($('pvs'), sOk ? st : '?'); setFlip($('pvg'), gOk ? go : '?'); $('pvs').closest('.board').style.setProperty('--ns', Math.max(1.2, Math.min(2.6, 120 / (Math.max(st.length, go.length, 1) * 13.8))) + 'rem'); $('s').classList.toggle('bad', !sOk); $('g').classList.toggle('bad', !gOk);
+            const S = $('status'); let min = null, playable = false, unsolvable = false, verified = false, needVerify = false; code = ''; lastLv = null;
+            S.className = 'no';
+            if (!sOk || !gOk) S.textContent = 'start and goal need to be valid ' + (mode === 'whole' ? 'whole numbers' : mode === 'dec' ? 'numbers (up to 2 decimals)' : 'numbers or fractions');
+            else if (!ops.length) S.textContent = 'add at least one operation';
+            else if (ops.some(s => !opOk(s))) S.textContent = 'switch the number type or remove the red operations';
+            else {
+                const a = parseNum(st), b = parseNum(go), os = ops.map(s => mk(s, mode));
+                if (!a || !b || os.some(o => !o)) S.textContent = 'those numbers are too big';
+                else if (same(a, b)) S.textContent = 'the start and the goal are the same number';
+                else { playable = true; min = solveCap(a, b, os, 400000); const vk = verKey(st, go); if (pendingVer !== null) { VER = { k: vk, m: pendingVer }; pendingVer = null; } if (min === -1 && VER && VER.k === vk) { min = VER.m; verified = true; S.className = 'ok'; S.textContent = 'verified by you: solved in ' + min + (min === 1 ? ' move' : ' moves') + ' (the shortest may be fewer)'; } else if (min === -1) { min = null; needVerify = true; S.textContent = "couldn't check every route. you can try it yourself, or remove some operations"; } else if (min === -2) { min = null; S.textContent = 'the shortest route is over 99 moves, which is too long for a level'; } else if (min === null) { unsolvable = true; S.textContent = 'no way to reach the goal with these operations'; } else if (!verified) { S.className = 'ok'; S.textContent = 'solvable! shortest route: ' + min + (min === 1 ? ' move' : ' moves'); } }
+            }
+            curMin = min; curVer = verified;
+            syncRoute();
+            if (min === null) { setFlip($('par'), '?'); $('parhint').textContent = unsolvable ? 'no solution yet, so there is no shortest route to base this on' : 'needs a valid, solvable level first'; $('pm').disabled = $('pp').disabled = true; }
+            else {
+                if (wantPar !== null) { slack = Math.max(0, wantPar - min); wantPar = null; }
+                slack = Math.max(0, Math.min(slack, 20 - min));
+                const p = min + slack; setFlip($('par'), String(p), true);
+                $('parhint').textContent = slack === 0 ? 'exactly the shortest route (hardest)' : slack + ' spare ' + (slack === 1 ? 'move' : 'moves') + ' on top of the shortest route (' + min + ')';
+                $('pm').disabled = slack === 0; $('pp').disabled = p >= 20;
+                lastLv = { s: st, g: go, p, n: mode, o: ops, rt: ROOTS && mode !== 'frac', hc: HC }; code = encodeLevel(Object.assign({}, lastLv, metaObj()));
+            }
+            curPar = min !== null ? min + slack : Math.max(1, Math.min(20, wantPar !== null ? wantPar : 5)); curUnsolvable = unsolvable;
+            /* no solution (or too many states to check): par can't follow a shortest route, but the level can still be played */
+            if (min === null && playable) { lastLv = { s: st, g: go, p: Math.max(1, Math.min(20, wantPar !== null ? wantPar : 5)), n: mode, o: ops, rt: ROOTS && mode !== 'frac', hc: HC }; code = encodeLevel(Object.assign({}, lastLv, metaObj())); }
+            $('vfy').hidden = !(needVerify && code); $('vfy').onclick = () => { if (code) location.href = '../custom/?level=' + code + '&from=editor&verify=1'; };
+            $('code').value = code; $('cc').disabled = $('cl').disabled = !code;
+            const pl = $('play'), ps = !code ? 'off' : unsolvable ? 'warn' : 'ok';
+            pl.className = 'btn go ' + ps; pl.innerHTML = (ps === 'warn' ? ICON_WARN : ICON_PLAY) + 'playtest'; pl.setAttribute('aria-disabled', ps === 'off'); pl.setAttribute('href', code ? '../custom/?level=' + code + '&from=editor' : '#');
+            if (ps === 'warn') { pl.dataset.tip = 'your level has no solution.'; pl.setAttribute('aria-label', 'playtest. your level has no solution.'); } else { delete pl.dataset.tip; pl.removeAttribute('aria-label'); }
+            $('sol').disabled = ps === 'off'; clearSolutions(); syncAdder(); saveDraft();
+        }
+        $('play').onclick = e => { if (!code) e.preventDefault(); };
 
-/* destructive buttons ask for a second tap instead of a popup */
-function armed(btn, idle, ask, fn) { let t = 0; btn.onclick = () => { if (btn.dataset.arm) { clearTimeout(t); delete btn.dataset.arm; btn.textContent = idle; fn(); } else { btn.dataset.arm = 1; btn.textContent = ask; t = setTimeout(() => { delete btn.dataset.arm; btn.textContent = idle; }, 2500); } }; }
-armed($('clr'), 'clear all', 'tap again to clear', () => { ops = []; upd(); });
-armed($('new'), 'new level', 'tap again to start over', () => { mode = 'whole'; ROOTS = false; ops = []; slack = 0; wantPar = null; solMax = null; $('s').value = '1'; $('g').value = '10'; $('opn').value = ''; syncMode(); upd(); });
+        /* for every move count L up to maxLen, find the routes of exactly L moves (shortest first). a route ends the moment it hits the goal and never repeats a number.
+           each length keeps its first capLen routes but still counts the rest, so no move count gets crowded out by shorter ones */
+        function findSolutions(start, goal, os, maxLen, capLen, capNodes) {
+            const groups = [], path = [], seen = new Set([key(start)]);
+            for (let L = 1; L <= maxLen; L++) {
+                const g = { len: L, routes: [], total: 0, exact: true }; let nodes = 0, stopped = false;
+                const dfs = (x, depth) => {
+                    for (const o of os) {
+                        if (stopped) return;
+                        if (++nodes > capNodes) { stopped = true; return; }
+                        const v = o.f(x); if (!v) continue;
+                        if (same(v, goal)) { if (depth + 1 === L) { g.total++; if (g.routes.length < capLen) g.routes.push(path.concat({ s: o.s, v })); } continue; }
+                        const k = key(v); if (depth + 1 >= L || seen.has(k)) continue;
+                        seen.add(k); path.push({ s: o.s, v }); dfs(v, depth + 1); path.pop(); seen.delete(k);
+                    }
+                };
+                dfs(start, 0);
+                if (stopped) { g.exact = false; if (g.total) groups.push(g); return { groups, stoppedAt: L }; }
+                if (g.total) groups.push(g);
+            }
+            return { groups, stoppedAt: null };
+        }
+        let routeShown = false;
+        /* the shortest route, as start -> operation -> value -> ... -> goal */
+        function renderRoute() {
+            const box = $('rtbox'), a = parseNum($('s').value.trim().replace('−', '-')), b = parseNum($('g').value.trim().replace('−', '-')), os = ops.map(s => mk(s, mode));
+            if (!a || !b || os.some(o => !o) || curMin === null) { box.hidden = true; return; }
+            const r = findSolutions(a, b, os, curMin, 1, 300000), route = r.groups.length && r.groups[0].routes[0];
+            const fmt = x => x.b > 1 ? surdFmt(x) : (x.d === 1 ? String(x.n) : mode === 'frac' ? x.n + '/' + x.d : String(+(x.n / x.d).toFixed(6))).replace('-', '−');
+            box.innerHTML = route ? '<div class="route"><span class="v">' + fmt(a) + '</span>' + route.map(st => '<span class="o">' + st.s + '</span><span class="v">' + fmt(st.v) + '</span>').join('') + '</div>' : '<p class="solnote">could not rebuild the route. try the solutions list below.</p>';
+            box.hidden = false;
+        }
+        function syncRoute() {
+            const btn = $('rtbtn'); btn.hidden = curMin === null || curVer; /* a route you found yourself can't be rebuilt here */
+            if (curMin === null || curVer) routeShown = false;
+            btn.textContent = routeShown ? 'hide shortest route' : 'view shortest route'; btn.setAttribute('aria-expanded', routeShown);
+            if (routeShown) renderRoute(); else $('rtbox').hidden = true;
+        }
+        $('rtbtn').onclick = () => { routeShown = !routeShown; syncRoute(); };
+        let solMax = null, solShown = false; /* solMax stays null until you change it, so the default follows par */
+        const solLimit = () => solMax !== null ? solMax : Math.max(8, curPar);
+        function syncSolMax() { const n = solLimit(); setFlip($('solmax'), String(n), true); $('sm').disabled = n <= 1; $('sp').disabled = n >= 20; }
+        function clearSolutions() { $('sollist').innerHTML = ''; $('solcnt').textContent = ''; solShown = false; syncSolMax(); }
+        function showSolutions() {
+            const list = $('sollist'), maxLen = solLimit(), capLen = 60; solShown = true;
+            if (curUnsolvable) { $('solcnt').textContent = '(0)'; list.innerHTML = "<p class=\"solnote\">no routes. the goal can't be reached with these operations.</p>"; return; }
+            const a = parseNum($('s').value.trim().replace('−', '-')), b = parseNum($('g').value.trim().replace('−', '-')), os = ops.map(s => mk(s, mode));
+            if (!a || !b || os.some(o => !o)) return;
+            const r = findSolutions(a, b, os, maxLen, capLen, 300000);
+            const fmt = x => x.b > 1 ? surdFmt(x) : (x.d === 1 ? String(x.n) : mode === 'frac' ? x.n + '/' + x.d : String(+(x.n / x.d).toFixed(6))).replace('-', '−');
+            const sum = r.groups.reduce((n, g) => n + g.total, 0), partial = r.groups.some(g => !g.exact) || r.stoppedAt !== null;
+            $('solcnt').textContent = '(' + sum + (partial ? '+' : '') + ')';
+            const first = r.groups.length ? r.groups[0].len : 0; let html = '';
+            r.groups.forEach(g => {
+                const tags = [g.len === first ? 'shortest' : '', g.len === curPar ? 'par' : ''].filter(Boolean).join(', '), more = g.exact ? '' : '+';
+                html += '<h4>' + g.len + (g.len === 1 ? ' move' : ' moves') + (tags ? ' (' + tags + ')' : '') + ', ' + g.total + more + (g.total === 1 && !more ? ' route' : ' routes') + '</h4><ol>';
+                const rel = g.len < curPar ? 'lt' : g.len === curPar ? 'eq' : 'gt'; /* under par, at par, over par */
+                g.routes.forEach(route => { html += '<li class="route"><span class="v">' + fmt(a) + '</span>' + route.map((st, i) => '<span class="o">' + st.s + '</span><span class="v' + (i === route.length - 1 ? ' ' + rel : '') + '">' + fmt(st.v) + '</span>').join('') + '</li>'; });
+                html += '</ol>';
+                if (g.total > g.routes.length) html += '<p class="solnote">showing the first ' + g.routes.length + ' of ' + g.total + more + '.</p>';
+            });
+            if (r.stoppedAt !== null) html += '<p class="solnote">stopped at ' + r.stoppedAt + ' moves because there are too many routes to search. try a lower move count or remove some operations.</p>';
+            else if (!r.groups.length) html = '<p class="solnote">no routes found within ' + maxLen + (maxLen === 1 ? ' move.' : ' moves.') + '</p>';
+            list.innerHTML = html; list.scrollTop = 0;
+        }
+        $('sol').onclick = showSolutions;
+        $('sm').onclick = () => { solMax = Math.max(1, solLimit() - 1); syncSolMax(); if (solShown) showSolutions(); };
+        $('sp').onclick = () => { solMax = Math.min(20, solLimit() + 1); syncSolMax(); if (solShown) showSolutions(); };
 
-/* start from a ?level= link if there is one, otherwise from the last unfinished draft */
-{
-    const lv0 = decodeLevel(new URLSearchParams(location.search).get('level') || '');
-    if (lv0) { loadLevel(lv0); try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { } }
-    else {
-        try { const d = JSON.parse(localStorage.getItem(DRAFT) || 'null'); if (d && MC[d.n] && Array.isArray(d.o) && d.o.every(x => typeof x === 'string') && typeof d.s === 'string' && typeof d.g === 'string') { mode = d.n; ROOTS = !!d.rt; ops = d.o; $('s').value = d.s; $('g').value = d.g; wantPar = Number.isInteger(d.p) ? d.p : null; } } catch (e) { }
-        syncMode(); upd();
-    }
-}
-</script>
-<script>
-/* parallax: the grid scrolls at half speed (shifted down by the other half), unless motion is reduced or animations are off */
-(() => {
-    const r = document.documentElement, b = document.body, F = .5; let q = 0;
-    if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-    const u = () => { q = 0; b.style.backgroundPositionY = (r.classList.contains('noanim') ? 0 : window.scrollY * (1 - F)) + 'px'; };
-    addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(u); }, { passive: true });
-})();
-</script>
+        async function copy(t, label) { try { await navigator.clipboard.writeText(t); } catch (e) { const x = document.createElement('textarea'); x.value = t; document.body.appendChild(x); x.select(); try { document.execCommand('copy'); } catch (z) { } x.remove(); } toast(label + ' copied', true); }
+        $('cc').onclick = () => code && copy(code, 'code'); $('cl').onclick = () => code && copy(LIVE + code, 'link');
+
+        /* paste a level code (or a full level link) into the code box to edit that level */
+        function loadLevel(lv) { mode = lv.n; ROOTS = !!lv.rt; HC = !!lv.hc; MT = { t: lv.t, a: lv.a, dv: lv.dv }; ops = lv.o.slice(); $('s').value = lv.s; $('g').value = lv.g; wantPar = lv.p; syncMode(); upd(); }
+        const levelFrom = v => { const m = v.match(/[?&]level=([^&#\s]+)/); return decodeLevel(m ? m[1] : v); };
+        $('code').oninput = () => {
+            const v = $('code').value.trim(); if (v === code) return;
+            const lv = v && levelFrom(v); $('code').classList.toggle('bad', !!v && !lv);
+            if (lv) { loadLevel(lv); $('code').classList.remove('bad'); toast('level loaded', true); }
+        };
+        $('code').onblur = () => { $('code').classList.remove('bad'); $('code').value = code; };
+
+        /* import button (bottom row): opens a box for a level code or link, checks it as you type, then loads it into the editor */
+        {
+            const dlg = $('impdlg'), inp = $('impin'), go = $('impgo'), err = $('imperr');
+            const check = () => { const v = inp.value.trim(), lv = v ? levelFrom(v) : null; inp.classList.toggle('bad', !!v && !lv); err.textContent = v && !lv ? "that isn't a valid level code or link" : ''; err.classList.toggle('err', !!v && !lv); go.disabled = !lv; return lv; };
+            const open = async () => {
+                inp.value = ''; check(); dlg.showModal();
+                /* if the clipboard already holds a level code or link, offer it ready to load (silently skipped when the browser asks or blocks) */
+                try { if (navigator.clipboard && navigator.clipboard.readText && navigator.permissions) { const st = await navigator.permissions.query({ name: 'clipboard-read' }); if (st.state === 'granted') { const c = (await navigator.clipboard.readText()).trim(); if (c && levelFrom(c) && !inp.value) { inp.value = c; check(); } } } } catch (e) { }
+                inp.focus(); inp.select();
+            };
+            const load = () => {
+                const lv = check(); if (!lv) { inp.focus(); return; }
+                dlg.close(); loadLevel(lv); toast('level loaded', true);
+                try { scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth' }); } catch (e) { scrollTo(0, 0); }
+            };
+            $('imp').onclick = open;
+            inp.oninput = check;
+            inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); load(); } });
+            go.onclick = load;
+            $('impx').onclick = () => dlg.close();
+            dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+        }
+
+        /* destructive buttons ask for a second tap instead of a popup */
+        function armed(btn, idle, ask, fn) { let t = 0; btn.onclick = () => { if (btn.dataset.arm) { clearTimeout(t); delete btn.dataset.arm; btn.textContent = idle; fn(); } else { btn.dataset.arm = 1; btn.textContent = ask; t = setTimeout(() => { delete btn.dataset.arm; btn.textContent = idle; }, 2500); } }; }
+        armed($('clr'), 'clear all', 'tap again to clear', () => { ops = []; upd(); });
+        armed($('new'), 'new level', 'tap again to start over', () => { mode = 'whole'; ROOTS = false; HC = false; MT = { t: '', a: acctName(), dv: 0 }; ops = []; slack = 0; wantPar = null; solMax = null; $('s').value = '1'; $('g').value = '10'; $('opn').value = ''; syncMode(); upd(); });
+
+        /* start from a ?level= link if there is one, otherwise from the last unfinished draft */
+        {
+            const lv0 = decodeLevel(new URLSearchParams(location.search).get('level') || '');
+            if (lv0) { const vm = +(new URLSearchParams(location.search).get('verified') || 0); if (Number.isInteger(vm) && vm >= 1 && vm <= 99) pendingVer = vm; loadLevel(lv0); try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { } }
+            else {
+                try { const d = JSON.parse(localStorage.getItem(DRAFT) || 'null'); if (d && MC[d.n] && Array.isArray(d.o) && d.o.every(x => typeof x === 'string') && typeof d.s === 'string' && typeof d.g === 'string') { mode = d.n; ROOTS = !!d.rt; HC = !!d.hc; MT = { t: typeof d.t === 'string' ? d.t.slice(0, 40) : '', a: typeof d.a === 'string' ? d.a.slice(0, 24) : '', dv: [2, 4, 6, 8].includes(d.dv) ? d.dv : 0 }; if (typeof d.vk === 'string' && Number.isInteger(d.vm)) VER = { k: d.vk, m: d.vm }; ops = d.o; $('s').value = d.s; $('g').value = d.g; wantPar = Number.isInteger(d.p) ? d.p : null; } } catch (e) { }
+                try { if (!MT.a && !localStorage.getItem(DRAFT)) MT.a = acctName(); } catch (e) { } /* brand new editor: start with the account name */
+                syncMode(); upd();
+            }
+        }
+    </script>
+    <script>
+        /* parallax: the grid scrolls at half speed (shifted down by the other half), unless motion is reduced or animations are off */
+        (() => {
+            const r = document.documentElement, b = document.body, F = .5; let q = 0;
+            if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+            const u = () => { q = 0; b.style.backgroundPositionY = (r.classList.contains('noanim') ? 0 : window.scrollY * (1 - F)) + 'px'; };
+            addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(u); }, { passive: true });
+        })();
+    </script>
 </body>
+
 </html>
