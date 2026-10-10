@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>level editor</title>
+<title>level editor · hole in √-1</title>
 <link
         href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Chakra+Petch:ital,wght@0,400;0,500;0,700;1,400&family=Dela+Gothic+One&family=Noto+Sans+JP:wght@400;500;700&display=swap"
         rel="stylesheet">
@@ -60,13 +60,17 @@ h1 .vin::before { content: ""; position: absolute; left: -1px; right: 0; top: -1
 html { scroll-padding-top: 220px }
 .board { position: sticky; top: 0; z-index: 20; background: var(--card); border: 2px solid var(--ink); padding: 12px 16px 14px; box-shadow: 6px 6px 0 var(--ink); margin-bottom: 22px }
 @media (max-height: 560px) { .board { position: static } html { scroll-padding-top: 0 } }
-.prow { display: flex; align-items: center; justify-content: space-around; gap: 24px }
+.prow { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: 12px; text-align: center }
+.prow .arrow { margin-top: 1.3rem; padding: 0 6px; line-height: 1 }
 .lbl { font-size: .85rem; color: var(--soft) }
 .arrow { font-size: 2rem; color: var(--soft) }
 .srow { display: flex; align-items: center; gap: 12px; margin-top: 10px }
+.board > .srow { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); align-items: center }
+.stat { flex: 1 1 0; min-width: 0; text-align: left } .stat .linkbtn:not([hidden]) { display: block; margin-top: 2px; padding: 4px 0; font-size: .82rem }
+#rtbox { margin-top: 8px }
 .srow a.btn { flex: 0 0 auto; padding: 8px 14px }
-#status { margin: 0; flex: 1 1 0; min-width: 0; font-size: .9rem; line-height: 1.25; text-align: left; font-weight: 700; color: var(--imag) } #status.ok { color: var(--ok) }
-#chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 2px 0 12px; min-height: 2.2rem; align-items: center }
+#status { margin: 0; flex: 0 0 auto; min-width: 0; font-size: .9rem; line-height: 1.25; text-align: left; font-weight: 700; color: var(--imag) } #status.ok { color: var(--ok) }
+#chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 2px 0 12px; min-height: 2.2rem; align-items: stretch }
 #chips:empty::before { content: "no operations yet. type one below to add it"; color: var(--soft); font-size: .9rem }
 .opb { display: inline-flex; align-items: center; padding: 8px 18px; font-family: inherit; color: var(--ink); text-transform: none; cursor: pointer; font-weight: 800; font-size: 1.2rem; line-height: 1.1; border: 2px solid var(--blue); background: var(--bg); box-shadow: 0 3px 0 var(--blue) }
 .opb:active, .opb:focus-visible { border-color: var(--imag); box-shadow: 0 3px 0 var(--imag); color: var(--imag); outline: none }
@@ -77,20 +81,25 @@ html { scroll-padding-top: 220px }
 .dgroup { background: var(--card); border: 2px solid var(--line); padding: 16px }
 .dgroup h3 { margin: 0 0 10px; font-size: 1.25rem; font-weight: 800; display: flex; align-items: baseline; justify-content: center; gap: 8px } .dgroup h3 small { color: var(--soft); font-weight: 500; font-size: .85rem }
 .dgroup label { display: block; font-size: .85rem; color: var(--soft); margin-bottom: 4px }
+.rtopt { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 12px; padding: 10px 12px; border: 1px solid var(--line); background: var(--bg); text-align: left }
+.rtopt b { display: block; font-size: .98rem } .rtopt small { display: block; margin-top: 2px; color: var(--soft); font-size: .82rem; font-weight: 500; line-height: 1.3 }
+.rtopt.off { opacity: .5 }
+.sw { flex: 0 0 auto; position: relative; width: 56px; height: 30px; border: 2px solid var(--line); background: var(--bg); cursor: pointer; padding: 0 } .sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: var(--soft); transition: left .2s } .sw[aria-checked="true"] { border-color: var(--imag) } .sw[aria-checked="true"]::after { left: 29px; background: var(--imag) } .sw:disabled { cursor: not-allowed } .sw:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px }
 .seg { display: flex } .seg button { flex: 1 1 0; min-height: 42px; padding: 6px 8px; font-family: inherit; font-weight: 700; font-size: .95rem; border: 1px solid var(--line); margin-left: -1px; background: var(--bg); color: var(--soft); cursor: pointer; text-transform: lowercase }
 .seg button:first-child { margin-left: 0 } .seg button[aria-checked="true"] { border-color: var(--imag); color: var(--imag); position: relative; z-index: 1 }
 .sg { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: end; margin-top: 14px }
 #swap { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; font-family: inherit; font-size: 1.2rem; font-weight: 700; border: 2px solid var(--line); background: var(--bg); color: var(--soft); cursor: pointer }
 input { width: 100%; min-width: 0; font-family: inherit; font-size: 1.1rem; font-weight: 700; text-align: center; padding: 9px 10px; border: 2px solid var(--line); border-radius: 0; background: var(--bg); color: var(--ink); text-transform: none; -webkit-appearance: none; appearance: none }
-input.bad { border-color: var(--imag) } input:disabled { opacity: .5 }
+input.bad { border-color: var(--imag) } input.need { border-color: var(--imag) } input:disabled { opacity: .5 }
 .numrow { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px }
 .dgroup .numrow label { margin: 0 }
-.addrow { display: flex; gap: 8px; align-items: stretch }
+.addrow { display: flex; gap: 6px; align-items: stretch } .addrow .addbtn { align-self: stretch; box-sizing: border-box }
 input::placeholder { color: var(--soft); opacity: .7; font-weight: 600 }
-.addrow input { flex: 1 1 auto; text-align: left; padding-left: 14px }
-.addbtn { flex: 0 0 auto; min-width: 84px; min-height: 44px; padding: 8px 16px; font-family: inherit; font-size: 1rem; font-weight: 700; text-transform: lowercase; border: 2px solid var(--blue); background: var(--bg); color: var(--ink); box-shadow: 0 3px 0 var(--blue); cursor: pointer; transition: transform .1s, box-shadow .1s, opacity .1s }
-.addbtn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--blue) }
-.addbtn:disabled { transform: translateY(2px); box-shadow: 0 1px 0 var(--blue); opacity: .4; color: var(--soft); cursor: not-allowed }
+.addrow input { flex: 1 1 auto; min-width: 0; text-align: left; padding-left: 12px; padding-right: 6px }
+.addbtn { flex: 0 0 auto; min-width: 68px; min-height: 44px; padding: 8px 16px; font-family: inherit; font-size: 1rem; font-weight: 700; text-transform: lowercase; border: 2px solid var(--blue); background: var(--bg); color: var(--ink); box-shadow: 0 3px 0 var(--blue); transform: translateY(-2px); cursor: pointer; transition: transform .1s, box-shadow .1s, opacity .1s }
+#rndop { min-width: 44px; padding: 8px 8px; display: inline-flex; align-items: center; justify-content: center }
+.addbtn:active:not(:disabled) { transform: none; box-shadow: 0 1px 0 var(--blue) } /* pushed in = flush with the input; raised = lifted 2px above it */
+.addbtn:disabled { transform: none; box-shadow: 0 1px 0 var(--blue); opacity: .4; color: var(--soft); cursor: not-allowed }
 .synrow { display: grid; grid-template-columns: 76px 1fr; gap: 10px; align-items: center; width: 100%; padding: 6px 4px; border: 0; border-bottom: 1px solid var(--line); background: none; font-family: inherit; text-align: left; color: var(--ink); cursor: pointer }
 .synrow:last-of-type { border-bottom: 0 }
 .synrow .opb { justify-content: center; padding: 4px 8px; font-size: 1rem; pointer-events: none; border-color: var(--blue); box-shadow: 0 3px 0 var(--blue); color: var(--ink) }
@@ -99,14 +108,15 @@ input::placeholder { color: var(--soft); opacity: .7; font-weight: 600 }
 #syn p { margin: 8px 0 0; font-size: .85rem; color: var(--soft); line-height: 1.4 }
 .prevrow { display: flex; align-items: center; justify-content: center; min-height: 3.4rem; margin-top: 12px }
 .prevrow:empty::before { content: "preview"; color: var(--soft); font-size: .85rem; opacity: .6 }
-.opb.pv { padding: 8px 18px } .opb.pv.dup { opacity: .45 }
+.opb .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .7em; line-height: 1.15; margin-left: .12em } .opb .fr > span { padding: 0 .2em } .opb .fr > span:first-child { border-bottom: 2px solid currentColor }
+.opb.pv { padding: 8px 18px } .opb.pv.bad, .opb.pv.bad:hover, .opb.pv.bad:active { border-color: var(--imag); box-shadow: 0 3px 0 var(--imag); color: var(--imag) } /* a preview that can't be added yet */ .opb.pv.dup { opacity: .45 }
 .pad { display: grid; grid-template-columns: repeat(auto-fit, minmax(74px, 1fr)); gap: 8px }
 #fixed { grid-template-columns: repeat(auto-fit, minmax(62px, 1fr)); margin-top: 6px }
 .pad button { min-height: 44px; padding: 8px 4px; font-family: inherit; font-size: 1rem; font-weight: 700; white-space: nowrap; text-transform: none; border: 2px solid var(--blue); background: var(--bg); color: var(--ink); box-shadow: 0 3px 0 var(--blue); cursor: pointer }
 .pad button:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--blue) }
 .pad button:disabled { opacity: .35; cursor: not-allowed; box-shadow: none }
 .pad button[aria-pressed="true"] { background: var(--blue); color: var(--bg) }
-.hint { margin: 10px 0 12px; min-height: 1.3em; font-size: .85rem; color: var(--soft) } .hint.err { color: var(--imag) }
+.hint { margin: 10px 0 12px; min-height: 1.3em; font-size: .85rem; color: var(--soft) } .hint.err { color: var(--imag) } .hint.need { color: var(--imag) }
 .stepper { display: flex; align-items: center; justify-content: center; gap: 18px }
 .stepper button { width: 48px; height: 48px; padding: 0; font-family: inherit; font-size: 1.5rem; font-weight: 700; border: 2px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer }
 .stepper button:disabled { opacity: .35; cursor: not-allowed }
@@ -128,6 +138,7 @@ a.btn.go[data-tip]:hover::after, a.btn.go[data-tip]:hover::before, a.btn.go[data
 #sollist:empty { display: none }
 #sollist h4 { margin: 14px 0 8px; font-size: .95rem; font-weight: 800; color: var(--soft) } #sollist h4:first-child { margin-top: 0 }
 #sollist ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px }
+#rtbox { margin-top: 6px; text-align: left } #rtbox .route { background: var(--card) } #rtbox .solnote { margin: 6px 0 0 }
 .route { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; padding: 8px 10px; background: var(--bg); border: 1px solid var(--line); font-weight: 800 }
 .route .o { padding: 1px 7px; border: 1px solid var(--blue); font-size: .85rem; color: var(--blue) }
 .route .v.lt { color: var(--blue) }
@@ -140,6 +151,13 @@ a.btn.go[data-tip]:hover::after, a.btn.go[data-tip]:hover::before, a.btn.go[data
 button:focus-visible, a.btn:focus-visible, input:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px }
 #toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); max-width: calc(100% - 32px); padding: 8px 16px; background: var(--card); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-weight: 700; z-index: 50; opacity: 0; pointer-events: none; transition: opacity .15s }
 #toast.show { opacity: 1 }
+#impdlg { width: min(92vw, 420px); max-width: 420px; padding: 20px 18px 18px; border: 2px solid var(--ink); background: var(--card); color: var(--ink); box-shadow: 4px 4px 0 var(--ink); text-align: center; text-transform: lowercase; font-family: inherit }
+#impdlg::backdrop { background: rgba(5, 7, 15, .6) }
+#impdlg h3 { margin: 0 0 6px; font-size: 1.15rem; font-weight: 800 }
+#impdlg p.hint { margin: 6px 0 4px; min-height: 2.6em }
+#impdlg .tools { margin-top: 8px }
+#impdlg .tools button.go { border-color: var(--blue); box-shadow: 0 3px 0 var(--blue) }
+#impdlg .tools button.go:disabled { box-shadow: none }
 @media (prefers-reduced-motion: no-preference) { .dgroup, .board { animation: rise .45s cubic-bezier(.2, .8, .2, 1) backwards } .dgroup:nth-child(2) { animation-delay: .06s } .dgroup:nth-child(3) { animation-delay: .12s } .dgroup:nth-child(4) { animation-delay: .18s } @keyframes rise { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: none } } }
         .tile {
             position: relative;
@@ -323,6 +341,14 @@ button:focus-visible, a.btn:focus-visible, input:focus-visible { outline: 3px so
             line-height: 1
         }
 
+
+/* scrollbars: square thumb in the page's own colours (follows the light/dark theme through the variables) */
+*::-webkit-scrollbar { width: 14px; height: 14px }
+*::-webkit-scrollbar-track, *::-webkit-scrollbar-corner { background: var(--bg) }
+*::-webkit-scrollbar-thumb { background: var(--line); background-clip: padding-box; border: 3px solid var(--bg); border-radius: 0; min-height: 40px; min-width: 40px }
+*::-webkit-scrollbar-thumb:hover { background: var(--soft); background-clip: padding-box }
+*::-webkit-scrollbar-thumb:active { background: var(--blue); background-clip: padding-box }
+@supports not selector(::-webkit-scrollbar) { * { scrollbar-width: thin; scrollbar-color: var(--line) var(--bg) } } /* firefox */
 </style>
 </head>
 <body>
@@ -331,19 +357,21 @@ button:focus-visible, a.btn:focus-visible, input:focus-visible { outline: 3px so
 <p class="sub">level editor: build a level, then share the link or code</p></header>
 <section class="board" aria-label="level preview">
 <div class="prow"><div><div class="lbl">you have</div><div class="num" id="pvs">1</div></div><div class="arrow" aria-hidden="true">⟶</div><div class="goal"><div class="lbl">goal</div><div class="num" id="pvg">10</div></div></div>
-<div class="srow"><p id="status" aria-live="polite">…</p><a class="btn go" id="play" href="#"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 1.5v13l11-6.5z" fill="currentColor"/></svg>playtest</a></div>
+<div class="srow"><div class="stat"><p id="status" aria-live="polite">…</p><button class="linkbtn" id="rtbtn" aria-expanded="false" aria-controls="rtbox" hidden>view shortest route</button></div><a class="btn go" id="play" href="#"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 1.5v13l11-6.5z" fill="currentColor"/></svg>playtest</a></div>
+<div id="rtbox" hidden></div>
 </section>
 <div class="dgroups">
 <section class="dgroup"><h3>numbers</h3>
 <div class="seg" id="modes" role="radiogroup" aria-label="number type">
 <button data-m="whole" role="radio" aria-checked="true">whole</button><button data-m="dec" role="radio" aria-checked="false">decimals</button><button data-m="frac" role="radio" aria-checked="false">fractions</button></div>
+<div class="rtopt" id="rtrow"><div><b>roots of non-squares</b><small id="rtnote">allow √ on numbers that aren't perfect squares, like √2 or 3√5</small></div><button class="sw" id="roots" role="switch" aria-checked="false" aria-label="roots of non-squares"></button></div>
 <div class="sg"><div><label for="s">you start with</label><input id="s" value="1" autocomplete="off"></div>
-<button id="swap" aria-label="swap start and goal" title="swap start and goal"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M2 5h11M10 2l3 3-3 3M14 11H3M6 8l-3 3 3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+<button id="swap" aria-label="swap start and goal" title="swap start and goal"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M2 5h11M10 2l3 3-3 3M14 11H3M6 8l-3 3 3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter"/></svg></button>
 <div><label for="g">goal</label><input id="g" value="10" autocomplete="off"></div></div></section>
 <section class="dgroup"><h3>operations <small id="cnt"></small></h3>
 <div id="chips" aria-live="polite"></div>
 <div class="center"><button class="linkbtn" id="clr" hidden>clear all</button></div>
-<div class="addrow"><input id="opn" placeholder="type an operation" aria-label="type an operation" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done"><button class="addbtn" id="addop" disabled>add</button></div>
+<div class="addrow"><input id="opn" placeholder="e.g. +2, sqrt" aria-label="type an operation" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done"><button class="addbtn" id="addop" disabled>add</button><button class="addbtn" id="rndop" title="add a random operation" aria-label="add a random operation"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17"/><rect x="6.8" y="6.8" width="2.4" height="2.4" fill="currentColor" stroke="none"/><rect x="14.8" y="6.8" width="2.4" height="2.4" fill="currentColor" stroke="none"/><rect x="10.8" y="10.8" width="2.4" height="2.4" fill="currentColor" stroke="none"/><rect x="6.8" y="14.8" width="2.4" height="2.4" fill="currentColor" stroke="none"/><rect x="14.8" y="14.8" width="2.4" height="2.4" fill="currentColor" stroke="none"/></svg></button></div>
 <div class="prevrow" id="prev" aria-live="polite"></div>
 <p class="hint" id="hint"></p>
 <div class="center"><button class="linkbtn" id="synbtn" aria-expanded="false" aria-controls="syn">show all syntax</button></div>
@@ -360,30 +388,40 @@ button:focus-visible, a.btn:focus-visible, input:focus-visible { outline: 3px so
 <label for="code">level code</label><input id="code" placeholder="paste a code or link here to load it" autocomplete="off" spellcheck="false">
 <div class="tools"><button id="cc">copy code</button><button id="cl">copy link</button></div></section>
 </div>
-<div class="tools"><button id="new">new level</button><a class="btn" href="../">main menu</a></div>
+<div class="tools"><button id="new">new level</button><button id="imp">import level</button><a class="btn" href="../">main menu</a></div>
 </main>
+<dialog id="impdlg" aria-labelledby="imptl">
+<h3 id="imptl">import a level</h3>
+<p class="hint" id="imphint" style="margin-top:0">paste a level code or a level link. this replaces the level you're editing</p>
+<input id="impin" placeholder="level code or link" aria-label="level code or link" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go">
+<p class="hint" id="imperr" aria-live="polite"></p>
+<div class="tools"><button id="impgo" class="go" disabled>load level</button><button id="impx">cancel</button></div>
+</dialog>
 <div id="toast" role="status" aria-live="polite"></div>
 <script>
         const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b] } return a || 1 };
-        let NB = 100000, CAP = 1e9;
-        function F(n, d = 1) { if (d < 0) { n = -n; d = -d } const g = gcd(n, d); n /= g; d /= g; if (Math.abs(n) > NB || d > NB) return null; return { n, d } }
-        const key = x => x.n + '/' + x.d;
+        let NB = 100000, CAP = 1e9, ROOTS = false; const BMAX = 200; /* ROOTS: allow √ of non-squares (the checkbox under the number type) */
+        function F(n, d = 1, b = 1) { if (d < 0) { n = -n; d = -d } if (n === 0) b = 1; const g = gcd(n, d); n /= g; d /= g; if (Math.abs(n) > NB || d > NB || b > BMAX) return null; return { n, d, b } }
+        const sqfC = new Map();
+        function sqf(m) { let c = sqfC.get(m); if (c) return c; let k = 1, r = m; for (let p = 2; p * p <= r; p++) while (r % (p * p) === 0) { r /= p * p; k *= p } c = [k, r]; sqfC.set(m, c); return c }
+        const key = x => x.n + '/' + x.d + (x.b > 1 ? 'r' + x.b : '');
         const term = x => { let d = x.d; while (d % 2 === 0) d /= 2; while (d % 5 === 0) d /= 5; return d === 1 };
-        const same = (a, b) => a.n === b.n && a.d === b.d;
+        const same = (a, b) => a.n === b.n && a.d === b.d && (a.b || 1) === (b.b || 1);
+        const surdFmt = x => { const a = Math.abs(x.n); return ((x.n < 0 ? '-' : '') + (a === 1 ? '' : a) + '√' + x.b + (x.d > 1 ? '/' + x.d : '')).replace('-', '−'); };
         function mk(s, mode) {
-            if (s === 'x²') return { s, f: x => F(x.n * x.n, x.d * x.d) };
-            if (s === '|x|') return { s, f: x => F(Math.abs(x.n), x.d) };
-            if (s === '−x') return { s, f: x => F(-x.n, x.d) };
-            if (s === 'x³') return { s, f: x => F(x.n * x.n * x.n, x.d * x.d * x.d) };
-            if (s === '√x') return { s, f: x => { if (x.n < 0) return null; const a = Math.round(Math.sqrt(x.n)), b = Math.round(Math.sqrt(x.d)); return a * a === x.n && b * b === x.d ? F(a, b) : null } };
-            if (s.startsWith('mod ')) { const k = parseInt(s.slice(4), 10); return { s, f: x => x.d !== 1 ? null : F(((x.n % k) + k) % k) }; }
-            if (s === 'rev') return { s, f: x => x.d !== 1 || x.n < 0 ? null : F(parseInt(String(x.n).split('').reverse().join(''), 10)) };
-            if (s === 'x⁻¹') return { s, f: x => { if (x.n === 0) return null; const r = F(x.d, x.n); return r && (mode !== 'dec' || r.d === 1 || term(r)) ? r : null } };
+            /* numbers can be a root like 2√3 = {n:2, d:1, b:3} (value n/d·√b, b with no square factor); in fractions mode √x of a non-square gives one */
+            if (s === 'x²') return { s, f: x => F(x.n * x.n * x.b, x.d * x.d) };
+            if (s === '|x|') return { s, f: x => F(Math.abs(x.n), x.d, x.b) };
+            if (s === '−x') return { s, f: x => F(-x.n, x.d, x.b) };
+            if (s === 'x³') return { s, f: x => F(x.n * x.n * x.n * x.b, x.d * x.d * x.d, x.b) };
+            if (s === '√x') { const rt = ROOTS || mode === 'frac'; return { s, f: x => { if (x.n < 0 || x.b > 1) return null; if (x.n === 0) return x; const [k, r] = sqf(x.n * x.d); return r > 1 && !rt ? null : F(k, x.d, r) } }; }
+            if (s.startsWith('mod ')) { const k = parseInt(s.slice(4), 10); return { s, f: x => x.d !== 1 || x.b > 1 ? null : F(((x.n % k) + k) % k) }; }
+            if (s === 'x⁻¹') return { s, f: x => { if (x.n === 0) return null; const r = F(x.d, x.n * x.b, x.b); return r && (mode !== 'dec' || r.d === 1 || term(r)) ? r : null } };
             const qs = s.slice(1), o = s[0], q = qs.includes('/') ? F(+qs.split('/')[0], +qs.split('/')[1]) : F(Math.round(parseFloat(qs) * 10), 10); /* the number can be whole, a decimal or a fraction (always kept in lowest terms) */
-            if (o === '+') return { s, f: x => F(x.n * q.d + q.n * x.d, x.d * q.d) };
-            if (o === '−') return { s, f: x => F(x.n * q.d - q.n * x.d, x.d * q.d) };
-            if (o === '×') return { s, f: x => F(x.n * q.n, x.d * q.d) };
-            if (o === '÷') return { s, f: x => { if (q.n === 0) return null; const r = F(x.n * q.d, x.d * q.n); return r && (r.d === 1 || mode === 'frac' || (mode === 'dec' && term(r))) ? r : null } };
+            if (o === '+') return { s, f: x => x.b > 1 ? null : F(x.n * q.d + q.n * x.d, x.d * q.d) };
+            if (o === '−') return { s, f: x => x.b > 1 ? null : F(x.n * q.d - q.n * x.d, x.d * q.d) };
+            if (o === '×') return { s, f: x => F(x.n * q.n, x.d * q.d, x.b) };
+            if (o === '÷') return { s, f: x => { if (q.n === 0) return null; const r = F(x.n * q.d, x.d * q.n, x.b); return r && (r.d === 1 || mode === 'frac' || (mode === 'dec' && term(r))) ? r : null } };
         }
         function solve(start, goal, ops) {
             let seen = new Set([key(start)]), fr = [start];
@@ -420,19 +458,19 @@ function mkTile() {
         }
 
 
-const OPC = { '+': 'p', '−': 'm', '×': 'x', '÷': 'd' }, FIX = { 'x²': 'sq', '|x|': 'ab', '−x': 'ng', 'x³': 'cu', '√x': 'rt', 'rev': 'rv', 'x⁻¹': 'iv' }, MC = { whole: 'w', dec: 'd', frac: 'f' };
+const OPC = { '+': 'p', '−': 'm', '×': 'x', '÷': 'd' }, FIX = { 'x²': 'sq', '|x|': 'ab', '−x': 'ng', 'x³': 'cu', '√x': 'rt', 'x⁻¹': 'iv' }, MC = { whole: 'w', dec: 'd', frac: 'f' };
 const b64e = s => btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const b64d = s => atob(s.replace(/-/g, '+').replace(/_/g, '/'));
 const opEnc = s => FIX[s] || (s.startsWith('mod ') ? 'o' + s.slice(4) : OPC[s[0]] + s.slice(1));
 function opDec(t) { for (const k in FIX) if (FIX[k] === t) return k; if (t[0] === 'o') return 'mod ' + t.slice(1); const c = Object.keys(OPC).find(k => OPC[k] === t[0]); return c ? c + t.slice(1) : null; }
-const encodeLevel = v => b64e([v.s, v.g, v.p, MC[v.n], v.o.map(opEnc).join(',')].join(';'));
+const encodeLevel = v => b64e([v.s, v.g, v.p, MC[v.n], v.o.map(opEnc).join(',')].concat(v.rt ? ['r'] : []).join(';'));
 function decodeLevel(code) {
     try {
-        const [s, g, p, n, o] = b64d(String(code).trim()).split(';'), mode = Object.keys(MC).find(k => MC[k] === n), ops = o.split(',').map(opDec);
+        const [s, g, p, n, o, rf] = b64d(String(code).trim()).split(';'), mode = Object.keys(MC).find(k => MC[k] === n), ops = o.split(',').map(opDec);
         const numOk = t => /^-?\d+(\.\d+)?(\/\d+)?$/.test(t) && !/\/0+$/.test(t), argOk = t => /^\d+(\.\d)?(\/\d+)?$/.test(t) && !/\/0+$/.test(t) && +t.split('/')[0] > 0;
-        if (!mode || !numOk(s) || !numOk(g) || !/^\d{1,2}$/.test(p) || +p < 1 || ops.length < 1) return null;
+        if ((rf !== undefined && rf !== 'r') || !mode || !numOk(s) || !numOk(g) || !/^\d{1,2}$/.test(p) || +p < 1 || ops.length < 1) return null;
         if (ops.some(x => !x || (/^[+−×÷]/.test(x) && !argOk(x.slice(1))) || (x.startsWith('mod ') && !/^\d{1,2}$/.test(x.slice(4)) || x === 'mod 0' || x === 'mod 1'))) return null;
-        return { s, g, p: +p, n: mode, o: ops };
+        return { s, g, p: +p, n: mode, o: ops, rt: rf === 'r' };
     } catch (e) { return null; }
 }
 
@@ -460,12 +498,15 @@ function solveCap(start, goal, ops, cap) {
 const LIVE = 'https://gamedevrg.github.io/gamedevrg.com/mathgolf/custom/?level=';
 const $ = id => document.getElementById(id);
 try { if ((JSON.parse(localStorage.getItem('hs1') || '{}')).theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) { }
-const ICON_PLAY = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 1.5v13l11-6.5z" fill="currentColor"/></svg>', ICON_WARN = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 1.8 15 14H1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 6.2v3.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="8" cy="12" r="1" fill="currentColor"/></svg>';
-const DRAFT = 'lvdraft', FIXED = ['x²', '|x|', '−x', 'x³', '√x', 'rev', 'x⁻¹'];
+const ICON_PLAY = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 1.5v13l11-6.5z" fill="currentColor"/></svg>', ICON_WARN = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 1.8 15 14H1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="miter"/><path d="M8 6.2v3.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"/><rect x="7" y="11" width="2" height="2" fill="currentColor"/></svg>';
+const DRAFT = 'lvdraft', FIXED = ['x²', '|x|', '−x', 'x³', '√x', 'x⁻¹'];
 let mode = 'whole', ops = [], code = '', slack = 0, wantPar = null, curMin = null, curPar = 1, curUnsolvable = false;
 const numRe = () => mode === 'frac' ? /^-?\d+(\/\d+)?$/ : mode === 'dec' ? /^-?\d+(\.\d{1,2})?$/ : /^-?\d+$/;
 const argRe = () => mode === 'frac' ? /^\d+(\/\d+)?$/ : mode === 'dec' ? /^\d+(\.\d)?$/ : /^\d+$/;
 const okNum = (t, re) => re.test(t) && !/\/0+$/.test(t) && Math.abs(parseFloat(t)) < 1e6;
+/* operation boxes: a fraction operand like ÷1/2 is drawn as a stacked fraction, like the buttons in the game */
+const opEsc = t => String(t).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+const opLabel = t => { const m = /^([+−×÷])(−?\d+)\/(\d+)$/.exec(t); return m ? m[1] + '<span class="fr"><span>' + m[2] + '</span><span>' + m[3] + '</span></span>' : opEsc(t); };
 const normArg = t => t.replace(/^0+(?=\d)/, '').replace(/^(\d+)\.0$/, '$1');
 /* typed text -> an operation. returns null (empty), {wait} (unfinished), {err} or {s} */
 const OPKEY = { '+': '+', '-': '−', '*': '×', x: '×', '×': '×', '÷': '÷', ':': '÷', '/': '÷', '%': 'mod' };
@@ -475,7 +516,6 @@ const FIXALIAS = {
     '|x|': '|x|', 'abs': '|x|', 'absolute': '|x|', 'abs(x)': '|x|',
     '-x': '−x', 'neg': '−x', 'negate': '−x', 'negative': '−x',
     '√x': '√x', '√': '√x', 'sqrt': '√x', 'sqrtx': '√x', 'sqrt(x)': '√x', 'root': '√x', 'squareroot': '√x', '√(x)': '√x',
-    'rev': 'rev', 'reverse': 'rev', 'flip': 'rev',
     'x⁻¹': 'x⁻¹', 'x^-1': 'x⁻¹', '^-1': 'x⁻¹', '⁻¹': 'x⁻¹', '1/x': 'x⁻¹', 'inv': 'x⁻¹', 'inverse': 'x⁻¹', 'recip': 'x⁻¹', 'reciprocal': 'x⁻¹'
 };
 function parseOp(raw) {
@@ -487,15 +527,16 @@ function parseOp(raw) {
     const mm = t.match(/^(?:mod|%)(.*)$/);
     if (mm) { o = 'mod'; arg = mm[1]; }
     else if (OPKEY[t[0]] && t[0] !== '%') { o = OPKEY[t[0]]; arg = t.slice(1); }
-    else return { err: "i don't know that one. try +2, ×3, mod 5, sqrt, square or rev" };
+    else return { err: "i don't know that one. try +2, ×3, mod 5, sqrt or square" };
     arg = arg.replace(/^\./, '0.');
     if (o === 'mod') return /^\d{1,2}$/.test(arg) && +arg >= 2 ? { s: 'mod ' + +arg } : { err: 'mod needs a whole number from 2 to 99' };
     if (!/^\d+([./]\d+)?$/.test(arg)) return { err: 'put a number after ' + o + ', like ' + o + '2' };
     if (!okNum(arg, argRe()) || !(parseFloat(arg.split('/')[0]) > 0)) {
         if (/\/0+$/.test(arg)) return { err: "can't divide by zero" };
         if (/^0+(\.0+)?(\/\d+)?$/.test(arg)) return { err: 'use a number above 0' };
-        if (arg.includes('/') && mode !== 'frac') return { err: 'fractions need the "fractions" number type above' };
-        if (arg.includes('.') && mode === 'whole') return { err: 'decimals need the "decimals" number type above' };
+        /* a fine operation that just needs another number type: keep the preview and ask for the switch (not an error) */
+        if (arg.includes('/') && mode !== 'frac') return { s: o + normArg(arg), need: 'fractions need the "fractions" number type above' };
+        if (arg.includes('.') && mode === 'whole' && /^\d+\.\d$/.test(arg)) return { s: o + normArg(arg), need: 'decimals need the "decimals" number type above' };
         return { err: mode === 'whole' ? 'use a whole number above 0' : mode === 'dec' ? 'use a number above 0 with at most 1 decimal' : 'use a whole number or a fraction like 3/4' };
     }
     return { s: o + normArg(arg) };
@@ -512,20 +553,21 @@ function toast(t, good) { const el = $('toast'); el.textContent = t; el.style.co
 function toggleOp(s) { const i = ops.indexOf(s); if (i >= 0) { ops.splice(i, 1); toast('removed ' + s); } else ops.push(s); upd(); }
 
 let cur = null; /* what the box currently parses to */
-function examples() { return mode === 'dec' ? '+2   −1.5   ×0.5   sqrt   square   rev' : mode === 'frac' ? '+1/2   −3/4   ×2   ÷1/3   sqrt   square' : '+2   ×3   ÷4   mod 5   sqrt   square   rev'; }
+function examples() { return mode === 'dec' ? '+2   −1.5   ×0.5   sqrt   square' : mode === 'frac' ? '+1/2   −3/4   ×2   ÷1/3   sqrt   square' : '+2   ×3   ÷4   mod 5   sqrt   square'; }
 function syncAdder() {
     const raw = $('opn').value; cur = parseOp(raw);
-    const h = $('hint'), pv = $('prev'), btn = $('addop'); h.classList.remove('err'); $('opn').classList.toggle('bad', !!(cur && cur.err));
-    const s = cur && cur.s, dup = !!s && ops.includes(s);
-    pv.innerHTML = s ? '<span class="opb pv' + (dup ? ' dup' : '') + '">' + s + '</span>' : '';
-    btn.disabled = !s || dup; btn.textContent = dup ? 'added' : 'add';
+    const h = $('hint'), pv = $('prev'), btn = $('addop'); h.classList.remove('err', 'need'); $('opn').classList.toggle('bad', !!(cur && cur.err)); $('opn').classList.toggle('need', !!(cur && cur.need));
+    const s = cur && cur.s, dup = !!s && !cur.need && ops.includes(s);
+    pv.innerHTML = s ? '<span class="opb pv' + (dup ? ' dup' : '') + (cur.need ? ' bad' : '') + '">' + opLabel(s) + '</span>' : '';
+    btn.disabled = !s || dup || !!cur.need; btn.textContent = dup ? 'added' : 'add';
     if (!cur) h.textContent = 'try ' + examples();
     else if (cur.wait) h.textContent = 'keep typing...';
+    else if (cur.need) { h.classList.add('need'); h.textContent = cur.need; }
     else if (cur.err) { h.classList.add('err'); h.textContent = cur.err; }
     else h.textContent = dup ? s + ' is already added' : 'press enter to add ' + s;
 }
 function addTyped() {
-    if (!cur || !cur.s) return syncAdder();
+    if (!cur || !cur.s || cur.need) return syncAdder();
     if (ops.includes(cur.s)) return toast(cur.s + ' is already added');
     const s = cur.s; ops.push(s); $('opn').value = ''; upd();
     if (!matchMedia('(pointer:coarse)').matches) $('opn').focus(); /* keep typing on desktop, don't pop the keyboard back up on phones */
@@ -533,19 +575,42 @@ function addTyped() {
 $('opn').oninput = syncAdder;
 $('opn').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); addTyped(); } };
 $('addop').onclick = addTyped;
+/* a random operation that fits the current number type and isn't already in the list */
+function randomOp() {
+    const pick = a => a[Math.floor(Math.random() * a.length)];
+    const nums = (lo) => {
+        const w = []; for (let i = lo; i <= 9; i++) w.push(String(i));
+        if (mode === 'dec') for (let i = lo; i <= 9; i++) w.push(i + '.5'); /* one decimal at most */
+        if (mode === 'frac') for (const d of [2, 3, 4]) for (let n = 1; n <= 2 * d + 1; n++) if (gcd(n, d) === 1 && n / d >= (lo > 1 ? 1.5 : 0)) w.push(n + '/' + d);
+        return w;
+    };
+    const kinds = ['+', '−', '×', '÷', 'mod', 'fixed', 'fixed']; /* fixed ones (square, root, ...) are about a third of the picks */
+    for (let tries = 0; tries < 200; tries++) {
+        const k = pick(kinds); let s;
+        if (k === 'fixed') s = pick(FIXED);
+        else if (k === 'mod') s = 'mod ' + pick(['2', '3', '4', '5', '6', '7', '8', '9']);
+        else s = k + normArg(pick(nums(k === '+' || k === '−' ? 1 : 2)));
+        if (opOk(s) && !ops.includes(s)) return s;
+    }
+    return null;
+}
+$('rndop').onclick = () => { const s = randomOp(); if (!s) return toast('no new operation to add'); ops.push(s); upd(); };
 const SYN = [
     ['+2', 'add', '+2'], ['−3', 'subtract', '-3 or −3'], ['×3', 'multiply', '*3, x3 or ×3'], ['÷3', 'divide', '/3, :3 or ÷3'], ['mod 5', 'remainder', 'mod 5, mod5 or %5'],
     ['x²', 'square', 'x², x^2, ^2, sq or square'], ['x³', 'cube', 'x³, x^3, ^3 or cube'], ['|x|', 'absolute value', '|x|, abs or absolute'],
-    ['−x', 'negate', '-x, neg, negate or negative'], ['√x', 'square root', '√x, √, sqrt, root or squareroot'], ['rev', 'reverse the digits', 'rev, reverse or flip'],
+    ['−x', 'negate', '-x, neg, negate or negative'], ['√x', 'square root', '√x, √, sqrt, root or squareroot'],
     ['x⁻¹', 'reciprocal', 'x⁻¹, x^-1, 1/x, inv, inverse, recip or reciprocal']];
-const SYNFILL = ['+2', '-3', '*3', '/3', 'mod 5', 'square', 'cube', 'abs', '-x', 'sqrt', 'rev', 'inv'];
+const SYNFILL = ['+2', '-3', '*3', '/3', 'mod 5', 'square', 'cube', 'abs', '-x', 'sqrt', 'inv'];
 $('syn').innerHTML = SYN.map((r, i) => '<button type="button" class="synrow" data-i="' + i + '" title="click to try ' + SYNFILL[i] + '"><span class="opb">' + r[0] + '</span><span class="t"><b>' + r[1] + '</b><br>' + r[2] + '</span></button>').join('') +
     '<p>numbers: whole (3), decimals (1.5, one decimal) or fractions (1/2), depending on the number type. they must be above 0. spaces and capitals are ignored. click a row to try it.</p>';
 $('synbtn').onclick = () => { const o = $('syn').hidden; $('syn').hidden = !o; $('synbtn').textContent = o ? 'hide syntax' : 'show all syntax'; $('synbtn').setAttribute('aria-expanded', o); };
 document.querySelectorAll('.synrow').forEach(b => b.onclick = () => { $('opn').value = SYNFILL[+b.dataset.i]; syncAdder(); if (!matchMedia('(pointer:coarse)').matches) $('opn').focus(); });
 function syncMode() {
     document.querySelectorAll('[data-m]').forEach(x => x.setAttribute('aria-checked', x.dataset.m === mode));
+    const fr = mode === 'frac'; $('roots').setAttribute('aria-checked', ROOTS || fr); $('roots').disabled = fr; $('rtrow').classList.toggle('off', fr);
+    $('rtnote').textContent = fr ? 'fractions already allow this' : "allow √ on numbers that aren't perfect squares, like √2 or 3√5";
 }
+$('roots').onclick = () => { if (mode === 'frac') return; ROOTS = !ROOTS; syncMode(); upd(); };
 document.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { mode = b.dataset.m; syncMode(); upd(); });
 ['s', 'g'].forEach(id => $(id).oninput = upd);
 $('s').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('g').focus(); } };
@@ -556,9 +621,9 @@ $('swap').onclick = () => { const a = $('s').value; $('s').value = $('g').value;
 $('pp').onclick = () => { slack++; upd(); };
 $('pm').onclick = () => { if (slack > 0) slack--; upd(); };
 
-function saveDraft() { try { localStorage.setItem(DRAFT, JSON.stringify({ n: mode, s: $('s').value, g: $('g').value, o: ops, p: curMin === null ? wantPar : curMin + slack })); } catch (e) { } }
+function saveDraft() { try { localStorage.setItem(DRAFT, JSON.stringify({ n: mode, rt: ROOTS, s: $('s').value, g: $('g').value, o: ops, p: curMin === null ? wantPar : curMin + slack })); } catch (e) { } }
 function upd() {
-    $('chips').innerHTML = ops.map((s, i) => '<button type="button" class="opb' + (opOk(s) ? '' : ' bad') + '" data-x="' + i + '" aria-label="remove ' + s + '" title="click to remove">' + s + '</button>').join('');
+    $('chips').innerHTML = ops.map((s, i) => '<button type="button" class="opb' + (opOk(s) ? '' : ' bad') + '" data-x="' + i + '" aria-label="remove ' + s + '" title="click to remove">' + opLabel(s) + '</button>').join('');
     document.querySelectorAll('[data-x]').forEach(b => b.onclick = () => { ops.splice(+b.dataset.x, 1); upd(); });
     $('cnt').textContent = ops.length ? '(' + ops.length + ')' : '';
     $('clr').hidden = ops.length < 2;
@@ -576,6 +641,7 @@ function upd() {
         else { playable = true; min = solveCap(a, b, os, 400000); if (min === -1) { min = null; S.textContent = 'too many possibilities to check. try removing some operations'; } else if (min === null) { unsolvable = true; S.textContent = 'no way to reach the goal in 8 moves or fewer with these operations'; } else { S.className = 'ok'; S.textContent = 'solvable! shortest route: ' + min + (min === 1 ? ' move' : ' moves'); } }
     }
     curMin = min;
+    syncRoute();
     if (min === null) { setFlip($('par'), '?'); $('parhint').textContent = unsolvable ? 'no solution yet, so there is no shortest route to base this on' : 'needs a valid, solvable level first'; $('pm').disabled = $('pp').disabled = true; }
     else {
         if (wantPar !== null) { slack = Math.max(0, wantPar - min); wantPar = null; }
@@ -583,11 +649,11 @@ function upd() {
         const p = min + slack; setFlip($('par'), String(p));
         $('parhint').textContent = slack === 0 ? 'exactly the shortest route (hardest)' : slack + ' spare ' + (slack === 1 ? 'move' : 'moves') + ' on top of the shortest route (' + min + ')';
         $('pm').disabled = slack === 0; $('pp').disabled = p >= 20;
-        code = encodeLevel({ s: st, g: go, p, n: mode, o: ops });
+        code = encodeLevel({ s: st, g: go, p, n: mode, o: ops, rt: ROOTS && mode !== 'frac' });
     }
     curPar = min !== null ? min + slack : Math.max(1, Math.min(20, wantPar !== null ? wantPar : 5)); curUnsolvable = unsolvable;
     /* no solution (or too many states to check): par can't follow a shortest route, but the level can still be played */
-    if (min === null && playable) code = encodeLevel({ s: st, g: go, p: Math.max(1, Math.min(20, wantPar !== null ? wantPar : 5)), n: mode, o: ops });
+    if (min === null && playable) code = encodeLevel({ s: st, g: go, p: Math.max(1, Math.min(20, wantPar !== null ? wantPar : 5)), n: mode, o: ops, rt: ROOTS && mode !== 'frac' });
     $('code').value = code; $('cc').disabled = $('cl').disabled = !code;
     const pl = $('play'), ps = !code ? 'off' : unsolvable ? 'warn' : 'ok';
     pl.className = 'btn go ' + ps; pl.innerHTML = (ps === 'warn' ? ICON_WARN : ICON_PLAY) + 'playtest'; pl.setAttribute('aria-disabled', ps === 'off'); pl.setAttribute('href', code ? '../custom/?level=' + code + '&from=editor' : '#');
@@ -618,6 +684,23 @@ function findSolutions(start, goal, os, maxLen, capLen, capNodes) {
     }
     return { groups, stoppedAt: null };
 }
+let routeShown = false;
+/* the shortest route, as start -> operation -> value -> ... -> goal */
+function renderRoute() {
+    const box = $('rtbox'), a = parseNum($('s').value.trim().replace('−', '-')), b = parseNum($('g').value.trim().replace('−', '-')), os = ops.map(s => mk(s, mode));
+    if (!a || !b || os.some(o => !o) || curMin === null) { box.hidden = true; return; }
+    const r = findSolutions(a, b, os, curMin, 1, 300000), route = r.groups.length && r.groups[0].routes[0];
+    const fmt = x => x.b > 1 ? surdFmt(x) : (x.d === 1 ? String(x.n) : mode === 'frac' ? x.n + '/' + x.d : String(+(x.n / x.d).toFixed(6))).replace('-', '−');
+    box.innerHTML = route ? '<div class="route"><span class="v">' + fmt(a) + '</span>' + route.map(st => '<span class="o">' + st.s + '</span><span class="v">' + fmt(st.v) + '</span>').join('') + '</div>' : '<p class="solnote">could not rebuild the route. try the solutions list below.</p>';
+    box.hidden = false;
+}
+function syncRoute() {
+    const btn = $('rtbtn'); btn.hidden = curMin === null;
+    if (curMin === null) routeShown = false;
+    btn.textContent = routeShown ? 'hide shortest route' : 'view shortest route'; btn.setAttribute('aria-expanded', routeShown);
+    if (routeShown) renderRoute(); else $('rtbox').hidden = true;
+}
+$('rtbtn').onclick = () => { routeShown = !routeShown; syncRoute(); };
 let solMax = null, solShown = false; /* solMax stays null until you change it, so the default follows par */
 const solLimit = () => solMax !== null ? solMax : Math.max(8, curPar);
 function syncSolMax() { const n = solLimit(); setFlip($('solmax'), String(n)); $('sm').disabled = n <= 1; $('sp').disabled = n >= 20; }
@@ -628,7 +711,7 @@ function showSolutions() {
     const a = parseNum($('s').value.trim().replace('−', '-')), b = parseNum($('g').value.trim().replace('−', '-')), os = ops.map(s => mk(s, mode));
     if (!a || !b || os.some(o => !o)) return;
     const r = findSolutions(a, b, os, maxLen, capLen, 300000);
-    const fmt = x => (x.d === 1 ? String(x.n) : mode === 'frac' ? x.n + '/' + x.d : String(+(x.n / x.d).toFixed(6))).replace('-', '−');
+    const fmt = x => x.b > 1 ? surdFmt(x) : (x.d === 1 ? String(x.n) : mode === 'frac' ? x.n + '/' + x.d : String(+(x.n / x.d).toFixed(6))).replace('-', '−');
     const sum = r.groups.reduce((n, g) => n + g.total, 0), partial = r.groups.some(g => !g.exact) || r.stoppedAt !== null;
     $('solcnt').textContent = '(' + sum + (partial ? '+' : '') + ')';
     const first = r.groups.length ? r.groups[0].len : 0; let html = '';
@@ -652,7 +735,7 @@ async function copy(t, label) { try { await navigator.clipboard.writeText(t); } 
 $('cc').onclick = () => code && copy(code, 'code'); $('cl').onclick = () => code && copy(LIVE + code, 'link');
 
 /* paste a level code (or a full level link) into the code box to edit that level */
-function loadLevel(lv) { mode = lv.n; ops = lv.o.slice(); $('s').value = lv.s; $('g').value = lv.g; wantPar = lv.p; syncMode(); upd(); }
+function loadLevel(lv) { mode = lv.n; ROOTS = !!lv.rt; ops = lv.o.slice(); $('s').value = lv.s; $('g').value = lv.g; wantPar = lv.p; syncMode(); upd(); }
 const levelFrom = v => { const m = v.match(/[?&]level=([^&#\s]+)/); return decodeLevel(m ? m[1] : v); };
 $('code').oninput = () => {
     const v = $('code').value.trim(); if (v === code) return;
@@ -661,20 +744,52 @@ $('code').oninput = () => {
 };
 $('code').onblur = () => { $('code').classList.remove('bad'); $('code').value = code; };
 
+/* import button (bottom row): opens a box for a level code or link, checks it as you type, then loads it into the editor */
+{
+    const dlg = $('impdlg'), inp = $('impin'), go = $('impgo'), err = $('imperr');
+    const check = () => { const v = inp.value.trim(), lv = v ? levelFrom(v) : null; inp.classList.toggle('bad', !!v && !lv); err.textContent = v && !lv ? "that isn't a valid level code or link" : ''; err.classList.toggle('err', !!v && !lv); go.disabled = !lv; return lv; };
+    const open = async () => {
+        inp.value = ''; check(); dlg.showModal();
+        /* if the clipboard already holds a level code or link, offer it ready to load (silently skipped when the browser asks or blocks) */
+        try { if (navigator.clipboard && navigator.clipboard.readText && navigator.permissions) { const st = await navigator.permissions.query({ name: 'clipboard-read' }); if (st.state === 'granted') { const c = (await navigator.clipboard.readText()).trim(); if (c && levelFrom(c) && !inp.value) { inp.value = c; check(); } } } } catch (e) { }
+        inp.focus(); inp.select();
+    };
+    const load = () => {
+        const lv = check(); if (!lv) { inp.focus(); return; }
+        dlg.close(); loadLevel(lv); toast('level loaded', true);
+        try { scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth' }); } catch (e) { scrollTo(0, 0); }
+    };
+    $('imp').onclick = open;
+    inp.oninput = check;
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); load(); } });
+    go.onclick = load;
+    $('impx').onclick = () => dlg.close();
+    dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+}
+
 /* destructive buttons ask for a second tap instead of a popup */
 function armed(btn, idle, ask, fn) { let t = 0; btn.onclick = () => { if (btn.dataset.arm) { clearTimeout(t); delete btn.dataset.arm; btn.textContent = idle; fn(); } else { btn.dataset.arm = 1; btn.textContent = ask; t = setTimeout(() => { delete btn.dataset.arm; btn.textContent = idle; }, 2500); } }; }
 armed($('clr'), 'clear all', 'tap again to clear', () => { ops = []; upd(); });
-armed($('new'), 'new level', 'tap again to start over', () => { mode = 'whole'; ops = []; slack = 0; wantPar = null; solMax = null; $('s').value = '1'; $('g').value = '10'; $('opn').value = ''; syncMode(); upd(); });
+armed($('new'), 'new level', 'tap again to start over', () => { mode = 'whole'; ROOTS = false; ops = []; slack = 0; wantPar = null; solMax = null; $('s').value = '1'; $('g').value = '10'; $('opn').value = ''; syncMode(); upd(); });
 
 /* start from a ?level= link if there is one, otherwise from the last unfinished draft */
 {
     const lv0 = decodeLevel(new URLSearchParams(location.search).get('level') || '');
     if (lv0) { loadLevel(lv0); try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { } }
     else {
-        try { const d = JSON.parse(localStorage.getItem(DRAFT) || 'null'); if (d && MC[d.n] && Array.isArray(d.o) && d.o.every(x => typeof x === 'string') && typeof d.s === 'string' && typeof d.g === 'string') { mode = d.n; ops = d.o; $('s').value = d.s; $('g').value = d.g; wantPar = Number.isInteger(d.p) ? d.p : null; } } catch (e) { }
+        try { const d = JSON.parse(localStorage.getItem(DRAFT) || 'null'); if (d && MC[d.n] && Array.isArray(d.o) && d.o.every(x => typeof x === 'string') && typeof d.s === 'string' && typeof d.g === 'string') { mode = d.n; ROOTS = !!d.rt; ops = d.o; $('s').value = d.s; $('g').value = d.g; wantPar = Number.isInteger(d.p) ? d.p : null; } } catch (e) { }
         syncMode(); upd();
     }
 }
+</script>
+<script>
+/* parallax: the grid scrolls at half speed (shifted down by the other half), unless motion is reduced or animations are off */
+(() => {
+    const r = document.documentElement, b = document.body, F = .5; let q = 0;
+    if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    const u = () => { q = 0; b.style.backgroundPositionY = (r.classList.contains('noanim') ? 0 : window.scrollY * (1 - F)) + 'px'; };
+    addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(u); }, { passive: true });
+})();
 </script>
 </body>
 </html>

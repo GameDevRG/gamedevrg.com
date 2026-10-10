@@ -427,10 +427,12 @@
             display: flex;
             align-items: center;
             justify-content: space-around;
-            gap: 24px;
+            gap: clamp(8px, 3.5vw, 24px);
             flex-wrap: nowrap
         }
 
+        .row.stack { flex-direction: column; gap: 12px }
+        .row.stack .arrow { transform: rotate(90deg); line-height: 1 }
         .lbl {
             font-size: .85rem;
             color: var(--soft);
@@ -761,7 +763,7 @@
         #dailypg { animation: none; transform-origin: 50% 6% }
         #dailypg.away { transform: translateX(-100vw) }
         #dailypg.awayR { transform: translateX(100vw) }
-        #settings.frommenu .gameonly { display: none }
+        #settings.frommenu .gameonly, #settings.indaily .nodaily { display: none }
         #menu { animation: none; transform-origin: 50% 6% }
         #menu.away { transform: translateX(-100vw) }
         #lbrows { list-style: none; margin: 10px 0 0; padding: 0; text-align: left }
@@ -1386,17 +1388,16 @@
         #menu.intro .mopt, #menu.intro .tools, :root:not(.noui):not(.noanim) #menu.intro .mopt, :root:not(.noui):not(.noanim) #menu.intro .tools { animation: none; opacity: 0; pointer-events: none }
         #menu.intro header { will-change: transform }
         #menu header { position: relative }
-        #menu .intrologo { position: absolute; left: 0; right: 0; top: 100%; margin-top: 30px; opacity: 0; pointer-events: none; color: var(--ink); font-family: 'Chakra Petch', system-ui, sans-serif; font-weight: 700; font-size: 1.6rem; letter-spacing: -.01em; line-height: 1 }
-        #menu .intrologo small { font-size: .62em; font-weight: 500; color: var(--soft); letter-spacing: 0 }
-        #menu.intro .intrologo { opacity: 1 }
+        #menu .menulogo { margin-top: 26px; text-align: center; color: var(--ink); opacity: .85; pointer-events: none; font-family: 'Chakra Petch', system-ui, sans-serif; font-weight: 700; font-size: 1.2rem; letter-spacing: -.01em; line-height: 1; transform-origin: 50% 50% }
+        #menu .menulogo small { font-size: .62em; font-weight: 500; color: var(--soft); letter-spacing: 0 }
         #menu .mopt b { display: flex; align-items: center; gap: .5em }
         #menu .mopt b::before { content: ""; flex: none; width: 1.2em; height: 1.2em; background: var(--ac, var(--blue)); -webkit-mask: var(--ic) center / contain no-repeat; mask: var(--ic) center / contain no-repeat }
-        #mopt2 { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M5 21V4%22/%3E%3Cpath d=%22M5 4h13l-3 4.5 3 4.5H5%22/%3E%3C/svg%3E") }
-        #mopt1 { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Crect x=%223.5%22 y=%223.5%22 width=%2217%22 height=%2217%22 rx=%223.5%22/%3E%3Ccircle cx=%228.5%22 cy=%228.5%22 r=%22.9%22 fill=%22%23000%22/%3E%3Ccircle cx=%2215.5%22 cy=%228.5%22 r=%22.9%22 fill=%22%23000%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%22.9%22 fill=%22%23000%22/%3E%3Ccircle cx=%228.5%22 cy=%2215.5%22 r=%22.9%22 fill=%22%23000%22/%3E%3Ccircle cx=%2215.5%22 cy=%2215.5%22 r=%22.9%22 fill=%22%23000%22/%3E%3C/svg%3E") }
-        #moptD { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Crect x=%223.5%22 y=%225%22 width=%2217%22 height=%2215.5%22 rx=%222.5%22/%3E%3Cpath d=%22M3.5 10h17M8 3v4M16 3v4%22/%3E%3C/svg%3E") }
-        #moptE { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M4 20l1-4.5L16.5 4a2 2 0 0 1 3 0l.5.5a2 2 0 0 1 0 3L8.5 19z%22/%3E%3Cpath d=%22M14.5 6l3.5 3.5%22/%3E%3C/svg%3E") }
-        #moptC { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M8 7l-5 5 5 5M16 7l5 5-5 5M14 4.5l-4 15%22/%3E%3C/svg%3E") }
-        #moptS { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M6 20v-6M12 20V5M18 20V10%22/%3E%3C/svg%3E") }
+        #mopt2 { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M5 21V4%22/%3E%3Cpath d=%22M5 4h13l-3 4.5 3 4.5H5%22/%3E%3C/svg%3E") }
+        #mopt1 { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Crect x=%223.5%22 y=%223.5%22 width=%2217%22 height=%2217%22/%3E%3Crect x=%226.8%22 y=%226.8%22 width=%222.4%22 height=%222.4%22 fill=%22%23000%22 stroke=%22none%22/%3E%3Crect x=%2214.8%22 y=%226.8%22 width=%222.4%22 height=%222.4%22 fill=%22%23000%22 stroke=%22none%22/%3E%3Crect x=%2210.8%22 y=%2210.8%22 width=%222.4%22 height=%222.4%22 fill=%22%23000%22 stroke=%22none%22/%3E%3Crect x=%226.8%22 y=%2214.8%22 width=%222.4%22 height=%222.4%22 fill=%22%23000%22 stroke=%22none%22/%3E%3Crect x=%2214.8%22 y=%2214.8%22 width=%222.4%22 height=%222.4%22 fill=%22%23000%22 stroke=%22none%22/%3E%3C/svg%3E") }
+        #moptD { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Crect x=%223.5%22 y=%225%22 width=%2217%22 height=%2215.5%22/%3E%3Cpath d=%22M3.5 10h17M8 3v4M16 3v4%22/%3E%3C/svg%3E") }
+        #moptE { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M4 20l1-4.5L16.5 4h3l.5.5v3L8.5 19z%22/%3E%3Cpath d=%22M14.5 6l3.5 3.5%22/%3E%3C/svg%3E") }
+        #moptC { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M8 7l-5 5 5 5M16 7l5 5-5 5M14 4.5l-4 15%22/%3E%3C/svg%3E") }
+        #moptS { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M6 20v-6M12 20V5M18 20V10%22/%3E%3C/svg%3E") }
     
         /* loading spinner */
         .spin { display: inline-block; width: 28px; height: 28px; border: 3px solid var(--line); border-top-color: var(--ink); border-radius: 50%; animation: spin .8s linear infinite; vertical-align: middle }
@@ -1485,6 +1486,12 @@
         #netdlg p { margin: 0 0 18px; line-height: 1.5 }
         #netdlg button { font: 700 1rem inherit; font-family: inherit; padding: 8px 24px; border: 2px solid var(--ink); background: var(--ink); color: var(--bg); cursor: pointer; text-transform: lowercase }
     
+        #howdlg { max-width: 440px; width: calc(100% - 32px); border: 2px solid var(--ink); background: var(--card); color: var(--ink); padding: 20px; font-family: inherit; text-align: left; text-transform: lowercase; box-shadow: 6px 6px 0 var(--ink) }
+        #howdlg::backdrop { background: rgba(5, 8, 20, .6) }
+        #howdlg h3 { margin: 0 0 12px; font-size: 1.4rem; text-align: center }
+        #howdlg ol { margin: 0 0 16px; padding-left: 1.4em; line-height: 1.5 } #howdlg li { margin-bottom: 8px; padding-left: 4px } #howdlg li::marker { color: var(--soft); font-weight: 700 }
+        #howdlg .cdbtns { display: flex; justify-content: center }
+        #howdlg button { font: 700 1rem inherit; font-family: inherit; padding: 8px 22px; border: 2px solid var(--ink); background: var(--ink); color: var(--bg); cursor: pointer; text-transform: lowercase }
         #codedlg { max-width: 400px; width: calc(100% - 32px); border: 2px solid var(--ink); background: var(--card); color: var(--ink); padding: 20px; font-family: inherit; text-align: center; text-transform: lowercase; box-shadow: 6px 6px 0 var(--ink) }
         #codedlg::backdrop { background: rgba(5, 8, 20, .6) }
         #codedlg h3 { margin: 0 0 8px; font-size: 1.4rem } #codedlg p { margin: 0 0 12px; color: var(--soft) }
@@ -1493,7 +1500,15 @@
         #codedlg .cdbtns { display: flex; gap: 10px; justify-content: center }
         #codedlg button { font: 700 1rem inherit; font-family: inherit; padding: 8px 22px; border: 2px solid var(--ink); background: var(--ink); color: var(--bg); cursor: pointer; text-transform: lowercase }
         #codedlg #codex { background: transparent; color: var(--ink) }
-    </style>
+    
+/* scrollbars: square thumb in the page's own colours (follows the light/dark theme through the variables) */
+*::-webkit-scrollbar { width: 14px; height: 14px }
+*::-webkit-scrollbar-track, *::-webkit-scrollbar-corner { background: var(--bg) }
+*::-webkit-scrollbar-thumb { background: var(--line); background-clip: padding-box; border: 3px solid var(--bg); border-radius: 0; min-height: 40px; min-width: 40px }
+*::-webkit-scrollbar-thumb:hover { background: var(--soft); background-clip: padding-box }
+*::-webkit-scrollbar-thumb:active { background: var(--blue); background-clip: padding-box }
+@supports not selector(::-webkit-scrollbar) { * { scrollbar-width: thin; scrollbar-color: var(--line) var(--bg) } } /* firefox */
+</style>
     <script>try { var q = JSON.parse(localStorage.getItem('hs1') || '{}'); if (q.theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); if (q.hc) document.documentElement.classList.add('hc') } catch (e) { }</script>
 </head>
 
@@ -1512,7 +1527,6 @@
                             stroke-linejoin="miter" vector-effect="non-scaling-stroke" />
                     </svg><span class="vin">-1</span></span></h1>
             <p class="sub">choose how you want to play</p>
-            <div class="intrologo" aria-hidden="true">gamedevrg<small>.com</small></div>
         </header>
         <div class="mopts">
             <button class="mopt red" id="mopt2"><b>main levels</b><span>hand-made levels for each difficulty</span></button>
@@ -1522,7 +1536,8 @@
             <button class="mopt white" id="moptC"><b>play from code</b><span>paste a level code or link someone shared</span></button>
             <button class="mopt white" id="moptS"><b>your stats</b><span>daily streaks and more</span></button>
         </div>
-        <div class="tools"><button id="mset">settings</button></div>
+        <div class="tools"><button id="mhow">how to play</button><button id="mset">settings</button></div>
+        <div class="menulogo" id="menulogo" aria-hidden="true">gamedevrg<small>.com</small></div>
     </section>
     <section id="dailypg" class="pg" hidden>
         <header>
@@ -1613,7 +1628,7 @@
             <div id="ops"></div>
             <div class="tools"><button id="undo">undo</button><button id="reset">restart level</button><button
                     id="rand">give
-                    up</button><button id="skipanim" hidden>skip animation</button></div>
+                    up</button><button id="sharelv">copy link</button><button id="skipanim" hidden>skip animation</button></div>
             <div class="tools"><select id="diff" aria-label="Difficulty">
                     <option value="2">easy</option>
                     <option value="4" selected>medium</option>
@@ -1634,7 +1649,7 @@
                 guaranteed to work (on challenge there is often a shorter route, so you can beat par),
                 and you can keep going past it, but every extra move is one over par. many levels have more than one
                 route. in
-                hardcore mode (settings) you only get 3 undos per level, can't restart, and can't go over par. by default levels use whole numbers, and division only works when the result is whole, so a greyed-out ÷ button means your number doesn't divide evenly. challenge difficulty adds extra operations like |x| (absolute value), √x, x³, negate, mod and digit reverse, and has lots of different solutions. in settings you can switch to decimals (moves like +0.5, and x⁻¹ turns 4 into 0.25) or fractions (division can leave fractions, and x⁻¹ turns 4 into 1/4). in decimals mode you can also allow decimal goals.</p><button
+                hardcore mode (settings) you only get 3 undos per level, can't restart, and can't go over par. by default levels use whole numbers, and division only works when the result is whole, so a greyed-out ÷ button means your number doesn't divide evenly. challenge difficulty adds extra operations like |x| (absolute value), √x, x³, negate and mod, and has lots of different solutions. in settings you can switch to decimals (moves like +0.5, and x⁻¹ turns 4 into 0.25) or fractions (division can leave fractions, and x⁻¹ turns 4 into 1/4). in decimals mode you can also allow decimal goals.</p><button
                 id="dx">gotcha</button>
         </dialog>
     </main>
@@ -1669,13 +1684,16 @@
                     <div><b>numbers</b><span>use whole numbers, decimals or fractions. starts a new level</span></div>
                     <div class="seg" id="numSeg" role="radiogroup" aria-label="number type"><button data-m="whole" role="radio" aria-checked="true">whole numbers</button><button data-m="dec" role="radio" aria-checked="false">decimals</button><button data-m="frac" role="radio" aria-checked="false">fractions</button></div>
                 </div>
-                <div class="srow gameonly" id="rowGdec">
+                <div class="srow gameonly nodaily" id="rowGdec">
                     <div><b>decimal goals</b><span>decimals only: the goal can be a decimal like 3.5, not just a whole number. starts a new level</span></div><button class="sw" id="swGdec" role="switch" aria-checked="false" aria-label="decimal goals"></button>
                 </div>
-                <div class="srow gameonly" id="rowGfrac">
+                <div class="srow gameonly nodaily" id="rowGfrac">
                     <div><b>fraction goals</b><span>fractions only: the goal can be a fraction like 7/4, not just a whole number. starts a new level</span></div><button class="sw" id="swGfrac" role="switch" aria-checked="false" aria-label="fraction goals"></button>
                 </div>
-                <div class="srow gameonly">
+                <div class="srow gameonly nodaily" id="rowRoots">
+                    <div><b>roots of non-squares</b><span>allow √ on numbers that aren't perfect squares, giving roots like √2 or 3√5. fractions already allow it. starts a new level</span></div><button class="sw" id="swRoots" role="switch" aria-checked="false" aria-label="roots of non-squares"></button>
+                </div>
+                <div class="srow gameonly nodaily">
                     <div><b>hardcore mode</b><span>only 3 undos per level, no restarting, and you can't go over par</span></div>
                     <button class="sw" id="swHc" role="switch" aria-checked="false" aria-label="hardcore mode"></button>
                 </div>
@@ -1724,6 +1742,17 @@
         <p id="netmsg"></p>
         <button id="netok"></button>
     </dialog>
+    <dialog id="howdlg">
+        <h3>how to play</h3>
+        <ol>
+            <li>you start with a number and need to turn it into the goal.</li>
+            <li>every move applies one of the operations shown to your number. tap an operation to use it.</li>
+            <li>par is a number of moves that is guaranteed to work. aim to finish in par or fewer, since every move past par counts as one over.</li>
+            <li>stuck? undo your last move or restart the level.</li>
+            <li>by default, division only works when the result is a whole number, so a greyed-out ÷ means your number doesn't divide evenly.</li>
+        </ol>
+        <div class="cdbtns"><button id="howx">gotcha</button></div>
+    </dialog>
     <dialog id="codedlg">
         <h3>play from code</h3>
         <p>paste a level code or link</p>
@@ -1732,11 +1761,15 @@
     </dialog>
     <script>
         const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b] } return a || 1 };
-        let NB = 100000, CAP = 1e9;
-        function F(n, d = 1) { if (d < 0) { n = -n; d = -d } const g = gcd(n, d); n /= g; d /= g; if (Math.abs(n) > NB || d > NB) return null; return { n, d } }
-        const key = x => x.n + '/' + x.d;
+        let NB = 100000, CAP = 1e9, ROOTS = false; /* ROOTS: the current level allows √ of non-squares (set when a level is made) */ const BMAX = 200;
+        function F(n, d = 1, b = 1) { if (d < 0) { n = -n; d = -d } if (n === 0) b = 1; const g = gcd(n, d); n /= g; d /= g; if (Math.abs(n) > NB || d > NB || b > BMAX) return null; return { n, d, b } }
+        const sqfC = new Map();
+        /* m = k²·r with r having no square factor: returns [k, r] */
+        function sqf(m) { let c = sqfC.get(m); if (c) return c; let k = 1, r = m; for (let p = 2; p * p <= r; p++) while (r % (p * p) === 0) { r /= p * p; k *= p } c = [k, r]; sqfC.set(m, c); return c }
+        const key = x => x.n + '/' + x.d + (x.b > 1 ? 'r' + x.b : '');
         const term = x => { let d = x.d; while (d % 2 === 0) d /= 2; while (d % 5 === 0) d /= 5; return d === 1 };
         const fmt = x => {
+            if (x.b > 1) { const a = Math.abs(x.n); return (x.n < 0 ? '-' : '') + (a === 1 ? '' : a) + '√' + x.b + (x.d > 1 ? '/' + x.d : ''); } /* a root like 2√3 or √3/2 */
             if (x.d === 1) return String(x.n);
             if (settings.num === 'dec' && term(x)) {
                 let r = Math.abs(x.n) % x.d, t = Math.floor(Math.abs(x.n) / x.d) + '.', k = 0;
@@ -1746,21 +1779,21 @@
             return x.n + '/' + x.d;
         };
         const fmtS = x => { const f = fmt(x), i = f.indexOf('.'); return i >= 0 && f.length - i - 1 > 2 ? f.slice(0, i + 3) : f; };
-        const same = (a, b) => a.n === b.n && a.d === b.d;
+        const same = (a, b) => a.n === b.n && a.d === b.d && (a.b || 1) === (b.b || 1);
         function mk(s, mode) {
-            if (s === 'x²') return { s, f: x => F(x.n * x.n, x.d * x.d) };
-            if (s === '|x|') return { s, f: x => F(Math.abs(x.n), x.d) };
-            if (s === '−x') return { s, f: x => F(-x.n, x.d) };
-            if (s === 'x³') return { s, f: x => F(x.n * x.n * x.n, x.d * x.d * x.d) };
-            if (s === '√x') return { s, f: x => { if (x.n < 0) return null; const a = Math.round(Math.sqrt(x.n)), b = Math.round(Math.sqrt(x.d)); return a * a === x.n && b * b === x.d ? F(a, b) : null } };
-            if (s.startsWith('mod ')) { const k = parseInt(s.slice(4), 10); return { s, f: x => x.d !== 1 ? null : F(((x.n % k) + k) % k) }; }
-            if (s === 'rev') return { s, f: x => x.d !== 1 || x.n < 0 ? null : F(parseInt(String(x.n).split('').reverse().join(''), 10)) };
-            if (s === 'x⁻¹') return { s, f: x => { if (x.n === 0) return null; const r = F(x.d, x.n); return r && (mode !== 'dec' || r.d === 1 || term(r)) ? r : null } };
+            /* numbers can be a root like 2√3 = {n:2, d:1, b:3} (value n/d·√b, b with no square factor); in fractions mode √x of a non-square gives one */
+            if (s === 'x²') return { s, f: x => F(x.n * x.n * x.b, x.d * x.d) };
+            if (s === '|x|') return { s, f: x => F(Math.abs(x.n), x.d, x.b) };
+            if (s === '−x') return { s, f: x => F(-x.n, x.d, x.b) };
+            if (s === 'x³') return { s, f: x => F(x.n * x.n * x.n * x.b, x.d * x.d * x.d, x.b) };
+            if (s === '√x') { const rt = ROOTS || mode === 'frac'; return { s, f: x => { if (x.n < 0 || x.b > 1) return null; if (x.n === 0) return x; const [k, r] = sqf(x.n * x.d); return r > 1 && !rt ? null : F(k, x.d, r) } }; }
+            if (s.startsWith('mod ')) { const k = parseInt(s.slice(4), 10); return { s, f: x => x.d !== 1 || x.b > 1 ? null : F(((x.n % k) + k) % k) }; }
+            if (s === 'x⁻¹') return { s, f: x => { if (x.n === 0) return null; const r = F(x.d, x.n * x.b, x.b); return r && (mode !== 'dec' || r.d === 1 || term(r)) ? r : null } };
             const qs = s.slice(1), o = s[0], q = qs.includes('/') ? F(+qs.split('/')[0], +qs.split('/')[1]) : F(Math.round(parseFloat(qs) * 10), 10); /* the number can be whole, a decimal or a fraction (always kept in lowest terms) */
-            if (o === '+') return { s, f: x => F(x.n * q.d + q.n * x.d, x.d * q.d) };
-            if (o === '−') return { s, f: x => F(x.n * q.d - q.n * x.d, x.d * q.d) };
-            if (o === '×') return { s, f: x => F(x.n * q.n, x.d * q.d) };
-            if (o === '÷') return { s, f: x => { if (q.n === 0) return null; const r = F(x.n * q.d, x.d * q.n); return r && (r.d === 1 || mode === 'frac' || (mode === 'dec' && term(r))) ? r : null } };
+            if (o === '+') return { s, f: x => x.b > 1 ? null : F(x.n * q.d + q.n * x.d, x.d * q.d) };
+            if (o === '−') return { s, f: x => x.b > 1 ? null : F(x.n * q.d - q.n * x.d, x.d * q.d) };
+            if (o === '×') return { s, f: x => F(x.n * q.n, x.d * q.d, x.b) };
+            if (o === '÷') return { s, f: x => { if (q.n === 0) return null; const r = F(x.n * q.d, x.d * q.n, x.b); return r && (r.d === 1 || mode === 'frac' || (mode === 'dec' && term(r))) ? r : null } };
         }
         function solve(start, goal, ops) {
             let seen = new Set([key(start)]), fr = [start];
@@ -1794,7 +1827,7 @@
         function genOp(tier, mode) {
             const dec = mode === 'dec', more = mode !== 'whole';
             if (tier === 8) {
-                let r; do r = ri(0, more ? 17 : 16); while (r === 14); const hh = () => dec && Math.random() < .4, hf = () => mode === 'frac' && Math.random() < .35, fq = () => { let d, n; do { d = ri(2, 5); n = ri(1, d * 3) } while (gcd(n, d) !== 1); return n + '/' + d }, dd = () => { let v; do { v = ri(1, 49) } while (v % 10 === 0); return v / 10 };
+                const r = ri(0, more ? 16 : 15); const hh = () => dec && Math.random() < .4, hf = () => mode === 'frac' && Math.random() < .35, fq = () => { let d, n; do { d = ri(2, 5); n = ri(1, d * 3) } while (gcd(n, d) !== 1); return n + '/' + d }, dd = () => { let v; do { v = ri(1, 49) } while (v % 10 === 0); return v / 10 };
                 if (r < 2) return mk('+' + (hh() ? dd() : hf() ? fq() : ri(1, 12)), mode); if (r < 4) return mk('−' + (hh() ? dd() : hf() ? fq() : ri(1, 12)), mode);
                 if (r < 6) return mk('×' + (hh() ? ['0.5', '1.5', '2.5'][ri(0, 2)] : hf() ? fq() : ri(2, 5)), mode); if (r < 8) return mk('÷' + (hh() ? ['0.5', '2.5'][ri(0, 1)] : hf() ? fq() : ri(2, 5)), mode);
                 if (r === 8) return mk('x²', mode); if (r === 9) return mk('|x|', mode); if (r === 10) return mk('√x', mode); if (r === 11) return mk('x³', mode);
@@ -1805,10 +1838,10 @@
             if (t < 2) return mk('+' + (h() ? dk() : ri(1, 9)), mode); if (t < 4) return mk('−' + (h() ? dk() : ri(1, 9)), mode);
             if (t < 6) return mk('×' + (h() ? pk(['0.5', '1.5', '2.5', '0.2', '0.4']) : ri(2, 5)), mode);
             if (t < 8) return mk('÷' + (h() ? pk(['0.5', '0.2', '2.5', '0.4']) : ri(2, 5)), mode);
-            if (t === 8 || !more) return mk('x²', mode);
+            if (t === 8 || !more) return mk(ROOTS && Math.random() < .5 ? '√x' : 'x²', mode);
             return mk('x⁻¹', mode);
         }
-        const NS = 'http://www.w3.org/2000/svg', val = x => x.n / x.d;
+        const NS = 'http://www.w3.org/2000/svg', val = x => x.n / x.d * Math.sqrt(x.b || 1);
         function mkTile() {
             const t = document.createElement('div'); t.className = 'tile'; t.setAttribute('aria-hidden', 'true');
             t.innerHTML = '<div class="h t"><span></span></div><div class="h b"><span></span></div><div class="flap h t f1"><span></span></div><div class="flap h b f2"><span></span></div>'; return t;
@@ -1902,7 +1935,7 @@
   "what": "what is this?",
   "settings": "settings",
   "gotcha": "gotcha",
-  "dlg_p": "every level is freshly generated and gives only the operations you need. par is a number of moves that is guaranteed to work (on challenge there is often a shorter route, so you can beat par), and you can keep going past it, but every extra move is one over par. many levels have more than one route. in hardcore mode (settings) you only get 3 undos per level, can't restart, and can't go over par. by default levels use whole numbers, and division only works when the result is whole, so a greyed-out ÷ button means your number doesn't divide evenly. challenge difficulty adds extra operations like |x| (absolute value), √x, x³, negate, mod and digit reverse, and has lots of different solutions. in settings you can switch to decimals (moves like +0.5, and x⁻¹ turns 4 into 0.25) or fractions (division can leave fractions, and x⁻¹ turns 4 into 1/4). in decimals mode you can also allow decimal goals.",
+  "dlg_p": "every level is freshly generated and gives only the operations you need. par is a number of moves that is guaranteed to work (on challenge there is often a shorter route, so you can beat par), and you can keep going past it, but every extra move is one over par. many levels have more than one route. in hardcore mode (settings) you only get 3 undos per level, can't restart, and can't go over par. by default levels use whole numbers, and division only works when the result is whole, so a greyed-out ÷ button means your number doesn't divide evenly. challenge difficulty adds extra operations like |x| (absolute value), √x, x³, negate and mod, and has lots of different solutions. in settings you can switch to decimals (moves like +0.5, and x⁻¹ turns 4 into 0.25) or fractions (division can leave fractions, and x⁻¹ turns 4 into 1/4). in decimals mode you can also allow decimal goals.",
   "scores_hint": "tap a score to play that level again",
   "scores_none": "no scores yet. solve a level and it will show up here.",
   "clear_scores": "clear scores",
@@ -1925,6 +1958,10 @@
   "gdec_d": "decimals only: the goal can be a decimal like 3.5, not just a whole number. starts a new level",
   "gfrac_b": "fraction goals",
   "gfrac_d": "fractions only: the goal can be a fraction like 7/4, not just a whole number. starts a new level",
+  "share_b": "copy link",
+  "share_ok": "link copied",
+  "roots_b": "roots of non-squares",
+  "roots_d": "allow √ on numbers that aren't perfect squares, giving roots like √2 or 3√5. fractions already allow it. starts a new level",
   "hc_b": "hardcore mode",
   "hc_d": "only 3 undos per level, no restarting, and you can't go over par",
   "theme_b": "light mode",
@@ -1953,6 +1990,9 @@
   "why_sqrt": "not a square",
   "why_whole": "whole only",
   "why_big": "too big",
+  "why_root_add": "can't add to a root",
+  "why_root_already": "already a root",
+  "why_neg": "negative",
   "dlvl": "daily level {d}",
   "hc_no": "not allowed in hardcore mode",
   "lose1": "out of moves. undo a move to keep trying, or give up.",
@@ -2069,7 +2109,7 @@
   "what": "¿qué es esto?",
   "settings": "ajustes",
   "gotcha": "¡entendido!",
-  "dlg_p": "cada nivel se genera al momento y te da solo las operaciones que necesitas. el par es un número de movimientos que seguro funciona (en desafío suele haber un camino más corto, así que puedes mejorar el par), y puedes seguir más allá, pero cada movimiento extra cuenta como uno sobre par. muchos niveles tienen más de un camino. en el modo hardcore (ajustes) solo tienes 3 deshacer por nivel, no puedes reiniciar y no puedes pasarte del par. por defecto los niveles usan números enteros, y la división solo funciona cuando el resultado es entero, así que un botón ÷ en gris significa que tu número no se divide exacto. la dificultad desafío añade operaciones extra como |x| (valor absoluto), √x, x³, negar, mod e invertir dígitos, y tiene un montón de soluciones distintas. en ajustes puedes cambiar a decimales (movimientos como +0.5, y x⁻¹ convierte 4 en 0.25) o a fracciones (la división puede dejar fracciones, y x⁻¹ convierte 4 en 1/4). en modo decimales también puedes permitir metas decimales.",
+  "dlg_p": "cada nivel se genera al momento y te da solo las operaciones que necesitas. el par es un número de movimientos que seguro funciona (en desafío suele haber un camino más corto, así que puedes mejorar el par), y puedes seguir más allá, pero cada movimiento extra cuenta como uno sobre par. muchos niveles tienen más de un camino. en el modo hardcore (ajustes) solo tienes 3 deshacer por nivel, no puedes reiniciar y no puedes pasarte del par. por defecto los niveles usan números enteros, y la división solo funciona cuando el resultado es entero, así que un botón ÷ en gris significa que tu número no se divide exacto. la dificultad desafío añade operaciones extra como |x| (valor absoluto), √x, x³, negar y mod, y tiene un montón de soluciones distintas. en ajustes puedes cambiar a decimales (movimientos como +0.5, y x⁻¹ convierte 4 en 0.25) o a fracciones (la división puede dejar fracciones, y x⁻¹ convierte 4 en 1/4). en modo decimales también puedes permitir metas decimales.",
   "scores_hint": "toca una puntuación para jugar ese nivel otra vez",
   "scores_none": "aún no hay puntuaciones. resuelve un nivel y aparecerá aquí.",
   "clear_scores": "borrar puntuaciones",
@@ -2092,6 +2132,10 @@
   "gdec_d": "solo decimales: la meta puede ser un decimal como 3.5, no solo un entero. empieza un nivel nuevo",
   "gfrac_b": "metas fraccionarias",
   "gfrac_d": "solo fracciones: la meta puede ser una fracción como 7/4, no solo un entero. empieza un nivel nuevo",
+  "share_b": "copiar enlace",
+  "share_ok": "enlace copiado",
+  "roots_b": "raíces de no cuadrados",
+  "roots_d": "permite √ en números que no son cuadrados perfectos, con raíces como √2 o 3√5. las fracciones ya lo permiten. empieza un nivel nuevo",
   "hc_b": "modo hardcore",
   "hc_d": "solo 3 deshacer por nivel, sin reiniciar, y no puedes pasarte del par",
   "theme_b": "modo claro",
@@ -2120,6 +2164,9 @@
   "why_sqrt": "no es cuadrado",
   "why_whole": "solo enteros",
   "why_big": "demasiado grande",
+  "why_root_add": "no se puede sumar a una raíz",
+  "why_root_already": "ya es una raíz",
+  "why_neg": "negativo",
   "dlvl": "nivel diario {d}",
   "hc_no": "no permitido en modo hardcore",
   "lose1": "te quedaste sin movimientos. deshaz uno para seguir intentándolo, o ríndete.",
@@ -2236,7 +2283,7 @@
   "what": "これは何？",
   "settings": "設定",
   "gotcha": "わかった！",
-  "dlg_p": "どのレベルもその場で作られて、必要な演算だけが用意されます。パーは「これだけあれば必ずゴールできる」手数のこと（チャレンジでは、もっと短いルートがあることも多いので、パーより少なく解けるかも）。パーを超えても続けられますが、1手増えるごとに1オーバーです。ルートがいくつもあるレベルもたくさん。ハードコアモード（設定）では、1レベルにつき「元に戻す」は3回まで、やり直しもできず、パーを超えることもできません。ふだんのレベルは整数だけで、割り算は答えが整数になるときだけ使えるので、÷ボタンがグレーなら、その数はきれいに割り切れないということです。チャレンジでは |x|（絶対値）、√x、x³、符号反転、mod、桁の逆順などの演算が加わり、解き方もいろいろ。設定で小数（+0.5 のような手があって、x⁻¹ は 4 を 0.25 にします）や分数（割り算で分数が残ることも。x⁻¹ は 4 を 1/4 にします）に切り替えられます。小数モードでは、ゴールも小数にできます。",
+  "dlg_p": "どのレベルもその場で作られて、必要な演算だけが用意されます。パーは「これだけあれば必ずゴールできる」手数のこと（チャレンジでは、もっと短いルートがあることも多いので、パーより少なく解けるかも）。パーを超えても続けられますが、1手増えるごとに1オーバーです。ルートがいくつもあるレベルもたくさん。ハードコアモード（設定）では、1レベルにつき「元に戻す」は3回まで、やり直しもできず、パーを超えることもできません。ふだんのレベルは整数だけで、割り算は答えが整数になるときだけ使えるので、÷ボタンがグレーなら、その数はきれいに割り切れないということです。チャレンジでは |x|（絶対値）、√x、x³、符号反転、modなどの演算が加わり、解き方もいろいろ。設定で小数（+0.5 のような手があって、x⁻¹ は 4 を 0.25 にします）や分数（割り算で分数が残ることも。x⁻¹ は 4 を 1/4 にします）に切り替えられます。小数モードでは、ゴールも小数にできます。",
   "scores_hint": "スコアをタップすると、そのレベルをもう一度遊べます",
   "scores_none": "まだスコアがありません。レベルを解くとここに表示されます。",
   "clear_scores": "スコアを消す",
@@ -2259,6 +2306,10 @@
   "gdec_d": "小数モード専用：ゴールが整数だけでなく、3.5 のような小数になることも。新しいレベルが始まります",
   "gfrac_b": "分数のゴール",
   "gfrac_d": "分数モード専用：ゴールが整数だけでなく、7/4 のような分数になることも。新しいレベルが始まります",
+  "share_b": "リンクをコピー",
+  "share_ok": "コピーしました",
+  "roots_b": "平方数以外の平方根",
+  "roots_d": "平方数でない数にも√を使えます（√2 や 3√5 など）。分数モードでは常に使えます。新しいレベルが始まります",
   "hc_b": "ハードコアモード",
   "hc_d": "「元に戻す」は1レベル3回まで、やり直し不可、パーオーバーも不可",
   "theme_b": "ライトモード",
@@ -2287,6 +2338,9 @@
   "why_sqrt": "平方数じゃない",
   "why_whole": "整数のみ",
   "why_big": "大きすぎ",
+  "why_root_add": "根号には足せない",
+  "why_root_already": "すでに根号",
+  "why_neg": "負の数",
   "dlvl": "デイリーレベル {d}",
   "hc_no": "ハードコアモードでは使えません",
   "lose1": "手数切れです。1手戻して続けるか、あきらめましょう。",
@@ -2403,7 +2457,7 @@
   "what": "这是什么？",
   "settings": "设置",
   "gotcha": "明白了",
-  "dlg_p": "每一关都是现场生成的，只给你需要的运算。标准杆是一个保证能通关的步数（挑战难度里往往还有更短的路线，所以你可以打破标准杆），超过了也能继续玩，只是每多一步就算超出标准杆一步。很多关卡不止一条路线。硬核模式（在设置里）下，每关只有 3 次撤销，不能重新开始，也不能超出标准杆。默认关卡只用整数，除法只有在结果是整数时才能用，所以灰掉的 ÷ 按钮就表示你的数除不尽。挑战难度会加入 |x|（绝对值）、√x、x³、取负、取模和数字反转等额外运算，解法也五花八门。在设置里可以切换成小数（比如 +0.5，x⁻¹ 会把 4 变成 0.25）或分数（除法可以留下分数，x⁻¹ 会把 4 变成 1/4）。小数模式下还可以让目标也是小数。",
+  "dlg_p": "每一关都是现场生成的，只给你需要的运算。标准杆是一个保证能通关的步数（挑战难度里往往还有更短的路线，所以你可以打破标准杆），超过了也能继续玩，只是每多一步就算超出标准杆一步。很多关卡不止一条路线。硬核模式（在设置里）下，每关只有 3 次撤销，不能重新开始，也不能超出标准杆。默认关卡只用整数，除法只有在结果是整数时才能用，所以灰掉的 ÷ 按钮就表示你的数除不尽。挑战难度会加入 |x|（绝对值）、√x、x³、取负和取模等额外运算，解法也五花八门。在设置里可以切换成小数（比如 +0.5，x⁻¹ 会把 4 变成 0.25）或分数（除法可以留下分数，x⁻¹ 会把 4 变成 1/4）。小数模式下还可以让目标也是小数。",
   "scores_hint": "点一下成绩，就能再玩一次那一关",
   "scores_none": "还没有成绩。解出一关，它就会出现在这里。",
   "clear_scores": "清除成绩",
@@ -2426,6 +2480,10 @@
   "gdec_d": "仅小数模式：目标可以是像 3.5 这样的小数，不只是整数。会开始新的一关",
   "gfrac_b": "分数目标",
   "gfrac_d": "仅分数模式：目标可以是像 7/4 这样的分数，不只是整数。会开始新的一关",
+  "share_b": "复制链接",
+  "share_ok": "已复制",
+  "roots_b": "非平方数的平方根",
+  "roots_d": "允许对非平方数使用√，得到 √2 或 3√5 这样的根号。分数模式下始终允许。会开始新关卡",
   "hc_b": "硬核模式",
   "hc_d": "每关只能撤销 3 次，不能重新开始，也不能超出标准杆",
   "theme_b": "浅色模式",
@@ -2454,6 +2512,9 @@
   "why_sqrt": "不是平方数",
   "why_whole": "仅限整数",
   "why_big": "太大",
+  "why_root_add": "不能加到根号上",
+  "why_root_already": "已经是根号",
+  "why_neg": "负数",
   "dlvl": "每日关卡 {d}",
   "hc_no": "硬核模式下不可用",
   "lose1": "步数用完了。撤销一步继续试，或者放弃吧。",
@@ -2510,6 +2571,10 @@
         Object.assign(I18N.es, { lang_en: 'inglés', lang_es: 'español', lang_ja: 'japonés', lang_zh: 'chino' });
         Object.assign(I18N.ja, { lang_en: '英語', lang_es: 'スペイン語', lang_ja: '日本語', lang_zh: '中国語' });
         Object.assign(I18N.zh, { lang_en: '英语', lang_es: '西班牙语', lang_ja: '日语', lang_zh: '中文' });
+        Object.assign(I18N.en, { howto_b: "how to play", howto_p1: "you start with a number and need to turn it into the goal.", howto_p2: "every move applies one of the operations shown to your number. tap an operation to use it.", howto_p3: "par is a number of moves that is guaranteed to work. aim to finish in par or fewer, since every move past par counts as one over.", howto_p4: "stuck? undo your last move or restart the level.", howto_p5: "by default, division only works when the result is a whole number, so a greyed-out ÷ means your number doesn't divide evenly." });
+        Object.assign(I18N.es, { howto_b: "cómo jugar", howto_p1: "empiezas con un número y tienes que convertirlo en la meta.", howto_p2: "cada movimiento aplica una de las operaciones mostradas a tu número. toca una operación para usarla.", howto_p3: "el par es un número de movimientos que seguro funciona. intenta terminar en par o menos, porque cada movimiento después del par cuenta como uno de más.", howto_p4: "¿atascado? deshaz tu último movimiento o reinicia el nivel.", howto_p5: "por defecto, la división solo funciona cuando el resultado es un número entero, así que un ÷ en gris significa que tu número no se divide exacto." });
+        Object.assign(I18N.ja, { howto_b: "遊び方", howto_p1: "最初の数を、ゴールの数に変えるのが目的です。", howto_p2: "1手ごとに、表示されている演算のどれかが今の数に適用されます。使いたい演算をタップしてください。", howto_p3: "パーは「これだけあれば必ずゴールできる」手数です。パー以内でのクリアを目指しましょう。パーを超えた手数は、1手ごとにオーバーとして数えられます。", howto_p4: "行き詰まったら、1手戻すか、レベルをやり直せます。", howto_p5: "初期設定では、割り算は結果が整数になるときだけ使えます。÷がグレーになっているときは、今の数が割り切れないということです。" });
+        Object.assign(I18N.zh, { howto_b: "玩法", howto_p1: "你从一个数开始，目标是把它变成目标数。", howto_p2: "每走一步，就会把所显示的一种运算用在当前的数上。点按运算即可使用。", howto_p3: "标准杆是保证能通关的步数。争取在标准杆以内完成，超出标准杆的每一步都算多一步。", howto_p4: "卡住了？可以撤销上一步，或者重新开始这一关。", howto_p5: "默认情况下，除法只有在结果为整数时才能使用，所以灰色的 ÷ 表示当前的数除不尽。" });
         let lang = 'en';
         try { const s = localStorage.getItem('lang'); if (LANGS.includes(s)) lang = s } catch (e) { }
         function tr(k, v) {
@@ -2556,7 +2621,7 @@
             document.querySelectorAll('#langSeg button').forEach(b => b.onclick = () => setLang(b.dataset.l));
             applyStatic();
         }
-        let settings = { flip: true, anim: true, theme: 'dark', num: 'whole', gdec: false, gfrac: false, hc: false };
+        let settings = { flip: true, anim: true, theme: 'dark', num: 'whole', gdec: false, gfrac: false, roots: false, hc: false };
         try { Object.assign(settings, JSON.parse(localStorage.getItem('hs1') || '{}')) } catch (e) { }
         settings.anims = Object.assign({ flip: true, ball: true, zoom: true, confetti: true, slide: true, theme: true, ui: true }, settings.anims || {});
         if (!['whole', 'dec', 'frac'].includes(settings.num)) settings.num = settings.dec ? 'dec' : 'whole';
@@ -2564,15 +2629,16 @@
         let instant = false, flipRev = false, rp = { steps: [], done: 0 };
         const animOn = k => settings.anim && !instant && (!k || settings.anims[k] !== false) && !matchMedia('(prefers-reduced-motion:reduce)').matches;
         function setFlip(el, text, label) {
-            /* flip tiles only show plain numbers (digits, minus, point, slash). anything else, like a root such as 2√3, is shown as ordinary text */
-            if (!settings.flip || !/^[-−]?[\d.\/]+$/.test(text)) { el.removeAttribute('data-neg'); el.classList.add('plain'); el.setAttribute('role', 'img'); el.setAttribute('aria-label', label || text); el.textContent = text; return; }
+            /* digits and decimal points become flip tiles; symbols between them (the slash in a fraction, the root sign in 2√3) are drawn as plain text between the tiles. anything else is shown as ordinary text */
+            if (!settings.flip || !/^[-−]?[\d.\/√]+$/.test(text)) { el.removeAttribute('data-neg'); el.classList.add('plain'); el.setAttribute('role', 'img'); el.setAttribute('aria-label', label || text); el.textContent = text; return; }
             if (el.classList.contains('plain')) { el.classList.remove('plain'); el.innerHTML = ''; }
             const neg = /^[-−]/.test(text); if (neg) el.setAttribute('data-neg', ''); else el.removeAttribute('data-neg');
             const chars = [...(neg ? text.slice(1) : text)], an = animOn('flip'), rv = flipRev;
             el.setAttribute('role', 'img'); el.setAttribute('aria-label', label || text);
             [...el.childNodes].forEach(n => { if (n.nodeType !== 1) el.removeChild(n); });
-            const mkNode = c => { if (c === '/') { const e = document.createElement('span'); e.className = 'sep'; e.setAttribute('aria-hidden', 'true'); e.textContent = '/'; return e; } const t = mkTile(); setTile(t, ' ', false); return t; };
-            const pat = chars.map(c => c === '/' ? '/' : 'd').join(''), cp = [...el.children].map(k => k.classList.contains('sep') ? '/' : 'd').join('');
+            const isSep = c => !/[\d.]/.test(c);
+            const mkNode = c => { if (isSep(c)) { const e = document.createElement('span'); e.className = 'sep'; e.setAttribute('aria-hidden', 'true'); e.textContent = c; return e; } const t = mkTile(); setTile(t, ' ', false); return t; };
+            const pat = chars.map(c => isSep(c) ? c : 'd').join(''), cp = [...el.children].map(k => k.classList.contains('sep') ? k.textContent : 'd').join('');
             if (pat !== cp) {
                 if (pat.endsWith(cp)) { for (let i = pat.length - cp.length - 1; i >= 0; i--)el.insertBefore(mkNode(chars[i]), el.firstChild); }
                 else if (cp.endsWith(pat)) { while (el.children.length > pat.length) el.removeChild(el.firstChild); }
@@ -2580,7 +2646,7 @@
             }
             let n = 0;
             chars.forEach((c, i) => {
-                if (c === '/') return; const t = el.children[i];
+                if (isSep(c)) return; const t = el.children[i];
                 clearTimeout(t._st);
                 if (!an) { setTile(t, c, false); return; }
                 if (t.dataset.ch === c) return;
@@ -2714,23 +2780,24 @@
             view = null; stopReplay(); stopFx();
             const t0 = parseInt($('diff').value, 10);
             if (genLevel(t0) || (t0 === 8 && genLevel(6))) return;
-            NB = 100000; CAP = 1e9;
+            ROOTS = false; NB = 100000; CAP = 1e9;
             L = { start: F(1), goal: F(10), ops: [mk('+3'), mk('×2')], limit: 3 }; cur = L.start; hist = []; undosUsed = 0; counted = false; render();
         }
-        function genLevel(tier) {
+        function genLevel(tier) { ROOTS = !!settings.roots;
             NB = tier === 8 ? 3000 : 100000; CAP = tier === 8 ? 40000 : 1e9;
             const tp = tier === 8 ? ri(5, 7) : 0, mode = settings.num, gd = mode === 'dec' && !!settings.gdec, gf = mode === 'frac' && !!settings.gfrac, special = o => o.s === 'x⁻¹' || o.s.includes('.') || o.s.includes('/');
             for (let tries = 0; tries < 3000; tries++) {
                 const pool = []; const n = tier === 8 ? ri(7, 8) : ri(4, 5) + (tier >= 4 ? 1 : 0);
                 while (pool.length < n) { const o = genOp(tier, mode); if (!pool.some(p => p.s === o.s)) pool.push(o); }
                 if (mode !== 'whole' && !pool.some(special)) continue;
-                if (tier === 8 && pool.filter(o => ['|x|', '√x', 'x³', '−x', 'rev', 'x²', 'x⁻¹'].includes(o.s) || o.s.startsWith('mod')).length < 3) continue;
+                if (tier === 8 && pool.filter(o => ['|x|', '√x', 'x³', '−x', 'x²', 'x⁻¹'].includes(o.s) || o.s.startsWith('mod')).length < 3) continue;
                 const start = F(tier === 8 ? ri(2, 40) : ri(1, tier >= 6 ? 20 : 12)); let v = start; const steps = tier === 8 ? tp : ri(tier, tier + 1); let ok = true;
                 for (let i = 0; i < steps; i++) {
                     const o = pool[ri(0, pool.length - 1)]; const r = o.f(v);
                     if (!r || Math.abs(r.n) > 5000 || r.d > 5000) { ok = false; break; } v = r;
                 }
                 if (!ok || same(v, start)) continue;
+                if (v.b > 1) continue; /* a goal is never a root (the path can go through one) */
                 if (v.d !== 1 && !(gd && term(v) && v.d <= 100) && !(gf && v.d <= 30 && Math.abs(v.n) <= 500)) continue;
                 if ((gd || gf) && v.d === 1 && Math.random() < .6) continue;
                 const par = solve(start, v, pool);
@@ -2745,17 +2812,31 @@
             }
             return false;
         }
+        /* fit the start and goal numbers inside the panel: begin at the biggest size and shrink by however much the row overflows (works for flip tiles and plain text, any length).
+           if that would make them tiny, stack the start above the goal so each one gets the full width */
         function updateNs() {
             if (!L) return;
-            const l1 = fmtS(cur).length, l2 = fmtS(L.goal).length, avail = Math.min(innerWidth, 1400) - 110;
-            const px = avail / ((l1 + l2) + 3);
-            document.querySelector('.board').style.setProperty('--ns', Math.max(1.4, Math.min(3.2, px / 16)) + 'rem');
+            const bd = $('cur').closest('.board'), row = bd && bd.querySelector('.row'); if (!row) return; /* the level board (the daily and stats pages have boards of their own) */
+            const fit = () => {
+                let ns = 3.2; bd.style.setProperty('--ns', ns + 'rem');
+                for (let i = 0; i < 8; i++) {
+                    const need = row.scrollWidth, have = row.clientWidth;
+                    if (!have || need <= have + 0.5 || ns <= 0.5) break;
+                    ns = Math.max(0.5, ns * (have / need) * 0.97); bd.style.setProperty('--ns', ns + 'rem');
+                }
+                return ns;
+            };
+            row.classList.remove('stack'); const side = fit();
+            if (side < 1.6) { row.classList.add('stack'); const stacked = fit(); if (stacked < side * 1.2) { row.classList.remove('stack'); fit(); } }
         }
-        const whyNot = s => tr(s[0] === '÷' ? 'why_div' : s === 'x⁻¹' ? 'why_undef' : s === '√x' ? 'why_sqrt' : (s.startsWith('mod') || s === 'rev') ? 'why_whole' : 'why_big');
+        const whyNot = s => tr((cur && cur.b > 1 && /^[+−]\d/.test(s)) ? 'why_root_add' : (cur && cur.b > 1 && s === '√x') ? 'why_root_already' : s[0] === '÷' ? (settings.num === 'frac' ? 'why_big' : 'why_div') : s === 'x⁻¹' ? 'why_undef' : s === '√x' ? (settings.num === 'frac' || ROOTS ? 'why_neg' : 'why_sqrt') : s.startsWith('mod') ? 'why_whole' : 'why_big');
         /* ---- the trail, drawn as a real math expression: parentheses where order matters, stacked fractions, powers, roots, bars ---- */
         const mEsc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+        const mRad = h => '<span class="sqw"><svg class="sq" viewBox="0 0 12 20" preserveAspectRatio="none" aria-hidden="true"><path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/></svg><span class="rd">' + h + '</span></span>';
         const mNum = t => {
             t = String(t).replace(/^-/, '−');
+            const rm = /^(−?)(\d*)√(\d+)(?:\/(\d+))?$/.exec(t);
+            if (rm) { const top = rm[2] + mRad(rm[3]); return rm[1] + (rm[4] ? '<span class="fr"><span>' + top + '</span><span>' + rm[4] + '</span></span>' : top); }
             const m = /^(−?)(\d+)\/(\d+)$/.exec(t);
             return m ? m[1] + '<span class="fr"><span>' + m[2] + '</span><span>' + m[3] + '</span></span>' : mEsc(t);
         };
@@ -2768,9 +2849,8 @@
             if (s === 'x³') return { h: mWrap(e, 4) + '<sup>3</sup>', p: 3 };
             if (s === 'x⁻¹') return { h: mWrap(e, 4) + '<sup>−1</sup>', p: 3 };
             if (s === '|x|') return { h: '<span class="ab">|</span>' + e.h + '<span class="ab">|</span>', p: 4 };
-            if (s === '√x') return { h: '<span class="sqw"><svg class="sq" viewBox="0 0 12 20" preserveAspectRatio="none" aria-hidden="true"><path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/></svg><span class="rd">' + e.h + '</span></span>', p: 4 };
+            if (s === '√x') return { h: mRad(e.h), p: 4 };
             if (s === '−x') return { h: '−' + mWrap(e, 4), p: 1 };
-            if (s === 'rev') return { h: 'rev' + mPar(e.h), p: 4 };
             if (s.startsWith('mod ')) return { h: mWrap(e, 3) + mOp('mod') + mEsc(s.slice(4)), p: 0 };
             const k = mNum(s.slice(1)), o = s[0];
             if (o === '+' || o === '−') return { h: mWrap(e, 1) + mOp(o) + k, p: 1 };
@@ -2787,6 +2867,7 @@
             return e.h + ' <span class="op">=</span> <b>' + mNum(fmt(cur)) + '</b>';
         }
         function render() {
+            { const sh = $('sharelv'); if (sh) sh.hidden = !!dailyMode || !L; }
             {
                 const dv = $('diff').value, mi = $('miD'), mm = $('miM');
                 mi.textContent = { 2: 'd_easy', 4: 'd_medium', 6: 'd_hard' }[dv] ? tr({ 2: 'd_easy', 4: 'd_medium', 6: 'd_hard' }[dv]) : ''; mi.className = 'dv' + dv;
@@ -2826,7 +2907,7 @@
             const m = $('msg'); m.className = ''; m.innerHTML = '';
             if (full && !busy) { m.className = 'lose'; m.textContent = left > 0 ? tr('lose1') : tr('lose2'); }
             if (won) {
-                if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: !!settings.hc, num: settings.num, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
+                if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: !!settings.hc, num: settings.num, rt: !!ROOTS, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
                 m.className = gaveUp ? 'lose' : 'win';
                 m.innerHTML = dailyMode ? tr('win_daily', { m: tr('moves', { n: used }) }) + '<br><span id="dnote"></span><br><button id="nx">' + tr('back_cal') + '</button>' : gaveUp ? tr(used < L.limit ? 'give_under' : 'give_par', { m: tr('moves', { n: used }) }) + '<br><button id="nx">' + tr('next_level') + '</button>' : tr('win', { n: used, sc }) + '<br><button id="nx">' + tr('next_level') + '</button>';
                 $('nx').onclick = dailyMode ? openDaily : newLevel; $('nx').focus(); if ($('dnote')) $('dnote').textContent = dailyNote;
@@ -2836,7 +2917,7 @@
         function applySettings() {
             if (settings.theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); else document.documentElement.removeAttribute('data-theme');
             $('swTheme').setAttribute('aria-checked', settings.theme === 'light');
-            $('swFlip').setAttribute('aria-checked', settings.flip); document.querySelectorAll('#numSeg button').forEach(b => b.setAttribute('aria-checked', b.dataset.m === settings.num)); $('swGdec').setAttribute('aria-checked', !!settings.gdec); $('swGdec').disabled = settings.num !== 'dec'; $('rowGdec').style.opacity = settings.num === 'dec' ? '' : '.45'; $('swGfrac').setAttribute('aria-checked', !!settings.gfrac); $('swGfrac').disabled = settings.num !== 'frac'; $('rowGfrac').style.opacity = settings.num === 'frac' ? '' : '.45'; $('swHc').setAttribute('aria-checked', !!settings.hc); $('swAnim').setAttribute('aria-checked', settings.anim);
+            $('swFlip').setAttribute('aria-checked', settings.flip); document.querySelectorAll('#numSeg button').forEach(b => b.setAttribute('aria-checked', b.dataset.m === settings.num)); $('swGdec').setAttribute('aria-checked', !!settings.gdec); $('swGdec').disabled = settings.num !== 'dec'; $('rowGdec').style.opacity = settings.num === 'dec' ? '' : '.45'; $('swRoots').setAttribute('aria-checked', !!settings.roots || settings.num === 'frac'); $('swRoots').disabled = settings.num === 'frac'; $('rowRoots').style.opacity = settings.num === 'frac' ? '.45' : ''; $('swGfrac').setAttribute('aria-checked', !!settings.gfrac); $('swGfrac').disabled = settings.num !== 'frac'; $('rowGfrac').style.opacity = settings.num === 'frac' ? '' : '.45'; $('swHc').setAttribute('aria-checked', !!settings.hc); $('swAnim').setAttribute('aria-checked', settings.anim);
             document.documentElement.classList.toggle('hc', !!settings.hc); document.body.classList.toggle('noanim', !settings.anim); document.documentElement.classList.toggle('noanim', !settings.anim);
             document.documentElement.classList.toggle('noui', settings.anims.ui === false); document.documentElement.classList.toggle('nofade', settings.anims.theme === false);
             document.querySelectorAll('[data-anim]').forEach(b => b.setAttribute('aria-checked', settings.anims[b.dataset.anim] !== false)); $('rowAdv').hidden = !settings.anim;
@@ -2884,8 +2965,8 @@
                 d = id === 'scores' || lb ? 1 : -1, away = d < 0 ? 'away' : 'awayR', off = d < 0 ? 'off' : 'offL';
             clearTimeout(ssTimer);
             if (on) {
-                if (id === 'settings') st.classList.toggle('frommenu', fromMenu);
-                if (id === 'settings') decAtOpen = settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac; else if (id === 'scores') renderScores();
+                if (id === 'settings') { st.classList.toggle('frommenu', fromMenu); st.classList.toggle('indaily', !!dailyMode && !fromMenu); }
+                if (id === 'settings') decAtOpen = settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac + '|' + !!settings.roots; else if (id === 'scores') renderScores();
                 parallax(bgBase + d * Math.round(innerWidth * (adv ? .6 : .3)));
                 st.classList.remove('off', 'offL'); st.hidden = false; st.scrollTop = 0;
                 mn.classList.add(away); if (nw) nw.classList.add(away);
@@ -2897,7 +2978,7 @@
                 ssTimer = setTimeout(() => { mn.hidden = true; if (nw) nw.hidden = true; dropAnims(mn, nw); }, an ? SW_DUR + 80 : 0);
             } else {
                 mn.hidden = false; if (nw) nw.hidden = false; parallax(adv ? bgBase - Math.round(innerWidth * .3) : bgBase);
-                if (!adv && (!lb || dailyMode)) { view = null; if (id === 'settings' && (settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac) !== decAtOpen && !dailyMode) newLevel(); else render(); }
+                if (!adv && (!lb || dailyMode)) { view = null; if (id === 'settings' && (settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac + '|' + !!settings.roots) !== decAtOpen && !dailyMode) newLevel(); else render(); }
                 getComputedStyle(nw || mn).transform;
                 mn.classList.remove('away', 'awayR'); if (nw) nw.classList.remove('away', 'awayR'); st.classList.add(off);
                 if (an) {
@@ -2952,7 +3033,7 @@
             const start = parseNum(e.s), goal = parseNum(e.g);
             let ops = null;
             if (start && goal && Array.isArray(e.o)) {
-                try { ops = e.o.map(s => mk(s, settings.num)); } catch (x) { ops = null; }
+                try { ROOTS = !!e.rt; ops = e.o.map(s => mk(s, settings.num)); } catch (x) { ops = null; }
                 if (ops && (ops.some(o => !o) || (e.d === 8 ? !(solve(start, goal, ops) <= e.par) : solve(start, goal, ops) !== e.par))) ops = null;
             }
             if (ops) {
@@ -2964,6 +3045,8 @@
         let clrT = 0;
         $('opts').onclick = () => showPanel('settings', true);
         $('mset').onclick = () => showPanel('settings', true);
+        $('mhow').onclick = () => $('howdlg').showModal();
+        $('howx').onclick = () => $('howdlg').close();
         $('sc').onclick = () => showPanel('scores', true);
         $('sback').onclick = () => showPanel('scores', false);
         $('sclear').onclick = () => {
@@ -2979,6 +3062,7 @@
         document.querySelectorAll('[data-anim]').forEach(b => b.onclick = () => { settings.anims[b.dataset.anim] = settings.anims[b.dataset.anim] === false; saveSettings(); applySettings(); });
         $('swGdec').onclick = () => { if (settings.num !== 'dec') return; settings.gdec = !settings.gdec; saveSettings(); applySettings(); };
         $('swGfrac').onclick = () => { if (settings.num !== 'frac') return; settings.gfrac = !settings.gfrac; saveSettings(); applySettings(); };
+        $('swRoots').onclick = () => { if (settings.num === 'frac') return; settings.roots = !settings.roots; saveSettings(); applySettings(); };
         $('swHc').onclick = () => { settings.hc = !settings.hc; saveSettings(); applySettings(); };
         $('swAnim').onclick = () => { settings.anim = !settings.anim; saveSettings(); applySettings(); };
         applySettings();
@@ -3004,6 +3088,20 @@
         $('undo').onclick = () => { if (hcOn() && undosUsed >= HC_UNDOS) return; const h = hist.pop(); if (h) { undosUsed++; cur = h.prev; flipRev = true; render(); flipRev = false; } };
         $('reset').onclick = () => { if (hcOn()) return; stopReplay(); cur = L.start; hist = []; counted = false; dailyNote = ''; render(); };
         $('rand').onclick = giveUp;
+        /* a link that opens exactly this level (same numbers, operations, par, number type and roots setting) on the custom level page */
+        const SH_URL = 'https://gamedevrg.github.io/gamedevrg.com/mathgolf/custom/?level=', SH_OPC = { '+': 'p', '−': 'm', '×': 'x', '÷': 'd' }, SH_FIX = { 'x²': 'sq', '|x|': 'ab', '−x': 'ng', 'x³': 'cu', '√x': 'rt', 'x⁻¹': 'iv' }, SH_MC = { whole: 'w', dec: 'd', frac: 'f' };
+        function levelLink() {
+            const opEnc = s => SH_FIX[s] || (s.startsWith('mod ') ? 'o' + s.slice(4) : SH_OPC[s[0]] + s.slice(1)), num = x => fmt(x).replace('−', '-');
+            const parts = [num(L.start), num(L.goal), Math.max(1, Math.min(99, L.limit)), SH_MC[settings.num], L.ops.map(o => opEnc(o.s)).join(',')];
+            if (ROOTS && settings.num !== 'frac') parts.push('r');
+            return SH_URL + btoa(parts.join(';')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        }
+        let shT = 0;
+        $('sharelv').onclick = async () => {
+            const url = levelLink(), b = $('sharelv');
+            try { await navigator.clipboard.writeText(url); } catch (e) { const x = document.createElement('textarea'); x.value = url; document.body.appendChild(x); x.select(); try { document.execCommand('copy'); } catch (z) { } x.remove(); }
+            b.textContent = tr('share_ok'); clearTimeout(shT); shT = setTimeout(() => { b.textContent = tr('share_b'); }, 1600);
+        };
         $('skipanim').onclick = skipReplay;
         $('diff').onchange = newLevel;
         /* phones: number line sits in the board under the numbers; larger screens: pinned along the bottom */
@@ -3254,15 +3352,28 @@
         (function menuIntro() {
             if (!animOn('ui') || (window.performance && performance.getEntriesByType && (performance.getEntriesByType('navigation')[0] || {}).type === 'back_forward')) return;
             const m = $('menu'), hd = m.querySelector('header'); if (m.hidden || !hd) return;
-            const lg = hd.querySelector('.intrologo'), r = hd.getBoundingClientRect(), dy = Math.round(innerHeight / 2 - (r.top + r.height / 2)); if (dy < 40) return; /* already near the middle, nothing to move */
+            const lg = $('menulogo'), r = hd.getBoundingClientRect(), dy = Math.round(innerHeight / 2 - (r.top + r.height / 2)); if (dy < 40) return; /* already near the middle, nothing to move */
             m.classList.add('intro'); hd.style.transform = 'translateY(' + dy + 'px)';
+            /* the logo starts just under the centered title (a bit bigger), then glides down to its place at the bottom of the menu */
+            const SC = 1.35; let from = null;
+            if (lg) { lg.style.transform = ''; const lr = lg.getBoundingClientRect(), want = r.bottom + dy + 30 + lr.height * SC / 2; from = 'translateY(' + Math.round(want - (lr.top + lr.height / 2)) + 'px) scale(' + SC + ')'; lg.style.transform = from; }
             setTimeout(() => {
                 m.classList.remove('intro'); hd.style.transform = '';
-                if (lg) lg.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 350, easing: 'ease-out' }); /* the logo fades away as the title moves up */
-                hd.animate([{ transform: 'translateY(' + dy + 'px)' }, { transform: 'translateY(0)' }], { duration: 700, easing: 'cubic-bezier(.4,0,.2,1)' });
+                const mv = { duration: 700, easing: 'cubic-bezier(.4,0,.2,1)' };
+                if (lg) { lg.style.transform = ''; lg.animate([{ transform: from }, { transform: 'none' }], mv); }
+                hd.animate([{ transform: 'translateY(' + dy + 'px)' }, { transform: 'translateY(0)' }], mv);
             }, 900);
         })();
     </script>
+<script>
+/* parallax: the grid scrolls at half speed (shifted down by the other half), unless motion is reduced or animations are off */
+(() => {
+    const r = document.documentElement, b = document.body, F = .5; let q = 0;
+    if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    const u = () => { q = 0; b.style.backgroundPositionY = (r.classList.contains('noanim') ? 0 : window.scrollY * (1 - F)) + 'px'; };
+    addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(u); }, { passive: true });
+})();
+</script>
 </body>
 
 </html>
