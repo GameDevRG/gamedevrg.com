@@ -707,7 +707,7 @@
             max-width: 88%;
             padding: 9px 15px;
             background: var(--bub);
-            border-radius: 12px;
+            border-radius: 0;
             font-size: .92rem;
             line-height: 1.35;
             overflow-wrap: anywhere;
@@ -1182,18 +1182,16 @@
         /* =====================================================================
            lobby tweaks: the chat moved into a pop-up, so the member list gets the whole row
            ===================================================================== */
-        .cols {
-            display: block;
-            height: auto;
-            margin-top: 12px
+        /* the chat lives in the lobby panel next to the member list; during a match it moves to the pop-up */
+        #chatbox {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column
         }
 
-        #mcol {
-            max-height: none
-        }
-
-        #mlist {
-            max-height: 340px
+        #chatlog {
+            min-height: 0
         }
 
         #room,
@@ -2221,6 +2219,9 @@
                     <div class="cellh">member list <small id="mcount"></small></div>
                     <ul id="mlist"></ul>
                 </div>
+                <div class="cell col" id="chatcol">
+                    <div class="cellh">chat</div>
+                </div>
             </div>
 
             <div class="cell" id="setbox">
@@ -2397,6 +2398,7 @@
                 id="toasttext"></span></button>
         <div id="chatpanel" role="dialog" aria-label="chat" hidden>
             <div class="chath"><b>chat</b><button id="chatclose" type="button" aria-label="hide chat">×</button></div>
+            <div id="chatbox">
             <div id="chatlog" role="log" aria-live="polite" aria-label="chat messages">
                 <div id="chatempty">say hi! messages show up here for everyone in the room.</div>
             </div>
@@ -2407,6 +2409,7 @@
                         <path d="M2.5 10.5 21.5 2.5 14.5 21.5 11.2 13.6Z" fill="currentColor" />
                     </svg></button>
             </form>
+            </div>
         </div>
     </div>
 
@@ -2481,7 +2484,7 @@
 
         /* ---------- state ---------- */
         let sess = null, you = '', state = null, es = null, joined = false, chatSeen = 0, lastFrom = null, sendQ = Promise.resolve();
-        let chatOpen = false, unread = 0, chatReady = false, toastT = 0; const baseTitle = document.title;
+        let curView = '', chatOpen = false, unread = 0, chatReady = false, toastT = 0; const baseTitle = document.title;
         let leaving = false; addEventListener('beforeunload', () => { leaving = true; }); addEventListener('pagehide', () => { leaving = true; }); addEventListener('pageshow', () => { leaving = false; });
         const isHost = () => !!state && state.hostId === you;
         const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, hardcore: false, timer: 0, showprog: true, overpar: -1, mode: 'race', endless: false, totaltime: 180 };
@@ -2490,7 +2493,14 @@
             $('loading').hidden = v !== 'loading'; $('landing').hidden = v !== 'landing'; $('room').hidden = v !== 'room';
             $('game').hidden = v !== 'game'; $('results').hidden = v !== 'results';
             const inRoom = v === 'room' || v === 'game' || v === 'results';
-            $('chatwidget').hidden = !inRoom; if (!inRoom && chatOpen) setChat(false);
+            const prevV = curView; curView = v;
+            const lobby = v === 'room';
+            $('chatwidget').hidden = !inRoom || lobby;
+            /* one chat: in the lobby it sits in the panel, in a match it lives in the pop-up */
+            const slot = lobby ? $('chatcol') : $('chatpanel');
+            if ($('chatbox').parentNode !== slot) slot.appendChild($('chatbox'));
+            if (lobby) { chatOpen = true; $('chatpanel').hidden = true; unread = 0; hideToast(); updateBadge(); const lg = $('chatlog'); lg.scrollTop = lg.scrollHeight; }
+            else if (chatOpen && (!inRoom || prevV === 'room')) setChat(false);
             if (v !== 'loading') scrollTo(0, 0);
         }
 
@@ -2705,7 +2715,7 @@
         $('chatfab').onclick = () => setChat(!chatOpen);
         $('chatclose').onclick = () => { setChat(false); $('chatfab').focus(); };
         $('chattoast').onclick = () => setChat(true);
-        document.addEventListener('keydown', e => { if (e.key === 'Escape' && chatOpen && !document.querySelector('dialog[open]')) setChat(false); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && chatOpen && curView !== 'room' && !document.querySelector('dialog[open]')) setChat(false); });
         document.addEventListener('visibilitychange', () => { if (!document.hidden && chatOpen && unread) { unread = 0; updateBadge(); } });
 
         /* ---------- buttons ---------- */
