@@ -1469,6 +1469,16 @@
             opacity: .5
         }
 
+        .rrow.pt {
+            grid-template-columns: minmax(0, 1fr) auto
+        }
+
+        .rrow.pt .rc {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--ink)
+        }
+
         #racehide {
             margin: 0 0 14px;
             font-size: .88rem;
@@ -1858,16 +1868,6 @@
             cursor: not-allowed
         }
 
-        #skip {
-            border-color: var(--imag) !important;
-            color: var(--imag) !important
-        }
-
-        #skip.arm {
-            background: var(--imag) !important;
-            color: var(--onimag) !important
-        }
-
         #gmsg {
             max-width: 460px;
             margin: 10px auto 0;
@@ -2227,6 +2227,13 @@
                 <h3>room settings</h3>
                 <p id="hostnote" hidden>only the host can change these</p>
 
+                <div class="srow col">
+                    <div><b>game mode</b><span class="d" id="modedesc"></span></div>
+                    <div class="seg" role="radiogroup" aria-label="game mode"><button type="button" role="radio"
+                            data-k="mode" data-v="race">race</button><button type="button" role="radio"
+                            data-k="mode" data-v="points">points</button></div>
+                </div>
+
                 <div class="srow">
                     <div><b>max players</b><span class="d">how many people can be in the room, including the
                             host</span></div>
@@ -2234,8 +2241,8 @@
                             aria-label="fewer players">−</button><output id="v_max"></output><button type="button"
                             data-step="max" data-d="1" aria-label="more players">+</button></div>
                 </div>
-                <div class="srow">
-                    <div><b>rounds</b><span class="d">how many levels the match lasts</span></div>
+                <div class="srow" id="row_rounds">
+                    <div><b>rounds</b><span class="d">how many levels the match lasts (points mode: how many rounds)</span></div>
                     <div class="step"><button type="button" data-step="rounds" data-d="-1"
                             aria-label="fewer rounds">−</button><output id="v_rounds"></output><button type="button"
                             data-step="rounds" data-d="1" aria-label="more rounds">+</button></div>
@@ -2284,7 +2291,7 @@
                             data-k="timer" data-v="180">3 min</button></div>
                 </div>
                 <div class="srow col">
-                    <div><b>moves over par</b><span class="d">how many moves over par a player may use on one level. out of moves? undo, restart or skip the level</span></div>
+                    <div><b>moves over par</b><span class="d">how many moves over par a player may use on one level. out of moves? undo or restart the level</span></div>
                     <div class="seg" role="radiogroup" aria-label="moves over par"><button type="button" role="radio"
                             data-k="overpar" data-v="-1">no limit</button><button type="button" role="radio"
                             data-k="overpar" data-v="0">par only</button><button type="button" role="radio"
@@ -2293,8 +2300,22 @@
                             data-k="overpar" data-v="3">+3</button><button type="button" role="radio"
                             data-k="overpar" data-v="5">+5</button></div>
                 </div>
-                <div class="srow">
-                    <div><b>show everyone's progress</b><span class="d">during the race, players see how many levels everyone has finished. turn it off to race blind</span></div>
+                <div class="srow" id="row_endless">
+                    <div><b>endless mode</b><span class="d">points only: no set number of rounds. the match lasts as long as you pick below and the most points wins</span></div>
+                    <button type="button" class="sw" role="switch" data-sw="endless" aria-label="endless mode"
+                        aria-checked="false"></button>
+                </div>
+                <div class="srow col" id="row_totaltime">
+                    <div><b>match length</b><span class="d">endless mode only: how long the whole match lasts</span></div>
+                    <div class="seg" role="radiogroup" aria-label="match length"><button type="button" role="radio"
+                            data-k="totaltime" data-v="60">1 min</button><button type="button" role="radio"
+                            data-k="totaltime" data-v="120">2 min</button><button type="button" role="radio"
+                            data-k="totaltime" data-v="180">3 min</button><button type="button" role="radio"
+                            data-k="totaltime" data-v="300">5 min</button><button type="button" role="radio"
+                            data-k="totaltime" data-v="600">10 min</button></div>
+                </div>
+                <div class="srow" id="row_showprog">
+                    <div><b>show everyone's progress</b><span class="d">race mode: players see how many levels everyone has finished. turn it off to race blind. (points mode always shows the scores)</span></div>
                     <button type="button" class="sw" role="switch" data-sw="showprog" aria-label="show everyone's progress"
                         aria-checked="true"></button>
                 </div>
@@ -2313,13 +2334,13 @@
     <!-- the race -->
     <section id="game" class="pg" hidden>
         <div class="gtop">
-            <div class="gcell"><span class="gk">level</span><b id="glevel">1 / 5</b></div>
-            <div class="gcell"><span class="gk">time</span><b id="gclock">0:00.0</b></div>
+            <div class="gcell"><span class="gk" id="glk">level</span><b id="glevel">1 / 5</b></div>
+            <div class="gcell"><span class="gk" id="gtlabel">time</span><b id="gclock">0:00.0</b></div>
             <div class="gcell" id="grwrap" hidden><span class="gk">this level</span><b id="grclock">1:00</b></div>
         </div>
         <p class="connmsg" role="status" hidden>connection lost. trying to reconnect…</p>
         <div class="board" id="racebox" hidden>
-            <div class="racehead">race progress</div>
+            <div class="racehead" id="racehead">race progress</div>
             <div id="racelist"></div>
         </div>
         <p id="racehide" hidden>progress is hidden in this room. nobody can see how far anyone else is!</p>
@@ -2343,8 +2364,7 @@
             <div class="lbl" id="left"></div>
             <div id="trail"></div>
             <div id="ops"></div>
-            <div class="tools"><button id="undo">undo</button><button id="reset">restart level</button><button
-                    id="skip">skip level</button></div>
+            <div class="tools"><button id="undo">undo</button><button id="reset">restart level</button></div>
             <div id="gmsg" role="status"></div>
         </section>
         <div class="tools gfoot"><button class="btn" id="gleave">leave room</button><button class="btn danger" id="gend"
@@ -2464,7 +2484,7 @@
         let chatOpen = false, unread = 0, chatReady = false, toastT = 0; const baseTitle = document.title;
         let leaving = false; addEventListener('beforeunload', () => { leaving = true; }); addEventListener('pagehide', () => { leaving = true; }); addEventListener('pageshow', () => { leaving = false; });
         const isHost = () => !!state && state.hostId === you;
-        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, hardcore: false, timer: 0, showprog: true, overpar: -1 };
+        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, hardcore: false, timer: 0, showprog: true, overpar: -1, mode: 'race', endless: false, totaltime: 180 };
 
         function view(v) {
             $('loading').hidden = v !== 'loading'; $('landing').hidden = v !== 'landing'; $('room').hidden = v !== 'room';
@@ -2530,9 +2550,12 @@
             es.addEventListener('start', e => { startMatch(JSON.parse(e.data)); showUi(); tick(); });
             es.addEventListener('progress', e => {
                 const p = JSON.parse(e.data); if (!match || p.id === you) return;
-                match.prog[p.id] = { done: p.done, solved: p.solved, finished: p.finished, left: p.left };
+                if (match.mode === 'points') (match.prog[p.id] = match.prog[p.id] || {}).left = p.left;
+                else match.prog[p.id] = { done: p.done, solved: p.solved, finished: p.finished, left: p.left };
                 if (ui === 'game') renderRace();
             });
+            es.addEventListener('round', e => onRound(JSON.parse(e.data)));
+            es.addEventListener('levels', e => onLevels(JSON.parse(e.data)));
             es.addEventListener('standings', e => {
                 standings = JSON.parse(e.data);
                 if (match && standings.id === match.id && standings.final && ui === 'game') { stopGameTimers(); ui = 'results'; showUi(); }
@@ -2580,11 +2603,12 @@
                 if (host && m.id !== you) li.appendChild(kickBtn(m));
                 ul.appendChild(li);
             });
-            const playing = state.phase === 'playing', lv = s.rounds + (s.rounds === 1 ? ' level' : ' levels');
+            const playing = state.phase === 'playing', lv = s.rounds + (s.rounds === 1 ? ' level' : ' levels'), rd = s.rounds + (s.rounds === 1 ? ' round' : ' rounds');
+            const what = s.mode === 'points' ? "you'll all solve the same level at the same time and the first to solve it gets the point. " + (s.endless ? 'the most points after ' + Math.round(s.totaltime / 60) + (s.totaltime === 60 ? ' minute' : ' minutes') + ' wins.' : 'the most points after ' + rd + ' wins.') : "you'll all race through the same " + lv + '.';
             $('exitbtn').textContent = host ? 'disband room' : 'leave room';
             $('startbtn').textContent = startingMatch ? 'making levels… ' + startingMatch.k + '/' + startingMatch.n : playing ? 'match running…' : host ? 'start!!!' : 'waiting for host';
             $('startbtn').disabled = !host || playing || !!startingMatch;
-            $('foothint').textContent = playing ? 'a match is running. the results will show up when everyone has finished.' : host ? "press start when everyone's here. you'll all race through the same " + lv + '.' : 'the host starts the match. you will all race through the same ' + lv + '.';
+            $('foothint').textContent = playing ? 'a match is running. the results will show up when everyone has finished.' : host ? "press start when everyone's here. " + what : 'the host starts the match. ' + what;
             $('lastrow').hidden = !standings; $('lastres').textContent = standings && standings.final ? 'see last results' : 'see results';
             $('gend').hidden = !host;
             renderSettings();
@@ -2602,20 +2626,22 @@
         /* settings: markup is static, this just syncs it with the room's values */
         function norm(s) {
             const o = Object.assign({}, s);
-            o.gdec = o.numbers === 'dec' && !!o.gdec; o.gfrac = o.numbers === 'frac' && !!o.gfrac; o.roots = o.numbers === 'frac' ? true : !!o.roots;
+            o.gdec = o.numbers === 'dec' && !!o.gdec; o.gfrac = o.numbers === 'frac' && !!o.gfrac; o.roots = o.numbers === 'frac' ? true : !!o.roots; o.endless = o.mode === 'points' && !!o.endless;
             return o;
         }
         function renderSettings() {
-            const host = isHost(), s = norm(state.settings), n = state.members.length, edit = host && state.phase !== 'playing' && !startingMatch;
+            const host = isHost(), s = norm(state.settings), n = state.members.length, edit = host && state.phase !== 'playing' && !startingMatch, pts = s.mode === 'points';
             $('setbox').classList.toggle('ro', !edit); $('hostnote').hidden = host;
+            $('modedesc').textContent = pts ? 'everyone solves the same level at once. the first to solve it gets the point and everyone moves on. most points wins' : 'everyone races through the same levels. the fastest to the end wins';
             $('v_max').textContent = s.max; $('v_rounds').textContent = s.rounds;
             const lim = { max: [Math.max(2, n), 8], rounds: [1, 15] };
-            document.querySelectorAll('[data-step]').forEach(b => { const k = b.dataset.step, d = +b.dataset.d; b.disabled = !edit || (d < 0 ? s[k] <= lim[k][0] : s[k] >= lim[k][1]); });
-            document.querySelectorAll('[data-k]').forEach(b => { b.setAttribute('aria-checked', String(s[b.dataset.k]) === b.dataset.v); b.disabled = !edit; });
+            document.querySelectorAll('[data-step]').forEach(b => { const k = b.dataset.step, d = +b.dataset.d; b.disabled = !edit || (k === 'rounds' && s.endless) || (d < 0 ? s[k] <= lim[k][0] : s[k] >= lim[k][1]); });
+            document.querySelectorAll('[data-k]').forEach(b => { b.setAttribute('aria-checked', String(s[b.dataset.k]) === b.dataset.v); b.disabled = !edit || (b.dataset.k === 'totaltime' && !s.endless); });
             document.querySelectorAll('[data-sw]').forEach(b => {
                 const k = b.dataset.sw; b.setAttribute('aria-checked', !!s[k]);
-                b.disabled = !edit || (k === 'gdec' && s.numbers !== 'dec') || (k === 'gfrac' && s.numbers !== 'frac') || (k === 'roots' && s.numbers === 'frac');
+                b.disabled = !edit || (k === 'gdec' && s.numbers !== 'dec') || (k === 'gfrac' && s.numbers !== 'frac') || (k === 'roots' && s.numbers === 'frac') || (k === 'endless' && !pts) || (k === 'showprog' && pts);
             });
+            $('row_endless').classList.toggle('dim', !pts); $('row_totaltime').classList.toggle('dim', !s.endless); $('row_rounds').classList.toggle('dim', !!s.endless); $('row_showprog').classList.toggle('dim', pts);
             $('row_gdec').classList.toggle('dim', s.numbers !== 'dec'); $('row_gfrac').classList.toggle('dim', s.numbers !== 'frac'); $('row_roots').classList.toggle('dim', s.numbers === 'frac');
         }
         function patch(p) {
@@ -2624,7 +2650,7 @@
             sendQ = sendQ.then(() => api('/vs/settings', { code: sess.code, token: sess.token, settings: p })).catch(e => localLine(isNet(e) ? "couldn't reach the server" : e.message));
         }
         document.querySelectorAll('[data-step]').forEach(b => b.onclick = () => { const k = b.dataset.step; patch({ [k]: state.settings[k] + +b.dataset.d }); });
-        document.querySelectorAll('[data-k]').forEach(b => b.onclick = () => { const k = b.dataset.k, v = b.dataset.v; patch({ [k]: k === 'numbers' ? v : +v }); });
+        document.querySelectorAll('[data-k]').forEach(b => b.onclick = () => { const k = b.dataset.k, v = b.dataset.v; patch({ [k]: (k === 'numbers' || k === 'mode') ? v : +v }); });
         document.querySelectorAll('[data-sw]').forEach(b => b.onclick = () => { const k = b.dataset.sw; patch({ [k]: !state.settings[k] }); });
 
         /* ---------- chat ---------- */
@@ -3025,7 +3051,7 @@
         let standings = null;        /* the latest results table from the server */
         let ui = 'room';             /* which screen this player is looking at: room (lobby) | game | results */
         let Lv = null, cur = null, hist = [], undosUsed = 0, round = 0, lockedRound = false, began = false;
-        let srvOff = 0, localGo = 0, roundStartAt = 0, tickT = 0, advT = 0, goT = 0, countShown = null, reportQ = Promise.resolve(), startingMatch = null;
+        let srvOff = 0, localGo = 0, roundStartAt = 0, tickT = 0, advT = 0, goT = 0, countShown = null, reportQ = Promise.resolve(), startingMatch = null, topping = false;
 
         const hardcore = () => !!(match && match.cfg.hardcore);
         const capMoves = () => match.cfg.overpar < 0 ? Infinity : Lv.limit + match.cfg.overpar;
@@ -3040,18 +3066,24 @@
 
         function startMatch(p) {
             stopGameTimers();
-            const cfg = p.settings; MODE = cfg.numbers; ROOTS = !!cfg.roots;
-            match = { id: p.id, cfg, levels: p.levels, total: p.levels.length, players: p.players.map(x => ({ id: x.id, name: x.name })), prog: {} };
+            const cfg = p.settings, pts = cfg.mode === 'points'; MODE = cfg.numbers; ROOTS = !!cfg.roots;
+            match = { id: p.id, cfg, mode: cfg.mode, levels: p.levels.slice(), total: cfg.endless ? Infinity : p.levels.length, players: p.players.map(x => ({ id: x.id, name: x.name })), prog: {}, scores: {}, round: 0, pend: null, waitIdx: null, skipN: 0, skipOf: 0, endAt: 0 };
             p.players.forEach(x => { match.prog[x.id] = { done: x.done || 0, solved: x.solved || 0, finished: !!x.finished, left: !!x.left }; });
-            if (p.mine) match.prog[you] = { done: p.mine.done, solved: p.mine.solved, finished: p.mine.done >= match.total, left: false };
+            if (p.mine && !pts) match.prog[you] = { done: p.mine.done, solved: p.mine.solved, finished: p.mine.done >= match.total, left: false };
             standings = null;
             srvOff = p.serverNow - Date.now(); localGo = p.goAt - srvOff;
-            round = p.mine ? p.mine.done : 0;
-            began = false; lockedRound = false; countShown = null; Lv = null; hist = [];
+            round = pts ? p.round : (p.mine ? p.mine.done : 0); match.round = round;
+            if (pts) {
+                match.scores = p.scores || {}; match.endAt = localGo + cfg.totaltime * 1000;
+                if (p.roundStart != null) match.pend = { idx: round, at: p.roundStart - srvOff }; else match.waitIdx = round;
+            } else match.pend = { idx: round, at: localGo };
+            began = false; lockedRound = false; countShown = null; Lv = null; hist = []; topping = false;
             const gb = $('gboard'); gb.hidden = true; gb.classList.toggle('hc', !!cfg.hardcore);
-            $('grwrap').hidden = !(cfg.timer > 0); $('gclock').textContent = '0:00.0'; $('glevel').textContent = Math.min(round + 1, match.total) + ' / ' + match.total; setMsg('');
+            $('grwrap').hidden = !(cfg.timer > 0); $('glk').textContent = pts ? 'round' : 'level'; $('gtlabel').textContent = pts && cfg.endless ? 'time left' : 'time';
+            $('gclock').textContent = pts && cfg.endless ? fmtCd(cfg.totaltime * 1000) : '0:00.0';
+            $('glevel').textContent = pts ? (round + 1) + (cfg.endless ? '' : ' / ' + match.total) : Math.min(round + 1, match.total) + ' / ' + match.total; setMsg('');
             $('gend').hidden = !isHost();
-            if (round >= match.total) { ui = 'results'; return; }   /* came back after already finishing */
+            if (!pts && round >= match.total) { ui = 'results'; return; }   /* came back after already finishing */
             ui = 'game'; tickT = setInterval(tick, 100);
         }
 
@@ -3061,25 +3093,37 @@
         }
         function tick() {
             if (!match || ui !== 'game') return;
-            const now = Date.now(), rem = localGo - now;
-            if (!began) {
-                if (rem > 0) { showCount(String(Math.ceil(rem / 1000))); return; }
-                began = true; $('gboard').hidden = false; showCount('go!'); goT = setTimeout(() => { $('gcount').hidden = true; }, 600);
-                loadLevel(round);
+            const now = Date.now(), pts = match.mode === 'points';
+            if (match.pend) {
+                if (now < match.pend.at) { if (!began) showCount(String(Math.ceil((match.pend.at - now) / 1000))); }
+                else {
+                    const first = !began, idx = match.pend.idx, at = match.pend.at; match.pend = null; began = true; $('gboard').hidden = false;
+                    if (first) { showCount('go!'); goT = setTimeout(() => { $('gcount').hidden = true; }, 600); }
+                    loadLevel(idx, pts ? at : now);
+                }
             }
-            $('gclock').textContent = fmtT(now - localGo);
-            if (match.cfg.timer > 0 && !lockedRound) {
+            if (!began) return;
+            $('gclock').textContent = pts && match.cfg.endless ? fmtCd(Math.max(0, match.endAt - now)) : fmtT(now - localGo);
+            if (match.cfg.timer > 0 && Lv && !lockedRound) {
                 const left = match.cfg.timer * 1000 - (now - roundStartAt);
                 $('grclock').textContent = fmtCd(Math.max(0, left)); $('grwrap').classList.toggle('low', left <= 10000);
-                if (left <= 0) roundDone('timeout');
+                if (left <= 0 && !pts) roundDone('timeout');   /* in points mode the server ends the round */
             }
+            if (pts && match.cfg.endless && isHost() && !topping && match.levels.length - match.round < 8) topUp();
+        }
+        /* endless mode: the host's browser makes more levels as the match goes on */
+        async function topUp() {
+            topping = true; const cfg = match.cfg, mid = match.id;
+            try { const levels = await makeLevels(cfg, 3); if (match && match.id === mid) await api('/vs/levels', { code: sess.code, token: sess.token, levels }); }
+            catch (e) { await sleep(2000); }
+            topping = false;
         }
 
-        function loadLevel(i) {
-            const lv = match.levels[i]; NB = lv.nb;
-            Lv = { start: lv.start, goal: lv.goal, limit: lv.limit, ops: lv.ops.map(s => mk(s, MODE)) };
-            cur = Lv.start; hist = []; undosUsed = 0; lockedRound = false; nlView = null; nlPend = false; roundStartAt = Date.now();
-            $('glevel').textContent = (i + 1) + ' / ' + match.total; setMsg('');
+        function loadLevel(i, startAt) {
+            const lv = match.levels[i]; if (!lv) return; NB = lv.nb;
+            Lv = { start: lv.start, goal: lv.goal, limit: lv.limit, nb: lv.nb, ops: lv.ops.map(s => mk(s, MODE)) };
+            cur = Lv.start; hist = []; undosUsed = 0; lockedRound = false; nlView = null; nlPend = false; roundStartAt = startAt || Date.now(); match.round = i; round = i;
+            $('glevel').textContent = match.mode === 'points' ? (i + 1) + (match.cfg.endless ? '' : ' / ' + match.total) : (i + 1) + ' / ' + match.total; setMsg('');
             if (match.cfg.timer > 0) { $('grclock').textContent = fmtCd(match.cfg.timer * 1000); $('grwrap').classList.remove('low'); }
             render();
         }
@@ -3087,6 +3131,7 @@
 
         function render() {
             if (!Lv || !match) return;
+            NB = Lv.nb;   /* the host's browser may be making other levels in the background */
             const used = hist.length, won = same(cur, Lv.goal), cap = capMoves(), over = used - Lv.limit, full = !won && used >= cap;
             $('cur').classList.toggle('winp', won);
             setFlip($('cur'), fmtS(cur), fmt(cur)); setFlip($('goal'), fmtS(Lv.goal), fmt(Lv.goal));
@@ -3117,27 +3162,63 @@
             $('undo').disabled = !used || won || lockedRound || (hardcore() && left <= 0);
             $('undo').textContent = hardcore() ? 'undo (' + Math.max(left, 0) + ' left)' : 'undo';
             $('reset').disabled = hardcore() || lockedRound; $('reset').title = hardcore() ? 'not allowed in hardcore mode' : '';
-            $('skip').disabled = lockedRound;
             if (!lockedRound) {
-                if (full) setMsg(hardcore() ? (left > 0 ? 'out of moves. undo a move to keep trying, or skip this level.' : 'out of moves and undos. skip this level.') : 'out of moves. undo a move, restart the level, or skip it.', 'lose');
-                else setMsg('');
+                if (full) {
+                    const stuck = hardcore() && left <= 0;
+                    if (stuck && match.mode !== 'points') { setMsg('out of moves and undos. level failed.', 'lose'); setTimeout(() => { if (!lockedRound && Lv && round === match.round) roundDone('skipped'); }, 700); }
+                    else if (stuck) setMsg('out of moves and undos. wait for the round to end.', 'lose');
+                    else setMsg(hardcore() ? 'out of moves. undo a move to keep trying.' : 'out of moves. undo a move or restart the level.', 'lose');
+                } else setMsg('');
             }
         }
 
-        /* a level is over: solved, skipped or out of time. tell the server, show a quick note, and go to the next one */
+        /* a level is over: solved, failed (hardcore, out of moves and undos) or out of time. tell the server, show a quick note, and go to the next one */
         function roundDone(status) {
             if (lockedRound || !match || !Lv) return;
+            if (match.mode === 'points') { if (status === 'solved') claimSolve(); return; }
             lockedRound = true;
             const moves = hist.length, t = Math.max(0, Date.now() - localGo), idx = round, last = idx + 1 >= match.total, over = moves - Lv.limit;
             const pr = match.prog[you] || (match.prog[you] = { done: 0, solved: 0, finished: false, left: false });
             pr.done = idx + 1; if (status === 'solved') pr.solved++; pr.finished = last;
             report(idx, status, moves, t);
             if (status === 'solved') setMsg('solved in ' + mv(moves) + ' · ' + (over < 0 ? -over + ' under par' : over === 0 ? 'par' : over + ' over par'), 'win');
-            else setMsg(status === 'timeout' ? "time's up!" : 'level skipped', 'lose');
-            $('skip').classList.remove('arm'); $('skip').textContent = 'skip level';
+            else setMsg(status === 'timeout' ? "time's up!" : 'out of moves. level failed', 'lose');
             render(); renderRace();
             clearTimeout(advT);
             advT = setTimeout(() => { if (last) finishLocal(); else { round++; loadLevel(round); } }, status === 'solved' ? 900 : 800);
+        }
+        /* points mode: tell the server we solved it. the server decides who was first and tells everyone (see onRound) */
+        async function claimSolve() {
+            lockedRound = true; const moves = hist.length, idx = match.round, mid = match.id;
+            render(); setMsg('solved in ' + mv(moves) + '! checking who was first…', 'win');
+            for (let i = 0; i < 20; i++) {
+                try { await api('/vs/solve', { code: sess.code, token: sess.token, matchId: mid, round: idx, moves }); return; }
+                catch (e) {
+                    if (e.status && e.status !== 429 && e.status < 500) { if (match && match.id === mid && match.round === idx) { lockedRound = false; render(); setMsg(e.message, 'lose'); } return; }
+                    await sleep(700);
+                }
+            }
+        }
+        function onRound(d) {
+            if (!match || match.mode !== 'points') return;
+            match.scores = d.scores; lockedRound = true;
+            const w = d.winner && match.players.find(p => p.id === d.winner);
+            let msg, cls;
+            if (d.winner === you) { msg = 'you got the point!'; cls = 'win'; }
+            else if (w) { msg = w.name + ' got the point'; cls = 'lose'; }
+            else { msg = d.reason === 'timeout' ? "time's up. nobody scores this round" : 'nobody scores'; cls = 'lose'; }
+            match.round = d.next === null ? d.round + 1 : d.next;
+            if (d.next !== null) {
+                if (d.roundStart !== null) { match.pend = { idx: d.next, at: d.roundStart - srvOff }; match.waitIdx = null; }
+                else { match.waitIdx = d.next; msg += ' · getting the next level…'; }
+            }
+            if (Lv) render();
+            setMsg(msg, cls); renderRace();
+        }
+        function onLevels(d) {
+            if (!match) return;
+            match.levels.push(...d.levels);
+            if (d.roundStart != null && match.waitIdx != null) { match.pend = { idx: match.waitIdx, at: d.roundStart - srvOff }; match.waitIdx = null; }
         }
         function finishLocal() { stopGameTimers(); ui = 'results'; showUi(); }
 
@@ -3165,11 +3246,6 @@
             const h = hist.pop(); undosUsed++; cur = h.prev; flipRev = true; render(); flipRev = false;
         };
         $('reset').onclick = () => { if (lockedRound || hardcore()) return; cur = Lv.start; hist = []; render(); };
-        $('skip').onclick = () => {
-            const b = $('skip'); if (lockedRound) return;
-            if (!b.classList.contains('arm')) { b.classList.add('arm'); b.textContent = 'sure?'; clearTimeout(b._t); b._t = setTimeout(() => { b.classList.remove('arm'); b.textContent = 'skip level'; }, 3000); return; }
-            roundDone('skipped');
-        };
         /* touch screens: :active is unreliable, so mirror it with a class */
         let pressedEl = null;
         const unpress = () => { if (pressedEl) { pressedEl.classList.remove('pressed'); pressedEl = null; } };
@@ -3197,7 +3273,7 @@
         $('lastres').onclick = () => { if (standings || match) { ui = 'results'; showUi(); } };
         $('startbtn').onclick = async () => {
             if (!isHost() || !sess || startingMatch || state.phase === 'playing') return;
-            const cfg = norm(state.settings), n = cfg.rounds;
+            const cfg = norm(state.settings), n = cfg.endless ? 10 : cfg.rounds;
             startingMatch = { k: 0, n }; renderRoom();
             try {
                 const levels = await makeLevels(cfg, n, k => { startingMatch.k = k; $('startbtn').textContent = 'making levels… ' + k + '/' + n; });
@@ -3209,6 +3285,20 @@
         /* ---------- the race panel (how far everyone is) ---------- */
         function renderRace() {
             if (!match) return;
+            if (match.mode === 'points') {
+                $('racebox').hidden = false; $('racehide').hidden = true; $('racehead').textContent = 'scores';
+                const prs = match.players.map(p => ({ p, pts: match.scores[p.id] || 0, left: !!(match.prog[p.id] && match.prog[p.id].left) }));
+                prs.sort((a, b) => b.pts - a.pts || (a.p.name < b.p.name ? -1 : 1));
+                const pl = $('racelist'); pl.innerHTML = '';
+                prs.forEach(r => {
+                    const row = document.createElement('div'); row.className = 'rrow pt' + (r.p.id === you ? ' me' : '') + (r.left ? ' left' : '');
+                    const n = document.createElement('span'); n.className = 'rn'; n.textContent = r.p.name + (r.p.id === you ? ' (you)' : '') + (r.left ? ' (left)' : '');
+                    const c = document.createElement('span'); c.className = 'rc'; c.textContent = String(r.pts);
+                    row.append(n, c); pl.appendChild(row);
+                });
+                return;
+            }
+            $('racehead').textContent = 'race progress';
             const show = !!match.cfg.showprog;
             $('racebox').hidden = !show; $('racehide').hidden = show;
             if (!show) return;
@@ -3231,6 +3321,23 @@
             const st = standings, list = $('reslist'); list.innerHTML = '';
             $('endm').hidden = !st || st.final || !isHost();
             if (!st) { $('resub').textContent = 'finishing up…'; $('reshint').textContent = ''; return; }
+            if (st.mode === 'points') {
+                const prow = st.rows, top = prow[0], tie = prow.length > 1 && prow[1].points === top.points;
+                $('resub').textContent = !st.final ? 'finishing up…' : top.points === 0 ? 'nobody scored' : (top.id === you ? 'you win!' : top.name + ' wins!') + (tie ? ' (tied on points, got there first)' : '');
+                $('reshint').textContent = st.final && st.total ? st.total + (st.total === 1 ? ' round' : ' rounds') + ' played' : '';
+                prow.forEach((r, i) => {
+                    const li = document.createElement('li');
+                    li.className = (r.id === you ? 'me ' : '') + (i === 0 && top.points > 0 ? 'first ' : '') + (r.status === 'left' ? 'left' : '');
+                    const rk = document.createElement('span'); rk.className = 'rk'; rk.textContent = String(i + 1);
+                    const mid = document.createElement('div'); mid.className = 'rm';
+                    const nm = document.createElement('b'); nm.className = 'rnm'; nm.textContent = r.name + (r.id === you ? ' (you)' : '');
+                    if (st.final && i === 0 && top.points > 0) { const w = document.createElement('i'); w.className = 'wintag'; w.textContent = 'winner'; nm.appendChild(w); }
+                    const sm = document.createElement('small'); sm.textContent = (r.points === 1 ? '1 point' : r.points + ' points') + (r.status === 'left' ? ' · left the match' : '');
+                    const tm = document.createElement('span'); tm.className = 'rt'; tm.textContent = String(r.points);
+                    mid.append(nm, sm); li.append(rk, mid, tm); list.appendChild(li);
+                });
+                return;
+            }
             const rows = st.rows, total = st.total, waiting = rows.filter(r => r.status === 'playing').length, first = rows.find(r => r.status === 'finished');
             $('resub').textContent = st.final
                 ? (first ? (first.id === you ? 'you win!' : first.name + ' wins!') : 'nobody finished the match')
