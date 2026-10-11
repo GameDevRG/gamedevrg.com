@@ -1104,7 +1104,7 @@
             margin: 0 auto 14px;
             border: 2px solid var(--line);
             line-height: 0;
-            background: #fff
+            background: #10162a
         }
 
         #qrbox svg {
@@ -2146,6 +2146,35 @@
                 padding: 0 14px
             }
         }
+        #spec{padding-bottom:30px}
+        #specgrid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:18px;align-items:start;margin-top:12px}
+        #speccol{display:flex;flex-direction:column;align-items:center;gap:10px}
+        #spcode{font-size:clamp(3rem,8vw,5.5rem);font-weight:800;color:var(--imag);line-height:1}
+        #spqr{width:min(240px,60%)}
+        #spqr svg{display:block;width:100%}
+        #speccol #chatbox{align-self:stretch;height:380px;border:2px solid var(--line);background:var(--cell)}
+        #specboard .sphead{text-align:center;font-size:1.3rem}
+        .tc.red,.sprow.red{color:var(--imag)}
+        .tc.blue,.sprow.blue{color:#6fb1e8}
+        .spscore,.spteams{display:grid;grid-template-columns:1fr 1fr}
+        .sbox{padding:12px;text-align:center}
+        .sbox.red{background:var(--imag);color:var(--onimag)}
+        .sbox.blue{background:#6fb1e8;color:#0b1020}
+        .sbox b{display:block;font-size:2.6rem}
+        .sprow{display:flex;justify-content:space-between;gap:8px;padding:12px 16px;border-top:2px solid var(--line);text-transform:none;text-align:left}
+        .sprow.dim{opacity:.6}
+        .sprow.th{font-weight:700;font-size:1.15rem}
+        .spbig{text-align:center;padding:18px}
+        .spbig b{display:block;font-size:3rem}
+        .splog{padding:14px 16px;text-align:left;text-transform:none;line-height:1.35}
+        .spfoot{display:flex;justify-content:space-between;gap:12px;align-items:flex-end}
+        .spfoot .tools{flex-direction:column;margin:0}
+        #chatto{align-self:flex-end;margin:6px 8px 0;padding:4px 10px;font:inherit;font-size:.8rem;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+        .msg.tred .bub{background:var(--imag);color:var(--onimag)}
+        .msg.tblue .bub{background:#6fb1e8;color:#0b1020}
+        .klink.tm.red{color:var(--imag)}
+        .klink.tm.blue{color:#6fb1e8}
+        @media(max-width:760px){#specgrid{grid-template-columns:1fr}}
     </style>
     <script>try { var q = JSON.parse(localStorage.getItem('hs1') || '{}'); if (q.theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); if (q.anim === false || (q.anims && q.anims.ui === false)) document.documentElement.classList.add('noanim') } catch (e) { }</script>
 </head>
@@ -2235,6 +2264,14 @@
                             data-k="mode" data-v="points">points</button></div>
                 </div>
 
+                <div class="srow" id="row_hostplays">
+                    <div><b>host plays</b><span class="d">turn off to only watch: you get a live scoreboard screen to show everyone</span></div>
+                    <button type="button" class="sw" role="switch" data-sw="hostplays" aria-label="host plays" aria-checked="true"></button>
+                </div>
+                <div class="srow" id="row_teams">
+                    <div><b>teams</b><span class="d">points mode only: red vs blue. a team's score is its players' points. you can move players between teams here in the lobby</span></div>
+                    <button type="button" class="sw" role="switch" data-sw="teams" aria-label="teams" aria-checked="false"></button>
+                </div>
                 <div class="srow">
                     <div><b>max players</b><span class="d">how many people can be in the room, including the
                             host</span></div>
@@ -2388,6 +2425,18 @@
                 hidden>end match for everyone</button></div>
     </section>
 
+    <!-- host screen: the host only watches -->
+    <section id="spec" class="pg" hidden>
+        <header><h1><span class="vs">versus</span> mode</h1></header>
+        <div id="specgrid">
+            <div id="speccol">
+                <div class="lbl">room code</div><div id="spcode"></div><div id="spqr"></div><button id="spqrstyle" class="klink" type="button"></button>
+                <div class="cellh" style="align-self:stretch">chat</div>
+            </div>
+            <div class="board" id="specboard"></div>
+        </div>
+    </section>
+
     <!-- chat: a button that opens a pop-up, with a badge and a preview for new messages -->
     <div id="chatwidget" hidden>
         <button id="chatfab" type="button" aria-expanded="false" aria-controls="chatpanel" aria-label="chat"><svg
@@ -2399,6 +2448,7 @@
         <div id="chatpanel" role="dialog" aria-label="chat" hidden>
             <div class="chath"><b>chat</b><button id="chatclose" type="button" aria-label="hide chat">×</button></div>
             <div id="chatbox">
+            <button id="chatto" type="button" hidden></button>
             <div id="chatlog" role="log" aria-live="polite" aria-label="chat messages">
                 <div id="chatempty">say hi! messages show up here for everyone in the room.</div>
             </div>
@@ -2418,7 +2468,7 @@
         <div id="qrbox"></div>
         <p class="codeline" id="qrcode"></p>
         <p class="linkline" id="qrlink"></p>
-        <div class="cdbtns"><button id="qrx">close</button></div>
+        <div class="cdbtns"><button class="ghost" id="qrstyle" type="button"></button><button id="qrx">close</button></div>
     </dialog>
     <dialog id="confirmdlg">
         <h3 class="t" id="cftitle"></h3>
@@ -2484,23 +2534,23 @@
 
         /* ---------- state ---------- */
         let sess = null, you = '', state = null, es = null, joined = false, chatSeen = 0, lastFrom = null, sendQ = Promise.resolve();
-        let curView = '', chatOpen = false, unread = 0, chatReady = false, toastT = 0; const baseTitle = document.title;
+        let chatTeam = false, curView = '', chatOpen = false, unread = 0, chatReady = false, toastT = 0; const baseTitle = document.title;
         let leaving = false; addEventListener('beforeunload', () => { leaving = true; }); addEventListener('pagehide', () => { leaving = true; }); addEventListener('pageshow', () => { leaving = false; });
         const isHost = () => !!state && state.hostId === you;
-        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, hardcore: false, timer: 0, showprog: true, overpar: -1, mode: 'race', endless: false, totaltime: 180 };
+        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, hardcore: false, timer: 0, showprog: true, overpar: -1, mode: 'race', endless: false, totaltime: 180, hostplays: true, teams: false };
 
         function view(v) {
             $('loading').hidden = v !== 'loading'; $('landing').hidden = v !== 'landing'; $('room').hidden = v !== 'room';
-            $('game').hidden = v !== 'game'; $('results').hidden = v !== 'results';
-            const inRoom = v === 'room' || v === 'game' || v === 'results';
+            $('game').hidden = v !== 'game'; $('results').hidden = v !== 'results'; $('spec').hidden = v !== 'spec';
+            const inRoom = v === 'room' || v === 'game' || v === 'results' || v === 'spec';
             const prevV = curView; curView = v;
-            const lobby = v === 'room';
+            const lobby = v === 'room' || v === 'spec';
             $('chatwidget').hidden = !inRoom || lobby;
             /* one chat: in the lobby it sits in the panel, in a match it lives in the pop-up */
-            const slot = lobby ? $('chatcol') : $('chatpanel');
+            const slot = v === 'spec' ? $('speccol') : lobby ? $('chatcol') : $('chatpanel');
             if ($('chatbox').parentNode !== slot) slot.appendChild($('chatbox'));
             if (lobby) { chatOpen = true; $('chatpanel').hidden = true; unread = 0; hideToast(); updateBadge(); const lg = $('chatlog'); lg.scrollTop = lg.scrollHeight; }
-            else if (chatOpen && (!inRoom || prevV === 'room')) setChat(false);
+            else if (chatOpen && (!inRoom || prevV === 'room' || prevV === 'spec')) setChat(false);
             if (v !== 'loading') scrollTo(0, 0);
         }
 
@@ -2552,8 +2602,8 @@
                 if (d.standings) standings = d.standings;
                 const mine = myRow(standings);
                 if (d.match) { if (mine && mine.status === 'finished') { stopGameTimers(); ui = 'results'; } }
-                else if (match && standings && standings.id === match.id && standings.final) { if (ui === 'game') { stopGameTimers(); ui = 'results'; } }
-                else if (ui === 'game') { stopGameTimers(); match = null; ui = 'room'; }
+                else if (match && standings && standings.id === match.id && standings.final) { if (ui === 'game' || ui === 'spec') { stopGameTimers(); ui = 'results'; } }
+                else if (ui === 'game' || ui === 'spec') { stopGameTimers(); match = null; ui = 'room'; }
                 enterRoom();
             });
             es.addEventListener('state', e => { state = JSON.parse(e.data); renderRoom(); if (ui === 'results') renderResults(); });
@@ -2562,13 +2612,13 @@
                 const p = JSON.parse(e.data); if (!match || p.id === you) return;
                 if (match.mode === 'points') (match.prog[p.id] = match.prog[p.id] || {}).left = p.left;
                 else match.prog[p.id] = { done: p.done, solved: p.solved, finished: p.finished, left: p.left };
-                if (ui === 'game') renderRace();
+                if (ui === 'game') renderRace(); else if (ui === 'spec') renderSpec();
             });
             es.addEventListener('round', e => onRound(JSON.parse(e.data)));
             es.addEventListener('levels', e => onLevels(JSON.parse(e.data)));
             es.addEventListener('standings', e => {
                 standings = JSON.parse(e.data);
-                if (match && standings.id === match.id && standings.final && ui === 'game') { stopGameTimers(); ui = 'results'; showUi(); }
+                if (match && standings.id === match.id && standings.final && (ui === 'game' || ui === 'spec')) { stopGameTimers(); ui = 'results'; showUi(); }
                 else if (ui === 'results') renderResults(); else if (ui === 'room') renderRoom();
             });
             es.addEventListener('chat', e => addChat(JSON.parse(e.data)));
@@ -2607,9 +2657,14 @@
                 const li = document.createElement('li'), n = document.createElement('span');
                 li.dataset.id = m.id; if (!m.online) li.classList.add('off'); if (prev.size && prev.has(m.id)) li.style.animation = 'none';
                 n.className = 'mn' + (m.id === state.hostId ? ' host' : ''); n.textContent = m.name;
-                const tag = (m.id === state.hostId ? ' (host)' : '') + (m.id === you && m.id !== state.hostId ? ' (you)' : '') + (!m.online ? ' (connection lost)' : '');
+                const tag = (m.id === state.hostId ? ' (host)' : '') + (m.id === you && m.id !== state.hostId ? ' (you)' : '') + (m.spec ? ' (spectating)' : '') + (!m.online ? ' (connection lost)' : '');
                 if (tag) { const i = document.createElement('i'); i.textContent = tag; if (m.id === state.hostId) i.style.color = 'inherit'; n.appendChild(i); }
                 li.appendChild(n);
+                if (s.teams && m.team) {
+                    const tb = document.createElement('button'); tb.type = 'button'; tb.className = 'klink tm ' + m.team; tb.textContent = m.team + ' team';
+                    if (host && state.phase !== 'playing') { tb.title = 'move to the other team'; tb.onclick = () => api('/vs/team', { code: sess.code, token: sess.token, target: m.id, team: m.team === 'red' ? 'blue' : 'red' }).catch(() => { }); } else tb.disabled = true;
+                    li.appendChild(tb);
+                }
                 if (host && m.id !== you) li.appendChild(kickBtn(m));
                 ul.appendChild(li);
             });
@@ -2621,7 +2676,7 @@
             $('foothint').textContent = playing ? 'a match is running. the results will show up when everyone has finished.' : host ? "press start when everyone's here. " + what : 'the host starts the match. ' + what;
             $('lastrow').hidden = !standings; $('lastres').textContent = standings && standings.final ? 'see last results' : 'see results';
             $('gend').hidden = !host;
-            renderSettings();
+            renderSettings(); updChatTo();
         }
         function kickBtn(m) {
             const b = document.createElement('button'); b.type = 'button'; b.className = 'klink'; b.textContent = 'kick'; b.setAttribute('aria-label', 'kick ' + m.name);
@@ -2636,7 +2691,7 @@
         /* settings: markup is static, this just syncs it with the room's values */
         function norm(s) {
             const o = Object.assign({}, s);
-            o.gdec = o.numbers === 'dec' && !!o.gdec; o.gfrac = o.numbers === 'frac' && !!o.gfrac; o.roots = o.numbers === 'frac' ? true : !!o.roots; o.endless = o.mode === 'points' && !!o.endless;
+            o.gdec = o.numbers === 'dec' && !!o.gdec; o.gfrac = o.numbers === 'frac' && !!o.gfrac; o.roots = o.numbers === 'frac' ? true : !!o.roots; o.endless = o.mode === 'points' && !!o.endless; o.teams = o.mode === 'points' && !!o.teams;
             return o;
         }
         function renderSettings() {
@@ -2649,9 +2704,9 @@
             document.querySelectorAll('[data-k]').forEach(b => { b.setAttribute('aria-checked', String(s[b.dataset.k]) === b.dataset.v); b.disabled = !edit || (b.dataset.k === 'totaltime' && !s.endless); });
             document.querySelectorAll('[data-sw]').forEach(b => {
                 const k = b.dataset.sw; b.setAttribute('aria-checked', !!s[k]);
-                b.disabled = !edit || (k === 'gdec' && s.numbers !== 'dec') || (k === 'gfrac' && s.numbers !== 'frac') || (k === 'roots' && s.numbers === 'frac') || (k === 'endless' && !pts) || (k === 'showprog' && pts);
+                b.disabled = !edit || (k === 'gdec' && s.numbers !== 'dec') || (k === 'gfrac' && s.numbers !== 'frac') || (k === 'roots' && s.numbers === 'frac') || (k === 'endless' && !pts) || (k === 'showprog' && pts) || (k === 'teams' && !pts);
             });
-            $('row_endless').classList.toggle('dim', !pts); $('row_totaltime').classList.toggle('dim', !s.endless); $('row_rounds').classList.toggle('dim', !!s.endless); $('row_showprog').classList.toggle('dim', pts);
+            $('row_teams').classList.toggle('dim', !pts); $('row_endless').classList.toggle('dim', !pts); $('row_totaltime').classList.toggle('dim', !s.endless); $('row_rounds').classList.toggle('dim', !!s.endless); $('row_showprog').classList.toggle('dim', pts);
             $('row_gdec').classList.toggle('dim', s.numbers !== 'dec'); $('row_gfrac').classList.toggle('dim', s.numbers !== 'frac'); $('row_roots').classList.toggle('dim', s.numbers === 'frac');
         }
         function patch(p) {
@@ -2671,8 +2726,8 @@
             let el;
             if (m.sys) { el = document.createElement('div'); el.className = 'sys'; el.textContent = m.text; lastFrom = null; }
             else {
-                el = document.createElement('div'); el.className = 'msg' + (mine ? ' me' : '');
-                if (lastFrom !== m.from) { el.classList.add('first'); const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = m.name; el.appendChild(nm); }
+                el = document.createElement('div'); el.className = 'msg' + (mine ? ' me' : '') + (m.team ? ' t' + m.team : '');
+                if (lastFrom !== m.from) { el.classList.add('first'); const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = m.name + (m.team ? ' (team)' : ''); el.appendChild(nm); }
                 const b = document.createElement('div'); b.className = 'bub'; b.textContent = m.text; b.title = new Date(m.t).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); el.appendChild(b);
                 lastFrom = m.from;
             }
@@ -2691,10 +2746,16 @@
             e.preventDefault();
             const inp = $('chatin'), text = inp.value.trim(); if (!text || !sess) return;
             inp.value = '';
-            try { await api('/vs/chat', { code: sess.code, token: sess.token, text }); }
+            try { await api('/vs/chat', { code: sess.code, token: sess.token, text, team: chatTeam }); }
             catch (err) { localLine(isNet(err) ? "couldn't send: no connection" : "couldn't send: " + err.message); }
             inp.focus();
         };
+
+        function updChatTo() {
+            const me = state && state.members.find(x => x.id === you), on = !!(me && me.team && state.settings.teams), b = $('chatto');
+            if (!on) chatTeam = false; b.hidden = !on; if (on) b.textContent = chatTeam ? 'sending to: team ' + me.team : 'sending to: everyone';
+        }
+        $('chatto').onclick = () => { chatTeam = !chatTeam; updChatTo(); $('chatin').focus(); };
 
         /* ---------- chat pop-up and new-message notification ---------- */
         function updateBadge() {
@@ -2715,7 +2776,7 @@
         $('chatfab').onclick = () => setChat(!chatOpen);
         $('chatclose').onclick = () => { setChat(false); $('chatfab').focus(); };
         $('chattoast').onclick = () => setChat(true);
-        document.addEventListener('keydown', e => { if (e.key === 'Escape' && chatOpen && curView !== 'room' && !document.querySelector('dialog[open]')) setChat(false); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && chatOpen && curView !== 'room' && curView !== 'spec' && !document.querySelector('dialog[open]')) setChat(false); });
         document.addEventListener('visibilitychange', () => { if (!document.hidden && chatOpen && unread) { unread = 0; updateBadge(); } });
 
         /* ---------- buttons ---------- */
@@ -2729,15 +2790,27 @@
             } else { try { await api('/vs/leave', { code: sess.code, token: sess.token }); } catch (e) { } }
             exitRoom();
         };
+        /* qr codes: dark blue background with red modules, or plain black on white (saved choice) */
+        let qrPlain = store.get('vs_qrplain') === '1';
+        function qrSvg(link, label) {
+            const q = qrcode(0, 'M'); q.addData(link); q.make();
+            const n = q.getModuleCount(), m = 4, s = n + m * 2; let d = '';
+            for (let r = 0; r < n; r++)for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += 'M' + (c + m) + ' ' + (r + m) + 'h1v1h-1z';
+            const bg = qrPlain ? '#fff' : '#10162a', fg = qrPlain ? '#000' : 'var(--imag)';
+            return '<svg viewBox="0 0 ' + s + ' ' + s + '" shape-rendering="crispEdges" role="img" aria-label="' + (label || 'qr code for the room link') + '"><rect width="' + s + '" height="' + s + '" fill="' + bg + '"/><path d="' + d + '" style="fill:' + fg + '"/></svg>';
+        }
+        function drawQrs() {
+            const t = qrPlain ? 'use colored qr' : 'use plain black & white qr';
+            $('qrstyle').textContent = t; $('spqrstyle').textContent = t;
+            if (!state) return; const link = roomLink(state.code);
+            try { if ($('qrdlg').open) $('qrbox').innerHTML = qrSvg(link); if (!$('spec').hidden) $('spqr').innerHTML = qrSvg(link); } catch (e) { }
+        }
+        const flipQr = () => { qrPlain = !qrPlain; store.set('vs_qrplain', qrPlain ? '1' : '0'); drawQrs(); };
+        $('qrstyle').onclick = flipQr; $('spqrstyle').onclick = flipQr;
         $('qrbtn').onclick = () => {
             if (!state) return;
-            const link = roomLink(state.code);
-            try {
-                const q = qrcode(0, 'M'); q.addData(link); q.make();
-                const n = q.getModuleCount(), m = 4, s = n + m * 2; let d = '';
-                for (let r = 0; r < n; r++)for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += 'M' + (c + m) + ' ' + (r + m) + 'h1v1h-1z';
-                $('qrbox').innerHTML = '<svg viewBox="0 0 ' + s + ' ' + s + '" shape-rendering="crispEdges" role="img" aria-label="qr code for the room link"><rect width="' + s + '" height="' + s + '" fill="#fff"/><path d="' + d + '" fill="#000"/></svg>';
-            } catch (e) { $('qrbox').textContent = ''; }
+            const link = roomLink(state.code); $('qrstyle').textContent = qrPlain ? 'use colored qr' : 'use plain black & white qr';
+            try { $('qrbox').innerHTML = qrSvg(link); } catch (e) { $('qrbox').textContent = ''; }
             $('qrcode').textContent = state.code; $('qrlink').textContent = shownLink(state.code); $('qrdlg').showModal();
         };
         $('qrx').onclick = () => $('qrdlg').close();
@@ -3094,7 +3167,7 @@
             $('glevel').textContent = pts ? (round + 1) + (cfg.endless ? '' : ' / ' + match.total) : Math.min(round + 1, match.total) + ' / ' + match.total; setMsg('');
             $('gend').hidden = !isHost();
             if (!pts && round >= match.total) { ui = 'results'; return; }   /* came back after already finishing */
-            ui = 'game'; tickT = setInterval(tick, 100);
+            if (isHost() && cfg.hostplays === false) { ui = 'spec'; tickT = setInterval(specTick, 100); } else { ui = 'game'; tickT = setInterval(tick, 100); }
         }
 
         function showCount(txt) {
@@ -3224,11 +3297,53 @@
             }
             if (Lv) render();
             setMsg(msg, cls); renderRace();
+            if (d.winner && w) (match.log = match.log || []).push({ t: w.name + ' solved puzzle ' + (d.round + 1) + '!', team: w.team });
+            if (ui === 'spec') renderSpec();
         }
         function onLevels(d) {
             if (!match) return;
             match.levels.push(...d.levels);
             if (d.roundStart != null && match.waitIdx != null) { match.pend = { idx: match.waitIdx, at: d.roundStart - srvOff }; match.waitIdx = null; }
+        }
+        /* ---------- host screen (host doesn't play) ---------- */
+        const mkEl = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+        let specSig = 0;
+        function specInit() {
+            if (!state) return; $('spcode').textContent = state.code;
+            try { $('spqr').innerHTML = qrSvg(roomLink(state.code)); $('spqrstyle').textContent = qrPlain ? 'use colored qr' : 'use plain black & white qr'; } catch (e) { $('spqr').textContent = ''; }
+        }
+        function specTick() {
+            if (!match || ui !== 'spec') return; const now = Date.now();
+            if (match.mode === 'points' && match.cfg.endless && !topping && match.levels.length - match.round < 8) topUp();
+            const sg = Math.floor(now / 1000); if (sg !== specSig) { specSig = sg; renderSpec(); }
+        }
+        function renderSpec() {
+            if (!match || ui !== 'spec') return;
+            const b = $('specboard'); b.innerHTML = ''; const pts = match.mode === 'points', teams = pts && match.cfg.teams, now = Date.now(), pl = match.players, sc = id => match.scores[id] || 0;
+            const cell = (...k) => { const d = mkEl('div', 'cell'); k.forEach(x => d.appendChild(x)); b.appendChild(d); return d; };
+            const prow = (cls, name, val) => { const r = mkEl('div', 'sprow ' + cls); r.append(mkEl('span', '', name), mkEl('b', '', val)); return r; };
+            if (teams) {
+                const T = { red: 0, blue: 0 }; pl.forEach(p => { if (p.team) T[p.team] += sc(p.id); }); const tot = T.red + T.blue, h = mkEl('div', 'cellh sphead');
+                if (T.red === T.blue) h.textContent = 'teams are tied'; else { const w = T.red > T.blue ? 'red' : 'blue'; h.append(mkEl('span', 'tc ' + w, w + ' team'), ' is winning!'); }
+                cell(h);
+                const sb = mkEl('div', 'spscore'); ['red', 'blue'].forEach(t => { const x = mkEl('div', 'sbox ' + t); x.append(mkEl('span', '', 'team ' + t), mkEl('b', '', T[t]), mkEl('small', '', (tot ? Math.round(T[t] / tot * 100) : 0) + '%')); sb.appendChild(x); }); cell(sb);
+                const tl = mkEl('div', 'spteams'); ['red', 'blue'].forEach(t => { const col = mkEl('div'); col.appendChild(prow(t + ' th', 'team ' + t, T[t]));
+                    pl.filter(p => p.team === t).sort((x, y) => sc(y.id) - sc(x.id)).forEach(p => col.appendChild(prow(t + (p.left ? ' dim' : ''), p.name + (p.left ? ' (left)' : ''), sc(p.id) + ' pts'))); tl.appendChild(col); }); cell(tl);
+            } else if (pts) {
+                cell(mkEl('div', 'sphead', 'live scoreboard'));
+                pl.slice().sort((x, y) => sc(y.id) - sc(x.id)).forEach((p, i) => cell(prow(p.left ? 'dim' : '', '#' + (i + 1) + ' ' + p.name + (p.left ? ' (left)' : ''), sc(p.id) + ' pts')));
+            } else {
+                cell(mkEl('div', 'sphead', 'live scoreboard'));
+                const rows = pl.map(p => Object.assign({ p }, match.prog[p.id] || { done: 0, finished: false, left: false })); rows.sort((x, y) => (y.finished - x.finished) || (y.done - x.done));
+                rows.forEach((r, i) => cell(prow(r.left && !r.finished ? 'dim' : '', '#' + (i + 1) + ' ' + r.p.name, r.finished ? 'done' : r.left ? 'left' : 'level ' + Math.min(r.done + 1, match.total) + '/' + match.total)));
+            }
+            state.members.filter(m => m.spec).forEach(m => cell(prow('dim', m.name + ' (spectating)' + (m.id === state.hostId ? ' (host)' : ''), '')));
+            if (pts) { const big = mkEl('div', 'spbig'); const e = match.cfg.endless;
+                big.append(mkEl('span', '', now < localGo ? 'starting…' : e ? 'time left' : 'level'), mkEl('b', '', now < localGo ? '' : e ? fmtCd(Math.max(0, match.endAt - now)) : Math.min(match.round + 1, match.total) + '/' + match.total)); cell(big); }
+            const f = mkEl('div', 'spfoot'), lg = mkEl('div', 'splog'); (match.log || []).slice(-5).forEach(x => { const l = mkEl('div'); l.append(mkEl('span', x.team ? 'tc ' + x.team : '', x.t)); lg.appendChild(l); });
+            const tools = mkEl('div', 'tools'), em = mkEl('button', 'btn', 'end match'), dr = mkEl('button', 'btn danger', 'disband room');
+            em.onclick = () => api('/vs/endmatch', { code: sess.code, token: sess.token }).catch(() => { }); dr.onclick = () => $('exitbtn').click();
+            tools.append(em, dr); f.append(lg, tools); cell(f);
         }
         function finishLocal() { stopGameTimers(); ui = 'results'; showUi(); }
 
@@ -3296,13 +3411,14 @@
         function renderRace() {
             if (!match) return;
             if (match.mode === 'points') {
-                $('racebox').hidden = false; $('racehide').hidden = true; $('racehead').textContent = 'scores';
+                $('racebox').hidden = false; $('racehide').hidden = true; const TT = { red: 0, blue: 0 }; match.players.forEach(p => { if (p.team) TT[p.team] += match.scores[p.id] || 0; });
+                $('racehead').textContent = match.cfg.teams ? 'scores · red ' + TT.red + ' vs blue ' + TT.blue : 'scores';
                 const prs = match.players.map(p => ({ p, pts: match.scores[p.id] || 0, left: !!(match.prog[p.id] && match.prog[p.id].left) }));
                 prs.sort((a, b) => b.pts - a.pts || (a.p.name < b.p.name ? -1 : 1));
                 const pl = $('racelist'); pl.innerHTML = '';
                 prs.forEach(r => {
                     const row = document.createElement('div'); row.className = 'rrow pt' + (r.p.id === you ? ' me' : '') + (r.left ? ' left' : '');
-                    const n = document.createElement('span'); n.className = 'rn'; n.textContent = r.p.name + (r.p.id === you ? ' (you)' : '') + (r.left ? ' (left)' : '');
+                    const n = document.createElement('span'); n.className = 'rn'; n.textContent = r.p.name + (r.p.id === you ? ' (you)' : '') + (r.p.team ? ' · ' + r.p.team : '') + (r.left ? ' (left)' : '');
                     const c = document.createElement('span'); c.className = 'rc'; c.textContent = String(r.pts);
                     row.append(n, c); pl.appendChild(row);
                 });
@@ -3335,6 +3451,7 @@
                 const prow = st.rows, top = prow[0], tie = prow.length > 1 && prow[1].points === top.points;
                 $('resub').textContent = !st.final ? 'finishing up…' : top.points === 0 ? 'nobody scored' : (top.id === you ? 'you win!' : top.name + ' wins!') + (tie ? ' (tied on points, got there first)' : '');
                 $('reshint').textContent = st.final && st.total ? st.total + (st.total === 1 ? ' round' : ' rounds') + ' played' : '';
+                if (st.teams && st.final) { const a = st.teams.red, b = st.teams.blue; $('resub').textContent = a === b ? 'the teams tied ' + a + ' to ' + b : (a > b ? 'red' : 'blue') + ' team wins! ' + Math.max(a, b) + ' to ' + Math.min(a, b); }
                 prow.forEach((r, i) => {
                     const li = document.createElement('li');
                     li.className = (r.id === you ? 'me ' : '') + (i === 0 && top.points > 0 ? 'first ' : '') + (r.status === 'left' ? 'left' : '');
@@ -3342,7 +3459,7 @@
                     const mid = document.createElement('div'); mid.className = 'rm';
                     const nm = document.createElement('b'); nm.className = 'rnm'; nm.textContent = r.name + (r.id === you ? ' (you)' : '');
                     if (st.final && i === 0 && top.points > 0) { const w = document.createElement('i'); w.className = 'wintag'; w.textContent = 'winner'; nm.appendChild(w); }
-                    const sm = document.createElement('small'); sm.textContent = (r.points === 1 ? '1 point' : r.points + ' points') + (r.status === 'left' ? ' · left the match' : '');
+                    const sm = document.createElement('small'); sm.textContent = (r.points === 1 ? '1 point' : r.points + ' points') + (r.team ? ' · team ' + r.team : '') + (r.status === 'left' ? ' · left the match' : '');
                     const tm = document.createElement('span'); tm.className = 'rt'; tm.textContent = String(r.points);
                     mid.append(nm, sm); li.append(rk, mid, tm); list.appendChild(li);
                 });
@@ -3377,7 +3494,7 @@
         /* which screen to show */
         function showUi() {
             view(ui);
-            if (ui === 'room') renderRoom(); else if (ui === 'game') { renderRace(); if (Lv && !$('gboard').hidden) render(); } else renderResults();
+            if (ui === 'room') renderRoom(); else if (ui === 'game') { renderRace(); if (Lv && !$('gboard').hidden) render(); } else if (ui === 'spec') { specInit(); renderSpec(); } else renderResults();
         }
 
         /* ---------- start ---------- */
