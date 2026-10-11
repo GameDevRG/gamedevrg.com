@@ -2003,6 +2003,10 @@
             --ac: var(--gold)
         }
 
+        #menu .mopt.green {
+            --ac: var(--ok)
+        }
+
         #menu .mopt.orange {
             --ac: var(--orange)
         }
@@ -2117,6 +2121,10 @@
 
         #moptS {
             --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M6 20v-6M12 20V5M18 20V10%22/%3E%3C/svg%3E")
+        }
+
+        #moptV {
+            --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M4 8h15M15 4l4 4-4 4%22/%3E%3Cpath d=%22M20 16H5M9 12l-4 4 4 4%22/%3E%3C/svg%3E")
         }
 
         /* loading spinner */
@@ -2273,28 +2281,32 @@
                 animation-delay: 60ms
             }
 
-            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(6) {
+            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(7) {
                 animation-delay: 120ms
             }
 
-            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(5) {
+            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(6) {
                 animation-delay: 180ms
             }
 
-            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(4) {
+            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(5) {
                 animation-delay: 240ms
             }
 
-            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(3) {
+            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(4) {
                 animation-delay: 300ms
             }
 
-            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(2) {
+            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(3) {
                 animation-delay: 360ms
             }
 
-            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(1) {
+            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(2) {
                 animation-delay: 420ms
+            }
+
+            :root:not(.noui):not(.noanim) #menu .mopt:nth-of-type(1) {
+                animation-delay: 480ms
             }
 
             :root:not(.noui):not(.noanim) .dgroup {
@@ -2704,6 +2716,8 @@
                     difficulty you pick</span></button>
             <button class="mopt gold" id="moptD"><b>daily levels</b><span>a new challenge every day, plus a calendar of
                     past days</span></button>
+            <button class="mopt green" id="moptV"><b>versus mode</b><span>make or join a room and play against
+                    friends</span></button>
             <button class="mopt orange" id="moptE"><b>level editor</b><span>make your own level and share
                     it</span></button>
             <button class="mopt white" id="moptC"><b>play from code</b><span>paste a level code or link someone
@@ -3836,6 +3850,10 @@
         Object.assign(I18N.es, { howto_b: "cómo jugar", howto_p1: "empiezas con un número y tienes que convertirlo en la meta.", howto_p2: "cada movimiento aplica una de las operaciones mostradas a tu número. toca una operación para usarla.", howto_p3: "el par es un número de movimientos que seguro funciona. intenta terminar en par o menos, porque cada movimiento después del par cuenta como uno de más.", howto_p4: "¿atascado? deshaz tu último movimiento o reinicia el nivel.", howto_p5: "por defecto, la división solo funciona cuando el resultado es un número entero, así que un ÷ en gris significa que tu número no se divide exacto." });
         Object.assign(I18N.ja, { howto_b: "遊び方", howto_p1: "最初の数を、ゴールの数に変えるのが目的です。", howto_p2: "1手ごとに、表示されている演算のどれかが今の数に適用されます。使いたい演算をタップしてください。", howto_p3: "パーは「これだけあれば必ずゴールできる」手数です。パー以内でのクリアを目指しましょう。パーを超えた手数は、1手ごとにオーバーとして数えられます。", howto_p4: "行き詰まったら、1手戻すか、レベルをやり直せます。", howto_p5: "初期設定では、割り算は結果が整数になるときだけ使えます。÷がグレーになっているときは、今の数が割り切れないということです。" });
         Object.assign(I18N.zh, { howto_b: "玩法", howto_p1: "你从一个数开始，目标是把它变成目标数。", howto_p2: "每走一步，就会把所显示的一种运算用在当前的数上。点按运算即可使用。", howto_p3: "标准杆是保证能通关的步数。争取在标准杆以内完成，超出标准杆的每一步都算多一步。", howto_p4: "卡住了？可以撤销上一步，或者重新开始这一关。", howto_p5: "默认情况下，除法只有在结果为整数时才能使用，所以灰色的 ÷ 表示当前的数除不尽。" });
+        Object.assign(I18N.en, { m_vs_b: "versus mode", m_vs_d: "make or join a room and play against friends" });
+        Object.assign(I18N.es, { m_vs_b: "modo versus", m_vs_d: "crea o únete a una sala y juega contra tus amigos" });
+        Object.assign(I18N.ja, { m_vs_b: "対戦モード", m_vs_d: "ルームを作る・参加して、友だちと対戦" });
+        Object.assign(I18N.zh, { m_vs_b: "对战模式", m_vs_d: "创建或加入房间，和朋友对战" });
         let lang = 'en';
         try { const s = localStorage.getItem('lang'); if (LANGS.includes(s)) lang = s } catch (e) { }
         function tr(k, v) {
@@ -4607,6 +4625,7 @@
         }
         window.addEventListener('pageshow', e => { if (e.persisted) { $('menu').getAnimations().forEach(a => a.cancel()); parallax(0); } }); /* coming back with the back button */
         $('moptE').onclick = () => slideAway('editor/');
+        $('moptV').onclick = () => slideAway('vs/');
         const goCode = () => { let v = $('codein').value.trim(); if (!v) return; const q = /[?&]level=([^&#\s]+)/.exec(v); if (q) v = decodeURIComponent(q[1]); location.href = 'custom/?level=' + encodeURIComponent(v); };
         $('codego').onclick = goCode; $('codein').onkeydown = e => { if (e.key === 'Enter') goCode(); }; $('codex').onclick = () => $('codedlg').close();
         i18nInit();
