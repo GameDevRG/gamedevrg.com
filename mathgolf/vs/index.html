@@ -24,6 +24,10 @@
             --cell: #0f1528;
             --bub: #2a3560;
             --onimag: #10162a;
+            --tl: rgba(255, 255, 255, .3);
+            --hole: #05070f;
+            --ballstroke: #9aa6c6;
+            --dimple: #c5ccdd;
             box-sizing: border-box;
             padding-top: env(safe-area-inset-top, 0px);
             padding-bottom: env(safe-area-inset-bottom, 0px)
@@ -43,7 +47,11 @@
             --yellow: #b7791f;
             --cell: #f6f8fc;
             --bub: #e3e8f4;
-            --onimag: #fff
+            --onimag: #fff;
+            --tl: rgba(20, 33, 61, .25);
+            --hole: #14213d;
+            --ballstroke: #14213d;
+            --dimple: #9aa6c6
         }
 
         html {
@@ -1170,6 +1178,976 @@
                 animation-duration: 2.4s !important
             }
         }
+
+        /* =====================================================================
+           lobby tweaks: the chat moved into a pop-up, so the member list gets the whole row
+           ===================================================================== */
+        .cols {
+            display: block;
+            height: auto;
+            margin-top: 12px
+        }
+
+        #mcol {
+            max-height: none
+        }
+
+        #mlist {
+            max-height: 340px
+        }
+
+        #room,
+        #game,
+        #results {
+            padding-bottom: 96px
+        }
+
+        #lastrow {
+            margin-top: 10px
+        }
+
+        /* =====================================================================
+           chat button, pop-up and new-message notification
+           ===================================================================== */
+        #chatfab {
+            position: fixed;
+            right: 12px;
+            bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 48px;
+            padding: 0 16px;
+            font: 700 1.05rem inherit;
+            font-family: inherit;
+            color: var(--onimag);
+            background: var(--imag);
+            border: 2px solid var(--ink);
+            box-shadow: 4px 4px 0 var(--ink);
+            cursor: pointer;
+            transition: transform .08s, box-shadow .08s
+        }
+
+        #chatfab svg {
+            width: 20px;
+            height: 20px;
+            flex: none
+        }
+
+        #chatfab:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--ink)
+        }
+
+        #chatfab[aria-expanded="true"] {
+            background: var(--card);
+            color: var(--ink)
+        }
+
+        #chatfab:focus-visible,
+        #chattoast:focus-visible,
+        .chath button:focus-visible {
+            outline: 3px solid var(--ink);
+            outline-offset: 2px
+        }
+
+        #chatbadge {
+            min-width: 22px;
+            height: 22px;
+            padding: 0 6px;
+            border-radius: 11px;
+            display: grid;
+            place-items: center;
+            background: var(--ink);
+            color: var(--bg);
+            font-size: .8rem;
+            line-height: 1
+        }
+
+        #chatfab.ping {
+            animation: fabPing .5s ease
+        }
+
+        @keyframes fabPing {
+            30% {
+                transform: scale(1.12)
+            }
+        }
+
+        #chatpanel {
+            position: fixed;
+            right: 12px;
+            bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+            z-index: 29;
+            width: min(360px, calc(100vw - 24px));
+            height: min(440px, calc(100dvh - 170px));
+            display: flex;
+            flex-direction: column;
+            background: var(--card);
+            border: 2px solid var(--ink);
+            box-shadow: 6px 6px 0 var(--ink);
+            animation: rise .2s ease backwards
+        }
+
+        .chath {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 6px 6px 14px;
+            border-bottom: 2px solid var(--line);
+            font-weight: 700
+        }
+
+        .chath button {
+            width: 36px;
+            height: 36px;
+            border: 0;
+            background: none;
+            color: var(--soft);
+            font-size: 1.6rem;
+            line-height: 1;
+            cursor: pointer
+        }
+
+        .chath button:hover {
+            color: var(--imag)
+        }
+
+        #chattoast {
+            position: fixed;
+            right: 12px;
+            bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+            z-index: 31;
+            width: min(300px, calc(100vw - 24px));
+            padding: 10px 14px;
+            text-align: left;
+            font-family: inherit;
+            color: var(--ink);
+            background: var(--card);
+            border: 2px solid var(--imag);
+            box-shadow: 4px 4px 0 var(--imag);
+            cursor: pointer;
+            animation: rise .25s ease backwards
+        }
+
+        #chattoast b {
+            display: block;
+            font-size: .78rem;
+            color: var(--imag);
+            text-transform: none
+        }
+
+        #chattoast span {
+            display: block;
+            margin-top: 2px;
+            font-size: .92rem;
+            text-transform: none;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap
+        }
+
+        .connmsg {
+            margin: 6px 0 0;
+            color: var(--imag);
+            font-weight: 700
+        }
+
+        /* =====================================================================
+           the game screen
+           ===================================================================== */
+        #game,
+        #results {
+            max-width: 560px;
+            padding-top: 3vh
+        }
+
+        .gtop {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            margin-bottom: 14px
+        }
+
+        .gcell {
+            min-width: 80px
+        }
+
+        .gk {
+            display: block;
+            font-size: .8rem;
+            color: var(--soft)
+        }
+
+        .gcell b {
+            display: block;
+            font-size: 1.6rem;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            line-height: 1.2
+        }
+
+        .gcell.low b {
+            color: var(--imag)
+        }
+
+        #racebox {
+            margin: 0 0 16px;
+            padding: 10px 14px;
+            text-align: left
+        }
+
+        .racehead {
+            margin-bottom: 4px;
+            font-weight: 700;
+            font-size: .95rem
+        }
+
+        #racelist {
+            max-height: 230px;
+            overflow-y: auto
+        }
+
+        .rrow {
+            display: grid;
+            grid-template-columns: minmax(0, 7.5em) 1fr 3.2em;
+            gap: 10px;
+            align-items: center;
+            padding: 4px 0
+        }
+
+        .rn {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: .92rem;
+            text-transform: none
+        }
+
+        .rrow.me .rn {
+            color: var(--imag);
+            font-weight: 700
+        }
+
+        .rbar {
+            display: flex;
+            gap: 3px
+        }
+
+        .rseg {
+            flex: 1 1 0;
+            height: 10px;
+            background: var(--cell);
+            border: 1px solid var(--line);
+            transition: background .25s, border-color .25s
+        }
+
+        .rseg.on {
+            background: var(--blue);
+            border-color: var(--blue)
+        }
+
+        .rrow.me .rseg.on {
+            background: var(--imag);
+            border-color: var(--imag)
+        }
+
+        .rrow.fin .rseg.on {
+            background: var(--ok);
+            border-color: var(--ok)
+        }
+
+        .rc {
+            font-size: .85rem;
+            color: var(--soft);
+            text-align: right;
+            font-variant-numeric: tabular-nums
+        }
+
+        .rrow.left {
+            opacity: .5
+        }
+
+        #racehide {
+            margin: 0 0 14px;
+            font-size: .88rem;
+            color: var(--soft)
+        }
+
+        #gcount {
+            position: fixed;
+            inset: 0;
+            z-index: 12;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none
+        }
+
+        #gcount span {
+            font-size: clamp(6rem, 34vw, 12rem);
+            font-weight: 800;
+            line-height: 1;
+            color: var(--imag);
+            animation: cdpop .55s cubic-bezier(.2, .8, .2, 1) both
+        }
+
+        #gcount small {
+            margin-top: 8px;
+            font-size: 1.1rem;
+            color: var(--soft)
+        }
+
+        @keyframes cdpop {
+            from {
+                transform: scale(1.7);
+                opacity: 0
+            }
+
+            to {
+                transform: none;
+                opacity: 1
+            }
+        }
+
+        .gfoot {
+            margin-top: 20px
+        }
+
+        .gfoot .btn.danger,
+        #results .btn.danger {
+            border-color: var(--imag);
+            color: var(--imag)
+        }
+
+        /* ---- the board: same look as the main game ---- */
+        #gboard {
+            padding: 18px
+        }
+
+        #gboard.hc {
+            border-color: var(--imag);
+            box-shadow: 6px 6px 0 var(--imag)
+        }
+
+        #gboard .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            gap: clamp(8px, 3.5vw, 24px);
+            flex-wrap: nowrap
+        }
+
+        #gboard .row.stack {
+            flex-direction: column;
+            gap: 12px
+        }
+
+        #gboard .row.stack .arrow {
+            transform: rotate(90deg);
+            line-height: 1
+        }
+
+        #gboard .lbl {
+            font-size: .85rem;
+            color: var(--soft);
+            text-align: center
+        }
+
+        #gboard .num {
+            display: flex;
+            justify-content: center;
+            gap: .14em;
+            font-size: var(--ns, 3.2rem);
+            font-weight: 800;
+            line-height: 1
+        }
+
+        #gboard .full {
+            font-size: .8rem;
+            margin-top: 4px;
+            max-width: 10em;
+            overflow-wrap: anywhere
+        }
+
+        #gboard.dec .full {
+            min-height: 1.3em
+        }
+
+        #gboard .arrow {
+            font-size: 1.8rem;
+            color: var(--soft)
+        }
+
+        #gboard .num[data-neg]::before {
+            content: "−";
+            align-self: center;
+            margin-right: .04em;
+            font-size: .9em;
+            font-weight: 800;
+            color: var(--ink)
+        }
+
+        #gboard .goal .num[data-neg]::before {
+            color: var(--imag)
+        }
+
+        #gboard .num .sep {
+            align-self: center;
+            font-size: .9em;
+            font-weight: 800;
+            color: var(--ink);
+            padding: 0 .02em
+        }
+
+        #gboard .goal .num .sep {
+            color: var(--imag)
+        }
+
+        #gboard .plain {
+            font-weight: 800;
+            line-height: 1
+        }
+
+        #gboard .goal .num.plain {
+            color: var(--imag)
+        }
+
+        #cur.winp {
+            animation: winPulse .6s ease .1s backwards
+        }
+
+        @keyframes winPulse {
+            0% {
+                transform: scale(1)
+            }
+
+            40% {
+                transform: scale(1.1)
+            }
+
+            100% {
+                transform: scale(1)
+            }
+        }
+
+        #nlwrap {
+            margin: 4px -2px 0
+        }
+
+        #nl {
+            width: 100%;
+            max-width: 1100px;
+            height: 200px;
+            display: block;
+            margin: 0 auto;
+            overflow: visible
+        }
+
+        #nl text {
+            font-family: inherit;
+            fill: var(--soft);
+            font-size: 12px;
+            text-anchor: middle
+        }
+
+        #pips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin: 14px 0 6px
+        }
+
+        .pip {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--ink);
+            background: transparent;
+            transition: background .2s
+        }
+
+        .pip.used {
+            background: var(--ink)
+        }
+
+        .pip.over {
+            border-color: var(--imag)
+        }
+
+        .pip.over.used {
+            background: var(--imag)
+        }
+
+        #left {
+            font-size: .85rem;
+            color: var(--soft)
+        }
+
+        #trail {
+            max-width: 460px;
+            margin: 0 auto 12px;
+            min-height: 1.6em;
+            text-align: center;
+            overflow-wrap: anywhere;
+            font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", "Times New Roman", serif;
+            font-size: 1.3rem;
+            line-height: 2;
+            color: var(--ink)
+        }
+
+        #trail .op,
+        #trail .pr {
+            color: var(--soft)
+        }
+
+        #trail .op {
+            margin: 0 .04em
+        }
+
+        #trail .pr {
+            font-size: 1.15em
+        }
+
+        #trail b {
+            font-weight: 700
+        }
+
+        #trail sup {
+            font-size: .68em;
+            line-height: 0;
+            vertical-align: .55em;
+            margin-left: .05em
+        }
+
+        #trail .fr {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            text-align: center;
+            font-size: .8em;
+            line-height: 1.2;
+            margin: 0 .15em
+        }
+
+        #trail .fr>span {
+            padding: 0 .2em
+        }
+
+        #ops .fr {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            text-align: center;
+            font-size: .7em;
+            line-height: 1.15;
+            margin-left: .12em
+        }
+
+        #ops .fr>span {
+            padding: 0 .2em
+        }
+
+        #ops .fr>span:first-child {
+            border-bottom: 2px solid currentColor
+        }
+
+        #trail .fr>span:first-child {
+            border-bottom: 1.5px solid currentColor
+        }
+
+        #trail .sqw {
+            display: inline-flex;
+            align-items: stretch;
+            vertical-align: middle;
+            line-height: 1.3;
+            margin: 0 .05em
+        }
+
+        #trail .sq {
+            width: .75em;
+            flex: none;
+            overflow: visible
+        }
+
+        #trail .rd {
+            border-top: 1.6px solid currentColor;
+            padding: .05em .12em 0 .06em;
+            margin-left: -1px
+        }
+
+        #trail .ab {
+            margin: 0 .08em;
+            font-size: 1.05em
+        }
+
+        #ops {
+            max-width: 456px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px
+        }
+
+        #ops button {
+            flex: 0 0 100px;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 1.5rem;
+            line-height: 1.1;
+            padding: 14px 8px;
+            border: 2px solid var(--blue);
+            background: var(--bg);
+            color: var(--ink);
+            cursor: pointer;
+            box-shadow: 0 4px 0 var(--blue);
+            transition: transform .08s, box-shadow .08s
+        }
+
+        #ops button:active:not(:disabled),
+        #ops button.pressed:not(:disabled),
+        #ops button:disabled {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 var(--blue)
+        }
+
+        #ops button small {
+            display: block;
+            font-size: .65rem;
+            font-weight: 700;
+            margin-top: 2px
+        }
+
+        #ops button:disabled {
+            opacity: .35;
+            cursor: not-allowed
+        }
+
+        #gboard.hc #ops button {
+            border-color: var(--imag);
+            box-shadow: 0 4px 0 var(--imag)
+        }
+
+        #gboard.hc #ops button:active:not(:disabled),
+        #gboard.hc #ops button.pressed:not(:disabled),
+        #gboard.hc #ops button:disabled {
+            box-shadow: 0 0 0 var(--imag)
+        }
+
+        #ops button:focus-visible,
+        #gboard .tools button:focus-visible {
+            outline: 3px solid var(--imag);
+            outline-offset: 2px
+        }
+
+        #gboard .tools button {
+            font: 700 1rem inherit;
+            font-family: inherit;
+            padding: 8px 18px;
+            border: 2px solid var(--line);
+            background: var(--card);
+            color: var(--ink);
+            cursor: pointer
+        }
+
+        #gboard .tools button:disabled {
+            opacity: .4;
+            cursor: not-allowed
+        }
+
+        #skip {
+            border-color: var(--imag) !important;
+            color: var(--imag) !important
+        }
+
+        #skip.arm {
+            background: var(--imag) !important;
+            color: var(--onimag) !important
+        }
+
+        #gmsg {
+            max-width: 460px;
+            margin: 10px auto 0;
+            text-align: center;
+            min-height: 1.6em;
+            font-weight: 700
+        }
+
+        #gmsg.win {
+            color: var(--ok)
+        }
+
+        #gmsg.lose {
+            color: var(--imag)
+        }
+
+        .tile {
+            position: relative;
+            flex: 0 0 auto;
+            width: .8em;
+            height: 1.15em;
+            perspective: 5em;
+            background: var(--bg);
+            border: 1px solid var(--line);
+            color: var(--ink);
+            box-sizing: content-box
+        }
+
+        .tile.nr {
+            width: .5em
+        }
+
+        .goal .tile {
+            color: var(--imag)
+        }
+
+        .tile::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(50% - .5px);
+            height: 1px;
+            background: var(--tl);
+            z-index: 5
+        }
+
+        .tile::before {
+            content: "";
+            position: absolute;
+            left: -4px;
+            right: -4px;
+            top: calc(50% - .08em);
+            height: .16em;
+            z-index: 6;
+            background: linear-gradient(90deg, var(--line) 3px, transparent 3px, transparent calc(100% - 3px), var(--line) calc(100% - 3px))
+        }
+
+        .tile .h {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 50%;
+            overflow: hidden;
+            background: var(--bg)
+        }
+
+        .tile .t {
+            top: 0;
+            transform-origin: bottom
+        }
+
+        .tile .b {
+            bottom: 0;
+            transform-origin: top;
+            background: var(--card);
+            background: color-mix(in srgb, var(--bg) 55%, var(--card))
+        }
+
+        .tile .h span {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 200%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            font-size: .9em;
+            font-weight: 800;
+            letter-spacing: 0
+        }
+
+        .tile .t span {
+            top: 0
+        }
+
+        .tile .b span {
+            bottom: 0
+        }
+
+        .tile .flap {
+            display: none;
+            z-index: 3;
+            backface-visibility: hidden
+        }
+
+        .tile.flipping .flap {
+            display: block
+        }
+
+        .tile.flipping .f1 {
+            animation: ft .07s ease-in forwards
+        }
+
+        .tile.flipping .f2 {
+            transform: rotateX(90deg);
+            animation: fb .07s ease-out .07s forwards
+        }
+
+        @keyframes ft {
+            to {
+                transform: rotateX(-90deg)
+            }
+        }
+
+        @keyframes fb {
+            to {
+                transform: rotateX(0)
+            }
+        }
+
+        .tile.flipping.rev .f1 {
+            transform: rotateX(-90deg);
+            animation: ftr .07s ease-out .07s forwards
+        }
+
+        .tile.flipping.rev .f2 {
+            transform: none;
+            animation: fbr .07s ease-in forwards
+        }
+
+        @keyframes ftr {
+            to {
+                transform: rotateX(0)
+            }
+        }
+
+        @keyframes fbr {
+            to {
+                transform: rotateX(90deg)
+            }
+        }
+
+        /* =====================================================================
+           results
+           ===================================================================== */
+        #resboard {
+            margin-top: 18px;
+            padding: 8px 14px
+        }
+
+        #reslist {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            text-align: left
+        }
+
+        #reslist li {
+            display: grid;
+            grid-template-columns: 2.2em minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 2px solid var(--line);
+            animation: rise .3s ease backwards
+        }
+
+        #reslist li:last-child {
+            border-bottom: 0
+        }
+
+        #reslist li.left {
+            opacity: .55
+        }
+
+        #reslist .rk {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--soft);
+            text-align: center
+        }
+
+        #reslist li.first .rk,
+        #reslist li.first .rt {
+            color: var(--imag)
+        }
+
+        #reslist .rnm {
+            text-transform: none;
+            overflow-wrap: anywhere
+        }
+
+        #reslist li.me .rnm {
+            color: var(--imag)
+        }
+
+        #reslist .wintag {
+            margin-left: 8px;
+            padding: 1px 8px;
+            font-style: normal;
+            font-size: .72rem;
+            color: var(--onimag);
+            background: var(--imag);
+            vertical-align: middle
+        }
+
+        #reslist small {
+            display: block;
+            margin-top: 2px;
+            color: var(--soft);
+            font-size: .82rem
+        }
+
+        #reslist .rt {
+            font-size: 1.35rem;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums
+        }
+
+        #reslist .rt.dim {
+            color: var(--soft);
+            font-weight: 400;
+            font-size: 1.1rem
+        }
+
+        #reshint {
+            max-width: 440px;
+            margin: 14px auto 0;
+            font-size: .85rem;
+            color: var(--soft)
+        }
+
+        @media (max-width:520px) {
+            #gboard {
+                padding: 14px;
+                box-shadow: 4px 4px 0 var(--ink)
+            }
+
+            #gboard.hc {
+                box-shadow: 4px 4px 0 var(--imag)
+            }
+
+            #ops {
+                gap: 10px
+            }
+
+            #ops button {
+                flex: 0 0 calc(33.333% - 7px);
+                padding: 12px 4px;
+                font-size: 1.4rem
+            }
+
+            #trail {
+                font-size: 1.05rem
+            }
+
+            .gtop {
+                gap: 14px
+            }
+
+            #chatfab span.lbl {
+                display: none
+            }
+
+            #chatfab {
+                padding: 0 14px
+            }
+        }
     </style>
     <script>try { var q = JSON.parse(localStorage.getItem('hs1') || '{}'); if (q.theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); if (q.anim === false || (q.anims && q.anims.ui === false)) document.documentElement.classList.add('noanim') } catch (e) { }</script>
 </head>
@@ -1231,7 +2209,7 @@
             <div class="tools"><button class="btn" id="copycode">copy code</button><button class="btn"
                     id="copylink">copy link</button></div>
             <p id="playas">playing as: <span id="me"></span></p>
-            <p id="conn" role="status" hidden>connection lost. trying to reconnect…</p>
+            <p id="conn" class="connmsg" role="status" hidden>connection lost. trying to reconnect…</p>
         </header>
 
         <div class="board" id="roomboard">
@@ -1242,19 +2220,6 @@
                 <div class="cell col" id="mcol">
                     <div class="cellh">member list <small id="mcount"></small></div>
                     <ul id="mlist"></ul>
-                </div>
-                <div class="cell col" id="chatcol">
-                    <div class="cellh">chat</div>
-                    <div id="chatlog" role="log" aria-live="polite" aria-label="chat messages">
-                        <div id="chatempty">say hi! messages show up here for everyone in the room.</div>
-                    </div>
-                    <form id="chatform" autocomplete="off">
-                        <input id="chatin" maxlength="300" placeholder="send a message..." aria-label="message">
-                        <button id="chatsend" type="submit" aria-label="send message"><svg viewBox="0 0 24 24"
-                                aria-hidden="true">
-                                <path d="M2.5 10.5 21.5 2.5 14.5 21.5 11.2 13.6Z" fill="currentColor" />
-                            </svg></button>
-                    </form>
                 </div>
             </div>
 
@@ -1318,17 +2283,112 @@
                             data-k="timer" data-v="120">2 min</button><button type="button" role="radio"
                             data-k="timer" data-v="180">3 min</button></div>
                 </div>
+                <div class="srow col">
+                    <div><b>moves over par</b><span class="d">how many moves over par a player may use on one level. out of moves? undo, restart or skip the level</span></div>
+                    <div class="seg" role="radiogroup" aria-label="moves over par"><button type="button" role="radio"
+                            data-k="overpar" data-v="-1">no limit</button><button type="button" role="radio"
+                            data-k="overpar" data-v="0">par only</button><button type="button" role="radio"
+                            data-k="overpar" data-v="1">+1</button><button type="button" role="radio"
+                            data-k="overpar" data-v="2">+2</button><button type="button" role="radio"
+                            data-k="overpar" data-v="3">+3</button><button type="button" role="radio"
+                            data-k="overpar" data-v="5">+5</button></div>
+                </div>
+                <div class="srow">
+                    <div><b>show everyone's progress</b><span class="d">during the race, players see how many levels everyone has finished. turn it off to race blind</span></div>
+                    <button type="button" class="sw" role="switch" data-sw="showprog" aria-label="show everyone's progress"
+                        aria-checked="true"></button>
+                </div>
             </div>
 
             <div class="foot">
                 <button class="fbtn soft" id="qrbtn">show qr code</button>
                 <button class="fbtn pink" id="exitbtn">leave room</button>
-                <button class="fbtn blue" id="startbtn" disabled title="starting a match isn't available yet">start!!!</button>
+                <button class="fbtn blue" id="startbtn">start!!!</button>
             </div>
-            <p id="foothint">starting a match isn't available yet. you can set up the room and chat in the meantime.
-            </p>
+            <p id="foothint"></p>
+            <div class="tools" id="lastrow" hidden><button class="btn" id="lastres">see last results</button></div>
         </div>
     </section>
+
+    <!-- the race -->
+    <section id="game" class="pg" hidden>
+        <div class="gtop">
+            <div class="gcell"><span class="gk">level</span><b id="glevel">1 / 5</b></div>
+            <div class="gcell"><span class="gk">time</span><b id="gclock">0:00.0</b></div>
+            <div class="gcell" id="grwrap" hidden><span class="gk">this level</span><b id="grclock">1:00</b></div>
+        </div>
+        <p class="connmsg" role="status" hidden>connection lost. trying to reconnect…</p>
+        <div class="board" id="racebox" hidden>
+            <div class="racehead">race progress</div>
+            <div id="racelist"></div>
+        </div>
+        <p id="racehide" hidden>progress is hidden in this room. nobody can see how far anyone else is!</p>
+        <section class="board" id="gboard" hidden>
+            <div class="row">
+                <div>
+                    <div class="lbl">you have</div>
+                    <div class="num" id="cur"></div>
+                    <div class="lbl full" id="curfull"></div>
+                </div>
+                <div class="arrow" aria-hidden="true">⟶</div>
+                <div class="goal">
+                    <div class="lbl">goal</div>
+                    <div class="num" id="goal"></div>
+                    <div class="lbl full" id="goalfull"></div>
+                </div>
+            </div>
+            <div id="nlwrap"><svg id="nl" viewBox="0 0 640 200" role="img"
+                    aria-label="number line showing your ball, your hits and the hole"></svg></div>
+            <div id="pips" aria-live="polite"></div>
+            <div class="lbl" id="left"></div>
+            <div id="trail"></div>
+            <div id="ops"></div>
+            <div class="tools"><button id="undo">undo</button><button id="reset">restart level</button><button
+                    id="skip">skip level</button></div>
+            <div id="gmsg" role="status"></div>
+        </section>
+        <div class="tools gfoot"><button class="btn" id="gleave">leave room</button><button class="btn danger" id="gend"
+                hidden>end match for everyone</button></div>
+    </section>
+    <div id="gcount" hidden aria-live="assertive"></div>
+
+    <!-- results -->
+    <section id="results" class="pg" hidden>
+        <header>
+            <h1><span class="vs">results</span></h1>
+            <p class="sub" id="resub"></p>
+        </header>
+        <p class="connmsg" role="status" hidden>connection lost. trying to reconnect…</p>
+        <div class="board" id="resboard">
+            <ol id="reslist"></ol>
+        </div>
+        <p id="reshint"></p>
+        <div class="tools"><button class="btn" id="tolobby">back to lobby</button><button class="btn danger" id="endm"
+                hidden>end match for everyone</button></div>
+    </section>
+
+    <!-- chat: a button that opens a pop-up, with a badge and a preview for new messages -->
+    <div id="chatwidget" hidden>
+        <button id="chatfab" type="button" aria-expanded="false" aria-controls="chatpanel" aria-label="chat"><svg
+                viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 4h18v12H8l-5 4z" fill="currentColor" />
+            </svg><span class="lbl">chat</span><span id="chatbadge" hidden>0</span></button>
+        <button id="chattoast" type="button" hidden aria-live="polite"><b id="toastname"></b><span
+                id="toasttext"></span></button>
+        <div id="chatpanel" role="dialog" aria-label="chat" hidden>
+            <div class="chath"><b>chat</b><button id="chatclose" type="button" aria-label="hide chat">×</button></div>
+            <div id="chatlog" role="log" aria-live="polite" aria-label="chat messages">
+                <div id="chatempty">say hi! messages show up here for everyone in the room.</div>
+            </div>
+            <form id="chatform" autocomplete="off">
+                <input id="chatin" maxlength="300" placeholder="send a message..." aria-label="message">
+                <button id="chatsend" type="submit" aria-label="send message"><svg viewBox="0 0 24 24"
+                        aria-hidden="true">
+                        <path d="M2.5 10.5 21.5 2.5 14.5 21.5 11.2 13.6Z" fill="currentColor" />
+                    </svg></button>
+            </form>
+        </div>
+    </div>
 
     <dialog id="qrdlg">
         <h3 class="t">scan to join</h3>
@@ -1401,12 +2461,16 @@
 
         /* ---------- state ---------- */
         let sess = null, you = '', state = null, es = null, joined = false, chatSeen = 0, lastFrom = null, sendQ = Promise.resolve();
+        let chatOpen = false, unread = 0, chatReady = false, toastT = 0; const baseTitle = document.title;
         let leaving = false; addEventListener('beforeunload', () => { leaving = true; }); addEventListener('pagehide', () => { leaving = true; }); addEventListener('pageshow', () => { leaving = false; });
         const isHost = () => !!state && state.hostId === you;
-        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, hardcore: false, timer: 0 };
+        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, hardcore: false, timer: 0, showprog: true, overpar: -1 };
 
         function view(v) {
             $('loading').hidden = v !== 'loading'; $('landing').hidden = v !== 'landing'; $('room').hidden = v !== 'room';
+            $('game').hidden = v !== 'game'; $('results').hidden = v !== 'results';
+            const inRoom = v === 'room' || v === 'game' || v === 'results';
+            $('chatwidget').hidden = !inRoom; if (!inRoom && chatOpen) setChat(false);
             if (v !== 'loading') scrollTo(0, 0);
         }
 
@@ -1450,9 +2514,30 @@
             es = new EventSource(API + '/vs/events?code=' + encodeURIComponent(sess.code) + '&token=' + encodeURIComponent(sess.token));
             es.addEventListener('hello', e => {
                 const d = JSON.parse(e.data); you = d.you; state = d.state; joined = true;
-                d.history.forEach(addChat); setConn(true); enterRoom();
+                d.history.forEach(addChat); chatReady = true; setConn(true);
+                if (d.match) {
+                    if (!match || match.id !== d.match.id) startMatch(d.match); /* picks up where the server says this player is */
+                    else d.match.players.forEach(x => { if (x.id !== you && x.done !== null) match.prog[x.id] = { done: x.done, solved: x.solved || 0, finished: !!x.finished, left: !!x.left }; });
+                }
+                if (d.standings) standings = d.standings;
+                const mine = myRow(standings);
+                if (d.match) { if (mine && mine.status === 'finished') { stopGameTimers(); ui = 'results'; } }
+                else if (match && standings && standings.id === match.id && standings.final) { if (ui === 'game') { stopGameTimers(); ui = 'results'; } }
+                else if (ui === 'game') { stopGameTimers(); match = null; ui = 'room'; }
+                enterRoom();
             });
-            es.addEventListener('state', e => { state = JSON.parse(e.data); renderRoom(); });
+            es.addEventListener('state', e => { state = JSON.parse(e.data); renderRoom(); if (ui === 'results') renderResults(); });
+            es.addEventListener('start', e => { startMatch(JSON.parse(e.data)); showUi(); tick(); });
+            es.addEventListener('progress', e => {
+                const p = JSON.parse(e.data); if (!match || p.id === you) return;
+                match.prog[p.id] = { done: p.done, solved: p.solved, finished: p.finished, left: p.left };
+                if (ui === 'game') renderRace();
+            });
+            es.addEventListener('standings', e => {
+                standings = JSON.parse(e.data);
+                if (match && standings.id === match.id && standings.final && ui === 'game') { stopGameTimers(); ui = 'results'; showUi(); }
+                else if (ui === 'results') renderResults(); else if (ui === 'room') renderRoom();
+            });
             es.addEventListener('chat', e => addChat(JSON.parse(e.data)));
             es.addEventListener('kicked', () => { exitRoom(); showMsg('the host kicked you from the room.'); });
             es.addEventListener('disbanded', () => { exitRoom(); showMsg('the host disbanded the room.'); });
@@ -1465,15 +2550,16 @@
                 } else setConn(false);
             };
         }
-        function setConn(ok) { $('conn').hidden = ok; }
+        function setConn(ok) { document.querySelectorAll('.connmsg').forEach(el => { el.hidden = ok; }); }
         function exitRoom() {
-            closeStream(); sess = null; state = null; joined = false; you = '';
+            closeStream(); clearMatch(); sess = null; state = null; joined = false; you = '';
+            chatReady = false; unread = 0; hideToast(); updateBadge();
             store.del('vs_session', true); setUrl('');
             $('chatlog').innerHTML = '<div id="chatempty">say hi! messages show up here for everyone in the room.</div>'; chatSeen = 0; lastFrom = null;
             $('mlist').innerHTML = ''; setConn(true);
             initLanding(); busy(false); lmsg(''); $('codein').value = ''; view('landing');
         }
-        function enterRoom() { view('room'); renderRoom(); const lg = $('chatlog'); lg.scrollTop = lg.scrollHeight; }
+        function enterRoom() { showUi(); const lg = $('chatlog'); lg.scrollTop = lg.scrollHeight; }
 
         /* ---------- rendering ---------- */
         function renderRoom() {
@@ -1488,15 +2574,19 @@
                 const li = document.createElement('li'), n = document.createElement('span');
                 li.dataset.id = m.id; if (!m.online) li.classList.add('off'); if (prev.size && prev.has(m.id)) li.style.animation = 'none';
                 n.className = 'mn' + (m.id === state.hostId ? ' host' : ''); n.textContent = m.name;
-                const tag = (m.id === state.hostId ? ' (host)' : '') + (m.id === you && m.id !== state.hostId ? ' (you)' : '') + (!m.online ? ' (reconnecting…)' : '');
+                const tag = (m.id === state.hostId ? ' (host)' : '') + (m.id === you && m.id !== state.hostId ? ' (you)' : '') + (!m.online ? ' (connection lost)' : '');
                 if (tag) { const i = document.createElement('i'); i.textContent = tag; if (m.id === state.hostId) i.style.color = 'inherit'; n.appendChild(i); }
                 li.appendChild(n);
                 if (host && m.id !== you) li.appendChild(kickBtn(m));
                 ul.appendChild(li);
             });
+            const playing = state.phase === 'playing', lv = s.rounds + (s.rounds === 1 ? ' level' : ' levels');
             $('exitbtn').textContent = host ? 'disband room' : 'leave room';
-            $('startbtn').textContent = host ? 'start!!!' : 'waiting for host';
-            $('foothint').textContent = host ? "starting a match isn't available yet. you can set up the room and chat in the meantime." : "the host starts the match. starting isn't available yet, so for now you can chat.";
+            $('startbtn').textContent = startingMatch ? 'making levels… ' + startingMatch.k + '/' + startingMatch.n : playing ? 'match running…' : host ? 'start!!!' : 'waiting for host';
+            $('startbtn').disabled = !host || playing || !!startingMatch;
+            $('foothint').textContent = playing ? 'a match is running. the results will show up when everyone has finished.' : host ? "press start when everyone's here. you'll all race through the same " + lv + '.' : 'the host starts the match. you will all race through the same ' + lv + '.';
+            $('lastrow').hidden = !standings; $('lastres').textContent = standings && standings.final ? 'see last results' : 'see results';
+            $('gend').hidden = !host;
             renderSettings();
         }
         function kickBtn(m) {
@@ -1516,15 +2606,15 @@
             return o;
         }
         function renderSettings() {
-            const host = isHost(), s = norm(state.settings), n = state.members.length;
-            $('setbox').classList.toggle('ro', !host); $('hostnote').hidden = host;
+            const host = isHost(), s = norm(state.settings), n = state.members.length, edit = host && state.phase !== 'playing' && !startingMatch;
+            $('setbox').classList.toggle('ro', !edit); $('hostnote').hidden = host;
             $('v_max').textContent = s.max; $('v_rounds').textContent = s.rounds;
             const lim = { max: [Math.max(2, n), 8], rounds: [1, 15] };
-            document.querySelectorAll('[data-step]').forEach(b => { const k = b.dataset.step, d = +b.dataset.d; b.disabled = !host || (d < 0 ? s[k] <= lim[k][0] : s[k] >= lim[k][1]); });
-            document.querySelectorAll('[data-k]').forEach(b => { b.setAttribute('aria-checked', String(s[b.dataset.k]) === b.dataset.v); b.disabled = !host; });
+            document.querySelectorAll('[data-step]').forEach(b => { const k = b.dataset.step, d = +b.dataset.d; b.disabled = !edit || (d < 0 ? s[k] <= lim[k][0] : s[k] >= lim[k][1]); });
+            document.querySelectorAll('[data-k]').forEach(b => { b.setAttribute('aria-checked', String(s[b.dataset.k]) === b.dataset.v); b.disabled = !edit; });
             document.querySelectorAll('[data-sw]').forEach(b => {
                 const k = b.dataset.sw; b.setAttribute('aria-checked', !!s[k]);
-                b.disabled = !host || (k === 'gdec' && s.numbers !== 'dec') || (k === 'gfrac' && s.numbers !== 'frac') || (k === 'roots' && s.numbers === 'frac');
+                b.disabled = !edit || (k === 'gdec' && s.numbers !== 'dec') || (k === 'gfrac' && s.numbers !== 'frac') || (k === 'roots' && s.numbers === 'frac');
             });
             $('row_gdec').classList.toggle('dim', s.numbers !== 'dec'); $('row_gfrac').classList.toggle('dim', s.numbers !== 'frac'); $('row_roots').classList.toggle('dim', s.numbers === 'frac');
         }
@@ -1552,6 +2642,11 @@
             }
             log.appendChild(el);
             if (near || mine) log.scrollTop = log.scrollHeight;
+            /* a new message from someone else while the chat is hidden (or the tab is in the background) */
+            if (!m.sys && !mine && chatReady && (!chatOpen || document.hidden)) {
+                unread++; updateBadge();
+                if (!chatOpen) { showToast(m); const f = $('chatfab'); f.classList.remove('ping'); void f.offsetWidth; f.classList.add('ping'); }
+            }
         }
         function localLine(text) { /* a note only this person sees (failed sends and so on) */
             const el = document.createElement('div'); el.className = 'sys err'; el.textContent = text; const log = $('chatlog'); log.appendChild(el); log.scrollTop = log.scrollHeight; lastFrom = null;
@@ -1564,6 +2659,28 @@
             catch (err) { localLine(isNet(err) ? "couldn't send: no connection" : "couldn't send: " + err.message); }
             inp.focus();
         };
+
+        /* ---------- chat pop-up and new-message notification ---------- */
+        function updateBadge() {
+            const b = $('chatbadge'); b.hidden = !unread; b.textContent = unread > 99 ? '99+' : String(unread);
+            $('chatfab').setAttribute('aria-label', unread ? 'chat, ' + unread + ' new ' + (unread === 1 ? 'message' : 'messages') : 'chat');
+            document.title = unread ? '(' + unread + ') ' + baseTitle : baseTitle;
+        }
+        function hideToast() { clearTimeout(toastT); $('chattoast').hidden = true; }
+        function showToast(m) {
+            $('toastname').textContent = m.name; $('toasttext').textContent = m.text;
+            const t = $('chattoast'); t.hidden = false; t.style.animation = 'none'; void t.offsetWidth; t.style.animation = '';
+            clearTimeout(toastT); toastT = setTimeout(hideToast, 5000);
+        }
+        function setChat(open) {
+            chatOpen = open; $('chatpanel').hidden = !open; $('chatfab').setAttribute('aria-expanded', String(open));
+            if (open) { unread = 0; updateBadge(); hideToast(); const lg = $('chatlog'); lg.scrollTop = lg.scrollHeight; if (!matchMedia('(pointer:coarse)').matches) $('chatin').focus(); }
+        }
+        $('chatfab').onclick = () => setChat(!chatOpen);
+        $('chatclose').onclick = () => { setChat(false); $('chatfab').focus(); };
+        $('chattoast').onclick = () => setChat(true);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && chatOpen && !document.querySelector('dialog[open]')) setChat(false); });
+        document.addEventListener('visibilitychange', () => { if (!document.hidden && chatOpen && unread) { unread = 0; updateBadge(); } });
 
         /* ---------- buttons ---------- */
         $('copycode').onclick = () => state && copy(state.code, $('copycode'), 'copy code');
@@ -1589,8 +2706,562 @@
         };
         $('qrx').onclick = () => $('qrdlg').close();
         $('qrdlg').addEventListener('click', e => { if (e.target === $('qrdlg')) $('qrdlg').close(); });
-        $('startbtn').onclick = () => { /* starting a match isn't built yet */ };
         $('tgo').onclick = () => { };
+
+        /* =====================================================================
+           THE GAME
+           The numbers, operations and level generator are the same as on the main page.
+           The host's browser makes the levels; everyone gets the same ones from the server.
+           ===================================================================== */
+        const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b] } return a || 1 };
+        let NB = 100000, CAP = 1e9, ROOTS = false, MODE = 'whole'; const BMAX = 200;
+        function F(n, d = 1, b = 1) { if (d < 0) { n = -n; d = -d } if (n === 0) b = 1; const g = gcd(n, d); n /= g; d /= g; if (Math.abs(n) > NB || d > NB || b > BMAX) return null; return { n, d, b } }
+        const sqfC = new Map();
+        /* m = k²·r with r having no square factor: returns [k, r] */
+        function sqf(m) { let c = sqfC.get(m); if (c) return c; let k = 1, r = m; for (let p = 2; p * p <= r; p++) while (r % (p * p) === 0) { r /= p * p; k *= p } c = [k, r]; sqfC.set(m, c); return c }
+        const key = x => x.n + '/' + x.d + (x.b > 1 ? 'r' + x.b : '');
+        const term = x => { let d = x.d; while (d % 2 === 0) d /= 2; while (d % 5 === 0) d /= 5; return d === 1 };
+        const fmt = x => {
+            if (x.b > 1) { const a = Math.abs(x.n); return (x.n < 0 ? '-' : '') + (a === 1 ? '' : a) + '√' + x.b + (x.d > 1 ? '/' + x.d : ''); }
+            if (x.d === 1) return String(x.n);
+            if (MODE === 'dec' && term(x)) {
+                let r = Math.abs(x.n) % x.d, t = Math.floor(Math.abs(x.n) / x.d) + '.', k = 0;
+                for (; r && k < 20; k++) { r *= 10; t += Math.floor(r / x.d); r %= x.d; }
+                if (!r) return (x.n < 0 ? '-' : '') + t;
+            }
+            return x.n + '/' + x.d;
+        };
+        const fmtS = x => { const f = fmt(x), i = f.indexOf('.'); return i >= 0 && f.length - i - 1 > 2 ? f.slice(0, i + 3) : f; };
+        const same = (a, b) => a.n === b.n && a.d === b.d && (a.b || 1) === (b.b || 1);
+        function mk(s, mode) {
+            if (s === 'x²') return { s, f: x => F(x.n * x.n * x.b, x.d * x.d) };
+            if (s === '|x|') return { s, f: x => F(Math.abs(x.n), x.d, x.b) };
+            if (s === '−x') return { s, f: x => F(-x.n, x.d, x.b) };
+            if (s === 'x³') return { s, f: x => F(x.n * x.n * x.n * x.b, x.d * x.d * x.d, x.b) };
+            if (s === '√x') { const rt = ROOTS || mode === 'frac'; return { s, f: x => { if (x.n < 0 || x.b > 1) return null; if (x.n === 0) return x; const [k, r] = sqf(x.n * x.d); return r > 1 && !rt ? null : F(k, x.d, r) } }; }
+            if (s.startsWith('mod ')) { const k = parseInt(s.slice(4), 10); return { s, f: x => x.d !== 1 || x.b > 1 ? null : F(((x.n % k) + k) % k) }; }
+            if (s === 'x⁻¹') return { s, f: x => { if (x.n === 0) return null; const r = F(x.d, x.n * x.b, x.b); return r && (mode !== 'dec' || r.d === 1 || term(r)) ? r : null } };
+            const qs = s.slice(1), o = s[0], q = qs.includes('/') ? F(+qs.split('/')[0], +qs.split('/')[1]) : F(Math.round(parseFloat(qs) * 10), 10);
+            if (o === '+') return { s, f: x => x.b > 1 ? null : F(x.n * q.d + q.n * x.d, x.d * q.d) };
+            if (o === '−') return { s, f: x => x.b > 1 ? null : F(x.n * q.d - q.n * x.d, x.d * q.d) };
+            if (o === '×') return { s, f: x => F(x.n * q.n, x.d * q.d, x.b) };
+            if (o === '÷') return { s, f: x => { if (q.n === 0) return null; const r = F(x.n * q.d, x.d * q.n, x.b); return r && (r.d === 1 || mode === 'frac' || (mode === 'dec' && term(r))) ? r : null } };
+        }
+        function solve(start, goal, ops) {
+            let seen = new Set([key(start)]), fr = [start];
+            for (let d = 1; d <= 8; d++) {
+                const nx = []; if (seen.size > CAP) return null;
+                for (const n of fr) for (const o of ops) {
+                    const v = o.f(n);
+                    if (!v || seen.has(key(v))) continue;
+                    if (same(v, goal)) return d; seen.add(key(v)); nx.push(v);
+                }
+                fr = nx;
+            }
+            return null;
+        }
+        function countBest(start, goal, ops) {
+            let layer = new Map([[key(start), [start, 1]]]), seen = new Set([key(start)]);
+            for (let d = 1; d <= 8; d++) {
+                const nx = new Map(); if (seen.size > CAP) return 0;
+                for (const [x, c] of layer.values()) for (const o of ops) {
+                    const v = o.f(x);
+                    if (!v || seen.has(key(v))) continue;
+                    const e = nx.get(key(v)); if (e) e[1] += c; else nx.set(key(v), [v, c]);
+                }
+                const g = nx.get(key(goal)); if (g) return g[1];
+                for (const k of nx.keys()) seen.add(k); layer = nx;
+            }
+            return 0;
+        }
+        const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+        function genOp(tier, mode) {
+            const dec = mode === 'dec', more = mode !== 'whole';
+            if (tier === 8) {
+                const r = ri(0, more ? 16 : 15); const hh = () => dec && Math.random() < .4, hf = () => mode === 'frac' && Math.random() < .35, fq = () => { let d, n; do { d = ri(2, 5); n = ri(1, d * 3) } while (gcd(n, d) !== 1); return n + '/' + d }, dd = () => { let v; do { v = ri(1, 49) } while (v % 10 === 0); return v / 10 };
+                if (r < 2) return mk('+' + (hh() ? dd() : hf() ? fq() : ri(1, 12)), mode); if (r < 4) return mk('−' + (hh() ? dd() : hf() ? fq() : ri(1, 12)), mode);
+                if (r < 6) return mk('×' + (hh() ? ['0.5', '1.5', '2.5'][ri(0, 2)] : hf() ? fq() : ri(2, 5)), mode); if (r < 8) return mk('÷' + (hh() ? ['0.5', '2.5'][ri(0, 1)] : hf() ? fq() : ri(2, 5)), mode);
+                if (r === 8) return mk('x²', mode); if (r === 9) return mk('|x|', mode); if (r === 10) return mk('√x', mode); if (r === 11) return mk('x³', mode);
+                if (r === 12) return mk('−x', mode); if (r === 13) return mk('mod ' + ri(3, 9), mode); return mk(more ? 'x⁻¹' : '|x|', mode);
+            }
+            const t = ri(0, more ? 10 : 9), h = () => dec && Math.random() < .5,
+                dk = () => { let v; do { v = ri(1, 49) } while (v % 10 === 0); return v / 10 }, pk = a => a[ri(0, a.length - 1)];
+            if (t < 2) return mk('+' + (h() ? dk() : ri(1, 9)), mode); if (t < 4) return mk('−' + (h() ? dk() : ri(1, 9)), mode);
+            if (t < 6) return mk('×' + (h() ? pk(['0.5', '1.5', '2.5', '0.2', '0.4']) : ri(2, 5)), mode);
+            if (t < 8) return mk('÷' + (h() ? pk(['0.5', '0.2', '2.5', '0.4']) : ri(2, 5)), mode);
+            if (t === 8 || !more) return mk(ROOTS && Math.random() < .5 ? '√x' : 'x²', mode);
+            return mk('x⁻¹', mode);
+        }
+        const val = x => x.n / x.d * Math.sqrt(x.b || 1);
+
+        /* makes one level for the room's settings: { start, goal, ops: ["+3", "×2", ...], limit (par), nb (biggest number allowed) } */
+        function genLevel(tier, cfg) {
+            ROOTS = !!cfg.roots; MODE = cfg.numbers;
+            NB = tier === 8 ? 3000 : 100000; CAP = tier === 8 ? 40000 : 1e9;
+            const tp = tier === 8 ? ri(5, 7) : 0, mode = cfg.numbers, gd = mode === 'dec' && !!cfg.gdec, gf = mode === 'frac' && !!cfg.gfrac, special = o => o.s === 'x⁻¹' || o.s.includes('.') || o.s.includes('/');
+            for (let tries = 0; tries < 3000; tries++) {
+                const pool = []; const n = tier === 8 ? ri(7, 8) : ri(4, 5) + (tier >= 4 ? 1 : 0);
+                while (pool.length < n) { const o = genOp(tier, mode); if (!pool.some(p => p.s === o.s)) pool.push(o); }
+                if (mode !== 'whole' && !pool.some(special)) continue;
+                if (tier === 8 && pool.filter(o => ['|x|', '√x', 'x³', '−x', 'x²', 'x⁻¹'].includes(o.s) || o.s.startsWith('mod')).length < 3) continue;
+                const start = F(tier === 8 ? ri(2, 40) : ri(1, tier >= 6 ? 20 : 12)); let v = start; const steps = tier === 8 ? tp : ri(tier, tier + 1); let ok = true;
+                for (let i = 0; i < steps; i++) {
+                    const o = pool[ri(0, pool.length - 1)]; const r = o.f(v);
+                    if (!r || Math.abs(r.n) > 5000 || r.d > 5000) { ok = false; break; } v = r;
+                }
+                if (!ok || same(v, start)) continue;
+                if (v.b > 1) continue; /* a goal is never a root (the path can go through one) */
+                if (v.d !== 1 && !(gd && term(v) && v.d <= 100) && !(gf && v.d <= 30 && Math.abs(v.n) <= 500)) continue;
+                if ((gd || gf) && v.d === 1 && Math.random() < .6) continue;
+                const par = solve(start, v, pool);
+                if (tier === 8) {
+                    /* challenge: par = the planted route (always reachable); a shorter route must also exist */
+                    if (!par || par >= tp || par < Math.max(3, tp - 2)) continue;
+                    if (tries < 1800 && par !== tp - 1) continue;
+                } else if (!par || par < Math.max(2, tier - 1) || par > tier + 1) continue;
+                const need = tier === 8 ? (tries < 1200 ? 2 : 1) : (tries < 2000 ? 2 : 1);
+                if (need > 1 && countBest(start, v, pool) < need) continue;
+                return { start, goal: v, ops: pool.map(o => o.s), limit: tier === 8 ? tp : par, nb: NB };
+            }
+            return null;
+        }
+        function makeLevel(cfg) {
+            const t0 = cfg.difficulty;
+            return genLevel(t0, cfg) || (t0 === 8 && genLevel(6, cfg)) || { start: F(1), goal: F(10), ops: ['+3', '×2'], limit: 3, nb: 100000 };
+        }
+        const sameLevel = (a, b) => key(a.start) === key(b.start) && key(a.goal) === key(b.goal);
+        /* one level at a time with a breath in between, so the page can show progress while the host's browser works */
+        function makeLevels(cfg, n, onProg) {
+            return new Promise((res, rej) => {
+                const out = [];
+                const step = () => {
+                    try {
+                        if (out.length >= n) return res(out);
+                        let lv, tries = 0;
+                        do { lv = makeLevel(cfg); tries++; } while (out.some(o => sameLevel(o, lv)) && tries < 8);
+                        out.push(lv); if (onProg) onProg(out.length, n);
+                        setTimeout(step, 0);
+                    } catch (e) { rej(e); }
+                };
+                step();
+            });
+        }
+
+        /* ---------- look and feel settings shared with the other pages ---------- */
+        const prefs = (() => {
+            let s = {}; try { s = JSON.parse(localStorage.getItem('hs1') || '{}') || {}; } catch (e) { }
+            return { flip: s.flip !== false, anim: s.anim !== false, anims: Object.assign({ flip: true, ball: true, zoom: true }, s.anims || {}) };
+        })();
+        const animOn = k => prefs.anim && (!k || prefs.anims[k] !== false) && !matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+        /* ---------- flip tiles ---------- */
+        let flipRev = false;
+        function mkTile() {
+            const t = document.createElement('div'); t.className = 'tile'; t.setAttribute('aria-hidden', 'true');
+            t.innerHTML = '<div class="h t"><span></span></div><div class="h b"><span></span></div><div class="flap h t f1"><span></span></div><div class="flap h b f2"><span></span></div>'; return t;
+        }
+        function setTile(t, ch, anim, rev) {
+            const sp = t.querySelectorAll('span'), old = t.dataset.ch; clearTimeout(t._tm);
+            t.classList.toggle('nr', /^[\/\-−.]$/.test(ch));
+            if (old === undefined || !anim || old === ch) { sp.forEach(x => x.textContent = ch); t.dataset.ch = ch; t.classList.remove('flipping', 'rev'); return; }
+            if (rev) { sp[0].textContent = old; sp[1].textContent = ch; sp[2].textContent = ch; sp[3].textContent = old; }
+            else { sp[0].textContent = ch; sp[1].textContent = old; sp[2].textContent = old; sp[3].textContent = ch; }
+            t.classList.remove('flipping'); t.classList.toggle('rev', !!rev); void t.offsetWidth; t.classList.add('flipping'); t.dataset.ch = ch;
+            t._tm = setTimeout(() => { sp[0].textContent = ch; sp[1].textContent = ch; t.classList.remove('flipping', 'rev'); }, 160);
+        }
+        function setFlip(el, text, label) {
+            if (!prefs.flip || !/^[-−]?[\d.\/√]+$/.test(text)) { el.removeAttribute('data-neg'); el.classList.add('plain'); el.setAttribute('role', 'img'); el.setAttribute('aria-label', label || text); el.textContent = text; return; }
+            if (el.classList.contains('plain')) { el.classList.remove('plain'); el.innerHTML = ''; }
+            const neg = /^[-−]/.test(text); if (neg) el.setAttribute('data-neg', ''); else el.removeAttribute('data-neg');
+            const chars = [...(neg ? text.slice(1) : text)], an = animOn('flip'), rv = flipRev;
+            el.setAttribute('role', 'img'); el.setAttribute('aria-label', label || text);
+            [...el.childNodes].forEach(n => { if (n.nodeType !== 1) el.removeChild(n); });
+            const isSep = c => !/[\d.]/.test(c);
+            const mkNode = c => { if (isSep(c)) { const e = document.createElement('span'); e.className = 'sep'; e.setAttribute('aria-hidden', 'true'); e.textContent = c; return e; } const t = mkTile(); setTile(t, ' ', false); return t; };
+            const pat = chars.map(c => isSep(c) ? c : 'd').join(''), cp = [...el.children].map(k => k.classList.contains('sep') ? k.textContent : 'd').join('');
+            if (pat !== cp) {
+                if (pat.endsWith(cp)) { for (let i = pat.length - cp.length - 1; i >= 0; i--)el.insertBefore(mkNode(chars[i]), el.firstChild); }
+                else if (cp.endsWith(pat)) { while (el.children.length > pat.length) el.removeChild(el.firstChild); }
+                else { el.innerHTML = ''; chars.forEach(c => el.appendChild(mkNode(c))); }
+            }
+            let n = 0;
+            chars.forEach((c, i) => {
+                if (isSep(c)) return; const t = el.children[i];
+                clearTimeout(t._st);
+                if (!an) { setTile(t, c, false); return; }
+                if (t.dataset.ch === c) return;
+                const d = n++ * 50;
+                if (d === 0) setTile(t, c, true, rv); else t._st = setTimeout(() => setTile(t, c, true, rv), d);
+            });
+        }
+
+        /* ---------- the number line ---------- */
+        let nlRaf = 0, nlPend = false, nlView = null;
+        function nice(r, n = 6) { const t = r / n, m = Math.pow(10, Math.floor(Math.log10(t))), f = t / m; return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * m }
+        function tf(v) { return String(+v.toFixed(3)) }
+        const teeW = () => 4;
+        function draw(vw, bl, vals, g, won) {
+            const W = $('nl').clientWidth || 640, H = W < 520 ? 160 : 200, pad = W < 520 ? 28 : 44, Y = H - 58, R = 7, sp = vw.hi - vw.lo, x = v => pad + (v - vw.lo) / sp * (W - 2 * pad);
+            const hgt = (a, b) => Math.max(4, Math.min(Y - 30, 100, Math.abs(x(b) - x(a)) * .25));
+            let h = `<line x1="10" y1="${Y}" x2="${W - 10}" y2="${Y}" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"/>`;
+            const lands = [];
+            vals.forEach((v, i) => { if (i === vals.length - 1 && bl) return; if (vals.slice(0, i).includes(v)) return; lands.push({ v, i, X: x(v) }); });
+            if (!lands.some(l => l.v === g)) lands.unshift({ v: g, i: -1, X: x(g) });
+            const dg = String(Math.round(Math.max(Math.abs(vw.lo), Math.abs(vw.hi)))).length + (sp < 10 ? 2 : 0) + (vw.lo < 0 ? 1 : 0), st = nice(sp, Math.max(2, Math.min(6, Math.floor((W - 2 * pad) / ((dg * 7.5 + 12) * 1.5))))),
+                lw = l => ((l.i === 0 ? teeW() : 0) + tf(l.v).length) * 4 + 4;
+            for (let t = Math.ceil(vw.lo / st) * st; t <= vw.hi + st * 1e-6; t += st) {
+                const X = x(t);
+                if (X < 10 || X > W - 10) continue;
+                h += `<line x1="${X}" y1="${Y - 5}" x2="${X}" y2="${Y + 5}" stroke="var(--blue)" stroke-width="1.5"/>`;
+                if (!lands.some(l => Math.abs(l.X - X) < lw(l) + tf(t).length * 4)) h += `<text x="${X}" y="${Y + 24}" opacity=".7">${tf(t)}</text>`;
+            }
+            const gx = x(g);
+            h += `<ellipse cx="${gx}" cy="${Y}" rx="11" ry="4.5" fill="var(--hole)" stroke="var(--hole)" stroke-width="1.5"/>`;
+            h += `<line x1="${gx}" y1="${Y}" x2="${gx}" y2="${Y - 54}" stroke="var(--ink)" stroke-width="2.5"/><path d="M${gx} ${Y - 54} L${gx + 22} ${Y - 46} L${gx} ${Y - 38}Z" fill="var(--imag)"/>`;
+            for (let i = 0; i < vals.length - 1; i++) {
+                const a = x(vals[i]), b = x(vals[i + 1]), ht = hgt(vals[i], vals[i + 1]), cy = Y - R - 2 * ht, isLast = i === vals.length - 2;
+                const col = isLast ? 'var(--imag)' : 'var(--soft)', op = isLast ? 1 : .55;
+                if (isLast && bl) {
+                    const u = bl.u, qx = a + ((a + b) / 2 - a) * u, qy = (Y - R) + (cy - (Y - R)) * u, ex = a + (b - a) * u, ey = (Y - R) - 4 * ht * u * (1 - u);
+                    h += `<path d="M${a} ${Y - R} Q${qx} ${qy} ${ex} ${ey}" fill="none" stroke="${col}" stroke-width="2" stroke-dasharray="6 5"/>`;
+                }
+                else h += `<path d="M${a} ${Y - R} Q${(a + b) / 2} ${cy} ${b} ${Y - R}" fill="none" stroke="${col}" stroke-width="2" stroke-dasharray="6 5" opacity="${op}"/>`;
+            }
+            const rows = [[], [], []];
+            vals.forEach((v, i) => {
+                if (i === vals.length - 1 && bl) return;
+                h += `<circle cx="${x(v)}" cy="${Y}" r="3" fill="var(--soft)"/>`;
+            });
+            const lblW = l => ((l.i === 0 ? teeW() : 0) + tf(l.v).length) * 8 + 6, pr = l => l.v === g ? 0 : l.i === vals.length - 1 ? 1 : l.i === 0 ? 2 : 3 + vals.length - l.i;
+            [...lands].sort((a, b) => pr(a) - pr(b)).forEach(l => {
+                const w = lblW(l), r = rows.findIndex(row => row.every(q => Math.abs(q.x - l.X) > (q.w + w) / 2));
+                if (r < 0) return; rows[r].push({ x: l.X, w });
+                h += `<text x="${l.X}" y="${Y + 24 + r * 16}" style="font-size:13px;font-weight:700;fill:${l.v === g ? 'var(--imag)' : 'var(--ink)'}">${l.i === 0 ? 'tee ' : ''}${tf(l.v)}</text>`;
+            });
+            const endY = won ? Y - 2 : Y - R; let bx, by;
+            if (bl) { const v = bl.from + (bl.to - bl.from) * bl.u, ht = hgt(bl.from, bl.to); bx = x(v); by = (Y - R) + (endY - (Y - R)) * bl.u - 4 * ht * bl.u * (1 - bl.u); }
+            else { bx = x(vals[vals.length - 1]); by = endY; }
+            h += `<g transform="translate(${bx} ${by})"><circle r="${R}" fill="#fff" stroke="var(--ballstroke)" stroke-width="1.5"/><circle cx="-2" cy="-2" r=".9" fill="var(--dimple)"/><circle cx="2" cy="-1" r=".9" fill="var(--dimple)"/><circle cx="0" cy="2.2" r=".9" fill="var(--dimple)"/></g>`;
+            $('nl').style.height = H + 'px'; $('nl').setAttribute('viewBox', `0 0 ${W} ${H}`); $('nl').innerHTML = h;
+        }
+        function drawLine() {
+            cancelAnimationFrame(nlRaf);
+            const vals = [val(Lv.start), ...hist.map((h, i) => val(hist[i + 1] ? hist[i + 1].prev : cur))], g = val(Lv.goal), won = same(cur, Lv.goal);
+            let lo = Math.min(g, ...vals), hi = Math.max(g, ...vals); if (hi - lo < 1) { lo -= 1; hi += 1 }
+            const tgt = { lo, hi }, hit = nlPend && vals.length > 1; nlPend = false;
+            const diff = !nlView || Math.abs(nlView.lo - lo) + Math.abs(nlView.hi - hi) > 1e-9;
+            const hitA = hit && animOn('ball'), zoomA = diff && animOn('zoom');
+            if (!nlView || (!hitA && !zoomA)) { nlView = tgt; draw(nlView, null, vals, g, won); return; }
+            const from = zoomA ? nlView : tgt, t0 = performance.now(), D = hitA ? 360 : 260, bf = vals[vals.length - 2], bt = vals[vals.length - 1];
+            const step = now => {
+                const t = Math.min((now - t0) / D, 1), e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+                if (t < 1) {
+                    nlView = { lo: from.lo + (tgt.lo - from.lo) * e, hi: from.hi + (tgt.hi - from.hi) * e };
+                    draw(nlView, hitA ? { u: t, from: bf, to: bt } : null, vals, g, won); nlRaf = requestAnimationFrame(step);
+                }
+                else { nlView = tgt; draw(nlView, null, vals, g, won); }
+            };
+            nlRaf = requestAnimationFrame(step);
+        }
+
+        /* ---------- the trail, drawn as a real math expression ---------- */
+        const mEsc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+        const mRad = h => '<span class="sqw"><svg class="sq" viewBox="0 0 12 20" preserveAspectRatio="none" aria-hidden="true"><path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/></svg><span class="rd">' + h + '</span></span>';
+        const mNum = t => {
+            t = String(t).replace(/^-/, '−');
+            const rm = /^(−?)(\d*)√(\d+)(?:\/(\d+))?$/.exec(t);
+            if (rm) { const top = rm[2] + mRad(rm[3]); return rm[1] + (rm[4] ? '<span class="fr"><span>' + top + '</span><span>' + rm[4] + '</span></span>' : top); }
+            const m = /^(−?)(\d+)\/(\d+)$/.exec(t);
+            return m ? m[1] + '<span class="fr"><span>' + m[2] + '</span><span>' + m[3] + '</span></span>' : mEsc(t);
+        };
+        const mPar = h => '<span class="pr">(</span>' + h + '<span class="pr">)</span>';
+        const mWrap = (e, min) => e.p < min ? mPar(e.h) : e.h;
+        const mOp = c => ' <span class="op">' + c + '</span> ';
+        function mStep(e, s) {
+            if (s === 'x²') return { h: mWrap(e, 4) + '<sup>2</sup>', p: 3 };
+            if (s === 'x³') return { h: mWrap(e, 4) + '<sup>3</sup>', p: 3 };
+            if (s === 'x⁻¹') return { h: mWrap(e, 4) + '<sup>−1</sup>', p: 3 };
+            if (s === '|x|') return { h: '<span class="ab">|</span>' + e.h + '<span class="ab">|</span>', p: 4 };
+            if (s === '√x') return { h: mRad(e.h), p: 4 };
+            if (s === '−x') return { h: '−' + mWrap(e, 4), p: 1 };
+            if (s.startsWith('mod ')) return { h: mWrap(e, 3) + mOp('mod') + mEsc(s.slice(4)), p: 0 };
+            const k = mNum(s.slice(1)), o = s[0];
+            if (o === '+' || o === '−') return { h: mWrap(e, 1) + mOp(o) + k, p: 1 };
+            if (o === '×' || o === '÷') return { h: mWrap(e, 2) + mOp(o) + k, p: 2 };
+            return { h: mWrap(e, 4) + mOp(mEsc(s)), p: 0 };
+        }
+        const opLabel = s => /^[+−×÷]−?\d+\/\d+$/.test(s) ? s[0] + mNum(s.slice(1)) : mEsc(s);
+        function trailHTML() {
+            const st = fmt(Lv.start);
+            let e = { h: mNum(st), p: /^-/.test(st) ? 1 : st.includes('/') ? 2 : 4 };
+            if (!hist.length) return e.h;
+            hist.forEach(h => { e = mStep(e, h.s); });
+            return e.h + ' <span class="op">=</span> <b>' + mNum(fmt(cur)) + '</b>';
+        }
+        const whyNot = s => (cur && cur.b > 1 && /^[+−]\d/.test(s)) ? "can't add to a root" : (cur && cur.b > 1 && s === '√x') ? 'already a root' : s[0] === '÷' ? (MODE === 'frac' ? 'too big' : 'not whole') : s === 'x⁻¹' ? 'undefined' : s === '√x' ? (MODE === 'frac' || ROOTS ? 'negative' : 'not a square') : s.startsWith('mod') ? 'whole only' : 'too big';
+
+        /* start and goal numbers: biggest size that fits the panel, or stacked if that would be tiny */
+        function updateNs() {
+            if (!Lv) return;
+            const bd = $('gboard'), row = bd.querySelector('.row'); if (!row || bd.hidden) return;
+            const fit = () => {
+                let ns = 3.2; bd.style.setProperty('--ns', ns + 'rem');
+                for (let i = 0; i < 8; i++) {
+                    const need = row.scrollWidth, have = row.clientWidth;
+                    if (!have || need <= have + 0.5 || ns <= 0.5) break;
+                    ns = Math.max(0.5, ns * (have / need) * 0.97); bd.style.setProperty('--ns', ns + 'rem');
+                }
+                return ns;
+            };
+            row.classList.remove('stack'); const side = fit();
+            if (side < 1.6) { row.classList.add('stack'); const stacked = fit(); if (stacked < side * 1.2) { row.classList.remove('stack'); fit(); } }
+        }
+
+        /* =====================================================================
+           THE MATCH (client side)
+           ===================================================================== */
+        const HC_UNDOS = 3;
+        let match = null;            /* { id, cfg, levels, total, players:[{id,name}], prog:{id:{done,solved,finished,left}} } */
+        let standings = null;        /* the latest results table from the server */
+        let ui = 'room';             /* which screen this player is looking at: room (lobby) | game | results */
+        let Lv = null, cur = null, hist = [], undosUsed = 0, round = 0, lockedRound = false, began = false;
+        let srvOff = 0, localGo = 0, roundStartAt = 0, tickT = 0, advT = 0, goT = 0, countShown = null, reportQ = Promise.resolve(), startingMatch = null;
+
+        const hardcore = () => !!(match && match.cfg.hardcore);
+        const capMoves = () => match.cfg.overpar < 0 ? Infinity : Lv.limit + match.cfg.overpar;
+        const mv = n => n + (n === 1 ? ' move' : ' moves');
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
+        function fmtT(ms) { const t = Math.max(0, Math.floor(ms / 100)); return Math.floor(t / 600) + ':' + String(Math.floor(t / 10) % 60).padStart(2, '0') + '.' + (t % 10); }
+        function fmtCd(ms) { const s = Math.ceil(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+        const myRow = st => st && st.rows.find(r => r.id === you);
+
+        function stopGameTimers() { clearInterval(tickT); clearTimeout(advT); clearTimeout(goT); cancelAnimationFrame(nlRaf); tickT = 0; $('gcount').hidden = true; }
+        function clearMatch() { stopGameTimers(); match = null; standings = null; ui = 'room'; Lv = null; hist = []; reportQ = Promise.resolve(); startingMatch = null; }
+
+        function startMatch(p) {
+            stopGameTimers();
+            const cfg = p.settings; MODE = cfg.numbers; ROOTS = !!cfg.roots;
+            match = { id: p.id, cfg, levels: p.levels, total: p.levels.length, players: p.players.map(x => ({ id: x.id, name: x.name })), prog: {} };
+            p.players.forEach(x => { match.prog[x.id] = { done: x.done || 0, solved: x.solved || 0, finished: !!x.finished, left: !!x.left }; });
+            if (p.mine) match.prog[you] = { done: p.mine.done, solved: p.mine.solved, finished: p.mine.done >= match.total, left: false };
+            standings = null;
+            srvOff = p.serverNow - Date.now(); localGo = p.goAt - srvOff;
+            round = p.mine ? p.mine.done : 0;
+            began = false; lockedRound = false; countShown = null; Lv = null; hist = [];
+            const gb = $('gboard'); gb.hidden = true; gb.classList.toggle('hc', !!cfg.hardcore);
+            $('grwrap').hidden = !(cfg.timer > 0); $('gclock').textContent = '0:00.0'; $('glevel').textContent = Math.min(round + 1, match.total) + ' / ' + match.total; setMsg('');
+            $('gend').hidden = !isHost();
+            if (round >= match.total) { ui = 'results'; return; }   /* came back after already finishing */
+            ui = 'game'; tickT = setInterval(tick, 100);
+        }
+
+        function showCount(txt) {
+            const el = $('gcount'); if (countShown === txt) return; countShown = txt;
+            el.hidden = false; el.innerHTML = '<span></span><small>' + (txt === 'go!' ? '' : 'get ready') + '</small>'; el.firstChild.textContent = txt;
+        }
+        function tick() {
+            if (!match || ui !== 'game') return;
+            const now = Date.now(), rem = localGo - now;
+            if (!began) {
+                if (rem > 0) { showCount(String(Math.ceil(rem / 1000))); return; }
+                began = true; $('gboard').hidden = false; showCount('go!'); goT = setTimeout(() => { $('gcount').hidden = true; }, 600);
+                loadLevel(round);
+            }
+            $('gclock').textContent = fmtT(now - localGo);
+            if (match.cfg.timer > 0 && !lockedRound) {
+                const left = match.cfg.timer * 1000 - (now - roundStartAt);
+                $('grclock').textContent = fmtCd(Math.max(0, left)); $('grwrap').classList.toggle('low', left <= 10000);
+                if (left <= 0) roundDone('timeout');
+            }
+        }
+
+        function loadLevel(i) {
+            const lv = match.levels[i]; NB = lv.nb;
+            Lv = { start: lv.start, goal: lv.goal, limit: lv.limit, ops: lv.ops.map(s => mk(s, MODE)) };
+            cur = Lv.start; hist = []; undosUsed = 0; lockedRound = false; nlView = null; nlPend = false; roundStartAt = Date.now();
+            $('glevel').textContent = (i + 1) + ' / ' + match.total; setMsg('');
+            if (match.cfg.timer > 0) { $('grclock').textContent = fmtCd(match.cfg.timer * 1000); $('grwrap').classList.remove('low'); }
+            render();
+        }
+        function setMsg(text, cls) { const m = $('gmsg'); m.className = cls || ''; m.textContent = text || ''; }
+
+        function render() {
+            if (!Lv || !match) return;
+            const used = hist.length, won = same(cur, Lv.goal), cap = capMoves(), over = used - Lv.limit, full = !won && used >= cap;
+            $('cur').classList.toggle('winp', won);
+            setFlip($('cur'), fmtS(cur), fmt(cur)); setFlip($('goal'), fmtS(Lv.goal), fmt(Lv.goal));
+            $('goalfull').textContent = fmtS(Lv.goal) !== fmt(Lv.goal) ? fmt(Lv.goal) : '';
+            $('curfull').textContent = fmtS(cur) !== fmt(cur) ? fmt(cur) : '';
+            $('gboard').classList.toggle('dec', MODE === 'dec');
+            updateNs();
+            const pipN = isFinite(cap) ? cap : Math.max(Lv.limit, used);
+            $('pips').innerHTML = Array.from({ length: pipN }, (_, i) => `<span class="pip${i < used ? ' used' : ''}${i >= Lv.limit ? ' over' : ''}"></span>`).join('');
+            $('left').textContent = 'par ' + Lv.limit + ' · ' + mv(used) + (isFinite(cap) && cap > Lv.limit ? ' · max ' + cap : '') + (over > 0 ? ' · ' + over + ' over par' : '');
+            $('left').style.color = over > 0 ? 'var(--imag)' : '';
+            const tk = t => /^[+−×÷][\d.]/.test(t) ? t[0] + ' ' + t.slice(1) : t === '−x' ? 'negate' : t;
+            $('trail').innerHTML = trailHTML(); $('trail').setAttribute('aria-label', hist.length ? [fmt(Lv.start), ...hist.map(h => tk(h.s))].join(' ') + ' = ' + fmt(cur) : fmt(Lv.start));
+            $('ops').innerHTML = '';
+            Lv.ops.forEach(o => {
+                const b = document.createElement('button'); b.innerHTML = opLabel(o.s);
+                const v = o.f(cur); b.disabled = won || !v || full || lockedRound;
+                if (!won && !v && !lockedRound) { const w = whyNot(o.s); b.title = w; b.innerHTML = opLabel(o.s) + '<small>' + w + '</small>'; }
+                b.onclick = () => {
+                    if (lockedRound || !v) return;
+                    hist.push({ prev: cur, s: o.s }); cur = v; nlPend = true; render();
+                    if (same(cur, Lv.goal)) roundDone('solved');
+                };
+                $('ops').appendChild(b);
+            });
+            drawLine();
+            const left = HC_UNDOS - undosUsed;
+            $('undo').disabled = !used || won || lockedRound || (hardcore() && left <= 0);
+            $('undo').textContent = hardcore() ? 'undo (' + Math.max(left, 0) + ' left)' : 'undo';
+            $('reset').disabled = hardcore() || lockedRound; $('reset').title = hardcore() ? 'not allowed in hardcore mode' : '';
+            $('skip').disabled = lockedRound;
+            if (!lockedRound) {
+                if (full) setMsg(hardcore() ? (left > 0 ? 'out of moves. undo a move to keep trying, or skip this level.' : 'out of moves and undos. skip this level.') : 'out of moves. undo a move, restart the level, or skip it.', 'lose');
+                else setMsg('');
+            }
+        }
+
+        /* a level is over: solved, skipped or out of time. tell the server, show a quick note, and go to the next one */
+        function roundDone(status) {
+            if (lockedRound || !match || !Lv) return;
+            lockedRound = true;
+            const moves = hist.length, t = Math.max(0, Date.now() - localGo), idx = round, last = idx + 1 >= match.total, over = moves - Lv.limit;
+            const pr = match.prog[you] || (match.prog[you] = { done: 0, solved: 0, finished: false, left: false });
+            pr.done = idx + 1; if (status === 'solved') pr.solved++; pr.finished = last;
+            report(idx, status, moves, t);
+            if (status === 'solved') setMsg('solved in ' + mv(moves) + ' · ' + (over < 0 ? -over + ' under par' : over === 0 ? 'par' : over + ' over par'), 'win');
+            else setMsg(status === 'timeout' ? "time's up!" : 'level skipped', 'lose');
+            $('skip').classList.remove('arm'); $('skip').textContent = 'skip level';
+            render(); renderRace();
+            clearTimeout(advT);
+            advT = setTimeout(() => { if (last) finishLocal(); else { round++; loadLevel(round); } }, status === 'solved' ? 900 : 800);
+        }
+        function finishLocal() { stopGameTimers(); ui = 'results'; showUi(); }
+
+        /* reports go out one at a time, in order, and are retried if the connection drops */
+        function report(idx, status, moves, t) {
+            const body = { code: sess.code, token: sess.token, matchId: match.id, round: idx, status, moves, t: Math.round(t) };
+            reportQ = reportQ.then(() => sendRound(body));
+        }
+        async function sendRound(body) {
+            for (let i = 0; i < 60; i++) {
+                try {
+                    const j = await api('/vs/round', body);
+                    if (j.standings) { standings = j.standings; if (ui === 'results') renderResults(); }
+                    return;
+                } catch (e) {
+                    if (e.status && e.status !== 429 && e.status < 500) return; /* the server refused it for good (match over, ...) */
+                    await sleep(1500);
+                }
+            }
+        }
+
+        /* ---------- controls ---------- */
+        $('undo').onclick = () => {
+            if (lockedRound || !hist.length || (hardcore() && undosUsed >= HC_UNDOS)) return;
+            const h = hist.pop(); undosUsed++; cur = h.prev; flipRev = true; render(); flipRev = false;
+        };
+        $('reset').onclick = () => { if (lockedRound || hardcore()) return; cur = Lv.start; hist = []; render(); };
+        $('skip').onclick = () => {
+            const b = $('skip'); if (lockedRound) return;
+            if (!b.classList.contains('arm')) { b.classList.add('arm'); b.textContent = 'sure?'; clearTimeout(b._t); b._t = setTimeout(() => { b.classList.remove('arm'); b.textContent = 'skip level'; }, 3000); return; }
+            roundDone('skipped');
+        };
+        /* touch screens: :active is unreliable, so mirror it with a class */
+        let pressedEl = null;
+        const unpress = () => { if (pressedEl) { pressedEl.classList.remove('pressed'); pressedEl = null; } };
+        document.addEventListener('pointerdown', e => {
+            const b = e.target.closest && e.target.closest('#ops button');
+            unpress(); if (b && !b.disabled) { b.classList.add('pressed'); pressedEl = b; }
+        }, true);
+        ['pointerup', 'pointercancel', 'dragend'].forEach(ev => document.addEventListener(ev, unpress, true));
+        let rsT = 0; addEventListener('resize', () => { clearTimeout(rsT); rsT = setTimeout(() => { if (ui === 'game' && Lv && !$('gboard').hidden) { nlView = null; nlPend = false; updateNs(); drawLine(); } }, 120); });
+
+        $('gleave').onclick = async () => {
+            if (!sess) return;
+            if (!(await ask('leave the match?', "you'll be taken out of the race and the room.", 'leave room'))) return;
+            try { await api('/vs/leave', { code: sess.code, token: sess.token }); } catch (e) { }
+            exitRoom();
+        };
+        const endMatchBtn = async () => {
+            if (!sess || !isHost()) return;
+            if (!(await ask('end the match?', "players who haven't finished yet will be marked as not finished.", 'end match'))) return;
+            try { await api('/vs/endmatch', { code: sess.code, token: sess.token }); }
+            catch (e) { showMsg(isNet(e) ? "couldn't reach the server" : e.message); }
+        };
+        $('gend').onclick = endMatchBtn; $('endm').onclick = endMatchBtn;
+        $('tolobby').onclick = () => { ui = 'room'; showUi(); };
+        $('lastres').onclick = () => { if (standings || match) { ui = 'results'; showUi(); } };
+        $('startbtn').onclick = async () => {
+            if (!isHost() || !sess || startingMatch || state.phase === 'playing') return;
+            const cfg = norm(state.settings), n = cfg.rounds;
+            startingMatch = { k: 0, n }; renderRoom();
+            try {
+                const levels = await makeLevels(cfg, n, k => { startingMatch.k = k; $('startbtn').textContent = 'making levels… ' + k + '/' + n; });
+                await api('/vs/start', { code: sess.code, token: sess.token, levels });
+            } catch (e) { showMsg(isNet(e) ? "couldn't reach the server" : e.message); }
+            startingMatch = null; if (state) renderRoom();
+        };
+
+        /* ---------- the race panel (how far everyone is) ---------- */
+        function renderRace() {
+            if (!match) return;
+            const show = !!match.cfg.showprog;
+            $('racebox').hidden = !show; $('racehide').hidden = show;
+            if (!show) return;
+            const rows = match.players.map(p => Object.assign({ p }, match.prog[p.id] || { done: 0, solved: 0, finished: false, left: false }));
+            rows.sort((a, b) => (b.finished - a.finished) || (b.done - a.done) || (a.p.name < b.p.name ? -1 : 1));
+            const list = $('racelist'); list.innerHTML = '';
+            rows.forEach(r => {
+                const row = document.createElement('div');
+                row.className = 'rrow' + (r.p.id === you ? ' me' : '') + (r.finished ? ' fin' : '') + (r.left && !r.finished ? ' left' : '');
+                const n = document.createElement('span'); n.className = 'rn'; n.textContent = r.p.name + (r.p.id === you ? ' (you)' : '');
+                const bar = document.createElement('span'); bar.className = 'rbar';
+                for (let i = 0; i < match.total; i++) { const s = document.createElement('i'); s.className = 'rseg' + (i < r.done ? ' on' : ''); bar.appendChild(s); }
+                const c = document.createElement('span'); c.className = 'rc'; c.textContent = r.finished ? 'done' : r.left ? 'left' : r.done + '/' + match.total;
+                row.append(n, bar, c); list.appendChild(row);
+            });
+        }
+
+        /* ---------- results ---------- */
+        function renderResults() {
+            const st = standings, list = $('reslist'); list.innerHTML = '';
+            $('endm').hidden = !st || st.final || !isHost();
+            if (!st) { $('resub').textContent = 'finishing up…'; $('reshint').textContent = ''; return; }
+            const rows = st.rows, total = st.total, waiting = rows.filter(r => r.status === 'playing').length, first = rows.find(r => r.status === 'finished');
+            $('resub').textContent = st.final
+                ? (first ? (first.id === you ? 'you win!' : first.name + ' wins!') : 'nobody finished the match')
+                : (waiting ? 'waiting for ' + waiting + ' more ' + (waiting === 1 ? 'player' : 'players') + '… places can still change' : 'wrapping up…');
+            $('reshint').textContent = st.final ? '' : 'you can go back to the lobby while you wait. these results will be here when you come back.';
+            rows.forEach((r, i) => {
+                const li = document.createElement('li');
+                li.className = (r.id === you ? 'me ' : '') + (r.status === 'finished' && i === 0 ? 'first ' : '') + (r.status === 'left' ? 'left' : '');
+                const rk = document.createElement('span'); rk.className = 'rk'; rk.textContent = r.status === 'finished' ? String(i + 1) : '–';
+                const mid = document.createElement('div'); mid.className = 'rm';
+                const nm = document.createElement('b'); nm.className = 'rnm'; nm.textContent = r.name + (r.id === you ? ' (you)' : '');
+                if (st.final && r.status === 'finished' && i === 0) { const w = document.createElement('i'); w.className = 'wintag'; w.textContent = 'winner'; nm.appendChild(w); }
+                const sm = document.createElement('small');
+                const tm = document.createElement('span'); tm.className = 'rt';
+                if (r.status === 'finished') {
+                    sm.textContent = r.solved + '/' + total + ' solved · ' + mv(r.moves) + (r.over > 0 ? ' · +' + r.over + ' over par' : '');
+                    tm.textContent = fmtT(r.time);
+                } else if (r.status === 'playing') {
+                    sm.textContent = r.done === null ? 'still playing' : 'on level ' + Math.min(r.done + 1, total) + ' of ' + total; tm.textContent = '…'; tm.classList.add('dim');
+                } else if (r.status === 'dnf') {
+                    sm.textContent = 'did not finish · ' + r.done + '/' + total + ' levels'; tm.textContent = 'dnf'; tm.classList.add('dim');
+                } else { sm.textContent = 'left the match'; tm.textContent = 'left'; tm.classList.add('dim'); }
+                mid.append(nm, sm); li.append(rk, mid, tm); list.appendChild(li);
+            });
+        }
+
+        /* which screen to show */
+        function showUi() {
+            view(ui);
+            if (ui === 'room') renderRoom(); else if (ui === 'game') { renderRace(); if (Lv && !$('gboard').hidden) render(); } else renderResults();
+        }
 
         /* ---------- start ---------- */
         (function init() {
