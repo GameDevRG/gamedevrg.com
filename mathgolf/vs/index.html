@@ -657,7 +657,8 @@
         }
 
         /* chat */
-        #chatlog {
+        #chatlog,
+        #teamlog {
             flex: 1 1 auto;
             overflow-y: auto;
             padding: 12px 18px;
@@ -666,7 +667,8 @@
             text-align: left
         }
 
-        #chatlog>:first-child {
+        #chatlog>:first-child,
+        #teamlog>:first-child {
             margin-top: 0
         }
 
@@ -1190,8 +1192,17 @@
             flex-direction: column
         }
 
-        #chatlog {
+        #chatlog,
+        #teamlog {
             min-height: 0
+        }
+
+        #chatlog[hidden],
+        #teamlog[hidden],
+        #chatbar[hidden],
+        #chatto[hidden],
+        #chatoff[hidden] {
+            display: none
         }
 
         #room,
@@ -2147,12 +2158,15 @@
             }
         }
         #spec{padding-bottom:30px}
-        #specgrid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:18px;align-items:start;margin-top:12px}
-        #speccol{display:flex;flex-direction:column;align-items:center;gap:10px}
-        #spcode{font-size:clamp(3rem,8vw,5.5rem);font-weight:800;color:var(--imag);line-height:1}
-        #spqr{width:min(240px,60%)}
+        #specgrid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:22px;align-items:start;margin-top:8px}
+        #speccol{display:flex;flex-direction:column;align-items:center;gap:12px;min-width:0}
+        #spcode{font-size:clamp(3.5rem,9vw,6rem);font-weight:800;color:var(--imag);line-height:1}
+        #spqrwrap{align-self:stretch;padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px}
+        #spqr{width:min(240px,100%)}
         #spqr svg{display:block;width:100%}
-        #speccol #chatbox{align-self:stretch;height:380px;border:2px solid var(--line);background:var(--cell)}
+        #specchat{align-self:stretch;margin:6px 0 0}
+        #speccell{height:360px}
+        #specboard{margin-top:0}
         #specboard .sphead{text-align:center;font-size:1.3rem}
         .tc.red,.sprow.red{color:var(--imag)}
         .tc.blue,.sprow.blue{color:#6fb1e8}
@@ -2160,18 +2174,49 @@
         .sbox{padding:12px;text-align:center}
         .sbox.red{background:var(--imag);color:var(--onimag)}
         .sbox.blue{background:#6fb1e8;color:#0b1020}
-        .sbox b{display:block;font-size:2.6rem}
-        .sprow{display:flex;justify-content:space-between;gap:8px;padding:12px 16px;border-top:2px solid var(--line);text-transform:none;text-align:left}
+        .sbox span{font-size:1.25rem;font-weight:700}
+        .sbox b{display:block;font-size:2.8rem;line-height:1.1}
+        .sprow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 22px;text-transform:none;text-align:left}
+        .spteams .sprow{border-top:2px solid var(--line)}
+        .spteams .sprow:first-child{border-top:0}
+        .sprow.red{flex-direction:row-reverse}
+        .sprow.th{font-weight:700;font-size:1.25rem;border-top:0}
+        .sprow.th.red{background:#33000f;justify-content:flex-start}
+        .sprow.th.blue{background:#00263f;justify-content:flex-start}
         .sprow.dim{opacity:.6}
-        .sprow.th{font-weight:700;font-size:1.15rem}
-        .spbig{text-align:center;padding:18px}
-        .spbig b{display:block;font-size:3rem}
-        .splog{padding:14px 16px;text-align:left;text-transform:none;line-height:1.35}
-        .spfoot{display:flex;justify-content:space-between;gap:12px;align-items:flex-end}
-        .spfoot .tools{flex-direction:column;margin:0}
-        #chatto{align-self:flex-end;margin:6px 8px 0;padding:4px 10px;font:inherit;font-size:.8rem;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
-        .msg.tred .bub{background:var(--imag);color:var(--onimag)}
-        .msg.tblue .bub{background:#6fb1e8;color:#0b1020}
+        .sv small{font-size:.8rem;color:var(--soft);margin:0 5px}
+        .sv b{font-size:1.7rem}
+        .rk{color:var(--soft);font-weight:700}
+        .rk1{color:var(--imag)}
+        .rk2{color:#6fb1e8}
+        .spbig{text-align:center;padding:16px 18px}
+        .spbig b{display:block;font-size:3.4rem;line-height:1.1}
+        .flip{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:6px}
+        .fd{position:relative;display:grid;place-items:center;width:52px;height:70px;font-size:3rem;font-weight:800;color:var(--imag);background:var(--bg);border:2px solid var(--line)}
+        .fd:after{content:'';position:absolute;left:0;right:0;top:50%;border-top:2px solid var(--line)}
+        .fc{font-size:3rem;font-weight:800;color:var(--imag)}
+        .splog{padding:14px 22px;text-align:left;text-transform:none;line-height:1.4}
+        .spfoot{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;padding-right:16px}
+        .spfoot .tools{flex-direction:column;margin:12px 0}
+        #nameerr{min-height:1.3em;margin:6px 0;color:var(--imag);font-size:.85rem;text-transform:none}
+        #newname{width:100%;box-sizing:border-box;padding:10px 12px;font:inherit}
+        #mplist{list-style:none;margin:0 0 12px;padding:0;max-height:50vh;overflow:auto}
+        #mplist li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 4px;border-bottom:2px solid var(--line);text-transform:none}
+        .msg .bub{position:relative}
+        .bub.tail:after{content:'';position:absolute;bottom:0;left:-9px;width:9px;height:9px;background:inherit;clip-path:polygon(100% 0,100% 100%,0 100%)}
+        .msg.me .bub.tail:after,.msg.sred .bub.tail:after{left:auto;right:-9px;clip-path:polygon(0 0,0 100%,100% 100%)}
+        #chatbar{display:flex;justify-content:space-between;gap:8px;padding:6px 8px}
+        #chatto,#chatoff{position:relative;padding:4px 10px;font:inherit;font-size:.8rem;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+        #chatto{margin-left:auto}
+        #chatto.dot:after{content:'';position:absolute;top:-6px;right:-6px;width:10px;height:10px;background:var(--imag)}
+        .msg.sred{align-items:flex-end}
+        .msg.sblue{align-items:flex-start}
+        .msg.sred .bub{background:var(--imag);color:var(--onimag)}
+        .msg.sblue .bub{background:#6fb1e8;color:#0b1020}
+        .msg.sred .nm,.msg.sblue .nm{color:var(--soft)}
+        .msg.sred .nm{margin:0 2px 3px 0}
+        .msg.mine.sred .nm{color:var(--imag)}
+        .msg.mine.sblue .nm{color:#6fb1e8}
         .klink.tm.red{color:var(--imag)}
         .klink.tm.blue{color:#6fb1e8}
         @media(max-width:760px){#specgrid{grid-template-columns:1fr}}
@@ -2235,7 +2280,7 @@
             <div id="rlinkline">or share this link: <span id="rlink"></span></div>
             <div class="tools"><button class="btn" id="copycode">copy code</button><button class="btn"
                     id="copylink">copy link</button></div>
-            <p id="playas">playing as: <span id="me"></span></p>
+            <p id="playas">playing as: <span id="me"></span> <button id="rename" class="klink" type="button" hidden>change name</button></p>
             <p id="conn" class="connmsg" role="status" hidden>connection lost. trying to reconnect…</p>
         </header>
 
@@ -2249,7 +2294,7 @@
                     <ul id="mlist"></ul>
                 </div>
                 <div class="cell col" id="chatcol">
-                    <div class="cellh">chat</div>
+                    <div class="cellh chatname">chat</div>
                 </div>
             </div>
 
@@ -2267,6 +2312,10 @@
                 <div class="srow" id="row_hostplays">
                     <div><b>host plays</b><span class="d">turn off to only watch: you get a live scoreboard screen to show everyone</span></div>
                     <button type="button" class="sw" role="switch" data-sw="hostplays" aria-label="host plays" aria-checked="true"></button>
+                </div>
+                <div class="srow" id="row_profanity">
+                    <div><b>profanity filter</b><span class="d">hides swear words in chat and blocks them in names</span></div>
+                    <button type="button" class="sw" role="switch" data-sw="profanity" aria-label="profanity filter" aria-checked="true"></button>
                 </div>
                 <div class="srow" id="row_teams">
                     <div><b>teams</b><span class="d">points mode only: red vs blue. a team's score is its players' points. you can move players between teams here in the lobby</span></div>
@@ -2430,8 +2479,9 @@
         <header><h1><span class="vs">versus</span> mode</h1></header>
         <div id="specgrid">
             <div id="speccol">
-                <div class="lbl">room code</div><div id="spcode"></div><div id="spqr"></div><button id="spqrstyle" class="klink" type="button"></button>
-                <div class="cellh" style="align-self:stretch">chat</div>
+                <div class="lbl">room code</div><div id="spcode"></div>
+                <div class="cell" id="spqrwrap"><div id="spqr"></div><button id="spqrstyle" class="klink" type="button"></button></div>
+                <div class="board" id="specchat"><div class="cell col" id="speccell"><div class="cellh chatname">chat</div></div></div>
             </div>
             <div class="board" id="specboard"></div>
         </div>
@@ -2446,12 +2496,13 @@
         <button id="chattoast" type="button" hidden aria-live="polite"><b id="toastname"></b><span
                 id="toasttext"></span></button>
         <div id="chatpanel" role="dialog" aria-label="chat" hidden>
-            <div class="chath"><b>chat</b><button id="chatclose" type="button" aria-label="hide chat">×</button></div>
+            <div class="chath"><b class="chatname">chat</b><button id="chatclose" type="button" aria-label="hide chat">×</button></div>
             <div id="chatbox">
-            <button id="chatto" type="button" hidden></button>
+            <div id="chatbar" hidden><button id="chatoff" type="button" hidden></button><button id="chatto" type="button" hidden></button></div>
             <div id="chatlog" role="log" aria-live="polite" aria-label="chat messages">
                 <div id="chatempty">say hi! messages show up here for everyone in the room.</div>
             </div>
+            <div id="teamlog" role="log" aria-live="polite" aria-label="team chat messages" hidden></div>
             <form id="chatform" autocomplete="off">
                 <input id="chatin" maxlength="300" placeholder="send a message..." aria-label="message">
                 <button id="chatsend" type="submit" aria-label="send message"><svg viewBox="0 0 24 24"
@@ -2463,6 +2514,17 @@
         </div>
     </div>
 
+    <dialog id="namedlg">
+        <h3 class="t">change your name</h3>
+        <input id="newname" maxlength="20" autocomplete="off" spellcheck="false" aria-label="new name">
+        <p id="nameerr" role="status"></p>
+        <div class="cdbtns"><button class="ghost" id="namecancel" type="button">cancel</button><button id="namesave" type="button">save</button></div>
+    </dialog>
+    <dialog id="mpdlg">
+        <h3 class="t">manage players</h3>
+        <ul id="mplist"></ul>
+        <div class="cdbtns"><button class="danger" id="mpend" type="button">end match</button><button id="mpx" type="button">close</button></div>
+    </dialog>
     <dialog id="qrdlg">
         <h3 class="t">scan to join</h3>
         <div id="qrbox"></div>
@@ -2534,10 +2596,10 @@
 
         /* ---------- state ---------- */
         let sess = null, you = '', state = null, es = null, joined = false, chatSeen = 0, lastFrom = null, sendQ = Promise.resolve();
-        let chatTeam = false, curView = '', chatOpen = false, unread = 0, chatReady = false, toastT = 0; const baseTitle = document.title;
+        let otherUnread = false, chatTeam = false, curView = '', chatOpen = false, unread = 0, chatReady = false, toastT = 0; const baseTitle = document.title;
         let leaving = false; addEventListener('beforeunload', () => { leaving = true; }); addEventListener('pagehide', () => { leaving = true; }); addEventListener('pageshow', () => { leaving = false; });
         const isHost = () => !!state && state.hostId === you;
-        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, hardcore: false, timer: 0, showprog: true, overpar: -1, mode: 'race', endless: false, totaltime: 180, hostplays: true, teams: false };
+        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, hardcore: false, timer: 0, showprog: true, overpar: -1, mode: 'race', endless: false, totaltime: 180, hostplays: true, teams: false, profanity: true };
 
         function view(v) {
             $('loading').hidden = v !== 'loading'; $('landing').hidden = v !== 'landing'; $('room').hidden = v !== 'room';
@@ -2547,7 +2609,7 @@
             const lobby = v === 'room' || v === 'spec';
             $('chatwidget').hidden = !inRoom || lobby;
             /* one chat: in the lobby it sits in the panel, in a match it lives in the pop-up */
-            const slot = v === 'spec' ? $('speccol') : lobby ? $('chatcol') : $('chatpanel');
+            const slot = v === 'spec' ? $('speccell') : lobby ? $('chatcol') : $('chatpanel');
             if ($('chatbox').parentNode !== slot) slot.appendChild($('chatbox'));
             if (lobby) { chatOpen = true; $('chatpanel').hidden = true; unread = 0; hideToast(); updateBadge(); const lg = $('chatlog'); lg.scrollTop = lg.scrollHeight; }
             else if (chatOpen && (!inRoom || prevV === 'room' || prevV === 'spec')) setChat(false);
@@ -2615,6 +2677,12 @@
                 if (ui === 'game') renderRace(); else if (ui === 'spec') renderSpec();
             });
             es.addEventListener('round', e => onRound(JSON.parse(e.data)));
+            es.addEventListener('renamed', e => {
+                const d = JSON.parse(e.data); const p = match && match.players.find(x => x.id === d.id); if (p) p.name = d.name;
+                if (standings && standings.rows) standings.rows.forEach(r => { if (r.id === d.id) r.name = d.name; });
+                if (ui === 'spec') renderSpec(); else if (ui === 'game') renderRace(); else if (ui === 'results') renderResults();
+            });
+            es.addEventListener('teams', e => { const t = JSON.parse(e.data); if (!match) return; match.players.forEach(p => { p.team = t[p.id] || null; }); if (ui === 'spec') renderSpec(); else if (ui === 'game') renderRace(); });
             es.addEventListener('levels', e => onLevels(JSON.parse(e.data)));
             es.addEventListener('standings', e => {
                 standings = JSON.parse(e.data);
@@ -2638,7 +2706,7 @@
             closeStream(); clearMatch(); sess = null; state = null; joined = false; you = '';
             chatReady = false; unread = 0; hideToast(); updateBadge();
             store.del('vs_session', true); setUrl('');
-            $('chatlog').innerHTML = '<div id="chatempty">say hi! messages show up here for everyone in the room.</div>'; chatSeen = 0; lastFrom = null;
+            $('chatlog').innerHTML = '<div id="chatempty">say hi! messages show up here for everyone in the room.</div>'; $('teamlog').innerHTML = ''; otherUnread = false; lastBy.pub = lastBy.team = null; chatSeen = 0; lastFrom = null;
             $('mlist').innerHTML = ''; setConn(true);
             initLanding(); busy(false); lmsg(''); $('codein').value = ''; view('landing');
         }
@@ -2649,7 +2717,7 @@
             if (!state) return;
             const host = isHost(), s = state.settings, mem = state.members, h = mem.find(m => m.id === state.hostId), me = mem.find(m => m.id === you);
             $('rcode').textContent = state.code; $('rlink').textContent = shownLink(state.code);
-            $('me').textContent = me ? me.name : ''; $('hostname').textContent = h ? h.name : ''; $('hostyou').textContent = host ? ' (you!)' : '';
+            $('me').textContent = me ? me.name : ''; $('rename').hidden = !(me && !me.account); $('hostname').textContent = h ? h.name : ''; $('hostyou').textContent = host ? ' (you!)' : '';
             $('mcount').textContent = '(' + mem.length + '/' + s.max + ')';
             const ul = $('mlist'), prev = new Set([...ul.children].map(li => li.dataset.id));
             ul.innerHTML = '';
@@ -2676,7 +2744,7 @@
             $('foothint').textContent = playing ? 'a match is running. the results will show up when everyone has finished.' : host ? "press start when everyone's here. " + what : 'the host starts the match. ' + what;
             $('lastrow').hidden = !standings; $('lastres').textContent = standings && standings.final ? 'see last results' : 'see results';
             $('gend').hidden = !host;
-            renderSettings(); updChatTo();
+            renderSettings(); updChatTo(); if ($('mpdlg').open) renderManage();
         }
         function kickBtn(m) {
             const b = document.createElement('button'); b.type = 'button'; b.className = 'klink'; b.textContent = 'kick'; b.setAttribute('aria-label', 'kick ' + m.name);
@@ -2719,20 +2787,24 @@
         document.querySelectorAll('[data-sw]').forEach(b => b.onclick = () => { const k = b.dataset.sw; patch({ [k]: !state.settings[k] }); });
 
         /* ---------- chat ---------- */
+        const lastBy = { pub: null, team: null }, lastBub = { pub: null, team: null };
         function addChat(m) {
             if (m.id <= chatSeen) return; chatSeen = m.id;
-            const log = $('chatlog'), near = log.scrollHeight - log.scrollTop - log.clientHeight < 90, mine = !m.sys && m.from === you;
-            const em = $('chatempty'); if (em) em.remove();
+            const ch = m.team ? 'team' : 'pub', log = $(ch === 'team' ? 'teamlog' : 'chatlog'), near = log.scrollHeight - log.scrollTop - log.clientHeight < 90, mine = !m.sys && m.from === you;
+            const em = $('chatempty'); if (em && ch === 'pub') em.remove();
             let el;
-            if (m.sys) { el = document.createElement('div'); el.className = 'sys'; el.textContent = m.text; lastFrom = null; }
+            if (m.sys) { el = document.createElement('div'); el.className = 'sys'; el.textContent = m.text; lastBy.pub = null; }
             else {
-                el = document.createElement('div'); el.className = 'msg' + (mine ? ' me' : '') + (m.team ? ' t' + m.team : '');
-                if (lastFrom !== m.from) { el.classList.add('first'); const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = m.name + (m.team ? ' (team)' : ''); el.appendChild(nm); }
+                const sided = ch === 'pub' && !!m.st;   /* public chat in a team room: red on one side, blue on the other */
+                el = document.createElement('div'); el.className = sided ? 'msg s' + m.st + (mine ? ' mine' : '') : 'msg' + (mine ? ' me' : '');
+                if (lastBy[ch] !== m.from) { el.classList.add('first'); const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = m.name; el.appendChild(nm); }
                 const b = document.createElement('div'); b.className = 'bub'; b.textContent = m.text; b.title = new Date(m.t).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); el.appendChild(b);
-                lastFrom = m.from;
+                if (lastBy[ch] === m.from && lastBub[ch]) lastBub[ch].classList.remove('tail');   /* only the bottom bubble of a stack gets the tail */
+                b.classList.add('tail'); lastBub[ch] = b; lastBy[ch] = m.from;
             }
             log.appendChild(el);
             if (near || mine) log.scrollTop = log.scrollHeight;
+            if (!m.sys && !mine && (ch === 'team') !== chatTeam) { otherUnread = true; updChatTo(); }
             /* a new message from someone else while the chat is hidden (or the tab is in the background) */
             if (!m.sys && !mine && chatReady && (!chatOpen || document.hidden)) {
                 unread++; updateBadge();
@@ -2740,7 +2812,7 @@
             }
         }
         function localLine(text) { /* a note only this person sees (failed sends and so on) */
-            const el = document.createElement('div'); el.className = 'sys err'; el.textContent = text; const log = $('chatlog'); log.appendChild(el); log.scrollTop = log.scrollHeight; lastFrom = null;
+            const el = document.createElement('div'); el.className = 'sys err'; el.textContent = text; const log = chatTeam ? $('teamlog') : $('chatlog'); log.appendChild(el); log.scrollTop = log.scrollHeight; lastBy.pub = lastBy.team = null;
         }
         $('chatform').onsubmit = async e => {
             e.preventDefault();
@@ -2752,10 +2824,20 @@
         };
 
         function updChatTo() {
-            const me = state && state.members.find(x => x.id === you), on = !!(me && me.team && state.settings.teams), b = $('chatto');
-            if (!on) chatTeam = false; b.hidden = !on; if (on) b.textContent = chatTeam ? 'sending to: team ' + me.team : 'sending to: everyone';
+            if (!state) return;
+            const me = state.members.find(x => x.id === you), tms = !!state.settings.teams, tm = !!(me && me.team && tms), host = isHost(), off = state.chat === false;
+            if (!tm && chatTeam) chatTeam = false;
+            const to = $('chatto'), co = $('chatoff');
+            to.hidden = !tm; co.hidden = !host; $('chatbar').hidden = !(tm || host);
+            to.textContent = chatTeam ? 'switch to public chat' : 'switch to team chat'; to.classList.toggle('dot', otherUnread && tm);
+            co.textContent = off ? 'turn chat on' : 'turn chat off';
+            $('chatlog').hidden = chatTeam; $('teamlog').hidden = !chatTeam;
+            document.querySelectorAll('.chatname').forEach(e => { e.textContent = tms ? (chatTeam ? 'team chat' : 'public chat') : 'chat'; });
+            const blocked = off && !host; $('chatin').disabled = blocked; $('chatsend').disabled = blocked;
+            $('chatin').placeholder = blocked ? 'chat is turned off by the host' : chatTeam ? 'message your team...' : 'send a message...';
         }
-        $('chatto').onclick = () => { chatTeam = !chatTeam; updChatTo(); $('chatin').focus(); };
+        $('chatto').onclick = () => { chatTeam = !chatTeam; otherUnread = false; updChatTo(); const lg = $(chatTeam ? 'teamlog' : 'chatlog'); lg.scrollTop = lg.scrollHeight; $('chatin').focus(); };
+        $('chatoff').onclick = () => api('/vs/chatoff', { code: sess.code, token: sess.token, on: state.chat === false }).catch(() => { });
 
         /* ---------- chat pop-up and new-message notification ---------- */
         function updateBadge() {
@@ -3150,7 +3232,7 @@
         function startMatch(p) {
             stopGameTimers();
             const cfg = p.settings, pts = cfg.mode === 'points'; MODE = cfg.numbers; ROOTS = !!cfg.roots;
-            match = { id: p.id, cfg, mode: cfg.mode, levels: p.levels.slice(), total: cfg.endless ? Infinity : p.levels.length, players: p.players.map(x => ({ id: x.id, name: x.name })), prog: {}, scores: {}, round: 0, pend: null, waitIdx: null, skipN: 0, skipOf: 0, endAt: 0 };
+            match = { id: p.id, cfg, mode: cfg.mode, levels: p.levels.slice(), total: cfg.endless ? Infinity : p.levels.length, players: p.players.map(x => ({ id: x.id, name: x.name, team: x.team || null })), prog: {}, scores: {}, round: 0, pend: null, waitIdx: null, skipN: 0, skipOf: 0, endAt: 0 };
             p.players.forEach(x => { match.prog[x.id] = { done: x.done || 0, solved: x.solved || 0, finished: !!x.finished, left: !!x.left }; });
             if (p.mine && !pts) match.prog[you] = { done: p.mine.done, solved: p.mine.solved, finished: p.mine.done >= match.total, left: false };
             standings = null;
@@ -3321,30 +3403,55 @@
             if (!match || ui !== 'spec') return;
             const b = $('specboard'); b.innerHTML = ''; const pts = match.mode === 'points', teams = pts && match.cfg.teams, now = Date.now(), pl = match.players, sc = id => match.scores[id] || 0;
             const cell = (...k) => { const d = mkEl('div', 'cell'); k.forEach(x => d.appendChild(x)); b.appendChild(d); return d; };
-            const prow = (cls, name, val) => { const r = mkEl('div', 'sprow ' + cls); r.append(mkEl('span', '', name), mkEl('b', '', val)); return r; };
+            const val = (lab, v, first) => { const s = mkEl('span', 'sv'), l = mkEl('small', '', lab), n = mkEl('b', '', v); if (first) s.append(l, n); else s.append(n, l); return s; };
+            const nm = (rk, name) => { const s = mkEl('span', 'nm'); if (rk) s.append(mkEl('span', 'rk rk' + rk, '#' + rk), ' '); s.append(name); return s; };
+            const prow = (cls, left, lab, v) => { const r = mkEl('div', 'sprow ' + cls); r.append(left, val(lab, v, true)); return r; };
+            const flip = str => { const f = mkEl('div', 'flip'); [...str].forEach(c => f.appendChild(mkEl('span', c === ':' ? 'fc' : 'fd', c))); return f; };
             if (teams) {
                 const T = { red: 0, blue: 0 }; pl.forEach(p => { if (p.team) T[p.team] += sc(p.id); }); const tot = T.red + T.blue, h = mkEl('div', 'cellh sphead');
                 if (T.red === T.blue) h.textContent = 'teams are tied'; else { const w = T.red > T.blue ? 'red' : 'blue'; h.append(mkEl('span', 'tc ' + w, w + ' team'), ' is winning!'); }
                 cell(h);
                 const sb = mkEl('div', 'spscore'); ['red', 'blue'].forEach(t => { const x = mkEl('div', 'sbox ' + t); x.append(mkEl('span', '', 'team ' + t), mkEl('b', '', T[t]), mkEl('small', '', (tot ? Math.round(T[t] / tot * 100) : 0) + '%')); sb.appendChild(x); }); cell(sb);
-                const tl = mkEl('div', 'spteams'); ['red', 'blue'].forEach(t => { const col = mkEl('div'); col.appendChild(prow(t + ' th', 'team ' + t, T[t]));
-                    pl.filter(p => p.team === t).sort((x, y) => sc(y.id) - sc(x.id)).forEach(p => col.appendChild(prow(t + (p.left ? ' dim' : ''), p.name + (p.left ? ' (left)' : ''), sc(p.id) + ' pts'))); tl.appendChild(col); }); cell(tl);
+                cell(mkEl('div', 'sphead', 'teams'));
+                const tl = mkEl('div', 'spteams'); ['red', 'blue'].forEach(t => { const col = mkEl('div'); const th = mkEl('div', 'sprow th ' + t, 'team ' + t); if (t === 'red') th.style.justifyContent = 'flex-end'; col.appendChild(th);
+                    pl.filter(p => p.team === t).sort((x, y) => sc(y.id) - sc(x.id)).forEach(p => { const r = mkEl('div', 'sprow ' + t + (p.left ? ' dim' : '')); r.append(nm(0, p.name + (p.left ? ' (left)' : '')), val('pts', sc(p.id), t === 'blue')); col.appendChild(r); }); tl.appendChild(col); }); cell(tl);
             } else if (pts) {
-                cell(mkEl('div', 'sphead', 'live scoreboard'));
-                pl.slice().sort((x, y) => sc(y.id) - sc(x.id)).forEach((p, i) => cell(prow(p.left ? 'dim' : '', '#' + (i + 1) + ' ' + p.name + (p.left ? ' (left)' : ''), sc(p.id) + ' pts')));
+                cell(mkEl('div', 'cellh sphead', 'live scoreboard'));
+                pl.slice().sort((x, y) => sc(y.id) - sc(x.id)).forEach((p, i) => cell(prow(p.left ? 'dim' : '', nm(i + 1, p.name + (p.left ? ' (left)' : '')), 'pts', sc(p.id))));
             } else {
-                cell(mkEl('div', 'sphead', 'live scoreboard'));
+                cell(mkEl('div', 'cellh sphead', 'live scoreboard'));
                 const rows = pl.map(p => Object.assign({ p }, match.prog[p.id] || { done: 0, finished: false, left: false })); rows.sort((x, y) => (y.finished - x.finished) || (y.done - x.done));
-                rows.forEach((r, i) => cell(prow(r.left && !r.finished ? 'dim' : '', '#' + (i + 1) + ' ' + r.p.name, r.finished ? 'done' : r.left ? 'left' : 'level ' + Math.min(r.done + 1, match.total) + '/' + match.total)));
+                rows.forEach((r, i) => cell(prow(r.left && !r.finished ? 'dim' : '', nm(i + 1, r.p.name), r.finished ? '' : r.left ? '' : 'level', r.finished ? 'done' : r.left ? 'left' : Math.min(r.done + 1, match.total) + '/' + match.total)));
             }
-            state.members.filter(m => m.spec).forEach(m => cell(prow('dim', m.name + ' (spectating)' + (m.id === state.hostId ? ' (host)' : ''), '')));
-            if (pts) { const big = mkEl('div', 'spbig'); const e = match.cfg.endless;
-                big.append(mkEl('span', '', now < localGo ? 'starting…' : e ? 'time left' : 'level'), mkEl('b', '', now < localGo ? '' : e ? fmtCd(Math.max(0, match.endAt - now)) : Math.min(match.round + 1, match.total) + '/' + match.total)); cell(big); }
+            state.members.filter(m => m.spec).forEach(m => { const r = mkEl('div', 'sprow dim'); r.append(nm(0, m.name + ' (spectating)' + (m.id === state.hostId ? ' (host)' : ''))); cell(r); });
+            if (pts) { const big = mkEl('div', 'spbig'), e = match.cfg.endless, pre = now < localGo;
+                big.append(mkEl('span', '', pre ? 'starting…' : e ? 'time left' : 'level'));
+                if (!pre) big.appendChild(e ? flip(fmtCd(Math.max(0, match.endAt - now))) : mkEl('b', '', Math.min(match.round + 1, match.total) + '/' + match.total)); cell(big); }
             const f = mkEl('div', 'spfoot'), lg = mkEl('div', 'splog'); (match.log || []).slice(-5).forEach(x => { const l = mkEl('div'); l.append(mkEl('span', x.team ? 'tc ' + x.team : '', x.t)); lg.appendChild(l); });
-            const tools = mkEl('div', 'tools'), em = mkEl('button', 'btn', 'end match'), dr = mkEl('button', 'btn danger', 'disband room');
-            em.onclick = () => api('/vs/endmatch', { code: sess.code, token: sess.token }).catch(() => { }); dr.onclick = () => $('exitbtn').click();
-            tools.append(em, dr); f.append(lg, tools); cell(f);
+            const tools = mkEl('div', 'tools'), mp = mkEl('button', 'btn', 'manage players'), dr = mkEl('button', 'btn danger', 'disband room');
+            mp.onclick = () => { renderManage(); $('mpdlg').showModal(); }; dr.onclick = () => $('exitbtn').click();
+            tools.append(mp, dr); f.append(lg, tools); cell(f);
         }
+        function renderManage() {
+            const ul = $('mplist'); ul.innerHTML = '';
+            state.members.filter(m => m.id !== you).forEach(m => {
+                const li = mkEl('li'); li.append(mkEl('span', 'mn', m.name));
+                const r = mkEl('span'); if (state.settings.teams && m.team) { const tb = mkEl('button', 'klink tm ' + m.team, m.team + ' team'); tb.type = 'button'; tb.title = 'move to the other team'; tb.onclick = () => api('/vs/team', { code: sess.code, token: sess.token, target: m.id, team: m.team === 'red' ? 'blue' : 'red' }).catch(() => { }); r.appendChild(tb); }
+                r.appendChild(kickBtn(m)); li.appendChild(r); ul.appendChild(li);
+            });
+            if (!ul.children.length) ul.appendChild(mkEl('li', '', 'nobody else is here'));
+        }
+        $('mpx').onclick = () => $('mpdlg').close();
+        /* guests can rename themselves in the room */
+        $('rename').onclick = () => { const me = state && state.members.find(x => x.id === you); $('newname').value = me ? me.name : ''; $('nameerr').textContent = ''; $('namedlg').showModal(); $('newname').select(); };
+        $('namecancel').onclick = () => $('namedlg').close();
+        $('namesave').onclick = async () => {
+            const name = $('newname').value.trim(); if (!name) { $('nameerr').textContent = 'pick a name first'; return; }
+            try { await api('/vs/rename', { code: sess.code, token: sess.token, name }); store.set('vs_nick', name); $('namedlg').close(); }
+            catch (e) { $('nameerr').textContent = isNet(e) ? "couldn't reach the server" : e.message; }
+        };
+        $('newname').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('namesave').click(); } };
+        $('mpend').onclick = () => { $('mpdlg').close(); api('/vs/endmatch', { code: sess.code, token: sess.token }).catch(() => { }); };
         function finishLocal() { stopGameTimers(); ui = 'results'; showUi(); }
 
         /* reports go out one at a time, in order, and are retried if the connection drops */
@@ -3495,6 +3602,7 @@
         function showUi() {
             view(ui);
             if (ui === 'room') renderRoom(); else if (ui === 'game') { renderRace(); if (Lv && !$('gboard').hidden) render(); } else if (ui === 'spec') { specInit(); renderSpec(); } else renderResults();
+            updChatTo();
         }
 
         /* ---------- start ---------- */
