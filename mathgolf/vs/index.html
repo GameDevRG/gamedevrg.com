@@ -791,6 +791,72 @@
         }
 
         #hostnote {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0 4px;
+            padding: 10px 12px;
+            background: var(--cell);
+            border: 2px solid var(--line);
+            border-left: 5px solid var(--imag);
+            color: var(--ink);
+            font-size: .9rem
+        }
+
+        #hostnote[hidden] {
+            display: none
+        }
+
+        #hostnote svg {
+            flex: none;
+            width: 18px;
+            height: 18px;
+            color: var(--imag)
+        }
+
+        #hostnote b {
+            color: var(--imag);
+            text-transform: none
+        }
+
+        #hostnote.nudge {
+            animation: hostNudge .45s ease
+        }
+
+        @keyframes hostNudge {
+            20% {
+                transform: translateX(-6px);
+                background: var(--bub)
+            }
+
+            40% {
+                transform: translateX(6px)
+            }
+
+            60% {
+                transform: translateX(-4px)
+            }
+
+            80% {
+                transform: translateX(3px);
+                background: var(--bub)
+            }
+        }
+
+        #setbox.viewonly .srow {
+            cursor: not-allowed
+        }
+
+        #setbox.viewonly button:disabled {
+            pointer-events: none
+        }
+
+        #setbox.viewonly .srow:not(.dim) .sw:disabled,
+        #setbox.viewonly .step button:disabled {
+            opacity: .7
+        }
+
+        #hostnote_old {
             margin: 0 0 4px;
             text-align: center;
             font-size: .85rem;
@@ -2175,6 +2241,55 @@
                 padding: 0 14px
             }
         }
+        #specboard.withlevel .spscroll{min-height:min(16vh,7.5rem)}
+        .splevel{padding:1.2vh 1.2vw;text-align:center}
+        .splevel .lh{color:var(--soft);letter-spacing:.2em;text-transform:uppercase;font-size:clamp(.7rem,1.6vh,1rem)}
+        .splevel .lrow{display:flex;align-items:center;justify-content:center;gap:2vw;margin:.6vh 0}
+        .splevel .lrow small{display:block;color:var(--soft);font-size:clamp(.7rem,1.5vh,.95rem);letter-spacing:.1em}
+        .splevel .lrow b{display:inline-block;min-width:2.6ch;padding:.1em .4em;background:var(--cell);border:2px solid var(--line);font-size:clamp(1.8rem,7vh,4.5rem);line-height:1.15;font-variant-numeric:tabular-nums}
+        .splevel .lrow .g b{color:var(--imag)}
+        .splevel .lrow>span{font-size:clamp(1.2rem,4vh,2.4rem);color:var(--soft)}
+        .splevel .lpar{color:var(--soft);font-size:clamp(.85rem,2vh,1.3rem);margin-bottom:.8vh}
+        .splevel .lops{display:flex;flex-wrap:wrap;justify-content:center;gap:.8vh .6vw}
+        .splevel .lops span{padding:.5vh .9vw;background:var(--bub);border:2px solid var(--line);font-size:clamp(.9rem,2.4vh,1.6rem);font-weight:700}
+        .splevel .lwait{color:var(--soft);padding:1vh 0;font-size:clamp(.95rem,2.4vh,1.5rem)}
+        #pauselay{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:20px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+        #pauselay[hidden]{display:none}
+        .pausebox{max-width:420px;width:100%;text-align:center;background:var(--card);border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:26px 22px}
+        .pausebox h2{margin:12px 0 6px;font-size:2rem}
+        .pausebox p{margin:0 0 16px;color:var(--soft);line-height:1.45}
+        .pausebars{display:flex;justify-content:center;gap:12px}
+        .pausebars i{display:block;width:16px;height:48px;background:var(--imag)}
+        #pauseresume[hidden]{display:none}
+        #gpause[hidden]{display:none}
+        #howto{position:fixed;inset:0;z-index:60;overflow:auto;background:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:28px 28px;padding:max(16px,env(safe-area-inset-top,0px)) 16px max(16px,env(safe-area-inset-bottom,0px));display:flex;align-items:flex-start;justify-content:center}
+        #howto[hidden]{display:none}
+        .howbox{width:100%;max-width:680px;margin:auto;background:var(--card);border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:22px 22px 18px}
+        .howbox h2{margin:0;text-align:center;font-size:2.2rem;line-height:1.1}
+        .howbox h2 .vs{color:var(--imag)}
+        .howmode{text-align:center;color:var(--soft);margin:6px 0 14px;text-transform:uppercase;letter-spacing:.18em;font-size:.8rem}
+        .howdemo{display:flex;align-items:center;justify-content:center;gap:18px;margin:6px 0 16px}
+        .howdemo>div{text-align:center}
+        .howdemo small{display:block;color:var(--soft);font-size:.75rem;letter-spacing:.1em}
+        .howdemo b{display:inline-block;min-width:3.2ch;padding:4px 12px;background:var(--cell);border:2px solid var(--line);font-size:2rem;line-height:1.2}
+        .howdemo .g b{color:var(--imag)}
+        .howdemo span{font-size:1.6rem;color:var(--soft)}
+        #howsteps{text-align:left;list-style:none;margin:0;padding:0;counter-reset:hs}
+        #howsteps li{counter-increment:hs;display:grid;grid-template-columns:2rem 1fr;gap:12px;padding:12px 0;border-top:2px solid var(--line)}
+        #howsteps li:before{content:counter(hs);display:grid;place-items:center;width:2rem;height:2rem;background:var(--imag);color:var(--onimag);font-weight:800}
+        #howsteps b{display:block;font-size:1.05rem}
+        #howsteps span{display:block;color:var(--soft);font-size:.92rem;line-height:1.45;margin-top:2px}
+        #howmsg{min-height:1.2em;text-align:center;color:var(--imag);margin:6px 0 0;font-size:.9rem}
+        .howfoot{display:flex;flex-direction:column;align-items:stretch;gap:10px;margin-top:10px;border-top:2px solid var(--line);padding-top:14px}
+        #howwait{margin:0;text-align:center;color:var(--soft)}
+        #howwait:after{content:'';display:inline-block;width:.9em;text-align:left;animation:howDots 1.4s steps(4,end) infinite}
+        @keyframes howDots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+        #howgo[hidden],#howback[hidden],#howwait[hidden]{display:none}
+        @media(max-width:520px){.howbox{padding:16px 14px}.howbox h2{font-size:1.8rem}}
+        #invite .mopt{margin-top:16px}
+        #invite #imsg{margin-top:12px}
+        #invite .hint{text-align:center;margin-top:14px}
+        #iother{color:#6fb1e8;text-decoration:underline}
         #specfab{display:none}
         @media(max-width:760px){
             #specfab{display:flex;position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:30;align-items:center;gap:8px;min-height:48px;padding:0 16px;font:700 1.05rem inherit;font-family:inherit;color:var(--onimag);background:var(--imag);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);cursor:pointer;animation:fabPop .25s cubic-bezier(.2,1.4,.4,1) both}
@@ -2314,6 +2429,53 @@
             .spfoot .tools{flex-direction:row;margin:0;padding:0 10px 10px;gap:8px}
             .spfoot .tools .btn{flex:1;font-size:.95rem;padding:12px 6px}
         }
+    
+        /* ---- the grid ---- */
+        #gridbox{margin:0 0 16px;padding:14px;text-align:left}
+        .gridw{display:grid;grid-template-columns:repeat(var(--gw,3),minmax(0,1fr));gap:8px;margin:10px 0}
+        .gcell{position:relative;aspect-ratio:1;min-width:0;display:flex;align-items:center;justify-content:center;padding:0;border:2px solid var(--line);background:var(--cell);color:var(--soft);font:inherit;text-transform:none;overflow:hidden;cursor:pointer;transition:background .35s,box-shadow .12s,transform .12s}
+        .gcell .gn{font-size:clamp(1.3rem,5.6vw,2.3rem);font-weight:800;line-height:1}
+        .gcell .gm{position:absolute;right:6px;bottom:4px;font-size:.78rem;font-weight:800;line-height:1}
+        .gcell .gws{position:absolute;left:5px;top:5px;right:5px;display:flex;flex-wrap:wrap;gap:3px}
+        .gcell .gsq{width:.7rem;height:.7rem;flex:0 0 auto}
+        .gcell:not(:disabled):hover{box-shadow:3px 3px 0 var(--ink);transform:translate(-1px,-1px)}
+        .gcell.mine{outline:3px solid var(--imag);outline-offset:2px}
+        .gcell.locked{color:#1b1b2f;border-color:transparent}
+        .gridw.teamgrid .gcell.locked{color:#fff}
+        div.gcell,.gcell.owned{cursor:default}
+        button.gcell:disabled{opacity:1}
+        button.gcell.locked:disabled{cursor:default}
+        .gridw.dense{gap:5px}
+        .gridw.dense .gn{font-size:clamp(1rem,3.6vw,1.6rem)}
+        .gridw.dense .gm{font-size:.6rem;right:3px;bottom:2px}
+        .gridw.dense .gsq{width:.5rem;height:.5rem}
+        #gridlegend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.82rem;color:var(--soft);text-transform:none}
+        #gridlegend span{display:inline-flex;align-items:center;gap:6px}
+        #gridmsg{min-height:1.2em;margin:8px 0 0;font-size:.9rem;color:var(--imag);text-transform:none}
+        .swatch{display:inline-block;width:.8em;height:.8em;border-radius:50%;border:2px solid var(--ink);vertical-align:-.05em;margin-right:.45em;flex:0 0 auto}
+        #gworkers{margin:0 0 12px;padding:8px 10px;font-size:.88rem;color:var(--soft);border:2px dashed var(--line);text-transform:none;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}
+        #gworkers .wchip{display:inline-flex;align-items:center;color:var(--ink);font-weight:700}
+        .pip.pb{border-color:#6fb1e8}.pip.pb.used{background:#6fb1e8}
+        .pip.pg{border-color:var(--soft);opacity:.7}.pip.pg.used{background:var(--soft)}
+        .resgrid{max-width:420px;margin:6px auto 14px}
+        #gtag{display:table;margin:12px auto 0;padding:2px 10px;border:2px solid;font-weight:800;font-size:.8rem;text-transform:uppercase;letter-spacing:.1em}
+        #gtag[hidden]{display:none}
+        .gridw.diffgrid .gcell{border-width:3px}
+        .gridw.diffgrid .gcell.d2{border-color:#46c96b}.gridw.diffgrid .gcell.d4{border-color:#f2c744}.gridw.diffgrid .gcell.d6{border-color:#e5484d}.gridw.diffgrid .gcell.d8{border-color:#4a9eff}
+        #teambar{display:grid;margin:0 0 14px;border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);transition:grid-template-columns .5s ease}
+        #teambar[hidden]{display:none}
+        #teambar>div{padding:8px 10px;text-align:center;line-height:1.15;min-width:0}
+        #teambar .red{background:var(--imag);color:var(--onimag)}
+        #teambar .blue{background:#6fb1e8;color:#0b1020}
+        #teambar b{display:block;font-size:1.5rem}
+        #teambar span{font-size:.8rem;font-weight:700}
+        #teambar.mine-red .red,#teambar.mine-blue .blue{box-shadow:inset 0 -5px 0 rgba(0,0,0,.35)}
+        .spgridbox{padding:1vh 1.2vw}
+        .spgridbox .gridw{width:min(100%,calc(var(--gw) / var(--gh) * 30vh));margin:0 auto;gap:.8vh}
+        .spgridbox .gcell .gn{font-size:clamp(1rem,3.6vh,2.6rem)}
+        .spgridbox .gcell .gm{font-size:clamp(.7rem,1.9vh,1.3rem)}
+        .spgridbox .gcell .gsq{width:clamp(.5rem,1.6vh,1rem);height:clamp(.5rem,1.6vh,1rem)}
+        @media(max-width:760px){.spgridbox .gridw{width:100%}}
     </style>
     <script>try { var q = JSON.parse(localStorage.getItem('hs1') || '{}'); if (q.theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); if (q.anim === false || (q.anims && q.anims.ui === false)) document.documentElement.classList.add('noanim') } catch (e) { }</script>
 </head>
@@ -2362,7 +2524,31 @@
             </div>
             <p id="lmsg" role="status"></p>
         </div>
-        <div class="tools"><a class="btn" href="../">back to menu</a></div>
+        <div class="tools"><a class="btn" href="../">main menu</a></div>
+    </section>
+
+    <!-- opened from an invite link: just a name and a join button -->
+    <section id="invite" class="pg" hidden>
+        <header>
+            <h1><span class="vs">versus</span> mode</h1>
+            <p class="sub">you've been invited to room <b id="icode"></b></p>
+        </header>
+        <div class="stack">
+            <div class="board who">
+                <div id="iacct" hidden>
+                    <p>joining as: <b id="iaccname" style="text-transform:none"></b></p>
+                </div>
+                <div id="iguest" hidden>
+                    <div class="row"><input id="iname" maxlength="20" autocomplete="nickname" spellcheck="false"
+                            placeholder="type your name" aria-label="your name"></div>
+                    <p class="hint">or <a href="../../account/?from=vs">sign in to gamedevrg.com</a> to play as your account</p>
+                </div>
+            </div>
+            <button class="mopt" id="ijoin"><b>join room</b></button>
+            <p id="imsg" role="status"></p>
+            <p class="hint"><a href="#" id="iother">use a different room code</a></p>
+        </div>
+        <div class="tools"><a class="btn" href="../">main menu</a></div>
     </section>
 
     <!-- inside a room -->
@@ -2394,13 +2580,14 @@
 
             <div class="cell" id="setbox">
                 <h3>room settings</h3>
-                <p id="hostnote" hidden>only the host can change these</p>
+                <p id="hostnote" hidden role="note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z" fill="currentColor" /></svg><span>view only: only the host <b id="hostnotename"></b>can change these settings</span></p>
 
                 <div class="srow col">
                     <div><b>game mode</b><span class="d" id="modedesc"></span></div>
                     <div class="seg" role="radiogroup" aria-label="game mode"><button type="button" role="radio"
                             data-k="mode" data-v="race">race</button><button type="button" role="radio"
-                            data-k="mode" data-v="points">points</button></div>
+                            data-k="mode" data-v="points">points</button><button type="button" role="radio"
+                            data-k="mode" data-v="grid">the grid</button></div>
                 </div>
 
                 <div class="srow" id="row_hostplays">
@@ -2412,7 +2599,7 @@
                     <button type="button" class="sw" role="switch" data-sw="profanity" aria-label="profanity filter" aria-checked="true"></button>
                 </div>
                 <div class="srow" id="row_teams">
-                    <div><b>teams</b><span class="d">points mode only: red vs blue. a team's score is its players' points. you can move players between teams here in the lobby</span></div>
+                    <div><b>teams</b><span class="d">points and grid modes: red vs blue. a team's score is its players' points (or levels in the grid). you can move players between teams here in the lobby</span></div>
                     <button type="button" class="sw" role="switch" data-sw="teams" aria-label="teams" aria-checked="false"></button>
                 </div>
                 <div class="srow">
@@ -2428,13 +2615,54 @@
                             aria-label="fewer rounds">−</button><output id="v_rounds"></output><button type="button"
                             data-step="rounds" data-d="1" aria-label="more rounds">+</button></div>
                 </div>
-                <div class="srow col">
+                <div class="srow" id="row_gridw">
+                    <div><b>grid width</b><span class="d">the grid: how many columns of levels</span></div>
+                    <div class="step"><button type="button" data-step="gridw" data-d="-1" aria-label="narrower grid">−</button><output id="v_gridw"></output><button type="button" data-step="gridw" data-d="1" aria-label="wider grid">+</button></div>
+                </div>
+                <div class="srow" id="row_gridh">
+                    <div><b>grid height</b><span class="d">the grid: how many rows of levels</span></div>
+                    <div class="step"><button type="button" data-step="gridh" data-d="-1" aria-label="shorter grid">−</button><output id="v_gridh"></output><button type="button" data-step="gridh" data-d="1" aria-label="taller grid">+</button></div>
+                </div>
+                <div class="srow col" id="row_difficulty">
                     <div><b>difficulty</b><span class="d">how hard the levels are</span></div>
                     <div class="seg" role="radiogroup" aria-label="difficulty"><button type="button" role="radio"
                             data-k="difficulty" data-v="2">easy</button><button type="button" role="radio"
                             data-k="difficulty" data-v="4">medium</button><button type="button" role="radio"
                             data-k="difficulty" data-v="6">hard</button><button type="button" role="radio"
                             data-k="difficulty" data-v="8">challenge</button></div>
+                </div>
+                <div class="srow" id="row_randdiff">
+                    <div><b>random difficulties</b><span class="d">every level gets its own difficulty. in the grid, squares get an outline in that difficulty's colour: green easy, yellow medium, red hard, blue challenge</span></div>
+                    <button type="button" class="sw" role="switch" data-sw="randdiff" aria-label="random difficulties" aria-checked="false"></button>
+                </div>
+                <div class="srow col" id="row_favdiff">
+                    <div><b>favoured difficulty</b><span class="d">random difficulties only: pick one to see it more often, or leave it on truly random</span></div>
+                    <div class="seg" role="radiogroup" aria-label="favoured difficulty"><button type="button" role="radio"
+                            data-k="favdiff" data-v="0">truly random</button><button type="button" role="radio"
+                            data-k="favdiff" data-v="2">easy</button><button type="button" role="radio"
+                            data-k="favdiff" data-v="4">medium</button><button type="button" role="radio"
+                            data-k="favdiff" data-v="6">hard</button><button type="button" role="radio"
+                            data-k="favdiff" data-v="8">challenge</button></div>
+                </div>
+                <div class="srow" id="row_weighted">
+                    <div><b>weighted points</b><span class="d">points and grid modes: harder levels are worth more points. set the points below</span></div>
+                    <button type="button" class="sw" role="switch" data-sw="weighted" aria-label="weighted points" aria-checked="false"></button>
+                </div>
+                <div class="srow" id="row_pt2">
+                    <div><b>easy points</b><span class="d">weighted points: what a easy level is worth</span></div>
+                    <div class="step"><button type="button" data-step="pt2" data-d="-1" aria-label="fewer easy points">−</button><output id="v_pt2"></output><button type="button" data-step="pt2" data-d="1" aria-label="more easy points">+</button></div>
+                </div>
+                <div class="srow" id="row_pt4">
+                    <div><b>medium points</b><span class="d">weighted points: what a medium level is worth</span></div>
+                    <div class="step"><button type="button" data-step="pt4" data-d="-1" aria-label="fewer medium points">−</button><output id="v_pt4"></output><button type="button" data-step="pt4" data-d="1" aria-label="more medium points">+</button></div>
+                </div>
+                <div class="srow" id="row_pt6">
+                    <div><b>hard points</b><span class="d">weighted points: what a hard level is worth</span></div>
+                    <div class="step"><button type="button" data-step="pt6" data-d="-1" aria-label="fewer hard points">−</button><output id="v_pt6"></output><button type="button" data-step="pt6" data-d="1" aria-label="more hard points">+</button></div>
+                </div>
+                <div class="srow" id="row_pt8">
+                    <div><b>challenge points</b><span class="d">weighted points: what a challenge level is worth</span></div>
+                    <div class="step"><button type="button" data-step="pt8" data-d="-1" aria-label="fewer challenge points">−</button><output id="v_pt8"></output><button type="button" data-step="pt8" data-d="1" aria-label="more challenge points">+</button></div>
                 </div>
                 <div class="srow col">
                     <div><b>numbers</b><span class="d">use whole numbers, decimals or fractions</span></div>
@@ -2463,7 +2691,7 @@
                     <button type="button" class="sw" role="switch" data-sw="hardcore" aria-label="hardcore mode"
                         aria-checked="false"></button>
                 </div>
-                <div class="srow col">
+                <div class="srow col" id="row_timer">
                     <div><b>time limit</b><span class="d">how long each round can last</span></div>
                     <div class="seg" role="radiogroup" aria-label="time limit"><button type="button" role="radio"
                             data-k="timer" data-v="0">no limit</button><button type="button" role="radio"
@@ -2495,6 +2723,15 @@
                             data-k="totaltime" data-v="300">5 min</button><button type="button" role="radio"
                             data-k="totaltime" data-v="600">10 min</button></div>
                 </div>
+                <div class="srow col" id="row_gridtime">
+                    <div><b>grid time limit</b><span class="d">the grid only: how long the match lasts. with no limit it goes on until the host ends it</span></div>
+                    <div class="seg" role="radiogroup" aria-label="grid time limit"><button type="button" role="radio"
+                            data-k="gridtime" data-v="0">no limit</button><button type="button" role="radio"
+                            data-k="gridtime" data-v="180">3 min</button><button type="button" role="radio"
+                            data-k="gridtime" data-v="300">5 min</button><button type="button" role="radio"
+                            data-k="gridtime" data-v="600">10 min</button><button type="button" role="radio"
+                            data-k="gridtime" data-v="900">15 min</button></div>
+                </div>
                 <div class="srow" id="row_showprog">
                     <div><b>show everyone's progress</b><span class="d">race mode: players see how many levels everyone has finished. turn it off to race blind. (points mode always shows the scores)</span></div>
                     <button type="button" class="sw" role="switch" data-sw="showprog" aria-label="show everyone's progress"
@@ -2503,6 +2740,11 @@
                 <div class="srow" id="row_firstfinish">
                     <div><b>end when someone finishes</b><span class="d">race mode: the match ends as soon as the first player finishes every level, and they win. anyone still playing is marked as not finished</span></div>
                     <button type="button" class="sw" role="switch" data-sw="firstfinish" aria-label="end the match when the first player finishes"
+                        aria-checked="false"></button>
+                </div>
+                <div class="srow" id="row_howto">
+                    <div><b>how to play screen</b><span class="d">before the match starts, everyone sees a short how-to-play screen. only the host can continue</span></div>
+                    <button type="button" class="sw" role="switch" data-sw="howto" aria-label="show a how to play screen before the match"
                         aria-checked="false"></button>
                 </div>
             </div>
@@ -2525,12 +2767,20 @@
             <div class="gcell" id="grwrap" hidden><span class="gk">this level</span><b id="grclock">1:00</b></div>
         </div>
         <p class="connmsg" role="status" hidden>connection lost. trying to reconnect…</p>
+        <div id="teambar" hidden role="img"></div>
+        <section class="board" id="gridbox" hidden>
+            <div class="racehead" id="gridhead">the grid</div>
+            <div class="gridw" id="gridwrap"></div>
+            <div id="gridlegend"></div>
+            <p id="gridmsg" role="status"></p>
+        </section>
         <div class="board" id="racebox" hidden>
             <div class="racehead" id="racehead">race progress</div>
             <div id="racelist"></div>
         </div>
         <p id="racehide" hidden>progress is hidden in this room. nobody can see how far anyone else is!</p>
         <section class="board" id="gboard" hidden>
+            <div id="gworkers" hidden></div>
             <div class="row">
                 <div>
                     <div class="lbl">you have</div>
@@ -2546,14 +2796,15 @@
             </div>
             <div id="nlwrap"><svg id="nl" viewBox="0 0 640 200" role="img"
                     aria-label="number line showing your ball, your hits and the hole"></svg></div>
+            <div id="gtag" hidden></div>
             <div id="pips" aria-live="polite"></div>
             <div class="lbl" id="left"></div>
             <div id="trail"></div>
             <div id="ops"></div>
-            <div class="tools"><button id="undo">undo</button><button id="reset">restart level</button></div>
+            <div class="tools"><button id="undo">undo</button><button id="reset">restart level</button><button id="gback" hidden>back to grid</button></div>
             <div id="gmsg" role="status"></div>
         </section>
-        <div class="tools gfoot"><button class="btn" id="gleave">leave room</button><button class="btn danger" id="gend"
+        <div class="tools gfoot"><button class="btn" id="gleave">leave room</button><button class="btn" id="gpause" hidden>pause game</button><button class="btn danger" id="gend"
                 hidden>end match for everyone</button></div>
     </section>
     <div id="gcount" hidden aria-live="assertive"></div>
@@ -2566,6 +2817,7 @@
         </header>
         <p class="connmsg" role="status" hidden>connection lost. trying to reconnect…</p>
         <div class="board" id="resboard">
+            <div class="gridw resgrid" id="resgrid" hidden></div>
             <ol id="reslist"></ol>
         </div>
         <p id="reshint"></p>
@@ -2588,6 +2840,32 @@
 
     <!-- host screen on phones: shows up in the corner when the chat is scrolled off screen -->
     <button id="specfab" type="button" hidden aria-label="jump to chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h18v12H8l-5 4z" fill="currentColor" /></svg><span class="lbl">chat</span><span id="specbadge" hidden>0</span></button>
+
+    <!-- paused by the host -->
+    <div id="pauselay" hidden role="alertdialog" aria-modal="true" aria-labelledby="pausetitle">
+        <div class="pausebox">
+            <div class="pausebars" aria-hidden="true"><i></i><i></i></div>
+            <h2 id="pausetitle">game paused</h2>
+            <p id="pausetxt">the host paused the game. it'll carry on when they resume, and your clock stays put</p>
+            <button class="fbtn blue" id="pauseresume" type="button" hidden>resume game</button>
+        </div>
+    </div>
+
+    <!-- how to play: shown to everyone before a match; only the host can continue -->
+    <div id="howto" hidden role="dialog" aria-modal="true" aria-labelledby="howtitle">
+        <div class="howbox">
+            <h2 id="howtitle"><span class="vs">how</span> to play</h2>
+            <p class="howmode" id="howmode"></p>
+            <div class="howdemo" aria-hidden="true"><div><small>you have</small><b>11</b></div><span>⟶</span><div class="g"><small>goal</small><b>139</b></div></div>
+            <ol id="howsteps"></ol>
+            <p id="howmsg" role="status"></p>
+            <div class="howfoot">
+                <p id="howwait">waiting for the host to continue</p>
+                <button class="fbtn blue" id="howgo" type="button">continue</button>
+                <button class="btn" id="howback" type="button">cancel</button>
+            </div>
+        </div>
+    </div>
 
     <!-- chat: a button that opens a pop-up, with a badge and a preview for new messages -->
     <div id="chatwidget" hidden>
@@ -2701,10 +2979,10 @@
         let otherUnread = false, chatTeam = false, curView = '', chatOpen = false, unread = 0, chatReady = false, toastT = 0; const baseTitle = document.title;
         let leaving = false; addEventListener('beforeunload', () => { leaving = true; }); addEventListener('pagehide', () => { leaving = true; }); addEventListener('pageshow', () => { leaving = false; });
         const isHost = () => !!state && state.hostId === you;
-        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, hardcore: false, timer: 0, showprog: true, overpar: -1, mode: 'race', endless: false, totaltime: 180, hostplays: true, teams: false, profanity: true, firstfinish: false };
+        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, hardcore: false, timer: 0, showprog: true, overpar: -1, mode: 'race', endless: false, totaltime: 180, hostplays: true, teams: false, profanity: true, firstfinish: false, howto: false, gridw: 3, gridh: 3, gridtime: 0, randdiff: false, favdiff: 0, weighted: false, pt2: 1, pt4: 2, pt6: 3, pt8: 4 };
 
         function view(v) {
-            $('loading').hidden = v !== 'loading'; $('landing').hidden = v !== 'landing'; $('room').hidden = v !== 'room';
+            $('loading').hidden = v !== 'loading'; $('landing').hidden = v !== 'landing'; $('invite').hidden = v !== 'invite'; $('room').hidden = v !== 'room';
             $('game').hidden = v !== 'game'; $('results').hidden = v !== 'results'; $('spec').hidden = v !== 'spec';
             const inRoom = v === 'room' || v === 'game' || v === 'results' || v === 'spec';
             const prevV = curView; curView = v;
@@ -2717,6 +2995,7 @@
             else if (chatOpen && (!inRoom || prevV === 'room' || prevV === 'spec')) setChat(false);
             if (v !== 'loading') scrollTo(0, 0);
             if (typeof updSpecFab === 'function') updSpecFab();
+            if (!inRoom && typeof setHowto === 'function') { setHowto(false); paused = false; if (typeof updPause === 'function') updPause(); }
         }
 
         /* ---------- landing ---------- */
@@ -2725,9 +3004,10 @@
             $('whoname').textContent = account;
             $('nick').value = store.get('vs_nick') || '';
         }
-        function lmsg(text, kind) { const m = $('lmsg'); m.textContent = text || ''; m.className = kind || ''; }
+        function lmsg(text, kind) { [$('lmsg'), $('imsg')].forEach(m => { m.textContent = text || ''; m.className = kind || ''; }); }
         function busy(on) {
-            ['create', 'join', 'codein', 'nick'].forEach(id => { $(id).disabled = on; });
+            ['create', 'join', 'codein', 'nick', 'iname', 'ijoin'].forEach(id => { $(id).disabled = on; });
+            $('ijoin').firstChild.textContent = on ? '…' : 'join room';
             $('join').textContent = on ? '…' : 'join';
         }
         async function go(path, body) {
@@ -2748,6 +3028,17 @@
         $('create').onclick = () => go('/vs/create', {});
         const doJoin = () => { const c = $('codein').value.replace(/\D/g, ''); if (c.length !== 5) { lmsg('room codes have 5 digits', 'err'); $('codein').focus(); return; } go('/vs/join', { code: c }); };
         $('join').onclick = doJoin;
+        /* invite link: show the name box (if you're not signed in) and one join button */
+        function showInvite(code) {
+            initLanding(); $('codein').value = code; $('icode').textContent = code;
+            $('iacct').hidden = !account; $('iguest').hidden = !!account; $('iaccname').textContent = account || '';
+            $('iname').value = $('nick').value; lmsg('');
+            view('invite'); if (!account) $('iname').focus();
+        }
+        const inviteJoin = () => { if (!account) $('nick').value = $('iname').value; doJoin(); };
+        $('ijoin').onclick = inviteJoin;
+        $('iname').onkeydown = e => { if (e.key === 'Enter') inviteJoin(); };
+        $('iother').onclick = e => { e.preventDefault(); $('codein').value = ''; lmsg(''); setUrl(null); view('landing'); };
         $('codein').oninput = e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 5); };
         $('codein').onkeydown = e => { if (e.key === 'Enter') doJoin(); };
         $('nick').onkeydown = e => { if (e.key === 'Enter') { if ($('codein').value.length === 5) doJoin(); else $('create').click(); } };
@@ -2763,6 +3054,7 @@
                 if (d.match) {
                     if (!match || match.id !== d.match.id) startMatch(d.match); /* picks up where the server says this player is */
                     else d.match.players.forEach(x => { if (x.id !== you && x.done !== null) match.prog[x.id] = { done: x.done, solved: x.solved || 0, finished: !!x.finished, left: !!x.left }; });
+                    if (match) syncMatch(d.match);
                 }
                 if (d.standings) standings = d.standings;
                 const mine = myRow(standings);
@@ -2775,7 +3067,7 @@
             es.addEventListener('start', e => { startMatch(JSON.parse(e.data)); showUi(); tick(); });
             es.addEventListener('progress', e => {
                 const p = JSON.parse(e.data); if (!match || p.id === you) return;
-                if (match.mode === 'points') (match.prog[p.id] = match.prog[p.id] || {}).left = p.left;
+                if (match.mode !== 'race') (match.prog[p.id] = match.prog[p.id] || {}).left = p.left;
                 else match.prog[p.id] = { done: p.done, solved: p.solved, finished: p.finished, left: p.left };
                 firstFinishCheck();
                 if (ui === 'game') renderRace(); else if (ui === 'spec') renderSpec();
@@ -2788,6 +3080,10 @@
             });
             es.addEventListener('teams', e => { const t = JSON.parse(e.data); if (!match) return; match.players.forEach(p => { p.team = t[p.id] || null; }); if (ui === 'spec') renderSpec(); else if (ui === 'game') renderRace(); });
             es.addEventListener('levels', e => onLevels(JSON.parse(e.data)));
+            es.addEventListener('pause', () => { if (match) setPaused(true); });
+            es.addEventListener('resume', e => { const d = JSON.parse(e.data); if (!match) return; if (paused) { srvOff = d.serverNow - Date.now(); shiftTimers(d.d); } setPaused(false); });
+            es.addEventListener('work', e => { if (!isGrid()) return; match.grid.working = JSON.parse(e.data).working || {}; if (ui === 'game') { renderGrid(); updWorkers(); } else if (ui === 'spec') renderSpec(); });
+            es.addEventListener('cell', e => onCell(JSON.parse(e.data)));
             es.addEventListener('standings', e => {
                 standings = JSON.parse(e.data);
                 if (match && standings.id === match.id && standings.final && (ui === 'game' || ui === 'spec')) { stopGameTimers(); ui = 'results'; showUi(); }
@@ -2841,7 +3137,7 @@
                 ul.appendChild(li);
             });
             const playing = state.phase === 'playing', lv = s.rounds + (s.rounds === 1 ? ' level' : ' levels'), rd = s.rounds + (s.rounds === 1 ? ' round' : ' rounds');
-            const what = s.mode === 'points' ? "you'll all solve the same level at the same time and the first to solve it gets the point. " + (s.endless ? 'the most points after ' + Math.round(s.totaltime / 60) + (s.totaltime === 60 ? ' minute' : ' minutes') + ' wins.' : 'the most points after ' + rd + ' wins.') : "you'll all race through the same " + lv + '.';
+            const what = s.mode === 'grid' ? "you'll all share a " + s.gridw + ' x ' + s.gridh + ' grid of levels. pick any level you like: solve it to claim it' + (s.teams ? ' for your team' : '') + ', or take one from the others by solving it in fewer moves.' + (s.gridtime ? ' the match lasts ' + Math.round(s.gridtime / 60) + ' minutes.' : ' it goes on until you end it.') + ' the most levels wins.' : s.mode === 'points' ? "you'll all solve the same level at the same time and the first to solve it gets the point. " + (s.endless ? 'the most points after ' + Math.round(s.totaltime / 60) + (s.totaltime === 60 ? ' minute' : ' minutes') + ' wins.' : 'the most points after ' + rd + ' wins.') : "you'll all race through the same " + lv + '.';
             $('exitbtn').textContent = host ? 'disband room' : 'leave room';
             $('startbtn').textContent = startingMatch ? 'making levels… ' + startingMatch.k + '/' + startingMatch.n : playing ? 'match running…' : host ? 'start!!!' : 'waiting for host';
             $('startbtn').disabled = !host || playing || !!startingMatch;
@@ -2863,33 +3159,118 @@
         /* settings: markup is static, this just syncs it with the room's values */
         function norm(s) {
             const o = Object.assign({}, s);
-            o.gdec = o.numbers === 'dec' && !!o.gdec; o.gfrac = o.numbers === 'frac' && !!o.gfrac; o.roots = o.numbers === 'frac' ? true : !!o.roots; o.endless = o.mode === 'points' && !!o.endless; o.teams = o.mode === 'points' && !!o.teams;
+            o.gdec = o.numbers === 'dec' && !!o.gdec; o.gfrac = o.numbers === 'frac' && !!o.gfrac; o.roots = o.numbers === 'frac' ? true : !!o.roots; o.endless = o.mode === 'points' && !!o.endless; o.teams = o.mode !== 'race' && !!o.teams; if (o.mode === 'grid') o.timer = 0;
             /* host-side rule: kept in this browser too, in case the server doesn't echo it back */
-            o.firstfinish = o.mode !== 'points' && (o.firstfinish !== undefined ? !!o.firstfinish : (typeof isHost === 'function' && isHost() && store.get('vs_firstfinish') === '1'));
+            o.firstfinish = o.mode === 'race' && (o.firstfinish !== undefined ? !!o.firstfinish : (typeof isHost === 'function' && isHost() && store.get('vs_firstfinish') === '1'));
+            o.howto = o.howto !== undefined ? !!o.howto : (typeof isHost === 'function' && isHost() && store.get('vs_howto') === '1');
             return o;
         }
         function renderSettings() {
-            const host = isHost(), s = norm(state.settings), n = state.members.length, edit = host && state.phase !== 'playing' && !startingMatch, pts = s.mode === 'points';
-            $('setbox').classList.toggle('ro', !edit); $('hostnote').hidden = host;
-            $('modedesc').textContent = pts ? 'everyone solves the same level at once. the first to solve it gets the point and everyone moves on. most points wins' : (s.firstfinish ? 'everyone races through the same levels. the match ends when the first player finishes them all, and they win' : 'everyone races through the same levels. the fastest to the end wins');
-            $('v_max').textContent = s.max; $('v_rounds').textContent = s.rounds;
-            const lim = { max: [Math.max(2, n), 50], rounds: [1, 15] };
-            document.querySelectorAll('[data-step]').forEach(b => { const k = b.dataset.step, d = +b.dataset.d; b.disabled = !edit || (k === 'rounds' && s.endless) || (d < 0 ? s[k] <= lim[k][0] : s[k] >= lim[k][1]); });
-            document.querySelectorAll('[data-k]').forEach(b => { b.setAttribute('aria-checked', String(s[b.dataset.k]) === b.dataset.v); b.disabled = !edit || (b.dataset.k === 'totaltime' && !s.endless); });
+            const host = isHost(), s = norm(state.settings), n = state.members.length, edit = host && state.phase !== 'playing' && !startingMatch, pts = s.mode === 'points', gr = s.mode === 'grid';
+            $('setbox').classList.toggle('ro', !edit); $('setbox').classList.toggle('viewonly', !host); $('hostnote').hidden = host;
+            const hm = state.members.find(m => m.id === state.hostId); $('hostnotename').textContent = hm ? '(' + hm.name + ') ' : '';
+            $('modedesc').textContent = gr ? 'everyone picks levels from a shared grid. solve a level to claim it for yourself (or your team). solve a claimed level in fewer moves to take it over. the most levels wins' : pts ? 'everyone solves the same level at once. the first to solve it gets the point and everyone moves on. most points wins' : (s.firstfinish ? 'everyone races through the same levels. the match ends when the first player finishes them all, and they win' : 'everyone races through the same levels. the fastest to the end wins');
+            $('v_max').textContent = s.max; $('v_rounds').textContent = s.rounds; $('v_gridw').textContent = s.gridw; $('v_gridh').textContent = s.gridh; [2, 4, 6, 8].forEach(t => { $('v_pt' + t).textContent = s['pt' + t]; });
+            const lim = { max: [Math.max(2, n), 50], rounds: [1, 15], gridw: [2, 8], gridh: [2, 8], pt2: [1, 20], pt4: [1, 20], pt6: [1, 20], pt8: [1, 20] };
+            const wt = s.weighted && s.mode !== 'race';
+            document.querySelectorAll('[data-step]').forEach(b => { const k = b.dataset.step, d = +b.dataset.d; b.disabled = !edit || (k === 'rounds' && (s.endless || gr)) || ((k === 'gridw' || k === 'gridh') && !gr) || (/^pt\d$/.test(k) && !wt) || (d < 0 ? s[k] <= lim[k][0] : s[k] >= lim[k][1]); });
+            document.querySelectorAll('[data-k]').forEach(b => { b.setAttribute('aria-checked', String(s[b.dataset.k]) === b.dataset.v); b.disabled = !edit || (b.dataset.k === 'totaltime' && !s.endless) || (b.dataset.k === 'timer' && gr) || (b.dataset.k === 'gridtime' && !gr) || (b.dataset.k === 'favdiff' && !s.randdiff) || (b.dataset.k === 'difficulty' && s.randdiff); });
             document.querySelectorAll('[data-sw]').forEach(b => {
                 const k = b.dataset.sw; b.setAttribute('aria-checked', !!s[k]);
-                b.disabled = !edit || (k === 'gdec' && s.numbers !== 'dec') || (k === 'gfrac' && s.numbers !== 'frac') || (k === 'roots' && s.numbers === 'frac') || (k === 'endless' && !pts) || (k === 'showprog' && pts) || (k === 'firstfinish' && pts) || (k === 'teams' && !pts);
+                b.disabled = !edit || (k === 'gdec' && s.numbers !== 'dec') || (k === 'gfrac' && s.numbers !== 'frac') || (k === 'roots' && s.numbers === 'frac') || (k === 'endless' && !pts) || (k === 'showprog' && s.mode !== 'race') || (k === 'firstfinish' && s.mode !== 'race') || (k === 'teams' && s.mode === 'race') || (k === 'weighted' && s.mode === 'race');
             });
-            $('row_teams').classList.toggle('dim', !pts); $('row_endless').classList.toggle('dim', !pts); $('row_totaltime').classList.toggle('dim', !s.endless); $('row_rounds').classList.toggle('dim', !!s.endless); $('row_showprog').classList.toggle('dim', pts); $('row_firstfinish').classList.toggle('dim', pts);
+            updHowto();
+            $('row_teams').classList.toggle('dim', s.mode === 'race'); $('row_endless').classList.toggle('dim', !pts); $('row_totaltime').classList.toggle('dim', !s.endless); $('row_rounds').classList.toggle('dim', !!s.endless || gr); $('row_showprog').classList.toggle('dim', s.mode !== 'race'); $('row_firstfinish').classList.toggle('dim', s.mode !== 'race');
+            ['row_gridw', 'row_gridh', 'row_gridtime'].forEach(id => $(id).classList.toggle('dim', !gr)); $('row_timer').classList.toggle('dim', gr); $('row_favdiff').classList.toggle('dim', !s.randdiff); $('row_difficulty').classList.toggle('dim', !!s.randdiff); $('row_weighted').classList.toggle('dim', s.mode === 'race'); [2, 4, 6, 8].forEach(t => $('row_pt' + t).classList.toggle('dim', !wt));
             $('row_gdec').classList.toggle('dim', s.numbers !== 'dec'); $('row_gfrac').classList.toggle('dim', s.numbers !== 'frac'); $('row_roots').classList.toggle('dim', s.numbers === 'frac');
         }
+        /* ---------- how to play screen ----------
+           the host's browser sends two hidden chat lines ("~vs:howto~" to open it, "~vs:howto-end~" to cancel);
+           the real match start closes it for everyone. only the host's browser has a working continue button. */
+        /* pause: the host presses pause and the server freezes its own clocks and tells everyone ("pause" / "resume" events).
+           everyone's screen freezes, and on resume every local clock is pushed forward by exactly the time spent paused
+           (the server measures that, so all clients agree). it works in every mode, including matches with time limits */
+        var paused = false, pausedLoad = false, specShowLevel = false;
+        function shiftTimers(d) {
+            if (!match || !d) return;
+            localGo += d; if (!pausedLoad) roundStartAt += d; else roundStartAt = Date.now(); pausedLoad = false;
+            if (match.pend) match.pend.at += d; if (match.endAt) match.endAt += d;
+        }
+        function updPause() {
+            const host = isHost();
+            $('pauselay').hidden = !paused; $('pauseresume').hidden = !host; $('pausetxt').textContent = host ? 'everyone is frozen and their clocks are stopped. press resume when you\'re ready' : "the host paused the game. it'll carry on when they resume, and your clock stays put";
+            const gp = $('gpause'); gp.hidden = !host || !match || ui === 'results'; gp.disabled = paused; gp.textContent = paused ? 'game paused' : 'pause game';
+            document.querySelectorAll('.pausebtn').forEach(b => { b.disabled = paused; b.textContent = paused ? 'game paused' : 'pause game'; });
+        }
+        function setPaused(on) { if (paused === !!on) { updPause(); return; } paused = !!on; updPause(); if (typeof isGrid === 'function' && isGrid() && ui === 'game') renderGrid(); if (paused && isHost()) $('pauseresume').focus(); }
+        /* after a reconnect: take the server's word for whether the match is paused, and for the scores and the grid */
+        function syncMatch(dm) {
+            if (!match || match.id !== dm.id) return;
+            if (dm.scores) match.scores = dm.scores; if (dm.moves) match.moves = dm.moves;
+            if (dm.grid) { match.grid = dm.grid; if (isGrid() && Lv && mineCell(match.grid.cells[match.round])) dropLevel('that level was claimed while you were away. pick another one!'); }
+            if (dm.paused && !paused) setPaused(true);
+            else if (!dm.paused && paused) {   /* the resume got missed: use the server's clock */
+                srvOff = dm.serverNow - Date.now(); localGo = dm.goAt - srvOff;
+                if (match.mode !== 'race' && dm.roundStart != null && match.pend) match.pend.at = dm.roundStart - srvOff;
+                if (match.endAt) match.endAt = localGo + matchLen(match.cfg) * 1000;
+                pausedLoad = false; setPaused(false);
+            }
+            if (ui === 'game') { if (isGrid() && began) renderGrid(); renderRace(); } else if (ui === 'spec') renderSpec();
+        }
+        const pauseClick = async () => { if (!isHost() || paused || !match || !sess) return; try { await api('/vs/pause', { code: sess.code, token: sess.token }); } catch (e) { showMsg(isNet(e) ? "couldn't reach the server" : e.message); } };
+        $('gpause').onclick = pauseClick;
+        $('pauseresume').onclick = async () => { if (!isHost() || !sess) return; $('pauseresume').disabled = true; try { await api('/vs/resume', { code: sess.code, token: sess.token }); } catch (e) { showMsg(isNet(e) ? "couldn't reach the server" : e.message); } $('pauseresume').disabled = false; };
+        var howtoOn = false;
+        function howtoSteps(c) {
+            const pts = c.mode === 'points', gr = c.mode === 'grid', st = [];
+            st.push(['get to the goal', 'every level shows the number you have and the goal you need to reach. turn one into the other.']);
+            st.push(['tap the buttons to change your number', 'each button does a bit of maths: add, subtract, multiply, divide' + (c.roots || c.numbers === 'frac' ? ', take a square root' : ', or take a square root') + '. buttons that can\'t be used right now are greyed out and say why.' + (c.numbers === 'dec' ? ' numbers can be decimals.' : c.numbers === 'frac' ? ' numbers can be fractions.' : '')]);
+            st.push(['use as few moves as you can', 'every level has a par, like in golf. fewer moves is better.' + (c.overpar >= 0 ? (c.overpar === 0 ? ' you can only use par moves, so no extras.' : ' you can use at most ' + c.overpar + ' more than par.') : '') + (c.hardcore ? ' hardcore: only ' + HC_UNDOS + ' undos per level and no restarting.' : ' undo takes back your last move and restart level starts over.')]);
+            if (gr) {
+                st.push(['pick any level from the grid', 'the grid is ' + c.gridw + ' x ' + c.gridh + ' levels. tap one to start working on it. you can switch whenever you like, but your moves on the old one are lost. small squares in the corner of a level show who is working on it.']);
+                st.push(['solve a level to claim it', 'solve a level and it turns ' + (c.teams ? 'your team\'s colour (red or blue)' : 'your colour') + '. the number in its corner is how many moves it took: par, +2 (two over par), -1 (one under par).']);
+                st.push(['take levels from the others', 'to take over a level ' + (c.teams ? 'the other team' : 'somebody else') + ' claimed, solve it in fewer moves than they did. on its level screen, blue squares show the move count to beat.']);
+                st.push([c.gridtime ? 'play until the time runs out' : 'hold the most levels', (c.gridtime ? 'the match lasts ' + (c.gridtime / 60) + ' min. ' : 'the match goes on until the host ends it. ') + (c.teams ? 'the team holding the most levels wins.' : 'whoever holds the most levels wins.')]);
+            } else if (pts) {
+                st.push(['everyone plays the same level at once', 'the first person to solve it gets the point, then everyone moves on to the next round.' + (c.teams ? ' your team\'s score is all its players\' points added together: red vs blue.' : '')]);
+                st.push([c.endless ? 'play until the time runs out' : 'most points wins', c.endless ? 'the match lasts ' + (c.totaltime / 60) + ' min. whoever has the most points at the end wins.' : 'the match is ' + c.rounds + ' rounds. whoever has the most points at the end wins.']);
+            } else {
+                st.push(['race through the levels', 'there are ' + c.rounds + ' levels and everyone plays them in the same order at their own speed.' + (c.firstfinish ? ' the match ends as soon as the first player finishes them all, and they win.' : ' the fastest to the end wins.') + (c.showprog ? ' the scoreboard shows how far everyone is.' : '')]);
+            }
+            if (c.randdiff) st.push(['levels have different difficulties', 'every level is easy, medium, hard or challenge' + (c.mode === 'grid' ? '. squares in the grid have an outline in the difficulty\'s colour: green easy, yellow medium, red hard, blue challenge.' : '.')]);
+            if (c.weighted && c.mode !== 'race') st.push(['harder levels are worth more', 'easy ' + c.pt2 + ', medium ' + c.pt4 + ', hard ' + c.pt6 + ', challenge ' + c.pt8 + (c.pt2 === 1 && c.pt4 === 1 && c.pt6 === 1 && c.pt8 === 1 ? ' point each' : ' points') + '.']);
+            if (c.timer > 0) st.push(['watch the clock', 'each ' + (pts ? 'round' : 'level') + ' has a ' + (c.timer / 60) + ' min time limit.']);
+            return st;
+        }
+        function updHowto() {
+            const h = $('howto'); if (!howtoOn || !state) return;
+            const host = isHost(), busy = !!startingMatch;
+            $('howgo').hidden = !host; $('howback').hidden = !host; $('howwait').hidden = host;
+            $('howgo').disabled = busy; $('howback').disabled = busy;
+        }
+        function setHowto(on) {
+            if (on && !state) return; if (!!on === howtoOn) { if (on) updHowto(); return; }
+            howtoOn = !!on; const h = $('howto'); h.hidden = !howtoOn; document.body.style.overflow = howtoOn ? 'hidden' : '';
+            if (!howtoOn) { $('howmsg').textContent = ''; $('howgo').textContent = 'continue'; return; }
+            const c = norm(state.settings); $('howmode').textContent = c.mode === 'grid' ? (c.teams ? 'the grid · teams' : 'the grid') : c.mode === 'points' ? (c.teams ? 'points mode · teams' : 'points mode') : 'race mode';
+            const ol = $('howsteps'); ol.innerHTML = ''; howtoSteps(c).forEach(x => { const li = document.createElement('li'), d = document.createElement('div'), b = document.createElement('b'), sp = document.createElement('span'); b.textContent = x[0]; sp.textContent = x[1]; d.append(b, sp); li.appendChild(d); ol.appendChild(li); });
+            $('howmsg').textContent = ''; $('howgo').textContent = 'continue'; h.scrollTop = 0; updHowto();
+            if (isHost()) $('howgo').focus();
+        }
+        const sendCtl = text => api('/vs/chat', { code: sess.code, token: sess.token, text, team: false });
+        $('howback').onclick = async () => { setHowto(false); try { await sendCtl('~vs:howto-end~'); } catch (e) { } };
+        $('howgo').onclick = () => { if (isHost()) beginMatch(); };
+
+        /* non-hosts who poke at a locked setting get the note nudged */
+        $('setbox').addEventListener('click', e => { if (isHost() || !e.target.closest('.srow')) return; const n = $('hostnote'); n.classList.remove('nudge'); void n.offsetWidth; n.classList.add('nudge'); });
         function patch(p) {
             if (!isHost()) return;
             if ('firstfinish' in p) store.set('vs_firstfinish', p.firstfinish ? '1' : '0');
+            if ('howto' in p) store.set('vs_howto', p.howto ? '1' : '0');
             state.settings = norm(Object.assign({}, state.settings, p)); renderSettings();
             sendQ = sendQ.then(() => api('/vs/settings', { code: sess.code, token: sess.token, settings: p })).catch(e => localLine(isNet(e) ? "couldn't reach the server" : e.message));
         }
-        document.querySelectorAll('[data-step]').forEach(b => b.onclick = e => { const k = b.dataset.step, lo = k === 'max' ? Math.max(2, state.members.length) : 1, hi = k === 'max' ? 50 : 15; /* shift-click jumps by 5 */ patch({ [k]: Math.max(lo, Math.min(hi, state.settings[k] + +b.dataset.d * (e.shiftKey && k === 'max' ? 5 : 1))) }); });
+        document.querySelectorAll('[data-step]').forEach(b => b.onclick = e => { const k = b.dataset.step, gk = k === 'gridw' || k === 'gridh', lo = k === 'max' ? Math.max(2, state.members.length) : gk ? 2 : 1, hi = k === 'max' ? 50 : gk ? 8 : /^pt\d$/.test(k) ? 20 : 15; /* shift-click jumps by 5 */ patch({ [k]: Math.max(lo, Math.min(hi, state.settings[k] + +b.dataset.d * (e.shiftKey && k === 'max' ? 5 : 1))) }); });
         document.querySelectorAll('[data-k]').forEach(b => b.onclick = () => { const k = b.dataset.k, v = b.dataset.v; patch({ [k]: (k === 'numbers' || k === 'mode') ? v : +v }); });
         document.querySelectorAll('[data-sw]').forEach(b => b.onclick = () => { const k = b.dataset.sw; patch({ [k]: !state.settings[k] }); });
 
@@ -2897,6 +3278,11 @@
         const lastBy = { pub: null, team: null }, lastBub = { pub: null, team: null };
         function addChat(m) {
             if (m.id <= chatSeen) return; chatSeen = m.id;
+            if (m.sys && /match is starting|ended the match|disband/i.test(m.text || '')) { setHowto(false); }
+            if (!m.sys && typeof m.text === 'string' && m.text.indexOf('~vs:') === 0) {   /* hidden control line from the host */
+                if (state && m.from === state.hostId) { if (m.text === '~vs:howto~' && Date.now() - (m.t || 0) < 15 * 60 * 1000) setHowto(true); else if (m.text === '~vs:howto-end~') setHowto(false); }
+                return;
+            }
             const ch = m.team ? 'team' : 'pub', log = $(ch === 'team' ? 'teamlog' : 'chatlog'), near = log.scrollHeight - log.scrollTop - log.clientHeight < 90, mine = !m.sys && m.from === you;
             const em = $('chatempty'); if (em && ch === 'pub') em.remove();
             let el;
@@ -2997,7 +3383,8 @@
             const q = qrcode(0, 'M'); q.addData(link); q.make();
             const n = q.getModuleCount(), m = 4, s = n + m * 2; let d = '';
             for (let r = 0; r < n; r++)for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += 'M' + (c + m) + ' ' + (r + m) + 'h1v1h-1z';
-            const pl = qrPlain || forcePlain, bg = pl ? '#fff' : '#10162a', fg = pl ? '#000' : 'var(--imag)';
+            /* light theme: colored = dark pink modules on white (a normal, scannable code). dark theme: colored = pink on navy, so the host screen stays black & white there */
+            const light = document.documentElement.getAttribute('data-theme') === 'light', pl = qrPlain || (forcePlain && !light), bg = light && !pl ? '#fff' : pl ? '#fff' : '#10162a', fg = pl ? '#000' : light ? '#c2185b' : 'var(--imag)';
             return '<svg viewBox="0 0 ' + s + ' ' + s + '" shape-rendering="crispEdges" role="img" aria-label="' + (label || 'qr code for the room link') + '"><rect width="' + s + '" height="' + s + '" fill="' + bg + '"/><path d="' + d + '" style="fill:' + fg + '"/></svg>';
         }
         function drawQrs() {
@@ -3007,6 +3394,7 @@
             try { if ($('qrdlg').open) $('qrbox').innerHTML = qrSvg(link); if (!$('spec').hidden) $('spqr').innerHTML = qrSvg(link, '', true); } catch (e) { }
         }
         const flipQr = () => { qrPlain = !qrPlain; store.set('vs_qrplain', qrPlain ? '1' : '0'); drawQrs(); };
+        new MutationObserver(drawQrs).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
         $('qrstyle').onclick = flipQr; $('spqrstyle').onclick = flipQr;
         $('qrbtn').onclick = () => {
             if (!state) return;
@@ -3135,9 +3523,19 @@
             }
             return null;
         }
+        /* random difficulties: every level picks its own. with a favoured difficulty that one comes up half the time and the rest share the other half */
+        function pickTier(cfg) {
+            if (!cfg.randdiff) return cfg.difficulty;
+            const T = [2, 4, 6, 8], f = cfg.favdiff;
+            if (!f) return T[ri(0, 3)];
+            if (Math.random() < .5) return f;
+            const o = T.filter(x => x !== f); return o[ri(0, 2)];
+        }
         function makeLevel(cfg) {
-            const t0 = cfg.difficulty;
-            return genLevel(t0, cfg) || (t0 === 8 && genLevel(6, cfg)) || { start: F(1), goal: F(10), ops: ['+3', '×2'], limit: 3, nb: 100000 };
+            const t0 = pickTier(cfg); let tier = t0, lv = genLevel(t0, cfg);
+            if (!lv && t0 === 8) { lv = genLevel(6, cfg); tier = 6; }
+            if (!lv) { lv = { start: F(1), goal: F(10), ops: ['+3', '×2'], limit: 3, nb: 100000 }; tier = 2; }
+            lv.tier = tier; return lv;
         }
         const sameLevel = (a, b) => key(a.start) === key(b.start) && key(a.goal) === key(b.goal);
         /* one level at a time with a breath in between, so the page can show progress while the host's browser works */
@@ -3348,33 +3746,38 @@
         function stopGameTimers() { clearInterval(tickT); clearTimeout(advT); clearTimeout(goT); cancelAnimationFrame(nlRaf); tickT = 0; $('gcount').hidden = true; }
         /* race mode, 'end when someone finishes': the host's browser ends the match as soon as anyone has finished every level */
         function firstFinishCheck() {
-            if (!sess || !match || match.mode === 'points' || match.ffSent || !isHost() || !state || !norm(state.settings).firstfinish) return;
+            if (!sess || !match || match.mode !== 'race' || match.ffSent || !isHost() || !state || !norm(state.settings).firstfinish) return;
             if (standings && standings.id === match.id && standings.final) return;
             if (!Object.values(match.prog).some(p => p && p.finished)) return;
             const m = match; m.ffSent = true;
             api('/vs/endmatch', { code: sess.code, token: sess.token }).catch(e => { if (isNet(e)) m.ffSent = false; });
         }
-        function clearMatch() { stopGameTimers(); match = null; standings = null; ui = 'room'; Lv = null; hist = []; reportQ = Promise.resolve(); startingMatch = null; }
+        function clearMatch() { stopGameTimers(); paused = false; $('gridbox').hidden = true; match = null; standings = null; ui = 'room'; Lv = null; hist = []; reportQ = Promise.resolve(); startingMatch = null; }
 
         function startMatch(p) {
+            setHowto(false);
             stopGameTimers();
-            const cfg = p.settings, pts = cfg.mode === 'points'; MODE = cfg.numbers; ROOTS = !!cfg.roots;
-            match = { id: p.id, cfg, mode: cfg.mode, levels: p.levels.slice(), total: cfg.endless ? Infinity : p.levels.length, players: p.players.map(x => ({ id: x.id, name: x.name, team: x.team || null })), prog: {}, scores: {}, round: 0, pend: null, waitIdx: null, skipN: 0, skipOf: 0, endAt: 0 };
+            const cfg = p.settings, pts = cfg.mode !== 'race', grid = cfg.mode === 'grid'; MODE = cfg.numbers; ROOTS = !!cfg.roots;
+            match = { id: p.id, cfg, mode: cfg.mode, levels: p.levels.slice(), total: cfg.endless ? Infinity : p.levels.length, players: p.players.map(x => ({ id: x.id, name: x.name, team: x.team || null, color: x.color || null })), grid: null, resume: null, prog: {}, scores: {}, round: 0, pend: null, waitIdx: null, skipN: 0, skipOf: 0, endAt: 0 };
             p.players.forEach(x => { match.prog[x.id] = { done: x.done || 0, solved: x.solved || 0, finished: !!x.finished, left: !!x.left }; });
             if (p.mine && !pts) match.prog[you] = { done: p.mine.done, solved: p.mine.solved, finished: p.mine.done >= match.total, left: false };
-            standings = null;
+            standings = null; paused = !!p.paused;
+            match.moves = p.moves || {};
+            if (grid) match.grid = p.grid || { w: cfg.gridw, h: cfg.gridh, cells: p.levels.map(() => null), working: {} };
             srvOff = p.serverNow - Date.now(); localGo = p.goAt - srvOff;
             round = pts ? p.round : (p.mine ? p.mine.done : 0); match.round = round;
             if (pts) {
-                match.scores = p.scores || {}; match.endAt = localGo + cfg.totaltime * 1000;
+                match.scores = p.scores || {}; match.endAt = matchLen(cfg) ? localGo + matchLen(cfg) * 1000 : 0;
                 if (p.roundStart != null) match.pend = { idx: round, at: p.roundStart - srvOff }; else match.waitIdx = round;
             } else match.pend = { idx: round, at: localGo };
             began = false; lockedRound = false; countShown = null; Lv = null; hist = []; topping = false;
-            const gb = $('gboard'); gb.hidden = true; gb.classList.toggle('hc', !!cfg.hardcore); teamBorder();
-            $('grwrap').hidden = !(cfg.timer > 0); $('glk').textContent = pts ? 'round' : 'level'; $('gtlabel').textContent = pts && cfg.endless ? 'time left' : 'time';
-            $('gclock').textContent = pts && cfg.endless ? fmtCd(cfg.totaltime * 1000) : '0:00.0';
-            $('glevel').textContent = pts ? (round + 1) + (cfg.endless ? '' : ' / ' + match.total) : Math.min(round + 1, match.total) + ' / ' + match.total; setMsg('');
+            const gb = $('gboard'); gb.hidden = true; $('gridbox').hidden = true; $('gworkers').hidden = true; $('gback').hidden = !grid; $('gridmsg').textContent = ''; gb.classList.toggle('hc', !!cfg.hardcore); teamBorder();
+            if (grid && p.mine && p.mine.cell >= 0 && !match.grid.cells[p.mine.cell]) match.resume = p.mine.cell;
+            $('grwrap').hidden = !(cfg.timer > 0); $('glk').textContent = grid ? 'claimed' : pts ? 'round' : 'level'; $('gtlabel').textContent = matchLen(cfg) ? 'time left' : 'time';
+            $('gclock').textContent = matchLen(cfg) ? fmtCd(matchLen(cfg) * 1000) : '0:00.0';
+            $('glevel').textContent = grid ? claimedCount() + ' / ' + match.total : pts ? (round + 1) + (cfg.endless ? '' : ' / ' + match.total) : Math.min(round + 1, match.total) + ' / ' + match.total; setMsg('');
             $('gend').hidden = !isHost();
+            updPause();
             if (!pts && round >= match.total) { ui = 'results'; return; }   /* came back after already finishing */
             if (isHost() && cfg.hostplays === false) { ui = 'spec'; tickT = setInterval(specTick, 100); } else { ui = 'game'; tickT = setInterval(tick, 100); }
         }
@@ -3384,18 +3787,19 @@
             el.hidden = false; el.innerHTML = '<span></span><small>' + (txt === 'go!' ? '' : 'get ready') + '</small>'; el.firstChild.textContent = txt;
         }
         function tick() {
-            if (!match || ui !== 'game') return;
+            if (!match || ui !== 'game' || paused) return;
             const now = Date.now(), pts = match.mode === 'points';
             if (match.pend) {
                 if (now < match.pend.at) { if (!began) showCount(String(Math.ceil((match.pend.at - now) / 1000))); }
                 else {
-                    const first = !began, idx = match.pend.idx, at = match.pend.at; match.pend = null; began = true; $('gboard').hidden = false;
+                    const first = !began, idx = match.pend.idx, at = match.pend.at; match.pend = null; began = true;
                     if (first) { showCount('go!'); goT = setTimeout(() => { $('gcount').hidden = true; }, 600); }
-                    loadLevel(idx, pts ? at : now);
+                    if (isGrid()) { $('gridbox').hidden = false; renderGrid(); if (match.resume != null) { const r = match.resume; match.resume = null; pickCell(r, true); } }
+                    else { $('gboard').hidden = false; loadLevel(idx, pts ? at : now); }
                 }
             }
             if (!began) return;
-            $('gclock').textContent = pts && match.cfg.endless ? fmtCd(Math.max(0, match.endAt - now)) : fmtT(now - localGo);
+            $('gclock').textContent = match.endAt ? fmtCd(Math.max(0, match.endAt - now)) : fmtT(now - localGo);
             if (match.cfg.timer > 0 && Lv && !lockedRound) {
                 const left = match.cfg.timer * 1000 - (now - roundStartAt);
                 $('grclock').textContent = fmtCd(Math.max(0, left)); $('grwrap').classList.toggle('low', left <= 10000);
@@ -3413,37 +3817,40 @@
 
         function loadLevel(i, startAt) {
             const lv = match.levels[i]; if (!lv) return; NB = lv.nb;
-            Lv = { start: lv.start, goal: lv.goal, limit: lv.limit, nb: lv.nb, ops: lv.ops.map(s => mk(s, MODE)) };
-            cur = Lv.start; hist = []; undosUsed = 0; lockedRound = false; nlView = null; nlPend = false; roundStartAt = startAt || Date.now(); match.round = i; round = i;
-            $('glevel').textContent = match.mode === 'points' ? (i + 1) + (match.cfg.endless ? '' : ' / ' + match.total) : (i + 1) + ' / ' + match.total; setMsg('');
+            Lv = { start: lv.start, goal: lv.goal, limit: lv.limit, nb: lv.nb, tier: lv.tier || 0, ops: lv.ops.map(s => mk(s, MODE)) };
+            cur = Lv.start; hist = []; undosUsed = 0; lockedRound = false; nlView = null; nlPend = false; roundStartAt = startAt || Date.now(); if (paused) pausedLoad = true; match.round = i; round = i;
+            if (match.mode !== 'grid') $('glevel').textContent = match.mode === 'points' ? (i + 1) + (match.cfg.endless ? '' : ' / ' + match.total) : (i + 1) + ' / ' + match.total; setMsg('');
             if (match.cfg.timer > 0) { $('grclock').textContent = fmtCd(match.cfg.timer * 1000); $('grwrap').classList.remove('low'); }
-            render();
+            render(); updWorkers();
         }
         function setMsg(text, cls) { const m = $('gmsg'); m.className = cls || ''; m.textContent = text || ''; }
 
         function render() {
             if (!Lv || !match) return;
             NB = Lv.nb;   /* the host's browser may be making other levels in the background */
-            const used = hist.length, won = same(cur, Lv.goal), cap = capMoves(), over = used - Lv.limit, full = !won && used >= cap;
-            $('cur').classList.toggle('winp', won);
+            const used = hist.length, won = same(cur, Lv.goal), cap = capMoves(), over = used - Lv.limit, full = !won && used >= cap, em = beatM(), short = won && !!em && used >= em;
+            $('cur').classList.toggle('winp', won && !short);
             setFlip($('cur'), fmtS(cur), fmt(cur)); setFlip($('goal'), fmtS(Lv.goal), fmt(Lv.goal));
             $('goalfull').textContent = fmtS(Lv.goal) !== fmt(Lv.goal) ? fmt(Lv.goal) : '';
             $('curfull').textContent = fmtS(cur) !== fmt(cur) ? fmt(cur) : '';
             $('gboard').classList.toggle('dec', MODE === 'dec');
             updateNs();
-            const pipN = isFinite(cap) ? cap : Math.max(Lv.limit, used);
-            $('pips').innerHTML = Array.from({ length: pipN }, (_, i) => `<span class="pip${i < used ? ' used' : ''}${i >= Lv.limit ? ' over' : ''}"></span>`).join('');
-            $('left').textContent = 'par ' + Lv.limit + ' · ' + mv(used) + (isFinite(cap) && cap > Lv.limit ? ' · max ' + cap : '') + (over > 0 ? ' · ' + over + ' over par' : '');
+            const pipN = isFinite(cap) ? cap : Math.max(Lv.limit, used, em);
+            /* a square somebody else already solved: blue squares past par show the move count to beat, grey ones are par moves you can't use, red is anything after that */
+            $('pips').innerHTML = Array.from({ length: pipN }, (_, i) => { const k = em ? (i >= Lv.limit && i >= em ? ' over' : i >= Lv.limit ? ' pb' : i >= em ? ' pg' : '') : (i >= Lv.limit ? ' over' : ''); return `<span class="pip${i < used ? ' used' : ''}${k}"></span>`; }).join('');
+            $('left').textContent = 'par ' + Lv.limit + ' · ' + mv(used) + (isFinite(cap) && cap > Lv.limit ? ' · max ' + cap : '') + (over > 0 ? ' · ' + over + ' over par' : '') + (em ? ' · to take this square: ' + (em - 1) + (em === 2 ? ' move' : ' moves') + ' or fewer' : '');
             $('left').style.color = over > 0 ? 'var(--imag)' : '';
+            const gt = $('gtag'), tl = Lv.tier && (match.cfg.randdiff || match.cfg.weighted) ? Lv.tier : 0; gt.hidden = !tl;
+            if (tl) { const pv = match.cfg['pt' + tl]; gt.textContent = DIFFN[tl] + (match.cfg.weighted && match.mode !== 'race' ? ' · ' + pv + (pv === 1 ? ' point' : ' points') : ''); gt.style.color = gt.style.borderColor = DIFFC[tl]; }
             const tk = t => /^[+−×÷][\d.]/.test(t) ? t[0] + ' ' + t.slice(1) : t === '−x' ? 'negate' : t;
             $('trail').innerHTML = trailHTML(); $('trail').setAttribute('aria-label', hist.length ? [fmt(Lv.start), ...hist.map(h => tk(h.s))].join(' ') + ' = ' + fmt(cur) : fmt(Lv.start));
             $('ops').innerHTML = '';
             Lv.ops.forEach(o => {
                 const b = document.createElement('button'); b.innerHTML = opLabel(o.s);
-                const v = o.f(cur); b.disabled = won || !v || full || lockedRound;
+                const v = o.f(cur); b.disabled = won || !v || full || lockedRound || paused;
                 if (!won && !v && !lockedRound) { const w = whyNot(o.s); b.title = w; b.innerHTML = opLabel(o.s) + '<small>' + w + '</small>'; }
                 b.onclick = () => {
-                    if (lockedRound || !v) return;
+                    if (lockedRound || !v || paused) return;
                     hist.push({ prev: cur, s: o.s }); cur = v; nlPend = true; render();
                     if (same(cur, Lv.goal)) roundDone('solved');
                 };
@@ -3451,14 +3858,14 @@
             });
             drawLine();
             const left = HC_UNDOS - undosUsed;
-            $('undo').disabled = !used || won || lockedRound || (hardcore() && left <= 0);
+            $('undo').disabled = !used || (won && !short) || lockedRound || (hardcore() && left <= 0);
             $('undo').textContent = hardcore() ? 'undo (' + Math.max(left, 0) + ' left)' : 'undo';
             $('reset').disabled = hardcore() || lockedRound; $('reset').title = hardcore() ? 'not allowed in hardcore mode' : '';
             if (!lockedRound) {
                 if (full) {
                     const stuck = hardcore() && left <= 0;
-                    if (stuck && match.mode !== 'points') { setMsg('out of moves and undos. level failed.', 'lose'); setTimeout(() => { if (!lockedRound && Lv && round === match.round) roundDone('skipped'); }, 700); }
-                    else if (stuck) setMsg('out of moves and undos. wait for the round to end.', 'lose');
+                    if (stuck && match.mode === 'race') { setMsg('out of moves and undos. level failed.', 'lose'); setTimeout(() => { if (!lockedRound && Lv && round === match.round) roundDone('skipped'); }, 700); }
+                    else if (stuck) setMsg(match.mode === 'grid' ? 'out of moves and undos. tap this level again to retry it, or pick another.' : 'out of moves and undos. wait for the round to end.', 'lose');
                     else setMsg(hardcore() ? 'out of moves. undo a move to keep trying.' : 'out of moves. undo a move or restart the level.', 'lose');
                 } else setMsg('');
             }
@@ -3467,7 +3874,8 @@
         /* a level is over: solved, failed (hardcore, out of moves and undos) or out of time. tell the server, show a quick note, and go to the next one */
         function roundDone(status) {
             if (lockedRound || !match || !Lv) return;
-            if (match.mode === 'points') { if (status === 'solved') claimSolve(); return; }
+            if (match.mode === 'grid' && status === 'solved') { const em = beatM(); if (em && hist.length >= em) { render(); setMsg('solved in ' + mv(hist.length) + ', but you need ' + (em - 1) + ' or fewer to take this square. undo or restart and try again', 'lose'); return; } }
+            if (match.mode !== 'race') { if (status === 'solved') (match.mode === 'grid' ? claimCell : claimSolve)(); return; }
             lockedRound = true;
             const moves = hist.length, t = Math.max(0, Date.now() - localGo), idx = round, last = idx + 1 >= match.total, over = moves - Lv.limit;
             const pr = match.prog[you] || (match.prog[you] = { done: 0, solved: 0, finished: false, left: false });
@@ -3484,17 +3892,140 @@
         async function claimSolve() {
             lockedRound = true; const moves = hist.length, idx = match.round, mid = match.id;
             render(); setMsg('solved in ' + mv(moves) + '! checking who was first…', 'win');
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 20;) {
                 try { await api('/vs/solve', { code: sess.code, token: sess.token, matchId: mid, round: idx, moves }); return; }
                 catch (e) {
                     if (e.status && e.status !== 429 && e.status < 500) { if (match && match.id === mid && match.round === idx) { lockedRound = false; render(); setMsg(e.message, 'lose'); } return; }
+                    if (!paused) i++;   /* a paused game doesn't use up the retries */
                     await sleep(700);
                 }
             }
         }
+
+        /* =====================================================================
+           THE GRID (client side)
+           a shared grid of levels. tap any level that isn't locked to work on it; the first to solve a level locks it
+           in their colour (or their team's). the server tells everybody who is on which level.
+           ===================================================================== */
+        const DIFFN = { 2: 'easy', 4: 'medium', 6: 'hard', 8: 'challenge' }, DIFFC = { 2: '#46c96b', 4: '#f2c744', 6: '#e5484d', 8: '#4a9eff' };
+        const TEAMCOL = { red: 'var(--imag)', blue: '#6fb1e8' };   /* the same red and blue as the team scoreboard */
+        const isGrid = () => !!match && match.mode === 'grid' && !!match.grid;
+        const claimedCount = () => isGrid() ? match.grid.cells.filter(Boolean).length : 0;
+        const matchLen = cfg => cfg.mode === 'points' && cfg.endless ? cfg.totaltime : cfg.mode === 'grid' && cfg.gridtime ? cfg.gridtime : 0;
+        const pcolor = p => match && match.cfg.teams ? (p && TEAMCOL[p.team]) || '#ddd' : (p && p.color) || '#ddd';
+        const cellColor = c => match.cfg.teams && c.t ? TEAMCOL[c.t] : pcolor(match.players.find(x => x.id === c.o));
+        function swatch(p) { const i = mkEl('i', 'swatch'); i.style.background = pcolor(p); return i; }
+        /* tiebreaker: with equal points, fewer total moves ranks higher */
+        const mvOf = id => (match && match.moves && match.moves[id]) || 0;
+        const myTeam = () => { const p = match && match.players.find(x => x.id === you); return p && p.team; };
+        /* is this claimed square yours (or your team's)? then nobody on your side can re-solve it */
+        const mineCell = c => !!c && (match.cfg.teams ? !!c.t && c.t === myTeam() : c.o === you);
+        /* the move count on the level you're playing that you'd have to beat (0: nobody enemy has solved it) */
+        const beatM = () => { if (!isGrid() || !Lv) return 0; const c = match.grid.cells[match.round]; return c && !mineCell(c) ? c.m || 0 : 0; };
+        const stuckNow = () => !!Lv && hardcore() && (!same(cur, Lv.goal) || (beatM() && hist.length >= beatM())) && hist.length >= capMoves() && undosUsed >= HC_UNDOS;
+
+        /* draws the grid into wrap. interactive: the player's own grid (buttons). otherwise it's the host screen / results (plain squares) */
+        function buildGrid(wrap, interactive) {
+            const g = match.grid, byCell = {}, tag = interactive ? 'BUTTON' : 'DIV';
+            if (wrap.children.length !== g.cells.length || (wrap.firstChild && wrap.firstChild.tagName !== tag)) wrap.innerHTML = '';
+            wrap.style.setProperty('--gw', g.w); wrap.style.setProperty('--gh', g.h); wrap.classList.toggle('dense', g.w >= 6); wrap.classList.toggle('teamgrid', !!match.cfg.teams); wrap.classList.toggle('diffgrid', !!match.cfg.randdiff);
+            Object.keys(g.working || {}).forEach(id => { const c = g.working[id]; if (c >= 0) (byCell[c] = byCell[c] || []).push(id); });
+            /* cells are updated in place (and only rebuilt when something on them changed), so a tap that lands while an update arrives isn't lost.
+               top left: one square per player working on it (white if that's the colour of the square itself); bottom right: the moves it was solved in vs par */
+            g.cells.forEach((c, i) => {
+                let b = wrap.children[i]; if (!b) { b = mkEl(interactive ? 'button' : 'div', 'gcell'); wrap.appendChild(b); }
+                const lv = match.levels[i], who = (byCell[i] || []).map(id => match.players.find(x => x.id === id)).filter(Boolean);
+                const owned = interactive && !!c && (mineCell(c) || (c.m || 0) <= 1);
+                b.className = 'gcell' + (c ? ' locked' : '') + (owned ? ' owned' : '') + (interactive && Lv && match.round === i ? ' mine' : '') + (match.cfg.randdiff && lv && lv.tier ? ' d' + lv.tier : '');
+                const diff = c && lv ? c.m - lv.limit : 0, mtxt = !c ? '' : diff > 0 ? '+' + diff : diff === 0 ? 'par' : String(diff);
+                const sig = [c ? c.o + '/' + c.t + '/' + c.m + '/' + cellColor(c) : '', mtxt, who.map(p => p.id + pcolor(p)).join(','), you].join('|');
+                if (b._sig !== sig) {
+                    b._sig = sig; b.innerHTML = ''; b.style.background = c ? cellColor(c) : '';
+                    b.appendChild(mkEl('b', 'gn', String(i + 1)));
+                    if (c) b.appendChild(mkEl('span', 'gm', mtxt));
+                    let label = 'level ' + (i + 1);
+                    if (c) { const o = match.players.find(x => x.id === c.o); label += ', solved by ' + (o ? o.name : 'someone') + (c.t ? ' for the ' + c.t + ' team' : '') + ' in ' + mv(c.m) + ', ' + (mtxt === 'par' ? 'par' : mtxt.replace('-', 'minus ').replace('+', 'plus ')); }
+                    if (who.length) {
+                        const ws = mkEl('span', 'gws');
+                        who.forEach(p => { const white = !!c && (match.cfg.teams ? p.team === c.t : p.id === c.o); const q = mkEl('i', 'gsq'); q.style.background = white ? '#fff' : pcolor(p); ws.appendChild(q); });
+                        b.appendChild(ws); label += ', ' + who.map(p => p.name).join(', ') + ' working on it';
+                    }
+                    b.setAttribute('aria-label', label);
+                }
+                if (interactive) { b.type = 'button'; b.disabled = owned || paused; b.onclick = () => pickCell(i); }
+            });
+        }
+        function renderGrid() {
+            if (!isGrid()) return;
+            buildGrid($('gridwrap'), true);
+            const n = claimedCount(); $('glevel').textContent = n + ' / ' + match.total;
+            $('gridhead').textContent = (Lv ? 'tap another level to switch' : 'pick a level to work on') + ' · ' + n + ' of ' + match.total + ' claimed';
+            const lg = $('gridlegend'); lg.innerHTML = '';
+            if (match.cfg.teams) ['red', 'blue'].forEach(t => { const s = mkEl('span', '', t + ' team'), i = mkEl('i', 'swatch'); i.style.background = TEAMCOL[t]; s.prepend(i); lg.appendChild(s); });
+            else match.players.forEach(p => { const s = mkEl('span', '', p.name + (p.id === you ? ' (you)' : '')); s.prepend(swatch(p)); lg.appendChild(s); });
+        }
+        /* who else is on the level you're playing */
+        function updWorkers() {
+            const w = $('gworkers');
+            if (!isGrid() || !Lv || $('gboard').hidden) { w.hidden = true; return; }
+            const ids = Object.keys(match.grid.working || {}).filter(id => id !== you && match.grid.working[id] === match.round);
+            w.hidden = false; w.innerHTML = '';
+            if (!ids.length) { w.textContent = 'nobody else is on this level'; return; }
+            w.appendChild(mkEl('span', '', ids.length === 1 ? 'also working on this level:' : 'also working on this level:'));
+            ids.forEach(id => { const p = match.players.find(x => x.id === id); if (!p) return; const c = mkEl('span', 'wchip', p.name); c.prepend(swatch(p)); w.appendChild(c); });
+        }
+        function dropLevel(msg) {
+            Lv = null; lockedRound = false; hist = []; $('gboard').hidden = true;
+            if (match && match.grid && match.grid.working) delete match.grid.working[you];
+            updWorkers(); renderGrid(); $('gridmsg').textContent = msg || '';
+        }
+        function pickCell(i, resume) {
+            if (!isGrid() || !began || paused || ui !== 'game' || !sess) return;
+            const oc = match.grid.cells[i]; if (oc && (mineCell(oc) || (oc.m || 0) <= 1)) return;
+            if (!resume && Lv && match.round === i && !lockedRound && hardcore() && !stuckNow()) return;   /* hardcore: no restarting, unless you're stuck */
+            $('gridmsg').textContent = ''; $('gboard').hidden = false; loadLevel(i, Date.now());
+            match.grid.working[you] = i; renderGrid(); updWorkers();
+            if (!resume) {
+                const mid = match.id;
+                api('/vs/pick', { code: sess.code, token: sess.token, matchId: mid, cell: i }).catch(e => { if (match && match.id === mid && match.round === i && Lv && e.status === 409) dropLevel(e.message); });
+            }
+            if (matchMedia('(max-width:760px)').matches) $('gboard').scrollIntoView({ behavior: animOn() ? 'smooth' : 'auto', block: 'start' });
+        }
+        $('gback').onclick = () => {
+            if (!isGrid() || !Lv) return;
+            const mid = match.id; dropLevel('');
+            api('/vs/pick', { code: sess.code, token: sess.token, matchId: mid, cell: -1 }).catch(() => { });
+            $('gridbox').scrollIntoView({ behavior: 'auto', block: 'start' });
+        };
+        /* you solved your level: tell the server. it locks the level for whoever was first and tells everyone (see onCell) */
+        async function claimCell() {
+            lockedRound = true; const moves = hist.length, idx = match.round, mid = match.id;
+            render(); setMsg('solved in ' + mv(moves) + '! locking it in…', 'win');
+            for (let i = 0; i < 20;) {
+                try { const j = await api('/vs/cell', { code: sess.code, token: sess.token, matchId: mid, cell: idx, moves }); if (j.won === false && match && match.id === mid && match.round === idx && Lv) { lockedRound = false; render(); setMsg(j.reason || 'somebody was faster', 'lose'); } return; }
+                catch (e) {
+                    if (e.status && e.status !== 429 && e.status < 500) { if (match && match.id === mid && match.round === idx && Lv) { lockedRound = false; render(); setMsg(e.message, 'lose'); } return; }
+                    if (!paused) i++;
+                    await sleep(700);
+                }
+            }
+        }
+        function onCell(d) {
+            if (!isGrid()) return;
+            const c = { o: d.o, t: d.t || null, m: d.m }; match.grid.cells[d.cell] = c; match.grid.working = d.working || {}; if (d.scores) match.scores = d.scores; if (d.moves) match.moves = d.moves;
+            const w = match.players.find(p => p.id === d.o), pv = d.prev && match.players.find(p => p.id === d.prev), n = d.cell + 1, name = w ? w.name : 'someone';
+            (match.log = match.log || []).push({ t: name + (pv ? ' took level ' + n + ' from ' + pv.name : ' claimed level ' + n) + ' in ' + mv(d.m) + '!', team: w && w.team });
+            if (Lv && match.round === d.cell) {
+                if (d.o === you) { setMsg('you ' + (pv ? 'took' : 'claimed') + ' level ' + n + '!', 'win'); setTimeout(() => { if (isGrid() && Lv && match.round === d.cell && lockedRound) dropLevel('you ' + (pv ? 'took' : 'claimed') + ' level ' + n + '!'); }, 1100); }
+                else if (mineCell(c)) dropLevel(name + ' claimed level ' + n + ' for your team. pick another one!');
+                else if (d.m <= 1) dropLevel(name + ' solved level ' + n + ' in 1 move. that can\'t be beaten. pick another one!');
+                else if (!lockedRound) { render(); setMsg(name + ' ' + (pv ? 'took' : 'claimed') + ' it in ' + mv(d.m) + '. you need ' + (d.m - 1) + ' or fewer', 'lose'); }
+            }
+            if (ui === 'game') { renderGrid(); renderRace(); updWorkers(); } else if (ui === 'spec') renderSpec();
+        }
         function onRound(d) {
             if (!match || match.mode !== 'points') return;
-            match.scores = d.scores; lockedRound = true;
+            match.scores = d.scores; if (d.moves) match.moves = d.moves; lockedRound = true;
             const w = d.winner && match.players.find(p => p.id === d.winner);
             let msg, cls;
             if (d.winner === you) { msg = 'you got the point!'; cls = 'win'; }
@@ -3534,13 +4065,13 @@
             try { $('spqr').innerHTML = qrSvg(roomLink(state.code), '', true); $('splink').textContent = 'scan to join · ' + shownLink(state.code); } catch (e) { $('spqr').textContent = ''; }
         }
         function specTick() {
-            if (!match || ui !== 'spec') return; const now = Date.now();
+            if (!match || ui !== 'spec' || paused) return; const now = Date.now();
             if (match.mode === 'points' && match.cfg.endless && !topping && match.levels.length - match.round < 8) topUp();
             const sg = Math.floor(now / 1000); if (sg !== specSig) { specSig = sg; renderSpec(); }
         }
         function renderSpec() {
             if (!match || ui !== 'spec') return;
-            const b = $('specboard'), oldSc = b.querySelector('.spscroll'), keepTop = oldSc ? oldSc.scrollTop : 0; b.innerHTML = ''; const pts = match.mode === 'points', teams = pts && match.cfg.teams, now = Date.now(), pl = match.players, sc = id => match.scores[id] || 0;
+            const b = $('specboard'), oldSc = b.querySelector('.spscroll'), keepTop = oldSc ? oldSc.scrollTop : 0; b.innerHTML = ''; const pts = match.mode === 'points', gr = match.mode === 'grid', teams = (pts || gr) && match.cfg.teams, now = Date.now(), pl = match.players, sc = id => match.scores[id] || 0;
             const scr = mkEl('div', 'spscroll'); let inScr = false;
             const cell = (...k) => { const d = mkEl('div', 'cell'); k.forEach(x => d.appendChild(x)); (inScr ? scr : b).appendChild(d); return d; };
             const val = (lab, v, first) => { const s = mkEl('span', 'sv'), l = mkEl('small', '', lab), n = mkEl('b', '', v); if (first) s.append(l, n); else s.append(n, l); return s; };
@@ -3550,15 +4081,20 @@
             const flip = str => specClock(str);
             if (teams) {
                 const T = { red: 0, blue: 0 }; pl.forEach(p => { if (p.team) T[p.team] += sc(p.id); }); const tot = T.red + T.blue, h = mkEl('div', 'cellh sphead');
-                if (T.red === T.blue) h.textContent = 'teams are tied'; else { const w = T.red > T.blue ? 'red' : 'blue'; h.append(mkEl('span', 'tc ' + w, w + ' team'), ' is winning!'); }
+                const M = { red: 0, blue: 0 }; pl.forEach(p => { if (p.team) M[p.team] += mvOf(p.id); });
+                if (T.red === T.blue && M.red !== M.blue) { const w = M.red < M.blue ? 'red' : 'blue'; h.append(mkEl('span', 'tc ' + w, w + ' team'), ' leads on fewer moves!'); }
+                else if (T.red === T.blue) h.textContent = 'teams are tied'; else { const w = T.red > T.blue ? 'red' : 'blue'; h.append(mkEl('span', 'tc ' + w, w + ' team'), ' is winning!'); }
                 cell(h);
-                const sb = mkEl('div', 'spscore'); sb.style.gridTemplateColumns = ['red', 'blue'].map(t => 'minmax(var(--minc), ' + (tot ? Math.round(T[t] / tot * 1000) : 500) + 'fr)').join(' '); ['red', 'blue'].forEach(t => { const x = mkEl('div', 'sbox ' + t); x.append(mkEl('span', '', 'team ' + t), mkEl('b', '', T[t]), mkEl('small', '', (tot ? Math.round(T[t] / tot * 100) : 0) + '%')); sb.appendChild(x); }); cell(sb);
+                const sb = mkEl('div', 'spscore'); sb.style.gridTemplateColumns = ['red', 'blue'].map(t => 'minmax(var(--minc), ' + (tot ? Math.round(T[t] / tot * 1000) : 500) + 'fr)').join(' '); ['red', 'blue'].forEach(t => { const x = mkEl('div', 'sbox ' + t); x.append(mkEl('span', '', 'team ' + t), mkEl('b', '', T[t]), mkEl('small', '', (tot ? Math.round(T[t] / tot * 100) : 0) + '%')); sb.appendChild(x); }); cell(sb); if (gr) cell(specGridBox());
                 cell(mkEl('div', 'sphead', 'teams')); inScr = true;
                 const tl = mkEl('div', 'spteams'); ['red', 'blue'].forEach(t => { const col = mkEl('div'); const th = mkEl('div', 'sprow th ' + t, 'team ' + t); if (t === 'red') th.style.justifyContent = 'flex-end'; col.appendChild(th);
-                    pl.filter(p => p.team === t).sort((x, y) => sc(y.id) - sc(x.id)).forEach(p => { const r = mkEl('div', 'sprow ' + t + (p.left ? ' dim' : '')); r.append(nm(0, p.name + (p.left ? ' (left)' : '')), val('pts', sc(p.id), t === 'blue')); fillOf(r, sc(p.id) / Math.max(1, ...pl.map(q => sc(q.id))), t); col.appendChild(r); }); tl.appendChild(col); }); cell(tl);
+                    pl.filter(p => p.team === t).sort((x, y) => sc(y.id) - sc(x.id) || mvOf(x.id) - mvOf(y.id)).forEach(p => { const r = mkEl('div', 'sprow ' + t + (p.left ? ' dim' : '')); r.append(nm(0, p.name + (p.left ? ' (left)' : '')), val(gr && !match.cfg.weighted ? 'cells' : 'pts', sc(p.id), t === 'blue')); fillOf(r, sc(p.id) / Math.max(1, ...pl.map(q => sc(q.id))), t); col.appendChild(r); }); tl.appendChild(col); }); cell(tl);
+            } else if (gr) {
+                cell(mkEl('div', 'cellh sphead', 'the grid')); cell(specGridBox()); cell(mkEl('div', 'sphead', match.cfg.weighted ? 'points' : 'levels claimed')); inScr = true;
+                const mx = Math.max(1, ...pl.map(p => sc(p.id))); pl.slice().sort((x, y) => sc(y.id) - sc(x.id) || mvOf(x.id) - mvOf(y.id)).forEach((p, i) => { const n = nm(i + 1, p.name + (p.left ? ' (left)' : '')); n.prepend(swatch(p)); cell(prow((p.left ? 'dim ' : '') + (i === 0 && sc(p.id) > 0 ? 'lead' : ''), n, match.cfg.weighted ? 'pts' : 'levels', sc(p.id), sc(p.id) / mx)); });
             } else if (pts) {
                 cell(mkEl('div', 'cellh sphead', 'live scoreboard')); inScr = true;
-                const mx = Math.max(1, ...pl.map(p => sc(p.id))); pl.slice().sort((x, y) => sc(y.id) - sc(x.id)).forEach((p, i) => cell(prow((p.left ? 'dim ' : '') + (i === 0 && sc(p.id) > 0 ? 'lead' : ''), nm(i + 1, p.name + (p.left ? ' (left)' : '')), 'pts', sc(p.id), sc(p.id) / mx)));
+                const mx = Math.max(1, ...pl.map(p => sc(p.id))); pl.slice().sort((x, y) => sc(y.id) - sc(x.id) || mvOf(x.id) - mvOf(y.id)).forEach((p, i) => cell(prow((p.left ? 'dim ' : '') + (i === 0 && sc(p.id) > 0 ? 'lead' : ''), nm(i + 1, p.name + (p.left ? ' (left)' : '')), 'pts', sc(p.id), sc(p.id) / mx)));
             } else {
                 cell(mkEl('div', 'cellh sphead', 'live scoreboard')); inScr = true;
                 const rows = pl.map(p => Object.assign({ p }, match.prog[p.id] || { done: 0, finished: false, left: false })); rows.sort((x, y) => (y.finished - x.finished) || (y.done - x.done));
@@ -3566,14 +4102,38 @@
             }
             state.members.filter(m => m.spec).forEach(m => { const r = mkEl('div', 'sprow dim'); r.append(nm(0, m.name + ' (spectating)' + (m.id === state.hostId ? ' (host)' : ''))); cell(r); });
             inScr = false; b.appendChild(scr); scr.scrollTop = keepTop;
-            if (pts) { const big = mkEl('div', 'spbig'), e = match.cfg.endless, pre = now < localGo;
+            const lvOn = pts && specShowLevel && match.round < match.total; b.classList.toggle('withlevel', lvOn);
+            if (lvOn) {
+                const L = mkEl('div', 'splevel'), lv = match.levels[match.round], now2 = Date.now();
+                L.appendChild(mkEl('div', 'lh', 'round ' + (match.round + 1) + (isFinite(match.total) ? ' of ' + match.total : '')));
+                if (!lv || match.waitIdx != null) L.appendChild(mkEl('div', 'lwait', 'getting the next level…'));
+                else if (match.pend && now2 < match.pend.at) L.appendChild(mkEl('div', 'lwait', 'next level in ' + Math.ceil((match.pend.at - now2) / 1000) + '…'));
+                else {
+                    MODE = match.cfg.numbers; ROOTS = !!match.cfg.roots;
+                    const row = mkEl('div', 'lrow'), box = (lab, v, c) => { const d = mkEl('div', c), sm = mkEl('small', '', lab), bb = mkEl('b', '', fmt(v)); d.append(sm, bb); return d; };
+                    row.append(box('you have', lv.start, ''), mkEl('span', '', '⟶'), box('goal', lv.goal, 'g')); L.appendChild(row);
+                    L.appendChild(mkEl('div', 'lpar', 'par ' + lv.limit + (lv.limit === 1 ? ' move' : ' moves')));
+                    const ops = mkEl('div', 'lops'); lv.ops.forEach(o => { const sp = mkEl('span'); sp.innerHTML = opLabel(o); ops.appendChild(sp); }); L.appendChild(ops);
+                }
+                cell(L);
+            }
+            if (pts && !(lvOn && !match.cfg.endless)) { const big = mkEl('div', 'spbig'), e = match.cfg.endless, pre = now < localGo;
                 big.append(mkEl('span', '', pre ? 'starting…' : e ? 'time left' : 'level'));
                 if (!pre) big.appendChild(e ? flip(fmtCd(Math.max(0, match.endAt - now))) : mkEl('b', '', Math.min(match.round + 1, match.total) + '/' + match.total)); cell(big).classList.add('grow'); }
+            if (gr) {
+                const big = mkEl('div', 'spbig sm'), pre = now < localGo; big.append(mkEl('span', '', pre ? 'starting…' : 'claimed'));
+                if (!pre) { big.appendChild(mkEl('b', '', claimedCount() + '/' + match.total)); if (match.endAt) { big.append(mkEl('span', '', 'time left')); big.appendChild(flip(fmtCd(Math.max(0, match.endAt - now)))); } }
+                cell(big);
+            }
             const f = mkEl('div', 'spfoot'), lg = mkEl('div', 'splog'); (match.log || []).slice(-5).forEach(x => { const l = mkEl('div'); l.append(mkEl('span', x.team ? 'tc ' + x.team : '', x.t)); lg.appendChild(l); }); if (!(match.log || []).length) lg.appendChild(mkEl('div', 'splog0', 'waiting for the first solve…'));
             const tools = mkEl('div', 'tools'), mp = mkEl('button', 'btn', 'manage players'), dr = mkEl('button', 'btn danger', 'disband room');
             mp.onclick = () => { renderManage(); $('mpdlg').showModal(); }; dr.onclick = () => $('exitbtn').click();
-            tools.append(mp, dr); f.append(lg, tools); cell(f);
+            const pb = mkEl('button', 'btn pausebtn', 'pause game'); pb.onclick = pauseClick;
+            tools.append(mp, pb);
+            if (match.mode === 'points') { const lb = mkEl('button', 'btn', specShowLevel ? 'hide level' : 'show level'); lb.setAttribute('aria-pressed', String(specShowLevel)); lb.onclick = () => { specShowLevel = !specShowLevel; renderSpec(); }; tools.append(lb); }
+            tools.append(dr); f.append(lg, tools); cell(f); updPause();
         }
+        function specGridBox() { const box = mkEl('div', 'spgridbox'), wrap = mkEl('div', 'gridw'); box.appendChild(wrap); buildGrid(wrap, false); return box; }
         function renderManage() {
             const ul = $('mplist'); ul.innerHTML = '';
             state.members.filter(m => m.id !== you).forEach(m => {
@@ -3645,15 +4205,23 @@
         $('gend').onclick = endMatchBtn; $('endm').onclick = endMatchBtn;
         $('tolobby').onclick = () => { ui = 'room'; showUi(); };
         $('lastres').onclick = () => { if (standings || match) { ui = 'results'; showUi(); } };
+        async function beginMatch() {
+            if (!isHost() || !sess || startingMatch || state.phase === 'playing') return;
+            const cfg = norm(state.settings), n = cfg.mode === 'grid' ? cfg.gridw * cfg.gridh : cfg.endless ? 10 : cfg.rounds;
+            startingMatch = { k: 0, n }; renderRoom(); updHowto(); $('howmsg').textContent = '';
+            try {
+                const levels = await makeLevels(cfg, n, k => { startingMatch.k = k; $('startbtn').textContent = 'making levels… ' + k + '/' + n; if (howtoOn) $('howgo').textContent = 'making levels… ' + k + '/' + n; });
+                await api('/vs/start', { code: sess.code, token: sess.token, levels });
+            } catch (e) { const t = isNet(e) ? "couldn't reach the server" : e.message; showMsg(t); if (howtoOn) $('howmsg').textContent = t; }
+            startingMatch = null; if (howtoOn) $('howgo').textContent = 'continue'; if (state) { renderRoom(); updHowto(); }
+        }
         $('startbtn').onclick = async () => {
             if (!isHost() || !sess || startingMatch || state.phase === 'playing') return;
-            const cfg = norm(state.settings), n = cfg.endless ? 10 : cfg.rounds;
-            startingMatch = { k: 0, n }; renderRoom();
-            try {
-                const levels = await makeLevels(cfg, n, k => { startingMatch.k = k; $('startbtn').textContent = 'making levels… ' + k + '/' + n; });
-                await api('/vs/start', { code: sess.code, token: sess.token, levels });
-            } catch (e) { showMsg(isNet(e) ? "couldn't reach the server" : e.message); }
-            startingMatch = null; if (state) renderRoom();
+            if (norm(state.settings).howto && !howtoOn) {
+                try { await sendCtl('~vs:howto~'); setHowto(true); return; }
+                catch (e) { if (isNet(e)) { showMsg("couldn't reach the server"); return; } showMsg("couldn't show the how to play screen, starting the match instead"); }
+            }
+            beginMatch();
         };
 
         /* ---------- the race panel (how far everyone is) ---------- */
@@ -3665,15 +4233,26 @@
         function renderRace() {
             if (!match) return;
             teamBorder();
-            if (match.mode === 'points') {
+            /* team games: the red vs blue share bar on top, same as the host screen */
+            const tb = $('teambar'), tOn = match.mode !== 'race' && !!match.cfg.teams;
+            tb.hidden = !tOn;
+            if (tOn) {
+                const T = { red: 0, blue: 0 }; match.players.forEach(p => { if (p.team) T[p.team] += match.scores[p.id] || 0; });
+                const tot = T.red + T.blue, mt = myTeam();
+                tb.style.gridTemplateColumns = ['red', 'blue'].map(t => 'minmax(5.5rem, ' + (tot ? Math.round(T[t] / tot * 1000) : 500) + 'fr)').join(' ');
+                tb.className = mt ? 'mine-' + mt : '';
+                tb.innerHTML = ''; ['red', 'blue'].forEach(t => { const d = mkEl('div', t), pc = tot ? Math.round(T[t] / tot * 100) : 0; d.append(mkEl('span', '', 'team ' + t + (t === mt ? ' (you)' : '')), mkEl('b', '', String(T[t])), mkEl('span', '', pc + '%')); tb.appendChild(d); });
+                tb.setAttribute('aria-label', 'red ' + T.red + ', blue ' + T.blue);
+            }
+            if (match.mode !== 'race') {
                 $('racebox').hidden = false; $('racehide').hidden = true; const TT = { red: 0, blue: 0 }; match.players.forEach(p => { if (p.team) TT[p.team] += match.scores[p.id] || 0; });
-                $('racehead').textContent = match.cfg.teams ? 'scores · red ' + TT.red + ' vs blue ' + TT.blue : 'scores';
+                const hd = match.mode === 'grid' ? (match.cfg.weighted ? 'points' : 'levels claimed') : 'scores'; $('racehead').textContent = match.cfg.teams ? hd + ' · red ' + TT.red + ' vs blue ' + TT.blue : hd;
                 const prs = match.players.map(p => ({ p, pts: match.scores[p.id] || 0, left: !!(match.prog[p.id] && match.prog[p.id].left) }));
-                prs.sort((a, b) => b.pts - a.pts || (a.p.name < b.p.name ? -1 : 1));
+                prs.sort((a, b) => b.pts - a.pts || mvOf(a.p.id) - mvOf(b.p.id) || (a.p.name < b.p.name ? -1 : 1));
                 const pl = $('racelist'); pl.innerHTML = '';
                 prs.forEach(r => {
                     const row = document.createElement('div'); row.className = 'rrow pt' + (r.p.id === you ? ' me' : '') + (r.left ? ' left' : '');
-                    const n = document.createElement('span'); n.className = 'rn'; n.textContent = r.p.name + (r.p.id === you ? ' (you)' : '') + (r.p.team ? ' · ' + r.p.team : '') + (r.left ? ' (left)' : '');
+                    const n = document.createElement('span'); n.className = 'rn'; n.textContent = r.p.name + (r.p.id === you ? ' (you)' : '') + (r.p.team ? ' · ' + r.p.team : '') + (r.left ? ' (left)' : ''); if (match.mode === 'grid') n.prepend(swatch(r.p));
                     const c = document.createElement('span'); c.className = 'rc'; c.textContent = String(r.pts);
                     row.append(n, c); pl.appendChild(row);
                 });
@@ -3700,13 +4279,14 @@
         /* ---------- results ---------- */
         function renderResults() {
             const st = standings, list = $('reslist'); list.innerHTML = '';
+            const rg = $('resgrid'); if (match && match.mode === 'grid' && match.grid) { rg.hidden = false; buildGrid(rg, false); } else rg.hidden = true;
             $('endm').hidden = !st || st.final || !isHost();
             if (!st) { $('resub').textContent = 'finishing up…'; $('reshint').textContent = ''; return; }
-            if (st.mode === 'points') {
+            if (st.mode === 'points' || st.mode === 'grid') {
                 const prow = st.rows, top = prow[0], tie = prow.length > 1 && prow[1].points === top.points;
-                $('resub').textContent = !st.final ? 'finishing up…' : top.points === 0 ? 'nobody scored' : (top.id === you ? 'you win!' : top.name + ' wins!') + (tie ? ' (tied on points, got there first)' : '');
-                $('reshint').textContent = st.final && st.total ? st.total + (st.total === 1 ? ' round' : ' rounds') + ' played' : '';
-                if (st.teams && st.final) { const a = st.teams.red, b = st.teams.blue; $('resub').textContent = a === b ? 'the teams tied ' + a + ' to ' + b : (a > b ? 'red' : 'blue') + ' team wins! ' + Math.max(a, b) + ' to ' + Math.min(a, b); }
+                $('resub').textContent = !st.final ? 'finishing up…' : top.points === 0 ? (st.mode === 'grid' ? 'nobody claimed a level' : 'nobody scored') : (top.id === you ? 'you win!' : top.name + ' wins!') + (tie ? (top.moves !== prow[1].moves ? ' (tied on points, fewer moves wins)' : ' (tied on points and moves, got there first)') : '');
+                $('reshint').textContent = st.mode === 'grid' ? (st.final ? st.total + ' of ' + st.cells + ' levels claimed' : '') : st.final && st.total ? st.total + (st.total === 1 ? ' round' : ' rounds') + ' played' : '';
+                if (st.teams && st.final) { const a = st.teams.red, b = st.teams.blue; const tm = st.teamMoves; $('resub').textContent = a === b ? (tm && tm.red !== tm.blue ? (tm.red < tm.blue ? 'red' : 'blue') + ' team wins on fewer moves! tied ' + a + ' to ' + b + ', ' + Math.min(tm.red, tm.blue) + ' moves vs ' + Math.max(tm.red, tm.blue) : 'the teams tied ' + a + ' to ' + b) : (a > b ? 'red' : 'blue') + ' team wins! ' + Math.max(a, b) + ' to ' + Math.min(a, b); }
                 prow.forEach((r, i) => {
                     const li = document.createElement('li');
                     li.className = (r.id === you ? 'me ' : '') + (i === 0 && top.points > 0 ? 'first ' : '') + (r.status === 'left' ? 'left' : '');
@@ -3714,7 +4294,7 @@
                     const mid = document.createElement('div'); mid.className = 'rm';
                     const nm = document.createElement('b'); nm.className = 'rnm'; nm.textContent = r.name + (r.id === you ? ' (you)' : '');
                     if (st.final && i === 0 && top.points > 0) { const w = document.createElement('i'); w.className = 'wintag'; w.textContent = 'winner'; nm.appendChild(w); }
-                    const sm = document.createElement('small'); sm.textContent = (r.points === 1 ? '1 point' : r.points + ' points') + (r.team ? ' · team ' + r.team : '') + (r.status === 'left' ? ' · left the match' : '');
+                    const sm = document.createElement('small'); sm.textContent = (st.mode === 'grid' && !(match && match.cfg.weighted) ? (r.points === 1 ? '1 level' : r.points + ' levels') : (r.points === 1 ? '1 point' : r.points + ' points')) + (r.team ? ' · team ' + r.team : '') + (r.moves ? ' · ' + mv(r.moves) : '') + (r.status === 'left' ? ' · left the match' : '');
                     const tm = document.createElement('span'); tm.className = 'rt'; tm.textContent = String(r.points);
                     mid.append(nm, sm); li.append(rk, mid, tm); list.appendChild(li);
                 });
@@ -3748,9 +4328,10 @@
 
         /* which screen to show */
         function showUi() {
+            if (ui === 'results') paused = false;
             view(ui);
-            if (ui === 'room') renderRoom(); else if (ui === 'game') { renderRace(); if (Lv && !$('gboard').hidden) render(); } else if (ui === 'spec') { specInit(); renderSpec(); } else renderResults();
-            updChatTo();
+            if (ui === 'room') renderRoom(); else if (ui === 'game') { renderRace(); if (isGrid() && began) { $('gridbox').hidden = false; renderGrid(); } if (Lv && !$('gboard').hidden) render(); } else if (ui === 'spec') { specInit(); renderSpec(); } else renderResults();
+            updChatTo(); if (typeof updPause === 'function') updPause();
         }
 
         /* ---------- start ---------- */
@@ -3761,11 +4342,8 @@
                 sess = saved; setUrl(saved.code); view('loading'); connect(); return;
             }
             if (saved && saved.code) { api('/vs/leave', { code: saved.code, token: saved.token }).catch(() => { }); store.del('vs_session', true); }
-            initLanding(); view('landing');
-            if (qRoom) {
-                $('codein').value = qRoom;
-                if (account || $('nick').value.trim()) doJoin(); else { lmsg('enter a nickname, then press join to enter room ' + qRoom, 'info'); $('nick').focus(); }
-            }
+            initLanding();
+            if (qRoom.length === 5) showInvite(qRoom); else view('landing');
         })();
     </script>
 </body>
