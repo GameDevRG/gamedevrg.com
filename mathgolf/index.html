@@ -2834,14 +2834,23 @@
         .mf.mfall .mroot { background: color-mix(in srgb, var(--imag) 35%, transparent) }
         .mf .mc.i { font-style: italic }
         .mf .mo { margin: 0 .12em }
+        .mf .mpar { display: inline-block; vertical-align: middle; line-height: 0; position: relative; margin: 0 .02em }
+        .mf .mpar svg { display: block; width: .34em; overflow: visible; fill: currentColor }
+        .mf .mpar svg.mbr { fill: none; stroke: currentColor; stroke-width: 1.5px; stroke-linejoin: miter }
+        .mf .mpar svg.mbr path { vector-effect: non-scaling-stroke }
         .mf .mph { display: inline-block; min-width: .5em; min-height: .85em; border: 1px dashed var(--soft); border-radius: 2px }
         .mf .msup { display: inline-block; font-size: .72em; vertical-align: .85em; line-height: 1.1; margin-left: 1px }
         .mf .mfrac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 .15em; text-align: center }
         .mf .mfn { display: block; border-bottom: 1.5px solid var(--ink); padding: 0 .2em .05em; min-width: .5em }
         .mf .mfd { display: block; padding: .05em .2em 0; min-width: .5em }
         .mf .msqrt { display: inline-flex; align-items: stretch; margin: 0 .1em }
-        .mf .mrad { line-height: 1.1 }
-        .mf .mrt { display: inline-block; border-top: 1.5px solid var(--ink); padding: 0 .15em; margin-left: -.05em; min-width: .5em }
+        .mf .mrad { display: block; flex: none; width: .62em; line-height: 0; position: relative }
+        .mf .mrad svg { position: absolute; left: 0; top: 0; display: block; width: 100%; height: 100%; overflow: visible; fill: none; stroke: currentColor; stroke-width: 1.5px; stroke-linejoin: miter; stroke-linecap: butt; transform: translateY(.75px) }
+        .mf .mrad path { vector-effect: non-scaling-stroke }
+        .mf .mcbrt .mrad { width: .85em }
+        .mf .mcbrt .mrad svg { left: .23em; width: calc(100% - .23em) }
+        .mf .mix { position: absolute; left: .02em; bottom: 44%; font-size: .55em; font-style: normal; line-height: 1 }
+        .mf .mrt { display: inline-block; border-top: 1.5px solid var(--ink); padding: 0 .15em; margin-left: -.75px; min-width: .5em }
         .mf .mcaret { display: inline-block; width: 0; height: 1.1em; margin: 0 -1px; border-left: 2px solid var(--ink); vertical-align: text-bottom; pointer-events: none; animation: mfblink 1.05s steps(1) infinite }
         .mf:not(.mffocus) .mcaret { display: none }
 
@@ -2862,11 +2871,59 @@
         }
 
         .crow .cr.tg { cursor: pointer }
+        .crow .cr:not(.err):not(:empty):hover { text-decoration: underline; text-decoration-color: var(--soft); text-decoration-thickness: 2px; text-underline-offset: 4px }
         .crow .cr.err { color: var(--soft) }
 
         .calcf { padding: 8px 12px 10px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px }
         .calcl { font-size: .8rem; color: var(--soft); text-transform: lowercase }
         .calcb { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px }
+
+        #calcbub { position: fixed; z-index: 100; padding: 6px 10px; background: var(--card); color: var(--ink); border: 2px solid var(--imag); box-shadow: 3px 3px 0 var(--imag); font: inherit; font-size: 1.05rem; line-height: 1.3; word-break: break-all; user-select: text; -webkit-user-select: text; animation: rise .15s ease backwards }
+        #calcbub::after { content: ''; position: absolute; left: var(--tx, 20px); bottom: -8px; width: 12px; height: 12px; background: var(--card); border: solid var(--imag); border-width: 0 2px 2px 0; transform: translateX(-50%) rotate(45deg) }
+        #calcbub.below::after { bottom: auto; top: -8px; border-width: 2px 0 0 2px }
+        #calcmdec, #calcmfrac { padding: 8px 14px; font: inherit; font-size: 1rem; color: var(--ink); background: var(--card); border: 2px solid var(--line); cursor: pointer }
+        #calcmdec[aria-checked="true"], #calcmfrac[aria-checked="true"] { background: var(--imag); border-color: var(--imag); color: var(--bg) }
+
+        /* ===== notepad ===== */
+        #notefab {
+            position: absolute; right: 54px; bottom: 8px; z-index: 2; display: flex; align-items: center; justify-content: center;
+            width: 38px; height: 38px; padding: 0; color: var(--ink); background: var(--card); border: 2px solid var(--ink);
+            box-shadow: 3px 3px 0 var(--ink); cursor: pointer; transition: transform .08s, box-shadow .08s
+        }
+        #notefab[hidden] { display: none }
+        #notefab svg { width: 20px; height: 20px; flex: none }
+        #notefab:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink) }
+        #notefab[aria-expanded="true"] { background: var(--imag); color: var(--onimag) }
+        #notefab:focus-visible, #notepanel button:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px }
+        #notepanel {
+            position: fixed; right: 12px; top: calc(108px + env(safe-area-inset-top, 0px)); z-index: 9;
+            width: min(360px, calc(100vw - 24px)); height: min(440px, calc(100dvh - 130px - env(safe-area-inset-top, 0px)));
+            display: flex; flex-direction: column; background: var(--card); border: 2px solid var(--ink); box-shadow: 6px 6px 0 var(--ink);
+            animation: rise .2s ease backwards
+        }
+        #notepanel[hidden] { display: none }
+        #notepanel.drag .calch { cursor: grab; touch-action: none }
+        #notepanel.dragging .calch { cursor: grabbing }
+        #notepanel.dragging { box-shadow: 10px 10px 0 var(--ink) }
+        body.notebelow #notepanel { top: auto; bottom: 12px; height: min(38dvh, 300px); z-index: 12 }
+        body.notebelow #calcpanel { height: max(200px, calc(100dvh - 148px - env(safe-area-inset-top, 0px) - min(38dvh, 300px))) }
+        #noteclose { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: 0; background: none; color: var(--soft); font-size: 1.6rem; line-height: 1; cursor: pointer }
+        #noteclose:hover { color: var(--imag) }
+        #notetools { display: flex; gap: 6px; padding: 6px 8px; border-bottom: 2px solid var(--line); background: var(--cell) }
+        #notetools button { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; padding: 0; font: inherit; font-size: 1.05rem; color: var(--ink); background: var(--card); border: 2px solid var(--line); cursor: pointer }
+        #notetools button:hover { border-color: var(--imag) }
+        #notetools button[aria-pressed="true"] { background: var(--imag); border-color: var(--imag); color: var(--bg) }
+        #notetools .ncsw { color: var(--imag); font-weight: 700; text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 2px }
+        #notetools button[aria-pressed="true"] .ncsw { color: var(--bg) }
+        #notebody { flex: 1 1 0; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 10px 12px; font-size: 1.1rem; line-height: 1.7; color: var(--ink); background: var(--card); outline: none; white-space: pre-wrap; word-break: break-word; cursor: text; caret-color: var(--imag) }
+        #notebody:empty::before { content: attr(data-ph); color: var(--soft); opacity: .6; pointer-events: none }
+        #notebody.drop { box-shadow: inset 0 0 0 2px var(--imag) }
+        #notebody .npink { color: var(--imag) }
+        #notebody .nplain { color: var(--ink) }
+        .mf.neq { display: inline-block; flex: none; position: relative; vertical-align: baseline; min-width: 0; max-width: 100%; padding: 0 .1em; margin: 0 .15em; overflow: visible; white-space: nowrap; cursor: default; font-size: 1.25rem; line-height: 1.3; user-select: all; -webkit-user-select: all }
+        .mf.neq.ndrag { position: fixed; z-index: 300; display: block; pointer-events: none; margin: 0; padding: 4px 10px; font-size: 1.3rem; background: var(--card); border: 2px solid var(--imag); box-shadow: 3px 3px 0 var(--imag); transform: translate(-50%, -130%); user-select: none; -webkit-user-select: none }
+        #notecaret { position: fixed; z-index: 299; width: 2px; background: var(--imag); pointer-events: none }
+        body.nodragging, body.nodragging * { cursor: grabbing !important; user-select: none !important; -webkit-user-select: none !important }
 
         #calcstart, #calcimport, #calcgoal {
             padding: 12px 18px;
@@ -2882,11 +2939,11 @@
         #calcstart:disabled, #calcimport:disabled, #calcgoal:disabled { opacity: .5; cursor: default }
 
 
-        #calcgrip { display: none; position: absolute; right: 3px; bottom: 3px; width: 20px; height: 20px; cursor: nwse-resize; touch-action: none;
+        #calcgrip, #notegrip { display: none; position: absolute; right: 3px; bottom: 3px; width: 20px; height: 20px; cursor: nwse-resize; touch-action: none;
             opacity: .55; transition: opacity .15s;
             background: radial-gradient(circle at 16px 16px, var(--soft) 1.5px, transparent 2px), radial-gradient(circle at 10px 16px, var(--soft) 1.5px, transparent 2px), radial-gradient(circle at 16px 10px, var(--soft) 1.5px, transparent 2px), radial-gradient(circle at 4px 16px, var(--soft) 1.5px, transparent 2px), radial-gradient(circle at 10px 10px, var(--soft) 1.5px, transparent 2px), radial-gradient(circle at 16px 4px, var(--soft) 1.5px, transparent 2px) }
-        #calcgrip:hover, #calcpanel.dragging #calcgrip { opacity: 1 }
-        #calcpanel.drag #calcgrip { display: block }
+        #calcgrip:hover, #calcpanel.dragging #calcgrip, #notegrip:hover, #notepanel.dragging #notegrip { opacity: 1 }
+        #calcpanel.drag #calcgrip, #notepanel.drag #notegrip { display: block }
         #calcpanel.drag .calcf { padding-right: 24px }
 
         @media (max-width:520px) {
@@ -3040,6 +3097,7 @@
             viewBox="0 0 24 24" aria-hidden="true">
             <path d="M5 2h14a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm1.5 2.5v4h11v-4zM7 11v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2zM7 15v2h2v-2zm4 0v2h2v-2zm4 0v6h2v-6zM7 19v2h2v-2zm4 0v2h2v-2z" fill="currentColor" />
         </svg></button>
+            <button id="notefab" type="button" aria-expanded="false" aria-controls="notepanel" aria-label="notepad" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm1 4v2h10V6zm0 4v2h10v-2zm0 4v2h6v-2z" fill="currentColor" /></svg></button>
             <div class="row">
                 <div>
                     <div class="lbl">you have</div>
@@ -3218,7 +3276,7 @@
     <div id="nlwrap" hidden><svg id="nl" viewBox="0 0 640 200" role="img"
             aria-label="number line showing your ball, your hits and the hole"></svg></div>
     <dialog id="netdlg">
-        <h3>┐(´д`)┌</h3>
+        <h3>:(</h3>
         <p id="netmsg"></p>
         <button id="netok"></button>
     </dialog>
@@ -3241,10 +3299,20 @@
         <input id="codein" autocomplete="off" spellcheck="false" aria-label="level code">
         <div class="cdbtns"><button id="codego">play</button><button id="codex">cancel</button></div>
     </dialog>
+    <div id="notepanel" role="dialog" aria-label="notepad" hidden>
+        <div class="calch" id="noteh"><span data-i="note_title">notepad</span><button id="noteclose" type="button" aria-label="close notepad">×</button></div>
+        <div id="notetools" role="toolbar" aria-label="text formatting">
+            <button type="button" id="notebold" data-cmd="bold" aria-pressed="false" aria-label="bold" title="bold"><b>B</b></button>
+            <button type="button" id="noteital" data-cmd="italic" aria-pressed="false" aria-label="italic" title="italic"><i>I</i></button>
+            <button type="button" id="notepink" data-cmd="pink" aria-pressed="false" aria-label="pink text" title="pink text"><span class="ncsw">A</span></button>
+        </div>
+        <div id="notebody" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true" aria-label="notepad"></div>
+        <div id="notegrip" aria-hidden="true"></div>
+    </div>
     <div id="calcpanel" role="dialog" aria-label="calculator" hidden>
         <div class="calch" id="calch"><span data-i="calc_title">calculator</span><button id="calcclose" type="button" aria-label="close calculator">×</button></div>
         <div id="calcrows"></div>
-        <div class="calcf"><span class="calcl" data-i="calc_imp_lbl">import expressions</span><div class="calcb"><button id="calcstart" type="button" data-i="calc_start">start</button><button id="calcimport" type="button" data-i="calc_import">current</button><button id="calcgoal" type="button" data-i="calc_goal">goal</button></div></div>
+        <div class="calcf"><span class="calcl" data-i="calc_show_lbl">show results as</span><div class="calcb" role="radiogroup"><button id="calcmdec" type="button" role="radio" aria-checked="false" data-i="calc_m_dec">decimal</button><button id="calcmfrac" type="button" role="radio" aria-checked="true" data-i="calc_m_frac">fraction</button></div><span class="calcl" data-i="calc_imp_lbl">import expressions</span><div class="calcb"><button id="calcstart" type="button" data-i="calc_start">start</button><button id="calcimport" type="button" data-i="calc_import">current</button><button id="calcgoal" type="button" data-i="calc_goal">goal</button></div></div>
         <div id="calcgrip" aria-hidden="true"></div>
     </div>
 
@@ -3356,6 +3424,11 @@
                 "calc_goal": "goal",
                 "calc_start": "start",
                 "calc_imp_lbl": "import expressions",
+                "calc_show_lbl": "show results as",
+                "calc_m_dec": "decimal",
+                "calc_m_frac": "fraction",
+                "note_title": "notepad",
+                "note_ph": "write here, or drag an equation in from the calculator",
                 "calc_none": "no equation yet",
                 "calc_close": "close calculator",
                 "calc_rm": "remove line",
@@ -3543,6 +3616,11 @@
                 "calc_goal": "meta",
                 "calc_start": "inicio",
                 "calc_imp_lbl": "importar expresiones",
+                "calc_show_lbl": "mostrar resultados como",
+                "calc_m_dec": "decimal",
+                "calc_m_frac": "fracción",
+                "note_title": "bloc de notas",
+                "note_ph": "escribe aquí o arrastra una ecuación desde la calculadora",
                 "calc_none": "aún no hay ecuación",
                 "calc_close": "cerrar calculadora",
                 "calc_rm": "quitar línea",
@@ -3730,6 +3808,11 @@
                 "calc_goal": "ゴール",
                 "calc_start": "開始",
                 "calc_imp_lbl": "式を取り込む",
+                "calc_show_lbl": "結果の表示",
+                "calc_m_dec": "小数",
+                "calc_m_frac": "分数",
+                "note_title": "メモ帳",
+                "note_ph": "ここに書くか、電卓から式をドラッグしてね",
                 "calc_none": "まだ式がありません",
                 "calc_close": "電卓を閉じる",
                 "calc_rm": "行を削除",
@@ -3917,6 +4000,11 @@
                 "calc_goal": "目标",
                 "calc_start": "起点",
                 "calc_imp_lbl": "导入表达式",
+                "calc_show_lbl": "结果显示为",
+                "calc_m_dec": "小数",
+                "calc_m_frac": "分数",
+                "note_title": "记事本",
+                "note_ph": "在此书写，或从计算器拖入算式",
                 "calc_none": "还没有算式",
                 "calc_close": "关闭计算器",
                 "calc_rm": "删除此行",
@@ -4932,7 +5020,7 @@
         /* a small expression evaluator: + - × ÷ ^ ( ) | | √ ² ³ ⁻¹ ! mod, implicit multiplication, sin/cos/tan in degrees */
         function calcEval(src) {
             const t = [], s = src; let i = 0;
-            const MAP = { '−': '-', '–': '-', '×': '*', '·': '*', '÷': '/', '²': 'sq', '³': 'cu' };
+            const MAP = { '−': '-', '–': '-', '×': '*', '·': '*', '÷': '/', '²': 'sq', '³': 'cu', '[': '(', '{': '(', ']': ')', '}': ')' };
             while (i < s.length) {
                 const c = s[i];
                 if (/\s/.test(c)) { i++; continue; }
@@ -5011,27 +5099,29 @@
             }
             return null;
         }
-        function calcShow(x) {   /* { a: short text, b: other text or '' } */
+        function calcShow(x) {   /* { a: text to show, tip: the full value for the click bubble } */
             const sg = x < 0 ? '−' : '', ax = Math.abs(x);
-            if (Number.isInteger(x)) return { a: ax < 1e15 ? sg + String(ax) : x.toExponential(3).replace('-', '−'), b: '' };
+            if (Number.isInteger(x)) return { a: ax < 1e15 ? sg + String(ax) : x.toExponential(3).replace('-', '−'), tip: ax < 1e15 ? sg + String(ax) : sg + ax.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 0 }) };
             const dec = ax >= 1e15 || ax < 1e-9 ? x.toExponential(8).replace('-', '−') : sg + String(parseFloat(ax.toPrecision(12)));
             const q = calcRat(x), body = dec.replace(/^−/, '');
             const rs = ax >= 1e15 || ax < 1e-9 ? body : String(parseFloat(ax >= 0.1 ? ax.toFixed(3) : ax.toPrecision(2))), dshort = body.length > 6 ? sg + (rs.length > 6 ? rs.slice(0, 6) : rs) + '…' : dec;
-            if (q) return { a: q.length > 10 ? q.slice(0, 9) + '…' : q, b: dec, full: q };
-            return { a: dshort, b: dshort === dec ? '' : dec };
+            const precise = ax >= 1e15 || ax < 1e-9 ? x.toExponential(14).replace('-', '−') : sg + String(parseFloat(ax.toPrecision(15)));
+            const tip = q ? q + ' = ' + precise : precise;
+            if (q && calcMode === 'frac') return { a: q.length > 10 ? q.slice(0, 9) + '…' : q, tip };
+            return { a: dshort, tip };
         }
 
-        let calcOpen = false, calcRows = [''], calcPos = null, calcSize = null;
+        let calcOpen = false, calcRows = [''], calcPos = null, calcSize = null, calcMode = 'frac', calcBubEl = null, calcBubFor = null;
         const calcMobile = () => matchMedia('(pointer:coarse), (max-width:640px)').matches;
 
         function calcUpdRow(row, text) {
-            const r = row.querySelector('.cr'); r.className = 'cr'; r.textContent = ''; r.removeAttribute('title'); r._v = null;
+            const r = row.querySelector('.cr'); r.className = 'cr'; r.textContent = ''; r.removeAttribute('title'); r._tip = null; if (calcBubFor === r) calcBubHide();
             if (!text.trim()) return;
             let v; try { v = calcEval(text); } catch (e) { v = NaN; }
             if (v === null) return;
             if (!isFinite(v)) { r.classList.add('err'); r.textContent = '—'; r.title = tr('calc_nan'); return; }
             const sh = calcShow(v); r.textContent = sh.a;
-            if (sh.b) { r.classList.add('tg'); r._v = { a: sh.a, b: sh.b, on: 0 }; r.title = tr('calc_sw', { a: sh.a, b: sh.b }); }
+            if (sh.tip) { r.classList.add('tg'); r._tip = sh.tip; }
         }
         /* ===== math field: a small Desmos-style equation editor =====
            a line is a tree of nodes: {t:'c', v} (one character), {t:'sup', a}, {t:'sqrt', a}, {t:'frac', n, d}.
@@ -5044,20 +5134,20 @@
         const mfCh = v => { const n = mfMk('c'); n.v = v; return n; };
         function mfAdd(list, i, ...ns) { ns.forEach(n => { n.l = list; }); list.splice(i, 0, ...ns); }
         function mfOut(l) {
-            return l.map(n => n.t === 'c' ? n.v : n.t === 'sup' ? '^(' + mfOut(n.a) + ')' : n.t === 'sqrt' ? '√(' + mfOut(n.a) + ')' : '((' + mfOut(n.n) + ')/(' + mfOut(n.d) + '))').join('');
+            return l.map(n => n.t === 'c' ? n.v : n.t === 'sup' ? '^(' + mfOut(n.a) + ')' : n.t === 'cbrt' ? 'cbrt(' + mfOut(n.a) + ')' : n.t === 'sqrt' ? '√(' + mfOut(n.a) + ')' : '((' + mfOut(n.n) + ')/(' + mfOut(n.d) + '))').join('');
         }
         /* pull the operand just before position `end` out of a list: a bracketed group (without its brackets) or a run of digits / letters / nodes */
         function mfTake(list, end) {
-            if (end > 0 && list[end - 1].t === 'c' && list[end - 1].v === ')') {
+            if (end > 0 && list[end - 1].t === 'c' && /^[)\]}]$/.test(list[end - 1].v)) {
                 let d = 0, k = end - 1;
-                for (; k >= 0; k--) { const m = list[k]; if (m.t === 'c') { if (m.v === ')') d++; else if (m.v === '(' && --d === 0) break; } }
+                for (; k >= 0; k--) { const m = list[k]; if (m.t === 'c') { if (/^[)\]}]$/.test(m.v)) d++; else if (/^[(\[{]$/.test(m.v) && --d === 0) break; } }
                 if (k >= 0) { const g = list.splice(k, end - k); g.shift(); g.pop(); return { at: k, nodes: g }; }
             }
             let k = end;
             while (k > 0) { const m = list[k - 1]; if (m.t !== 'c' || /[0-9.a-zA-Zπ]/.test(m.v)) k--; else break; }
-            if (k < end && list[k].t === 'sup' && k > 0 && list[k - 1].t === 'c' && list[k - 1].v === ')') {   /* (a+b)^2 / 5: keep the bracket with its exponent */
+            if (k < end && list[k].t === 'sup' && k > 0 && list[k - 1].t === 'c' && /^[)\]}]$/.test(list[k - 1].v)) {   /* (a+b)^2 / 5: keep the bracket with its exponent */
                 let d = 0, m = k - 1;
-                for (; m >= 0; m--) { const q = list[m]; if (q.t === 'c') { if (q.v === ')') d++; else if (q.v === '(' && --d === 0) break; } }
+                for (; m >= 0; m--) { const q = list[m]; if (q.t === 'c') { if (/^[)\]}]$/.test(q.v)) d++; else if (/^[(\[{]$/.test(q.v) && --d === 0) break; } }
                 if (m >= 0) k = m;
             }
             return { at: k, nodes: list.splice(k, end - k) };
@@ -5066,15 +5156,17 @@
         function mfFill(list, s) {
             let i = 0;
             const tok = () => { let j = i; while (j < s.length && /[0-9.]/.test(s[j])) j++; if (j === i && j < s.length && /[a-zA-Zπ]/.test(s[j])) j++; const w = s.slice(i, j); i = j; return w; };
-            const grp = () => { let d = 0, j = i; for (; j < s.length; j++) { if (s[j] === '(') d++; else if (s[j] === ')' && --d === 0) break; } const w = s.slice(i + 1, j); i = j + 1; return w; };
-            const arg = () => { if (s[i] === '(') return grp(); if (s[i] === '√') { i++; return '√' + (s[i] === '(' ? '(' + grp() + ')' : tok()); } return tok(); };
+            const grp = () => { let d = 0, j = i; for (; j < s.length; j++) { if ('([{'.includes(s[j])) d++; else if (')]}'.includes(s[j]) && --d === 0) break; } const w = s.slice(i + 1, j); i = j + 1; return w; };
+            const arg = () => { if ('([{'.includes(s[i])) return grp(); if (s[i] === '√') { i++; return '√' + ('([{'.includes(s[i]) ? '(' + grp() + ')' : tok()); } if (s.startsWith('cbrt', i) && '([{'.includes(s[i + 4])) { i += 4; return 'cbrt(' + grp() + ')'; } if (s[i] === '∛') { i++; return '∛' + ('([{'.includes(s[i]) ? '(' + grp() + ')' : tok()); } return tok(); };
             const sup = txt => { const n = mfMk('sup'); mfAdd(list, list.length, n); mfFill(n.a, txt); };
             while (i < s.length) {
                 const c = s[i];
-                if (c === '^') { i++; let sg = ''; if (s[i] !== '(' && (s[i] === '−' || s[i] === '-')) sg = s[i++]; sup(s[i] === '(' ? grp() : sg + tok()); }
+                if (c === '^') { i++; let sg = ''; if (!'([{'.includes(s[i]) && (s[i] === '−' || s[i] === '-')) sg = s[i++]; sup('([{'.includes(s[i]) ? grp() : sg + tok()); }
                 else if (c === '²' || c === '³') { i++; sup(c === '²' ? '2' : '3'); }
                 else if (c === '⁻' && s[i + 1] === '¹') { i += 2; sup('−1'); }
-                else if (c === '√') { i++; const n = mfMk('sqrt'); mfAdd(list, list.length, n); mfFill(n.a, s[i] === '(' ? grp() : tok()); }
+                else if (c === '√') { i++; const n = mfMk('sqrt'); mfAdd(list, list.length, n); mfFill(n.a, '([{'.includes(s[i]) ? grp() : tok()); }
+                else if (c === 'c' && s.startsWith('cbrt', i) && '([{'.includes(s[i + 4])) { i += 4; const n = mfMk('cbrt'); mfAdd(list, list.length, n); mfFill(n.a, grp()); }
+                else if (c === '∛') { i++; const n = mfMk('cbrt'); mfAdd(list, list.length, n); mfFill(n.a, '([{'.includes(s[i]) ? grp() : tok()); }
                 else if (c === '/') { i++; const op = mfTake(list, list.length), n = mfMk('frac'); mfAdd(n.n, 0, ...op.nodes); mfAdd(list, op.at, n); mfFill(n.d, arg()); }
                 else { mfAdd(list, list.length, mfCh(c)); i++; }
             }
@@ -5085,6 +5177,7 @@
             while (k > 0 && l[k - 1].t === 'c' && /[a-zA-Z]/.test(l[k - 1].v)) k--;
             const w = l.slice(k, c.i).map(n => n.v).join('').toLowerCase();
             if (w.endsWith('sqrt')) { const at = c.i - 4; l.splice(at, 4); const n = mfMk('sqrt'); mfAdd(l, at, n); f.c = { l: n.a, i: 0 }; }
+            else if (w.endsWith('cbrt')) { const at = c.i - 4; l.splice(at, 4); const n = mfMk('cbrt'); mfAdd(l, at, n); f.c = { l: n.a, i: 0 }; }
             else if (w === 'pi') { l.splice(k, 2); mfAdd(l, k, mfCh('π')); c.i = k + 1; }
         }
         function mfType(f, ch) {
@@ -5094,9 +5187,10 @@
                 if (ch === '^') f.c = { l: n.a, i: 0 }; else { mfAdd(n.a, 0, mfCh(ch === '²' ? '2' : '3')); c.i++; }
             }
             else if (ch === '√') { const n = mfMk('sqrt'); mfAdd(l, c.i, n); f.c = { l: n.a, i: 0 }; }
+            else if (ch === '∛') { const n = mfMk('cbrt'); mfAdd(l, c.i, n); f.c = { l: n.a, i: 0 }; }
             else if (ch === '/') { const op = mfTake(l, c.i), n = mfMk('frac'); mfAdd(n.n, 0, ...op.nodes); mfAdd(l, op.at, n); f.c = { l: n.d, i: 0 }; }
-            else if (ch === '(') { mfAdd(l, c.i, mfCh('('), mfCh(')')); c.i++; }
-            else if (ch === ')') { const nx = l[c.i]; if (nx && nx.t === 'c' && nx.v === ')') c.i++; else { mfAdd(l, c.i, mfCh(')')); c.i++; } }
+            else if (ch === '(' || ch === '[' || ch === '{') { mfAdd(l, c.i, mfCh(ch), mfCh(ch === '(' ? ')' : ch === '[' ? ']' : '}')); c.i++; }
+            else if (ch === ')' || ch === ']' || ch === '}') { const nx = l[c.i]; if (nx && nx.t === 'c' && nx.v === ch) c.i++; else { mfAdd(l, c.i, mfCh(ch)); c.i++; } }
             else if (ch === '\n' || ch === '\r') { /* no line breaks */ }
             else { mfAdd(l, c.i, mfCh(ch === '*' ? '×' : ch === '-' ? '−' : ch)); c.i++; mfAuto(f); }
         }
@@ -5106,7 +5200,7 @@
                 const p = l[c.i - 1];
                 if (p.t === 'c') {
                     const nx = l[c.i];
-                    if (p.v === '(' && nx && nx.t === 'c' && nx.v === ')') { l.splice(c.i - 1, 2); c.i--; } else { l.splice(c.i - 1, 1); c.i--; }
+                    if ('([{'.includes(p.v) && nx && nx.t === 'c' && nx.v === ')]}'['([{'.indexOf(p.v)]) { l.splice(c.i - 1, 2); c.i--; } else { l.splice(c.i - 1, 1); c.i--; }
                 } else { const k = mfKids(p), e = k[k.length - 1]; f.c = { l: e, i: e.length }; }
                 return;
             }
@@ -5178,12 +5272,45 @@
                     const n = list[i]; let e;
                     if (n.t === 'c') { e = mk('span', 'mc' + (it[i] ? ' i' : '') + (/[+−×÷=<>±]/.test(n.v) ? ' mo' : '')); e.textContent = n.v === ' ' ? '\u00a0' : n.v; }
                     else if (n.t === 'sup') { e = mk('span', 'mnode msup'); const k = mk('span', 'mlist'); e.appendChild(k); fill(n.a, k); }
-                    else if (n.t === 'sqrt') { e = mk('span', 'mnode msqrt'); const g = mk('span', 'mrad'); g.textContent = '√'; const k = mk('span', 'mlist mrt'); e.append(g, k); fill(n.a, k); }
+                    else if (n.t === 'sqrt' || n.t === 'cbrt') { e = mk('span', 'mnode msqrt' + (n.t === 'cbrt' ? ' mcbrt' : '')); const g = mk('span', 'mrad'); g.innerHTML = '<svg viewBox="0 0 10 100" preserveAspectRatio="none"><path d="M0 62L2.2 58L5.4 97L10 0"/></svg>'; if (n.t === 'cbrt') g.insertAdjacentHTML('beforeend', '<span class="mix">3</span>'); const k = mk('span', 'mlist mrt'); e.append(g, k); fill(n.a, k); }
                     else { e = mk('span', 'mnode mfrac'); const a = mk('span', 'mlist mfn'), b = mk('span', 'mlist mfd'); e.append(a, b); fill(n.n, a); fill(n.d, b); }
                     e._n = n; el.appendChild(e);
                 }
             };
             fill(f.root, host);
+            /* stretch ( ) around tall content (fractions, roots, ...) */
+            const stretch = el => {
+                const kids = Array.from(el.children), st = [];
+                for (const k of kids) {
+                    if (k.classList.contains('mnode')) k.querySelectorAll('.mlist').forEach(stretch);
+                    else if (k.classList.contains('mlist')) stretch(k);
+                }
+                kids.forEach((k, i) => {
+                    const v = k._n && k._n.t === 'c' ? k._n.v : '';
+                    if (v === '(' || v === '[' || v === '{') st.push(i);
+                    else if ((v === ')' || v === ']' || v === '}') && st.length && kids[st[st.length - 1]]._n.v === ({ ')': '(', ']': '[', '}': '{' })[v]) {
+                        const a = st.pop(), inner = kids.slice(a + 1, i).filter(x => !x.classList.contains('mcaret'));
+                        if (!inner.length) return;
+                        let top = Infinity, bot = -Infinity;
+                        for (const x of inner) { const r = x.getBoundingClientRect(); if (r.height) { top = Math.min(top, r.top); bot = Math.max(bot, r.bottom) } }
+                        const open = kids[a], close = k, base = open.getBoundingClientRect();
+                        if (!isFinite(top) || !base.height) return;
+                        const h = bot - top + 4;
+                        if (h <= base.height * 1.12) return;
+                        const PATHS = { '(': 'M9 0C3 20 1 40 1 50S3 80 9 100C4 80 4 60 4 50S4 20 9 0Z', ')': 'M1 0C7 20 9 40 9 50S7 80 1 100C6 80 6 60 6 50S6 20 1 0Z', '[': 'M9 0H2V100H9', ']': 'M1 0H8V100H1', '{': 'M9 0C5 0 5 6 5 14V40C5 46 3 50 1 50C3 50 5 54 5 60V86C5 94 5 100 9 100', '}': 'M1 0C5 0 5 6 5 14V40C5 46 7 50 9 50C7 50 5 54 5 60V86C5 94 5 100 1 100' };
+                        const mkp = (ch, node) => {
+                            node.textContent = ''; node.classList.add('mpar');
+                            const line = ch !== '(' && ch !== ')', curly = ch === '{' || ch === '}';
+                            node.innerHTML = '<svg viewBox="0 0 10 100" preserveAspectRatio="none"' + (line ? ' class="mbr"' : '') + ' style="height:' + h + 'px' + (curly ? ';width:.42em' : '') + '"><path d="' + PATHS[ch] + '"/></svg>';
+                        };
+                        mkp(open._n.v, open); mkp(close._n.v, close);
+                        const mid = (top + bot) / 2, o = open.getBoundingClientRect();
+                        const dy = mid - (o.top + o.bottom) / 2;
+                        if (Math.abs(dy) > .5) { open.style.top = dy + 'px'; close.style.top = dy + 'px'; }
+                    }
+                });
+            };
+            stretch(host);
             f.el.classList.toggle('mfe', !f.root.length);
             f.el.classList.toggle('mfall', !!f.all && f.root.length > 0);
             if (f.focused) {   /* keep the caret on screen when the line is longer than the window */
@@ -5281,9 +5408,10 @@
                 else if (k === 'up') { const pv = calcFields[idx - 1]; if (pv) pv.focus(true); }
                 else if (k === 'back') { if (idx > 0 && idx === calcRows.length - 1) calcFields[idx - 1].focus(true); }
             };
-            res.onclick = () => { const v = res._v; if (!v) return; v.on ^= 1; res.textContent = v.on ? v.b : v.a; };
+            res.onclick = () => { if (res._tip) calcBub(res, res._tip); };
         }
         function calcRender(focusIdx) {
+            calcBubHide();
             const box = $('calcrows'); box.textContent = ''; calcFields = [];
             if (calcRows[calcRows.length - 1].trim() !== '') calcRows.push('');
             calcRows.forEach((t, idx) => calcMkRow(idx, idx === calcRows.length - 1));
@@ -5327,13 +5455,253 @@
             calcClamp();
         }
         function calcSet(open) {
-            calcOpen = open; const pn = $('calcpanel'); pn.hidden = !open; $('calcfab').setAttribute('aria-expanded', String(open));
+            calcBubHide(); calcOpen = open; const pn = $('calcpanel'); pn.hidden = !open; $('calcfab').setAttribute('aria-expanded', String(open));
             if (open) {
                 calcRender(); calcLayout();
                 if (!calcMobile() && calcFields.length) calcFields[calcFields.length - 1].focus(true);
             }
         }
-        function calcClose() { if (calcOpen) calcSet(false); }
+        /* ===== results: speech bubble with the full number, and a decimal / fraction switch ===== */
+        function calcBubHide() { if (calcBubEl) { calcBubEl.remove(); calcBubEl = null; calcBubFor = null; } }
+        function calcBub(btn, text) {
+            if (calcBubFor === btn) { calcBubHide(); return; }
+            calcBubHide();
+            const b = document.createElement('div'); b.id = 'calcbub'; b.textContent = text; b.setAttribute('role', 'status');
+            b.style.maxWidth = Math.min(300, innerWidth - 16) + 'px'; document.body.appendChild(b);
+            const r = btn.getBoundingClientRect(), bw = b.offsetWidth, bh = b.offsetHeight;
+            const left = Math.min(Math.max(8, r.right - bw), Math.max(8, innerWidth - bw - 8)), above = r.top - bh - 12 >= 8;
+            b.style.left = left + 'px'; b.style.top = (above ? r.top - bh - 12 : r.bottom + 12) + 'px'; b.classList.toggle('below', !above);
+            b.style.setProperty('--tx', Math.min(Math.max(14, r.left + r.width / 2 - left), bw - 14) + 'px');
+            calcBubEl = b; calcBubFor = btn;
+        }
+        document.addEventListener('pointerdown', e => { if (calcBubEl && !calcBubEl.contains(e.target) && e.target !== calcBubFor) calcBubHide(); }, true);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') calcBubHide(); });
+        addEventListener('resize', calcBubHide);
+        $('calcrows').addEventListener('scroll', calcBubHide);
+        function calcSetMode(m) {
+            calcMode = m; try { localStorage.setItem('calcmode', m); } catch (e) { }
+            $('calcmdec').setAttribute('aria-checked', String(m === 'dec')); $('calcmfrac').setAttribute('aria-checked', String(m === 'frac'));
+            calcBubHide(); Array.from($('calcrows').children).forEach((row, i) => calcUpdRow(row, calcRows[i] || ''));
+        }
+        $('calcmdec').onclick = () => calcSetMode('dec'); $('calcmfrac').onclick = () => calcSetMode('frac');
+        try { if (localStorage.getItem('calcmode') === 'dec') calcMode = 'dec'; } catch (e) { }
+        calcSetMode(calcMode);
+        /* ===== notepad: bold / italic / pink text, and equations dragged in from the calculator ===== */
+        const NOTE_KEY = 'notepad1';
+        let noteOpen = false, notePos = null, noteSize = null, notePend = null, noteTimer = 0;
+        function noteLang() { $('notebody').dataset.ph = typeof tr === 'function' ? tr('note_ph') : 'write here, or drag an equation in from the calculator'; }
+        /* equations are stored as small trees: a character is a string, other nodes are {t, a} or {t:'frac', n, d} */
+        const noteSer = l => l.map(n => n.t === 'c' ? n.v : n.t === 'frac' ? { t: 'frac', n: noteSer(n.n), d: noteSer(n.d) } : { t: n.t, a: noteSer(n.a) });
+        function noteDes(arr, dst, depth) {
+            depth = depth || 0; if (!Array.isArray(arr) || depth > 12) return;
+            arr.slice(0, 500).forEach(x => {
+                let c;
+                if (typeof x === 'string') c = mfCh(x.slice(0, 1));
+                else if (x && (x.t === 'sup' || x.t === 'sqrt' || x.t === 'cbrt')) { c = mfMk(x.t); noteDes(x.a, c.a, depth + 1); }
+                else if (x && x.t === 'frac') { c = mfMk('frac'); noteDes(x.n, c.n, depth + 1); noteDes(x.d, c.d, depth + 1); }
+                else return;
+                mfAdd(dst, dst.length, c);
+            });
+        }
+        function noteEq(ser) {
+            const el = document.createElement('span'); el.className = 'mf neq'; el.contentEditable = 'false'; el.dataset.eq = JSON.stringify(ser || []);
+            return el;
+        }
+        function noteDraw(el) {   /* (re)draw a rendered equation; needs to be on screen so brackets can stretch */
+            let ser = []; try { ser = JSON.parse(el.dataset.eq || '[]'); } catch (e) { }
+            let view = el.querySelector('.mroot'); if (!view) { el.textContent = ''; view = document.createElement('span'); view.className = 'mroot'; el.appendChild(view); }
+            const f = { root: mfList(null), all: false, focused: false, c: { l: null, i: -1 }, view, el };
+            noteDes(ser, f.root); mfDraw(f);
+        }
+        const noteRedraw = () => $('notebody').querySelectorAll('.neq').forEach(noteDraw);
+        function noteSave() { clearTimeout(noteTimer); noteTimer = setTimeout(() => { try { localStorage.setItem(NOTE_KEY, $('notebody').innerHTML); } catch (e) { } }, 250); }
+        function noteClean(src, dst) {   /* keeps only plain text, line breaks, bold, italic, the pink class and equations */
+            src.childNodes.forEach(n => {
+                if (n.nodeType === 3) dst.appendChild(document.createTextNode(n.nodeValue));
+                else if (n.nodeType === 1) {
+                    const t = n.tagName.toLowerCase();
+                    if (n.classList.contains('neq')) { const el = noteEq(null); el.dataset.eq = (n.getAttribute('data-eq') || '[]').slice(0, 20000); dst.appendChild(el); }
+                    else if (/^(div|p|br|b|strong|i|em|span)$/.test(t)) {
+                        const c = document.createElement(t === 'strong' ? 'b' : t === 'em' ? 'i' : t);
+                        if (t === 'span') { if (n.classList.contains('npink')) c.className = 'npink'; else if (n.classList.contains('nplain')) c.className = 'nplain'; }
+                        noteClean(n, c); dst.appendChild(c);
+                    }
+                    else if (!/^(script|style|iframe|object|embed|svg)$/.test(t)) noteClean(n, dst);
+                }
+            });
+        }
+        function noteLoad() {
+            try { const h = localStorage.getItem(NOTE_KEY); if (h) noteClean(new DOMParser().parseFromString(h, 'text/html').body, $('notebody')); } catch (e) { }
+        }
+        /* the pink colour is applied with a marker colour, then turned into a class so it follows the theme */
+        function noteColors() {
+            $('notebody').querySelectorAll('[style*="color"]').forEach(el => {
+                const c = el.style.color.replace(/\s/g, '');
+                if (c === 'rgb(1,2,3)') { el.style.color = ''; el.classList.add('npink'); el.classList.remove('nplain'); }
+                else if (c === 'rgb(1,2,4)') { el.style.color = ''; el.classList.add('nplain'); el.classList.remove('npink'); }
+                if (!el.getAttribute('style')) el.removeAttribute('style');
+            });
+        }
+        function noteState() {
+            const b = $('notebody'), sel = getSelection(), on = { bold: false, italic: false, pink: false };
+            if (sel.rangeCount && b.contains(sel.anchorNode)) {
+                try { on.bold = document.queryCommandState('bold'); on.italic = document.queryCommandState('italic'); } catch (e) { }
+                let n = sel.anchorNode; n = n.nodeType === 1 ? n : n.parentElement;
+                const c = n && n.closest('.npink, .nplain'); on.pink = !!(c && b.contains(c) && c.classList.contains('npink'));
+            }
+            if (notePend !== null) on.pink = notePend;
+            $('notebold').setAttribute('aria-pressed', String(on.bold)); $('noteital').setAttribute('aria-pressed', String(on.italic)); $('notepink').setAttribute('aria-pressed', String(on.pink));
+            return on;
+        }
+        function noteCmd(c) {
+            const b = $('notebody'), sel = getSelection();
+            if (!sel.rangeCount || !b.contains(sel.anchorNode)) { b.focus(); const r = document.createRange(); r.selectNodeContents(b); r.collapse(false); sel.removeAllRanges(); sel.addRange(r); }
+            if (c === 'pink') {
+                const on = noteState().pink;
+                document.execCommand('styleWithCSS', false, true); document.execCommand('foreColor', false, on ? '#010204' : '#010203'); document.execCommand('styleWithCSS', false, false);
+                noteColors(); notePend = sel.isCollapsed ? !on : null;
+            } else { document.execCommand('styleWithCSS', false, false); document.execCommand(c); }
+            noteState(); noteSave();
+        }
+        function noteRangeAt(x, y, useXY) {
+            const b = $('notebody'); let r = null;
+            if (useXY) {
+                if (document.caretRangeFromPoint) r = document.caretRangeFromPoint(x, y);
+                else if (document.caretPositionFromPoint) { const p = document.caretPositionFromPoint(x, y); if (p) { r = document.createRange(); r.setStart(p.offsetNode, p.offset); r.collapse(true); } }
+            }
+            if (!r || !b.contains(r.startContainer)) { r = document.createRange(); r.selectNodeContents(b); r.collapse(false); }
+            const sc = r.startContainer, el = sc.nodeType === 1 ? sc : sc.parentElement, eq = el && el.closest('.neq');
+            if (eq) { r.setStartAfter(eq); r.collapse(true); }
+            return r;
+        }
+        function noteInsertEq(ser, range) {
+            const b = $('notebody'), eq = noteEq(ser);
+            range.insertNode(eq);
+            const sp = document.createTextNode('\u00a0'); eq.after(sp);
+            noteDraw(eq);
+            b.focus(); const sel = getSelection(), r = document.createRange(); r.setStart(sp, 1); r.collapse(true); sel.removeAllRanges(); sel.addRange(r);
+            eq.scrollIntoView({ block: 'nearest' }); noteSave(); noteState();
+        }
+        function noteClamp() {
+            const pn = $('notepanel'); if (!notePos || calcMobile()) return;
+            if (noteSize) { noteSize.w = Math.max(260, Math.min(innerWidth - 8, noteSize.w)); noteSize.h = Math.max(240, Math.min(innerHeight - 8, noteSize.h)); pn.style.width = noteSize.w + 'px'; pn.style.height = noteSize.h + 'px'; }
+            const w = pn.offsetWidth, h = pn.offsetHeight;
+            notePos.x = Math.max(4, Math.min(innerWidth - w - 4, notePos.x)); notePos.y = Math.max(4, Math.min(innerHeight - h - 4, notePos.y));
+            pn.style.left = notePos.x + 'px'; pn.style.top = notePos.y + 'px';
+        }
+        function noteLayout() {
+            const pn = $('notepanel'), mob = calcMobile();
+            pn.classList.toggle('drag', !mob); document.body.classList.toggle('notebelow', mob && noteOpen);
+            if (mob) { pn.style.left = pn.style.top = pn.style.right = pn.style.bottom = pn.style.width = pn.style.height = ''; return; }
+            pn.style.right = 'auto'; pn.style.bottom = 'auto';
+            if (!notePos) { const w = pn.offsetWidth, cw = $('calcpanel').offsetWidth || 360; notePos = { x: Math.max(8, innerWidth - 12 - cw - 16 - w), y: 108 }; }
+            noteClamp();
+        }
+        function noteSet(open) {
+            noteOpen = open; const pn = $('notepanel'); pn.hidden = !open; $('notefab').setAttribute('aria-expanded', String(open));
+            if (open) { noteLayout(); noteRedraw(); noteLang(); if (!calcMobile()) { const b = $('notebody'); b.focus(); const r = document.createRange(); r.selectNodeContents(b); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } }
+            else document.body.classList.remove('notebelow');
+        }
+        $('notefab').onclick = () => noteSet(!noteOpen);
+        $('noteclose').onclick = () => { noteSet(false); $('notefab').focus(); };
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && noteOpen && $('notepanel').contains(document.activeElement)) { noteSet(false); $('notefab').focus(); } });
+        $('notetools').addEventListener('mousedown', e => e.preventDefault());   /* keep the text selection while using the toolbar */
+        $('notetools').addEventListener('click', e => { const b = e.target.closest('button'); if (b) noteCmd(b.dataset.cmd); });
+        (() => {
+            const body = $('notebody');
+            body.addEventListener('input', () => { noteColors(); notePend = null; if (body.innerHTML === '<br>') body.innerHTML = ''; noteSave(); noteState(); });
+            body.addEventListener('keydown', () => { notePend = null; });
+            body.addEventListener('pointerdown', () => { notePend = null; });
+            body.addEventListener('paste', e => { e.preventDefault(); const t = (e.clipboardData || window.clipboardData).getData('text/plain'); document.execCommand('insertText', false, t); });
+            body.addEventListener('drop', e => { if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) e.preventDefault(); });
+            document.addEventListener('selectionchange', () => { if (noteOpen) noteState(); });
+        })();
+        /* keep the two windows stacked sensibly: whichever you touched last is in front */
+        { const zc = () => parseInt(getComputedStyle($('calcpanel')).zIndex) || 9;
+          $('notepanel').addEventListener('pointerdown', () => { if (!document.body.classList.contains('notebelow')) $('notepanel').style.zIndex = zc() + 1; });
+          $('calcpanel').addEventListener('pointerdown', () => { if (!document.body.classList.contains('notebelow')) $('notepanel').style.zIndex = Math.max(1, zc() - 1); }); }
+        /* move the window by its title bar, resize from the corner (desktop only) */
+        (() => {
+            const h = $('noteh'), pn = $('notepanel'), g = $('notegrip'); let d = null, r = null;
+            h.addEventListener('pointerdown', e => {
+                if (calcMobile() || e.target.closest('button') || e.button > 0 || !notePos) return;
+                d = { dx: e.clientX - notePos.x, dy: e.clientY - notePos.y }; pn.classList.add('dragging'); h.setPointerCapture(e.pointerId); e.preventDefault();
+            });
+            h.addEventListener('pointermove', e => { if (!d) return; notePos.x = e.clientX - d.dx; notePos.y = e.clientY - d.dy; noteClamp(); });
+            const end = () => { d = null; pn.classList.remove('dragging'); };
+            h.addEventListener('pointerup', end); h.addEventListener('pointercancel', end);
+            g.addEventListener('pointerdown', e => {
+                if (calcMobile() || e.button > 0 || !notePos) return;
+                r = { x: e.clientX, y: e.clientY, w: pn.offsetWidth, h: pn.offsetHeight }; g.setPointerCapture(e.pointerId); pn.classList.add('dragging'); e.preventDefault();
+            });
+            g.addEventListener('pointermove', e => {
+                if (!r) return;
+                noteSize = { w: Math.min(r.w + e.clientX - r.x, innerWidth - notePos.x - 4), h: Math.min(r.h + e.clientY - r.y, innerHeight - notePos.y - 4) }; noteClamp();
+            });
+            const end2 = () => { r = null; pn.classList.remove('dragging'); };
+            g.addEventListener('pointerup', end2); g.addEventListener('pointercancel', end2);
+        })();
+        addEventListener('resize', () => { if (noteOpen) noteLayout(); });
+        /* drag an equation out of the calculator and drop it into the notepad */
+        (() => {
+            const rows = $('calcrows'); let st = null, ghost = null, mark = null, suppress = false, timer = 0;
+            const fieldOf = t => { const row = t.closest && t.closest('.crow'); if (!row) return null; const f = calcFields[Array.prototype.indexOf.call(rows.children, row)]; return f && f.root.length ? f : null; };
+            const tm = e => { if (st && st.on) e.preventDefault(); };
+            function cleanup() {
+                clearTimeout(timer); if (ghost) ghost.remove(); if (mark) mark.remove(); ghost = mark = null;
+                $('notebody').classList.remove('drop'); document.body.classList.remove('nodragging'); st = null;
+                document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); document.removeEventListener('pointercancel', cleanup);
+                document.removeEventListener('keydown', esc, true); document.removeEventListener('touchmove', tm);
+            }
+            function esc(e) { if (e.key === 'Escape') { e.stopPropagation(); cleanup(); } }
+            function begin(x, y) {
+                st.on = true; if (!noteOpen) noteSet(true);
+                ghost = document.createElement('div'); ghost.className = 'mf neq ndrag'; ghost.appendChild(st.f.view.cloneNode(true)); document.body.appendChild(ghost);
+                mark = document.createElement('div'); mark.id = 'notecaret'; mark.hidden = true; document.body.appendChild(mark);
+                document.body.classList.add('nodragging'); document.addEventListener('keydown', esc, true); document.addEventListener('touchmove', tm, { passive: false });
+                if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+                update(x, y);
+            }
+            function update(x, y) {
+                ghost.style.left = x + 'px'; ghost.style.top = y + 'px';
+                const el = document.elementFromPoint(x, y), over = el && el.closest && el.closest('#notebody');
+                $('notebody').classList.toggle('drop', !!over);
+                if (!over) { mark.hidden = true; return; }
+                const range = noteRangeAt(x, y, true); let rc = range.getClientRects()[0];
+                if (!rc || (!rc.height && !rc.width)) {
+                    const sc = range.startContainer, e2 = sc.nodeType === 1 ? sc : sc.parentElement, br = e2.getBoundingClientRect(), cs = getComputedStyle(e2);
+                    rc = { left: br.left + (parseFloat(cs.paddingLeft) || 0), top: br.top + (parseFloat(cs.paddingTop) || 0), height: parseFloat(cs.lineHeight) || 24 };
+                }
+                mark.hidden = false; mark.style.left = rc.left + 'px'; mark.style.top = rc.top + 'px'; mark.style.height = (rc.height || 24) + 'px';
+            }
+            function move(e) {
+                if (!st || e.pointerId !== st.id) return;
+                if (!st.on) { if (Math.hypot(e.clientX - st.x, e.clientY - st.y) > 6) { if (st.touch) cleanup(); else begin(e.clientX, e.clientY); } return; }
+                update(e.clientX, e.clientY);
+            }
+            function up(e) {
+                if (!st || e.pointerId !== st.id) return;
+                if (st.on) {
+                    const el = document.elementFromPoint(e.clientX, e.clientY), pn = el && el.closest && el.closest('#notepanel');
+                    if (pn) noteInsertEq(noteSer(st.f.root), noteRangeAt(e.clientX, e.clientY, !!el.closest('#notebody')));
+                    suppress = true; setTimeout(() => { suppress = false; }, 0);
+                }
+                cleanup();
+            }
+            rows.addEventListener('pointerdown', e => {
+                if (st || (e.pointerType === 'mouse' && e.button > 0) || !e.target.closest('.mf')) return;
+                const f = fieldOf(e.target); if (!f) return;
+                st = { f, x: e.clientX, y: e.clientY, id: e.pointerId, on: false, touch: e.pointerType === 'touch' };
+                document.addEventListener('pointermove', move); document.addEventListener('pointerup', up); document.addEventListener('pointercancel', cleanup);
+                if (st.touch) timer = setTimeout(() => { if (st && !st.on) begin(st.x, st.y); }, 380);
+            });
+            rows.addEventListener('click', e => { if (suppress) { e.stopPropagation(); e.preventDefault(); } }, true);
+        })();
+        /* the notepad button shows and hides together with the calculator button */
+        { const cf = $('calcfab'), nf = $('notefab'), sync = () => { nf.hidden = cf.hidden; if (cf.hidden && noteOpen) noteSet(false); };
+          new MutationObserver(sync).observe(cf, { attributes: true, attributeFilter: ['hidden'] }); sync(); }
+        noteLoad(); noteLang(); noteState();
+function calcClose() { if (calcOpen) calcSet(false); }
         $('calcfab').onclick = () => calcSet(!calcOpen);
         $('calcclose').onclick = () => { calcSet(false); $('calcfab').focus(); };
         $('calcimport').onclick = calcImport;
@@ -5387,7 +5755,7 @@
             const on = !!mn && !mn.hidden && (curView === null || curView === 'random') && !ov;
             $('calcfab').hidden = !on; if (!on) calcClose();
         }
-        function calcLang() { if (calcOpen) calcRender(); }
+        function calcLang() { if (calcOpen) calcRender(); noteLang(); }
         { const mo = new MutationObserver(calcSync); ['main', 'settings', 'scores', 'adv', 'lb'].forEach(k => { const e = k === 'main' ? document.querySelector('main') : $(k); if (e) mo.observe(e, { attributes: true, attributeFilter: ['hidden'] }); }); calcSync(); }
         i18nInit();
         newLevel();
