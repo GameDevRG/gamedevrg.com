@@ -1175,14 +1175,17 @@
             box-shadow: 0 4px 0 #c9d0e0
         }
 
-        .mopt:hover,
-        .mopt.red:hover,
-        .mopt.gold:hover,
-        .mopt.green:hover,
-        .mopt.white:hover,
-        :root[data-theme="light"] .mopt.white:hover {
-            border-color: var(--ink);
-            box-shadow: 0 4px 0 var(--ink)
+        @media (hover: hover) {
+
+            .mopt:hover,
+            .mopt.red:hover,
+            .mopt.gold:hover,
+            .mopt.green:hover,
+            .mopt.white:hover,
+            :root[data-theme="light"] .mopt.white:hover {
+                border-color: var(--ink);
+                box-shadow: 0 4px 0 var(--ink)
+            }
         }
 
         .mopt:active,
@@ -1950,15 +1953,21 @@
             transition: opacity .15s, right .15s
         }
 
-        .mopt:hover::after,
         .mopt:focus-visible::after {
             opacity: .8;
             right: 14px
         }
 
-        .mopt:hover:not(:active):not(.pressed) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 0 var(--ink)
+        @media (hover: hover) {
+            .mopt:hover::after {
+                opacity: .8;
+                right: 14px
+            }
+
+            .mopt:hover:not(:active):not(.pressed) {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 0 var(--ink)
+            }
         }
 
         .mopt:focus-visible {
@@ -1980,9 +1989,11 @@
             box-shadow: 0 4px 0 var(--orange)
         }
 
-        .mopt.orange:hover {
-            border-color: var(--ink);
-            box-shadow: 0 4px 0 var(--ink)
+        @media (hover: hover) {
+            .mopt.orange:hover {
+                border-color: var(--ink);
+                box-shadow: 0 4px 0 var(--ink)
+            }
         }
 
         .mopt.orange:active,
@@ -2116,7 +2127,7 @@
         }
 
         #moptC {
-            --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M8 7l-5 5 5 5M16 7l5 5-5 5M14 4.5l-4 15%22/%3E%3C/svg%3E")
+            --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Crect x=%224.5%22 y=%225%22 width=%2215%22 height=%2216%22/%3E%3Crect x=%228.5%22 y=%222.5%22 width=%227%22 height=%225%22 fill=%22%23000%22/%3E%3Cpath d=%22M8.5 12h7M8.5 16h7%22/%3E%3C/svg%3E")
         }
 
         #moptS {
@@ -2124,7 +2135,7 @@
         }
 
         #moptV {
-            --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M4 8h15M15 4l4 4-4 4%22/%3E%3Cpath d=%22M20 16H5M9 12l-4 4 4 4%22/%3E%3C/svg%3E")
+            --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M3.5 3.5L21 21M20.5 3.5L3 21%22/%3E%3Cpath d=%22M14.5 19.5l5-5M4.5 14.5l5 5%22/%3E%3C/svg%3E")
         }
 
         /* loading spinner */
