@@ -863,6 +863,13 @@
             color: var(--soft)
         }
 
+        .sgroup { margin-top: 10px }
+        .sgroup summary { cursor: pointer; list-style: none; padding: 10px 0 8px; font-weight: 800; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; color: var(--soft); display: flex; align-items: center; gap: 8px; user-select: none }
+        .sgroup summary::-webkit-details-marker { display: none }
+        .sgroup summary::before { content: "▾"; display: inline-block; width: 1em; transition: transform .15s }
+        .sgroup:not([open]) summary::before { transform: rotate(-90deg) }
+        .sgroup summary:focus-visible { outline: 3px solid var(--imag); outline-offset: 2px }
+
         .srow {
             display: flex;
             align-items: center;
@@ -1100,6 +1107,22 @@
         }
 
         /* ---------- dialogs ---------- */
+
+        .vispick { display: grid; gap: 12px; margin: 0 0 16px }
+        #browse { border-color: var(--ink); box-shadow: 0 4px 0 var(--ink) }
+        #browse:active:not(:disabled) { box-shadow: 0 0 0 var(--ink) }
+        .vispick .mopt b { font-size: 1.25rem }
+        .vispick #createpub { border-color: var(--blue); box-shadow: 0 4px 0 var(--blue) }
+        .vispick #createpub:hover:not(:disabled) { border-color: var(--ink); box-shadow: 0 4px 0 var(--ink) }
+        .vispick #createpub:active:not(:disabled) { border-color: var(--ink); box-shadow: 0 0 0 var(--ink) }
+        #roomlist { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; text-align: left }
+        #roomlist li { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 2px solid var(--ink); background: var(--card) }
+        #roomlist .ri { flex: 1; min-width: 0 }
+        #roomlist .ri b { display: block; font-size: 1.05rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-transform: none }
+        #roomlist .ri span { display: block; font-size: .8rem; color: var(--soft) }
+        #roomlist button { font: 700 .95rem inherit; font-family: inherit; padding: 6px 16px; border: 2px solid var(--ink); background: var(--ink); color: var(--bg); cursor: pointer; text-transform: lowercase }
+        #roomlist button:disabled { opacity: .45; cursor: not-allowed }
+        #roomsmsg:empty { display: none }
         dialog {
             max-width: 400px;
             width: calc(100% - 32px);
@@ -1612,11 +1635,6 @@
             padding: 18px
         }
 
-        #gboard.hc {
-            border-color: var(--imag);
-            box-shadow: 6px 6px 0 var(--imag)
-        }
-
         #gboard.tred {
             border-color: var(--imag);
             box-shadow: 6px 6px 0 var(--imag)
@@ -1921,17 +1939,6 @@
             cursor: not-allowed
         }
 
-        #gboard.hc #ops button {
-            border-color: var(--imag);
-            box-shadow: 0 4px 0 var(--imag)
-        }
-
-        #gboard.hc #ops button:active:not(:disabled),
-        #gboard.hc #ops button.pressed:not(:disabled),
-        #gboard.hc #ops button:disabled {
-            box-shadow: 0 0 0 var(--imag)
-        }
-
         #ops button:focus-visible,
         #gboard .tools button:focus-visible {
             outline: 3px solid var(--imag);
@@ -2203,10 +2210,6 @@
                 box-shadow: 4px 4px 0 var(--ink)
             }
 
-            #gboard.hc {
-                box-shadow: 4px 4px 0 var(--imag)
-            }
-
             #gboard.tred {
                 box-shadow: 4px 4px 0 var(--imag)
             }
@@ -2243,7 +2246,7 @@
         }
         #specboard.withlevel .spscroll{min-height:min(16vh,7.5rem)}
         .splevel{padding:1.2vh 1.2vw;text-align:center}
-        .splevel .lh{color:var(--soft);letter-spacing:.2em;text-transform:uppercase;font-size:clamp(.7rem,1.6vh,1rem)}
+        .splevel .lh{color:var(--soft);letter-spacing:.2em;text-transform:lowercase;font-size:clamp(.7rem,1.6vh,1rem)}
         .splevel .lrow{display:flex;align-items:center;justify-content:center;gap:2vw;margin:.6vh 0}
         .splevel .lrow small{display:block;color:var(--soft);font-size:clamp(.7rem,1.5vh,.95rem);letter-spacing:.1em}
         .splevel .lrow b{display:inline-block;min-width:2.6ch;padding:.1em .4em;background:var(--cell);border:2px solid var(--line);font-size:clamp(1.8rem,7vh,4.5rem);line-height:1.15;font-variant-numeric:tabular-nums}
@@ -2267,7 +2270,7 @@
         .howbox{width:100%;max-width:680px;margin:auto;background:var(--card);border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:22px 22px 18px}
         .howbox h2{margin:0;text-align:center;font-size:2.2rem;line-height:1.1}
         .howbox h2 .vs{color:var(--imag)}
-        .howmode{text-align:center;color:var(--soft);margin:6px 0 14px;text-transform:uppercase;letter-spacing:.18em;font-size:.8rem}
+        .howmode{text-align:center;color:var(--soft);margin:6px 0 14px;text-transform:lowercase;letter-spacing:.18em;font-size:.8rem}
         .howdemo{display:flex;align-items:center;justify-content:center;gap:18px;margin:6px 0 16px}
         .howdemo>div{text-align:center}
         .howdemo small{display:block;color:var(--soft);font-size:.75rem;letter-spacing:.1em}
@@ -2325,7 +2328,7 @@
         .spscroll .sprow.th{position:sticky;top:0;z-index:2}
         #specboard .sphead{text-align:center;font-size:clamp(1.1rem,3vh,2rem)}
         #spcode{letter-spacing:.04em;font-variant-numeric:tabular-nums;}
-        #speccol .lbl{letter-spacing:.2em;text-transform:uppercase;font-size:clamp(.8rem,1.9vh,1.2rem)}
+        #speccol .lbl{letter-spacing:.2em;text-transform:lowercase;font-size:clamp(.8rem,1.9vh,1.2rem)}
         #splink{font-size:clamp(.7rem,1.7vh,1rem);color:var(--soft);text-align:center;word-break:break-all;text-transform:none;letter-spacing:.02em}
         #specboard .sphead{letter-spacing:.04em;position:relative}
         #specboard>.cell:first-child .sphead:after{content:'';display:block;width:2.2em;height:3px;margin:.4em auto 0;background:var(--imag)}
@@ -2344,7 +2347,7 @@
         .splog>div:before{content:'›';margin-right:.5em;opacity:.7}
         .splog .splog0{opacity:.55;font-weight:400}.splog>.splog0:before{content:none}
         .sbox b{letter-spacing:-.02em}
-        .spbig>span{letter-spacing:.2em;text-transform:uppercase;font-size:.7em;color:var(--soft)}
+        .spbig>span{letter-spacing:.2em;text-transform:lowercase;font-size:.7em;color:var(--soft)}
         .tc.red,.sprow.red{color:var(--imag)}
         .tc.blue,.sprow.blue{color:#6fb1e8}
         .spscore,.spteams{display:grid;grid-template-columns:1fr 1fr;--minc:9.5rem}
@@ -2458,7 +2461,7 @@
         .pip.pb{border-color:#6fb1e8}.pip.pb.used{background:#6fb1e8}
         .pip.pg{border-color:var(--soft);opacity:.7}.pip.pg.used{background:var(--soft)}
         .resgrid{max-width:420px;margin:6px auto 14px}
-        #gtag{display:table;margin:12px auto 0;padding:2px 10px;border:2px solid;font-weight:800;font-size:.8rem;text-transform:uppercase;letter-spacing:.1em}
+        #gtag{display:table;margin:12px auto 0;padding:2px 10px;border:2px solid;font-weight:800;font-size:.8rem;text-transform:lowercase;letter-spacing:.1em}
         #gtag[hidden]{display:none}
         .gridw.diffgrid .gcell{border-width:3px}
         .gridw.diffgrid .gcell.d2{border-color:#46c96b}.gridw.diffgrid .gcell.d4{border-color:#f2c744}.gridw.diffgrid .gcell.d6{border-color:#e5484d}.gridw.diffgrid .gcell.d8{border-color:#4a9eff}
@@ -2476,6 +2479,86 @@
         .spgridbox .gcell .gm{font-size:clamp(.7rem,1.9vh,1.3rem)}
         .spgridbox .gcell .gsq{width:clamp(.5rem,1.6vh,1rem);height:clamp(.5rem,1.6vh,1rem)}
         @media(max-width:760px){.spgridbox .gridw{width:100%}}
+    
+        /* =====================================================================
+           host screen layout: slim top bar (room code, status, buttons), a wide board, and a narrow side column
+           with the QR code and a twitch-style chat stream (no box)
+           ===================================================================== */
+        #spec{padding:1.2vh 1.6vw 1.4vh}
+        #sptop{flex:0 0 auto;display:flex;align-items:center;gap:2vw;padding:0 0 1.2vh;min-width:0}
+        #sptitle{font-size:clamp(1rem,2.5vh,1.7rem);font-weight:800;white-space:nowrap}
+        #spcodebox{display:flex;align-items:baseline;gap:1vw;white-space:nowrap}
+        #spcodebox .lbl{font-size:clamp(.65rem,1.5vh,.95rem);letter-spacing:.2em;text-transform:lowercase;color:var(--soft)}
+        #spcode{font-size:clamp(1.7rem,6vh,4rem);line-height:1}
+        #spstatus{flex:1 1 auto;display:flex;justify-content:center;align-items:center;gap:1.6vw;min-width:0}
+        #spstatus .spbig{display:flex;align-items:baseline;gap:.8vw;padding:0;text-align:left;font-size:clamp(.8rem,1.9vh,1.2rem)}
+        #spstatus .spbig b{display:inline;font-size:clamp(1.5rem,5vh,3.4rem);line-height:1}
+        #spstatus .spclock{font-size:clamp(1.5rem,5vh,3.4rem);margin:0}
+        #sptools{display:flex;flex-wrap:wrap;gap:.7vh .6vw;justify-content:flex-end;margin-left:auto}
+        #sptools .btn{font-size:clamp(.78rem,1.8vh,1.15rem);padding:.8vh .9vw}
+        #specgrid{flex:1 1 0;min-height:420px;grid-template-columns:minmax(0,1fr) clamp(250px,23vw,400px);gap:1.6vw;margin-top:0}
+        #speccol{align-items:stretch;gap:1.2vh}
+        #spqrwrap{flex:0 0 auto;padding:1vh;gap:4px}
+        #spqr{height:clamp(96px,min(17vh,16vw),230px);align-self:center}
+        #splink{font-size:clamp(.62rem,1.4vh,.85rem)}
+        #specboard{overflow:hidden;gap:1.2vh}
+        .spbody{flex:1 1 0;min-height:0;display:grid;grid-template-columns:minmax(0,1fr);gap:1.4vw;align-items:start}
+        #specboard.twocol .spbody{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
+        .spbody>.cell{min-height:0}
+        .spbody>.spscroll{align-self:stretch;min-height:0;max-height:100%}
+        .spgridbox .gridw{width:min(100%,calc(var(--gw) / var(--gh) * 56vh))}
+        .splog{padding:.8vh 1.2vw;font-size:clamp(.78rem,1.7vh,1.05rem)}
+        /* chat as a twitch-style stream */
+        #specchat{flex:1 1 0;min-height:0;display:flex;flex-direction:column;padding:0 0 0 1vw;margin:0;border:0;border-left:2px solid var(--line);background:transparent;box-shadow:none}
+        #speccell{border:0;background:transparent;padding:0;min-height:0}
+        #speccell .cellh.chatname{display:none}
+        #speccell #chatlog{padding:0;background:transparent;border:0;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 14%);mask-image:linear-gradient(to bottom,transparent 0,#000 14%)}
+        #speccell #chatlog>:first-child{margin-top:auto}
+        #speccell .msg,#speccell .msg.first{display:block;margin:0;padding:.2em 0;text-align:left;font-size:clamp(.82rem,1.85vh,1.15rem);line-height:1.35;animation:none;text-transform:none}
+        #speccell .msg .nm{display:inline;margin:0 .4em 0 0;font-size:inherit;font-weight:800;color:var(--soft)}
+        #speccell .msg .nm:after{content:':'}
+        #speccell .msg .bub{display:inline;max-width:none;padding:0;background:none;color:var(--ink);font-size:inherit;border:0;box-shadow:none;overflow-wrap:anywhere}
+        #speccell .msg .bub:after,#speccell .msg .bub:before{display:none}
+        #speccell .msg.me .nm,#speccell .msg.mine .nm{color:var(--imag)}
+        #speccell .msg.sred .nm{color:var(--imag)}#speccell .msg.sblue .nm{color:#6fb1e8}
+        #speccell .sys{margin:.2em 0;text-align:left;font-size:clamp(.72rem,1.55vh,.95rem);opacity:.75}
+        #speccell #chatform{border-top:2px solid var(--line);margin-top:.6vh}
+        #speccell #chatin{height:auto;padding:.9vh .6vw;font-size:clamp(.8rem,1.8vh,1.1rem)}
+        #speccell #chatsend{height:auto;flex:0 0 3.4vh}
+        #chatlog .msg:not(.first)>.nm,#teamlog .msg:not(.first)>.nm{display:none}
+                /* sizing: the grid has to fit the height that's left under the header and team bar */
+        .spgridbox .gridw{width:min(100%,calc(var(--gw) / var(--gh) * 58vh))}
+        #specboard.hasteams .spgridbox .gridw{width:min(100%,calc(var(--gw) / var(--gh) * 46vh))}
+        .spbody>.cell{overflow:hidden}
+        #specboard .sphead{font-size:clamp(1rem,2.6vh,1.7rem)}
+        #specboard>.cell:first-child .sphead:after{margin:.25em auto 0;height:2px}
+        #specboard .sbox{padding:.7vh}
+        #specboard .sbox span{font-size:clamp(.9rem,2.2vh,1.4rem)}
+        #specboard .sbox b{font-size:clamp(1.5rem,4.4vh,3rem)}
+        #specboard .sprow{padding:.7vh 1.2vw;font-size:clamp(.9rem,2.4vh,1.6rem)}
+        #specboard .sprow.th{font-size:clamp(1rem,2.5vh,1.7rem)}
+        @media(max-width:760px){
+            #spec{padding:10px 10px 24px}
+            #sptop{flex-wrap:wrap;gap:6px 14px;padding-bottom:8px}
+            #sptitle{display:none}
+            #spcode{font-size:clamp(2rem,11vw,3.2rem)}
+            #spstatus{order:3;flex:1 0 100%;justify-content:flex-start}
+            #sptools{order:4;flex:1 0 100%;justify-content:flex-start}
+            #sptools .btn{font-size:.9rem;padding:9px 10px;flex:1 1 auto}
+            #specgrid{display:flex;flex-direction:column;grid-template-areas:none;gap:12px;min-height:0}
+            #speccol{display:contents}
+            #specboard{order:0;overflow:visible;padding:10px}
+            #spqrwrap{order:1;align-self:center}
+            #specchat{order:2;flex:none;height:320px;padding-left:10px}
+            #specboard.twocol .spbody,.spbody{grid-template-columns:minmax(0,1fr)}
+            .spgridbox .gridw,#specboard.hasteams .spgridbox .gridw{width:100%}
+            #specgrid{flex:none}
+            #specboard{flex:none;overflow:visible}
+            .spbody{flex:none}
+            .spbody>.cell{overflow:visible}
+            .spbody>.spscroll{max-height:45vh;overflow-y:auto}
+            #speccell #chatlog{max-height:none}
+        }
     </style>
     <script>try { var q = JSON.parse(localStorage.getItem('hs1') || '{}'); if (q.theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); if (q.anim === false || (q.anims && q.anims.ui === false)) document.documentElement.classList.add('noanim') } catch (e) { }</script>
 </head>
@@ -2499,7 +2582,7 @@
     <section id="landing" class="pg" hidden>
         <header>
             <h1><span class="vs">versus</span> mode</h1>
-            <p class="sub">play hole in √-1 against friends in a private room</p>
+            <p class="sub">play hole in √-1 against friends or other players</p>
         </header>
         <div class="stack">
             <div class="board who" id="whobox">
@@ -2513,8 +2596,9 @@
                         account</p>
                 </div>
             </div>
-            <button class="mopt" id="create"><b>create a room</b><span>you'll be the host. share the code, pick the
-                    settings and chat while everyone joins</span></button>
+            <button class="mopt" id="create"><b>create a room</b><span>you'll be the host. pick public or private, then share the
+                    code, pick the settings and chat while everyone joins</span></button>
+            <button class="mopt" id="browse"><b>public rooms</b><span>see every public room and jump into one</span></button>
             <div class="joinbox">
                 <b>join a room</b>
                 <span>got a code or link from a friend? enter the code here</span>
@@ -2557,6 +2641,7 @@
             <h1><span class="vs">versus</span> mode</h1>
             <div class="lbl">room code</div>
             <div id="rcode" aria-label="room code"></div>
+            <div class="lbl" id="rvis"></div>
             <div id="rlinkline">or share this link: <span id="rlink"></span></div>
             <div class="tools"><button class="btn" id="copycode">copy code</button><button class="btn"
                     id="copylink">copy link</button></div>
@@ -2582,48 +2667,75 @@
                 <h3>room settings</h3>
                 <p id="hostnote" hidden role="note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z" fill="currentColor" /></svg><span>view only: only the host <b id="hostnotename"></b>can change these settings</span></p>
 
-                <div class="srow col">
+                <details class="sgroup" open>
+                    <summary>match</summary>
+<div class="srow col">
                     <div><b>game mode</b><span class="d" id="modedesc"></span></div>
                     <div class="seg" role="radiogroup" aria-label="game mode"><button type="button" role="radio"
                             data-k="mode" data-v="race">race</button><button type="button" role="radio"
                             data-k="mode" data-v="points">points</button><button type="button" role="radio"
                             data-k="mode" data-v="grid">the grid</button></div>
                 </div>
-
-                <div class="srow" id="row_hostplays">
-                    <div><b>host plays</b><span class="d">turn off to only watch: you get a live scoreboard screen to show everyone</span></div>
-                    <button type="button" class="sw" role="switch" data-sw="hostplays" aria-label="host plays" aria-checked="true"></button>
-                </div>
-                <div class="srow" id="row_profanity">
-                    <div><b>profanity filter</b><span class="d">hides swear words in chat and blocks them in names</span></div>
-                    <button type="button" class="sw" role="switch" data-sw="profanity" aria-label="profanity filter" aria-checked="true"></button>
-                </div>
-                <div class="srow" id="row_teams">
+<div class="srow" id="row_teams">
                     <div><b>teams</b><span class="d">points and grid modes: red vs blue. a team's score is its players' points (or levels in the grid). you can move players between teams here in the lobby</span></div>
                     <button type="button" class="sw" role="switch" data-sw="teams" aria-label="teams" aria-checked="false"></button>
                 </div>
-                <div class="srow">
-                    <div><b>max players</b><span class="d">how many people can be in the room, including the
-                            host</span></div>
-                    <div class="step"><button type="button" data-step="max" data-d="-1"
-                            aria-label="fewer players">−</button><output id="v_max"></output><button type="button"
-                            data-step="max" data-d="1" aria-label="more players">+</button></div>
-                </div>
-                <div class="srow" id="row_rounds">
+<div class="srow" id="row_rounds">
                     <div><b>rounds</b><span class="d">how many levels the match lasts (points mode: how many rounds)</span></div>
                     <div class="step"><button type="button" data-step="rounds" data-d="-1"
                             aria-label="fewer rounds">−</button><output id="v_rounds"></output><button type="button"
                             data-step="rounds" data-d="1" aria-label="more rounds">+</button></div>
                 </div>
-                <div class="srow" id="row_gridw">
+<div class="srow" id="row_endless">
+                    <div><b>endless mode</b><span class="d">points only: no set number of rounds. the match lasts as long as you pick below and the most points wins</span></div>
+                    <button type="button" class="sw" role="switch" data-sw="endless" aria-label="endless mode"
+                        aria-checked="false"></button>
+                </div>
+<div class="srow col" id="row_totaltime">
+                    <div><b>match length</b><span class="d">endless mode only: how long the whole match lasts</span></div>
+                    <div class="seg" role="radiogroup" aria-label="match length"><button type="button" role="radio"
+                            data-k="totaltime" data-v="60">1 min</button><button type="button" role="radio"
+                            data-k="totaltime" data-v="120">2 min</button><button type="button" role="radio"
+                            data-k="totaltime" data-v="180">3 min</button><button type="button" role="radio"
+                            data-k="totaltime" data-v="300">5 min</button><button type="button" role="radio"
+                            data-k="totaltime" data-v="600">10 min</button></div>
+                </div>
+<div class="srow" id="row_gridw">
                     <div><b>grid width</b><span class="d">the grid: how many columns of levels</span></div>
                     <div class="step"><button type="button" data-step="gridw" data-d="-1" aria-label="narrower grid">−</button><output id="v_gridw"></output><button type="button" data-step="gridw" data-d="1" aria-label="wider grid">+</button></div>
                 </div>
-                <div class="srow" id="row_gridh">
+<div class="srow" id="row_gridh">
                     <div><b>grid height</b><span class="d">the grid: how many rows of levels</span></div>
                     <div class="step"><button type="button" data-step="gridh" data-d="-1" aria-label="shorter grid">−</button><output id="v_gridh"></output><button type="button" data-step="gridh" data-d="1" aria-label="taller grid">+</button></div>
                 </div>
-                <div class="srow col" id="row_difficulty">
+<div class="srow col" id="row_gridtime">
+                    <div><b>grid time limit</b><span class="d">the grid only: how long the match lasts. with no limit it goes on until the host ends it</span></div>
+                    <div class="seg" role="radiogroup" aria-label="grid time limit"><button type="button" role="radio"
+                            data-k="gridtime" data-v="0">no limit</button><button type="button" role="radio"
+                            data-k="gridtime" data-v="180">3 min</button><button type="button" role="radio"
+                            data-k="gridtime" data-v="300">5 min</button><button type="button" role="radio"
+                            data-k="gridtime" data-v="600">10 min</button><button type="button" role="radio"
+                            data-k="gridtime" data-v="900">15 min</button></div>
+                </div>
+<div class="srow" id="row_showprog">
+                    <div><b>show everyone's progress</b><span class="d">race mode: players see how many levels everyone has finished. turn it off to race blind. (points mode always shows the scores)</span></div>
+                    <button type="button" class="sw" role="switch" data-sw="showprog" aria-label="show everyone's progress"
+                        aria-checked="true"></button>
+                </div>
+<div class="srow" id="row_firstfinish">
+                    <div><b>end when someone finishes</b><span class="d">race mode: the match ends as soon as the first player finishes every level, and they win. anyone still playing is marked as not finished</span></div>
+                    <button type="button" class="sw" role="switch" data-sw="firstfinish" aria-label="end the match when the first player finishes"
+                        aria-checked="false"></button>
+                </div>
+<div class="srow" id="row_replay">
+                    <div><b>replay solutions</b><span class="d">points only: when someone scores, everyone watches their solution play out before the next level. longer solutions play faster</span></div>
+                    <button type="button" class="sw" role="switch" data-sw="replay" aria-label="replay solutions"
+                        aria-checked="true"></button>
+                </div>
+                </details>
+                <details class="sgroup" open>
+                    <summary>levels</summary>
+<div class="srow col" id="row_difficulty">
                     <div><b>difficulty</b><span class="d">how hard the levels are</span></div>
                     <div class="seg" role="radiogroup" aria-label="difficulty"><button type="button" role="radio"
                             data-k="difficulty" data-v="2">easy</button><button type="button" role="radio"
@@ -2631,11 +2743,11 @@
                             data-k="difficulty" data-v="6">hard</button><button type="button" role="radio"
                             data-k="difficulty" data-v="8">challenge</button></div>
                 </div>
-                <div class="srow" id="row_randdiff">
+<div class="srow" id="row_randdiff">
                     <div><b>random difficulties</b><span class="d">every level gets its own difficulty. in the grid, squares get an outline in that difficulty's colour: green easy, yellow medium, red hard, blue challenge</span></div>
                     <button type="button" class="sw" role="switch" data-sw="randdiff" aria-label="random difficulties" aria-checked="false"></button>
                 </div>
-                <div class="srow col" id="row_favdiff">
+<div class="srow col" id="row_favdiff">
                     <div><b>favoured difficulty</b><span class="d">random difficulties only: pick one to see it more often, or leave it on truly random</span></div>
                     <div class="seg" role="radiogroup" aria-label="favoured difficulty"><button type="button" role="radio"
                             data-k="favdiff" data-v="0">truly random</button><button type="button" role="radio"
@@ -2644,54 +2756,55 @@
                             data-k="favdiff" data-v="6">hard</button><button type="button" role="radio"
                             data-k="favdiff" data-v="8">challenge</button></div>
                 </div>
-                <div class="srow" id="row_weighted">
-                    <div><b>weighted points</b><span class="d">points and grid modes: harder levels are worth more points. set the points below</span></div>
-                    <button type="button" class="sw" role="switch" data-sw="weighted" aria-label="weighted points" aria-checked="false"></button>
-                </div>
-                <div class="srow" id="row_pt2">
-                    <div><b>easy points</b><span class="d">weighted points: what a easy level is worth</span></div>
-                    <div class="step"><button type="button" data-step="pt2" data-d="-1" aria-label="fewer easy points">−</button><output id="v_pt2"></output><button type="button" data-step="pt2" data-d="1" aria-label="more easy points">+</button></div>
-                </div>
-                <div class="srow" id="row_pt4">
-                    <div><b>medium points</b><span class="d">weighted points: what a medium level is worth</span></div>
-                    <div class="step"><button type="button" data-step="pt4" data-d="-1" aria-label="fewer medium points">−</button><output id="v_pt4"></output><button type="button" data-step="pt4" data-d="1" aria-label="more medium points">+</button></div>
-                </div>
-                <div class="srow" id="row_pt6">
-                    <div><b>hard points</b><span class="d">weighted points: what a hard level is worth</span></div>
-                    <div class="step"><button type="button" data-step="pt6" data-d="-1" aria-label="fewer hard points">−</button><output id="v_pt6"></output><button type="button" data-step="pt6" data-d="1" aria-label="more hard points">+</button></div>
-                </div>
-                <div class="srow" id="row_pt8">
-                    <div><b>challenge points</b><span class="d">weighted points: what a challenge level is worth</span></div>
-                    <div class="step"><button type="button" data-step="pt8" data-d="-1" aria-label="fewer challenge points">−</button><output id="v_pt8"></output><button type="button" data-step="pt8" data-d="1" aria-label="more challenge points">+</button></div>
-                </div>
-                <div class="srow col">
+<div class="srow col">
                     <div><b>numbers</b><span class="d">use whole numbers, decimals or fractions</span></div>
                     <div class="seg" role="radiogroup" aria-label="number type"><button type="button" role="radio"
                             data-k="numbers" data-v="whole">whole numbers</button><button type="button" role="radio"
                             data-k="numbers" data-v="dec">decimals</button><button type="button" role="radio"
                             data-k="numbers" data-v="frac">fractions</button></div>
                 </div>
-                <div class="srow" id="row_gdec">
+<div class="srow" id="row_gdec">
                     <div><b>decimal goals</b><span class="d">decimals only: the goal can be a decimal like 3.5</span>
                     </div><button type="button" class="sw" role="switch" data-sw="gdec" aria-label="decimal goals"
                         aria-checked="false"></button>
                 </div>
-                <div class="srow" id="row_gfrac">
+<div class="srow" id="row_gfrac">
                     <div><b>fraction goals</b><span class="d">fractions only: the goal can be a fraction like
                             7/4</span></div><button type="button" class="sw" role="switch" data-sw="gfrac"
                         aria-label="fraction goals" aria-checked="false"></button>
                 </div>
-                <div class="srow" id="row_roots">
+<div class="srow" id="row_roots">
                     <div><b>roots of non-squares</b><span class="d">allow √ on numbers that aren't perfect squares.
                             always on for fractions</span></div><button type="button" class="sw" role="switch"
                         data-sw="roots" aria-label="roots of non-squares" aria-checked="false"></button>
                 </div>
-                <div class="srow">
-                    <div><b>hardcore mode</b><span class="d">only 3 undos per level and no restarting</span></div>
-                    <button type="button" class="sw" role="switch" data-sw="hardcore" aria-label="hardcore mode"
-                        aria-checked="false"></button>
+                </details>
+                <details class="sgroup" open>
+                    <summary>scoring</summary>
+<div class="srow" id="row_weighted">
+                    <div><b>weighted points</b><span class="d">points and grid modes: harder levels are worth more points. set the points below</span></div>
+                    <button type="button" class="sw" role="switch" data-sw="weighted" aria-label="weighted points" aria-checked="false"></button>
                 </div>
-                <div class="srow col" id="row_timer">
+<div class="srow" id="row_pt2">
+                    <div><b>easy points</b><span class="d">weighted points: what a easy level is worth</span></div>
+                    <div class="step"><button type="button" data-step="pt2" data-d="-1" aria-label="fewer easy points">−</button><output id="v_pt2"></output><button type="button" data-step="pt2" data-d="1" aria-label="more easy points">+</button></div>
+                </div>
+<div class="srow" id="row_pt4">
+                    <div><b>medium points</b><span class="d">weighted points: what a medium level is worth</span></div>
+                    <div class="step"><button type="button" data-step="pt4" data-d="-1" aria-label="fewer medium points">−</button><output id="v_pt4"></output><button type="button" data-step="pt4" data-d="1" aria-label="more medium points">+</button></div>
+                </div>
+<div class="srow" id="row_pt6">
+                    <div><b>hard points</b><span class="d">weighted points: what a hard level is worth</span></div>
+                    <div class="step"><button type="button" data-step="pt6" data-d="-1" aria-label="fewer hard points">−</button><output id="v_pt6"></output><button type="button" data-step="pt6" data-d="1" aria-label="more hard points">+</button></div>
+                </div>
+<div class="srow" id="row_pt8">
+                    <div><b>challenge points</b><span class="d">weighted points: what a challenge level is worth</span></div>
+                    <div class="step"><button type="button" data-step="pt8" data-d="-1" aria-label="fewer challenge points">−</button><output id="v_pt8"></output><button type="button" data-step="pt8" data-d="1" aria-label="more challenge points">+</button></div>
+                </div>
+                </details>
+                <details class="sgroup" open>
+                    <summary>rules</summary>
+<div class="srow col" id="row_timer">
                     <div><b>time limit</b><span class="d">how long each round can last</span></div>
                     <div class="seg" role="radiogroup" aria-label="time limit"><button type="button" role="radio"
                             data-k="timer" data-v="0">no limit</button><button type="button" role="radio"
@@ -2699,7 +2812,7 @@
                             data-k="timer" data-v="120">2 min</button><button type="button" role="radio"
                             data-k="timer" data-v="180">3 min</button></div>
                 </div>
-                <div class="srow col">
+<div class="srow col">
                     <div><b>moves over par</b><span class="d">how many moves over par a player may use on one level. out of moves? undo or restart the level</span></div>
                     <div class="seg" role="radiogroup" aria-label="moves over par"><button type="button" role="radio"
                             data-k="overpar" data-v="-1">no limit</button><button type="button" role="radio"
@@ -2709,44 +2822,31 @@
                             data-k="overpar" data-v="3">+3</button><button type="button" role="radio"
                             data-k="overpar" data-v="5">+5</button></div>
                 </div>
-                <div class="srow" id="row_endless">
-                    <div><b>endless mode</b><span class="d">points only: no set number of rounds. the match lasts as long as you pick below and the most points wins</span></div>
-                    <button type="button" class="sw" role="switch" data-sw="endless" aria-label="endless mode"
-                        aria-checked="false"></button>
+                </details>
+                <details class="sgroup" open>
+                    <summary>room</summary>
+<div class="srow">
+                    <div><b>max players</b><span class="d">how many people can be in the room, including the
+                            host</span></div>
+                    <div class="step"><button type="button" data-step="max" data-d="-1"
+                            aria-label="fewer players">−</button><output id="v_max"></output><button type="button"
+                            data-step="max" data-d="1" aria-label="more players">+</button></div>
                 </div>
-                <div class="srow col" id="row_totaltime">
-                    <div><b>match length</b><span class="d">endless mode only: how long the whole match lasts</span></div>
-                    <div class="seg" role="radiogroup" aria-label="match length"><button type="button" role="radio"
-                            data-k="totaltime" data-v="60">1 min</button><button type="button" role="radio"
-                            data-k="totaltime" data-v="120">2 min</button><button type="button" role="radio"
-                            data-k="totaltime" data-v="180">3 min</button><button type="button" role="radio"
-                            data-k="totaltime" data-v="300">5 min</button><button type="button" role="radio"
-                            data-k="totaltime" data-v="600">10 min</button></div>
+<div class="srow" id="row_hostplays">
+                    <div><b>host plays</b><span class="d">turn off to only watch: you get a live scoreboard screen to show everyone</span></div>
+                    <button type="button" class="sw" role="switch" data-sw="hostplays" aria-label="host plays" aria-checked="true"></button>
                 </div>
-                <div class="srow col" id="row_gridtime">
-                    <div><b>grid time limit</b><span class="d">the grid only: how long the match lasts. with no limit it goes on until the host ends it</span></div>
-                    <div class="seg" role="radiogroup" aria-label="grid time limit"><button type="button" role="radio"
-                            data-k="gridtime" data-v="0">no limit</button><button type="button" role="radio"
-                            data-k="gridtime" data-v="180">3 min</button><button type="button" role="radio"
-                            data-k="gridtime" data-v="300">5 min</button><button type="button" role="radio"
-                            data-k="gridtime" data-v="600">10 min</button><button type="button" role="radio"
-                            data-k="gridtime" data-v="900">15 min</button></div>
+<div class="srow" id="row_profanity">
+                    <div><b>profanity filter</b><span class="d">hides swear words in chat and blocks them in names</span></div>
+                    <button type="button" class="sw" role="switch" data-sw="profanity" aria-label="profanity filter" aria-checked="true"></button>
                 </div>
-                <div class="srow" id="row_showprog">
-                    <div><b>show everyone's progress</b><span class="d">race mode: players see how many levels everyone has finished. turn it off to race blind. (points mode always shows the scores)</span></div>
-                    <button type="button" class="sw" role="switch" data-sw="showprog" aria-label="show everyone's progress"
-                        aria-checked="true"></button>
-                </div>
-                <div class="srow" id="row_firstfinish">
-                    <div><b>end when someone finishes</b><span class="d">race mode: the match ends as soon as the first player finishes every level, and they win. anyone still playing is marked as not finished</span></div>
-                    <button type="button" class="sw" role="switch" data-sw="firstfinish" aria-label="end the match when the first player finishes"
-                        aria-checked="false"></button>
-                </div>
-                <div class="srow" id="row_howto">
+<div class="srow" id="row_howto">
                     <div><b>how to play screen</b><span class="d">before the match starts, everyone sees a short how-to-play screen. only the host can continue</span></div>
                     <button type="button" class="sw" role="switch" data-sw="howto" aria-label="show a how to play screen before the match"
                         aria-checked="false"></button>
                 </div>
+                </details>
+
             </div>
 
             <div class="foot">
@@ -2827,14 +2927,18 @@
 
     <!-- host screen: the host only watches -->
     <section id="spec" class="pg" hidden>
-        <header><h1><span class="vs">versus</span> mode</h1></header>
+        <div id="sptop">
+            <div id="sptitle"><span class="vs">versus</span> mode</div>
+            <div id="spcodebox"><span class="lbl">room code</span><b id="spcode"></b></div>
+            <div id="spstatus" aria-live="off"></div>
+            <div id="sptools"></div>
+        </div>
         <div id="specgrid">
-            <div id="speccol">
-                <div class="lbl">room code</div><div id="spcode"></div>
-                <div class="cell" id="spqrwrap"><div id="spqr"></div><button id="spqrstyle" class="klink" type="button" hidden></button><div id="splink"></div></div>
-                <div class="board" id="specchat"><div class="cell col" id="speccell"><div class="cellh chatname">chat</div></div></div>
-            </div>
             <div class="board" id="specboard"></div>
+            <aside id="speccol">
+                <div class="cell" id="spqrwrap"><div id="spqr"></div><button id="spqrstyle" class="klink" type="button" hidden></button><div id="splink"></div></div>
+                <div id="specchat"><div class="cell col" id="speccell"><div class="cellh chatname">chat</div></div></div>
+            </aside>
         </div>
     </section>
 
@@ -2894,6 +2998,20 @@
         </div>
     </div>
 
+    <dialog id="createdlg">
+        <h3 class="t">create a room</h3>
+        <div class="vispick">
+            <button class="mopt" id="createpub" type="button"><b>public room</b><span>anyone can find it in the public room list and join</span></button>
+            <button class="mopt" id="createpriv" type="button"><b>private room</b><span>only people with your code or link can join</span></button>
+        </div>
+        <div class="cdbtns"><button class="ghost" id="createx" type="button">cancel</button></div>
+    </dialog>
+    <dialog id="roomsdlg">
+        <h3 class="t">public rooms</h3>
+        <ul id="roomlist"></ul>
+        <p id="roomsmsg" role="status"></p>
+        <div class="cdbtns"><button class="ghost" id="roomsrefresh" type="button">refresh</button><button id="roomsx" type="button">close</button></div>
+    </dialog>
     <dialog id="namedlg">
         <h3 class="t">change your name</h3>
         <input id="newname" maxlength="20" autocomplete="off" spellcheck="false" aria-label="new name">
@@ -2979,7 +3097,7 @@
         let otherUnread = false, chatTeam = false, curView = '', chatOpen = false, unread = 0, chatReady = false, toastT = 0; const baseTitle = document.title;
         let leaving = false; addEventListener('beforeunload', () => { leaving = true; }); addEventListener('pagehide', () => { leaving = true; }); addEventListener('pageshow', () => { leaving = false; });
         const isHost = () => !!state && state.hostId === you;
-        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, hardcore: false, timer: 0, showprog: true, overpar: -1, mode: 'race', endless: false, totaltime: 180, hostplays: true, teams: false, profanity: true, firstfinish: false, howto: false, gridw: 3, gridh: 3, gridtime: 0, randdiff: false, favdiff: 0, weighted: false, pt2: 1, pt4: 2, pt6: 3, pt8: 4 };
+        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, replay: true, timer: 0, showprog: true, overpar: -1, mode: 'race', endless: false, totaltime: 180, hostplays: true, teams: false, profanity: true, firstfinish: false, howto: false, gridw: 3, gridh: 3, gridtime: 0, randdiff: false, favdiff: 0, weighted: false, pt2: 1, pt4: 2, pt6: 3, pt8: 4 };
 
         function view(v) {
             $('loading').hidden = v !== 'loading'; $('landing').hidden = v !== 'landing'; $('invite').hidden = v !== 'invite'; $('room').hidden = v !== 'room';
@@ -3006,7 +3124,7 @@
         }
         function lmsg(text, kind) { [$('lmsg'), $('imsg')].forEach(m => { m.textContent = text || ''; m.className = kind || ''; }); }
         function busy(on) {
-            ['create', 'join', 'codein', 'nick', 'iname', 'ijoin'].forEach(id => { $(id).disabled = on; });
+            ['create', 'browse', 'join', 'codein', 'nick', 'iname', 'ijoin'].forEach(id => { $(id).disabled = on; });
             $('ijoin').firstChild.textContent = on ? '…' : 'join room';
             $('join').textContent = on ? '…' : 'join';
         }
@@ -3025,7 +3143,33 @@
                 if (isNet(e)) { lmsg(''); netErr(); } else lmsg(e.message, 'err');
             } finally { clearTimeout(slow); }
         }
-        $('create').onclick = () => go('/vs/create', {});
+        $('create').onclick = () => {
+            if (!account && !$('nick').value.trim()) { lmsg('pick a nickname first', 'err'); $('nick').focus(); return; }
+            $('createdlg').showModal();
+        };
+        $('createpub').onclick = () => { $('createdlg').close(); go('/vs/create', { public: true }); };
+        $('createpriv').onclick = () => { $('createdlg').close(); go('/vs/create', { public: false }); };
+        $('createx').onclick = () => $('createdlg').close();
+        /* the public room list */
+        const MODEN = { race: 'race', points: 'points', grid: 'grid' };
+        async function loadRooms() {
+            const ul = $('roomlist'), msg = $('roomsmsg'); msg.textContent = 'loading…';
+            try {
+                const j = await api('/vs/rooms'); ul.innerHTML = '';
+                j.rooms.forEach(r => {
+                    const li = document.createElement('li'), info = document.createElement('div'); info.className = 'ri';
+                    const b = document.createElement('b'); b.textContent = (r.host || 'someone') + "'s room"; info.appendChild(b);
+                    const sp = document.createElement('span'); sp.textContent = (MODEN[r.mode] || r.mode) + (r.teams ? ' · teams' : '') + ' · ' + r.count + '/' + r.max + ' players' + (r.playing ? ' · match in progress' : ''); info.appendChild(sp);
+                    const jb = document.createElement('button'); jb.type = 'button'; jb.textContent = r.playing ? 'playing' : r.full ? 'full' : 'join'; jb.disabled = r.playing || r.full;
+                    jb.onclick = () => { $('roomsdlg').close(); $('codein').value = r.code; doJoin(); };
+                    li.append(info, jb); ul.appendChild(li);
+                });
+                msg.textContent = j.rooms.length ? '' : 'no public rooms right now. create one!';
+            } catch (e) { ul.innerHTML = ''; msg.textContent = isNet(e) ? "couldn't reach the server" : e.message; }
+        }
+        $('browse').onclick = () => { $('roomsdlg').showModal(); loadRooms(); };
+        $('roomsrefresh').onclick = loadRooms;
+        $('roomsx').onclick = () => $('roomsdlg').close();
         const doJoin = () => { const c = $('codein').value.replace(/\D/g, ''); if (c.length !== 5) { lmsg('room codes have 5 digits', 'err'); $('codein').focus(); return; } go('/vs/join', { code: c }); };
         $('join').onclick = doJoin;
         /* invite link: show the name box (if you're not signed in) and one join button */
@@ -3116,7 +3260,7 @@
         function renderRoom() {
             if (!state) return;
             const host = isHost(), s = state.settings, mem = state.members, h = mem.find(m => m.id === state.hostId), me = mem.find(m => m.id === you);
-            $('rcode').textContent = state.code; $('rlink').textContent = shownLink(state.code);
+            $('rvis').textContent = state.public ? 'public room' : 'private room'; $('rcode').textContent = state.code; $('rlink').textContent = shownLink(state.code);
             $('me').textContent = me ? me.name : ''; $('rename').hidden = !(me && !me.account); $('hostname').textContent = h ? h.name : ''; $('hostyou').textContent = host ? ' (you!)' : '';
             $('mcount').textContent = '(' + mem.length + '/' + s.max + ')';
             const ul = $('mlist'), prev = new Set([...ul.children].map(li => li.dataset.id));
@@ -3159,7 +3303,7 @@
         /* settings: markup is static, this just syncs it with the room's values */
         function norm(s) {
             const o = Object.assign({}, s);
-            o.gdec = o.numbers === 'dec' && !!o.gdec; o.gfrac = o.numbers === 'frac' && !!o.gfrac; o.roots = o.numbers === 'frac' ? true : !!o.roots; o.endless = o.mode === 'points' && !!o.endless; o.teams = o.mode !== 'race' && !!o.teams; if (o.mode === 'grid') o.timer = 0;
+            o.gdec = o.numbers === 'dec' && !!o.gdec; o.gfrac = o.numbers === 'frac' && !!o.gfrac; o.roots = o.numbers === 'frac' ? true : !!o.roots; o.endless = o.mode === 'points' && !!o.endless; o.replay = o.replay !== false; o.teams = o.mode !== 'race' && !!o.teams; if (o.mode === 'grid') o.timer = 0;
             /* host-side rule: kept in this browser too, in case the server doesn't echo it back */
             o.firstfinish = o.mode === 'race' && (o.firstfinish !== undefined ? !!o.firstfinish : (typeof isHost === 'function' && isHost() && store.get('vs_firstfinish') === '1'));
             o.howto = o.howto !== undefined ? !!o.howto : (typeof isHost === 'function' && isHost() && store.get('vs_howto') === '1');
@@ -3177,10 +3321,10 @@
             document.querySelectorAll('[data-k]').forEach(b => { b.setAttribute('aria-checked', String(s[b.dataset.k]) === b.dataset.v); b.disabled = !edit || (b.dataset.k === 'totaltime' && !s.endless) || (b.dataset.k === 'timer' && gr) || (b.dataset.k === 'gridtime' && !gr) || (b.dataset.k === 'favdiff' && !s.randdiff) || (b.dataset.k === 'difficulty' && s.randdiff); });
             document.querySelectorAll('[data-sw]').forEach(b => {
                 const k = b.dataset.sw; b.setAttribute('aria-checked', !!s[k]);
-                b.disabled = !edit || (k === 'gdec' && s.numbers !== 'dec') || (k === 'gfrac' && s.numbers !== 'frac') || (k === 'roots' && s.numbers === 'frac') || (k === 'endless' && !pts) || (k === 'showprog' && s.mode !== 'race') || (k === 'firstfinish' && s.mode !== 'race') || (k === 'teams' && s.mode === 'race') || (k === 'weighted' && s.mode === 'race');
+                b.disabled = !edit || (k === 'gdec' && s.numbers !== 'dec') || (k === 'gfrac' && s.numbers !== 'frac') || (k === 'roots' && s.numbers === 'frac') || (k === 'endless' && !pts) || (k === 'replay' && !pts) || (k === 'showprog' && s.mode !== 'race') || (k === 'firstfinish' && s.mode !== 'race') || (k === 'teams' && s.mode === 'race') || (k === 'weighted' && s.mode === 'race');
             });
             updHowto();
-            $('row_teams').classList.toggle('dim', s.mode === 'race'); $('row_endless').classList.toggle('dim', !pts); $('row_totaltime').classList.toggle('dim', !s.endless); $('row_rounds').classList.toggle('dim', !!s.endless || gr); $('row_showprog').classList.toggle('dim', s.mode !== 'race'); $('row_firstfinish').classList.toggle('dim', s.mode !== 'race');
+            $('row_teams').classList.toggle('dim', s.mode === 'race'); $('row_endless').classList.toggle('dim', !pts); $('row_replay').classList.toggle('dim', !pts); $('row_totaltime').classList.toggle('dim', !s.endless); $('row_rounds').classList.toggle('dim', !!s.endless || gr); $('row_showprog').classList.toggle('dim', s.mode !== 'race'); $('row_firstfinish').classList.toggle('dim', s.mode !== 'race');
             ['row_gridw', 'row_gridh', 'row_gridtime'].forEach(id => $(id).classList.toggle('dim', !gr)); $('row_timer').classList.toggle('dim', gr); $('row_favdiff').classList.toggle('dim', !s.randdiff); $('row_difficulty').classList.toggle('dim', !!s.randdiff); $('row_weighted').classList.toggle('dim', s.mode === 'race'); [2, 4, 6, 8].forEach(t => $('row_pt' + t).classList.toggle('dim', !wt));
             $('row_gdec').classList.toggle('dim', s.numbers !== 'dec'); $('row_gfrac').classList.toggle('dim', s.numbers !== 'frac'); $('row_roots').classList.toggle('dim', s.numbers === 'frac');
         }
@@ -3190,7 +3334,7 @@
         /* pause: the host presses pause and the server freezes its own clocks and tells everyone ("pause" / "resume" events).
            everyone's screen freezes, and on resume every local clock is pushed forward by exactly the time spent paused
            (the server measures that, so all clients agree). it works in every mode, including matches with time limits */
-        var paused = false, pausedLoad = false, specShowLevel = false;
+        var paused = false, pausedLoad = false, specShowLevel = false, pausedAtLocal = 0;
         function shiftTimers(d) {
             if (!match || !d) return;
             localGo += d; if (!pausedLoad) roundStartAt += d; else roundStartAt = Date.now(); pausedLoad = false;
@@ -3198,11 +3342,11 @@
         }
         function updPause() {
             const host = isHost();
-            $('pauselay').hidden = !paused; $('pauseresume').hidden = !host; $('pausetxt').textContent = host ? 'everyone is frozen and their clocks are stopped. press resume when you\'re ready' : "the host paused the game. it'll carry on when they resume, and your clock stays put";
+            $('pauselay').hidden = !paused || (host && ui === 'spec');   /* the host's presenting screen stays live: no overlay, the pause button turns into resume */ $('pauseresume').hidden = !host; $('pausetxt').textContent = host ? 'everyone is frozen and their clocks are stopped. press resume when you\'re ready' : "the host paused the game. it'll carry on when they resume, and your clock stays put";
             const gp = $('gpause'); gp.hidden = !host || !match || ui === 'results'; gp.disabled = paused; gp.textContent = paused ? 'game paused' : 'pause game';
-            document.querySelectorAll('.pausebtn').forEach(b => { b.disabled = paused; b.textContent = paused ? 'game paused' : 'pause game'; });
+            document.querySelectorAll('.pausebtn').forEach(b => { b.disabled = false; b.textContent = paused ? 'resume game' : 'pause game'; b.classList.toggle('on', paused); });
         }
-        function setPaused(on) { if (paused === !!on) { updPause(); return; } paused = !!on; updPause(); if (typeof isGrid === 'function' && isGrid() && ui === 'game') renderGrid(); if (paused && isHost()) $('pauseresume').focus(); }
+        function setPaused(on) { if (paused === !!on) { updPause(); return; } paused = !!on; if (paused) pausedAtLocal = Date.now(); updPause(); if (ui === 'spec') renderSpec(); if (typeof isGrid === 'function' && isGrid() && ui === 'game') renderGrid(); if (paused && isHost()) $('pauseresume').focus(); }
         /* after a reconnect: take the server's word for whether the match is paused, and for the scores and the grid */
         function syncMatch(dm) {
             if (!match || match.id !== dm.id) return;
@@ -3219,20 +3363,22 @@
         }
         const pauseClick = async () => { if (!isHost() || paused || !match || !sess) return; try { await api('/vs/pause', { code: sess.code, token: sess.token }); } catch (e) { showMsg(isNet(e) ? "couldn't reach the server" : e.message); } };
         $('gpause').onclick = pauseClick;
-        $('pauseresume').onclick = async () => { if (!isHost() || !sess) return; $('pauseresume').disabled = true; try { await api('/vs/resume', { code: sess.code, token: sess.token }); } catch (e) { showMsg(isNet(e) ? "couldn't reach the server" : e.message); } $('pauseresume').disabled = false; };
+        const resumeClick = async () => { if (!isHost() || !sess) return; $('pauseresume').disabled = true; try { await api('/vs/resume', { code: sess.code, token: sess.token }); } catch (e) { showMsg(isNet(e) ? "couldn't reach the server" : e.message); } $('pauseresume').disabled = false; };
+        $('pauseresume').onclick = resumeClick;
+        const pauseToggle = () => paused ? resumeClick() : pauseClick();
         var howtoOn = false;
         function howtoSteps(c) {
             const pts = c.mode === 'points', gr = c.mode === 'grid', st = [];
             st.push(['get to the goal', 'every level shows the number you have and the goal you need to reach. turn one into the other.']);
             st.push(['tap the buttons to change your number', 'each button does a bit of maths: add, subtract, multiply, divide' + (c.roots || c.numbers === 'frac' ? ', take a square root' : ', or take a square root') + '. buttons that can\'t be used right now are greyed out and say why.' + (c.numbers === 'dec' ? ' numbers can be decimals.' : c.numbers === 'frac' ? ' numbers can be fractions.' : '')]);
-            st.push(['use as few moves as you can', 'every level has a par, like in golf. fewer moves is better.' + (c.overpar >= 0 ? (c.overpar === 0 ? ' you can only use par moves, so no extras.' : ' you can use at most ' + c.overpar + ' more than par.') : '') + (c.hardcore ? ' hardcore: only ' + HC_UNDOS + ' undos per level and no restarting.' : ' undo takes back your last move and restart level starts over.')]);
+            st.push(['use as few moves as you can', 'every level has a par, like in golf. fewer moves is better.' + (c.overpar >= 0 ? (c.overpar === 0 ? ' you can only use par moves, so no extras.' : ' you can use at most ' + c.overpar + ' more than par.') : '') + ' undo takes back your last move and restart level starts over.']);
             if (gr) {
                 st.push(['pick any level from the grid', 'the grid is ' + c.gridw + ' x ' + c.gridh + ' levels. tap one to start working on it. you can switch whenever you like, but your moves on the old one are lost. small squares in the corner of a level show who is working on it.']);
                 st.push(['solve a level to claim it', 'solve a level and it turns ' + (c.teams ? 'your team\'s colour (red or blue)' : 'your colour') + '. the number in its corner is how many moves it took: par, +2 (two over par), -1 (one under par).']);
                 st.push(['take levels from the others', 'to take over a level ' + (c.teams ? 'the other team' : 'somebody else') + ' claimed, solve it in fewer moves than they did. on its level screen, blue squares show the move count to beat.']);
                 st.push([c.gridtime ? 'play until the time runs out' : 'hold the most levels', (c.gridtime ? 'the match lasts ' + (c.gridtime / 60) + ' min. ' : 'the match goes on until the host ends it. ') + (c.teams ? 'the team holding the most levels wins.' : 'whoever holds the most levels wins.')]);
             } else if (pts) {
-                st.push(['everyone plays the same level at once', 'the first person to solve it gets the point, then everyone moves on to the next round.' + (c.teams ? ' your team\'s score is all its players\' points added together: red vs blue.' : '')]);
+                st.push(['everyone plays the same level at once', 'the first person to solve it gets the point' + (c.replay ? ', everyone watches how they did it,' : '') + ' then everyone moves on to the next round.' + (c.teams ? ' your team\'s score is all its players\' points added together: red vs blue.' : '')]);
                 st.push([c.endless ? 'play until the time runs out' : 'most points wins', c.endless ? 'the match lasts ' + (c.totaltime / 60) + ' min. whoever has the most points at the end wins.' : 'the match is ' + c.rounds + ' rounds. whoever has the most points at the end wins.']);
             } else {
                 st.push(['race through the levels', 'there are ' + c.rounds + ' levels and everyone plays them in the same order at their own speed.' + (c.firstfinish ? ' the match ends as soon as the first player finishes them all, and they win.' : ' the fastest to the end wins.') + (c.showprog ? ' the scoreboard shows how far everyone is.' : '')]);
@@ -3291,8 +3437,8 @@
                 /* public chat in a team room: red on one side, blue on the other, and people with no team (host, spectators) get their own colour */
                 const side = m.st === 'red' || m.st === 'blue' ? m.st : (ch === 'pub' && state && state.settings && state.settings.teams ? 'na' : ''), sided = ch === 'pub' && !!side;
                 el = document.createElement('div'); el.className = sided ? 'msg s' + side + (mine ? ' mine' : '') : 'msg' + (mine ? ' me' : '');
-                if (lastBy[ch] !== m.from) { el.classList.add('first'); const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = m.name; el.appendChild(nm); }
-                const b = document.createElement('div'); b.className = 'bub'; b.textContent = m.text; b.title = new Date(m.t).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); el.appendChild(b);
+                if (lastBy[ch] !== m.from) el.classList.add('first'); { const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = m.name; el.appendChild(nm); }
+                const b = document.createElement('div'); b.className = 'bub'; b.textContent = m.text; b.title = new Date(m.t).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).toLowerCase(); el.appendChild(b);
                 if (lastBy[ch] === m.from && lastBub[ch]) lastBub[ch].classList.remove('tail');   /* only the bottom bubble of a stack gets the tail */
                 b.classList.add('tail'); lastBub[ch] = b; lastBy[ch] = m.from;
             }
@@ -3728,14 +3874,12 @@
         /* =====================================================================
            THE MATCH (client side)
            ===================================================================== */
-        const HC_UNDOS = 3;
         let match = null;            /* { id, cfg, levels, total, players:[{id,name}], prog:{id:{done,solved,finished,left}} } */
         let standings = null;        /* the latest results table from the server */
         let ui = 'room';             /* which screen this player is looking at: room (lobby) | game | results */
-        let Lv = null, cur = null, hist = [], undosUsed = 0, round = 0, lockedRound = false, began = false;
-        let srvOff = 0, localGo = 0, roundStartAt = 0, tickT = 0, advT = 0, goT = 0, countShown = null, reportQ = Promise.resolve(), startingMatch = null, topping = false;
+        let Lv = null, cur = null, hist = [], round = 0, lockedRound = false, began = false;
+        let replayT = 0, srvOff = 0, localGo = 0, roundStartAt = 0, tickT = 0, advT = 0, goT = 0, countShown = null, reportQ = Promise.resolve(), startingMatch = null, topping = false;
 
-        const hardcore = () => !!(match && match.cfg.hardcore);
         const capMoves = () => match.cfg.overpar < 0 ? Infinity : Lv.limit + match.cfg.overpar;
         const mv = n => n + (n === 1 ? ' move' : ' moves');
         const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -3743,7 +3887,7 @@
         function fmtCd(ms) { const s = Math.ceil(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
         const myRow = st => st && st.rows.find(r => r.id === you);
 
-        function stopGameTimers() { clearInterval(tickT); clearTimeout(advT); clearTimeout(goT); cancelAnimationFrame(nlRaf); tickT = 0; $('gcount').hidden = true; }
+        function stopGameTimers() { stopReplay(); clearInterval(tickT); clearTimeout(advT); clearTimeout(goT); cancelAnimationFrame(nlRaf); tickT = 0; $('gcount').hidden = true; }
         /* race mode, 'end when someone finishes': the host's browser ends the match as soon as anyone has finished every level */
         function firstFinishCheck() {
             if (!sess || !match || match.mode !== 'race' || match.ffSent || !isHost() || !state || !norm(state.settings).firstfinish) return;
@@ -3771,7 +3915,7 @@
                 if (p.roundStart != null) match.pend = { idx: round, at: p.roundStart - srvOff }; else match.waitIdx = round;
             } else match.pend = { idx: round, at: localGo };
             began = false; lockedRound = false; countShown = null; Lv = null; hist = []; topping = false;
-            const gb = $('gboard'); gb.hidden = true; $('gridbox').hidden = true; $('gworkers').hidden = true; $('gback').hidden = !grid; $('gridmsg').textContent = ''; gb.classList.toggle('hc', !!cfg.hardcore); teamBorder();
+            const gb = $('gboard'); gb.hidden = true; $('gridbox').hidden = true; $('gworkers').hidden = true; $('gback').hidden = !grid; $('gridmsg').textContent = ''; teamBorder();
             if (grid && p.mine && p.mine.cell >= 0 && !match.grid.cells[p.mine.cell]) match.resume = p.mine.cell;
             $('grwrap').hidden = !(cfg.timer > 0); $('glk').textContent = grid ? 'claimed' : pts ? 'round' : 'level'; $('gtlabel').textContent = matchLen(cfg) ? 'time left' : 'time';
             $('gclock').textContent = matchLen(cfg) ? fmtCd(matchLen(cfg) * 1000) : '0:00.0';
@@ -3816,9 +3960,10 @@
         }
 
         function loadLevel(i, startAt) {
+            stopReplay();
             const lv = match.levels[i]; if (!lv) return; NB = lv.nb;
             Lv = { start: lv.start, goal: lv.goal, limit: lv.limit, nb: lv.nb, tier: lv.tier || 0, ops: lv.ops.map(s => mk(s, MODE)) };
-            cur = Lv.start; hist = []; undosUsed = 0; lockedRound = false; nlView = null; nlPend = false; roundStartAt = startAt || Date.now(); if (paused) pausedLoad = true; match.round = i; round = i;
+            cur = Lv.start; hist = []; lockedRound = false; nlView = null; nlPend = false; roundStartAt = startAt || Date.now(); if (paused) pausedLoad = true; match.round = i; round = i;
             if (match.mode !== 'grid') $('glevel').textContent = match.mode === 'points' ? (i + 1) + (match.cfg.endless ? '' : ' / ' + match.total) : (i + 1) + ' / ' + match.total; setMsg('');
             if (match.cfg.timer > 0) { $('grclock').textContent = fmtCd(match.cfg.timer * 1000); $('grwrap').classList.remove('low'); }
             render(); updWorkers();
@@ -3857,21 +4002,12 @@
                 $('ops').appendChild(b);
             });
             drawLine();
-            const left = HC_UNDOS - undosUsed;
-            $('undo').disabled = !used || (won && !short) || lockedRound || (hardcore() && left <= 0);
-            $('undo').textContent = hardcore() ? 'undo (' + Math.max(left, 0) + ' left)' : 'undo';
-            $('reset').disabled = hardcore() || lockedRound; $('reset').title = hardcore() ? 'not allowed in hardcore mode' : '';
-            if (!lockedRound) {
-                if (full) {
-                    const stuck = hardcore() && left <= 0;
-                    if (stuck && match.mode === 'race') { setMsg('out of moves and undos. level failed.', 'lose'); setTimeout(() => { if (!lockedRound && Lv && round === match.round) roundDone('skipped'); }, 700); }
-                    else if (stuck) setMsg(match.mode === 'grid' ? 'out of moves and undos. tap this level again to retry it, or pick another.' : 'out of moves and undos. wait for the round to end.', 'lose');
-                    else setMsg(hardcore() ? 'out of moves. undo a move to keep trying.' : 'out of moves. undo a move or restart the level.', 'lose');
-                } else setMsg('');
-            }
+            $('undo').disabled = !used || (won && !short) || lockedRound;
+            $('reset').disabled = lockedRound;
+            if (!lockedRound) setMsg(full ? 'out of moves. undo a move or restart the level.' : '');
         }
 
-        /* a level is over: solved, failed (hardcore, out of moves and undos) or out of time. tell the server, show a quick note, and go to the next one */
+        /* a level is over: solved or out of time. tell the server, show a quick note, and go to the next one */
         function roundDone(status) {
             if (lockedRound || !match || !Lv) return;
             if (match.mode === 'grid' && status === 'solved') { const em = beatM(); if (em && hist.length >= em) { render(); setMsg('solved in ' + mv(hist.length) + ', but you need ' + (em - 1) + ' or fewer to take this square. undo or restart and try again', 'lose'); return; } }
@@ -3891,9 +4027,10 @@
         /* points mode: tell the server we solved it. the server decides who was first and tells everyone (see onRound) */
         async function claimSolve() {
             lockedRound = true; const moves = hist.length, idx = match.round, mid = match.id;
+            const path = hist.map(x => Lv.ops.findIndex(o => o.s === x.s));   /* which button each move was, so the others can watch it */
             render(); setMsg('solved in ' + mv(moves) + '! checking who was first…', 'win');
             for (let i = 0; i < 20;) {
-                try { await api('/vs/solve', { code: sess.code, token: sess.token, matchId: mid, round: idx, moves }); return; }
+                try { await api('/vs/solve', { code: sess.code, token: sess.token, matchId: mid, round: idx, moves, path }); return; }
                 catch (e) {
                     if (e.status && e.status !== 429 && e.status < 500) { if (match && match.id === mid && match.round === idx) { lockedRound = false; render(); setMsg(e.message, 'lose'); } return; }
                     if (!paused) i++;   /* a paused game doesn't use up the retries */
@@ -3922,7 +4059,6 @@
         const mineCell = c => !!c && (match.cfg.teams ? !!c.t && c.t === myTeam() : c.o === you);
         /* the move count on the level you're playing that you'd have to beat (0: nobody enemy has solved it) */
         const beatM = () => { if (!isGrid() || !Lv) return 0; const c = match.grid.cells[match.round]; return c && !mineCell(c) ? c.m || 0 : 0; };
-        const stuckNow = () => !!Lv && hardcore() && (!same(cur, Lv.goal) || (beatM() && hist.length >= beatM())) && hist.length >= capMoves() && undosUsed >= HC_UNDOS;
 
         /* draws the grid into wrap. interactive: the player's own grid (buttons). otherwise it's the host screen / results (plain squares) */
         function buildGrid(wrap, interactive) {
@@ -3982,7 +4118,6 @@
         function pickCell(i, resume) {
             if (!isGrid() || !began || paused || ui !== 'game' || !sess) return;
             const oc = match.grid.cells[i]; if (oc && (mineCell(oc) || (oc.m || 0) <= 1)) return;
-            if (!resume && Lv && match.round === i && !lockedRound && hardcore() && !stuckNow()) return;   /* hardcore: no restarting, unless you're stuck */
             $('gridmsg').textContent = ''; $('gboard').hidden = false; loadLevel(i, Date.now());
             match.grid.working[you] = i; renderGrid(); updWorkers();
             if (!resume) {
@@ -4023,6 +4158,28 @@
             }
             if (ui === 'game') { renderGrid(); renderRace(); updWorkers(); } else if (ui === 'spec') renderSpec();
         }
+        /* solution replay (points mode): after somebody scores, everyone else's board plays out the winning moves.
+           it has to fit before the next level starts, so the longer the solution, the faster it plays */
+        function stopReplay() { clearTimeout(replayT); replayT = 0; }
+        function playReplay(path, between, endMsg, endCls) {
+            stopReplay();
+            if (!Lv || ui !== 'game' || !began || !path || !path.length) return;
+            const ops = path.map(i => Lv.ops[i]); if (ops.some(o => !o)) return;
+            const stepMs = Math.max(60, Math.min(800, (between - 900) / (ops.length + 1))), idx = round;
+            cur = Lv.start; hist = []; nlPend = true; render();
+            setMsg('watch the solution · ' + mv(ops.length), 'win');
+            let i = 0;
+            const step = () => {
+                if (!Lv || round !== idx || ui !== 'game') { replayT = 0; return; }
+                if (paused) { replayT = setTimeout(step, 200); return; }
+                if (i >= ops.length) { replayT = 0; setMsg(endMsg, endCls); return; }
+                const o = ops[i++], nv = o.f(cur);
+                if (!nv) { replayT = 0; setMsg(endMsg, endCls); return; }
+                hist.push({ prev: cur, s: o.s }); cur = nv; nlPend = true; render();
+                replayT = setTimeout(step, stepMs);
+            };
+            replayT = setTimeout(step, Math.min(500, stepMs));
+        }
         function onRound(d) {
             if (!match || match.mode !== 'points') return;
             match.scores = d.scores; if (d.moves) match.moves = d.moves; lockedRound = true;
@@ -4038,6 +4195,7 @@
             }
             if (Lv) render();
             setMsg(msg, cls); renderRace();
+            if (d.path && match.cfg.replay !== false && d.winner !== you && Lv && round === d.round) playReplay(d.path, d.between || 4600, msg, cls);
             if (d.winner && w) (match.log = match.log || []).push({ t: w.name + ' solved puzzle ' + (d.round + 1) + '!', team: w.team });
             if (ui === 'spec') renderSpec();
         }
@@ -4065,14 +4223,14 @@
             try { $('spqr').innerHTML = qrSvg(roomLink(state.code), '', true); $('splink').textContent = 'scan to join · ' + shownLink(state.code); } catch (e) { $('spqr').textContent = ''; }
         }
         function specTick() {
-            if (!match || ui !== 'spec' || paused) return; const now = Date.now();
-            if (match.mode === 'points' && match.cfg.endless && !topping && match.levels.length - match.round < 8) topUp();
+            if (!match || ui !== 'spec') return; const now = Date.now();
+            if (match.mode === 'points' && match.cfg.endless && !paused && !topping && match.levels.length - match.round < 8) topUp();
             const sg = Math.floor(now / 1000); if (sg !== specSig) { specSig = sg; renderSpec(); }
         }
         function renderSpec() {
             if (!match || ui !== 'spec') return;
-            const b = $('specboard'), oldSc = b.querySelector('.spscroll'), keepTop = oldSc ? oldSc.scrollTop : 0; b.innerHTML = ''; const pts = match.mode === 'points', gr = match.mode === 'grid', teams = (pts || gr) && match.cfg.teams, now = Date.now(), pl = match.players, sc = id => match.scores[id] || 0;
-            const scr = mkEl('div', 'spscroll'); let inScr = false;
+            const b = $('specboard'), oldSc = b.querySelector('.spscroll'), keepTop = oldSc ? oldSc.scrollTop : 0; b.innerHTML = ''; const stEl = $('spstatus'); stEl.innerHTML = ''; const body = mkEl('div', 'spbody'); const pts = match.mode === 'points', gr = match.mode === 'grid', teams = (pts || gr) && match.cfg.teams, now = paused ? pausedAtLocal : Date.now(), pl = match.players, sc = id => match.scores[id] || 0;
+            const scr = mkEl('div', 'spscroll'); let inScr = false; b.classList.toggle('twocol', match.mode === 'grid'); b.classList.toggle('hasteams', (match.mode === 'points' || match.mode === 'grid') && !!match.cfg.teams);
             const cell = (...k) => { const d = mkEl('div', 'cell'); k.forEach(x => d.appendChild(x)); (inScr ? scr : b).appendChild(d); return d; };
             const val = (lab, v, first) => { const s = mkEl('span', 'sv'), l = mkEl('small', '', lab), n = mkEl('b', '', v); if (first) s.append(l, n); else s.append(n, l); return s; };
             const nm = (rk, name) => { const s = mkEl('span', 'nm'); if (rk) s.append(mkEl('span', 'rk rk' + rk, '#' + rk), ' '); s.append(name); return s; };
@@ -4085,12 +4243,12 @@
                 if (T.red === T.blue && M.red !== M.blue) { const w = M.red < M.blue ? 'red' : 'blue'; h.append(mkEl('span', 'tc ' + w, w + ' team'), ' leads on fewer moves!'); }
                 else if (T.red === T.blue) h.textContent = 'teams are tied'; else { const w = T.red > T.blue ? 'red' : 'blue'; h.append(mkEl('span', 'tc ' + w, w + ' team'), ' is winning!'); }
                 cell(h);
-                const sb = mkEl('div', 'spscore'); sb.style.gridTemplateColumns = ['red', 'blue'].map(t => 'minmax(var(--minc), ' + (tot ? Math.round(T[t] / tot * 1000) : 500) + 'fr)').join(' '); ['red', 'blue'].forEach(t => { const x = mkEl('div', 'sbox ' + t); x.append(mkEl('span', '', 'team ' + t), mkEl('b', '', T[t]), mkEl('small', '', (tot ? Math.round(T[t] / tot * 100) : 0) + '%')); sb.appendChild(x); }); cell(sb); if (gr) cell(specGridBox());
-                cell(mkEl('div', 'sphead', 'teams')); inScr = true;
+                const sb = mkEl('div', 'spscore'); sb.style.gridTemplateColumns = ['red', 'blue'].map(t => 'minmax(var(--minc), ' + (tot ? Math.round(T[t] / tot * 1000) : 500) + 'fr)').join(' '); ['red', 'blue'].forEach(t => { const x = mkEl('div', 'sbox ' + t); x.append(mkEl('span', '', 'team ' + t), mkEl('b', '', T[t]), mkEl('small', '', (tot ? Math.round(T[t] / tot * 100) : 0) + '%')); sb.appendChild(x); }); cell(sb); if (gr) { const gc = mkEl('div', 'cell'); gc.appendChild(specGridBox()); body.appendChild(gc); }
+                inScr = true; cell(mkEl('div', 'sphead', 'teams'));
                 const tl = mkEl('div', 'spteams'); ['red', 'blue'].forEach(t => { const col = mkEl('div'); const th = mkEl('div', 'sprow th ' + t, 'team ' + t); if (t === 'red') th.style.justifyContent = 'flex-end'; col.appendChild(th);
                     pl.filter(p => p.team === t).sort((x, y) => sc(y.id) - sc(x.id) || mvOf(x.id) - mvOf(y.id)).forEach(p => { const r = mkEl('div', 'sprow ' + t + (p.left ? ' dim' : '')); r.append(nm(0, p.name + (p.left ? ' (left)' : '')), val(gr && !match.cfg.weighted ? 'cells' : 'pts', sc(p.id), t === 'blue')); fillOf(r, sc(p.id) / Math.max(1, ...pl.map(q => sc(q.id))), t); col.appendChild(r); }); tl.appendChild(col); }); cell(tl);
             } else if (gr) {
-                cell(mkEl('div', 'cellh sphead', 'the grid')); cell(specGridBox()); cell(mkEl('div', 'sphead', match.cfg.weighted ? 'points' : 'levels claimed')); inScr = true;
+                { const gc = mkEl('div', 'cell'); gc.appendChild(specGridBox()); body.appendChild(gc); } inScr = true; cell(mkEl('div', 'sphead', match.cfg.weighted ? 'points' : 'levels claimed'));
                 const mx = Math.max(1, ...pl.map(p => sc(p.id))); pl.slice().sort((x, y) => sc(y.id) - sc(x.id) || mvOf(x.id) - mvOf(y.id)).forEach((p, i) => { const n = nm(i + 1, p.name + (p.left ? ' (left)' : '')); n.prepend(swatch(p)); cell(prow((p.left ? 'dim ' : '') + (i === 0 && sc(p.id) > 0 ? 'lead' : ''), n, match.cfg.weighted ? 'pts' : 'levels', sc(p.id), sc(p.id) / mx)); });
             } else if (pts) {
                 cell(mkEl('div', 'cellh sphead', 'live scoreboard')); inScr = true;
@@ -4101,7 +4259,7 @@
                 rows.forEach((r, i) => cell(prow((r.left && !r.finished ? 'dim ' : '') + (r.finished ? 'fin ' : '') + (i === 0 && (r.finished || r.done > 0) ? 'lead' : ''), nm(i + 1, r.p.name), r.finished ? '' : r.left ? '' : 'level', r.finished ? 'done' : r.left ? 'left' : Math.min(r.done + 1, match.total) + '/' + match.total, r.finished ? 1 : r.done / match.total)));
             }
             state.members.filter(m => m.spec).forEach(m => { const r = mkEl('div', 'sprow dim'); r.append(nm(0, m.name + ' (spectating)' + (m.id === state.hostId ? ' (host)' : ''))); cell(r); });
-            inScr = false; b.appendChild(scr); scr.scrollTop = keepTop;
+            inScr = false; body.appendChild(scr); b.appendChild(body); scr.scrollTop = keepTop;
             const lvOn = pts && specShowLevel && match.round < match.total; b.classList.toggle('withlevel', lvOn);
             if (lvOn) {
                 const L = mkEl('div', 'splevel'), lv = match.levels[match.round], now2 = Date.now();
@@ -4119,19 +4277,21 @@
             }
             if (pts && !(lvOn && !match.cfg.endless)) { const big = mkEl('div', 'spbig'), e = match.cfg.endless, pre = now < localGo;
                 big.append(mkEl('span', '', pre ? 'starting…' : e ? 'time left' : 'level'));
-                if (!pre) big.appendChild(e ? flip(fmtCd(Math.max(0, match.endAt - now))) : mkEl('b', '', Math.min(match.round + 1, match.total) + '/' + match.total)); cell(big).classList.add('grow'); }
+                if (!pre) big.appendChild(e ? flip(fmtCd(Math.max(0, match.endAt - now))) : mkEl('b', '', Math.min(match.round + 1, match.total) + '/' + match.total)); stEl.appendChild(big); }
             if (gr) {
                 const big = mkEl('div', 'spbig sm'), pre = now < localGo; big.append(mkEl('span', '', pre ? 'starting…' : 'claimed'));
                 if (!pre) { big.appendChild(mkEl('b', '', claimedCount() + '/' + match.total)); if (match.endAt) { big.append(mkEl('span', '', 'time left')); big.appendChild(flip(fmtCd(Math.max(0, match.endAt - now)))); } }
-                cell(big);
+                stEl.appendChild(big);
             }
-            const f = mkEl('div', 'spfoot'), lg = mkEl('div', 'splog'); (match.log || []).slice(-5).forEach(x => { const l = mkEl('div'); l.append(mkEl('span', x.team ? 'tc ' + x.team : '', x.t)); lg.appendChild(l); }); if (!(match.log || []).length) lg.appendChild(mkEl('div', 'splog0', 'waiting for the first solve…'));
-            const tools = mkEl('div', 'tools'), mp = mkEl('button', 'btn', 'manage players'), dr = mkEl('button', 'btn danger', 'disband room');
+            if (match.mode === 'race') { const rr = pl.filter(p => (match.prog[p.id] || {}).finished).length, big = mkEl('div', 'spbig'); big.append(mkEl('span', '', 'finished'), mkEl('b', '', rr + '/' + pl.length)); stEl.appendChild(big); }
+            if (paused) { const pz = mkEl('div', 'spbig'); pz.append(mkEl('span', '', 'game paused')); stEl.appendChild(pz); }
+            const lg = mkEl('div', 'splog'); (match.log || []).slice(-3).forEach(x => { const l = mkEl('div'); l.append(mkEl('span', x.team ? 'tc ' + x.team : '', x.t)); lg.appendChild(l); }); if (!(match.log || []).length) lg.appendChild(mkEl('div', 'splog0', 'waiting for the first solve…'));
+            const tools = $('sptools'); tools.innerHTML = ''; const mp = mkEl('button', 'btn', 'manage players'), dr = mkEl('button', 'btn danger', 'disband room');
             mp.onclick = () => { renderManage(); $('mpdlg').showModal(); }; dr.onclick = () => $('exitbtn').click();
-            const pb = mkEl('button', 'btn pausebtn', 'pause game'); pb.onclick = pauseClick;
+            const pb = mkEl('button', 'btn pausebtn', 'pause game'); pb.onclick = pauseToggle;
             tools.append(mp, pb);
             if (match.mode === 'points') { const lb = mkEl('button', 'btn', specShowLevel ? 'hide level' : 'show level'); lb.setAttribute('aria-pressed', String(specShowLevel)); lb.onclick = () => { specShowLevel = !specShowLevel; renderSpec(); }; tools.append(lb); }
-            tools.append(dr); f.append(lg, tools); cell(f); updPause();
+            tools.append(dr); cell(lg); updPause();
         }
         function specGridBox() { const box = mkEl('div', 'spgridbox'), wrap = mkEl('div', 'gridw'); box.appendChild(wrap); buildGrid(wrap, false); return box; }
         function renderManage() {
@@ -4176,10 +4336,10 @@
 
         /* ---------- controls ---------- */
         $('undo').onclick = () => {
-            if (lockedRound || !hist.length || (hardcore() && undosUsed >= HC_UNDOS)) return;
-            const h = hist.pop(); undosUsed++; cur = h.prev; flipRev = true; render(); flipRev = false;
+            if (lockedRound || !hist.length) return;
+            const h = hist.pop(); cur = h.prev; flipRev = true; render(); flipRev = false;
         };
-        $('reset').onclick = () => { if (lockedRound || hardcore()) return; cur = Lv.start; hist = []; render(); };
+        $('reset').onclick = () => { if (lockedRound) return; cur = Lv.start; hist = []; render(); };
         /* touch screens: :active is unreliable, so mirror it with a class */
         let pressedEl = null;
         const unpress = () => { if (pressedEl) { pressedEl.classList.remove('pressed'); pressedEl = null; } };
