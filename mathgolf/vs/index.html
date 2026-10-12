@@ -939,6 +939,11 @@
             color: var(--soft)
         }
 
+        #row_offdiff .seg button[aria-checked="false"] {
+            text-decoration: line-through;
+            opacity: .55
+        }
+
         .ro .seg button[aria-checked="true"]:disabled {
             color: var(--imag)
         }
@@ -1464,29 +1469,40 @@
         .gtop {
             display: flex;
             justify-content: center;
-            gap: 28px;
+            gap: 12px;
             margin-bottom: 14px
         }
 
-        .gcell {
-            min-width: 80px
+        /* the stats above the board (named gstat because .gcell is a square in the claim grid) */
+        .gstat {
+            flex: 0 1 150px;
+            min-width: 96px;
+            padding: 8px 14px 6px;
+            text-align: center;
+            background: var(--card);
+            border: 2px solid var(--line)
         }
 
         .gk {
             display: block;
-            font-size: .8rem;
+            font-size: .75rem;
             color: var(--soft)
         }
 
-        .gcell b {
+        .gstat b {
             display: block;
             font-size: 1.6rem;
             font-weight: 800;
             font-variant-numeric: tabular-nums;
-            line-height: 1.2
+            line-height: 1.2;
+            white-space: nowrap
         }
 
-        .gcell.low b {
+        .gstat.low {
+            border-color: var(--imag)
+        }
+
+        .gstat.low b {
             color: var(--imag)
         }
 
@@ -2459,7 +2475,7 @@
         #gworkers{margin:0 0 12px;padding:8px 10px;font-size:.88rem;color:var(--soft);border:2px dashed var(--line);text-transform:none;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}
         #gworkers .wchip{display:inline-flex;align-items:center;color:var(--ink);font-weight:700}
         .pip.pb{border-color:#6fb1e8}.pip.pb.used{background:#6fb1e8}
-        .pip.pg{border-color:var(--soft);opacity:.7}.pip.pg.used{background:var(--soft)}
+        .pip.pgy{border-color:var(--soft);opacity:.7}.pip.pgy.used{background:var(--soft)}
         .resgrid{max-width:420px;margin:6px auto 14px}
         #gtag{display:table;margin:12px auto 0;padding:2px 10px;border:2px solid;font-weight:800;font-size:.8rem;text-transform:lowercase;letter-spacing:.1em}
         #gtag[hidden]{display:none}
@@ -2559,6 +2575,232 @@
             .spbody>.spscroll{max-height:45vh;overflow-y:auto}
             #speccell #chatlog{max-height:none}
         }
+    
+        /* =====================================================================
+           calculator: button next to the chat button + a pop-up window
+           ===================================================================== */
+        #calcfab {
+            position: absolute;
+            right: 8px;
+            bottom: 8px;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            color: var(--ink);
+            background: var(--card);
+            border: 2px solid var(--ink);
+            box-shadow: 3px 3px 0 var(--ink);
+            cursor: pointer;
+            transition: transform .08s, box-shadow .08s
+        }
+        #gboard { position: relative }
+
+        #calcfab[hidden] { display: none }
+        #calcfab svg { width: 20px; height: 20px; flex: none }
+        #calcfab:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink) }
+        #calcfab[aria-expanded="true"] { background: var(--imag); color: var(--onimag) }
+        #calcfab:focus-visible, #calcpanel button:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px }
+
+        #calcpanel {
+            position: fixed;
+            right: 12px;
+            bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+            z-index: 32;
+            width: min(360px, calc(100vw - 24px));
+            height: min(440px, calc(100dvh - 170px));
+            display: flex;
+            flex-direction: column;
+            background: var(--card);
+            border: 2px solid var(--ink);
+            box-shadow: 6px 6px 0 var(--ink);
+            animation: rise .2s ease backwards
+        }
+
+        #calcpanel[hidden] { display: none }
+
+        .calch {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 46px;
+            border-bottom: 2px solid var(--line);
+            font-weight: 700;
+            font-size: 1.15rem;
+            user-select: none;
+            -webkit-user-select: none
+        }
+
+        #calcpanel.drag .calch { cursor: grab; touch-action: none }
+        #calcpanel.dragging .calch { cursor: grabbing }
+        #calcpanel.dragging { box-shadow: 10px 10px 0 var(--ink) }
+
+        #calcclose {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            border: 0;
+            background: none;
+            color: var(--soft);
+            font-size: 1.6rem;
+            line-height: 1;
+            cursor: pointer
+        }
+
+        #calcclose:hover { color: var(--imag) }
+
+        #calcrows { flex: 1 1 0; min-height: 0; overflow-y: auto; overflow-x: hidden }
+
+        .crow {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 50px;
+            padding: 0 10px 0 6px;
+            background: var(--cell);
+            border-bottom: 2px solid var(--line)
+        }
+
+        .crow:focus-within { box-shadow: inset 3px 0 0 var(--imag) }
+
+        .crow .cx {
+            flex: none;
+            width: 28px;
+            height: 32px;
+            border: 0;
+            background: none;
+            color: var(--soft);
+            font-size: 1.2rem;
+            line-height: 1;
+            cursor: pointer
+        }
+
+        .crow .cx:hover { color: var(--imag) }
+        .crow.blank .cx { visibility: hidden }
+
+        /* equation lines: a small Desmos-style editor (see mfCreate) */
+        .mf {
+            position: relative;
+            flex: 1 1 0;
+            min-width: 0;
+            padding: 8px 2px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+            cursor: text;
+            text-align: left;
+            color: var(--ink);
+            font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", "Times New Roman", serif;
+            font-size: 1.3rem;
+            line-height: 1.3;
+            scrollbar-width: none
+        }
+
+        .mf::-webkit-scrollbar { display: none }
+        .mf .mroot { display: inline-block; min-width: 4px; min-height: 1.3em }
+        .mf .mfin { position: absolute; left: 0; top: 0; width: 1px; height: 1px; padding: 0; border: 0; opacity: 0; resize: none; font-size: 16px; pointer-events: none }
+        .mf.mfe::before { content: attr(data-ph); position: absolute; left: 10px; top: 8px; color: var(--soft); opacity: .6; pointer-events: none }
+        .mf.mfall .mroot { background: color-mix(in srgb, var(--imag) 35%, transparent) }
+        .mf .mc.i { font-style: italic }
+        .mf .mo { margin: 0 .12em }
+        .mf .mph { display: inline-block; min-width: .5em; min-height: .85em; border: 1px dashed var(--soft); border-radius: 2px }
+        .mf .msup { display: inline-block; font-size: .72em; vertical-align: .85em; line-height: 1.1; margin-left: 1px }
+        .mf .mfrac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 .15em; text-align: center }
+        .mf .mfn { display: block; border-bottom: 1.5px solid var(--ink); padding: 0 .2em .05em; min-width: .5em }
+        .mf .mfd { display: block; padding: .05em .2em 0; min-width: .5em }
+        .mf .msqrt { display: inline-flex; align-items: stretch; margin: 0 .1em }
+        .mf .mrad { line-height: 1.1 }
+        .mf .mrt { display: inline-block; border-top: 1.5px solid var(--ink); padding: 0 .15em; margin-left: -.05em; min-width: .5em }
+        .mf .mcaret { display: inline-block; width: 0; height: 1.1em; margin: 0 -1px; border-left: 2px solid var(--ink); vertical-align: text-bottom; pointer-events: none; animation: mfblink 1.05s steps(1) infinite }
+        .mf:not(.mffocus) .mcaret { display: none }
+
+        @keyframes mfblink { 50% { opacity: 0 } }
+
+        .crow .cr {
+            flex: none;
+            max-width: 46%;
+            padding: 4px 8px;
+            border: 0;
+            background: none;
+            color: var(--imag);
+            font: inherit;
+            font-size: 1.15rem;
+            text-align: right;
+            white-space: nowrap;
+            cursor: default
+        }
+
+        .crow .cr.tg { cursor: pointer }
+        .crow .cr.err { color: var(--soft) }
+
+        .calcf { padding: 8px 12px 10px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px }
+        .calcl { font-size: .8rem; color: var(--soft); text-transform: lowercase }
+        .calcb { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px }
+
+        #calcstart, #calcimport, #calcgoal {
+            padding: 12px 18px;
+            font: inherit;
+            font-size: 1rem;
+            color: var(--ink);
+            background: var(--card);
+            border: 2px solid var(--line);
+            cursor: pointer
+        }
+
+        #calcstart:hover, #calcimport:hover, #calcgoal:hover { border-color: var(--imag) }
+        #calcstart:disabled, #calcimport:disabled, #calcgoal:disabled { opacity: .5; cursor: default }
+
+
+        #calcgrip { display: none; position: absolute; right: 3px; bottom: 3px; width: 20px; height: 20px; cursor: nwse-resize; touch-action: none;
+            opacity: .55; transition: opacity .15s;
+            background: radial-gradient(circle at 16px 16px, var(--soft) 1.5px, transparent 2px), radial-gradient(circle at 10px 16px, var(--soft) 1.5px, transparent 2px), radial-gradient(circle at 16px 10px, var(--soft) 1.5px, transparent 2px), radial-gradient(circle at 4px 16px, var(--soft) 1.5px, transparent 2px), radial-gradient(circle at 10px 10px, var(--soft) 1.5px, transparent 2px), radial-gradient(circle at 16px 4px, var(--soft) 1.5px, transparent 2px) }
+        #calcgrip:hover, #calcpanel.dragging #calcgrip { opacity: 1 }
+        #calcpanel.drag #calcgrip { display: block }
+        #calcpanel.drag .calcf { padding-right: 24px }
+
+        @media (max-width:520px) {
+        }
+
+        /* =====================================================================
+           settings presets: maker, list and share codes
+           ===================================================================== */
+        #psmaker { position: fixed; inset: 0; z-index: 70; overflow: auto; background: var(--bg); background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 28px 28px; padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px)); display: flex; align-items: flex-start; justify-content: center }
+        #psmaker[hidden] { display: none }
+        .psbox { width: 100%; max-width: 720px; margin: auto; background: var(--card); border: 2px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); padding: 18px 20px 20px; text-align: left }
+        .pshead { display: flex; align-items: center; justify-content: space-between; gap: 10px }
+        .pshead h2 { margin: 0; font-size: 1.9rem; line-height: 1.1 }
+        .pshead h2 .vs { color: var(--imag) }
+        #psclose { width: 40px; height: 40px; border: 0; background: none; color: var(--soft); font-size: 1.9rem; line-height: 1; cursor: pointer }
+        #psclose:hover { color: var(--imag) }
+        .psintro { margin: 6px 0 0; color: var(--soft); font-size: .92rem; line-height: 1.45; text-transform: none }
+        #psmsg { min-height: 1.5em; margin: 8px 0 0; color: var(--imag); font-size: .92rem; text-transform: none }
+        #psmsg.ok { color: var(--ok) }
+        .psimp { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 }
+        .psimp input, #psname { flex: 1 1 220px; min-width: 0; padding: 10px 12px; font: inherit; font-size: 1rem; text-transform: none; color: var(--ink); background: var(--cell); border: 2px solid var(--line) }
+        .psimp input:focus, #psname:focus { outline: 0; border-color: var(--imag) }
+        .psacts { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 }
+        #pscards .none { margin: 14px 0; color: var(--soft); text-align: center; text-transform: none }
+        .pscard { margin-top: 10px; padding: 12px 14px; background: var(--cell); border: 2px solid var(--line) }
+        .pscard b { display: block; font-size: 1.1rem; text-transform: none; overflow-wrap: anywhere }
+        .pscard .sm { margin: 3px 0 10px; color: var(--soft); font-size: .85rem; line-height: 1.4; text-transform: none }
+        .pscard .bt { display: flex; gap: 8px; flex-wrap: wrap }
+        .psbox .btn.go { border-color: var(--imag); box-shadow: 0 3px 0 var(--imag) }
+        .psbox .btn.arm { color: var(--imag); border-color: var(--imag) }
+        #pseditor .srow .d { text-transform: none }
+        #psfields { margin-top: 6px }
+        .pscodebox { margin-top: 14px; padding: 10px 12px; background: var(--cell); border: 2px solid var(--line) }
+        .pscodebox small { display: block; color: var(--soft); font-size: .75rem; letter-spacing: .08em; margin-bottom: 4px }
+        #pscode { display: block; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .8rem; line-height: 1.4; word-break: break-all; text-transform: none; user-select: all }
+        .psfoot { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px }
+        #psbar { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 8px 0 2px }
+        @media (max-width:520px) { .psbox { padding: 14px 12px 16px } .pshead h2 { font-size: 1.5rem } }
     </style>
     <script>try { var q = JSON.parse(localStorage.getItem('hs1') || '{}'); if (q.theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); if (q.anim === false || (q.anims && q.anims.ui === false)) document.documentElement.classList.add('noanim') } catch (e) { }</script>
 </head>
@@ -2599,6 +2841,7 @@
             <button class="mopt" id="create"><b>create a room</b><span>you'll be the host. pick public or private, then share the
                     code, pick the settings and chat while everyone joins</span></button>
             <button class="mopt" id="browse"><b>public rooms</b><span>see every public room and jump into one</span></button>
+            <button class="mopt" id="psopen"><b>settings presets</b><span>make sets of room settings, save them, share them with a code, and load them whenever you have a room</span></button>
             <div class="joinbox">
                 <b>join a room</b>
                 <span>got a code or link from a friend? enter the code here</span>
@@ -2665,6 +2908,7 @@
 
             <div class="cell" id="setbox">
                 <h3>room settings</h3>
+                <div id="psbar"><button type="button" class="btn" id="psroom">presets</button> <button type="button" class="btn" id="pscoderoom">copy settings code</button></div>
                 <p id="hostnote" hidden role="note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z" fill="currentColor" /></svg><span>view only: only the host <b id="hostnotename"></b>can change these settings</span></p>
 
                 <details class="sgroup" open>
@@ -2756,6 +3000,14 @@
                             data-k="favdiff" data-v="6">hard</button><button type="button" role="radio"
                             data-k="favdiff" data-v="8">challenge</button></div>
                 </div>
+<div class="srow col" id="row_offdiff">
+                    <div><b>difficulties in the mix</b><span class="d">random difficulties only: tap a difficulty to leave it out of the random pick (crossed out = disabled). at least one stays on</span></div>
+                    <div class="seg" role="group" aria-label="difficulties in the mix"><button type="button" role="checkbox"
+                            data-off="2" aria-checked="true">easy</button><button type="button" role="checkbox"
+                            data-off="4" aria-checked="true">medium</button><button type="button" role="checkbox"
+                            data-off="6" aria-checked="true">hard</button><button type="button" role="checkbox"
+                            data-off="8" aria-checked="true">challenge</button></div>
+                </div>
 <div class="srow col">
                     <div><b>numbers</b><span class="d">use whole numbers, decimals or fractions</span></div>
                     <div class="seg" role="radiogroup" aria-label="number type"><button type="button" role="radio"
@@ -2840,6 +3092,10 @@
                     <div><b>profanity filter</b><span class="d">hides swear words in chat and blocks them in names</span></div>
                     <button type="button" class="sw" role="switch" data-sw="profanity" aria-label="profanity filter" aria-checked="true"></button>
                 </div>
+<div class="srow" id="row_calc">
+                    <div><b>calculators</b><span class="d">players can open a calculator window during the match. turn off for a pure mental-math game</span></div>
+                    <button type="button" class="sw" role="switch" data-sw="calc" aria-label="allow calculators" aria-checked="true"></button>
+                </div>
 <div class="srow" id="row_howto">
                     <div><b>how to play screen</b><span class="d">before the match starts, everyone sees a short how-to-play screen. only the host can continue</span></div>
                     <button type="button" class="sw" role="switch" data-sw="howto" aria-label="show a how to play screen before the match"
@@ -2862,9 +3118,9 @@
     <!-- the race -->
     <section id="game" class="pg" hidden>
         <div class="gtop">
-            <div class="gcell"><span class="gk" id="glk">level</span><b id="glevel">1 / 5</b></div>
-            <div class="gcell"><span class="gk" id="gtlabel">time</span><b id="gclock">0:00.0</b></div>
-            <div class="gcell" id="grwrap" hidden><span class="gk">this level</span><b id="grclock">1:00</b></div>
+            <div class="gstat"><span class="gk" id="glk">level</span><b id="glevel">1 / 5</b></div>
+            <div class="gstat"><span class="gk" id="gtlabel">time</span><b id="gclock">0:00.0</b></div>
+            <div class="gstat" id="grwrap" hidden><span class="gk">this level</span><b id="grclock">1:00</b></div>
         </div>
         <p class="connmsg" role="status" hidden>connection lost. trying to reconnect…</p>
         <div id="teambar" hidden role="img"></div>
@@ -2880,6 +3136,10 @@
         </div>
         <p id="racehide" hidden>progress is hidden in this room. nobody can see how far anyone else is!</p>
         <section class="board" id="gboard" hidden>
+            <button id="calcfab" type="button" aria-expanded="false" aria-controls="calcpanel" aria-label="calculator"><svg
+                viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 2h14a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm1.5 2.5v4h11v-4zM7 11v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2zM7 15v2h2v-2zm4 0v2h2v-2zm4 0v6h2v-6zM7 19v2h2v-2zm4 0v2h2v-2z" fill="currentColor" />
+            </svg></button>
             <div id="gworkers" hidden></div>
             <div class="row">
                 <div>
@@ -2923,6 +3183,7 @@
         <p id="reshint"></p>
         <div class="tools"><button class="btn" id="tolobby">back to lobby</button><button class="btn danger" id="endm"
                 hidden>end match for everyone</button></div>
+        <p id="hostlobby" class="sub" role="status" hidden></p>
     </section>
 
     <!-- host screen: the host only watches -->
@@ -2994,6 +3255,33 @@
                         <path d="M2.5 10.5 21.5 2.5 14.5 21.5 11.2 13.6Z" fill="currentColor" />
                     </svg></button>
             </form>
+            </div>
+        </div>
+
+        <div id="calcpanel" role="dialog" aria-label="calculator" hidden>
+            <div class="calch" id="calch"><span>calculator</span><button id="calcclose" type="button" aria-label="close calculator">×</button></div>
+            <div id="calcrows"></div>
+            <div class="calcf"><span class="calcl">import expressions</span><div class="calcb"><button id="calcstart" type="button">start</button><button id="calcimport" type="button">current</button><button id="calcgoal" type="button">goal</button></div></div>
+            <div id="calcgrip" aria-hidden="true"></div>
+        </div>
+    </div>
+
+    <!-- settings presets: make, save, share and load sets of room settings -->
+    <div id="psmaker" hidden role="dialog" aria-modal="true" aria-labelledby="pstitle">
+        <div class="psbox">
+            <div class="pshead"><h2 id="pstitle"><span class="vs">settings</span> presets</h2><button id="psclose" type="button" aria-label="close presets">×</button></div>
+            <div id="psmsg" role="status"></div>
+            <div id="pslist">
+                <p class="psintro" id="psintro"></p>
+                <div class="psimp"><input id="psimpin" autocomplete="off" spellcheck="false" placeholder="paste a preset code" aria-label="preset code"><button type="button" class="btn" id="psimpsave">save to my presets</button><button type="button" class="btn go" id="psimproom" hidden>apply to room</button></div>
+                <div class="psacts"><button type="button" class="fbtn blue" id="psnew">new preset</button><button type="button" class="fbtn soft" id="pssaveroom" hidden>save the room's settings</button><button type="button" class="fbtn soft" id="pscoderoom2" hidden>copy the room's code</button></div>
+                <div id="pscards"></div>
+            </div>
+            <div id="pseditor" hidden>
+                <div class="psimp"><input id="psname" maxlength="24" autocomplete="off" placeholder="preset name" aria-label="preset name"></div>
+                <div id="psfields"></div>
+                <div class="pscodebox"><small>share code</small><code id="pscode"></code></div>
+                <div class="psfoot"><button type="button" class="fbtn blue" id="pssave">save preset</button><button type="button" class="fbtn soft" id="pscopy">copy code</button><button type="button" class="fbtn" id="psback">back</button></div>
             </div>
         </div>
     </div>
@@ -3097,7 +3385,12 @@
         let otherUnread = false, chatTeam = false, curView = '', chatOpen = false, unread = 0, chatReady = false, toastT = 0; const baseTitle = document.title;
         let leaving = false; addEventListener('beforeunload', () => { leaving = true; }); addEventListener('pagehide', () => { leaving = true; }); addEventListener('pageshow', () => { leaving = false; });
         const isHost = () => !!state && state.hostId === you;
-        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, replay: true, timer: 0, showprog: true, overpar: -1, mode: 'race', endless: false, totaltime: 180, hostplays: true, teams: false, profanity: true, firstfinish: false, howto: false, gridw: 3, gridh: 3, gridtime: 0, randdiff: false, favdiff: 0, weighted: false, pt2: 1, pt4: 2, pt6: 3, pt8: 4 };
+        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, replay: true, calc: true, timer: 0, showprog: true, overpar: -1, mode: 'race', endless: false, totaltime: 180, hostplays: true, teams: false, profanity: true, firstfinish: false, howto: false, gridw: 3, gridh: 3, gridtime: 0, randdiff: false, favdiff: 0, weighted: false, pt2: 1, pt4: 2, pt6: 3, pt8: 4, offdiff: 0 };
+        /* random difficulties: which ones are switched off (a bit mask: easy 1, medium 2, hard 4, challenge 8; never all four) */
+        const OFFBIT = { 2: 1, 4: 2, 6: 4, 8: 8 };
+        const offClean = v => { v = (parseInt(v, 10) || 0) & 15; return v === 15 ? 0 : v; };
+        const tiersOn = off => [2, 4, 6, 8].filter(t => !(off & OFFBIT[t]));
+        const diffList = c => { const n = tiersOn(offClean(c.offdiff)).map(t => ({ 2: 'easy', 4: 'medium', 6: 'hard', 8: 'challenge' }[t])); return n.length === 1 ? n[0] : n.slice(0, -1).join(', ') + ' or ' + n[n.length - 1]; };
 
         function view(v) {
             $('loading').hidden = v !== 'loading'; $('landing').hidden = v !== 'landing'; $('invite').hidden = v !== 'invite'; $('room').hidden = v !== 'room';
@@ -3304,8 +3597,10 @@
         function norm(s) {
             const o = Object.assign({}, s);
             o.gdec = o.numbers === 'dec' && !!o.gdec; o.gfrac = o.numbers === 'frac' && !!o.gfrac; o.roots = o.numbers === 'frac' ? true : !!o.roots; o.endless = o.mode === 'points' && !!o.endless; o.replay = o.replay !== false; o.teams = o.mode !== 'race' && !!o.teams; if (o.mode === 'grid') o.timer = 0;
+            o.offdiff = offClean(o.offdiff !== undefined ? o.offdiff : (typeof isHost === 'function' && isHost() ? store.get('vs_offdiff') : 0));   /* host-side rule, kept in this browser too like the ones below */
             /* host-side rule: kept in this browser too, in case the server doesn't echo it back */
             o.firstfinish = o.mode === 'race' && (o.firstfinish !== undefined ? !!o.firstfinish : (typeof isHost === 'function' && isHost() && store.get('vs_firstfinish') === '1'));
+            o.calc = o.calc !== false;
             o.howto = o.howto !== undefined ? !!o.howto : (typeof isHost === 'function' && isHost() && store.get('vs_howto') === '1');
             return o;
         }
@@ -3318,7 +3613,7 @@
             const lim = { max: [Math.max(2, n), 50], rounds: [1, 15], gridw: [2, 8], gridh: [2, 8], pt2: [1, 20], pt4: [1, 20], pt6: [1, 20], pt8: [1, 20] };
             const wt = s.weighted && s.mode !== 'race';
             document.querySelectorAll('[data-step]').forEach(b => { const k = b.dataset.step, d = +b.dataset.d; b.disabled = !edit || (k === 'rounds' && (s.endless || gr)) || ((k === 'gridw' || k === 'gridh') && !gr) || (/^pt\d$/.test(k) && !wt) || (d < 0 ? s[k] <= lim[k][0] : s[k] >= lim[k][1]); });
-            document.querySelectorAll('[data-k]').forEach(b => { b.setAttribute('aria-checked', String(s[b.dataset.k]) === b.dataset.v); b.disabled = !edit || (b.dataset.k === 'totaltime' && !s.endless) || (b.dataset.k === 'timer' && gr) || (b.dataset.k === 'gridtime' && !gr) || (b.dataset.k === 'favdiff' && !s.randdiff) || (b.dataset.k === 'difficulty' && s.randdiff); });
+            document.querySelectorAll('[data-k]').forEach(b => { b.setAttribute('aria-checked', String(s[b.dataset.k]) === b.dataset.v); b.disabled = !edit || (b.dataset.k === 'totaltime' && !s.endless) || (b.dataset.k === 'timer' && gr) || (b.dataset.k === 'gridtime' && !gr) || (b.dataset.k === 'favdiff' && (!s.randdiff || (+b.dataset.v && (s.offdiff & OFFBIT[+b.dataset.v])))) || (b.dataset.k === 'difficulty' && s.randdiff); });
             document.querySelectorAll('[data-sw]').forEach(b => {
                 const k = b.dataset.sw; b.setAttribute('aria-checked', !!s[k]);
                 b.disabled = !edit || (k === 'gdec' && s.numbers !== 'dec') || (k === 'gfrac' && s.numbers !== 'frac') || (k === 'roots' && s.numbers === 'frac') || (k === 'endless' && !pts) || (k === 'replay' && !pts) || (k === 'showprog' && s.mode !== 'race') || (k === 'firstfinish' && s.mode !== 'race') || (k === 'teams' && s.mode === 'race') || (k === 'weighted' && s.mode === 'race');
@@ -3326,6 +3621,8 @@
             updHowto();
             $('row_teams').classList.toggle('dim', s.mode === 'race'); $('row_endless').classList.toggle('dim', !pts); $('row_replay').classList.toggle('dim', !pts); $('row_totaltime').classList.toggle('dim', !s.endless); $('row_rounds').classList.toggle('dim', !!s.endless || gr); $('row_showprog').classList.toggle('dim', s.mode !== 'race'); $('row_firstfinish').classList.toggle('dim', s.mode !== 'race');
             ['row_gridw', 'row_gridh', 'row_gridtime'].forEach(id => $(id).classList.toggle('dim', !gr)); $('row_timer').classList.toggle('dim', gr); $('row_favdiff').classList.toggle('dim', !s.randdiff); $('row_difficulty').classList.toggle('dim', !!s.randdiff); $('row_weighted').classList.toggle('dim', s.mode === 'race'); [2, 4, 6, 8].forEach(t => $('row_pt' + t).classList.toggle('dim', !wt));
+            document.querySelectorAll('[data-off]').forEach(b => { const bit = OFFBIT[+b.dataset.off], on = !(s.offdiff & bit); b.setAttribute('aria-checked', on); b.disabled = !edit || !s.randdiff || (on && ((s.offdiff | bit) & 15) === 15); });
+            $('row_offdiff').classList.toggle('dim', !s.randdiff);
             $('row_gdec').classList.toggle('dim', s.numbers !== 'dec'); $('row_gfrac').classList.toggle('dim', s.numbers !== 'frac'); $('row_roots').classList.toggle('dim', s.numbers === 'frac');
         }
         /* ---------- how to play screen ----------
@@ -3383,7 +3680,7 @@
             } else {
                 st.push(['race through the levels', 'there are ' + c.rounds + ' levels and everyone plays them in the same order at their own speed.' + (c.firstfinish ? ' the match ends as soon as the first player finishes them all, and they win.' : ' the fastest to the end wins.') + (c.showprog ? ' the scoreboard shows how far everyone is.' : '')]);
             }
-            if (c.randdiff) st.push(['levels have different difficulties', 'every level is easy, medium, hard or challenge' + (c.mode === 'grid' ? '. squares in the grid have an outline in the difficulty\'s colour: green easy, yellow medium, red hard, blue challenge.' : '.')]);
+            if (c.randdiff) st.push(['levels have different difficulties', 'every level is ' + diffList(c) + (c.mode === 'grid' ? '. squares in the grid have an outline in the difficulty\'s colour: green easy, yellow medium, red hard, blue challenge.' : '.')]);
             if (c.weighted && c.mode !== 'race') st.push(['harder levels are worth more', 'easy ' + c.pt2 + ', medium ' + c.pt4 + ', hard ' + c.pt6 + ', challenge ' + c.pt8 + (c.pt2 === 1 && c.pt4 === 1 && c.pt6 === 1 && c.pt8 === 1 ? ' point each' : ' points') + '.']);
             if (c.timer > 0) st.push(['watch the clock', 'each ' + (pts ? 'round' : 'level') + ' has a ' + (c.timer / 60) + ' min time limit.']);
             return st;
@@ -3413,12 +3710,222 @@
             if (!isHost()) return;
             if ('firstfinish' in p) store.set('vs_firstfinish', p.firstfinish ? '1' : '0');
             if ('howto' in p) store.set('vs_howto', p.howto ? '1' : '0');
+            if ('offdiff' in p) store.set('vs_offdiff', String(offClean(p.offdiff)));
             state.settings = norm(Object.assign({}, state.settings, p)); renderSettings();
             sendQ = sendQ.then(() => api('/vs/settings', { code: sess.code, token: sess.token, settings: p })).catch(e => localLine(isNet(e) ? "couldn't reach the server" : e.message));
         }
         document.querySelectorAll('[data-step]').forEach(b => b.onclick = e => { const k = b.dataset.step, gk = k === 'gridw' || k === 'gridh', lo = k === 'max' ? Math.max(2, state.members.length) : gk ? 2 : 1, hi = k === 'max' ? 50 : gk ? 8 : /^pt\d$/.test(k) ? 20 : 15; /* shift-click jumps by 5 */ patch({ [k]: Math.max(lo, Math.min(hi, state.settings[k] + +b.dataset.d * (e.shiftKey && k === 'max' ? 5 : 1))) }); });
         document.querySelectorAll('[data-k]').forEach(b => b.onclick = () => { const k = b.dataset.k, v = b.dataset.v; patch({ [k]: (k === 'numbers' || k === 'mode') ? v : +v }); });
-        document.querySelectorAll('[data-sw]').forEach(b => b.onclick = () => { const k = b.dataset.sw; patch({ [k]: !state.settings[k] }); });
+        document.querySelectorAll('[data-sw]').forEach(b => b.onclick = () => { const k = b.dataset.sw; patch({ [k]: k === 'calc' ? state.settings.calc === false : !state.settings[k] }); });
+
+        /* =====================================================================
+           settings presets
+           ===================================================================== */
+        /* the order of this list is part of the share code: only ever add new settings at the end */
+        const PS_KEYS = ['mode', 'teams', 'rounds', 'endless', 'totaltime', 'gridw', 'gridh', 'gridtime', 'showprog', 'firstfinish', 'replay', 'difficulty', 'randdiff', 'favdiff', 'offdiff', 'numbers', 'gdec', 'gfrac', 'roots', 'weighted', 'pt2', 'pt4', 'pt6', 'pt8', 'timer', 'overpar', 'max', 'hostplays', 'profanity', 'calc', 'howto'];
+        const PS_DEF = Object.assign({}, DEFAULTS, { firstfinish: false, howto: false, calc: true });
+        const PS_TIME = [[60, '1 min'], [120, '2 min'], [180, '3 min'], [300, '5 min'], [600, '10 min']];
+        const PS_DIFF = [[2, 'easy'], [4, 'medium'], [6, 'hard'], [8, 'challenge']];
+        const PS_GROUPS = [
+            ['match', [
+                { k: 'mode', t: 'seg', l: 'game mode', d: 'race: fastest through all the levels. points: first to solve each level scores. the grid: claim levels on a shared grid', o: [['race', 'race'], ['points', 'points'], ['grid', 'the grid']] },
+                { k: 'teams', t: 'sw', l: 'teams', d: 'red vs blue. a team\'s score is its players\' points (or levels in the grid)', show: s => s.mode !== 'race' },
+                { k: 'rounds', t: 'step', l: 'rounds', d: 'how many levels the match lasts', min: 1, max: 15, show: s => s.mode !== 'grid' && !s.endless },
+                { k: 'endless', t: 'sw', l: 'endless mode', d: 'no set number of rounds: the match lasts as long as you pick and the most points wins', show: s => s.mode === 'points' },
+                { k: 'totaltime', t: 'seg', l: 'match length', d: 'how long the whole endless match lasts', o: PS_TIME, show: s => s.mode === 'points' && s.endless },
+                { k: 'gridw', t: 'step', l: 'grid width', d: 'how many columns of levels', min: 2, max: 8, show: s => s.mode === 'grid' },
+                { k: 'gridh', t: 'step', l: 'grid height', d: 'how many rows of levels', min: 2, max: 8, show: s => s.mode === 'grid' },
+                { k: 'gridtime', t: 'seg', l: 'grid time limit', d: 'with no limit it goes on until the host ends it', o: [[0, 'no limit'], [180, '3 min'], [300, '5 min'], [600, '10 min'], [900, '15 min']], show: s => s.mode === 'grid' },
+                { k: 'showprog', t: 'sw', l: 'show everyone\'s progress', d: 'players see how many levels everyone has finished. off = race blind', show: s => s.mode === 'race' },
+                { k: 'firstfinish', t: 'sw', l: 'end when someone finishes', d: 'the match ends as soon as the first player finishes every level, and they win', show: s => s.mode === 'race' },
+                { k: 'replay', t: 'sw', l: 'replay solutions', d: 'when someone scores, everyone watches their solution before the next level', show: s => s.mode === 'points' }
+            ]],
+            ['levels', [
+                { k: 'difficulty', t: 'seg', l: 'difficulty', d: 'how hard the levels are', o: PS_DIFF },
+                { k: 'randdiff', t: 'sw', l: 'random difficulties', d: 'every level gets its own difficulty' },
+                { k: 'favdiff', t: 'seg', l: 'favoured difficulty', d: 'see one difficulty more often, or leave it on truly random', o: [[0, 'truly random']].concat(PS_DIFF), show: s => s.randdiff },
+                { k: 'offdiff', t: 'off', l: 'difficulties in the mix', d: 'tap a difficulty to leave it out of the random pick (crossed out = disabled). at least one stays on', show: s => s.randdiff },
+                { k: 'numbers', t: 'seg', l: 'numbers', d: 'whole numbers, decimals or fractions', o: [['whole', 'whole numbers'], ['dec', 'decimals'], ['frac', 'fractions']] },
+                { k: 'gdec', t: 'sw', l: 'decimal goals', d: 'the goal can be a decimal like 3.5', show: s => s.numbers === 'dec' },
+                { k: 'gfrac', t: 'sw', l: 'fraction goals', d: 'the goal can be a fraction like 7/4', show: s => s.numbers === 'frac' },
+                { k: 'roots', t: 'sw', l: 'roots of non-squares', d: 'allow √ on numbers that aren\'t perfect squares', show: s => s.numbers !== 'frac' }
+            ]],
+            ['scoring', [
+                { k: 'weighted', t: 'sw', l: 'weighted points', d: 'harder levels are worth more points', show: s => s.mode !== 'race' },
+                { k: 'pt2', t: 'step', l: 'easy points', d: 'what an easy level is worth', min: 1, max: 20, show: s => s.mode !== 'race' && s.weighted },
+                { k: 'pt4', t: 'step', l: 'medium points', d: 'what a medium level is worth', min: 1, max: 20, show: s => s.mode !== 'race' && s.weighted },
+                { k: 'pt6', t: 'step', l: 'hard points', d: 'what a hard level is worth', min: 1, max: 20, show: s => s.mode !== 'race' && s.weighted },
+                { k: 'pt8', t: 'step', l: 'challenge points', d: 'what a challenge level is worth', min: 1, max: 20, show: s => s.mode !== 'race' && s.weighted }
+            ]],
+            ['rules', [
+                { k: 'timer', t: 'seg', l: 'time limit', d: 'how long each round can last', o: [[0, 'no limit'], [60, '1 min'], [120, '2 min'], [180, '3 min']], show: s => s.mode !== 'grid' },
+                { k: 'overpar', t: 'seg', l: 'moves over par', d: 'how many moves over par a player may use on one level', o: [[-1, 'no limit'], [0, 'par only'], [1, '+1'], [2, '+2'], [3, '+3'], [5, '+5']] }
+            ]],
+            ['room', [
+                { k: 'max', t: 'step', l: 'max players', d: 'how many people can be in the room, including the host', min: 2, max: 50 },
+                { k: 'hostplays', t: 'sw', l: 'host plays', d: 'turn off to only watch: you get a live scoreboard screen' },
+                { k: 'profanity', t: 'sw', l: 'profanity filter', d: 'hides swear words in chat and blocks them in names' },
+                { k: 'calc', t: 'sw', l: 'calculators', d: 'players can open a calculator window during the match' },
+                { k: 'howto', t: 'sw', l: 'how to play screen', d: 'everyone sees a short how-to-play screen before the match starts' }
+            ]]
+        ];
+        const PS_FIELDS = {}; PS_GROUPS.forEach(g => g[1].forEach(f => { PS_FIELDS[f.k] = f; }));
+
+        /* any object in, a full valid settings object out */
+        function psClean(raw) {
+            raw = raw && typeof raw === 'object' ? raw : {};
+            const o = {};
+            PS_KEYS.forEach(k => {
+                const f = PS_FIELDS[k], d = PS_DEF[k], v = raw[k];
+                if (k === 'offdiff') { o[k] = offClean(v === undefined ? d : v); return; }
+                if (f.t === 'sw') o[k] = v === undefined ? d : !!v;
+                else if (f.t === 'step') { const n = Math.round(+v); o[k] = isFinite(n) && v !== undefined && v !== null && v !== '' ? Math.max(f.min, Math.min(f.max, n)) : d; }
+                else { const m = f.o.find(x => String(x[0]) === String(v)); o[k] = m ? m[0] : d; }
+            });
+            o.gdec = o.numbers === 'dec' && o.gdec; o.gfrac = o.numbers === 'frac' && o.gfrac; o.roots = o.numbers === 'frac' ? true : o.roots;
+            o.endless = o.mode === 'points' && o.endless; o.teams = o.mode !== 'race' && o.teams; o.weighted = o.mode !== 'race' && o.weighted;
+            o.firstfinish = o.mode === 'race' && o.firstfinish; if (o.mode === 'grid') o.timer = 0;
+            if (!o.randdiff) { o.favdiff = 0; o.offdiff = 0; } else if (o.favdiff && (o.offdiff & OFFBIT[o.favdiff])) o.favdiff = 0;
+            return o;
+        }
+        const psHash = t => { let h = 5381; for (let i = 0; i < t.length; i++) h = ((h * 33) ^ t.charCodeAt(i)) >>> 0; return (h % 46656).toString(36).padStart(3, '0'); };
+        function psEncode(name, st) {
+            const diff = {}; PS_KEYS.forEach((k, i) => { if (st[k] !== PS_DEF[k]) diff[i.toString(36)] = typeof st[k] === 'boolean' ? +st[k] : st[k]; });
+            const b = btoa(unescape(encodeURIComponent(JSON.stringify({ n: String(name || '').slice(0, 24), s: diff })))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+            return 'vs1.' + b + '.' + psHash(b);
+        }
+        function psDecode(code) {
+            const m = /^vs1\.([A-Za-z0-9_-]+)\.([0-9a-z]{3})$/.exec(String(code || '').replace(/[\s"'“”‘’`]/g, ''));
+            if (!m || psHash(m[1]) !== m[2]) throw new Error("that code doesn't look right. check it for typos");
+            let j; try { j = JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g, '+').replace(/_/g, '/'))))); } catch (e) { throw new Error("that code doesn't look right. check it for typos"); }
+            if (!j || typeof j.s !== 'object' || j.s === null) throw new Error("that code doesn't look right. check it for typos");
+            const raw = {}; Object.keys(j.s).forEach(i => { const k = PS_KEYS[parseInt(i, 36)]; if (k) raw[k] = j.s[i]; });
+            return { name: String(j.n || 'shared preset').slice(0, 24) || 'shared preset', s: psClean(raw) };
+        }
+        const psLoad = () => { try { const a = JSON.parse(store.get('vs_presets') || '[]'); return Array.isArray(a) ? a.filter(x => x && x.id && x.name && x.s).map(x => ({ id: String(x.id), name: String(x.name).slice(0, 24), s: psClean(x.s) })) : []; } catch (e) { return []; } };
+        const psStore = a => store.set('vs_presets', JSON.stringify(a));
+        const psId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        function psSummary(st) {
+            const dn = { 2: 'easy', 4: 'medium', 6: 'hard', 8: 'challenge' };
+            const a = [st.mode === 'grid' ? 'the grid ' + st.gridw + '×' + st.gridh : st.mode];
+            if (st.mode === 'points' && st.endless) a.push('endless ' + (st.totaltime / 60) + ' min'); else if (st.mode !== 'grid') a.push(st.rounds + (st.rounds === 1 ? ' round' : ' rounds'));
+            a.push(st.randdiff ? 'random difficulties' : dn[st.difficulty]);
+            a.push(st.numbers === 'whole' ? 'whole numbers' : st.numbers === 'dec' ? 'decimals' : 'fractions');
+            if (st.teams) a.push('teams'); if (st.weighted) a.push('weighted points');
+            if (st.timer) a.push(st.timer / 60 + ' min per round'); if (st.overpar >= 0) a.push(st.overpar === 0 ? 'par only' : '+' + st.overpar + ' over par');
+            if (!st.calc) a.push('no calculators'); if (!st.hostplays) a.push('host watches');
+            return a.join(' · ');
+        }
+        const psCan = () => !!state && isHost() && state.phase !== 'playing' && !startingMatch;
+        const psIn = () => !!sess && !!state;
+        let psEd = null;   /* the preset being edited: { id, name, s } */
+        function psMsg(t, ok) { const m = $('psmsg'); m.textContent = t || ''; m.classList.toggle('ok', !!ok); }
+        function psOpen() {
+            psMsg(''); $('psimpin').value = ''; $('psmaker').hidden = false; document.body.style.overflow = 'hidden'; psList(); $('psmaker').scrollTop = 0;
+            $('psclose').focus();
+        }
+        function psShut() { $('psmaker').hidden = true; if (!howtoOn) document.body.style.overflow = ''; psEd = null; }
+        function psList() {
+            psEd = null; $('pslist').hidden = false; $('pseditor').hidden = true;
+            const inr = psIn(), can = inr && psCan(), pres = psLoad();
+            $('psintro').textContent = !inr ? 'build a set of room settings, save it here, and load it when you make a room. share one with a friend by sending its code.' : can ? 'load a preset into your room, or paste a code to apply one straight away.' : isHost() ? "presets can only be loaded in the lobby, between matches." : 'only the host can load presets into the room. you can still make and save your own.';
+            $('psimproom').hidden = !can; $('pssaveroom').hidden = !inr; $('pscoderoom2').hidden = !inr;
+            const box = $('pscards'); box.textContent = '';
+            if (!pres.length) { const n = document.createElement('div'); n.className = 'none'; n.textContent = 'no presets yet. make one with “new preset”' + (inr ? ' or save the room\'s settings.' : '.'); box.appendChild(n); }
+            const mkb = (t, fn, cls) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn' + (cls ? ' ' + cls : ''); b.textContent = t; b.onclick = fn; return b; };
+            pres.forEach(pr => {
+                const c = document.createElement('div'); c.className = 'pscard';
+                const nm = document.createElement('b'); nm.textContent = pr.name;
+                const sm = document.createElement('div'); sm.className = 'sm'; sm.textContent = psSummary(pr.s);
+                const bt = document.createElement('div'); bt.className = 'bt';
+                if (can) bt.appendChild(mkb('load into room', () => psApply(pr.s, pr.name), 'go'));
+                bt.appendChild(mkb('edit', () => psEdit(pr)));
+                bt.appendChild(mkb('copy code', () => psCopy(psEncode(pr.name, pr.s))));
+                const del = mkb('delete', () => {
+                    if (!del.classList.contains('arm')) { del.classList.add('arm'); del.textContent = 'sure?'; clearTimeout(del._t); del._t = setTimeout(() => { del.classList.remove('arm'); del.textContent = 'delete'; }, 3000); return; }
+                    psStore(psLoad().filter(x => x.id !== pr.id)); psMsg('deleted “' + pr.name + '”', true); psList();
+                });
+                bt.appendChild(del);
+                c.append(nm, sm, bt); box.appendChild(c);
+            });
+        }
+        async function psCopy(t, done) {
+            const fin = (ok, m) => { if (done) done(ok); else psMsg(m, ok); };
+            try { await navigator.clipboard.writeText(t); fin(true, 'code copied. send it to a friend'); }
+            catch (e) { const ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (er) { } ta.remove(); fin(ok, ok ? 'code copied. send it to a friend' : "couldn't copy. select the code and copy it yourself"); }
+        }
+        function psApply(st, name) {
+            if (!psCan()) { psMsg("presets can only be loaded by the host, in the lobby"); return; }
+            patch(Object.assign({}, st)); psShut(); localLine('loaded the preset “' + name + '” into the room');
+        }
+        function psImport(toRoom) {
+            let r; try { r = psDecode($('psimpin').value); } catch (e) { psMsg(e.message); return; }
+            if (toRoom) { psApply(r.s, r.name); return; }
+            const a = psLoad(); let nm = r.name, n = 2; while (a.some(x => x.name === nm)) nm = r.name.slice(0, 20) + ' (' + (n++) + ')';
+            a.push({ id: psId(), name: nm, s: r.s }); psStore(a); $('psimpin').value = ''; psList(); psMsg('added “' + nm + '” to your presets', true);
+        }
+        function psEdit(pr) {
+            psEd = pr ? { id: pr.id, name: pr.name, s: psClean(pr.s) } : { id: '', name: '', s: psClean({}) };
+            $('pslist').hidden = true; $('pseditor').hidden = false; $('psname').value = psEd.name; psMsg(''); psFields(); psCodeUpd(); $('psmaker').scrollTop = 0;
+        }
+        function psCodeUpd() { $('pscode').textContent = psEncode($('psname').value.trim() || 'my preset', psEd.s); }
+        function psSet(k, v) { psEd.s = psClean(Object.assign({}, psEd.s, { [k]: v })); const sc = $('psmaker').scrollTop; psFields(); psCodeUpd(); $('psmaker').scrollTop = sc; }
+        function psFields() {
+            const box = $('psfields'); box.textContent = ''; const st = psEd.s;
+            PS_GROUPS.forEach(([gname, fs]) => {
+                const vis = fs.filter(f => !f.show || f.show(st)); if (!vis.length) return;
+                const g = document.createElement('details'); g.className = 'sgroup'; g.open = true;
+                const sum = document.createElement('summary'); sum.textContent = gname; g.appendChild(sum);
+                vis.forEach(f => {
+                    const row = document.createElement('div'); row.className = 'srow' + (f.t === 'seg' || f.t === 'off' ? ' col' : '');
+                    const lab = document.createElement('div'), b = document.createElement('b'), d = document.createElement('span'); b.textContent = f.l; d.className = 'd'; d.textContent = f.d; lab.append(b, d); row.appendChild(lab);
+                    let ctl;
+                    if (f.t === 'sw') {
+                        ctl = document.createElement('button'); ctl.type = 'button'; ctl.className = 'sw'; ctl.setAttribute('role', 'switch'); ctl.setAttribute('aria-label', f.l); ctl.setAttribute('aria-checked', String(!!st[f.k])); ctl.onclick = () => psSet(f.k, !st[f.k]);
+                    } else if (f.t === 'step') {
+                        ctl = document.createElement('div'); ctl.className = 'step';
+                        const mk = (t, dl, al) => { const x = document.createElement('button'); x.type = 'button'; x.textContent = t; x.setAttribute('aria-label', al + ' ' + f.l); x.disabled = dl < 0 ? st[f.k] <= f.min : st[f.k] >= f.max; x.onclick = () => psSet(f.k, st[f.k] + dl); return x; };
+                        const out = document.createElement('output'); out.textContent = st[f.k]; ctl.append(mk('−', -1, 'less'), out, mk('+', 1, 'more'));
+                    } else if (f.t === 'seg') {
+                        ctl = document.createElement('div'); ctl.className = 'seg'; ctl.setAttribute('role', 'radiogroup'); ctl.setAttribute('aria-label', f.l);
+                        f.o.forEach(([v, t]) => { const x = document.createElement('button'); x.type = 'button'; x.setAttribute('role', 'radio'); x.textContent = t; x.setAttribute('aria-checked', String(st[f.k] === v)); x.disabled = f.k === 'favdiff' && v && (st.offdiff & OFFBIT[v]); x.onclick = () => psSet(f.k, v); ctl.appendChild(x); });
+                    } else {
+                        ctl = document.createElement('div'); ctl.className = 'seg'; ctl.setAttribute('role', 'group'); ctl.setAttribute('aria-label', f.l);
+                        PS_DIFF.forEach(([v, t]) => { const bit = OFFBIT[v], on = !(st.offdiff & bit), x = document.createElement('button'); x.type = 'button'; x.setAttribute('role', 'checkbox'); x.textContent = t; x.setAttribute('aria-checked', String(on)); x.disabled = on && ((st.offdiff | bit) & 15) === 15; x.onclick = () => psSet('offdiff', st.offdiff ^ bit); ctl.appendChild(x); });
+                    }
+                    row.appendChild(ctl); g.appendChild(row);
+                });
+                box.appendChild(g);
+            });
+        }
+        function psSaveEd() {
+            const name = $('psname').value.trim().slice(0, 24) || 'my preset', a = psLoad();
+            if (psEd.id && a.some(x => x.id === psEd.id)) a.forEach(x => { if (x.id === psEd.id) { x.name = name; x.s = psEd.s; } });
+            else a.push({ id: psId(), name, s: psEd.s });
+            psStore(a); psList(); psMsg('saved “' + name + '”', true);
+        }
+        $('psopen').onclick = psOpen; $('psroom').onclick = psOpen; $('psclose').onclick = psShut;
+        $('psnew').onclick = () => psEdit(null);
+        $('pssaveroom').onclick = () => { if (!state) return; const st = psClean(norm(state.settings)); psEdit({ id: '', name: 'room settings', s: st }); };
+        /* the room's current settings as a share code */
+        const psRoomCode = () => psEncode('room settings', psClean(norm(state.settings)));
+        $('pscoderoom').onclick = () => {
+            if (!state) return; const b = $('pscoderoom'), o = 'copy settings code';
+            psCopy(psRoomCode(), ok => { b.textContent = ok ? 'code copied!' : "couldn't copy"; clearTimeout(b._t); b._t = setTimeout(() => { b.textContent = o; }, 1800); if (!ok) localLine('settings code: ' + psRoomCode()); });
+        };
+        $('pscoderoom2').onclick = () => { if (state) psCopy(psRoomCode()); };
+        $('psimpsave').onclick = () => psImport(false); $('psimproom').onclick = () => psImport(true);
+        $('psimpin').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); psImport(psIn() && psCan()); } };
+        $('psname').oninput = () => psCodeUpd();
+        $('pssave').onclick = psSaveEd; $('psback').onclick = () => { psMsg(''); psList(); };
+        $('pscopy').onclick = () => psCopy($('pscode').textContent);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('psmaker').hidden && !document.querySelector('dialog[open]')) { if (psEd) { psMsg(''); psList(); } else psShut(); } });
+        document.querySelectorAll('[data-off]').forEach(b => b.onclick = () => {
+            const t = +b.dataset.off, bit = OFFBIT[t], now = offClean(norm(state.settings).offdiff), next = now ^ bit;
+            if ((next & 15) === 15) return;   /* keep at least one difficulty on */
+            const p = { offdiff: next }; if ((next & bit) && state.settings.favdiff === t) p.favdiff = 0;
+            patch(p);
+        });
 
         /* ---------- chat ---------- */
         const lastBy = { pub: null, team: null }, lastBub = { pub: null, team: null };
@@ -3503,9 +4010,508 @@
             clearTimeout(toastT); toastT = setTimeout(hideToast, 5000);
         }
         function setChat(open) {
-            chatOpen = open; $('chatpanel').hidden = !open; $('chatfab').setAttribute('aria-expanded', String(open));
+            if (open && typeof calcOpen !== 'undefined' && calcOpen && calcMobile()) calcClose(); chatOpen = open; $('chatpanel').hidden = !open; $('chatfab').setAttribute('aria-expanded', String(open));
             if (open) { unread = 0; updateBadge(); hideToast(); const lg = $('chatlog'); lg.scrollTop = lg.scrollHeight; if (!matchMedia('(pointer:coarse)').matches) $('chatin').focus(); }
         }
+
+        /* =====================================================================
+           calculator
+           ===================================================================== */
+        /* the equation on screen, as plain text the calculator can read (mirrors mStep) */
+        function trailText() {
+            if (!Lv) return '';
+            const par = e => '(' + e.t + ')', wrap = (e, min) => e.p < min ? par(e) : e.t;
+            const num = t => {
+                t = String(t).replace(/^-/, '−');
+                const rm = /^(−?)(\d*)√(\d+)(?:\/(\d+))?$/.exec(t);
+                if (rm) { const top = rm[2] + '√' + rm[3]; return rm[1] + (rm[4] ? '(' + top + ')/' + rm[4] : top); }
+                return t;
+            };
+            const st = fmt(Lv.start);
+            let e = { t: num(st), p: /^-/.test(st) ? 1 : st.includes('/') ? 2 : 4 };
+            if (/^-/.test(st) || st.includes('/') || /√/.test(st)) { if (hist.length) e = { t: e.t, p: /^-/.test(st) ? 1 : 2 }; }
+            hist.forEach(h => {
+                const o = h.s;
+                if (o === 'x²') e = { t: wrap(e, 4) + '²', p: 3 };
+                else if (o === 'x³') e = { t: wrap(e, 4) + '³', p: 3 };
+                else if (o === 'x⁻¹') e = { t: wrap(e, 4) + '⁻¹', p: 3 };
+                else if (o === '|x|') e = { t: '|' + e.t + '|', p: 4 };
+                else if (o === '√x') e = { t: '√(' + e.t + ')', p: 4 };
+                else if (o === '−x') e = { t: '−' + wrap(e, 4), p: 1 };
+                else if (o.startsWith('mod ')) e = { t: wrap(e, 3) + ' mod ' + o.slice(4), p: 0 };
+                else {
+                    let k = num(o.slice(1)); if (k.includes('/') && !/√/.test(k)) k = '(' + k + ')';
+                    const c = o[0];
+                    if (c === '+' || c === '−') e = { t: wrap(e, 1) + c + k, p: 1 };
+                    else e = { t: wrap(e, 2) + c + k, p: 2 };
+                }
+            });
+            return e.t;
+        }
+
+        /* a small expression evaluator: + - × ÷ ^ ( ) | | √ ² ³ ⁻¹ ! mod, implicit multiplication, sin/cos/tan in degrees */
+        function calcEval(src) {
+            const t = [], s = src; let i = 0;
+            const MAP = { '−': '-', '–': '-', '×': '*', '·': '*', '÷': '/', '²': 'sq', '³': 'cu' };
+            while (i < s.length) {
+                const c = s[i];
+                if (/\s/.test(c)) { i++; continue; }
+                if (/[0-9.]/.test(c)) { let j = i; while (j < s.length && /[0-9.]/.test(s[j])) j++; const w = s.slice(i, j); if ((w.match(/\./g) || []).length > 1 || w === '.') throw 0; t.push({ k: 'n', v: parseFloat(w) }); i = j; continue; }
+                if (c === 'π') { t.push({ k: 'id', v: 'pi' }); i++; continue; }
+                if (/[a-z]/i.test(c)) { let j = i + 1; while (j < s.length && /[a-z]/i.test(s[j])) j++; t.push({ k: 'id', v: s.slice(i, j).toLowerCase() }); i = j; continue; }
+                if (c === '⁻' && s[i + 1] === '¹') { t.push({ k: 'inv' }); i += 2; continue; }
+                const o = MAP[c] || c;
+                if (!/^(\+|-|\*|\/|\^|\(|\)|\||√|!|sq|cu)$/.test(o)) throw 0;
+                t.push({ k: 'op', v: o }); i++;
+            }
+            let p = 0;
+            const isOp = v => t[p] && t[p].k === 'op' && t[p].v === v;
+            const need = v => { if (p < t.length) { if (!isOp(v)) throw 0; p++; } };   /* a missing closing bracket at the very end is fine */
+            const startsFactor = () => { const x = t[p]; return x && (x.k === 'n' || (x.k === 'id' && x.v !== 'mod') || (x.k === 'op' && (x.v === '(' || x.v === '√'))); };
+            const fact = n => { if (n < 0 || !Number.isInteger(n) || n > 170) throw 0; let r = 1; for (let k = 2; k <= n; k++) r *= k; return r; };
+            const FN = {
+                sin: x => Math.sin(x * Math.PI / 180), cos: x => Math.cos(x * Math.PI / 180), tan: x => Math.tan(x * Math.PI / 180),
+                asin: x => Math.asin(x) * 180 / Math.PI, acos: x => Math.acos(x) * 180 / Math.PI, atan: x => Math.atan(x) * 180 / Math.PI,
+                ln: Math.log, log: Math.log10, sqrt: Math.sqrt, cbrt: Math.cbrt, abs: Math.abs, exp: Math.exp, floor: Math.floor, ceil: Math.ceil, round: Math.round
+            };
+            const tidy = x => Math.abs(x) < 1e-12 ? 0 : x;
+            function expr() { let v = term(); while (isOp('+') || isOp('-')) { const o = t[p++].v, r = term(); v = o === '+' ? v + r : v - r; } return v; }
+            function term() {
+                let v = unary();
+                for (; ;) {
+                    if (isOp('*') || isOp('/')) { const o = t[p++].v, r = unary(); v = o === '*' ? v * r : v / r; }
+                    else if (t[p] && t[p].k === 'id' && t[p].v === 'mod') { p++; const r = unary(); v = ((v % r) + r) % r; }
+                    else if (startsFactor()) v *= power();
+                    else return v;
+                }
+            }
+            function unary() { if (isOp('-')) { p++; return -unary(); } if (isOp('+')) { p++; return unary(); } return power(); }
+            function power() { const b = postfix(); if (isOp('^')) { p++; return Math.pow(b, unary()); } return b; }
+            function postfix() {
+                let v = atom();
+                for (; ;) {
+                    if (isOp('sq')) { p++; v *= v; } else if (isOp('cu')) { p++; v = v * v * v; }
+                    else if (t[p] && t[p].k === 'inv') { p++; v = 1 / v; }
+                    else if (isOp('!')) { p++; v = fact(v); }
+                    else return v;
+                }
+            }
+            function atom() {
+                const x = t[p++]; if (!x) throw 0;
+                if (x.k === 'n') return x.v;
+                if (x.k === 'op') {
+                    if (x.v === '(') { const v = expr(); need(')'); return v; }
+                    if (x.v === '|') { const v = expr(); need('|'); return Math.abs(v); }
+                    if (x.v === '√') return Math.sqrt(postfix());
+                    throw 0;
+                }
+                if (x.k === 'id') {
+                    if (x.v === 'pi') return Math.PI;
+                    if (x.v === 'e') return Math.E;
+                    const f = FN[x.v]; if (!f) throw 0;
+                    let a; if (isOp('(')) { p++; a = expr(); need(')'); } else a = postfix();
+                    return tidy(f(a));
+                }
+                throw 0;
+            }
+            if (!t.length) return null;
+            const v = expr(); if (p < t.length) throw 0;
+            return v;
+        }
+
+        function calcRat(x) {   /* exact-looking fraction (like the game shows), or null */
+            if (Number.isInteger(x)) return null;
+            let h1 = 1, h0 = 0, k1 = 0, k0 = 1, y = Math.abs(x);
+            for (let n = 0; n < 40; n++) {
+                const a = Math.floor(y), h = a * h1 + h0, k = a * k1 + k0;
+                h0 = h1; h1 = h; k0 = k1; k1 = k;
+                if (k > 20000) return null;
+                if (Math.abs(Math.abs(x) - h / k) < 1e-11 * Math.max(1, Math.abs(x))) return (x < 0 ? '−' : '') + h + '/' + k;
+                const fr = y - a; if (fr < 1e-12) return null; y = 1 / fr;
+            }
+            return null;
+        }
+        function calcShow(x) {   /* { a: short text, b: other text or '' } */
+            const sg = x < 0 ? '−' : '', ax = Math.abs(x);
+            if (Number.isInteger(x)) return { a: ax < 1e15 ? sg + String(ax) : x.toExponential(3).replace('-', '−'), b: '' };
+            const dec = ax >= 1e15 || ax < 1e-9 ? x.toExponential(8).replace('-', '−') : sg + String(parseFloat(ax.toPrecision(12)));
+            const q = calcRat(x), body = dec.replace(/^−/, '');
+            const rs = ax >= 1e15 || ax < 1e-9 ? body : String(parseFloat(ax >= 0.1 ? ax.toFixed(3) : ax.toPrecision(2))), dshort = body.length > 6 ? sg + (rs.length > 6 ? rs.slice(0, 6) : rs) + '…' : dec;
+            if (q) return { a: q.length > 10 ? q.slice(0, 9) + '…' : q, b: dec, full: q };
+            return { a: dshort, b: dshort === dec ? '' : dec };
+        }
+
+        let calcOpen = false, calcRows = [''], calcPos = null, calcSize = null;
+        const calcMobile = () => matchMedia('(pointer:coarse), (max-width:640px)').matches;
+
+        function calcUpdRow(row, text) {
+            const r = row.querySelector('.cr'); r.className = 'cr'; r.textContent = ''; r.removeAttribute('title'); r._v = null;
+            if (!text.trim()) return;
+            let v; try { v = calcEval(text); } catch (e) { v = NaN; }
+            if (v === null) return;
+            if (!isFinite(v)) { r.classList.add('err'); r.textContent = '—'; r.title = 'not a number'; return; }
+            const sh = calcShow(v); r.textContent = sh.a;
+            if (sh.b) { r.classList.add('tg'); r._v = { a: sh.a, b: sh.b, on: 0 }; r.title = 'click to switch between ' + sh.a + ' and ' + sh.b; }
+        }
+        /* ===== math field: a small Desmos-style equation editor =====
+           a line is a tree of nodes: {t:'c', v} (one character), {t:'sup', a}, {t:'sqrt', a}, {t:'frac', n, d}.
+           mfOut() flattens the tree back to the plain text the calculator already evaluates. */
+        const CALC_WORDS = new Set(['sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'mod', 'ln', 'log', 'sqrt', 'cbrt', 'abs', 'exp', 'floor', 'ceil', 'round', 'pi']);
+        const MF_FUNCS = [...CALC_WORDS].sort((a, b) => b.length - a.length);
+        const mfList = o => { const l = []; l.p = o || null; return l; };
+        const mfKids = n => n.t === 'frac' ? [n.n, n.d] : [n.a];
+        const mfMk = t => { const n = { t, l: null }; if (t === 'frac') { n.n = mfList(n); n.d = mfList(n); } else if (t !== 'c') n.a = mfList(n); return n; };
+        const mfCh = v => { const n = mfMk('c'); n.v = v; return n; };
+        function mfAdd(list, i, ...ns) { ns.forEach(n => { n.l = list; }); list.splice(i, 0, ...ns); }
+        function mfOut(l) {
+            return l.map(n => n.t === 'c' ? n.v : n.t === 'sup' ? '^(' + mfOut(n.a) + ')' : n.t === 'sqrt' ? '√(' + mfOut(n.a) + ')' : '((' + mfOut(n.n) + ')/(' + mfOut(n.d) + '))').join('');
+        }
+        /* pull the operand just before position `end` out of a list: a bracketed group (without its brackets) or a run of digits / letters / nodes */
+        function mfTake(list, end) {
+            if (end > 0 && list[end - 1].t === 'c' && list[end - 1].v === ')') {
+                let d = 0, k = end - 1;
+                for (; k >= 0; k--) { const m = list[k]; if (m.t === 'c') { if (m.v === ')') d++; else if (m.v === '(' && --d === 0) break; } }
+                if (k >= 0) { const g = list.splice(k, end - k); g.shift(); g.pop(); return { at: k, nodes: g }; }
+            }
+            let k = end;
+            while (k > 0) { const m = list[k - 1]; if (m.t !== 'c' || /[0-9.a-zA-Zπ]/.test(m.v)) k--; else break; }
+            if (k < end && list[k].t === 'sup' && k > 0 && list[k - 1].t === 'c' && list[k - 1].v === ')') {   /* (a+b)^2 / 5: keep the bracket with its exponent */
+                let d = 0, m = k - 1;
+                for (; m >= 0; m--) { const q = list[m]; if (q.t === 'c') { if (q.v === ')') d++; else if (q.v === '(' && --d === 0) break; } }
+                if (m >= 0) k = m;
+            }
+            return { at: k, nodes: list.splice(k, end - k) };
+        }
+        /* plain text -> tree (for lines imported from the game and for pasting) */
+        function mfFill(list, s) {
+            let i = 0;
+            const tok = () => { let j = i; while (j < s.length && /[0-9.]/.test(s[j])) j++; if (j === i && j < s.length && /[a-zA-Zπ]/.test(s[j])) j++; const w = s.slice(i, j); i = j; return w; };
+            const grp = () => { let d = 0, j = i; for (; j < s.length; j++) { if (s[j] === '(') d++; else if (s[j] === ')' && --d === 0) break; } const w = s.slice(i + 1, j); i = j + 1; return w; };
+            const arg = () => { if (s[i] === '(') return grp(); if (s[i] === '√') { i++; return '√' + (s[i] === '(' ? '(' + grp() + ')' : tok()); } return tok(); };
+            const sup = txt => { const n = mfMk('sup'); mfAdd(list, list.length, n); mfFill(n.a, txt); };
+            while (i < s.length) {
+                const c = s[i];
+                if (c === '^') { i++; let sg = ''; if (s[i] !== '(' && (s[i] === '−' || s[i] === '-')) sg = s[i++]; sup(s[i] === '(' ? grp() : sg + tok()); }
+                else if (c === '²' || c === '³') { i++; sup(c === '²' ? '2' : '3'); }
+                else if (c === '⁻' && s[i + 1] === '¹') { i += 2; sup('−1'); }
+                else if (c === '√') { i++; const n = mfMk('sqrt'); mfAdd(list, list.length, n); mfFill(n.a, s[i] === '(' ? grp() : tok()); }
+                else if (c === '/') { i++; const op = mfTake(list, list.length), n = mfMk('frac'); mfAdd(n.n, 0, ...op.nodes); mfAdd(list, op.at, n); mfFill(n.d, arg()); }
+                else { mfAdd(list, list.length, mfCh(c)); i++; }
+            }
+        }
+        /* typing: ^ opens an exponent, / makes a fraction, ( adds its ), sqrt and pi turn into symbols */
+        function mfAuto(f) {
+            const c = f.c, l = c.l; let k = c.i;
+            while (k > 0 && l[k - 1].t === 'c' && /[a-zA-Z]/.test(l[k - 1].v)) k--;
+            const w = l.slice(k, c.i).map(n => n.v).join('').toLowerCase();
+            if (w.endsWith('sqrt')) { const at = c.i - 4; l.splice(at, 4); const n = mfMk('sqrt'); mfAdd(l, at, n); f.c = { l: n.a, i: 0 }; }
+            else if (w === 'pi') { l.splice(k, 2); mfAdd(l, k, mfCh('π')); c.i = k + 1; }
+        }
+        function mfType(f, ch) {
+            const c = f.c, l = c.l;
+            if (ch === '^' || ch === '²' || ch === '³') {
+                const n = mfMk('sup'); mfAdd(l, c.i, n);
+                if (ch === '^') f.c = { l: n.a, i: 0 }; else { mfAdd(n.a, 0, mfCh(ch === '²' ? '2' : '3')); c.i++; }
+            }
+            else if (ch === '√') { const n = mfMk('sqrt'); mfAdd(l, c.i, n); f.c = { l: n.a, i: 0 }; }
+            else if (ch === '/') { const op = mfTake(l, c.i), n = mfMk('frac'); mfAdd(n.n, 0, ...op.nodes); mfAdd(l, op.at, n); f.c = { l: n.d, i: 0 }; }
+            else if (ch === '(') { mfAdd(l, c.i, mfCh('('), mfCh(')')); c.i++; }
+            else if (ch === ')') { const nx = l[c.i]; if (nx && nx.t === 'c' && nx.v === ')') c.i++; else { mfAdd(l, c.i, mfCh(')')); c.i++; } }
+            else if (ch === '\n' || ch === '\r') { /* no line breaks */ }
+            else { mfAdd(l, c.i, mfCh(ch === '*' ? '×' : ch === '-' ? '−' : ch)); c.i++; mfAuto(f); }
+        }
+        function mfBack(f) {
+            const c = f.c, l = c.l;
+            if (c.i > 0) {
+                const p = l[c.i - 1];
+                if (p.t === 'c') {
+                    const nx = l[c.i];
+                    if (p.v === '(' && nx && nx.t === 'c' && nx.v === ')') { l.splice(c.i - 1, 2); c.i--; } else { l.splice(c.i - 1, 1); c.i--; }
+                } else { const k = mfKids(p), e = k[k.length - 1]; f.c = { l: e, i: e.length }; }
+                return;
+            }
+            const o = l.p; if (!o) return;
+            const host = o.l, at = host.indexOf(o);
+            if (o.t === 'frac') {
+                if (l === o.d) f.c = { l: o.n, i: o.n.length };
+                else if (!o.n.length && !o.d.length) { host.splice(at, 1); f.c = { l: host, i: at }; }
+                else f.c = { l: host, i: at };
+                return;
+            }
+            const inner = o.a.splice(0);   /* sup / sqrt: take the box away and keep what was typed in it */
+            mfAdd(host, at + 1, ...inner); host.splice(at, 1); f.c = { l: host, i: at };
+        }
+        function mfDel(f) {
+            const c = f.c, l = c.l;
+            if (c.i < l.length) { const nx = l[c.i]; if (nx.t === 'c') l.splice(c.i, 1); else f.c = { l: mfKids(nx)[0], i: 0 }; }
+        }
+        function mfLeft(f) {
+            const c = f.c, l = c.l;
+            if (c.i > 0) { const p = l[c.i - 1]; if (p.t === 'c') c.i--; else { const k = mfKids(p), e = k[k.length - 1]; f.c = { l: e, i: e.length }; } return; }
+            const o = l.p; if (!o) return;
+            if (o.t === 'frac' && l === o.d) { f.c = { l: o.n, i: o.n.length }; return; }
+            f.c = { l: o.l, i: o.l.indexOf(o) };
+        }
+        function mfRight(f) {
+            const c = f.c, l = c.l;
+            if (c.i < l.length) { const nx = l[c.i]; if (nx.t === 'c') c.i++; else f.c = { l: mfKids(nx)[0], i: 0 }; return; }
+            const o = l.p; if (!o) return;
+            if (o.t === 'frac' && l === o.n) { f.c = { l: o.d, i: 0 }; return; }
+            f.c = { l: o.l, i: o.l.indexOf(o) + 1 };
+        }
+        function mfUp(f) {
+            const c = f.c, l = c.l, o = l.p;
+            if (o && o.t === 'frac' && l === o.d) { f.c = { l: o.n, i: Math.min(c.i, o.n.length) }; return true; }
+            const nx = l[c.i], pv = l[c.i - 1];
+            if (nx && nx.t === 'sup') { f.c = { l: nx.a, i: 0 }; return true; }
+            if (pv && pv.t === 'sup') { f.c = { l: pv.a, i: pv.a.length }; return true; }
+            return false;
+        }
+        function mfDown(f) {
+            const c = f.c, l = c.l, o = l.p;
+            if (o && o.t === 'frac' && l === o.n) { f.c = { l: o.d, i: Math.min(c.i, o.d.length) }; return true; }
+            if (o && o.t === 'sup') { f.c = { l: o.l, i: o.l.indexOf(o) + 1 }; return true; }
+            return false;
+        }
+        /* which letters are variables (drawn italic): everything except known function words such as sin or mod */
+        function mfItal(l) {
+            const r = []; let i = 0; const isL = n => n.t === 'c' && /[a-zA-Z]/.test(n.v);
+            while (i < l.length) {
+                if (!isL(l[i])) { i++; continue; }
+                let j = i; while (j < l.length && isL(l[j])) j++;
+                const run = l.slice(i, j).map(n => n.v).join('').toLowerCase(); let p = 0;
+                while (p < run.length) { const w = MF_FUNCS.find(w => run.startsWith(w, p)); if (w) { for (let q = 0; q < w.length; q++) r[i + p + q] = false; p += w.length; } else { r[i + p] = true; p++; } }
+                i = j;
+            }
+            return r;
+        }
+        function mfDraw(f) {
+            const host = f.view; host.textContent = '';
+            const mk = (tag, cls) => { const e = document.createElement(tag); e.className = cls; return e; };
+            const fill = (list, el) => {
+                el._l = list;
+                if (!list.length && list.p) el.classList.add('mph');
+                const it = mfItal(list);
+                for (let i = 0; i <= list.length; i++) {
+                    if (f.c.l === list && f.c.i === i) el.appendChild(mk('span', 'mcaret'));
+                    if (i === list.length) break;
+                    const n = list[i]; let e;
+                    if (n.t === 'c') { e = mk('span', 'mc' + (it[i] ? ' i' : '') + (/[+−×÷=<>±]/.test(n.v) ? ' mo' : '')); e.textContent = n.v === ' ' ? '\u00a0' : n.v; }
+                    else if (n.t === 'sup') { e = mk('span', 'mnode msup'); const k = mk('span', 'mlist'); e.appendChild(k); fill(n.a, k); }
+                    else if (n.t === 'sqrt') { e = mk('span', 'mnode msqrt'); const g = mk('span', 'mrad'); g.textContent = '√'; const k = mk('span', 'mlist mrt'); e.append(g, k); fill(n.a, k); }
+                    else { e = mk('span', 'mnode mfrac'); const a = mk('span', 'mlist mfn'), b = mk('span', 'mlist mfd'); e.append(a, b); fill(n.n, a); fill(n.d, b); }
+                    e._n = n; el.appendChild(e);
+                }
+            };
+            fill(f.root, host);
+            f.el.classList.toggle('mfe', !f.root.length);
+            f.el.classList.toggle('mfall', !!f.all && f.root.length > 0);
+            if (f.focused) {   /* keep the caret on screen when the line is longer than the window */
+                const cr = host.querySelector('.mcaret');
+                if (cr) { const a = cr.getBoundingClientRect(), b = f.el.getBoundingClientRect(); if (a.left < b.left + 8) f.el.scrollLeft -= b.left + 8 - a.left; else if (a.right > b.right - 8) f.el.scrollLeft += a.right - (b.right - 8); }
+            }
+        }
+        function mfCreate(txt, ph, label) {
+            const f = { root: mfList(null), all: false, focused: false, onchange: null, onnav: null };
+            mfFill(f.root, txt); f.c = { l: f.root, i: f.root.length };
+            const el = document.createElement('div'); el.className = 'mf'; el.dataset.ph = ph;
+            const view = document.createElement('span'); view.className = 'mroot';
+            const ta = document.createElement('textarea'); ta.className = 'mfin'; ta.rows = 1;
+            ta.setAttribute('autocomplete', 'off'); ta.setAttribute('autocorrect', 'off'); ta.setAttribute('autocapitalize', 'off'); ta.setAttribute('aria-label', label); ta.spellcheck = false;
+            el.append(view, ta); f.el = el; f.view = view; f.ta = ta;
+            const draw = () => mfDraw(f), commit = () => { mfDraw(f); if (f.onchange) f.onchange(); };
+            const clr = () => { if (f.all) { f.root.length = 0; f.c = { l: f.root, i: 0 }; f.all = false; } };
+            f.text = () => mfOut(f.root);
+            f.focus = end => { if (end) f.c = { l: f.root, i: f.root.length }; ta.focus(); mfDraw(f); };
+            /* typed characters arrive through the hidden textarea (works with phone keyboards too) */
+            ta.addEventListener('input', () => { const v = ta.value; ta.value = ''; if (!v) return; clr(); for (const ch of v) mfType(f, ch); commit(); });
+            ta.addEventListener('keydown', e => {
+                const k = e.key;
+                if (e.ctrlKey || e.metaKey) {
+                    if (k === 'a' || k === 'A') { e.preventDefault(); f.all = f.root.length > 0; draw(); }
+                    else if ((k === 'c' || k === 'C' || k === 'x' || k === 'X') && navigator.clipboard) {
+                        e.preventDefault(); try { navigator.clipboard.writeText(mfOut(f.root)); } catch (_) { }
+                        if (k === 'x' || k === 'X') { f.root.length = 0; f.c = { l: f.root, i: 0 }; f.all = false; commit(); }
+                    }
+                    return;
+                }
+                if (e.altKey) return;
+                let h = true, ch = false;
+                if (k === 'Backspace') { if (!f.all && !f.root.length && f.onnav) { e.preventDefault(); f.onnav('back'); return; } if (f.all) clr(); else mfBack(f); ch = true; }
+                else if (k === 'Delete') { if (f.all) clr(); else mfDel(f); ch = true; }
+                else if (k === 'ArrowLeft') { f.all = false; mfLeft(f); }
+                else if (k === 'ArrowRight') { f.all = false; mfRight(f); }
+                else if (k === 'ArrowUp') { f.all = false; if (!mfUp(f) && f.onnav) f.onnav('up'); }
+                else if (k === 'ArrowDown') { f.all = false; if (!mfDown(f) && f.onnav) f.onnav('down'); }
+                else if (k === 'Home') { f.all = false; f.c = { l: f.root, i: 0 }; }
+                else if (k === 'End') { f.all = false; f.c = { l: f.root, i: f.root.length }; }
+                else if (k === 'Enter') { if (f.onnav) f.onnav('enter'); }
+                else h = false;
+                if (h) { e.preventDefault(); if (ch) commit(); else draw(); }
+            });
+            ta.addEventListener('beforeinput', e => {   /* soft keyboards: backspace may only show up here */
+                if (e.inputType === 'deleteContentBackward' && !e.isComposing && ta.value === '') {
+                    e.preventDefault();
+                    if (!f.all && !f.root.length && f.onnav) { f.onnav('back'); return; }
+                    if (f.all) clr(); else mfBack(f);
+                    commit();
+                }
+            });
+            ta.addEventListener('paste', e => {
+                e.preventDefault();
+                const t = ((e.clipboardData && e.clipboardData.getData('text')) || '').replace(/\s*[\r\n]+\s*/g, ' ').trim(); if (!t) return;
+                clr(); const tmp = mfList(null); mfFill(tmp, t); const ns = tmp.splice(0);
+                mfAdd(f.c.l, f.c.i, ...ns); f.c.i += ns.length; commit();
+            });
+            ta.addEventListener('focus', () => { f.focused = true; el.classList.add('mffocus'); mfDraw(f); });
+            ta.addEventListener('blur', () => { f.focused = false; f.all = false; el.classList.remove('mffocus'); mfDraw(f); });
+            /* click to put the caret where you pointed */
+            el.addEventListener('mousedown', e => { if (e.target !== ta) e.preventDefault(); });
+            el.addEventListener('click', e => {
+                f.all = false;
+                const t = e.target.closest ? e.target.closest('.mc, .mnode, .mlist') : null;
+                if (t && t._n) { const n = t._n, l = n.l, r = t.getBoundingClientRect(); f.c = { l, i: l.indexOf(n) + (e.clientX > r.left + r.width / 2 ? 1 : 0) }; }
+                else if (t && t._l) f.c = { l: t._l, i: t._l.length };
+                else f.c = { l: f.root, i: f.root.length };
+                ta.focus(); mfDraw(f);
+            });
+            mfDraw(f);
+            return f;
+        }
+
+        let calcFields = [];
+        function calcMkRow(idx, last) {
+            const box = $('calcrows'), txt = calcRows[idx];
+            const row = document.createElement('div'); row.className = 'crow' + (txt.trim() === '' ? ' blank' : '');
+            const x = document.createElement('button'); x.type = 'button'; x.className = 'cx'; x.textContent = '×'; x.setAttribute('aria-label', 'remove line');
+            const res = document.createElement('button'); res.type = 'button'; res.className = 'cr'; res.tabIndex = -1;
+            const fld = mfCreate(txt, last ? 'type here…' : '', 'equation');
+            calcFields[idx] = fld;
+            row.append(x, fld.el, res); box.appendChild(row);
+            calcUpdRow(row, txt);
+            x.onclick = () => { calcRows.splice(idx, 1); if (!calcRows.length) calcRows = ['']; calcRender(Math.min(idx, calcRows.length - 1)); };
+            fld.onchange = () => {
+                const v = mfOut(fld.root); calcRows[idx] = v; row.classList.toggle('blank', v.trim() === ''); calcUpdRow(row, v);
+                if (idx === calcRows.length - 1 && v.trim() !== '') {   /* typing in the last line opens a new blank one below */
+                    fld.el.dataset.ph = ''; calcRows.push(''); calcMkRow(idx + 1, true);
+                }
+            };
+            fld.onnav = k => {
+                if (k === 'enter' || k === 'down') { const nx = calcFields[idx + 1]; if (nx) nx.focus(true); }
+                else if (k === 'up') { const pv = calcFields[idx - 1]; if (pv) pv.focus(true); }
+                else if (k === 'back') { if (idx > 0 && idx === calcRows.length - 1) calcFields[idx - 1].focus(true); }
+            };
+            res.onclick = () => { const v = res._v; if (!v) return; v.on ^= 1; res.textContent = v.on ? v.b : v.a; };
+        }
+        function calcRender(focusIdx) {
+            const box = $('calcrows'); box.textContent = ''; calcFields = [];
+            if (calcRows[calcRows.length - 1].trim() !== '') calcRows.push('');
+            calcRows.forEach((t, idx) => calcMkRow(idx, idx === calcRows.length - 1));
+            if (focusIdx != null) { const fld = calcFields[focusIdx]; if (fld && (arguments[1] || !calcMobile())) fld.focus(true); }
+        }
+        function numText(v) {
+            if (!Lv) return '';
+            const t = String(fmt(v)).replace(/^-/, '−');
+            const rm = /^(−?)(\d*)√(\d+)(?:\/(\d+))?$/.exec(t);
+            if (rm) { const top = rm[2] + '√' + rm[3]; return rm[1] + (rm[4] ? '(' + top + ')/' + rm[4] : top); }
+            return t;
+        }
+        function goalText() { return Lv ? numText(Lv.goal) : ''; }
+        function startText() { return Lv ? numText(Lv.start) : ''; }
+        function calcPush(txt, btn) {
+            if (!txt) { const o = btn.textContent; btn.textContent = 'no equation yet'; setTimeout(() => { btn.textContent = o; }, 1400); return; }
+            if (calcRows[calcRows.length - 1].trim() === '') calcRows[calcRows.length - 1] = txt; else calcRows.push(txt);
+            calcRows.push('');
+            calcRender();
+            const bx = $('calcrows'); bx.scrollTop = bx.scrollHeight;
+        }
+        function calcImport() { calcPush(trailText(), $('calcimport')); }
+        function calcImportGoal() { calcPush(goalText(), $('calcgoal')); }
+        function calcImportStart() { calcPush(startText(), $('calcstart')); }
+        function calcClamp() {
+            const pn = $('calcpanel'); if (!calcPos || calcMobile()) return;
+            if (calcSize) { calcSize.w = Math.max(260, Math.min(innerWidth - 8, calcSize.w)); calcSize.h = Math.max(240, Math.min(innerHeight - 8, calcSize.h)); pn.style.width = calcSize.w + 'px'; pn.style.height = calcSize.h + 'px'; }
+            const w = pn.offsetWidth, h = pn.offsetHeight;
+            calcPos.x = Math.max(4, Math.min(innerWidth - w - 4, calcPos.x)); calcPos.y = Math.max(4, Math.min(innerHeight - h - 4, calcPos.y));
+            pn.style.left = calcPos.x + 'px'; pn.style.top = calcPos.y + 'px';
+        }
+        function calcLayout() {
+            const pn = $('calcpanel'), mob = calcMobile();
+            pn.classList.toggle('drag', !mob);
+            if (mob) { pn.style.left = pn.style.top = pn.style.right = pn.style.bottom = pn.style.width = pn.style.height = ''; return; }
+            pn.style.right = 'auto'; pn.style.bottom = 'auto';
+            if (!calcPos) {   /* first time: sit to the left of the chat window */
+                const w = pn.offsetWidth, h = pn.offsetHeight;
+                calcPos = { x: Math.max(8, innerWidth - 12 - 360 - 16 - w), y: Math.max(8, innerHeight - 72 - h) };
+            }
+            calcClamp();
+        }
+        function calcSet(open) {
+            calcOpen = open; const pn = $('calcpanel'); pn.hidden = !open; $('calcfab').setAttribute('aria-expanded', String(open));
+            if (open) {
+                if (calcMobile() && typeof chatOpen !== 'undefined' && chatOpen && curView !== 'room' && curView !== 'spec') setChat(false);
+                calcRender(); calcLayout();
+                if (!calcMobile() && calcFields.length) calcFields[calcFields.length - 1].focus(true);
+            }
+        }
+        /* the host can switch calculators off: hides the button, closes the window and clears old lines */
+        function calcApplyRule(cfg) {
+            const on = !cfg || cfg.calc !== false;
+            $('calcfab').hidden = !on;
+            if (!on) calcClose();
+            calcRows = ['']; if (calcOpen) calcRender();
+        }
+        function calcClose() { if (calcOpen) calcSet(false); }
+        $('calcfab').onclick = () => calcSet(!calcOpen);
+        $('calcclose').onclick = () => { calcSet(false); $('calcfab').focus(); };
+        $('calcimport').onclick = calcImport;
+        $('calcgoal').onclick = calcImportGoal;
+        $('calcstart').onclick = calcImportStart;
+        $('calcpanel').addEventListener('pointerdown', () => { $('calcpanel').style.zIndex = 33; $('chatpanel').style.zIndex = 29; });
+        $('chatpanel').addEventListener('pointerdown', () => { $('calcpanel').style.zIndex = 28; $('chatpanel').style.zIndex = 31; });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && calcOpen && $('calcpanel').contains(document.activeElement)) { calcSet(false); $('calcfab').focus(); } });
+        /* drag the window by its title bar (desktop only; on phones it stays put) */
+        (() => {
+            const h = $('calch'), pn = $('calcpanel'); let d = null;
+            /* sway: the window hangs from the grab point and swings a little as you move it, then settles */
+            let ang = 0, vel = 0, raf = 0, lastX = 0;
+            const calm = matchMedia('(prefers-reduced-motion: reduce)');
+            const tick = () => {
+                vel += -ang * 0.1 - vel * 0.2; ang += vel;
+                if (!d && Math.abs(ang) < 0.02 && Math.abs(vel) < 0.02) { ang = vel = 0; raf = 0; pn.style.transform = ''; pn.style.transformOrigin = ''; return; }
+                pn.style.transform = 'rotate(' + ang.toFixed(3) + 'deg)';
+                raf = requestAnimationFrame(tick);
+            };
+            const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+            h.addEventListener('pointerdown', e => {
+                if (calcMobile() || e.target.closest('button') || e.button > 0 || !calcPos) return;
+                d = { dx: e.clientX - calcPos.x, dy: e.clientY - calcPos.y }; pn.classList.add('dragging'); h.setPointerCapture(e.pointerId); e.preventDefault();
+                lastX = e.clientX; if (!calm.matches) { pn.style.transformOrigin = (e.clientX - calcPos.x) + 'px ' + (e.clientY - calcPos.y) + 'px'; kick(); }
+            });
+            h.addEventListener('pointermove', e => {
+                if (!d) return; calcPos.x = e.clientX - d.dx; calcPos.y = e.clientY - d.dy; calcClamp();
+                if (!calm.matches) { vel = Math.max(-0.8, Math.min(0.8, vel + (e.clientX - lastX) * 0.012)); lastX = e.clientX; kick(); }
+            });
+            const end = () => { d = null; pn.classList.remove('dragging'); };
+            h.addEventListener('pointerup', end); h.addEventListener('pointercancel', end);
+        })();
+        /* resize from the bottom-right corner (desktop only) */
+        (() => {
+            const g = $('calcgrip'), pn = $('calcpanel'); let r = null;
+            g.addEventListener('pointerdown', e => {
+                if (calcMobile() || e.button > 0 || !calcPos) return;
+                r = { x: e.clientX, y: e.clientY, w: pn.offsetWidth, h: pn.offsetHeight }; g.setPointerCapture(e.pointerId); pn.classList.add('dragging'); e.preventDefault();
+            });
+            g.addEventListener('pointermove', e => {
+                if (!r) return;
+                calcSize = { w: Math.min(r.w + e.clientX - r.x, innerWidth - calcPos.x - 4), h: Math.min(r.h + e.clientY - r.y, innerHeight - calcPos.y - 4) };
+                calcClamp();
+            });
+            const end = () => { r = null; pn.classList.remove('dragging'); };
+            g.addEventListener('pointerup', end); g.addEventListener('pointercancel', end);
+        })();
+        addEventListener('resize', () => { if (calcOpen) calcLayout(); });
+
         $('chatfab').onclick = () => setChat(!chatOpen);
         $('chatclose').onclick = () => { setChat(false); $('chatfab').focus(); };
         $('chattoast').onclick = () => setChat(true);
@@ -3672,10 +4678,11 @@
         /* random difficulties: every level picks its own. with a favoured difficulty that one comes up half the time and the rest share the other half */
         function pickTier(cfg) {
             if (!cfg.randdiff) return cfg.difficulty;
-            const T = [2, 4, 6, 8], f = cfg.favdiff;
-            if (!f) return T[ri(0, 3)];
+            const off = offClean(cfg.offdiff !== undefined ? cfg.offdiff : (isHost() ? store.get('vs_offdiff') : 0)), T = tiersOn(off), f = cfg.favdiff;
+            if (T.length === 1) return T[0];
+            if (!f || !T.includes(f)) return T[ri(0, T.length - 1)];
             if (Math.random() < .5) return f;
-            const o = T.filter(x => x !== f); return o[ri(0, 2)];
+            const o = T.filter(x => x !== f); return o[ri(0, o.length - 1)];
         }
         function makeLevel(cfg) {
             const t0 = pickTier(cfg); let tier = t0, lv = genLevel(t0, cfg);
@@ -3901,7 +4908,7 @@
         function startMatch(p) {
             setHowto(false);
             stopGameTimers();
-            const cfg = p.settings, pts = cfg.mode !== 'race', grid = cfg.mode === 'grid'; MODE = cfg.numbers; ROOTS = !!cfg.roots;
+            const cfg = p.settings; calcApplyRule(cfg); const pts = cfg.mode !== 'race', grid = cfg.mode === 'grid'; MODE = cfg.numbers; ROOTS = !!cfg.roots;
             match = { id: p.id, cfg, mode: cfg.mode, levels: p.levels.slice(), total: cfg.endless ? Infinity : p.levels.length, players: p.players.map(x => ({ id: x.id, name: x.name, team: x.team || null, color: x.color || null })), grid: null, resume: null, prog: {}, scores: {}, round: 0, pend: null, waitIdx: null, skipN: 0, skipOf: 0, endAt: 0 };
             p.players.forEach(x => { match.prog[x.id] = { done: x.done || 0, solved: x.solved || 0, finished: !!x.finished, left: !!x.left }; });
             if (p.mine && !pts) match.prog[you] = { done: p.mine.done, solved: p.mine.solved, finished: p.mine.done >= match.total, left: false };
@@ -3982,7 +4989,7 @@
             updateNs();
             const pipN = isFinite(cap) ? cap : Math.max(Lv.limit, used, em);
             /* a square somebody else already solved: blue squares past par show the move count to beat, grey ones are par moves you can't use, red is anything after that */
-            $('pips').innerHTML = Array.from({ length: pipN }, (_, i) => { const k = em ? (i >= Lv.limit && i >= em ? ' over' : i >= Lv.limit ? ' pb' : i >= em ? ' pg' : '') : (i >= Lv.limit ? ' over' : ''); return `<span class="pip${i < used ? ' used' : ''}${k}"></span>`; }).join('');
+            $('pips').innerHTML = Array.from({ length: pipN }, (_, i) => { const k = em ? (i >= Lv.limit && i >= em ? ' over' : i >= Lv.limit ? ' pb' : i >= em ? ' pgy' : '') : (i >= Lv.limit ? ' over' : ''); return `<span class="pip${i < used ? ' used' : ''}${k}"></span>`; }).join('');
             $('left').textContent = 'par ' + Lv.limit + ' · ' + mv(used) + (isFinite(cap) && cap > Lv.limit ? ' · max ' + cap : '') + (over > 0 ? ' · ' + over + ' over par' : '') + (em ? ' · to take this square: ' + (em - 1) + (em === 2 ? ' move' : ' moves') + ' or fewer' : '');
             $('left').style.color = over > 0 ? 'var(--imag)' : '';
             const gt = $('gtag'), tl = Lv.tier && (match.cfg.randdiff || match.cfg.weighted) ? Lv.tier : 0; gt.hidden = !tl;
@@ -4234,8 +5241,9 @@
             const cell = (...k) => { const d = mkEl('div', 'cell'); k.forEach(x => d.appendChild(x)); (inScr ? scr : b).appendChild(d); return d; };
             const val = (lab, v, first) => { const s = mkEl('span', 'sv'), l = mkEl('small', '', lab), n = mkEl('b', '', v); if (first) s.append(l, n); else s.append(n, l); return s; };
             const nm = (rk, name) => { const s = mkEl('span', 'nm'); if (rk) s.append(mkEl('span', 'rk rk' + rk, '#' + rk), ' '); s.append(name); return s; };
-            const fillOf = (r, frac, side) => { const f = mkEl('i', 'fill ' + (side || '')); f.style.width = Math.max(0, Math.min(1, frac || 0)) * 100 + '%'; r.prepend(f); return r; };
-            const prow = (cls, left, lab, v, frac) => { const r = mkEl('div', 'sprow ' + cls); r.append(left, val(lab, v, true)); if (frac != null) fillOf(r, frac); return r; };
+            const fillOf = (r, frac, side, color) => { const f = mkEl('i', 'fill ' + (side || '')); f.style.width = Math.max(0, Math.min(1, frac || 0)) * 100 + '%'; if (color) f.style.background = 'color-mix(in srgb, ' + color + ' 38%, transparent)'; r.prepend(f); return r; };
+            const prow = (cls, left, lab, v, frac, color) => { const r = mkEl('div', 'sprow ' + cls); r.append(left, val(lab, v, true)); if (frac != null) fillOf(r, frac, '', color); if (color && /\blead\b/.test(cls)) r.style.boxShadow = 'inset 5px 0 0 ' + color; return r; };
+            const pcol = p => p && p.color ? pcolor(p) : null;   /* each player's own colour (none in modes that don't give players one) */
             const flip = str => specClock(str);
             if (teams) {
                 const T = { red: 0, blue: 0 }; pl.forEach(p => { if (p.team) T[p.team] += sc(p.id); }); const tot = T.red + T.blue, h = mkEl('div', 'cellh sphead');
@@ -4249,10 +5257,10 @@
                     pl.filter(p => p.team === t).sort((x, y) => sc(y.id) - sc(x.id) || mvOf(x.id) - mvOf(y.id)).forEach(p => { const r = mkEl('div', 'sprow ' + t + (p.left ? ' dim' : '')); r.append(nm(0, p.name + (p.left ? ' (left)' : '')), val(gr && !match.cfg.weighted ? 'cells' : 'pts', sc(p.id), t === 'blue')); fillOf(r, sc(p.id) / Math.max(1, ...pl.map(q => sc(q.id))), t); col.appendChild(r); }); tl.appendChild(col); }); cell(tl);
             } else if (gr) {
                 { const gc = mkEl('div', 'cell'); gc.appendChild(specGridBox()); body.appendChild(gc); } inScr = true; cell(mkEl('div', 'sphead', match.cfg.weighted ? 'points' : 'levels claimed'));
-                const mx = Math.max(1, ...pl.map(p => sc(p.id))); pl.slice().sort((x, y) => sc(y.id) - sc(x.id) || mvOf(x.id) - mvOf(y.id)).forEach((p, i) => { const n = nm(i + 1, p.name + (p.left ? ' (left)' : '')); n.prepend(swatch(p)); cell(prow((p.left ? 'dim ' : '') + (i === 0 && sc(p.id) > 0 ? 'lead' : ''), n, match.cfg.weighted ? 'pts' : 'levels', sc(p.id), sc(p.id) / mx)); });
+                const mx = Math.max(1, ...pl.map(p => sc(p.id))); pl.slice().sort((x, y) => sc(y.id) - sc(x.id) || mvOf(x.id) - mvOf(y.id)).forEach((p, i) => { const n = nm(i + 1, p.name + (p.left ? ' (left)' : '')); n.prepend(swatch(p)); cell(prow((p.left ? 'dim ' : '') + (i === 0 && sc(p.id) > 0 ? 'lead' : ''), n, match.cfg.weighted ? 'pts' : 'levels', sc(p.id), sc(p.id) / mx, pcol(p))); });
             } else if (pts) {
                 cell(mkEl('div', 'cellh sphead', 'live scoreboard')); inScr = true;
-                const mx = Math.max(1, ...pl.map(p => sc(p.id))); pl.slice().sort((x, y) => sc(y.id) - sc(x.id) || mvOf(x.id) - mvOf(y.id)).forEach((p, i) => cell(prow((p.left ? 'dim ' : '') + (i === 0 && sc(p.id) > 0 ? 'lead' : ''), nm(i + 1, p.name + (p.left ? ' (left)' : '')), 'pts', sc(p.id), sc(p.id) / mx)));
+                const mx = Math.max(1, ...pl.map(p => sc(p.id))); pl.slice().sort((x, y) => sc(y.id) - sc(x.id) || mvOf(x.id) - mvOf(y.id)).forEach((p, i) => cell(prow((p.left ? 'dim ' : '') + (i === 0 && sc(p.id) > 0 ? 'lead' : ''), nm(i + 1, p.name + (p.left ? ' (left)' : '')), 'pts', sc(p.id), sc(p.id) / mx, pcol(p))));
             } else {
                 cell(mkEl('div', 'cellh sphead', 'live scoreboard')); inScr = true;
                 const rows = pl.map(p => Object.assign({ p }, match.prog[p.id] || { done: 0, finished: false, left: false })); rows.sort((x, y) => (y.finished - x.finished) || (y.done - x.done));
@@ -4363,8 +5371,10 @@
             catch (e) { showMsg(isNet(e) ? "couldn't reach the server" : e.message); }
         };
         $('gend').onclick = endMatchBtn; $('endm').onclick = endMatchBtn;
-        $('tolobby').onclick = () => { ui = 'room'; showUi(); };
-        $('lastres').onclick = () => { if (standings || match) { ui = 'results'; showUi(); } };
+        /* when the host leaves the finished results for the lobby, everybody still on the results screen is told */
+        const tellLobby = on => { if (isHost() && sess && standings && standings.final) api('/vs/lobby', { code: sess.code, token: sess.token, on }).catch(() => { }); };
+        $('tolobby').onclick = () => { ui = 'room'; showUi(); tellLobby(true); };
+        $('lastres').onclick = () => { if (standings || match) { ui = 'results'; showUi(); tellLobby(false); } };
         async function beginMatch() {
             if (!isHost() || !sess || startingMatch || state.phase === 'playing') return;
             const cfg = norm(state.settings), n = cfg.mode === 'grid' ? cfg.gridw * cfg.gridh : cfg.endless ? 10 : cfg.rounds;
@@ -4441,6 +5451,8 @@
             const st = standings, list = $('reslist'); list.innerHTML = '';
             const rg = $('resgrid'); if (match && match.mode === 'grid' && match.grid) { rg.hidden = false; buildGrid(rg, false); } else rg.hidden = true;
             $('endm').hidden = !st || st.final || !isHost();
+            const hl = $('hostlobby'), hm = state && state.members.find(m => m.id === state.hostId);
+            hl.hidden = !(state && state.hostLobby && !isHost() && st && st.final); hl.textContent = hm ? 'the host (' + hm.name + ') went back to the lobby' : 'the host went back to the lobby';
             if (!st) { $('resub').textContent = 'finishing up…'; $('reshint').textContent = ''; return; }
             if (st.mode === 'points' || st.mode === 'grid') {
                 const prow = st.rows, top = prow[0], tie = prow.length > 1 && prow[1].points === top.points;
