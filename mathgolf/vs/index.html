@@ -416,6 +416,19 @@
             cursor: not-allowed
         }
 
+        /* settings presets: yellow */
+        #psopen { border-color: var(--yellow); box-shadow: 0 4px 0 var(--yellow) }
+        #psopen:hover:not(:disabled) { border-color: var(--ink); box-shadow: 0 4px 0 var(--ink) }
+        #psopen:active:not(:disabled) { box-shadow: 0 0 0 var(--ink) }
+        /* preset buttons press down like the other buttons instead of scaling */
+        .psbox .btn { box-shadow: 0 3px 0 var(--line) }
+        .psbox .btn.go { box-shadow: 0 3px 0 var(--yellow) }
+        .psbox .btn:hover:not(:disabled) { box-shadow: 0 3px 0 var(--ink) }
+        .psbox .btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 0 0 var(--ink) }
+        #psroom, #pscoderoom { border-color: var(--yellow); box-shadow: 0 3px 0 var(--yellow) }
+        #psroom:hover:not(:disabled), #pscoderoom:hover:not(:disabled) { border-color: var(--ink); box-shadow: 0 3px 0 var(--ink) }
+        #psroom:active:not(:disabled), #pscoderoom:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 0 0 var(--ink) }
+
         .joinbox {
             background: var(--card);
             border: 2px solid var(--blue);
@@ -944,6 +957,10 @@
             opacity: .55
         }
 
+        #row_packs .seg button[aria-checked="false"] {
+            opacity: .55
+        }
+
         .ro .seg button[aria-checked="true"]:disabled {
             color: var(--imag)
         }
@@ -1040,6 +1057,7 @@
             box-shadow: 0 4px 0 var(--imag)
         }
 
+        #psmaker .fbtn.blue, #psmaker .fbtn.pink { border-color: var(--yellow); box-shadow: 0 4px 0 var(--yellow) }
         .fbtn.blue {
             border-color: var(--blue);
             box-shadow: 0 4px 0 var(--blue)
@@ -2922,22 +2940,22 @@
         .psbox { width: 100%; max-width: 720px; margin: auto; background: var(--card); border: 2px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); padding: 18px 20px 20px; text-align: left }
         .pshead { display: flex; align-items: center; justify-content: space-between; gap: 10px }
         .pshead h2 { margin: 0; font-size: 1.9rem; line-height: 1.1 }
-        .pshead h2 .vs { color: var(--imag) }
+        .pshead h2 .vs { color: var(--yellow) }
         #psclose { width: 40px; height: 40px; border: 0; background: none; color: var(--soft); font-size: 1.9rem; line-height: 1; cursor: pointer }
-        #psclose:hover { color: var(--imag) }
+        #psclose:hover { color: var(--yellow) }
         .psintro { margin: 6px 0 0; color: var(--soft); font-size: .92rem; line-height: 1.45; text-transform: none }
         #psmsg { min-height: 1.5em; margin: 8px 0 0; color: var(--imag); font-size: .92rem; text-transform: none }
         #psmsg.ok { color: var(--ok) }
         .psimp { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 }
         .psimp input, #psname { flex: 1 1 220px; min-width: 0; padding: 10px 12px; font: inherit; font-size: 1rem; text-transform: none; color: var(--ink); background: var(--cell); border: 2px solid var(--line) }
-        .psimp input:focus, #psname:focus { outline: 0; border-color: var(--imag) }
+        .psimp input:focus, #psname:focus { outline: 0; border-color: var(--yellow) }
         .psacts { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 }
         #pscards .none { margin: 14px 0; color: var(--soft); text-align: center; text-transform: none }
         .pscard { margin-top: 10px; padding: 12px 14px; background: var(--cell); border: 2px solid var(--line) }
         .pscard b { display: block; font-size: 1.1rem; text-transform: none; overflow-wrap: anywhere }
         .pscard .sm { margin: 3px 0 10px; color: var(--soft); font-size: .85rem; line-height: 1.4; text-transform: none }
         .pscard .bt { display: flex; gap: 8px; flex-wrap: wrap }
-        .psbox .btn.go { border-color: var(--imag); box-shadow: 0 3px 0 var(--imag) }
+        .psbox .btn.go { border-color: var(--yellow); box-shadow: 0 3px 0 var(--yellow) }
         .psbox .btn.arm { color: var(--imag); border-color: var(--imag) }
         #pseditor .srow .d { text-transform: none }
         #psfields { margin-top: 6px }
@@ -3175,6 +3193,12 @@
                     <div><b>roots of non-squares</b><span class="d">allow √ on numbers that aren't perfect squares.
                             always on for fractions</span></div><button type="button" class="sw" role="switch"
                         data-sw="roots" aria-label="roots of non-squares" aria-checked="false"></button>
+                </div>
+<div class="srow col" id="row_packs">
+                    <div><b>game packs</b><span class="d">every level comes from one of the packs that are on. base game: the familiar operations. complex numbers: numbers with an imaginary part, played on a plane. the numbers, decimal goals and roots settings only change base game levels. at least one pack stays on</span></div>
+                    <div class="seg" role="group" aria-label="game packs"><button type="button" role="checkbox"
+                            data-pack="1" aria-checked="true">base game</button><button type="button" role="checkbox"
+                            data-pack="2" aria-checked="false">complex numbers</button></div>
                 </div>
 <div class="srow" id="row_sandpits">
                     <div><b>sand pits</b><span class="d">levels get sand pits: numbers, or a whole stretch of numbers, that you can land on but not move from, so you can only undo. they are placed to block some routes, and every level can still be solved</span></div>
@@ -3552,10 +3576,13 @@
         let otherUnread = false, chatTeam = false, curView = '', chatOpen = false, unread = 0, chatReady = false, toastT = 0; const baseTitle = document.title;
         let leaving = false; addEventListener('beforeunload', () => { leaving = true; }); addEventListener('pagehide', () => { leaving = true; }); addEventListener('pageshow', () => { leaving = false; });
         const isHost = () => !!state && state.hostId === you;
-        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, replay: true, calc: true, timer: 0, showprog: true, overpar: -1, mode: 'race', endless: false, totaltime: 180, hostplays: true, teams: false, profanity: true, firstfinish: false, howto: false, gridw: 3, gridh: 3, gridtime: 0, randdiff: false, favdiff: 0, weighted: false, pt2: 1, pt4: 2, pt6: 3, pt8: 4, offdiff: 0, sandpits: false };
+        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, replay: true, calc: true, timer: 0, showprog: true, overpar: -1, mode: 'race', endless: false, totaltime: 180, hostplays: true, teams: false, profanity: true, firstfinish: false, howto: false, gridw: 3, gridh: 3, gridtime: 0, randdiff: false, favdiff: 0, weighted: false, pt2: 1, pt4: 2, pt6: 3, pt8: 4, offdiff: 0, sandpits: false, packs: 1 };
         /* random difficulties: which ones are switched off (a bit mask: easy 1, medium 2, hard 4, challenge 8; never all four) */
         const OFFBIT = { 2: 1, 4: 2, 6: 4, 8: 8 };
         const offClean = v => { v = (parseInt(v, 10) || 0) & 15; return v === 15 ? 0 : v; };
+        /* game packs: a bit mask (1 = base game, 2 = complex numbers). every level comes from one of the packs that are on */
+        const PACKS = [[1, 'base', 'base game'], [2, 'complex', 'complex numbers']];
+        const packsClean = v => ((parseInt(v, 10) || 1) & 3) || 1;
         const tiersOn = off => [2, 4, 6, 8].filter(t => !(off & OFFBIT[t]));
         const diffList = c => { const n = tiersOn(offClean(c.offdiff)).map(t => ({ 2: 'easy', 4: 'medium', 6: 'hard', 8: 'challenge' }[t])); return n.length === 1 ? n[0] : n.slice(0, -1).join(', ') + ' or ' + n[n.length - 1]; };
 
@@ -3767,7 +3794,7 @@
             o.offdiff = offClean(o.offdiff !== undefined ? o.offdiff : (typeof isHost === 'function' && isHost() ? store.get('vs_offdiff') : 0));   /* host-side rule, kept in this browser too like the ones below */
             /* host-side rule: kept in this browser too, in case the server doesn't echo it back */
             o.firstfinish = o.mode === 'race' && (o.firstfinish !== undefined ? !!o.firstfinish : (typeof isHost === 'function' && isHost() && store.get('vs_firstfinish') === '1'));
-            o.calc = o.calc !== false; o.sandpits = !!o.sandpits;
+            o.calc = o.calc !== false; o.sandpits = !!o.sandpits; o.packs = packsClean(o.packs);
             o.howto = o.howto !== undefined ? !!o.howto : (typeof isHost === 'function' && isHost() && store.get('vs_howto') === '1');
             return o;
         }
@@ -3790,6 +3817,7 @@
             ['row_gridw', 'row_gridh', 'row_gridtime'].forEach(id => $(id).classList.toggle('dim', !gr)); $('row_timer').classList.toggle('dim', gr); $('row_favdiff').classList.toggle('dim', !s.randdiff); $('row_difficulty').classList.toggle('dim', !!s.randdiff); $('row_weighted').classList.toggle('dim', s.mode === 'race'); [2, 4, 6, 8].forEach(t => $('row_pt' + t).classList.toggle('dim', !wt));
             document.querySelectorAll('[data-off]').forEach(b => { const bit = OFFBIT[+b.dataset.off], on = !(s.offdiff & bit); b.setAttribute('aria-checked', on); b.disabled = !edit || !s.randdiff || (on && ((s.offdiff | bit) & 15) === 15); });
             $('row_offdiff').classList.toggle('dim', !s.randdiff);
+            document.querySelectorAll('[data-pack]').forEach(b => { const bit = +b.dataset.pack, on = !!(s.packs & bit); b.setAttribute('aria-checked', on); b.disabled = !edit || (on && s.packs === bit); });
             $('row_gdec').classList.toggle('dim', s.numbers !== 'dec'); $('row_gfrac').classList.toggle('dim', s.numbers !== 'frac'); $('row_roots').classList.toggle('dim', s.numbers === 'frac');
         }
         /* ---------- how to play screen ----------
@@ -3889,7 +3917,7 @@
            settings presets
            ===================================================================== */
         /* the order of this list is part of the share code: only ever add new settings at the end */
-        const PS_KEYS = ['mode', 'teams', 'rounds', 'endless', 'totaltime', 'gridw', 'gridh', 'gridtime', 'showprog', 'firstfinish', 'replay', 'difficulty', 'randdiff', 'favdiff', 'offdiff', 'numbers', 'gdec', 'gfrac', 'roots', 'weighted', 'pt2', 'pt4', 'pt6', 'pt8', 'timer', 'overpar', 'max', 'hostplays', 'profanity', 'calc', 'howto', 'sandpits'];
+        const PS_KEYS = ['mode', 'teams', 'rounds', 'endless', 'totaltime', 'gridw', 'gridh', 'gridtime', 'showprog', 'firstfinish', 'replay', 'difficulty', 'randdiff', 'favdiff', 'offdiff', 'numbers', 'gdec', 'gfrac', 'roots', 'weighted', 'pt2', 'pt4', 'pt6', 'pt8', 'timer', 'overpar', 'max', 'hostplays', 'profanity', 'calc', 'howto', 'sandpits', 'packs'];
         const PS_DEF = Object.assign({}, DEFAULTS, { firstfinish: false, howto: false, calc: true });
         const PS_TIME = [[60, '1 min'], [120, '2 min'], [180, '3 min'], [300, '5 min'], [600, '10 min']];
         const PS_DIFF = [[2, 'easy'], [4, 'medium'], [6, 'hard'], [8, 'challenge']];
@@ -3916,6 +3944,7 @@
                 { k: 'gdec', t: 'sw', l: 'decimal goals', d: 'the goal can be a decimal like 3.5', show: s => s.numbers === 'dec' },
                 { k: 'gfrac', t: 'sw', l: 'fraction goals', d: 'the goal can be a fraction like 7/4', show: s => s.numbers === 'frac' },
                 { k: 'roots', t: 'sw', l: 'roots of non-squares', d: 'allow √ on numbers that aren\'t perfect squares', show: s => s.numbers !== 'frac' },
+                { k: 'packs', t: 'packs', l: 'game packs', d: 'every level comes from one of the packs that are on. at least one stays on' },
                 { k: 'sandpits', t: 'sw', l: 'sand pits', d: 'some levels have numbers (or ranges of numbers) you can land on but not move from. only undo gets you out' }
             ]],
             ['scoring', [
@@ -3946,6 +3975,7 @@
             PS_KEYS.forEach(k => {
                 const f = PS_FIELDS[k], d = PS_DEF[k], v = raw[k];
                 if (k === 'offdiff') { o[k] = offClean(v === undefined ? d : v); return; }
+                if (k === 'packs') { o[k] = packsClean(v === undefined ? d : v); return; }
                 if (f.t === 'sw') o[k] = v === undefined ? d : !!v;
                 else if (f.t === 'step') { const n = Math.round(+v); o[k] = isFinite(n) && v !== undefined && v !== null && v !== '' ? Math.max(f.min, Math.min(f.max, n)) : d; }
                 else { const m = f.o.find(x => String(x[0]) === String(v)); o[k] = m ? m[0] : d; }
@@ -3979,7 +4009,7 @@
             if (st.mode === 'points' && st.endless) a.push('endless ' + (st.totaltime / 60) + ' min'); else if (st.mode !== 'grid') a.push(st.rounds + (st.rounds === 1 ? ' round' : ' rounds'));
             a.push(st.randdiff ? 'random difficulties' : dn[st.difficulty]);
             a.push(st.numbers === 'whole' ? 'whole numbers' : st.numbers === 'dec' ? 'decimals' : 'fractions');
-            if (st.teams) a.push('teams'); if (st.weighted) a.push('weighted points'); if (st.sandpits) a.push('sand pits');
+            if (st.teams) a.push('teams'); if (st.weighted) a.push('weighted points'); if (st.sandpits) a.push('sand pits'); if (st.packs & 2) a.push('complex numbers');
             if (st.timer) a.push(st.timer / 60 + ' min per round'); if (st.overpar >= 0) a.push(st.overpar === 0 ? 'par only' : '+' + st.overpar + ' over par');
             if (!st.calc) a.push('no calculators'); if (!st.hostplays) a.push('host watches');
             return a.join(' · ');
@@ -4045,7 +4075,7 @@
                 const g = document.createElement('details'); g.className = 'sgroup'; g.open = true;
                 const sum = document.createElement('summary'); sum.textContent = gname; g.appendChild(sum);
                 vis.forEach(f => {
-                    const row = document.createElement('div'); row.className = 'srow' + (f.t === 'seg' || f.t === 'off' ? ' col' : '');
+                    const row = document.createElement('div'); row.className = 'srow' + (f.t === 'seg' || f.t === 'off' || f.t === 'packs' ? ' col' : '');
                     const lab = document.createElement('div'), b = document.createElement('b'), d = document.createElement('span'); b.textContent = f.l; d.className = 'd'; d.textContent = f.d; lab.append(b, d); row.appendChild(lab);
                     let ctl;
                     if (f.t === 'sw') {
@@ -4057,6 +4087,9 @@
                     } else if (f.t === 'seg') {
                         ctl = document.createElement('div'); ctl.className = 'seg'; ctl.setAttribute('role', 'radiogroup'); ctl.setAttribute('aria-label', f.l);
                         f.o.forEach(([v, t]) => { const x = document.createElement('button'); x.type = 'button'; x.setAttribute('role', 'radio'); x.textContent = t; x.setAttribute('aria-checked', String(st[f.k] === v)); x.disabled = f.k === 'favdiff' && v && (st.offdiff & OFFBIT[v]); x.onclick = () => psSet(f.k, v); ctl.appendChild(x); });
+                    } else if (f.t === 'packs') {
+                        ctl = document.createElement('div'); ctl.className = 'seg'; ctl.setAttribute('role', 'group'); ctl.setAttribute('aria-label', f.l);
+                        PACKS.forEach(([bit, , t]) => { const on = !!(st.packs & bit), x = document.createElement('button'); x.type = 'button'; x.setAttribute('role', 'checkbox'); x.textContent = t; x.setAttribute('aria-checked', String(on)); x.disabled = on && st.packs === bit; x.onclick = () => psSet('packs', st.packs ^ bit); ctl.appendChild(x); });
                     } else {
                         ctl = document.createElement('div'); ctl.className = 'seg'; ctl.setAttribute('role', 'group'); ctl.setAttribute('aria-label', f.l);
                         PS_DIFF.forEach(([v, t]) => { const bit = OFFBIT[v], on = !(st.offdiff & bit), x = document.createElement('button'); x.type = 'button'; x.setAttribute('role', 'checkbox'); x.textContent = t; x.setAttribute('aria-checked', String(on)); x.disabled = on && ((st.offdiff | bit) & 15) === 15; x.onclick = () => psSet('offdiff', st.offdiff ^ bit); ctl.appendChild(x); });
@@ -4088,6 +4121,11 @@
         $('pssave').onclick = psSaveEd; $('psback').onclick = () => { psMsg(''); psList(); };
         $('pscopy').onclick = () => psCopy($('pscode').textContent);
         document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('psmaker').hidden && !document.querySelector('dialog[open]')) { if (psEd) { psMsg(''); psList(); } else psShut(); } });
+        document.querySelectorAll('[data-pack]').forEach(b => b.onclick = () => {
+            const bit = +b.dataset.pack, next = packsClean(norm(state.settings).packs) ^ bit;
+            if (!next) return;   /* keep at least one pack on */
+            patch({ packs: next });
+        });
         document.querySelectorAll('[data-off]').forEach(b => b.onclick = () => {
             const t = +b.dataset.off, bit = OFFBIT[t], now = offClean(norm(state.settings).offdiff), next = now ^ bit;
             if ((next & 15) === 15) return;   /* keep at least one difficulty on */
@@ -5408,9 +5446,12 @@ function calcClose() { if (calcOpen) calcSet(false); }
         const sqfC = new Map();
         /* m = k²·r with r having no square factor: returns [k, r] */
         function sqf(m) { let c = sqfC.get(m); if (c) return c; let k = 1, r = m; for (let p = 2; p * p <= r; p++) while (r % (p * p) === 0) { r /= p * p; k *= p } c = [k, r]; sqfC.set(m, c); return c }
-        const key = x => x.n + '/' + x.d + (x.b > 1 ? 'r' + x.b : '');
+        const key = x => x.c ? 'c' + x.re + ',' + x.im : x.n + '/' + x.d + (x.b > 1 ? 'r' + x.b : '');
         const term = x => { let d = x.d; while (d % 2 === 0) d /= 2; while (d % 5 === 0) d /= 5; return d === 1 };
+        /* complex numbers (the complex numbers pack) are {c:1, re, im} with whole parts, shown like 3+2i */
+        const fmtC = x => { const a = Math.abs(x.im), co = a === 1 ? '' : a; if (!x.im) return String(x.re); if (!x.re) return (x.im < 0 ? '-' : '') + co + 'i'; return x.re + (x.im < 0 ? '−' : '+') + co + 'i'; };
         const fmt = x => {
+            if (x.c) return fmtC(x);
             if (x.b > 1) { const a = Math.abs(x.n); return (x.n < 0 ? '-' : '') + (a === 1 ? '' : a) + '√' + x.b + (x.d > 1 ? '/' + x.d : ''); }
             if (x.d === 1) return String(x.n);
             if (MODE === 'dec' && term(x)) {
@@ -5421,7 +5462,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
             return x.n + '/' + x.d;
         };
         const fmtS = x => { const f = fmt(x), i = f.indexOf('.'); return i >= 0 && f.length - i - 1 > 2 ? f.slice(0, i + 3) : f; };
-        const same = (a, b) => a.n === b.n && a.d === b.d && (a.b || 1) === (b.b || 1);
+        const same = (a, b) => (a.c || b.c) ? !!(a.c && b.c && a.re === b.re && a.im === b.im) : a.n === b.n && a.d === b.d && (a.b || 1) === (b.b || 1);
         function mk(s, mode) {
             if (s === 'x²') return { s, f: x => F(x.n * x.n * x.b, x.d * x.d) };
             if (s === '|x|') return { s, f: x => F(Math.abs(x.n), x.d, x.b) };
@@ -5545,6 +5586,12 @@ function calcClose() { if (calcOpen) calcSet(false); }
             }
             return pits.length ? { pits: pits.map(pitCopy), par: np } : null;
         }
+        /* a sand pit is one number {n,d,b}, or a range: the same plus hi = {n,d,b}, which covers every number from the first up to hi (both ends included) */
+        const pitVal = x => x.n / x.d * Math.sqrt(x.b || 1);
+        const pitCmp = (x, y) => { if ((x.b || 1) === 1 && (y.b || 1) === 1) { const t = x.n * y.d - y.n * x.d; return t < 0 ? -1 : t > 0 ? 1 : 0; } const t = pitVal(x) - pitVal(y); return Math.abs(t) < 1e-9 ? 0 : t < 0 ? -1 : 1; };
+        const pitHas = (p, x) => p.poly ? (!!x.c && p.pts.some(q => q.re === x.re && q.im === x.im)) : p.hi ? (!x.c && pitCmp(x, p) >= 0 && pitCmp(x, p.hi) <= 0) : same(p, x);
+        const inPits = (pits, x) => !!pits && pits.some(p => pitHas(p, x));   /* is x in any sand pit? you can land on it, but then you can only undo */
+        const pitFmt = p => p.poly ? '{' + p.pts.map(fmtC).join(', ') + '}' : p.hi ? fmt(p) + '–' + fmt(p.hi) : fmt(p);   /* as shown to the player */
         const inPit = x => !!Lv && inPits(Lv.pits, x);
 
         /* makes one level for the room's settings: { start, goal, ops: ["+3", "×2", ...], limit (par), nb (biggest number allowed) } */
@@ -5580,6 +5627,83 @@ function calcClose() { if (calcOpen) calcSet(false); }
             }
             return null;
         }
+        /* ---------- complex numbers pack ----------
+           values are Gaussian integers a+bi; the number line becomes a plane (real across, imaginary up) */
+        const CB = 40, CIMAG = ['+i', '−i', '+2i', '−2i', '×i', '×(1+i)', '×(1−i)', 'x̄'];
+        const CXP = ['+1', '−1', '+2', '−2', '+3', '+i', '−i', '+2i', '−2i', '×i', '×2', '×3', '×(1+i)', '×(1−i)', 'x̄', '−x'];
+        function mkC(s) {
+            const C = (re, im) => Math.abs(re) > CB || Math.abs(im) > CB ? null : { c: 1, re, im };
+            if (s === 'x̄') return { s, f: x => x.c ? C(x.re, -x.im) : null };
+            if (s === '−x') return { s, f: x => x.c ? C(-x.re, -x.im) : null };
+            if (s === '×i') return { s, f: x => x.c ? C(-x.im, x.re) : null };
+            if (s === '×2') return { s, f: x => x.c ? C(2 * x.re, 2 * x.im) : null };
+            if (s === '×3') return { s, f: x => x.c ? C(3 * x.re, 3 * x.im) : null };
+            if (s === '×(1+i)') return { s, f: x => x.c ? C(x.re - x.im, x.re + x.im) : null };
+            if (s === '×(1−i)') return { s, f: x => x.c ? C(x.re + x.im, x.im - x.re) : null };
+            const m = /^([+−])(\d*)(i?)$/.exec(s), sg = m[1] === '−' ? -1 : 1, k = sg * (m[2] === '' ? 1 : +m[2]);
+            return m[3] ? { s, f: x => x.c ? C(x.re, x.im + k) : null } : { s, f: x => x.c ? C(x.re + k, x.im) : null };
+        }
+        /* complex sand pits: an irregular polygon on the plane. it covers every Gaussian integer inside it, and you can land on those but not move from them */
+        function randPoly(c) {
+            const k = ri(4, 6), cx = c.re + (Math.random() - .5) * .5, cy = c.im + (Math.random() - .5) * .5, a0 = Math.random() * 2 * Math.PI, st = 2 * Math.PI / k, poly = [];
+            for (let i = 0; i < k; i++) { const a = a0 + (i + (Math.random() - .5) * .5) * st, r = .6 + Math.random() * 1.3; poly.push([+(cx + r * Math.cos(a)).toFixed(2), +(cy + r * Math.sin(a)).toFixed(2)]); }
+            return poly;
+        }
+        /* the numbers inside a polygon, or null when some number sits too close to an edge to tell whether it is in or out */
+        function polyCovers(poly) {
+            const xs = poly.map(q => q[0]), ys = poly.map(q => q[1]), out = [];
+            for (let a = Math.floor(Math.min(...xs)); a <= Math.ceil(Math.max(...xs)); a++) for (let b = Math.floor(Math.min(...ys)); b <= Math.ceil(Math.max(...ys)); b++) {
+                let inside = false, md = 9;
+                for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+                    const xi = poly[i][0], yi = poly[i][1], xj = poly[j][0], yj = poly[j][1], dx = xj - xi, dy = yj - yi;
+                    if ((yi > b) !== (yj > b) && a < dx * (b - yi) / dy + xi) inside = !inside;
+                    const t = Math.max(0, Math.min(1, ((a - xi) * dx + (b - yi) * dy) / (dx * dx + dy * dy)));
+                    md = Math.min(md, Math.hypot(a - xi - t * dx, b - yi - t * dy));
+                }
+                if (md < .15) return null;
+                if (inside) out.push({ c: 1, re: a, im: b });
+            }
+            return out;
+        }
+        function placeCPits(start, goal, ops, par, tier, tp) {
+            const cand = routeNodes(start, goal, ops, par); if (!cand.length) return null;
+            for (let i = cand.length - 1; i > 0; i--) { const j = ri(0, i); [cand[i], cand[j]] = [cand[j], cand[i]]; }
+            const want = ri(1, Math.min(tier >= 4 ? 2 : 1, cand.length)), pits = []; let np = par;
+            for (const c of cand) {
+                if (pits.length >= want) break;
+                if (inPits(pits, c)) continue;
+                for (let t = 0; t < 8; t++) {
+                    const poly = randPoly(c), pts = polyCovers(poly);
+                    if (!pts || !pts.length || pts.length > 6 || !pts.some(q => same(q, c)) || pts.some(q => same(q, start) || same(q, goal) || inPits(pits, q))) continue;
+                    const pit = { poly, pts }, p2 = solveAvoid(start, goal, ops, pits.concat([pit]));
+                    if (!p2 || (tier === 8 ? p2 >= tp : p2 > tier + 1)) continue;
+                    pits.push(pit); np = p2; break;
+                }
+            }
+            return pits.length ? { pits: pits.map(q => ({ poly: q.poly })), par: np } : null;
+        }
+        function genComplex(tier, cfg) {
+            NB = 100000; CAP = tier === 8 ? 40000 : 200000;
+            const tp = tier === 8 ? ri(5, 7) : 0;
+            for (let tries = 0; tries < 3000; tries++) {
+                const n = tier === 8 ? ri(6, 7) : ri(4, 5) + (tier >= 4 ? 1 : 0), pool = [];
+                while (pool.length < n) { const o = mkC(CXP[ri(0, CXP.length - 1)]); if (!pool.some(q => q.s === o.s)) pool.push(o); }
+                if (!pool.some(o => CIMAG.includes(o.s))) continue;
+                const start = { c: 1, re: ri(-3, 5), im: tier >= 4 ? ri(-3, 4) : 0 }; let v = start; const steps = tier === 8 ? tp : ri(tier, tier + 1); let ok = true;
+                for (let i = 0; i < steps; i++) { const r = pool[ri(0, pool.length - 1)].f(v); if (!r) { ok = false; break; } v = r; }
+                if (!ok || same(v, start) || (v.im === 0 && Math.random() < .7)) continue;   /* most goals have an imaginary part */
+                const par = solve(start, v, pool);
+                if (tier === 8) { if (!par || par >= tp || par < Math.max(3, tp - 2)) continue; if (tries < 1800 && par !== tp - 1) continue; }
+                else if (!par || par < Math.max(2, tier - 1) || par > tier + 1) continue;
+                const need = tier === 8 ? (tries < 1200 ? 2 : 1) : (tries < 2000 ? 2 : 1);
+                if (need > 1 && countBest(start, v, pool) < need) continue;
+                let lim = tier === 8 ? tp : par, pits;
+                if (cfg.sandpits) { const pp = placeCPits(start, v, pool, par, tier, tp); if (!pp) continue; pits = pp.pits; if (tier !== 8) lim = pp.par; }
+                return { start, goal: v, ops: pool.map(o => o.s), limit: lim, nb: NB, pits, pack: 'complex' };
+            }
+            return null;
+        }
+        function pickPack(cfg) { const on = PACKS.filter(x => packsClean(cfg.packs) & x[0]); return on[ri(0, on.length - 1)][1]; }
         /* random difficulties: every level picks its own. with a favoured difficulty that one comes up half the time and the rest share the other half */
         function pickTier(cfg) {
             if (!cfg.randdiff) return cfg.difficulty;
@@ -5590,7 +5714,8 @@ function calcClose() { if (calcOpen) calcSet(false); }
             const o = T.filter(x => x !== f); return o[ri(0, o.length - 1)];
         }
         function makeLevel(cfg) {
-            const t0 = pickTier(cfg); let tier = t0, lv = genLevel(t0, cfg);
+            const t0 = pickTier(cfg), pk = pickPack(cfg); let tier = t0, lv = pk === 'complex' ? genComplex(t0, cfg) : null;
+            if (!lv) lv = genLevel(t0, cfg);
             if (!lv && t0 === 8) { lv = genLevel(6, cfg); tier = 6; }
             if (!lv) { lv = { start: F(1), goal: F(10), ops: ['+3', '×2'], limit: 3, nb: 100000 }; tier = 2; }
             lv.tier = tier; return lv;
@@ -5711,8 +5836,51 @@ function calcClose() { if (calcOpen) calcSet(false); }
             h += `<g transform="translate(${bx} ${by})"><circle r="${R}" fill="#fff" stroke="var(--ballstroke)" stroke-width="1.5"/><circle cx="-2" cy="-2" r=".9" fill="var(--dimple)"/><circle cx="2" cy="-1" r=".9" fill="var(--dimple)"/><circle cx="0" cy="2.2" r=".9" fill="var(--dimple)"/></g>`;
             $('nl').style.height = H + 'px'; $('nl').setAttribute('viewBox', `0 0 ${W} ${H}`); $('nl').innerHTML = h;
         }
+        let planeLast = null;
+        function drawPlane(bl) {
+            const W = $('nl').clientWidth || 640, g = Lv.goal;
+            const pts = [Lv.start, ...hist.map((h, i) => hist[i + 1] ? hist[i + 1].prev : cur)], won = same(cur, g);
+            const all = [...pts, g, { re: 0, im: 0 }];
+            let r0 = Math.min(...all.map(q => q.re)) - 1, r1 = Math.max(...all.map(q => q.re)) + 1, i0 = Math.min(...all.map(q => q.im)) - 1, i1 = Math.max(...all.map(q => q.im)) + 1;
+            { const sp = Math.max(r1 - r0, i1 - i0, 4), a0 = r0 - sp, a1 = r1 + sp, b0 = i0 - sp, b1 = i1 + sp;   /* sand pits near the action stay in view */
+                (Lv.pits || []).forEach(pt => { if (!pt.poly) return; const xs = pt.poly.map(q => q[0]), ys = pt.poly.map(q => q[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys); if (x1 < a0 || x0 > a1 || y1 < b0 || y0 > b1) return; r0 = Math.min(r0, x0 - .3); r1 = Math.max(r1, x1 + .3); i0 = Math.min(i0, y0 - .3); i1 = Math.max(i1, y1 + .3); }); }
+            if (r1 - r0 < 6) { const m = (r0 + r1) / 2; r0 = m - 3; r1 = m + 3; } if (i1 - i0 < 4) { const m = (i0 + i1) / 2; i0 = m - 2; i1 = m + 2; }
+            const tgt = { r0, r1, i0, i1 };
+            if (bl && planeLast) { const u = bl.u, q = planeLast; r0 = q.r0 + (r0 - q.r0) * u; r1 = q.r1 + (r1 - q.r1) * u; i0 = q.i0 + (i0 - q.i0) * u; i1 = q.i1 + (i1 - q.i1) * u; }
+            const pad = 30, H = W < 520 ? 200 : 240;
+            const sc = Math.min((W - 2 * pad) / (r1 - r0), (H - 2 * pad) / (i1 - i0)), mr = (r0 + r1) / 2, mi = (i0 + i1) / 2;
+            const X = re => W / 2 + (re - mr) * sc, Y = im => H / 2 - (im - mi) * sc, P = q => X(q.re) + ' ' + Y(q.im);
+            let h = `<rect x="1" y="1" width="${W - 2}" height="${H - 2}" fill="var(--bg)" stroke="var(--line)" stroke-width="2"/>`;
+            h += `<text x="10" y="15" style="font-size:11px;text-anchor:start;opacity:.8">complex plane</text>`;
+            const vr0 = mr - W / 2 / sc, vr1 = mr + W / 2 / sc, vi0 = mi - H / 2 / sc, vi1 = mi + H / 2 / sc, st = Math.max(1, Math.ceil(30 / sc));
+            for (let a = Math.ceil(vr0 / st) * st; a <= vr1; a += st) { const x = X(a); h += `<line x1="${x}" y1="${Y(vi0)}" x2="${x}" y2="${Y(vi1)}" stroke="var(--blue)" stroke-width="1" opacity=".18"/>`; if (a && x > 12 && x < W - 12) h += `<text x="${x}" y="${Math.min(H - 4, Math.max(12, Y(0) + 15))}" opacity=".7" style="font-size:11px">${a < 0 ? '−' + (-a) : a}</text>`; }
+            for (let b = Math.ceil(vi0 / st) * st; b <= vi1; b += st) { const y = Y(b); h += `<line x1="${X(vr0)}" y1="${y}" x2="${X(vr1)}" y2="${y}" stroke="var(--blue)" stroke-width="1" opacity=".18"/>`; if (b && y > 10 && y < H - 6 && !(y < 26 && X(0) < 120)) h += `<text x="${Math.max(10, Math.min(W - 10, X(0) - 10))}" y="${y + 4}" opacity=".7" style="font-size:11px;text-anchor:end">${b === 1 ? 'i' : b === -1 ? '−i' : (b < 0 ? '−' + (-b) : b) + 'i'}</text>`; }
+            h += `<line x1="${X(vr0)}" y1="${Y(0)}" x2="${X(vr1)}" y2="${Y(0)}" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"/><line x1="${X(0)}" y1="${Y(vi0)}" x2="${X(0)}" y2="${Y(vi1)}" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"/>`;
+            (Lv.pits || []).forEach(pt => { if (pt.poly) h += `<polygon points="${pt.poly.map(q => X(q[0]).toFixed(1) + ',' + Y(q[1]).toFixed(1)).join(' ')}" fill="#d4a64f" fill-opacity=".26" stroke="#f2c14e" stroke-width="2.5" stroke-linejoin="round"/>`; });
+            const gx = X(g.re), gy = Y(g.im);
+            h += `<ellipse cx="${gx}" cy="${gy}" rx="10" ry="4" fill="var(--hole)" stroke="var(--hole)" stroke-width="1.5"/><line x1="${gx}" y1="${gy}" x2="${gx}" y2="${gy - 34}" stroke="var(--ink)" stroke-width="2.5"/><path d="M${gx} ${gy - 34} L${gx + 18} ${gy - 27} L${gx} ${gy - 20}Z" fill="var(--imag)"/>`;
+            for (let i = 0; i < pts.length - 1; i++) { const last = i === pts.length - 2; h += `<path d="M${P(pts[i])} L${P(pts[i + 1])}" fill="none" stroke="${last ? 'var(--imag)' : 'var(--soft)'}" stroke-width="2" stroke-dasharray="6 5" opacity="${last ? 1 : .55}"/>`; }
+            pts.forEach((q, i) => { if (bl && i === pts.length - 1) return; h += `<circle cx="${X(q.re)}" cy="${Y(q.im)}" r="3" fill="var(--soft)"/>`; });
+            const lab = (q, txt, col) => { const x = X(q.re), right = x < W - 90; return `<text x="${x + (right ? 12 : -12)}" y="${Y(q.im) + 22}" style="font-size:13px;font-weight:700;text-anchor:${right ? 'start' : 'end'};fill:${col}">${txt}</text>`; };
+            h += lab(g, mEsc(fmt(g).replace(/^-/, '−')), 'var(--imag)');
+            if (!same(Lv.start, g) && !won) h += lab(Lv.start, 'tee ' + mEsc(fmt(Lv.start).replace(/^-/, '−')), 'var(--ink)');
+            const b = pts[pts.length - 1]; let bx = X(b.re), by = Y(b.im), up = 0;
+            if (bl && pts.length > 1) { const a = pts[pts.length - 2], ax = X(a.re), ay = Y(a.im), dx = bx - ax, dy = by - ay, ht = Math.max(8, Math.min(34, Math.hypot(dx, dy) * .2)); bx = ax + dx * bl.u; by = ay + dy * bl.u; up = 4 * ht * bl.u * (1 - bl.u); }
+            if (bl || !won) h += `<ellipse cx="${bx}" cy="${by + 2}" rx="${7 * (1 - Math.min(.4, up / 220))}" ry="2.6" fill="#000" opacity="${.3 * (1 - Math.min(.6, up / 120))}"/>`;
+            h += `<g transform="translate(${bx} ${by - up - (won && !bl ? 2 : 0)})"><circle r="7" fill="#fff" stroke="var(--ballstroke)" stroke-width="1.5"/><circle cx="-2" cy="-2" r=".9" fill="var(--dimple)"/><circle cx="2" cy="-1" r=".9" fill="var(--dimple)"/><circle cx="0" cy="2.2" r=".9" fill="var(--dimple)"/></g>`;
+            $('nl').style.height = H + 'px'; $('nl').setAttribute('viewBox', `0 0 ${W} ${H}`); $('nl').innerHTML = h;
+            if (!bl) planeLast = tgt;
+        }
         function drawLine() {
             cancelAnimationFrame(nlRaf);
+            $('nl').setAttribute('aria-label', Lv.pack === 'complex' ? 'complex plane showing your ball, your hits and the hole' : 'number line showing your ball, your hits and the hole');
+            if (Lv.pack === 'complex') {
+                const hitC = nlPend && hist.length > 0 && animOn('ball'); nlPend = false; nlView = null;
+                if (!hitC) { drawPlane(null); return; }
+                /* the ball hops along an arc while its shadow slides straight along the ground */
+                const t0 = performance.now(), D = 420, stepC = now => { const t = Math.min((now - t0) / D, 1); if (t < 1) { drawPlane({ u: t * t * (3 - 2 * t) }); nlRaf = requestAnimationFrame(stepC); } else drawPlane(null); };
+                nlRaf = requestAnimationFrame(stepC); return;
+            }
             const vals = [val(Lv.start), ...hist.map((h, i) => val(hist[i + 1] ? hist[i + 1].prev : cur))], g = val(Lv.goal), won = same(cur, Lv.goal);
             let lo = Math.min(g, ...vals), hi = Math.max(g, ...vals); if (hi - lo < 1) { lo -= 1; hi += 1 }
             { const sp0 = hi - lo; (Lv.pits || []).forEach(p => { [val(p), val(p.hi || p)].forEach(pv => { if (pv >= lo - sp0 && pv <= hi + sp0) { lo = Math.min(lo, pv - sp0 * .05); hi = Math.max(hi, pv + sp0 * .05); } }); }); }   /* sand pits near the action stay in view */
@@ -5876,7 +6044,8 @@ function calcClose() { if (calcOpen) calcSet(false); }
         function loadLevel(i, startAt) {
             stopReplay();
             const lv = match.levels[i]; if (!lv) return; NB = lv.nb;
-            Lv = { start: lv.start, goal: lv.goal, limit: lv.limit, nb: lv.nb, tier: lv.tier || 0, ops: lv.ops.map(s => mk(s, MODE)), pits: (lv.pits || []).map(p => { const q = F(p.n, p.d, p.b || 1); if (q && p.hi) { const h = F(p.hi.n, p.hi.d, p.hi.b || 1); if (h) q.hi = h; } return q; }).filter(Boolean) };
+            const cxl = lv.pack === 'complex';
+            Lv = { start: lv.start, goal: lv.goal, limit: lv.limit, nb: lv.nb, tier: lv.tier || 0, pack: cxl ? 'complex' : 'base', ops: lv.ops.map(s => cxl ? mkC(s) : mk(s, MODE)), pits: (lv.pits || []).map(p => { if (p.poly) { const pts = polyCovers(p.poly); return pts ? { poly: p.poly, pts } : null; } const q = F(p.n, p.d, p.b || 1); if (q && p.hi) { const h = F(p.hi.n, p.hi.d, p.hi.b || 1); if (h) q.hi = h; } return q; }).filter(Boolean) };
             cur = Lv.start; hist = []; lockedRound = false; nlView = null; nlPend = false; roundStartAt = startAt || Date.now(); if (paused) pausedLoad = true; match.round = i; round = i;
             if (match.mode !== 'grid') $('glevel').textContent = match.mode === 'points' ? (i + 1) + (match.cfg.endless ? '' : ' / ' + match.total) : (i + 1) + ' / ' + match.total; setMsg('');
             if (match.cfg.timer > 0) { $('grclock').textContent = fmtCd(match.cfg.timer * 1000); $('grwrap').classList.remove('low'); }
