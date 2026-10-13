@@ -2816,6 +2816,9 @@
         #notetools #notepink[aria-pressed="true"] .ncsw { color: var(--bg) }
         #notetools #notecm { width: 18px; margin-left: -6px; border-left-width: 0 }
         #notetools #notecm[aria-expanded="true"] { background: var(--card); border-color: var(--ink) }
+        /* the colour button and its arrow are one control: hovering either one outlines both */
+        #notetools:has(#notepink:hover, #notecm:hover) #notepink:not([aria-pressed="true"]),
+        #notetools:has(#notepink:hover, #notecm:hover) #notecm:not([aria-expanded="true"]) { border-color: var(--imag) }
         #notepal { position: absolute; left: 8px; top: calc(100% + 4px); z-index: 6; display: flex; gap: 4px; padding: 6px; background: var(--card); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink) }
         #notepal[hidden] { display: none }
         #notetools #notepal button { width: 30px; height: 30px }
@@ -2857,14 +2860,56 @@
         #calcpanel.drag .calcf { padding-right: 24px }
 
         /* boxed answer: a calculator result dragged into the notepad */
-        #notebody .mf.neq.nans { padding: .05em .45em; margin: 0 .2em; border: 2px solid var(--imag); background: color-mix(in srgb, var(--imag) 10%, transparent); font-size: 1.2rem }
+        #notebody .mf.neq.nbox { --bc: var(--imag); padding: .05em .45em; margin: 0 .2em; border: 2px solid var(--bc); background: color-mix(in srgb, var(--bc) 10%, transparent) }
+        #notebody .mf.neq.nbox.nc-or { --bc: var(--orange) }
+        #notebody .mf.neq.nbox.nc-ye { --bc: var(--yellow) }
+        #notebody .mf.neq.nbox.nc-gr { --bc: var(--ok) }
+        #notebody .mf.neq.nbox.nc-bl { --bc: var(--blue) }
+        #notebody .mf.neq.nbox.nc-sf { --bc: var(--soft) }
+        #notebody .mf.neq.nbox.nsel { background: color-mix(in srgb, var(--bc) 35%, transparent) }
         .mf.neq.ndrag.nans { background: var(--card) }
+        /* equations in the notepad: bold, colour that reaches the fraction bars and roots, edit mode */
+        .mf.neq { font-weight: 400; -webkit-touch-callout: none }
+        .mf.neq.nb { font-weight: 700 }
+        .neq .mfn { border-bottom-color: currentColor }
+        .neq .mrt { border-top-color: currentColor }
+        .neq.nb .mfn { border-bottom-width: 2.6px }
+        .neq.nb .mrt { border-top-width: 2.6px }
+        .neq.nb .mrad svg { stroke-width: 2.6px }
+        #notebody .neq.editing { user-select: auto; -webkit-user-select: auto; cursor: text; outline: 2px dotted var(--line); outline-offset: 2px; background: var(--card) }
+        #notebody .neq.editing > .mf { display: inline-block; flex: none; padding: 0 2px; overflow: visible; min-width: .6em; font-size: inherit }
+        #notetools button:disabled { opacity: .4; pointer-events: none }
+        /* text highlight in the notepad is drawn by the script above, so the browser's own square one is hidden there */
+        #notebody::selection, #notebody ::selection { background: transparent }
+        #notehl { position: absolute; z-index: 2; overflow: hidden; pointer-events: none }
+        #notehl div { position: absolute; background: color-mix(in srgb, var(--imag) 35%, transparent) }
+        #notebody .neq.nsel { border-radius: 5px }
+        #notebody .enpink { color: var(--imag) }
+        #notebody .enc-or { color: var(--orange) }
+        #notebody .enc-ye { color: var(--yellow) }
+        #notebody .enc-gr { color: var(--ok) }
+        #notebody .enc-bl { color: var(--blue) }
+        #notebody .enc-sf { color: var(--soft) }
+        /* one continuous highlight: only the two ends of the selection are rounded, and spacing around operators is filled in too */
+        .mf .msel { background: color-mix(in srgb, var(--imag) 35%, transparent); border-radius: 0 }
+        .mf .msel-s { border-radius: 5px 0 0 5px }
+        .mf .msel-e { border-radius: 0 5px 5px 0 }
+        .mf .msel-s.msel-e { border-radius: 5px }
+        .mf .msel.mo { margin: 0; padding: 0 .12em }
+        .mf.mfall .mroot { border-radius: 5px }
+        /* the notepad equation is itself an .mf, which made ".mf:not(.mffocus) .mcaret" hide the caret inside its editor */
+        #notebody .neq.editing .mf.mffocus .mcaret { display: inline-block }
+        .crow.dropbefore { box-shadow: inset 0 3px 0 var(--imag) }
+        .crow.dropafter { box-shadow: inset 0 -3px 0 var(--imag) }
+        #calcrows.drop { box-shadow: inset 0 0 0 2px var(--imag) }
         .crow .cr.tg { touch-action: manipulation }
         .crow .cr { overflow-x: auto; overflow-y: hidden; scrollbar-width: none }
         .crow .cr::-webkit-scrollbar { display: none }
         .crow .cr .mf.cres { display: inline-block; flex: none; position: relative; vertical-align: middle; min-width: 0; padding: 0 .1em; overflow: visible; cursor: inherit; text-align: left; color: var(--imag); font-size: 1.3rem; line-height: 1.3 }
         .crow .cr .cres .mfn { border-bottom-color: var(--imag) }
         .crow .cr .cres .mrt { border-top-color: var(--imag) }
+        .cres .mroot > .mc.mo:first-child { margin-left: 0 }
+        #calcbub .mf.cres { display: block; padding: 0; overflow-x: auto; overflow-y: hidden; font-size: 1.25rem; cursor: text; user-select: text; -webkit-user-select: text }
 
         @media (max-width:520px) {
         }
@@ -3367,6 +3412,7 @@
             <button type="button" id="noteital" data-cmd="italic" aria-pressed="false" aria-label="italic" title="italic"><i>I</i></button>
             <button type="button" id="notepink" data-cmd="pink" aria-pressed="false" aria-label="pink text" title="pink text"><span class="ncsw">A</span></button><button type="button" id="notecm" data-cmd="menu" aria-haspopup="true" aria-expanded="false" aria-controls="notepal" aria-label="choose text colour" title="choose colour"><svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true" fill="currentColor"><path d="M1 3h8L5 8z" /></svg></button>
             <span class="nsep" aria-hidden="true"></span>
+            <button type="button" id="notebox" data-cmd="box" aria-pressed="false" aria-label="box around equation" title="box around the highlighted equation" disabled><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="5.5" width="16" height="13" rx="1" /></svg></button>
             <button type="button" id="notelist" data-cmd="list" aria-pressed="false" aria-label="bullet list" title="bullet list (or type * or - then a space)"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor"><circle cx="5" cy="6.5" r="1.7" /><rect x="9" y="5.75" width="11" height="1.5" /><circle cx="5" cy="12" r="1.7" /><rect x="9" y="11.25" width="11" height="1.5" /><circle cx="5" cy="17.5" r="1.7" /><rect x="9" y="16.75" width="11" height="1.5" /></svg></button>
             <button type="button" id="noteclr" data-cmd="clear" aria-label="clear formatting" title="clear formatting"><span class="ntx">T<small>x</small></span></button>
         <div id="notepal" role="group" aria-label="text colour" hidden></div>
@@ -4279,12 +4325,14 @@
             r.math = calcMode === 'frac' && (q || rd) ? (q || rd) : null;
             return r;
         }
+        /* 1.5e+20 -> 1.5×10^(20), so it is drawn with a real exponent like Desmos */
+        function calcSci(t) { return t ? t.replace(/(\d(?:\.\d+)?)e([+\-−]?)(\d+)/g, (m, a, sg, n) => a + '×10^(' + (sg === '-' || sg === '−' ? '−' : '') + n + ')') : t; }
         function calcShow0(x) {   /* { a: text to show, tip: the full value for the click bubble } */
             const sg = x < 0 ? '−' : '', ax = Math.abs(x);
             if (Number.isInteger(x)) return { a: ax < 1e15 ? sg + String(ax) : x.toExponential(3).replace('-', '−'), tip: ax < 1e15 ? sg + String(ax) : sg + ax.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 0 }) };
             const dec = ax >= 1e15 || ax < 1e-9 ? x.toExponential(8).replace('-', '−') : sg + String(parseFloat(ax.toPrecision(12)));
             const q = calcRat(x), body = dec.replace(/^−/, '');
-            const rs = ax >= 1e15 || ax < 1e-9 ? body : String(parseFloat(ax >= 0.1 ? ax.toFixed(3) : ax.toPrecision(2))), dshort = body.length > 6 ? sg + (rs.length > 6 ? rs.slice(0, 6) : rs) + '…' : dec;
+            const rs = ax >= 1e15 || ax < 1e-9 ? body : String(parseFloat(ax >= 0.1 ? ax.toFixed(3) : ax.toPrecision(2))), dshort = ax >= 1e15 || ax < 1e-9 ? sg + ax.toExponential(4) : body.length > 6 ? sg + (rs.length > 6 ? rs.slice(0, 6) : rs) + '…' : dec;
             const precise = ax >= 1e15 || ax < 1e-9 ? x.toExponential(14).replace('-', '−') : sg + String(parseFloat(ax.toPrecision(15)));
             const rd = q ? null : calcRad(x), tip = q ? q + ' = ' + precise : rd ? rd + ' = ' + precise : precise;
             if (q && calcMode === 'frac') return { a: q.length > 10 ? q.slice(0, 9) + '…' : q, tip };
@@ -4308,7 +4356,8 @@
             let v; try { v = calcEval(text); } catch (e) { v = NaN; }
             if (v === null) return;
             if (!isFinite(v)) { r.classList.add('err'); r.textContent = '—'; r.title = 'not a number'; return; }
-            const sh = calcShow(v); r.textContent = sh.a; r._full = sh.full; if (sh.math) calcResMath(r, sh.math);
+            const sh = calcShow(v); sh.a = calcSci(sh.a); sh.full = calcSci(sh.full); sh.tip = calcSci(sh.tip);
+            r.textContent = sh.a; r._full = sh.full; calcResMath(r, sh.math || sh.a);
             if (sh.tip) { r.classList.add('tg'); r._tip = sh.tip; }
         }
         /* ===== math field: a small Desmos-style equation editor =====
@@ -4462,6 +4511,7 @@
                     else if (n.t === 'sup') { e = mk('span', 'mnode msup'); const k = mk('span', 'mlist'); e.appendChild(k); fill(n.a, k); }
                     else if (n.t === 'sqrt' || n.t === 'cbrt') { e = mk('span', 'mnode msqrt' + (n.t === 'cbrt' ? ' mcbrt' : '')); const g = mk('span', 'mrad'); g.innerHTML = '<svg viewBox="0 0 10 100" preserveAspectRatio="none"><path d="M0 62L2.2 58L5.4 97L10 0"/></svg>'; if (n.t === 'cbrt') g.insertAdjacentHTML('beforeend', '<span class="mix">3</span>'); const k = mk('span', 'mlist mrt'); e.append(g, k); fill(n.a, k); }
                     else { e = mk('span', 'mnode mfrac'); const a = mk('span', 'mlist mfn'), b = mk('span', 'mlist mfd'); e.append(a, b); fill(n.n, a); fill(n.d, b); }
+                    if (n.k) e.classList.add('e' + n.k); if (f.sel && f.sel.l === list && i >= f.sel.a && i < f.sel.b) { e.classList.add('msel'); if (i === f.sel.a) e.classList.add('msel-s'); if (i === f.sel.b - 1) e.classList.add('msel-e'); }
                     e._n = n; el.appendChild(e);
                 }
             };
@@ -4661,8 +4711,11 @@
         function calcBub(btn, text) {
             if (calcBubFor === btn) { calcBubHide(); return; }
             calcBubHide();
-            const b = document.createElement('div'); b.id = 'calcbub'; b.textContent = text; b.setAttribute('role', 'status');
+            const b = document.createElement('div'); b.id = 'calcbub'; b.setAttribute('role', 'status'); b.setAttribute('aria-label', text);
             b.style.maxWidth = Math.min(300, innerWidth - 16) + 'px'; document.body.appendChild(b);
+            { const el = document.createElement('span'); el.className = 'mf cres'; const view = document.createElement('span'); view.className = 'mroot'; el.appendChild(view); b.appendChild(el);
+              const f = { root: mfList(null), all: false, focused: false, c: { l: null, i: -1 }, view, el }; mfFill(f.root, text); mfDraw(f);
+              b.addEventListener('copy', e => { e.clipboardData.setData('text/plain', text); e.preventDefault(); }); }
             const r = btn.getBoundingClientRect(), bw = b.offsetWidth, bh = b.offsetHeight;
             const left = Math.min(Math.max(8, r.right - bw), Math.max(8, innerWidth - bw - 8)), above = r.top - bh - 12 >= 8;
             b.style.left = left + 'px'; b.style.top = (above ? r.top - bh - 12 : r.bottom + 12) + 'px'; b.classList.toggle('below', !above);
@@ -4689,15 +4742,20 @@
         let noteOpen = false, notePos = null, noteSize = null, noteHoldOn = false, noteTimer = 0;
         function noteLang() { $('notebody').dataset.ph = typeof tr === 'function' ? tr('note_ph') : 'write here, or drag an equation in from the calculator'; }
         /* equations are stored as small trees: a character is a string, other nodes are {t, a} or {t:'frac', n, d} */
-        const noteSer = l => l.map(n => n.t === 'c' ? n.v : n.t === 'frac' ? { t: 'frac', n: noteSer(n.n), d: noteSer(n.d) } : { t: n.t, a: noteSer(n.a) });
+        const noteSer = l => l.map(n => {
+            const o = n.t === 'c' ? (n.k ? { t: 'c', v: n.v } : n.v) : n.t === 'frac' ? { t: 'frac', n: noteSer(n.n), d: noteSer(n.d) } : { t: n.t, a: noteSer(n.a) };
+            if (n.k && typeof o === 'object') o.k = n.k; return o;
+        });
         function noteDes(arr, dst, depth) {
             depth = depth || 0; if (!Array.isArray(arr) || depth > 12) return;
             arr.slice(0, 500).forEach(x => {
                 let c;
                 if (typeof x === 'string') c = mfCh(x.slice(0, 1));
+                else if (x && x.t === 'c' && typeof x.v === 'string') c = mfCh(x.v.slice(0, 1));
                 else if (x && (x.t === 'sup' || x.t === 'sqrt' || x.t === 'cbrt')) { c = mfMk(x.t); noteDes(x.a, c.a, depth + 1); }
                 else if (x && x.t === 'frac') { c = mfMk('frac'); noteDes(x.n, c.n, depth + 1); noteDes(x.d, c.d, depth + 1); }
                 else return;
+                if (x && typeof x === 'object' && NOTE_CLS.includes(x.k)) c.k = x.k;
                 mfAdd(dst, dst.length, c);
             });
         }
@@ -4711,14 +4769,14 @@
             const f = { root: mfList(null), all: false, focused: false, c: { l: null, i: -1 }, view, el };
             noteDes(ser, f.root); mfDraw(f);
         }
-        const noteRedraw = () => $('notebody').querySelectorAll('.neq').forEach(noteDraw);
+        const noteRedraw = () => $('notebody').querySelectorAll('.neq:not(.editing)').forEach(noteDraw);
         function noteSave() { clearTimeout(noteTimer); noteTimer = setTimeout(() => { try { localStorage.setItem(NOTE_KEY, $('notebody').innerHTML); } catch (e) { } }, 250); }
         function noteClean(src, dst) {   /* keeps only plain text, line breaks, bold, italic, the pink class and equations */
             src.childNodes.forEach(n => {
                 if (n.nodeType === 3) dst.appendChild(document.createTextNode(n.nodeValue.replace(/\u200b/g, '')));
                 else if (n.nodeType === 1) {
                     const t = n.tagName.toLowerCase();
-                    if (n.classList.contains('neq')) { const el = noteEq(null); el.dataset.eq = (n.getAttribute('data-eq') || '[]').slice(0, 20000); { const k = NOTE_CLS.find(q => n.classList.contains(q)); if (k) el.classList.add(k); } if (n.classList.contains('nans')) el.classList.add('nans'); dst.appendChild(el); }
+                    if (n.classList.contains('neq')) { const el = noteEq(null); el.dataset.eq = (n.getAttribute('data-eq') || '[]').slice(0, 20000); { const k = NOTE_CLS.find(q => n.classList.contains(q)); if (k) el.classList.add(k); } if (n.classList.contains('nans') || n.classList.contains('nbox')) el.classList.add('nbox'); if (n.classList.contains('nb')) el.classList.add('nb'); dst.appendChild(el); }
                     else if (/^(div|p|br|b|strong|i|em|span|ul|li)$/.test(t)) {
                         const c = document.createElement(t === 'strong' ? 'b' : t === 'em' ? 'i' : t);
                         if (t === 'span') { const k = NOTE_CLS.find(q => n.classList.contains(q)); if (k) c.className = k; else if (n.classList.contains('nplain')) c.className = 'nplain'; }
@@ -4783,15 +4841,29 @@
                 const s = t === r.startContainer ? r.startOffset : 0, e = t === r.endContainer ? r.endOffset : t.length;
                 if (e > s && /[^\s\u200b]/.test(t.data.slice(s, e))) out.push({ t, s, e });
             });
-            b.querySelectorAll('.neq').forEach(q => {
-                const qr = document.createRange(); qr.selectNode(q);
-                if (r.compareBoundaryPoints(Range.START_TO_START, qr) <= 0 && r.compareBoundaryPoints(Range.END_TO_END, qr) >= 0) out.push({ q });
-            });
+            b.querySelectorAll('.neq:not(.editing)').forEach(q => { if (r.intersectsNode(q)) out.push({ q }); });
             return out;
+        }
+        /* colour inside an equation that is being edited: the selected part, or (nothing selected) what you type next */
+        function noteSetK(n, k) { if (k) n.k = k; else delete n.k; if (n.t !== 'c') mfKids(n).forEach(l => l.forEach(m => noteSetK(m, k))); }
+        function noteEditColor(f, k, toggle) {
+            const nodes = f.selNodes ? f.selNodes() : [];
+            if (nodes.length) { const same = toggle && k && nodes.every(n => n.k === k); nodes.forEach(n => noteSetK(n, same ? '' : k)); }
+            else f.pen = toggle && f.pen === k ? '' : k;
+            mfDraw(f); noteState();
+        }
+        function noteEditCol(f) {
+            const nodes = f.selNodes ? f.selNodes() : [];
+            if (!nodes.length) return f.pen || '';
+            const cs = new Set(nodes.map(n => n.k || '')); return cs.size === 1 ? [...cs][0] : '*';
+        }
+        function noteSelEqs() {   /* the equations the current selection covers */
+            const s = getSelection(), b = $('notebody'); if (!s.rangeCount || s.isCollapsed || !b.contains(s.anchorNode)) return [];
+            const r = s.getRangeAt(0); return Array.from(b.querySelectorAll('.neq:not(.editing)')).filter(q => r.intersectsNode(q));
         }
         function noteColorSel(r, color) {   /* color: a class from NOTE_COLS, or '' for no colour */
             const tg = noteTargets(r); if (!tg.length) return;
-            noteKeepSel(() => {
+            (tg.every(x => x.q) ? (g => g()) : noteKeepSel)(() => {
                 const parts = [];
                 tg.forEach(x => {
                     if (x.q) { parts.push(x.q); return; }
@@ -4820,7 +4892,7 @@
         function noteMenu(open) { $('notepal').hidden = !open; $('notecm').setAttribute('aria-expanded', String(open)); }
         function noteState() {
             { const sl = getSelection(), rg = sl.rangeCount && !sl.isCollapsed ? sl.getRangeAt(0) : null;   /* one box over each selected equation */
-              $('notebody').querySelectorAll('.neq').forEach(q => q.classList.toggle('nsel', !!(rg && rg.intersectsNode(q)))); }
+              $('notebody').querySelectorAll('.neq').forEach(q => q.classList.toggle('nsel', !q.classList.contains('editing') && !!(rg && rg.intersectsNode(q)))); }
             const b = $('notebody'), sel = getSelection(), on = { bold: false, italic: false, list: false }; let col = '';
             if (sel.rangeCount && b.contains(sel.anchorNode)) {
                 try { on.bold = document.queryCommandState('bold'); on.italic = document.queryCommandState('italic'); on.list = document.queryCommandState('insertUnorderedList'); } catch (e) { }
@@ -4830,6 +4902,10 @@
                 /* the caret takes the colour of whatever you are about to type */
                 const cc = sel.isCollapsed && col && NOTE_COLS.find(c => c[0] === col); b.style.caretColor = cc ? 'var(' + cc[1] + ')' : '';
             }
+            { const seq = noteSelEqs();   /* equations selected: bold and box buttons follow them */
+              if (seq.length) { const eb = seq.every(q => q.classList.contains('nb')), hasT = sel.rangeCount && noteTargets(sel.getRangeAt(0)).some(x => x.t); on.bold = hasT ? on.bold && eb : eb; }
+              const bx = $('notebox'); bx.disabled = !seq.length; bx.setAttribute('aria-pressed', String(!!seq.length && seq.every(q => q.classList.contains('nbox')))); }
+            { const ed = b.querySelector('.neq.editing'); if (ed && ed._f) col = noteEditCol(ed._f); }
             const last = NOTE_COLS.find(c => c[0] === noteLast), pk = $('notepink');
             pk.style.setProperty('--ncc', 'var(' + last[1] + ')'); pk.title = pk.setAttribute('aria-label', last[2] + ' text') || last[2] + ' text (click to apply or remove)';
             $('notebold').setAttribute('aria-pressed', String(on.bold)); $('noteital').setAttribute('aria-pressed', String(on.italic));
@@ -4840,6 +4916,13 @@
         function noteCmd(c, arg) {
             const b = $('notebody'), sel = getSelection();
             if (c === 'menu') { noteMenu($('notepal').hidden); return; }
+            { const ed = b.querySelector('.neq.editing');   /* while an equation is being edited, colour works on the letters inside it */
+              if (ed && ed._f) {
+                  if (c === 'color' || c === 'pink') { const k = c === 'color' ? (arg || '') : noteLast; if (c === 'color' && k) { noteLast = k; try { localStorage.setItem('notecolor1', k); } catch (e) { } } noteEditColor(ed._f, k, c === 'pink'); noteMenu(false); }
+                  else if (c === 'clear') noteEditColor(ed._f, '', false);
+                  return;
+              } }
+            if (c === 'box') { const eqs = noteSelEqs(); if (eqs.length) { const all = eqs.every(q => q.classList.contains('nbox')); eqs.forEach(q => q.classList.toggle('nbox', !all)); } noteState(); noteSave(); return; }
             if (!sel.rangeCount || !b.contains(sel.anchorNode)) { b.focus(); const r = document.createRange(); r.selectNodeContents(b); r.collapse(false); sel.removeAllRanges(); sel.addRange(r); }
             if (c === 'pink' || c === 'color') {   /* the main button toggles the last colour; a swatch always applies that colour */
                 const k = c === 'color' ? (arg || '') : noteLast;
@@ -4851,8 +4934,12 @@
             }
             else if (c === 'list') document.execCommand('insertUnorderedList');
             else if (c === 'clear') {
-                document.execCommand('removeFormat');
+                noteSelEqs().forEach(q => q.classList.remove('nb', 'nbox')); document.execCommand('removeFormat');
                 if (!sel.isCollapsed) noteColorSel(sel.getRangeAt(0), ''); else if (noteColorOf(sel.getRangeAt(0).startContainer)) noteColorCaret(sel, '');
+            }
+            else if (c === 'bold' && noteSelEqs().length) {   /* bold on a highlighted equation (and on any text selected with it) */
+                const eqs = noteSelEqs(), all = eqs.every(q => q.classList.contains('nb')); eqs.forEach(q => q.classList.toggle('nb', !all));
+                if (noteTargets(sel.getRangeAt(0)).some(x => x.t)) { document.execCommand('styleWithCSS', false, false); document.execCommand('bold'); }
             }
             else { document.execCommand('styleWithCSS', false, false); document.execCommand(c); }
             noteState(); noteSave();
@@ -4892,6 +4979,7 @@
             noteClamp();
         }
         function noteSet(open) {
+            if (!open) $('notebody').querySelectorAll('.neq.editing').forEach(q => q._fin && q._fin('save', false));
             noteOpen = open; const pn = $('notepanel'); pn.hidden = !open; $('notefab').setAttribute('aria-expanded', String(open));
             if (open) { noteLayout(); noteRedraw(); noteLang(); if (!calcMobile()) { const b = $('notebody'); b.focus(); const r = document.createRange(); r.selectNodeContents(b); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } }
             else { document.body.classList.remove('notebelow'); noteMenu(false); }
@@ -4938,11 +5026,25 @@
         /* move the window by its title bar, resize from the corner (desktop only) */
         (() => {
             const h = $('noteh'), pn = $('notepanel'), g = $('notegrip'); let d = null, r = null;
+            /* sway: like the calculator, the window hangs from the grab point and swings a little as you move it, then settles */
+            let ang = 0, vel = 0, raf = 0, lastX = 0;
+            const calm = matchMedia('(prefers-reduced-motion: reduce)');
+            const tick = () => {
+                vel += -ang * 0.1 - vel * 0.2; ang += vel;
+                if (!d && Math.abs(ang) < 0.02 && Math.abs(vel) < 0.02) { ang = vel = 0; raf = 0; pn.style.transform = ''; pn.style.transformOrigin = ''; return; }
+                pn.style.transform = 'rotate(' + ang.toFixed(3) + 'deg)';
+                raf = requestAnimationFrame(tick);
+            };
+            const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
             h.addEventListener('pointerdown', e => {
                 if (calcMobile() || e.target.closest('button') || e.button > 0 || !notePos) return;
                 d = { dx: e.clientX - notePos.x, dy: e.clientY - notePos.y }; pn.classList.add('dragging'); h.setPointerCapture(e.pointerId); e.preventDefault();
+                lastX = e.clientX; if (!calm.matches) { pn.style.transformOrigin = (e.clientX - notePos.x) + 'px ' + (e.clientY - notePos.y) + 'px'; kick(); }
             });
-            h.addEventListener('pointermove', e => { if (!d) return; notePos.x = e.clientX - d.dx; notePos.y = e.clientY - d.dy; noteClamp(); });
+            h.addEventListener('pointermove', e => {
+                if (!d) return; notePos.x = e.clientX - d.dx; notePos.y = e.clientY - d.dy; noteClamp();
+                if (!calm.matches) { vel = Math.max(-0.8, Math.min(0.8, vel + (e.clientX - lastX) * 0.012)); lastX = e.clientX; kick(); }
+            });
             const end = () => { d = null; pn.classList.remove('dragging'); };
             h.addEventListener('pointerup', end); h.addEventListener('pointercancel', end);
             g.addEventListener('pointerdown', e => {
@@ -4998,7 +5100,7 @@
                 if (!st || e.pointerId !== st.id) return;
                 if (st.on) {
                     const el = document.elementFromPoint(e.clientX, e.clientY), pn = el && el.closest && el.closest('#notepanel');
-                    if (pn) { const rg = noteRangeAt(e.clientX, e.clientY, !!el.closest('#notebody')); if (st.ans) { const l = mfList(null); mfFill(l, st.ans); noteInsertEq(noteSer(l), rg, 'nans'); } else noteInsertEq(noteSer(st.f.root), rg); }
+                    if (pn) { const rg = noteRangeAt(e.clientX, e.clientY, !!el.closest('#notebody')); if (st.ans) { const l = mfList(null); mfFill(l, st.ans); noteInsertEq(noteSer(l), rg, 'nbox'); } else noteInsertEq(noteSer(st.f.root), rg); }
                     suppress = true; setTimeout(() => { suppress = false; }, 0);
                 }
                 cleanup();
@@ -5012,6 +5114,181 @@
                 if (st.touch) timer = setTimeout(() => { if (st && !st.on) begin(st.x, st.y); }, 380);
             });
             rows.addEventListener('click', e => { if (suppress) { e.stopPropagation(); e.preventDefault(); } }, true);
+        })();
+        /* ===== notepad equations: click to highlight, click again to edit, drag back into the calculator ===== */
+        (() => {
+            const body = $('notebody'); let st = null, ghost = null, tgt = null, timer = 0, last = null;
+            const eqText = q => { let ser = []; try { ser = JSON.parse(q.dataset.eq || '[]'); } catch (e) { } const l = mfList(null); noteDes(ser, l); return mfOut(l); };
+            const selectEq = q => { const r = document.createRange(); r.selectNode(q); const s = getSelection(); s.removeAllRanges(); s.addRange(r); noteState(); };
+            const onlyThis = q => { const s = getSelection(); if (!s.rangeCount || s.isCollapsed || !body.contains(s.anchorNode)) return false; const tg = noteTargets(s.getRangeAt(0)); return tg.length === 1 && tg[0].q === q; };
+            /* ----- edit an equation in place with the same editor the calculator uses ----- */
+            function edit(q, x, y) {
+                if (q.classList.contains('editing')) return;
+                let ser = []; try { ser = JSON.parse(q.dataset.eq || '[]'); } catch (e) { }
+                const f = mfCreate('', '', tr('calc_eq')); noteDes(ser, f.root); f.c = { l: f.root, i: f.root.length };
+                let done = false;
+                const fin = (mode, reselect) => {   /* mode: save | cancel | del */
+                    if (done) return; done = true; q._fin = null; q._f = null; document.removeEventListener('pointermove', mv); document.removeEventListener('pointerup', upd);
+                    const s = noteSer(f.root); q.classList.remove('editing');
+                    if (mode === 'save' && s.length) { const j = JSON.stringify(s); if (j.length <= 20000) q.dataset.eq = j; }
+                    if (mode === 'del' || (mode === 'save' && !s.length)) {
+                        const r = document.createRange(); r.setStartBefore(q); r.collapse(true); q.remove();
+                        if (reselect) { body.focus(); const sl = getSelection(); sl.removeAllRanges(); sl.addRange(r); }
+                        noteSave(); noteState(); return;
+                    }
+                    q.textContent = ''; noteDraw(q);
+                    if (reselect) { body.focus(); selectEq(q); }
+                    noteSave(); noteState();
+                };
+                q._f = f; f.pen = ''; f.sel = null;
+                /* partly coloured equations: every node can carry a colour (k). a drag or Shift+arrows selects part of the line;
+                   with nothing selected, the colour you pick is used for what you type next */
+                const known = new WeakSet(), walk = (l, fn) => l.forEach(n => { fn(n); if (n.t !== 'c') mfKids(n).forEach(k => walk(k, fn)); });
+                walk(f.root, n => known.add(n));
+                f.onchange = () => { let ch = false; walk(f.root, n => { if (!known.has(n)) { known.add(n); if (f.pen && n.t === 'c') { n.k = f.pen; ch = true; } } }); if (ch) mfDraw(f); };
+                f.selNodes = () => f.all ? f.root.slice() : f.sel ? f.sel.l.slice(f.sel.a, f.sel.b) : [];
+                const delSel = () => { if (!f.sel) return false; const { l, a, b } = f.sel; l.splice(a, b - a); f.c = { l, i: a }; f.sel = null; return true; };
+                let anchor = null;
+                f.el.addEventListener('keydown', e => {   /* capture: runs before the editor's own key handling */
+                    const k = e.key, mod = e.ctrlKey || e.metaKey;
+                    if (e.shiftKey && !mod && !e.altKey && (k === 'ArrowLeft' || k === 'ArrowRight')) {
+                        e.preventDefault(); e.stopPropagation();
+                        if (!f.sel || !anchor || anchor.l !== f.c.l) anchor = { l: f.c.l, i: f.c.i };
+                        f.all = false; const c = f.c; c.i = Math.max(0, Math.min(c.l.length, c.i + (k === 'ArrowLeft' ? -1 : 1)));
+                        const a = Math.min(anchor.i, c.i), b = Math.max(anchor.i, c.i); f.sel = a === b ? null : { l: c.l, a, b };
+                        mfDraw(f); noteState(); return;
+                    }
+                    if (f.sel && !mod && (k === 'Backspace' || k === 'Delete')) { e.preventDefault(); e.stopPropagation(); delSel(); mfDraw(f); f.onchange(); noteState(); return; }
+                    if (f.sel && !mod && k.length === 1) delSel();   /* typing over a selection replaces it */
+                    else if (f.sel && !['Shift', 'Control', 'Alt', 'Meta'].includes(k)) f.sel = null;
+                }, true);
+                let dr = null;
+                const hit = (x, y) => { const el = document.elementFromPoint(x, y), t = el && el.closest ? el.closest('.mc, .mnode') : null; if (!t || !t._n || !f.el.contains(t)) return null; const r = t.getBoundingClientRect(); return { l: t._n.l, i: t._n.l.indexOf(t._n) + (x > r.left + r.width / 2 ? 1 : 0) }; };
+                f.el.addEventListener('pointerdown', e => { if (e.pointerType === 'touch' || e.button > 0) return; f.sel = null; f.all = false; dr = hit(e.clientX, e.clientY); });
+                const mv = e => {
+                    if (!dr) return; const h = hit(e.clientX, e.clientY); if (!h || h.l !== dr.l) return;
+                    const a = Math.min(dr.i, h.i), b = Math.max(dr.i, h.i); f.sel = a === b ? null : { l: dr.l, a, b }; if (f.sel) f.c = { l: dr.l, i: h.i };
+                    mfDraw(f); noteState();
+                };
+                const upd = () => { dr = null; };
+                document.addEventListener('pointermove', mv); document.addEventListener('pointerup', upd);
+                f.onnav = k => { if (k === 'enter') fin('save', true); else if (k === 'back') fin('del', true); };
+                f.ta.addEventListener('blur', () => fin('save', false));
+                f.ta.addEventListener('keydown', e => { if (e.key === 'Escape') { e.preventDefault(); fin('cancel', true); } });
+                /* keep the notepad's own key / paste handlers out of the equation editor */
+                ['keydown', 'keyup', 'input', 'beforeinput', 'paste', 'cut', 'copy', 'drop'].forEach(t => f.el.addEventListener(t, e => e.stopPropagation()));
+                q.classList.add('editing'); q.textContent = ''; q.appendChild(f.el); q._fin = fin;
+                f.focus(true);
+                if (x != null) requestAnimationFrame(() => {   /* put the caret where you clicked */
+                    const t = document.elementFromPoint(x, y);
+                    if (!done && t && t !== f.el && f.el.contains(t)) t.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: x, clientY: y }));
+                });
+            }
+            /* ----- drag a notepad equation back into the calculator (the equation stays in the notepad too) ----- */
+            const clearHint = () => { document.querySelectorAll('.crow.dropbefore, .crow.dropafter').forEach(r => r.classList.remove('dropbefore', 'dropafter')); $('calcrows').classList.remove('drop'); };
+            function insert(txt, idx) {
+                const n = calcRows.length, lastBlank = calcRows[n - 1].trim() === '';
+                if (idx == null || idx >= n - (lastBlank ? 1 : 0)) { if (lastBlank) calcRows[n - 1] = txt; else calcRows.push(txt); calcRows.push(''); }
+                else if (calcRows[idx].trim() === '') calcRows[idx] = txt;
+                else calcRows.splice(idx, 0, txt);
+                calcRender(); const bx = $('calcrows'); bx.scrollTop = idx == null ? bx.scrollHeight : bx.scrollTop;
+            }
+            const tm = e => { if (st && st.on) e.preventDefault(); };
+            function esc(e) { if (e.key === 'Escape') { e.stopPropagation(); cleanup(); } }
+            function cleanup() {
+                clearTimeout(timer); if (ghost) ghost.remove(); ghost = null; clearHint();
+                document.body.classList.remove('nodragging'); st = null; tgt = null;
+                document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); document.removeEventListener('pointercancel', cleanup);
+                document.removeEventListener('keydown', esc, true); document.removeEventListener('touchmove', tm);
+            }
+            function update(x, y) {
+                ghost.style.left = x + 'px'; ghost.style.top = y + 'px'; clearHint(); tgt = null;
+                const el = document.elementFromPoint(x, y);
+                if (!el || !el.closest || !el.closest('#calcpanel') || $('calcpanel').hidden) return;
+                const row = el.closest('.crow');
+                if (row) { const rc = row.getBoundingClientRect(), after = y > rc.top + rc.height / 2; row.classList.add(after ? 'dropafter' : 'dropbefore'); tgt = { idx: Array.prototype.indexOf.call($('calcrows').children, row) + (after ? 1 : 0) }; }
+                else { $('calcrows').classList.add('drop'); tgt = { idx: null }; }
+            }
+            function begin(x, y) {
+                st.on = true; last.dragged = true; selectEq(st.q);
+                ghost = document.createElement('div'); ghost.className = 'mf neq ndrag';
+                const v = st.q.querySelector('.mroot'); if (v) ghost.appendChild(v.cloneNode(true));
+                document.body.appendChild(ghost);
+                document.body.classList.add('nodragging'); document.addEventListener('keydown', esc, true); document.addEventListener('touchmove', tm, { passive: false });
+                if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+                update(x, y);
+            }
+            function move(e) {
+                if (!st || e.pointerId !== st.id) return;
+                if (!st.on) { if (Math.hypot(e.clientX - st.x, e.clientY - st.y) > 6) { if (st.touch) cleanup(); else begin(e.clientX, e.clientY); } return; }
+                update(e.clientX, e.clientY);
+            }
+            function up(e) {
+                if (!st || e.pointerId !== st.id) return;
+                if (st.on && tgt) { const txt = eqText(st.q); if (txt.trim()) insert(txt, tgt.idx); }
+                cleanup();
+            }
+            body.addEventListener('pointerdown', e => {
+                const q = e.target.closest && e.target.closest('.neq');
+                if (!q || q.classList.contains('editing') || st || (e.pointerType === 'mouse' && e.button > 0)) return;
+                last = { q, was: onlyThis(q), dragged: false };   /* was it already the one highlighted equation? then this click edits it */
+                st = { q, x: e.clientX, y: e.clientY, id: e.pointerId, on: false, touch: e.pointerType === 'touch' };
+                document.addEventListener('pointermove', move); document.addEventListener('pointerup', up); document.addEventListener('pointercancel', cleanup);
+                if (st.touch) timer = setTimeout(() => { if (st && !st.on) begin(st.x, st.y); }, 380);
+            });
+            body.addEventListener('click', e => {
+                const q = e.target.closest && e.target.closest('.neq');
+                if (!q || q.classList.contains('editing')) return;
+                if (last && last.q === q && !last.dragged && !e.shiftKey) { if (last.was) edit(q, e.clientX, e.clientY); else selectEq(q); }
+                last = null;
+            });
+            /* the browser's own drag-and-drop would move the highlighted equation as text; ours replaces it */
+            body.addEventListener('dragstart', e => { const s = getSelection(); if (s.rangeCount && !s.isCollapsed && noteSelEqs().length) e.preventDefault(); });
+            body.addEventListener('keydown', e => {
+                const eqs = noteSelEqs();
+                if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === 'b' || e.key === 'B') && eqs.length) { e.preventDefault(); noteCmd('bold'); }
+                else if (e.key === 'Enter' && !e.shiftKey && eqs.length === 1 && onlyThis(eqs[0])) { e.preventDefault(); edit(eqs[0]); }
+            });
+        })();
+        /* ===== notepad text highlight: one continuous bar with rounded ends (the browser's own highlight can't be rounded) ===== */
+        (() => {
+            const body = $('notebody'), pn = $('notepanel'), ov = document.createElement('div'); ov.id = 'notehl'; ov.setAttribute('aria-hidden', 'true'); pn.appendChild(ov);
+            const GAP = 6, RAD = 5; let queued = false;
+            function draw() {
+                queued = false; ov.textContent = '';
+                if (!noteOpen) return;
+                const s = getSelection(); if (!s.rangeCount || s.isCollapsed || !body.contains(s.anchorNode) || !body.contains(s.focusNode)) return;
+                const ae = s.anchorNode.nodeType === 1 ? s.anchorNode : s.anchorNode.parentElement; if (ae && ae.closest('.neq')) return;   /* typing inside an equation */
+                const r = s.getRangeAt(0), rects = [];
+                noteTexts().forEach(t => {   /* the pieces of text the selection covers (equations draw their own highlight) */
+                    if (!r.intersectsNode(t)) return;
+                    const a = t === r.startContainer ? r.startOffset : 0, z = t === r.endContainer ? r.endOffset : t.length; if (z <= a) return;
+                    const tr = document.createRange(); tr.setStart(t, a); tr.setEnd(t, z);
+                    for (const q of tr.getClientRects()) if (q.width > 0 && q.height > 0) rects.push({ l: q.left, r: q.right, t: q.top, b: q.bottom });
+                });
+                if (!rects.length) return;
+                /* group the pieces into lines, then join the pieces on a line that touch */
+                rects.sort((x, y) => (x.t + x.b) - (y.t + y.b) || x.l - y.l);
+                const lines = [];
+                rects.forEach(q => { const ln = lines[lines.length - 1], mid = (q.t + q.b) / 2; if (ln && Math.abs(mid - ln.mid) < (q.b - q.t) * .6) { ln.p.push(q); } else lines.push({ mid, p: [q] }); });
+                const bx = body.getBoundingClientRect(), segs = [];
+                lines.forEach((ln, li) => {
+                    ln.p.sort((x, y) => x.l - y.l);
+                    const row = [];
+                    ln.p.forEach(q => { const g = row[row.length - 1]; if (g && q.l - g.r <= GAP) { g.r = Math.max(g.r, q.r); g.t = Math.min(g.t, q.t); g.b = Math.max(g.b, q.b); } else row.push({ l: q.l, r: q.r, t: q.t, b: q.b }); });
+                    row.forEach((g, i) => { g.rl = (li === 0 && i === 0) || i > 0; g.rr = (li === lines.length - 1 && i === row.length - 1) || i < row.length - 1; segs.push(g); });
+                });
+                ov.style.left = body.offsetLeft + 'px'; ov.style.top = body.offsetTop + 'px'; ov.style.width = body.clientWidth + 'px'; ov.style.height = body.clientHeight + 'px';
+                segs.forEach(g => {
+                    const d = document.createElement('div'), rl = g.rl ? RAD : 0, rr = g.rr ? RAD : 0;
+                    d.style.cssText = 'left:' + (g.l - bx.left - body.clientLeft) + 'px;top:' + (g.t - bx.top - body.clientTop) + 'px;width:' + (g.r - g.l) + 'px;height:' + (g.b - g.t) + 'px;border-radius:' + rl + 'px ' + rr + 'px ' + rr + 'px ' + rl + 'px';
+                    ov.appendChild(d);
+                });
+            }
+            const queue = () => { if (!queued) { queued = true; requestAnimationFrame(draw); } };
+            document.addEventListener('selectionchange', queue);
+            body.addEventListener('scroll', queue); body.addEventListener('input', queue); addEventListener('resize', queue);
+            new MutationObserver(queue).observe(pn, { attributes: true, attributeFilter: ['hidden'] });
         })();
         /* the notepad button shows and hides together with the calculator button */
         { const cf = $('calcfab'), nf = $('notefab'), sync = () => { nf.hidden = cf.hidden; if (cf.hidden && noteOpen) noteSet(false); };

@@ -2944,6 +2944,9 @@
         #notetools #notepink[aria-pressed="true"] .ncsw { color: var(--bg) }
         #notetools #notecm { width: 18px; margin-left: -6px; border-left-width: 0 }
         #notetools #notecm[aria-expanded="true"] { background: var(--card); border-color: var(--ink) }
+        /* the colour button and its arrow are one control: hovering either one outlines both */
+        #notetools:has(#notepink:hover, #notecm:hover) #notepink:not([aria-pressed="true"]),
+        #notetools:has(#notepink:hover, #notecm:hover) #notecm:not([aria-expanded="true"]) { border-color: var(--imag) }
         #notepal { position: absolute; left: 8px; top: calc(100% + 4px); z-index: 6; display: flex; gap: 4px; padding: 6px; background: var(--card); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink) }
         #notepal[hidden] { display: none }
         #notetools #notepal button { width: 30px; height: 30px }
@@ -2985,15 +2988,97 @@
         #calcpanel.drag .calcf { padding-right: 24px }
 
         /* boxed answer: a calculator result dragged into the notepad */
-        #notebody .mf.neq.nans { padding: .05em .45em; margin: 0 .2em; border: 2px solid var(--imag); background: color-mix(in srgb, var(--imag) 10%, transparent); font-size: 1.2rem }
+        #notebody .mf.neq.nbox { --bc: var(--imag); padding: .05em .45em; margin: 0 .2em; border: 2px solid var(--bc); background: color-mix(in srgb, var(--bc) 10%, transparent) }
+        #notebody .mf.neq.nbox.nc-or { --bc: var(--orange) }
+        #notebody .mf.neq.nbox.nc-ye { --bc: var(--yellow) }
+        #notebody .mf.neq.nbox.nc-gr { --bc: var(--ok) }
+        #notebody .mf.neq.nbox.nc-bl { --bc: var(--blue) }
+        #notebody .mf.neq.nbox.nc-sf { --bc: var(--soft) }
+        #notebody .mf.neq.nbox.nsel { background: color-mix(in srgb, var(--bc) 35%, transparent) }
         .mf.neq.ndrag.nans { background: var(--card) }
+        /* equations in the notepad: bold, colour that reaches the fraction bars and roots, edit mode */
+        .mf.neq { font-weight: 400; -webkit-touch-callout: none }
+        .mf.neq.nb { font-weight: 700 }
+        .neq .mfn { border-bottom-color: currentColor }
+        .neq .mrt { border-top-color: currentColor }
+        .neq.nb .mfn { border-bottom-width: 2.6px }
+        .neq.nb .mrt { border-top-width: 2.6px }
+        .neq.nb .mrad svg { stroke-width: 2.6px }
+        #notebody .neq.editing { user-select: auto; -webkit-user-select: auto; cursor: text; outline: 2px dotted var(--line); outline-offset: 2px; background: var(--card) }
+        #notebody .neq.editing > .mf { display: inline-block; flex: none; padding: 0 2px; overflow: visible; min-width: .6em; font-size: inherit }
+        #notetools button:disabled { opacity: .4; pointer-events: none }
+        /* text highlight in the notepad is drawn by the script above, so the browser's own square one is hidden there */
+        #notebody::selection, #notebody ::selection { background: transparent }
+        #notehl { position: absolute; z-index: 2; overflow: hidden; pointer-events: none }
+        #notehl div { position: absolute; background: color-mix(in srgb, var(--imag) 35%, transparent) }
+        #notebody .neq.nsel { border-radius: 5px }
+        #notebody .enpink { color: var(--imag) }
+        #notebody .enc-or { color: var(--orange) }
+        #notebody .enc-ye { color: var(--yellow) }
+        #notebody .enc-gr { color: var(--ok) }
+        #notebody .enc-bl { color: var(--blue) }
+        #notebody .enc-sf { color: var(--soft) }
+        /* selection highlight in the calculator's equation input: square corners */
+        .mf .msel { background: color-mix(in srgb, var(--imag) 35%, transparent); border-radius: 0 }
+        .mf .msel.mo { margin: 0; padding: 0 .12em }
+        .mf.mfall .mroot { border-radius: 0 }
+        /* the notepad equation is itself an .mf, which made ".mf:not(.mffocus) .mcaret" hide the caret inside its editor */
+        #notebody .neq.editing .mf.mffocus .mcaret { display: inline-block }
+        .crow.dropbefore { box-shadow: inset 0 3px 0 var(--imag) }
+        .crow.dropafter { box-shadow: inset 0 -3px 0 var(--imag) }
+        #calcrows.drop { box-shadow: inset 0 0 0 2px var(--imag) }
         .crow .cr.tg { touch-action: manipulation }
         .crow .cr { overflow-x: auto; overflow-y: hidden; scrollbar-width: none }
         .crow .cr::-webkit-scrollbar { display: none }
         .crow .cr .mf.cres { display: inline-block; flex: none; position: relative; vertical-align: middle; min-width: 0; padding: 0 .1em; overflow: visible; cursor: inherit; text-align: left; color: var(--imag); font-size: 1.3rem; line-height: 1.3 }
         .crow .cr .cres .mfn { border-bottom-color: var(--imag) }
         .crow .cr .cres .mrt { border-top-color: var(--imag) }
+        .cres .mroot > .mc.mo:first-child { margin-left: 0 }
+        #calcbub .mf.cres { display: block; padding: 0; overflow-x: auto; overflow-y: hidden; font-size: 1.25rem; cursor: text; user-select: text; -webkit-user-select: text }
 
+
+        /* ---------- select game packs (random levels) ---------- */
+        #packspg .mopts { margin-top: 22px; gap: 16px }
+        #packspg .sub { margin-top: 8px }
+        .pack { --pc: var(--blue); border-color: var(--pc); box-shadow: 0 4px 0 var(--pc); padding-right: 64px }
+        .pack.red { --pc: var(--imag) }
+        .pack.blue { --pc: var(--blue) }
+        .pack.yellow { --pc: var(--gold) }
+        .pack.green { --pc: var(--ok) }
+        .pack.orange { --pc: var(--orange) }
+        /* complex plane: beside the board when the window has room (placePlane sets left and width) */
+        #nlwrap.side { top: 0; bottom: 0; right: auto; display: flex; align-items: center; padding: 0 }
+        #nlwrap.side #nl, #nlwrap.corner #nl { height: auto }
+        #nlwrap.corner { top: auto; right: 16px; bottom: 16px; padding: 0 }
+        .cj { text-decoration: overline; text-decoration-thickness: 1.5px }
+        #mainlevels .mopts { margin-top: 22px; gap: 16px }
+        #mainlevels .sub { margin-top: 8px }
+        .pack.mopt.go::after, .pack.mopt.go:hover::after, .pack.mopt.go:focus-visible::after { content: "\2192"; width: auto; height: auto; border: 0; background: transparent; color: var(--pc); font-size: 1.5rem; line-height: 1; right: 18px; opacity: 0 }
+        @media (hover: hover) { .pack.mopt.go:hover::after { opacity: .9; right: 14px } }
+        .pack.mopt.go:focus-visible::after { opacity: .9; right: 14px }
+        .pack b { display: flex; align-items: center; gap: .5em }
+        .pack b::before { content: ""; flex: none; width: 1.2em; height: 1.2em; background: var(--pc); -webkit-mask: var(--ic) center / contain no-repeat; mask: var(--ic) center / contain no-repeat }
+        .pack[data-p="base"] { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M3 8h8M7 4v8M13 13l8 8M21 13l-8 8%22/%3E%3C/svg%3E") }
+        .pack[data-p="vars"] { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M3 8l7 9M10 8l-7 9M14 10h7M14 16h7%22/%3E%3C/svg%3E") }
+        .pack[data-p="complex"] { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M13 4v2.5M9 10h4v9M9 19h8%22/%3E%3C/svg%3E") }
+        .pack[data-p="trig"] { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M2 12c3-9 7-9 10 0s7 9 10 0%22/%3E%3C/svg%3E") }
+        .pack[data-p="calc"] { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M15 3.5c-2.5-1-4 .5-4 3.5v10c0 3-1.5 4.5-4 3.5%22/%3E%3C/svg%3E") }
+        @media (prefers-reduced-motion: no-preference) {
+            :root:not(.noui):not(.noanim) .pack b::before { transition: transform .22s cubic-bezier(.2, .8, .2, 1) }
+            @media (hover: hover) { :root:not(.noui):not(.noanim) .pack:not(:disabled):hover b::before { transform: rotate(-12deg) } }
+        }
+        .pack.mopt::after, .pack.mopt:hover::after, .pack.mopt:focus-visible::after {
+            content: ""; right: 20px; opacity: 1; width: 26px; height: 26px; box-sizing: border-box;
+            border: 2px solid var(--pc); background: transparent; color: var(--bg); font-size: 1.1rem; line-height: 22px; text-align: center
+        }
+        .pack.mopt[aria-pressed="true"]::after, .pack.mopt[aria-pressed="true"]:hover::after { content: "\2713"; background: var(--pc) }
+        @media (hover: hover) {
+            .pack.mopt:hover:not(:active):not(.pressed):not(:disabled) { border-color: var(--pc); box-shadow: 0 6px 0 var(--pc) }
+        }
+        .pack.mopt:active:not(:disabled), .pack.mopt.pressed:not(:disabled) { box-shadow: 0 0 0 var(--pc) }
+        .pack.mopt:disabled { cursor: not-allowed; opacity: .5; transform: none; box-shadow: 0 4px 0 var(--pc) }
+        .pack.mopt:disabled::after { opacity: .4 }
+        .pack .ptag { display: inline-block; align-self: flex-start; margin-top: 8px; padding: 2px 8px; font-style: normal; font-size: .75rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--soft); border: 1px dashed var(--line) }
         @media (max-width:520px) {
         }
     </style>
@@ -3015,7 +3100,7 @@
                         <path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="3"
                             stroke-linejoin="miter" vector-effect="non-scaling-stroke" />
                     </svg><span class="vin">-1</span></span></h1>
-            <p class="sub">v4.9.2 - a math game inspired by golf.</p>
+            <p class="sub">v4.8.3 - a math game inspired by golf.</p>
         </header>
         <div class="mopts">
             <button class="mopt red" id="mopt2"><b>main levels</b><span>hand-made levels for each
@@ -3108,27 +3193,43 @@
     <section id="mainlevels" class="pg" hidden>
         <header>
             <h2 class="pgh">main levels</h2>
+            <p class="sub">pick a game pack to see its levels</p>
+        </header>
+        <div class="mopts" id="mainpacklist">
+            <button class="mopt pack go red" type="button" data-p="base"><b>base game</b><span>familiar operations, base game</span></button>
+            <button class="mopt pack go blue" type="button" data-p="vars"><b>variables</b><span>operations that use variables</span></button>
+            <button class="mopt pack go yellow" type="button" data-p="complex"><b>complex numbers</b><span>numbers with an imaginary part</span></button>
+            <button class="mopt pack go green" type="button" data-p="trig"><b>trigonometric functions</b><span>sine, cosine, tangent and friends</span></button>
+            <button class="mopt pack go orange" type="button" data-p="calc"><b>calculus</b><span>derivatives and more</span></button>
+        </div>
+        <div class="tools"><button id="mback">back to menu</button></div>
+    </section>
+    <section id="mainpackpg" class="pg" hidden>
+        <header>
+            <h2 class="pgh" id="mpt"></h2>
             <p class="sub">hand-made levels, grouped by difficulty</p>
         </header>
         <div class="dgroups">
-            <div class="dgroup">
-                <h3 class="dv2">easy</h3>
-                <div class="soon">levels coming soon</div>
-            </div>
-            <div class="dgroup">
-                <h3 class="dv4">medium</h3>
-                <div class="soon">levels coming soon</div>
-            </div>
-            <div class="dgroup">
-                <h3 class="dv6">hard</h3>
-                <div class="soon">levels coming soon</div>
-            </div>
-            <div class="dgroup">
-                <h3 class="dv8">challenge</h3>
-                <div class="soon">levels coming soon</div>
-            </div>
+            <div class="dgroup"><h3 class="dv2">easy</h3><div class="soon">levels coming soon</div></div>
+            <div class="dgroup"><h3 class="dv4">medium</h3><div class="soon">levels coming soon</div></div>
+            <div class="dgroup"><h3 class="dv6">hard</h3><div class="soon">levels coming soon</div></div>
+            <div class="dgroup"><h3 class="dv8">challenge</h3><div class="soon">levels coming soon</div></div>
         </div>
-        <div class="tools"><button id="mback">back to menu</button></div>
+        <div class="tools"><button id="mpback">back to packs</button></div>
+    </section>
+    <section id="packspg" class="pg" hidden>
+        <header>
+            <h2 class="pgh">select game packs</h2>
+            <p class="sub">each random level comes from one of the packs you have turned on</p>
+        </header>
+        <div class="mopts" id="packlist">
+            <button class="mopt pack red" type="button" data-p="base" aria-pressed="true"><b>base game</b><span>familiar operations, base game</span></button>
+            <button class="mopt pack blue" type="button" data-p="vars" aria-pressed="false" disabled><b>variables</b><span>operations that use variables</span><em class="ptag">coming soon</em></button>
+            <button class="mopt pack yellow" type="button" data-p="complex" aria-pressed="false"><b>complex numbers</b><span>numbers with an imaginary part</span></button>
+            <button class="mopt pack green" type="button" data-p="trig" aria-pressed="false" disabled><b>trigonometric functions</b><span>sine, cosine, tangent and friends</span><em class="ptag">coming soon</em></button>
+            <button class="mopt pack orange" type="button" data-p="calc" aria-pressed="false" disabled><b>calculus</b><span>derivatives and more</span><em class="ptag">coming soon</em></button>
+        </div>
+        <div class="tools"><button id="packplay">play</button><button id="packback">back to menu</button></div>
     </section>
     <main hidden>
         <header>
@@ -3354,6 +3455,7 @@
             <button type="button" id="noteital" data-cmd="italic" aria-pressed="false" aria-label="italic" title="italic"><i>I</i></button>
             <button type="button" id="notepink" data-cmd="pink" aria-pressed="false" aria-label="pink text" title="pink text"><span class="ncsw">A</span></button><button type="button" id="notecm" data-cmd="menu" aria-haspopup="true" aria-expanded="false" aria-controls="notepal" aria-label="choose text colour" title="choose colour"><svg viewBox="0 0 10 10" width="10" height="10" aria-hidden="true" fill="currentColor"><path d="M1 3h8L5 8z" /></svg></button>
             <span class="nsep" aria-hidden="true"></span>
+            <button type="button" id="notebox" data-cmd="box" aria-pressed="false" aria-label="box around equation" title="box around the highlighted equation" disabled><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="4" y="5.5" width="16" height="13" rx="1" /></svg></button>
             <button type="button" id="notelist" data-cmd="list" aria-pressed="false" aria-label="bullet list" title="bullet list (or type * or - then a space)"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor"><circle cx="5" cy="6.5" r="1.7" /><rect x="9" y="5.75" width="11" height="1.5" /><circle cx="5" cy="12" r="1.7" /><rect x="9" y="11.25" width="11" height="1.5" /><circle cx="5" cy="17.5" r="1.7" /><rect x="9" y="16.75" width="11" height="1.5" /></svg></button>
             <button type="button" id="noteclr" data-cmd="clear" aria-label="clear formatting" title="clear formatting"><span class="ntx">T<small>x</small></span></button>
         <div id="notepal" role="group" aria-label="text colour" hidden></div>
@@ -3375,9 +3477,12 @@
         const sqfC = new Map();
         /* m = k²·r with r having no square factor: returns [k, r] */
         function sqf(m) { let c = sqfC.get(m); if (c) return c; let k = 1, r = m; for (let p = 2; p * p <= r; p++) while (r % (p * p) === 0) { r /= p * p; k *= p } c = [k, r]; sqfC.set(m, c); return c }
-        const key = x => x.n + '/' + x.d + (x.b > 1 ? 'r' + x.b : '');
+        const key = x => x.c ? 'c' + x.re + ',' + x.im : x.n + '/' + x.d + (x.b > 1 ? 'r' + x.b : '');
         const term = x => { let d = x.d; while (d % 2 === 0) d /= 2; while (d % 5 === 0) d /= 5; return d === 1 };
+        /* complex numbers (the complex numbers pack) are {c:1, re, im} with whole parts, shown like 3+2i */
+        const fmtC = x => { const a = Math.abs(x.im), co = a === 1 ? '' : a; if (!x.im) return String(x.re); if (!x.re) return (x.im < 0 ? '-' : '') + co + 'i'; return x.re + (x.im < 0 ? '−' : '+') + co + 'i'; };
         const fmt = x => {
+            if (x.c) return fmtC(x);
             if (x.b > 1) { const a = Math.abs(x.n); return (x.n < 0 ? '-' : '') + (a === 1 ? '' : a) + '√' + x.b + (x.d > 1 ? '/' + x.d : ''); } /* a root like 2√3 or √3/2 */
             if (x.d === 1) return String(x.n);
             if (settings.num === 'dec' && term(x)) {
@@ -3388,7 +3493,7 @@
             return x.n + '/' + x.d;
         };
         const fmtS = x => { const f = fmt(x), i = f.indexOf('.'); return i >= 0 && f.length - i - 1 > 2 ? f.slice(0, i + 3) : f; };
-        const same = (a, b) => a.n === b.n && a.d === b.d && (a.b || 1) === (b.b || 1);
+        const same = (a, b) => (a.c || b.c) ? !!(a.c && b.c && a.re === b.re && a.im === b.im) : a.n === b.n && a.d === b.d && (a.b || 1) === (b.b || 1);
         function mk(s, mode) {
             /* numbers can be a root like 2√3 = {n:2, d:1, b:3} (value n/d·√b, b with no square factor); in fractions mode √x of a non-square gives one */
             if (s === 'x²') return { s, f: x => F(x.n * x.n * x.b, x.d * x.d) };
@@ -4260,6 +4365,22 @@
         Object.assign(I18N.es, { m_vs_b: "modo versus", m_vs_d: "crea o únete a una sala y juega contra tus amigos" });
         Object.assign(I18N.ja, { m_vs_b: "対戦モード", m_vs_d: "ルームを作る・参加して、友だちと対戦" });
         Object.assign(I18N.zh, { m_vs_b: "对战模式", m_vs_d: "创建或加入房间，和朋友对战" });
+        Object.assign(I18N.en, {"packs_t": "select game packs", "packs_sub": "each random level comes from one of the packs you have turned on", "pk_base_b": "base game", "pk_base_d": "familiar operations, base game", "pk_vars_b": "variables", "pk_vars_d": "operations that use variables", "pk_cx_b": "complex numbers", "pk_cx_d": "numbers with an imaginary part", "pk_trig_b": "trigonometric functions", "pk_trig_d": "sine, cosine, tangent and friends", "pk_soon": "coming soon", "pk_play": "play"});
+        Object.assign(I18N.en, {"cplane": "complex plane"});
+        Object.assign(I18N.en, {"mp_sub": "pick a game pack to see its levels", "mp_back": "back to packs"});
+        Object.assign(I18N.en, {"pk_calc_b": "calculus", "pk_calc_d": "derivatives and more"});
+        Object.assign(I18N.es, {"packs_t": "elige paquetes de juego", "packs_sub": "cada nivel aleatorio sale de uno de los paquetes que tengas activados", "pk_base_b": "juego base", "pk_base_d": "operaciones conocidas, juego base", "pk_vars_b": "variables", "pk_vars_d": "operaciones que usan variables", "pk_cx_b": "números complejos", "pk_cx_d": "números con parte imaginaria", "pk_trig_b": "funciones trigonométricas", "pk_trig_d": "seno, coseno, tangente y compañía", "pk_soon": "próximamente", "pk_play": "jugar"});
+        Object.assign(I18N.es, {"cplane": "plano complejo"});
+        Object.assign(I18N.es, {"mp_sub": "elige un paquete de juego para ver sus niveles", "mp_back": "volver a los paquetes"});
+        Object.assign(I18N.es, {"pk_calc_b": "cálculo", "pk_calc_d": "derivadas y más"});
+        Object.assign(I18N.ja, {"packs_t": "ゲームパックを選ぶ", "packs_sub": "ランダムレベルは、オンにしたパックのどれかから作られます", "pk_base_b": "基本ゲーム", "pk_base_d": "おなじみの演算、基本ゲーム", "pk_vars_b": "変数", "pk_vars_d": "変数を使う演算", "pk_cx_b": "複素数", "pk_cx_d": "虚数部をもつ数", "pk_trig_b": "三角関数", "pk_trig_d": "サイン、コサイン、タンジェントなど", "pk_soon": "近日公開", "pk_play": "プレイ"});
+        Object.assign(I18N.ja, {"cplane": "複素平面"});
+        Object.assign(I18N.ja, {"mp_sub": "ゲームパックを選んでレベルを見よう", "mp_back": "パック選択に戻る"});
+        Object.assign(I18N.ja, {"pk_calc_b": "微積分", "pk_calc_d": "導関数など"});
+        Object.assign(I18N.zh, {"packs_t": "选择游戏包", "packs_sub": "每个随机关卡都来自你开启的其中一个游戏包", "pk_base_b": "基础游戏", "pk_base_d": "熟悉的运算，基础游戏", "pk_vars_b": "变量", "pk_vars_d": "使用变量的运算", "pk_cx_b": "复数", "pk_cx_d": "带虚部的数", "pk_trig_b": "三角函数", "pk_trig_d": "正弦、余弦、正切等", "pk_soon": "即将上线", "pk_play": "开始"});
+        Object.assign(I18N.zh, {"cplane": "复平面"});
+        Object.assign(I18N.zh, {"mp_sub": "选择一个游戏包查看关卡", "mp_back": "返回游戏包"});
+        Object.assign(I18N.zh, {"pk_calc_b": "微积分", "pk_calc_d": "导数等"});
         let lang = 'en';
         try { const s = localStorage.getItem('lang'); if (LANGS.includes(s)) lang = s } catch (e) { }
         function tr(k, v) {
@@ -4314,8 +4435,8 @@
         let instant = false, flipRev = false, rp = { steps: [], done: 0 };
         const animOn = k => settings.anim && !instant && (!k || settings.anims[k] !== false) && !matchMedia('(prefers-reduced-motion:reduce)').matches;
         function setFlip(el, text, label) {
-            /* digits and decimal points become flip tiles; symbols between them (the slash in a fraction, the root sign in 2√3) are drawn as plain text between the tiles. anything else is shown as ordinary text */
-            if (!settings.flip || !/^[-−]?[\d.\/√]+$/.test(text)) { el.removeAttribute('data-neg'); el.classList.add('plain'); el.setAttribute('role', 'img'); el.setAttribute('aria-label', label || text); el.textContent = text; return; }
+            /* digits and decimal points become flip tiles; symbols between them (the slash in a fraction, the root sign in 2√3, the + − and i of a complex number) are drawn as plain text between the tiles. anything else is shown as ordinary text */
+            if (!settings.flip || !/^[-−]?[\d.\/√+−i]+$/.test(text)) { el.removeAttribute('data-neg'); el.classList.add('plain'); el.setAttribute('role', 'img'); el.setAttribute('aria-label', label || text); el.textContent = text; return; }
             if (el.classList.contains('plain')) { el.classList.remove('plain'); el.innerHTML = ''; }
             const neg = /^[-−]/.test(text); if (neg) el.setAttribute('data-neg', ''); else el.removeAttribute('data-neg');
             const chars = [...(neg ? text.slice(1) : text)], an = animOn('flip'), rv = flipRev;
@@ -4412,6 +4533,15 @@
         }
         function drawLine() {
             cancelAnimationFrame(raf);
+            { const nl = $('nl'); nl.setAttribute('aria-label', L.pack === 'complex' ? 'complex plane showing your ball, your hits and the hole' : 'number line showing your ball, your hits and the hole'); }
+            placePlane(L.pack === 'complex');
+            if (L.pack === 'complex') {
+                const hit = pend && hist.length > 0 && animOn('ball'); pend = false; view = null;
+                if (!hit) { drawPlane(null); return; }
+                /* the ball hops along an arc while its shadow slides straight along the ground */
+                const t0 = performance.now(), D = 420, step = now => { const t = Math.min((now - t0) / D, 1); if (t < 1) { drawPlane({ u: t * t * (3 - 2 * t) }); raf = requestAnimationFrame(step); } else drawPlane(null); };
+                raf = requestAnimationFrame(step); return;
+            }
             const vals = [val(L.start), ...hist.map((h, i) => val(hist[i + 1] ? hist[i + 1].prev : cur))], g = val(L.goal), won = same(cur, L.goal);
             let lo = Math.min(g, ...vals), hi = Math.max(g, ...vals); if (hi - lo < 1) { lo -= 1; hi += 1 }
             const tgt = { lo, hi }, hit = pend && vals.length > 1; pend = false;
@@ -4461,10 +4591,105 @@
                 timers.push(setTimeout(() => { rp.done = i + 1; hist.push({ prev: cur, s: o.s }); cur = o.f(cur); pend = true; if (i === steps.length - 1) busy = false; render(); }, 400 + i * 600));
             });
         }
+        /* ---------- game packs ----------
+           PACK_GEN holds one level generator per pack (each takes the difficulty tier and returns true when it built a level).
+           To finish a pack later: add its generator here, then remove "disabled" and the "coming soon" tag from its button in #packlist. */
+        /* ---------- complex numbers pack (proof of concept) ----------
+           values are Gaussian integers a+bi; the number line becomes a plane (real across, imaginary up) */
+        const CB = 40, CIMAG = ['+i', '−i', '+2i', '−2i', '×i', '×(1+i)', '×(1−i)', 'x̄'];
+        const CXP = ['+1', '−1', '+2', '−2', '+3', '+i', '−i', '+2i', '−2i', '×i', '×2', '×3', '×(1+i)', '×(1−i)', 'x̄', '−x'];
+        function mkC(s) {
+            const C = (re, im) => Math.abs(re) > CB || Math.abs(im) > CB ? null : { c: 1, re, im };
+            if (s === 'x̄') return { s, f: x => C(x.re, -x.im) };
+            if (s === '−x') return { s, f: x => C(-x.re, -x.im) };
+            if (s === '×i') return { s, f: x => C(-x.im, x.re) };
+            if (s === '×2') return { s, f: x => C(2 * x.re, 2 * x.im) };
+            if (s === '×3') return { s, f: x => C(3 * x.re, 3 * x.im) };
+            if (s === '×(1+i)') return { s, f: x => C(x.re - x.im, x.re + x.im) };
+            if (s === '×(1−i)') return { s, f: x => C(x.re + x.im, x.im - x.re) };
+            const m = /^([+−])(\d*)(i?)$/.exec(s), sg = m[1] === '−' ? -1 : 1, k = sg * (m[2] === '' ? 1 : +m[2]);
+            return m[3] ? { s, f: x => C(x.re, x.im + k) } : { s, f: x => C(x.re + k, x.im) };
+        }
+        function genComplex(tier) {
+            CAP = tier === 8 ? 40000 : 200000;
+            const tp = tier === 8 ? ri(5, 7) : 0;
+            for (let tries = 0; tries < 3000; tries++) {
+                const n = tier === 8 ? ri(6, 7) : ri(4, 5) + (tier >= 4 ? 1 : 0), pool = [];
+                while (pool.length < n) { const o = mkC(CXP[ri(0, CXP.length - 1)]); if (!pool.some(q => q.s === o.s)) pool.push(o); }
+                if (!pool.some(o => CIMAG.includes(o.s))) continue;
+                const start = { c: 1, re: ri(-3, 5), im: tier >= 4 ? ri(-3, 4) : 0 }; let v = start; const steps = tier === 8 ? tp : ri(tier, tier + 1); let ok = true;
+                for (let i = 0; i < steps; i++) { const r = pool[ri(0, pool.length - 1)].f(v); if (!r) { ok = false; break; } v = r; }
+                if (!ok || same(v, start) || (v.im === 0 && Math.random() < .7)) continue; /* most goals have an imaginary part, so the pack is really about complex numbers */
+                const par = solve(start, v, pool);
+                if (tier === 8) { if (!par || par >= tp || par < Math.max(3, tp - 2)) continue; if (tries < 1800 && par !== tp - 1) continue; }
+                else if (!par || par < Math.max(2, tier - 1) || par > tier + 1) continue;
+                const need = tier === 8 ? (tries < 1200 ? 2 : 1) : (tries < 2000 ? 2 : 1);
+                if (need > 1 && countBest(start, v, pool) < need) continue;
+                L = { start, goal: v, ops: pool, limit: tier === 8 ? tp : par, pack: 'complex' }; cur = start; hist = []; undosUsed = 0; counted = false; render(); return true;
+            }
+            return false;
+        }
+        /* the plane sits beside the board when there are at least 200px free on either side of it; if not, it floats as a small box in the bottom-right corner (inside the board on phones) */
+        function placePlane(on) {
+            const nw = $('nlwrap'), mn = document.querySelector('main');
+            let mode = '';
+            if (on && !mqPhone.matches && mn && !mn.hidden && mn.offsetWidth) {
+                /* measured from layout, not getBoundingClientRect: while the board slides in, its rect is shifted by the animation */
+                const vw = document.documentElement.clientWidth, ml = (vw - mn.offsetWidth) / 2, r = { left: ml, right: ml + mn.offsetWidth }, right = vw - r.right - 24, left = r.left - 24, sp = Math.max(right, left);
+                if (sp >= 200) { const w = Math.min(sp, 480); nw.style.left = Math.round(right >= left ? r.right + 12 + (right - w) / 2 : 12 + (left - w) / 2) + 'px'; nw.style.width = Math.round(w) + 'px'; mode = 'side'; }
+                else { nw.style.left = 'auto'; nw.style.width = Math.min(320, Math.round(vw * .38)) + 'px'; mode = 'corner'; }
+            }
+            nw.classList.toggle('side', mode === 'side'); nw.classList.toggle('corner', mode === 'corner');
+            if (!mode) { nw.style.left = ''; nw.style.width = ''; }
+        }
+        let plT = 0; addEventListener('resize', () => { clearTimeout(plT); plT = setTimeout(() => { if (L && L.pack === 'complex' && !$('nlwrap').hidden) drawLine(); }, 120); });
+        let planeLast = null;
+        function drawPlane(bl) {
+            const W = $('nl').clientWidth || 640, g = L.goal;
+            const pts = [L.start, ...hist.map((h, i) => hist[i + 1] ? hist[i + 1].prev : cur)], won = same(cur, g);
+            const all = [...pts, g, { re: 0, im: 0 }];
+            let r0 = Math.min(...all.map(q => q.re)) - 1, r1 = Math.max(...all.map(q => q.re)) + 1, i0 = Math.min(...all.map(q => q.im)) - 1, i1 = Math.max(...all.map(q => q.im)) + 1;
+            if (r1 - r0 < 6) { const m = (r0 + r1) / 2; r0 = m - 3; r1 = m + 3; } if (i1 - i0 < 4) { const m = (i0 + i1) / 2; i0 = m - 2; i1 = m + 2; }
+            /* the plane grows taller when the numbers spread upwards, so the grid keeps equal units without shrinking */
+            const tgt = { r0, r1, i0, i1 };
+            if (bl && planeLast) { const u = bl.u, q = planeLast; r0 = q.r0 + (r0 - q.r0) * u; r1 = q.r1 + (r1 - q.r1) * u; i0 = q.i0 + (i0 - q.i0) * u; i1 = q.i1 + (i1 - q.i1) * u; } /* the grid glides to its new size while the ball hops */
+            const pad = 30, nwc = $('nlwrap').classList, free = nwc.contains('side') || nwc.contains('corner');
+            /* beside the board or in the corner the box floats, so its height may follow the numbers; inside the board (phones) it keeps the number line's fixed height, so the buttons below never move */
+            const H = !free ? (W < 520 ? 160 : 200) : Math.round(Math.max(150, Math.min(nwc.contains('side') ? Math.max(280, Math.round(innerHeight * .7)) : Math.round(W * .8), (i1 - i0) / (r1 - r0) * (W - 2 * pad) + 2 * pad)));
+            const sc = Math.min((W - 2 * pad) / (r1 - r0), (H - 2 * pad) / (i1 - i0)), mr = (r0 + r1) / 2, mi = (i0 + i1) / 2;
+            const X = re => W / 2 + (re - mr) * sc, Y = im => H / 2 - (im - mi) * sc, P = q => X(q.re) + ' ' + Y(q.im);
+            let h = `<rect x="1" y="1" width="${W - 2}" height="${H - 2}" fill="var(--bg)" stroke="var(--line)" stroke-width="2"/>`; /* solid panel, so the page's grid background doesn't show through */
+            h += `<text x="10" y="15" style="font-size:11px;text-anchor:start;opacity:.8">${tr('cplane')}</text>`;
+            /* the grid fills the whole box: the visible range is what the box shows around the fitted view */
+            const vr0 = mr - W / 2 / sc, vr1 = mr + W / 2 / sc, vi0 = mi - H / 2 / sc, vi1 = mi + H / 2 / sc;
+            const st = Math.max(1, Math.ceil(30 / sc));
+            for (let a = Math.ceil(vr0 / st) * st; a <= vr1; a += st) { const x = X(a); h += `<line x1="${x}" y1="${Y(vi0)}" x2="${x}" y2="${Y(vi1)}" stroke="var(--blue)" stroke-width="1" opacity=".18"/>`; if (a && x > 12 && x < W - 12) h += `<text x="${x}" y="${Math.min(H - 4, Math.max(12, Y(0) + 15))}" opacity=".7" style="font-size:11px">${a}</text>`; }
+            for (let b = Math.ceil(vi0 / st) * st; b <= vi1; b += st) { const y = Y(b); h += `<line x1="${X(vr0)}" y1="${y}" x2="${X(vr1)}" y2="${y}" stroke="var(--blue)" stroke-width="1" opacity=".18"/>`; if (b && y > 10 && y < H - 6 && !(y < 26 && X(0) < 120)) h += `<text x="${Math.max(10, Math.min(W - 10, X(0) - 10))}" y="${y + 4}" opacity=".7" style="font-size:11px;text-anchor:end">${b === 1 ? '' : b === -1 ? '−' : b < 0 ? '−' + -b : b}i</text>`; }
+            h += `<line x1="${X(vr0)}" y1="${Y(0)}" x2="${X(vr1)}" y2="${Y(0)}" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"/><line x1="${X(0)}" y1="${Y(vi0)}" x2="${X(0)}" y2="${Y(vi1)}" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"/>`;
+            const gx = X(g.re), gy = Y(g.im); holePos = { x: gx, y: gy };
+            h += `<ellipse cx="${gx}" cy="${gy}" rx="10" ry="4" fill="var(--hole)" stroke="var(--hole)" stroke-width="1.5"/><line x1="${gx}" y1="${gy}" x2="${gx}" y2="${gy - 34}" stroke="var(--ink)" stroke-width="2.5"/><path d="M${gx} ${gy - 34} L${gx + 18} ${gy - 27} L${gx} ${gy - 20}Z" fill="var(--imag)"/>`;
+            for (let i = 0; i < pts.length - 1; i++) { const last = i === pts.length - 2; h += `<path d="M${P(pts[i])} L${P(pts[i + 1])}" fill="none" stroke="${last ? 'var(--imag)' : 'var(--soft)'}" stroke-width="2" stroke-dasharray="6 5" opacity="${last ? 1 : .55}"/>`; }
+            pts.forEach((q, i) => { if (bl && i === pts.length - 1) return; h += `<circle cx="${X(q.re)}" cy="${Y(q.im)}" r="3" fill="var(--soft)"/>`; });
+            const lab = (q, txt, col) => { const x = X(q.re), right = x < W - 90; return `<text x="${x + (right ? 12 : -12)}" y="${Y(q.im) + 22}" style="font-size:13px;font-weight:700;text-anchor:${right ? 'start' : 'end'};fill:${col}">${txt}</text>`; };
+            h += lab(g, mEsc(fmt(g).replace(/^-/, '−')), 'var(--imag)');
+            if (!same(L.start, g) && !won) h += lab(L.start, tr('tee') + ' ' + mEsc(fmt(L.start).replace(/^-/, '−')), 'var(--ink)');
+            const b = pts[pts.length - 1]; let bx = X(b.re), by = Y(b.im), up = 0;
+            if (bl && pts.length > 1) { const a = pts[pts.length - 2], ax = X(a.re), ay = Y(a.im), dx = bx - ax, dy = by - ay, ht = Math.max(8, Math.min(34, Math.hypot(dx, dy) * .2)); bx = ax + dx * bl.u; by = ay + dy * bl.u; up = 4 * ht * bl.u * (1 - bl.u); }
+            if (bl || !won) h += `<ellipse cx="${bx}" cy="${by + 2}" rx="${7 * (1 - Math.min(.4, up / 220))}" ry="2.6" fill="#000" opacity="${.3 * (1 - Math.min(.6, up / 120))}"/>`; /* shadow: stays on the ground while the ball is up */
+            h += `<g transform="translate(${bx} ${by - up - (won && !bl ? 2 : 0)})"><circle r="7" fill="#fff" stroke="var(--ballstroke)" stroke-width="1.5"/><circle cx="-2" cy="-2" r=".9" fill="var(--dimple)"/><circle cx="2" cy="-1" r=".9" fill="var(--dimple)"/><circle cx="0" cy="2.2" r=".9" fill="var(--dimple)"/></g>`;
+            $('nl').style.height = H + 'px'; $('nl').setAttribute('viewBox', `0 0 ${W} ${H}`); $('nl').innerHTML = h;
+            if (!bl) planeLast = tgt;
+        }
+        const PACK_GEN = { base: t => genLevel(t), complex: t => genComplex(t) };
+        let packsOn = ['base'];
+        try { const s = JSON.parse(localStorage.getItem('hs_packs') || 'null'); if (Array.isArray(s)) { const ok = s.filter(p => PACK_GEN[p]); if (ok.length) packsOn = ok; } } catch (e) { }
+        const savePacks = () => { try { localStorage.setItem('hs_packs', JSON.stringify(packsOn)); } catch (e) { } };
+        /* with several packs on, every new level is made by one of them, picked at random */
+        const pickGen = () => PACK_GEN[packsOn[Math.floor(Math.random() * packsOn.length)]] || PACK_GEN.base;
         function newLevel() {
             view = null; stopReplay(); stopFx();
-            const t0 = parseInt($('diff').value, 10);
-            if (genLevel(t0) || (t0 === 8 && genLevel(6))) return;
+            const t0 = parseInt($('diff').value, 10), gen = pickGen();
+            if (gen(t0) || (t0 === 8 && gen(6))) return;
             ROOTS = false; NB = 100000; CAP = 1e9;
             L = { start: F(1), goal: F(10), ops: [mk('+3'), mk('×2')], limit: 3 }; cur = L.start; hist = []; undosUsed = 0; counted = false; render();
         }
@@ -4537,6 +4762,7 @@
             if (s === '|x|') return { h: '<span class="ab">|</span>' + e.h + '<span class="ab">|</span>', p: 4 };
             if (s === '√x') return { h: mRad(e.h), p: 4 };
             if (s === '−x') return { h: '−' + mWrap(e, 4), p: 1 };
+            if (s === 'x̄') return { h: '<span class="cj">' + e.h + '</span>', p: 4 };
             if (s.startsWith('mod ')) return { h: mWrap(e, 3) + mOp('mod') + mEsc(s.slice(4)), p: 0 };
             const k = mNum(s.slice(1)), o = s[0];
             if (o === '+' || o === '−') return { h: mWrap(e, 1) + mOp(o) + k, p: 1 };
@@ -4547,13 +4773,13 @@
         const opLabel = s => /^[+−×÷]−?\d+\/\d+$/.test(s) ? s[0] + mNum(s.slice(1)) : mEsc(s);
         function trailHTML() {
             const st = fmt(L.start);
-            let e = { h: mNum(st), p: /^-/.test(st) ? 1 : st.includes('/') ? 2 : 4 };
+            let e = { h: mNum(st), p: /^-/.test(st) || (L.start.c && L.start.re && L.start.im) ? 1 : st.includes('/') ? 2 : 4 };
             if (!hist.length) return e.h;
             hist.forEach(h => { e = mStep(e, h.s); });
             return e.h + ' <span class="op">=</span> <b>' + mNum(fmt(cur)) + '</b>';
         }
         function render() {
-            { const sh = $('sharelv'); if (sh) sh.hidden = !!dailyMode || !L; }
+            { const sh = $('sharelv'); if (sh) sh.hidden = !!dailyMode || !L || L.pack === 'complex'; }
             {
                 const dv = $('diff').value, mi = $('miD'), mm = $('miM');
                 mi.textContent = { 2: 'd_easy', 4: 'd_medium', 6: 'd_hard' }[dv] ? tr({ 2: 'd_easy', 4: 'd_medium', 6: 'd_hard' }[dv]) : ''; mi.className = 'dv' + dv;
@@ -4593,7 +4819,7 @@
             const m = $('msg'); m.className = ''; m.innerHTML = '';
             if (full && !busy) { m.className = 'lose'; m.textContent = left > 0 ? tr('lose1') : tr('lose2'); }
             if (won) {
-                if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: !!settings.hc, num: settings.num, rt: !!ROOTS, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
+                if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); L.pack === 'complex' || saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: !!settings.hc, num: settings.num, rt: !!ROOTS, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
                 m.className = gaveUp ? 'lose' : 'win';
                 m.innerHTML = dailyMode ? tr('win_daily', { m: tr('moves', { n: used }) }) + '<br><span id="dnote"></span><br><button id="nx">' + tr('back_cal') + '</button>' : gaveUp ? tr(used < L.limit ? 'give_under' : 'give_par', { m: tr('moves', { n: used }) }) + '<br><button id="nx">' + tr('next_level') + '</button>' : tr('win', { n: used, sc }) + '<br><button id="nx">' + tr('next_level') + '</button>';
                 $('nx').onclick = dailyMode ? openDaily : newLevel; $('nx').focus(); if ($('dnote')) $('dnote').textContent = dailyNote;
@@ -4815,7 +5041,7 @@
         function viewEls(v) {
             const nw = $('nlwrap');
             if (v === 'random') return [document.querySelector('main'), nw];
-            return [$({ menu: 'menu', main: 'mainlevels', daily: 'dailypg', stats: 'statspg' }[v])];
+            return [$({ menu: 'menu', main: 'mainlevels', daily: 'dailypg', stats: 'statspg', packs: 'packspg', mainpack: 'mainpackpg' }[v])];
         }
         /* on phones the number line sits inside the board, so it moves with it and needs no animation of its own */
         const movers = els => els.filter(e => e !== $('nlwrap') || e.parentNode === document.body);
@@ -4832,16 +5058,16 @@
                     st.position = 'fixed'; st.left = r.left + 'px'; st.top = r.top + 'px'; st.width = r.width + 'px'; st.margin = '0';
                 });
             }
-            $('menu').hidden = v !== 'menu'; $('mainlevels').hidden = v !== 'main'; $('dailypg').hidden = v !== 'daily'; $('statspg').hidden = v !== 'stats';
+            $('menu').hidden = v !== 'menu'; $('mainlevels').hidden = v !== 'main'; $('dailypg').hidden = v !== 'daily'; $('statspg').hidden = v !== 'stats'; $('packspg').hidden = v !== 'packs'; $('mainpackpg').hidden = v !== 'mainpack';
             mn.hidden = v !== 'random'; nw.hidden = v !== 'random';
             outs.forEach(e => { e.hidden = false; });
             document.body.classList.toggle('inmenu', v !== 'random');
             scrollTo(0, 0);
             if (an) {
-                const d = v === 'menu' ? (prev === 'stats' ? -1 : 1) : (v === 'stats' ? 1 : -1), ins = viewEls(v); /* stats sits to the left of the menu, every other page to the right */
+                const d = v === 'menu' ? (prev === 'stats' ? -1 : 1) : (v === 'stats' ? 1 : (v === 'main' && prev === 'mainpack') ? 1 : -1), ins = viewEls(v); /* stats sits to the left of the menu, every other page to the right */
                 const outAnims = movers(outs).map(e => swayAnim(e, swayKF(d, 0, 100 * d, false), SW_DUR, 'linear', 'forwards')); /* forwards: stays off-screen until it is hidden, so it never snaps back for a frame */
                 movers(ins).forEach(e => { e.style.animation = 'none'; swayAnim(e, swayKF(d, -100 * d, 0, true), 1200, 'linear'); });
-                bgBase = v === 'menu' ? 0 : (v === 'stats' ? 1 : -1) * Math.round(innerWidth * .3); parallax(bgBase);
+                bgBase = v === 'menu' ? 0 : (v === 'stats' ? 1 : v === 'mainpack' ? -2 : -1) * Math.round(innerWidth * .3); parallax(bgBase);
                 let cleaned = false;
                 const cleanOuts = () => {
                     if (cleaned) return; cleaned = true; outs.forEach(e => {
@@ -4853,7 +5079,7 @@
                 transEnd = () => { clearTimeout(outTimer); clearTimeout(inTimer); cleanOuts(); ins.forEach(e => e.getAnimations().forEach(a => a.cancel())); transEnd = null; };
                 outTimer = setTimeout(cleanOuts, SW_DUR + 500); /* only a fallback */
                 inTimer = setTimeout(() => { transEnd = null; }, 1230);
-            } else if (prev !== v) { bgBase = v === 'menu' ? 0 : (v === 'stats' ? 1 : -1) * Math.round(innerWidth * .3); }
+            } else if (prev !== v) { bgBase = v === 'menu' ? 0 : (v === 'stats' ? 1 : v === 'mainpack' ? -2 : -1) * Math.round(innerWidth * .3); }
             curView = v; calcSync();
             if (v === 'random') { view = null; pend = false; if (L) { updateNs(); render(); } }
         }
@@ -5016,8 +5242,19 @@
         $('moptS').onclick = openStats;
         $('stback').onclick = () => showView('menu');
         $('moptD').onclick = () => { location.href = 'daily/'; };
-        $('mopt1').onclick = () => { if (dailyMode) { dailyMode = false; newLevel(); } showView('random'); };
+        $('mopt1').onclick = () => { syncPacks(); showView('packs'); };
+        function syncPacks() { document.querySelectorAll('#packlist .pack').forEach(b => b.setAttribute('aria-pressed', packsOn.includes(b.dataset.p))); }
+        document.querySelectorAll('#packlist .pack').forEach(b => b.onclick = () => {
+            const p = b.dataset.p; if (b.disabled || !PACK_GEN[p]) return;
+            if (packsOn.includes(p)) { if (packsOn.length > 1) packsOn = packsOn.filter(x => x !== p); } /* at least one pack stays on */
+            else packsOn.push(p);
+            savePacks(); syncPacks();
+        });
+        $('packplay').onclick = () => { if (dailyMode) { dailyMode = false; newLevel(); } showView('random'); };
+        $('packback').onclick = () => showView('menu');
         $('mopt2').onclick = () => showView('main');
+        document.querySelectorAll('#mainpacklist .pack').forEach(b => b.onclick = () => { $('mpt').textContent = b.querySelector('b').textContent; showView('mainpack'); });
+        $('mpback').onclick = () => showView('main');
         $('mback').onclick = () => showView('menu');
         $('tomenu').onclick = () => showView('menu');
         $('moptC').onclick = () => { $('codein').value = ''; $('codedlg').showModal(); $('codein').focus(); };
@@ -5183,12 +5420,14 @@
             r.math = calcMode === 'frac' && (q || rd) ? (q || rd) : null;
             return r;
         }
+        /* 1.5e+20 -> 1.5×10^(20), so it is drawn with a real exponent like Desmos */
+        function calcSci(t) { return t ? t.replace(/(\d(?:\.\d+)?)e([+\-−]?)(\d+)/g, (m, a, sg, n) => a + '×10^(' + (sg === '-' || sg === '−' ? '−' : '') + n + ')') : t; }
         function calcShow0(x) {   /* { a: text to show, tip: the full value for the click bubble } */
             const sg = x < 0 ? '−' : '', ax = Math.abs(x);
             if (Number.isInteger(x)) return { a: ax < 1e15 ? sg + String(ax) : x.toExponential(3).replace('-', '−'), tip: ax < 1e15 ? sg + String(ax) : sg + ax.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 0 }) };
             const dec = ax >= 1e15 || ax < 1e-9 ? x.toExponential(8).replace('-', '−') : sg + String(parseFloat(ax.toPrecision(12)));
             const q = calcRat(x), body = dec.replace(/^−/, '');
-            const rs = ax >= 1e15 || ax < 1e-9 ? body : String(parseFloat(ax >= 0.1 ? ax.toFixed(3) : ax.toPrecision(2))), dshort = body.length > 6 ? sg + (rs.length > 6 ? rs.slice(0, 6) : rs) + '…' : dec;
+            const rs = ax >= 1e15 || ax < 1e-9 ? body : String(parseFloat(ax >= 0.1 ? ax.toFixed(3) : ax.toPrecision(2))), dshort = ax >= 1e15 || ax < 1e-9 ? sg + ax.toExponential(4) : body.length > 6 ? sg + (rs.length > 6 ? rs.slice(0, 6) : rs) + '…' : dec;
             const precise = ax >= 1e15 || ax < 1e-9 ? x.toExponential(14).replace('-', '−') : sg + String(parseFloat(ax.toPrecision(15)));
             const rd = q ? null : calcRad(x), tip = q ? q + ' = ' + precise : rd ? rd + ' = ' + precise : precise;
             if (q && calcMode === 'frac') return { a: q.length > 10 ? q.slice(0, 9) + '…' : q, tip };
@@ -5212,7 +5451,8 @@
             let v; try { v = calcEval(text); } catch (e) { v = NaN; }
             if (v === null) return;
             if (!isFinite(v)) { r.classList.add('err'); r.textContent = '—'; r.title = tr('calc_nan'); return; }
-            const sh = calcShow(v); r.textContent = sh.a; r._full = sh.full; if (sh.math) calcResMath(r, sh.math);
+            const sh = calcShow(v); sh.a = calcSci(sh.a); sh.full = calcSci(sh.full); sh.tip = calcSci(sh.tip);
+            r.textContent = sh.a; r._full = sh.full; calcResMath(r, sh.math || sh.a);
             if (sh.tip) { r.classList.add('tg'); r._tip = sh.tip; }
         }
         /* ===== math field: a small Desmos-style equation editor =====
@@ -5366,6 +5606,7 @@
                     else if (n.t === 'sup') { e = mk('span', 'mnode msup'); const k = mk('span', 'mlist'); e.appendChild(k); fill(n.a, k); }
                     else if (n.t === 'sqrt' || n.t === 'cbrt') { e = mk('span', 'mnode msqrt' + (n.t === 'cbrt' ? ' mcbrt' : '')); const g = mk('span', 'mrad'); g.innerHTML = '<svg viewBox="0 0 10 100" preserveAspectRatio="none"><path d="M0 62L2.2 58L5.4 97L10 0"/></svg>'; if (n.t === 'cbrt') g.insertAdjacentHTML('beforeend', '<span class="mix">3</span>'); const k = mk('span', 'mlist mrt'); e.append(g, k); fill(n.a, k); }
                     else { e = mk('span', 'mnode mfrac'); const a = mk('span', 'mlist mfn'), b = mk('span', 'mlist mfd'); e.append(a, b); fill(n.n, a); fill(n.d, b); }
+                    if (n.k) e.classList.add('e' + n.k); if (f.sel && f.sel.l === list && i >= f.sel.a && i < f.sel.b) { e.classList.add('msel'); if (i === f.sel.a) e.classList.add('msel-s'); if (i === f.sel.b - 1) e.classList.add('msel-e'); }
                     e._n = n; el.appendChild(e);
                 }
             };
@@ -5557,8 +5798,11 @@
         function calcBub(btn, text) {
             if (calcBubFor === btn) { calcBubHide(); return; }
             calcBubHide();
-            const b = document.createElement('div'); b.id = 'calcbub'; b.textContent = text; b.setAttribute('role', 'status');
+            const b = document.createElement('div'); b.id = 'calcbub'; b.setAttribute('role', 'status'); b.setAttribute('aria-label', text);
             b.style.maxWidth = Math.min(300, innerWidth - 16) + 'px'; document.body.appendChild(b);
+            { const el = document.createElement('span'); el.className = 'mf cres'; const view = document.createElement('span'); view.className = 'mroot'; el.appendChild(view); b.appendChild(el);
+              const f = { root: mfList(null), all: false, focused: false, c: { l: null, i: -1 }, view, el }; mfFill(f.root, text); mfDraw(f);
+              b.addEventListener('copy', e => { e.clipboardData.setData('text/plain', text); e.preventDefault(); }); }
             const r = btn.getBoundingClientRect(), bw = b.offsetWidth, bh = b.offsetHeight;
             const left = Math.min(Math.max(8, r.right - bw), Math.max(8, innerWidth - bw - 8)), above = r.top - bh - 12 >= 8;
             b.style.left = left + 'px'; b.style.top = (above ? r.top - bh - 12 : r.bottom + 12) + 'px'; b.classList.toggle('below', !above);
@@ -5585,15 +5829,20 @@
         let noteOpen = false, notePos = null, noteSize = null, noteHoldOn = false, noteTimer = 0;
         function noteLang() { $('notebody').dataset.ph = typeof tr === 'function' ? tr('note_ph') : 'write here, or drag an equation in from the calculator'; }
         /* equations are stored as small trees: a character is a string, other nodes are {t, a} or {t:'frac', n, d} */
-        const noteSer = l => l.map(n => n.t === 'c' ? n.v : n.t === 'frac' ? { t: 'frac', n: noteSer(n.n), d: noteSer(n.d) } : { t: n.t, a: noteSer(n.a) });
+        const noteSer = l => l.map(n => {
+            const o = n.t === 'c' ? (n.k ? { t: 'c', v: n.v } : n.v) : n.t === 'frac' ? { t: 'frac', n: noteSer(n.n), d: noteSer(n.d) } : { t: n.t, a: noteSer(n.a) };
+            if (n.k && typeof o === 'object') o.k = n.k; return o;
+        });
         function noteDes(arr, dst, depth) {
             depth = depth || 0; if (!Array.isArray(arr) || depth > 12) return;
             arr.slice(0, 500).forEach(x => {
                 let c;
                 if (typeof x === 'string') c = mfCh(x.slice(0, 1));
+                else if (x && x.t === 'c' && typeof x.v === 'string') c = mfCh(x.v.slice(0, 1));
                 else if (x && (x.t === 'sup' || x.t === 'sqrt' || x.t === 'cbrt')) { c = mfMk(x.t); noteDes(x.a, c.a, depth + 1); }
                 else if (x && x.t === 'frac') { c = mfMk('frac'); noteDes(x.n, c.n, depth + 1); noteDes(x.d, c.d, depth + 1); }
                 else return;
+                if (x && typeof x === 'object' && NOTE_CLS.includes(x.k)) c.k = x.k;
                 mfAdd(dst, dst.length, c);
             });
         }
@@ -5607,14 +5856,14 @@
             const f = { root: mfList(null), all: false, focused: false, c: { l: null, i: -1 }, view, el };
             noteDes(ser, f.root); mfDraw(f);
         }
-        const noteRedraw = () => $('notebody').querySelectorAll('.neq').forEach(noteDraw);
+        const noteRedraw = () => $('notebody').querySelectorAll('.neq:not(.editing)').forEach(noteDraw);
         function noteSave() { clearTimeout(noteTimer); noteTimer = setTimeout(() => { try { localStorage.setItem(NOTE_KEY, $('notebody').innerHTML); } catch (e) { } }, 250); }
         function noteClean(src, dst) {   /* keeps only plain text, line breaks, bold, italic, the pink class and equations */
             src.childNodes.forEach(n => {
                 if (n.nodeType === 3) dst.appendChild(document.createTextNode(n.nodeValue.replace(/\u200b/g, '')));
                 else if (n.nodeType === 1) {
                     const t = n.tagName.toLowerCase();
-                    if (n.classList.contains('neq')) { const el = noteEq(null); el.dataset.eq = (n.getAttribute('data-eq') || '[]').slice(0, 20000); { const k = NOTE_CLS.find(q => n.classList.contains(q)); if (k) el.classList.add(k); } if (n.classList.contains('nans')) el.classList.add('nans'); dst.appendChild(el); }
+                    if (n.classList.contains('neq')) { const el = noteEq(null); el.dataset.eq = (n.getAttribute('data-eq') || '[]').slice(0, 20000); { const k = NOTE_CLS.find(q => n.classList.contains(q)); if (k) el.classList.add(k); } if (n.classList.contains('nans') || n.classList.contains('nbox')) el.classList.add('nbox'); if (n.classList.contains('nb')) el.classList.add('nb'); dst.appendChild(el); }
                     else if (/^(div|p|br|b|strong|i|em|span|ul|li)$/.test(t)) {
                         const c = document.createElement(t === 'strong' ? 'b' : t === 'em' ? 'i' : t);
                         if (t === 'span') { const k = NOTE_CLS.find(q => n.classList.contains(q)); if (k) c.className = k; else if (n.classList.contains('nplain')) c.className = 'nplain'; }
@@ -5679,15 +5928,29 @@
                 const s = t === r.startContainer ? r.startOffset : 0, e = t === r.endContainer ? r.endOffset : t.length;
                 if (e > s && /[^\s\u200b]/.test(t.data.slice(s, e))) out.push({ t, s, e });
             });
-            b.querySelectorAll('.neq').forEach(q => {
-                const qr = document.createRange(); qr.selectNode(q);
-                if (r.compareBoundaryPoints(Range.START_TO_START, qr) <= 0 && r.compareBoundaryPoints(Range.END_TO_END, qr) >= 0) out.push({ q });
-            });
+            b.querySelectorAll('.neq:not(.editing)').forEach(q => { if (r.intersectsNode(q)) out.push({ q }); });
             return out;
+        }
+        /* colour inside an equation that is being edited: the selected part, or (nothing selected) what you type next */
+        function noteSetK(n, k) { if (k) n.k = k; else delete n.k; if (n.t !== 'c') mfKids(n).forEach(l => l.forEach(m => noteSetK(m, k))); }
+        function noteEditColor(f, k, toggle) {
+            const nodes = f.selNodes ? f.selNodes() : [];
+            if (nodes.length) { const same = toggle && k && nodes.every(n => n.k === k); nodes.forEach(n => noteSetK(n, same ? '' : k)); }
+            else f.pen = toggle && f.pen === k ? '' : k;
+            mfDraw(f); noteState();
+        }
+        function noteEditCol(f) {
+            const nodes = f.selNodes ? f.selNodes() : [];
+            if (!nodes.length) return f.pen || '';
+            const cs = new Set(nodes.map(n => n.k || '')); return cs.size === 1 ? [...cs][0] : '*';
+        }
+        function noteSelEqs() {   /* the equations the current selection covers */
+            const s = getSelection(), b = $('notebody'); if (!s.rangeCount || s.isCollapsed || !b.contains(s.anchorNode)) return [];
+            const r = s.getRangeAt(0); return Array.from(b.querySelectorAll('.neq:not(.editing)')).filter(q => r.intersectsNode(q));
         }
         function noteColorSel(r, color) {   /* color: a class from NOTE_COLS, or '' for no colour */
             const tg = noteTargets(r); if (!tg.length) return;
-            noteKeepSel(() => {
+            (tg.every(x => x.q) ? (g => g()) : noteKeepSel)(() => {
                 const parts = [];
                 tg.forEach(x => {
                     if (x.q) { parts.push(x.q); return; }
@@ -5716,7 +5979,7 @@
         function noteMenu(open) { $('notepal').hidden = !open; $('notecm').setAttribute('aria-expanded', String(open)); }
         function noteState() {
             { const sl = getSelection(), rg = sl.rangeCount && !sl.isCollapsed ? sl.getRangeAt(0) : null;   /* one box over each selected equation */
-              $('notebody').querySelectorAll('.neq').forEach(q => q.classList.toggle('nsel', !!(rg && rg.intersectsNode(q)))); }
+              $('notebody').querySelectorAll('.neq').forEach(q => q.classList.toggle('nsel', !q.classList.contains('editing') && !!(rg && rg.intersectsNode(q)))); }
             const b = $('notebody'), sel = getSelection(), on = { bold: false, italic: false, list: false }; let col = '';
             if (sel.rangeCount && b.contains(sel.anchorNode)) {
                 try { on.bold = document.queryCommandState('bold'); on.italic = document.queryCommandState('italic'); on.list = document.queryCommandState('insertUnorderedList'); } catch (e) { }
@@ -5726,6 +5989,10 @@
                 /* the caret takes the colour of whatever you are about to type */
                 const cc = sel.isCollapsed && col && NOTE_COLS.find(c => c[0] === col); b.style.caretColor = cc ? 'var(' + cc[1] + ')' : '';
             }
+            { const seq = noteSelEqs();   /* equations selected: bold and box buttons follow them */
+              if (seq.length) { const eb = seq.every(q => q.classList.contains('nb')), hasT = sel.rangeCount && noteTargets(sel.getRangeAt(0)).some(x => x.t); on.bold = hasT ? on.bold && eb : eb; }
+              const bx = $('notebox'); bx.disabled = !seq.length; bx.setAttribute('aria-pressed', String(!!seq.length && seq.every(q => q.classList.contains('nbox')))); }
+            { const ed = b.querySelector('.neq.editing'); if (ed && ed._f) col = noteEditCol(ed._f); }
             const last = NOTE_COLS.find(c => c[0] === noteLast), pk = $('notepink');
             pk.style.setProperty('--ncc', 'var(' + last[1] + ')'); pk.title = pk.setAttribute('aria-label', last[2] + ' text') || last[2] + ' text (click to apply or remove)';
             $('notebold').setAttribute('aria-pressed', String(on.bold)); $('noteital').setAttribute('aria-pressed', String(on.italic));
@@ -5736,6 +6003,13 @@
         function noteCmd(c, arg) {
             const b = $('notebody'), sel = getSelection();
             if (c === 'menu') { noteMenu($('notepal').hidden); return; }
+            { const ed = b.querySelector('.neq.editing');   /* while an equation is being edited, colour works on the letters inside it */
+              if (ed && ed._f) {
+                  if (c === 'color' || c === 'pink') { const k = c === 'color' ? (arg || '') : noteLast; if (c === 'color' && k) { noteLast = k; try { localStorage.setItem('notecolor1', k); } catch (e) { } } noteEditColor(ed._f, k, c === 'pink'); noteMenu(false); }
+                  else if (c === 'clear') noteEditColor(ed._f, '', false);
+                  return;
+              } }
+            if (c === 'box') { const eqs = noteSelEqs(); if (eqs.length) { const all = eqs.every(q => q.classList.contains('nbox')); eqs.forEach(q => q.classList.toggle('nbox', !all)); } noteState(); noteSave(); return; }
             if (!sel.rangeCount || !b.contains(sel.anchorNode)) { b.focus(); const r = document.createRange(); r.selectNodeContents(b); r.collapse(false); sel.removeAllRanges(); sel.addRange(r); }
             if (c === 'pink' || c === 'color') {   /* the main button toggles the last colour; a swatch always applies that colour */
                 const k = c === 'color' ? (arg || '') : noteLast;
@@ -5747,8 +6021,12 @@
             }
             else if (c === 'list') document.execCommand('insertUnorderedList');
             else if (c === 'clear') {
-                document.execCommand('removeFormat');
+                noteSelEqs().forEach(q => q.classList.remove('nb', 'nbox')); document.execCommand('removeFormat');
                 if (!sel.isCollapsed) noteColorSel(sel.getRangeAt(0), ''); else if (noteColorOf(sel.getRangeAt(0).startContainer)) noteColorCaret(sel, '');
+            }
+            else if (c === 'bold' && noteSelEqs().length) {   /* bold on a highlighted equation (and on any text selected with it) */
+                const eqs = noteSelEqs(), all = eqs.every(q => q.classList.contains('nb')); eqs.forEach(q => q.classList.toggle('nb', !all));
+                if (noteTargets(sel.getRangeAt(0)).some(x => x.t)) { document.execCommand('styleWithCSS', false, false); document.execCommand('bold'); }
             }
             else { document.execCommand('styleWithCSS', false, false); document.execCommand(c); }
             noteState(); noteSave();
@@ -5788,6 +6066,7 @@
             noteClamp();
         }
         function noteSet(open) {
+            if (!open) $('notebody').querySelectorAll('.neq.editing').forEach(q => q._fin && q._fin('save', false));
             noteOpen = open; const pn = $('notepanel'); pn.hidden = !open; $('notefab').setAttribute('aria-expanded', String(open));
             if (open) { noteLayout(); noteRedraw(); noteLang(); if (!calcMobile()) { const b = $('notebody'); b.focus(); const r = document.createRange(); r.selectNodeContents(b); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } }
             else { document.body.classList.remove('notebelow'); noteMenu(false); }
@@ -5834,11 +6113,25 @@
         /* move the window by its title bar, resize from the corner (desktop only) */
         (() => {
             const h = $('noteh'), pn = $('notepanel'), g = $('notegrip'); let d = null, r = null;
+            /* sway: like the calculator, the window hangs from the grab point and swings a little as you move it, then settles */
+            let ang = 0, vel = 0, raf = 0, lastX = 0;
+            const calm = matchMedia('(prefers-reduced-motion: reduce)');
+            const tick = () => {
+                vel += -ang * 0.1 - vel * 0.2; ang += vel;
+                if (!d && Math.abs(ang) < 0.02 && Math.abs(vel) < 0.02) { ang = vel = 0; raf = 0; pn.style.transform = ''; pn.style.transformOrigin = ''; return; }
+                pn.style.transform = 'rotate(' + ang.toFixed(3) + 'deg)';
+                raf = requestAnimationFrame(tick);
+            };
+            const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
             h.addEventListener('pointerdown', e => {
                 if (calcMobile() || e.target.closest('button') || e.button > 0 || !notePos) return;
                 d = { dx: e.clientX - notePos.x, dy: e.clientY - notePos.y }; pn.classList.add('dragging'); h.setPointerCapture(e.pointerId); e.preventDefault();
+                lastX = e.clientX; if (!calm.matches) { pn.style.transformOrigin = (e.clientX - notePos.x) + 'px ' + (e.clientY - notePos.y) + 'px'; kick(); }
             });
-            h.addEventListener('pointermove', e => { if (!d) return; notePos.x = e.clientX - d.dx; notePos.y = e.clientY - d.dy; noteClamp(); });
+            h.addEventListener('pointermove', e => {
+                if (!d) return; notePos.x = e.clientX - d.dx; notePos.y = e.clientY - d.dy; noteClamp();
+                if (!calm.matches) { vel = Math.max(-0.8, Math.min(0.8, vel + (e.clientX - lastX) * 0.012)); lastX = e.clientX; kick(); }
+            });
             const end = () => { d = null; pn.classList.remove('dragging'); };
             h.addEventListener('pointerup', end); h.addEventListener('pointercancel', end);
             g.addEventListener('pointerdown', e => {
@@ -5894,7 +6187,7 @@
                 if (!st || e.pointerId !== st.id) return;
                 if (st.on) {
                     const el = document.elementFromPoint(e.clientX, e.clientY), pn = el && el.closest && el.closest('#notepanel');
-                    if (pn) { const rg = noteRangeAt(e.clientX, e.clientY, !!el.closest('#notebody')); if (st.ans) { const l = mfList(null); mfFill(l, st.ans); noteInsertEq(noteSer(l), rg, 'nans'); } else noteInsertEq(noteSer(st.f.root), rg); }
+                    if (pn) { const rg = noteRangeAt(e.clientX, e.clientY, !!el.closest('#notebody')); if (st.ans) { const l = mfList(null); mfFill(l, st.ans); noteInsertEq(noteSer(l), rg, 'nbox'); } else noteInsertEq(noteSer(st.f.root), rg); }
                     suppress = true; setTimeout(() => { suppress = false; }, 0);
                 }
                 cleanup();
@@ -5908,6 +6201,181 @@
                 if (st.touch) timer = setTimeout(() => { if (st && !st.on) begin(st.x, st.y); }, 380);
             });
             rows.addEventListener('click', e => { if (suppress) { e.stopPropagation(); e.preventDefault(); } }, true);
+        })();
+        /* ===== notepad equations: click to highlight, click again to edit, drag back into the calculator ===== */
+        (() => {
+            const body = $('notebody'); let st = null, ghost = null, tgt = null, timer = 0, last = null;
+            const eqText = q => { let ser = []; try { ser = JSON.parse(q.dataset.eq || '[]'); } catch (e) { } const l = mfList(null); noteDes(ser, l); return mfOut(l); };
+            const selectEq = q => { const r = document.createRange(); r.selectNode(q); const s = getSelection(); s.removeAllRanges(); s.addRange(r); noteState(); };
+            const onlyThis = q => { const s = getSelection(); if (!s.rangeCount || s.isCollapsed || !body.contains(s.anchorNode)) return false; const tg = noteTargets(s.getRangeAt(0)); return tg.length === 1 && tg[0].q === q; };
+            /* ----- edit an equation in place with the same editor the calculator uses ----- */
+            function edit(q, x, y) {
+                if (q.classList.contains('editing')) return;
+                let ser = []; try { ser = JSON.parse(q.dataset.eq || '[]'); } catch (e) { }
+                const f = mfCreate('', '', tr('calc_eq')); noteDes(ser, f.root); f.c = { l: f.root, i: f.root.length };
+                let done = false;
+                const fin = (mode, reselect) => {   /* mode: save | cancel | del */
+                    if (done) return; done = true; q._fin = null; q._f = null; document.removeEventListener('pointermove', mv); document.removeEventListener('pointerup', upd);
+                    const s = noteSer(f.root); q.classList.remove('editing');
+                    if (mode === 'save' && s.length) { const j = JSON.stringify(s); if (j.length <= 20000) q.dataset.eq = j; }
+                    if (mode === 'del' || (mode === 'save' && !s.length)) {
+                        const r = document.createRange(); r.setStartBefore(q); r.collapse(true); q.remove();
+                        if (reselect) { body.focus(); const sl = getSelection(); sl.removeAllRanges(); sl.addRange(r); }
+                        noteSave(); noteState(); return;
+                    }
+                    q.textContent = ''; noteDraw(q);
+                    if (reselect) { body.focus(); selectEq(q); }
+                    noteSave(); noteState();
+                };
+                q._f = f; f.pen = ''; f.sel = null;
+                /* partly coloured equations: every node can carry a colour (k). a drag or Shift+arrows selects part of the line;
+                   with nothing selected, the colour you pick is used for what you type next */
+                const known = new WeakSet(), walk = (l, fn) => l.forEach(n => { fn(n); if (n.t !== 'c') mfKids(n).forEach(k => walk(k, fn)); });
+                walk(f.root, n => known.add(n));
+                f.onchange = () => { let ch = false; walk(f.root, n => { if (!known.has(n)) { known.add(n); if (f.pen && n.t === 'c') { n.k = f.pen; ch = true; } } }); if (ch) mfDraw(f); };
+                f.selNodes = () => f.all ? f.root.slice() : f.sel ? f.sel.l.slice(f.sel.a, f.sel.b) : [];
+                const delSel = () => { if (!f.sel) return false; const { l, a, b } = f.sel; l.splice(a, b - a); f.c = { l, i: a }; f.sel = null; return true; };
+                let anchor = null;
+                f.el.addEventListener('keydown', e => {   /* capture: runs before the editor's own key handling */
+                    const k = e.key, mod = e.ctrlKey || e.metaKey;
+                    if (e.shiftKey && !mod && !e.altKey && (k === 'ArrowLeft' || k === 'ArrowRight')) {
+                        e.preventDefault(); e.stopPropagation();
+                        if (!f.sel || !anchor || anchor.l !== f.c.l) anchor = { l: f.c.l, i: f.c.i };
+                        f.all = false; const c = f.c; c.i = Math.max(0, Math.min(c.l.length, c.i + (k === 'ArrowLeft' ? -1 : 1)));
+                        const a = Math.min(anchor.i, c.i), b = Math.max(anchor.i, c.i); f.sel = a === b ? null : { l: c.l, a, b };
+                        mfDraw(f); noteState(); return;
+                    }
+                    if (f.sel && !mod && (k === 'Backspace' || k === 'Delete')) { e.preventDefault(); e.stopPropagation(); delSel(); mfDraw(f); f.onchange(); noteState(); return; }
+                    if (f.sel && !mod && k.length === 1) delSel();   /* typing over a selection replaces it */
+                    else if (f.sel && !['Shift', 'Control', 'Alt', 'Meta'].includes(k)) f.sel = null;
+                }, true);
+                let dr = null;
+                const hit = (x, y) => { const el = document.elementFromPoint(x, y), t = el && el.closest ? el.closest('.mc, .mnode') : null; if (!t || !t._n || !f.el.contains(t)) return null; const r = t.getBoundingClientRect(); return { l: t._n.l, i: t._n.l.indexOf(t._n) + (x > r.left + r.width / 2 ? 1 : 0) }; };
+                f.el.addEventListener('pointerdown', e => { if (e.pointerType === 'touch' || e.button > 0) return; f.sel = null; f.all = false; dr = hit(e.clientX, e.clientY); });
+                const mv = e => {
+                    if (!dr) return; const h = hit(e.clientX, e.clientY); if (!h || h.l !== dr.l) return;
+                    const a = Math.min(dr.i, h.i), b = Math.max(dr.i, h.i); f.sel = a === b ? null : { l: dr.l, a, b }; if (f.sel) f.c = { l: dr.l, i: h.i };
+                    mfDraw(f); noteState();
+                };
+                const upd = () => { dr = null; };
+                document.addEventListener('pointermove', mv); document.addEventListener('pointerup', upd);
+                f.onnav = k => { if (k === 'enter') fin('save', true); else if (k === 'back') fin('del', true); };
+                f.ta.addEventListener('blur', () => fin('save', false));
+                f.ta.addEventListener('keydown', e => { if (e.key === 'Escape') { e.preventDefault(); fin('cancel', true); } });
+                /* keep the notepad's own key / paste handlers out of the equation editor */
+                ['keydown', 'keyup', 'input', 'beforeinput', 'paste', 'cut', 'copy', 'drop'].forEach(t => f.el.addEventListener(t, e => e.stopPropagation()));
+                q.classList.add('editing'); q.textContent = ''; q.appendChild(f.el); q._fin = fin;
+                f.focus(true);
+                if (x != null) requestAnimationFrame(() => {   /* put the caret where you clicked */
+                    const t = document.elementFromPoint(x, y);
+                    if (!done && t && t !== f.el && f.el.contains(t)) t.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: x, clientY: y }));
+                });
+            }
+            /* ----- drag a notepad equation back into the calculator (the equation stays in the notepad too) ----- */
+            const clearHint = () => { document.querySelectorAll('.crow.dropbefore, .crow.dropafter').forEach(r => r.classList.remove('dropbefore', 'dropafter')); $('calcrows').classList.remove('drop'); };
+            function insert(txt, idx) {
+                const n = calcRows.length, lastBlank = calcRows[n - 1].trim() === '';
+                if (idx == null || idx >= n - (lastBlank ? 1 : 0)) { if (lastBlank) calcRows[n - 1] = txt; else calcRows.push(txt); calcRows.push(''); }
+                else if (calcRows[idx].trim() === '') calcRows[idx] = txt;
+                else calcRows.splice(idx, 0, txt);
+                calcRender(); const bx = $('calcrows'); bx.scrollTop = idx == null ? bx.scrollHeight : bx.scrollTop;
+            }
+            const tm = e => { if (st && st.on) e.preventDefault(); };
+            function esc(e) { if (e.key === 'Escape') { e.stopPropagation(); cleanup(); } }
+            function cleanup() {
+                clearTimeout(timer); if (ghost) ghost.remove(); ghost = null; clearHint();
+                document.body.classList.remove('nodragging'); st = null; tgt = null;
+                document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); document.removeEventListener('pointercancel', cleanup);
+                document.removeEventListener('keydown', esc, true); document.removeEventListener('touchmove', tm);
+            }
+            function update(x, y) {
+                ghost.style.left = x + 'px'; ghost.style.top = y + 'px'; clearHint(); tgt = null;
+                const el = document.elementFromPoint(x, y);
+                if (!el || !el.closest || !el.closest('#calcpanel') || $('calcpanel').hidden) return;
+                const row = el.closest('.crow');
+                if (row) { const rc = row.getBoundingClientRect(), after = y > rc.top + rc.height / 2; row.classList.add(after ? 'dropafter' : 'dropbefore'); tgt = { idx: Array.prototype.indexOf.call($('calcrows').children, row) + (after ? 1 : 0) }; }
+                else { $('calcrows').classList.add('drop'); tgt = { idx: null }; }
+            }
+            function begin(x, y) {
+                st.on = true; last.dragged = true; selectEq(st.q);
+                ghost = document.createElement('div'); ghost.className = 'mf neq ndrag';
+                const v = st.q.querySelector('.mroot'); if (v) ghost.appendChild(v.cloneNode(true));
+                document.body.appendChild(ghost);
+                document.body.classList.add('nodragging'); document.addEventListener('keydown', esc, true); document.addEventListener('touchmove', tm, { passive: false });
+                if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+                update(x, y);
+            }
+            function move(e) {
+                if (!st || e.pointerId !== st.id) return;
+                if (!st.on) { if (Math.hypot(e.clientX - st.x, e.clientY - st.y) > 6) { if (st.touch) cleanup(); else begin(e.clientX, e.clientY); } return; }
+                update(e.clientX, e.clientY);
+            }
+            function up(e) {
+                if (!st || e.pointerId !== st.id) return;
+                if (st.on && tgt) { const txt = eqText(st.q); if (txt.trim()) insert(txt, tgt.idx); }
+                cleanup();
+            }
+            body.addEventListener('pointerdown', e => {
+                const q = e.target.closest && e.target.closest('.neq');
+                if (!q || q.classList.contains('editing') || st || (e.pointerType === 'mouse' && e.button > 0)) return;
+                last = { q, was: onlyThis(q), dragged: false };   /* was it already the one highlighted equation? then this click edits it */
+                st = { q, x: e.clientX, y: e.clientY, id: e.pointerId, on: false, touch: e.pointerType === 'touch' };
+                document.addEventListener('pointermove', move); document.addEventListener('pointerup', up); document.addEventListener('pointercancel', cleanup);
+                if (st.touch) timer = setTimeout(() => { if (st && !st.on) begin(st.x, st.y); }, 380);
+            });
+            body.addEventListener('click', e => {
+                const q = e.target.closest && e.target.closest('.neq');
+                if (!q || q.classList.contains('editing')) return;
+                if (last && last.q === q && !last.dragged && !e.shiftKey) { if (last.was) edit(q, e.clientX, e.clientY); else selectEq(q); }
+                last = null;
+            });
+            /* the browser's own drag-and-drop would move the highlighted equation as text; ours replaces it */
+            body.addEventListener('dragstart', e => { const s = getSelection(); if (s.rangeCount && !s.isCollapsed && noteSelEqs().length) e.preventDefault(); });
+            body.addEventListener('keydown', e => {
+                const eqs = noteSelEqs();
+                if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === 'b' || e.key === 'B') && eqs.length) { e.preventDefault(); noteCmd('bold'); }
+                else if (e.key === 'Enter' && !e.shiftKey && eqs.length === 1 && onlyThis(eqs[0])) { e.preventDefault(); edit(eqs[0]); }
+            });
+        })();
+        /* ===== notepad text highlight: one continuous bar with rounded ends (the browser's own highlight can't be rounded) ===== */
+        (() => {
+            const body = $('notebody'), pn = $('notepanel'), ov = document.createElement('div'); ov.id = 'notehl'; ov.setAttribute('aria-hidden', 'true'); pn.appendChild(ov);
+            const GAP = 6, RAD = 5; let queued = false;
+            function draw() {
+                queued = false; ov.textContent = '';
+                if (!noteOpen) return;
+                const s = getSelection(); if (!s.rangeCount || s.isCollapsed || !body.contains(s.anchorNode) || !body.contains(s.focusNode)) return;
+                const ae = s.anchorNode.nodeType === 1 ? s.anchorNode : s.anchorNode.parentElement; if (ae && ae.closest('.neq')) return;   /* typing inside an equation */
+                const r = s.getRangeAt(0), rects = [];
+                noteTexts().forEach(t => {   /* the pieces of text the selection covers (equations draw their own highlight) */
+                    if (!r.intersectsNode(t)) return;
+                    const a = t === r.startContainer ? r.startOffset : 0, z = t === r.endContainer ? r.endOffset : t.length; if (z <= a) return;
+                    const tr = document.createRange(); tr.setStart(t, a); tr.setEnd(t, z);
+                    for (const q of tr.getClientRects()) if (q.width > 0 && q.height > 0) rects.push({ l: q.left, r: q.right, t: q.top, b: q.bottom });
+                });
+                if (!rects.length) return;
+                /* group the pieces into lines, then join the pieces on a line that touch */
+                rects.sort((x, y) => (x.t + x.b) - (y.t + y.b) || x.l - y.l);
+                const lines = [];
+                rects.forEach(q => { const ln = lines[lines.length - 1], mid = (q.t + q.b) / 2; if (ln && Math.abs(mid - ln.mid) < (q.b - q.t) * .6) { ln.p.push(q); } else lines.push({ mid, p: [q] }); });
+                const bx = body.getBoundingClientRect(), segs = [];
+                lines.forEach((ln, li) => {
+                    ln.p.sort((x, y) => x.l - y.l);
+                    const row = [];
+                    ln.p.forEach(q => { const g = row[row.length - 1]; if (g && q.l - g.r <= GAP) { g.r = Math.max(g.r, q.r); g.t = Math.min(g.t, q.t); g.b = Math.max(g.b, q.b); } else row.push({ l: q.l, r: q.r, t: q.t, b: q.b }); });
+                    row.forEach((g, i) => { g.rl = (li === 0 && i === 0) || i > 0; g.rr = (li === lines.length - 1 && i === row.length - 1) || i < row.length - 1; segs.push(g); });
+                });
+                ov.style.left = body.offsetLeft + 'px'; ov.style.top = body.offsetTop + 'px'; ov.style.width = body.clientWidth + 'px'; ov.style.height = body.clientHeight + 'px';
+                segs.forEach(g => {
+                    const d = document.createElement('div'), rl = g.rl ? RAD : 0, rr = g.rr ? RAD : 0;
+                    d.style.cssText = 'left:' + (g.l - bx.left - body.clientLeft) + 'px;top:' + (g.t - bx.top - body.clientTop) + 'px;width:' + (g.r - g.l) + 'px;height:' + (g.b - g.t) + 'px;border-radius:' + rl + 'px ' + rr + 'px ' + rr + 'px ' + rl + 'px';
+                    ov.appendChild(d);
+                });
+            }
+            const queue = () => { if (!queued) { queued = true; requestAnimationFrame(draw); } };
+            document.addEventListener('selectionchange', queue);
+            body.addEventListener('scroll', queue); body.addEventListener('input', queue); addEventListener('resize', queue);
+            new MutationObserver(queue).observe(pn, { attributes: true, attributeFilter: ['hidden'] });
         })();
         /* the notepad button shows and hides together with the calculator button */
         { const cf = $('calcfab'), nf = $('notefab'), sync = () => { nf.hidden = cf.hidden; if (cf.hidden && noteOpen) noteSet(false); };
@@ -6000,4 +6468,4 @@ function calcClose() { if (calcOpen) calcSet(false); }
     </script>
 </body>
 
-</html>
+</html> 
