@@ -5527,6 +5527,28 @@ function calcClose() { if (calcOpen) calcSet(false); }
         /* ---------- sand pits ----------
            a sand pit is a number you can land on but not move from: stuck there, you can only undo.
            they are picked from numbers that lie on shortest routes (so they block some solutions) and every level is checked to still be solvable. */
+        /* how hard the sand is: the higher the difficulty, the larger the share of the shortest routes the pits must block.
+           band(tier, relax) = [least share, most share]. relax loosens it when a level is hard to find (1 = full, .5 = half, 0 = anything goes) */
+        function pitBand(tier, relax) {
+            const lo = tier >= 8 ? .8 : .1 + (tier - 1) * .1, hi = tier >= 8 ? 1 : Math.min(1, lo + .4);
+            return relax >= 1 ? [lo, hi] : relax > 0 ? [lo * .5, 1] : [0, 1];
+        }
+        const pitMax = tier => tier <= 2 ? 1 : tier <= 4 ? 2 : tier <= 6 ? 3 : 4;   /* how many pits a level can have */
+        /* the share of the shortest routes (length par) that run through a pit, so can no longer be used. null if the count is too big */
+        function blockedShare(start, goal, ops, par, pits) {
+            let layer = new Map([[key(start), { v: start, t: 1, a: 1 }]]), seen = new Set([key(start)]);
+            for (let d = 1; d <= par; d++) {
+                const nx = new Map(); if (seen.size > CAP) return null;
+                for (const e of layer.values()) for (const o of ops) {
+                    const v = o.f(e.v); if (!v) continue; const k = key(v);
+                    if (seen.has(k) && !nx.has(k)) continue;
+                    let n = nx.get(k); if (!n) nx.set(k, n = { v, t: 0, a: 0 });
+                    n.t += e.t; if (!inPits(pits, e.v)) n.a += e.a;   /* nothing continues from a pit */
+                }
+                for (const k of nx.keys()) seen.add(k); layer = nx;
+            }
+            const g = layer.get(key(goal)); return g && g.t ? 1 - g.a / g.t : null;
+        }
         function solveAvoid(start, goal, ops, blocked) { /* blocked: a list of sand pits (numbers or ranges) */
             let seen = new Set([key(start)]), fr = [start];
             for (let d = 1; d <= 8; d++) {
@@ -5569,22 +5591,24 @@ function calcClose() { if (calcOpen) calcSet(false); }
         /* returns { pits, par } or null. par = the shortest route that avoids the pits.
            each pit is one number on a shortest route or, about 4 times in 10, a range of numbers around one. a root like √2 can only be covered by a range
            (a level code can't hold a single root as a pit) */
-        function placePits(start, goal, ops, par, tier, tp) {
+        function placePits(start, goal, ops, par, tier, tp, relax) {
             const cand = routeNodes(start, goal, ops, par); if (!cand.length) return null;
             for (let i = cand.length - 1; i > 0; i--) { const j = ri(0, i); [cand[i], cand[j]] = [cand[j], cand[i]]; }
-            const want = ri(1, Math.min(tier === 8 ? 3 : tier >= 4 ? 2 : 1, cand.length)), pits = []; let np = par;
+            const [lo, hi] = pitBand(tier, relax), most = Math.min(pitMax(tier), cand.length), rng = Math.min(7, 2 + tier), pits = []; let np = par, share = 0;
             for (const c of cand) {
-                if (pits.length >= want) break;
+                if (pits.length >= most || (pits.length && share >= lo)) break;
                 if (inPits(pits, c)) continue;   /* already inside a range */
-                const tries = []; if (c.b > 1 || ri(1, 10) <= 4) tries.push(pitRangeAround(c)); if (!(c.b > 1)) tries.push(c);   /* the range first, then the plain number */
+                const tries = []; if (c.b > 1 || ri(1, 10) <= rng) tries.push(pitRangeAround(c)); if (!(c.b > 1)) tries.push(c);   /* the range first, then the plain number (higher difficulty: more ranges) */
                 for (const pit of tries) {
                     if (pitHas(pit, start) || pitHas(pit, goal)) continue;
-                    const p2 = solveAvoid(start, goal, ops, pits.concat([pit]));
+                    const all = pits.concat([pit]), p2 = solveAvoid(start, goal, ops, all);
                     if (!p2 || (tier === 8 ? p2 >= tp : p2 > tier + 1)) continue;   /* still solvable, and still within what the difficulty allows */
-                    pits.push(pit); np = p2; break;
+                    const sh = blockedShare(start, goal, ops, par, all);
+                    if (sh === null || sh > hi) continue;   /* blocks too many routes for this difficulty */
+                    pits.push(pit); np = p2; share = sh; break;
                 }
             }
-            return pits.length ? { pits: pits.map(pitCopy), par: np } : null;
+            return pits.length && share >= lo ? { pits: pits.map(pitCopy), par: np } : null;
         }
         /* a sand pit is one number {n,d,b}, or a range: the same plus hi = {n,d,b}, which covers every number from the first up to hi (both ends included) */
         const pitVal = x => x.n / x.d * Math.sqrt(x.b || 1);
@@ -5622,7 +5646,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
                 const need = tier === 8 ? (tries < 1200 ? 2 : 1) : (tries < 2000 ? 2 : 1);
                 if (need > 1 && countBest(start, v, pool) < need) continue;
                 let lp = tier === 8 ? tp : par, pits;
-                if (cfg.sandpits) { const pp = placePits(start, v, pool, par, tier, tp); if (!pp) continue; pits = pp.pits; if (tier !== 8) lp = pp.par; }
+                if (cfg.sandpits) { const pp = placePits(start, v, pool, par, tier, tp, tries < 1500 ? 1 : tries < 2500 ? .5 : 0); if (!pp) continue; pits = pp.pits; if (tier !== 8) lp = pp.par; }
                 return { start, goal: v, ops: pool.map(o => o.s), limit: lp, nb: NB, pits };
             }
             return null;
@@ -5644,9 +5668,18 @@ function calcClose() { if (calcOpen) calcSet(false); }
             return m[3] ? { s, f: x => x.c ? C(x.re, x.im + k) : null } : { s, f: x => x.c ? C(x.re + k, x.im) : null };
         }
         /* complex sand pits: an irregular polygon on the plane. it covers every Gaussian integer inside it, and you can land on those but not move from them */
-        function randPoly(c) {
-            const k = ri(4, 6), cx = c.re + (Math.random() - .5) * .5, cy = c.im + (Math.random() - .5) * .5, a0 = Math.random() * 2 * Math.PI, st = 2 * Math.PI / k, poly = [];
-            for (let i = 0; i < k; i++) { const a = a0 + (i + (Math.random() - .5) * .5) * st, r = .6 + Math.random() * 1.3; poly.push([+(cx + r * Math.cos(a)).toFixed(2), +(cy + r * Math.sin(a)).toFixed(2)]); }
+        function randPoly(c, scale = 1) {
+            /* a blob: 6-8 wobbly control points round a centre, joined by a smooth closed curve (Catmull-Rom). the curve is sampled into a fine outline, and that same outline is what gets drawn and what decides which numbers are covered, so what you see is exactly what is sand */
+            const k = ri(6, 8), cx = c.re + (Math.random() - .5) * .5, cy = c.im + (Math.random() - .5) * .5, a0 = Math.random() * 2 * Math.PI, st = 2 * Math.PI / k, ctl = [];
+            for (let i = 0; i < k; i++) { const a = a0 + (i + (Math.random() - .5) * .4) * st, r = (.65 + Math.random() * .95) * scale; ctl.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); }
+            const poly = [], N = 8;
+            for (let i = 0; i < k; i++) {
+                const p0 = ctl[(i + k - 1) % k], p1 = ctl[i], p2 = ctl[(i + 1) % k], p3 = ctl[(i + 2) % k];
+                for (let j = 0; j < N; j++) {
+                    const t = j / N, t2 = t * t, t3 = t2 * t, f = (a, b, c2, d) => .5 * (2 * b + (-a + c2) * t + (2 * a - 5 * b + 4 * c2 - d) * t2 + (-a + 3 * b - 3 * c2 + d) * t3);
+                    poly.push([+f(p0[0], p1[0], p2[0], p3[0]).toFixed(2), +f(p0[1], p1[1], p2[1], p3[1]).toFixed(2)]);
+                }
+            }
             return poly;
         }
         /* the numbers inside a polygon, or null when some number sits too close to an edge to tell whether it is in or out */
@@ -5665,22 +5698,24 @@ function calcClose() { if (calcOpen) calcSet(false); }
             }
             return out;
         }
-        function placeCPits(start, goal, ops, par, tier, tp) {
+        function placeCPits(start, goal, ops, par, tier, tp, relax) {
             const cand = routeNodes(start, goal, ops, par); if (!cand.length) return null;
             for (let i = cand.length - 1; i > 0; i--) { const j = ri(0, i); [cand[i], cand[j]] = [cand[j], cand[i]]; }
-            const want = ri(1, Math.min(tier >= 4 ? 2 : 1, cand.length)), pits = []; let np = par;
+            const [lo, hi] = pitBand(tier, relax), most = Math.min(pitMax(tier), cand.length), big = 1 + (tier - 1) * .07, maxPts = 4 + Math.ceil(tier / 2), pits = []; let np = par, share = 0;   /* higher difficulty: bigger shapes */
             for (const c of cand) {
-                if (pits.length >= want) break;
+                if (pits.length >= most || (pits.length && share >= lo)) break;
                 if (inPits(pits, c)) continue;
-                for (let t = 0; t < 8; t++) {
-                    const poly = randPoly(c), pts = polyCovers(poly);
-                    if (!pts || !pts.length || pts.length > 6 || !pts.some(q => same(q, c)) || pts.some(q => same(q, start) || same(q, goal) || inPits(pits, q))) continue;
-                    const pit = { poly, pts }, p2 = solveAvoid(start, goal, ops, pits.concat([pit]));
-                    if (!p2 || (tier === 8 ? p2 >= tp : p2 > tier + 1)) continue;
-                    pits.push(pit); np = p2; break;
+                for (let t = 0; t < 14; t++) {
+                    const poly = randPoly(c, big), pts = polyCovers(poly);
+                    if (!pts || !pts.length || pts.length > maxPts || !pts.some(q => same(q, c)) || pts.some(q => same(q, start) || same(q, goal) || inPits(pits, q))) continue;
+                    const all = pits.concat([{ poly, pts }]), p2 = solveAvoid(start, goal, ops, all);
+                    if (!p2 || (tier === 8 ? p2 >= tp : p2 > tier + 1)) continue;   /* still solvable, and still within what the difficulty allows */
+                    const sh = blockedShare(start, goal, ops, par, all);
+                    if (sh === null || sh > hi) continue;   /* blocks too many routes for this difficulty */
+                    pits.push({ poly, pts }); np = p2; share = sh; break;
                 }
             }
-            return pits.length ? { pits: pits.map(q => ({ poly: q.poly })), par: np } : null;
+            return pits.length && share >= lo ? { pits: pits.map(q => ({ poly: q.poly })), par: np } : null;
         }
         function genComplex(tier, cfg) {
             NB = 100000; CAP = tier === 8 ? 40000 : 200000;
@@ -5698,7 +5733,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
                 const need = tier === 8 ? (tries < 1200 ? 2 : 1) : (tries < 2000 ? 2 : 1);
                 if (need > 1 && countBest(start, v, pool) < need) continue;
                 let lim = tier === 8 ? tp : par, pits;
-                if (cfg.sandpits) { const pp = placeCPits(start, v, pool, par, tier, tp); if (!pp) continue; pits = pp.pits; if (tier !== 8) lim = pp.par; }
+                if (cfg.sandpits) { const pp = placeCPits(start, v, pool, par, tier, tp, tries < 1500 ? 1 : tries < 2500 ? .5 : 0); if (!pp) continue; pits = pp.pits; if (tier !== 8) lim = pp.par; }
                 return { start, goal: v, ops: pool.map(o => o.s), limit: lim, nb: NB, pits, pack: 'complex' };
             }
             return null;

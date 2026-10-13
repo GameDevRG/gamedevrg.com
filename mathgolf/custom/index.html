@@ -4213,6 +4213,15 @@
                 else h += `<path d="M${a} ${Y - R} Q${(a + b) / 2} ${cy} ${b} ${Y - R}" fill="none" stroke="${col}" stroke-width="2" stroke-dasharray="6 5" opacity="${op}"/>`;
             }
             (L.pits || []).forEach(p => { const pv = val(p), px = x(pv), pe = p.hi ? x(val(p.hi)) : px, a = Math.max(12, Math.min(px, pe)), z = Math.min(W - 12, Math.max(px, pe)); if (a > z) return; const cx = (a + z) / 2; h += `<ellipse cx="${cx}" cy="${Y}" rx="${(z - a) / 2 + 10}" ry="4" fill="#d4a64f"/><text x="${cx}" y="${Y - 11}" style="font-size:11px;font-weight:700;fill:#d4a64f">${p.hi ? tf(pv) + '–' + tf(val(p.hi)) : tf(pv)}</text>`; });   /* sand pits: a range is one wide patch */
+            /* sand pits that are off screen: a sand-coloured arrow at the edge they lie past, with the nearest pit's number and how many more there are */
+            { const all = (L.pits || []).map(p => { const a = x(val(p)), b = p.hi ? x(val(p.hi)) : a; return { p, lo: Math.min(a, b), hi: Math.max(a, b) }; }),
+                  offL = all.filter(q => q.hi < 12).sort((u, v) => v.hi - u.hi), offR = all.filter(q => q.lo > W - 12).sort((u, v) => u.lo - v.lo),
+                  nm = q => q.p.hi ? tf(val(q.p)) + '–' + tf(val(q.p.hi)) : tf(val(q.p));
+              [[offL, -1], [offR, 1]].forEach(([o, d]) => {
+                  if (!o.length) return; const ex = d < 0 ? 10 : W - 10, tx = ex - d * 10;
+                  h += `<path d="M${ex} ${Y} L${tx} ${Y - 7} L${tx} ${Y + 7}Z" fill="#d4a64f"/>`;
+                  h += `<text x="${tx - d * 5}" y="${Y - 12}" style="font-size:12px;font-weight:700;fill:#d4a64f;text-anchor:${d < 0 ? 'start' : 'end'}">${nm(o[0])}${o.length > 1 ? ' +' + (o.length - 1) : ''}</text>`;
+              }); }
             const rows = [[], [], []];
             vals.forEach((v, i) => {
                 if (i === vals.length - 1 && bl) return;
