@@ -2894,6 +2894,7 @@
             </div>
             <div id="pips" aria-live="polite"></div>
             <div class="lbl" id="left"></div>
+            <div class="lbl" id="pitnote" hidden style="color:#d4a64f"></div>
             <div class="lbl" id="dsolved" hidden></div>
             <div id="trail"></div>
             <div id="ops"></div>
@@ -3941,6 +3942,10 @@
         Object.assign(I18N.es, { lang_en: 'inglés', lang_es: 'español', lang_ja: 'japonés', lang_zh: 'chino' });
         Object.assign(I18N.ja, { lang_en: '英語', lang_es: 'スペイン語', lang_ja: '日本語', lang_zh: '中国語' });
         Object.assign(I18N.zh, { lang_en: '英语', lang_es: '西班牙语', lang_ja: '日语', lang_zh: '中文' });
+        Object.assign(I18N.en, { sand_stuck: "stuck in the sand! you can only undo.", sand_note: "sand pits:" });
+        Object.assign(I18N.es, { sand_stuck: "¡atascado en la arena! solo puedes deshacer.", sand_note: "trampas de arena:" });
+        Object.assign(I18N.ja, { sand_stuck: "砂にはまった！元に戻すことしかできません。", sand_note: "バンカー:" });
+        Object.assign(I18N.zh, { sand_stuck: "陷进沙坑了！只能撤销。", sand_note: "沙坑：" });
         let lang = 'en';
         try { const s = localStorage.getItem('lang'); if (LANGS.includes(s)) lang = s } catch (e) { }
         function tr(k, v) {
@@ -4046,6 +4051,7 @@
         function stopFx() { clearTimeout(fxTimer); cancelAnimationFrame(fxRaf); const c = $('fx'); c.getContext('2d').clearRect(0, 0, c.width, c.height); }
         function nice(r, n = 6) { const t = r / n, m = Math.pow(10, Math.floor(Math.log10(t))), f = t / m; return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * m }
         function tf(v) { return String(+v.toFixed(3)) }
+        const inPit = x => !!L && !!L.pits && L.pits.some(p => same(p, x));   /* sand pit: you can land on it, but then you can only undo */
         function draw(vw, bl, vals, g, won) {
             const W = $('nl').clientWidth || 640, H = W < 520 ? 160 : 200, pad = W < 520 ? 28 : 44, Y = H - 58, R = 7, sp = vw.hi - vw.lo, x = v => pad + (v - vw.lo) / sp * (W - 2 * pad);
             const hgt = (a, b) => Math.max(4, Math.min(Y - 30, 100, Math.abs(x(b) - x(a)) * .25));
@@ -4073,6 +4079,7 @@
                 }
                 else h += `<path d="M${a} ${Y - R} Q${(a + b) / 2} ${cy} ${b} ${Y - R}" fill="none" stroke="${col}" stroke-width="2" stroke-dasharray="6 5" opacity="${op}"/>`;
             }
+            (L.pits || []).forEach(p => { const pv = val(p), px = x(pv); if (px < 12 || px > W - 12) return; h += `<ellipse cx="${px}" cy="${Y}" rx="10" ry="4" fill="#d4a64f"/><text x="${px}" y="${Y - 11}" style="font-size:11px;font-weight:700;fill:#d4a64f">${tf(pv)}</text>`; });   /* sand pits */
             const rows = [[], [], []];
             vals.forEach((v, i) => {
                 if (i === vals.length - 1 && bl) return;
@@ -4095,6 +4102,7 @@
             cancelAnimationFrame(raf);
             const vals = [val(L.start), ...hist.map((h, i) => val(hist[i + 1] ? hist[i + 1].prev : cur))], g = val(L.goal), won = same(cur, L.goal);
             let lo = Math.min(g, ...vals), hi = Math.max(g, ...vals); if (hi - lo < 1) { lo -= 1; hi += 1 }
+            { const sp0 = hi - lo; (L.pits || []).forEach(p => { const pv = val(p); if (pv >= lo - sp0 && pv <= hi + sp0) { lo = Math.min(lo, pv - sp0 * .05); hi = Math.max(hi, pv + sp0 * .05); } }); }   /* sand pits near the action stay in view */
             const tgt = { lo, hi }, hit = pend && vals.length > 1; pend = false;
             const diff = !view || Math.abs(view.lo - lo) + Math.abs(view.hi - hi) > 1e-9;
             const hitA = hit && animOn('ball'), zoomA = diff && animOn('zoom');
@@ -4114,14 +4122,14 @@
         const hcOn = () => settings.hc && !dailyMode;
         let L = null, cur = null, hist = [], holes = 0, total = 0, counted = false, gaveUp = false, busy = false, timers = [];
         function stopReplay() { timers.forEach(clearTimeout); timers = []; busy = false; gaveUp = false; }
-        function bestPath(start, goal, ops) {
-            const par = new Map([[key(start), null]]); let fr = [start];
+        function bestPath(start, goal, ops, pits) {
+            const par = new Map([[key(start), null]]); let fr = [start]; const pk = new Set((pits || []).map(key));
             for (let d = 0; d < 9; d++) {
                 const nx = [];
                 for (const n of fr) for (const o of ops) {
                     const v = o.f(n); if (!v || par.has(key(v))) continue;
                     par.set(key(v), { from: n, o }); if (same(v, goal)) { const path = []; let c = v; while (par.get(key(c))) { const e = par.get(key(c)); path.unshift(e.o); c = e.from; } return path; }
-                    nx.push(v);
+                    if (!pk.has(key(v))) nx.push(v);   /* nothing continues from a sand pit */
                 }
                 fr = nx;
             }
@@ -4136,7 +4144,7 @@
         function giveUp() {
             if (busy || same(cur, L.goal)) return;
             stopReplay(); gaveUp = true; busy = true; cur = L.start; hist = []; pend = false; render();
-            const steps = bestPath(L.start, L.goal, L.ops); rp = { steps, done: 0 };
+            const steps = bestPath(L.start, L.goal, L.ops, L.pits); rp = { steps, done: 0 };
             if (!steps.length) { busy = false; render(); return; }
             steps.forEach((o, i) => {
                 timers.push(setTimeout(() => { rp.done = i + 1; hist.push({ prev: cur, s: o.s }); cur = o.f(cur); pend = true; if (i === steps.length - 1) busy = false; render(); }, 400 + i * 600));
@@ -4238,7 +4246,7 @@
                 mm.textContent = settings.hc ? tr('hardcore') : tr('normal'); mm.className = settings.hc ? 'mhc' : 'mnorm';
             }
             $('cur').classList.toggle('winp', same(cur, L.goal));
-            const used = hist.length, won = same(cur, L.goal), over = dailyMode ? 0 : used - L.limit; /* daily levels have no par */
+            const used = hist.length, won = same(cur, L.goal), stuck = !won && inPit(cur), over = dailyMode ? 0 : used - L.limit; /* daily levels have no par */
             $('lbplay').hidden = !dailyMode;
             $('psub').textContent = dailyMode ? tr('psub_daily') : tr('psub_par');
             const sc = over <= 0 ? tr('sc_par') : tr('sc_over', { n: over });
@@ -4256,8 +4264,8 @@
             $('ops').innerHTML = '';
             L.ops.forEach(o => {
                 const b = document.createElement('button'); b.innerHTML = opLabel(o.s);
-                const v = o.f(cur); b.disabled = won || !v || busy || full;
-                if (!won && !v) { const w = whyNot(o.s); b.title = w; b.innerHTML = opLabel(o.s) + '<small>' + w + '</small>'; }
+                const v = o.f(cur); b.disabled = won || !v || busy || full || stuck;
+                if (!won && !v && !stuck) { const w = whyNot(o.s); b.title = w; b.innerHTML = opLabel(o.s) + '<small>' + w + '</small>'; }
                 b.onclick = () => { hist.push({ prev: cur, s: o.s }); cur = v; pend = true; render(); }; $('ops').appendChild(b);
             });
             drawLine();
@@ -4270,6 +4278,8 @@
             $('undo').style.display = $('reset').style.display = gaveUp ? 'none' : '';
             const m = $('msg'); m.className = ''; m.innerHTML = '';
             if (full && !busy) { m.className = 'lose'; m.textContent = left > 0 ? tr('lose1') : tr('lose2'); }
+            else if (stuck && !busy) { m.className = 'lose'; m.textContent = tr('sand_stuck'); }
+            { const pn = $('pitnote'), pl = L.pits || []; pn.hidden = !pl.length; pn.textContent = pl.length ? tr('sand_note') + ' ' + pl.map(p => fmt(p)).join(', ') : ''; }
             if (won) {
                 if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: !!settings.hc, num: settings.num, rt: !!ROOTS, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
                 m.className = gaveUp ? 'lose' : 'win';
@@ -4648,7 +4658,7 @@
                 ROOTS = false; const md = lv.mode === 'whole' ? 'whole' : 'frac', cv = v => typeof v === 'object' ? F(v.n, v.d, v.b || 1) : F(v);
                 NB = 3000; settings.num = md; /* in memory only, so fractions show as 7/4 whatever the main game is set to */
                 stopReplay(); stopFx(); pend = false; view = null;
-                L = { start: cv(lv.start), goal: cv(lv.goal), ops: lv.ops.map(s => mk(s, md)), limit: 999 }; /* no par in daily levels */
+                L = { start: cv(lv.start), goal: cv(lv.goal), ops: lv.ops.map(s => mk(s, md)), limit: 999, pits: (lv.pits || []).map(cv).filter(Boolean) }; /* no par in daily levels. pits = sand pits: numbers you can land on but not move from */
                 cur = L.start; hist = []; undosUsed = 0; counted = false; dailyNote = ''; dailyMode = true; dailyDate = date;
                 showView('random');
                 loadDailySolved();

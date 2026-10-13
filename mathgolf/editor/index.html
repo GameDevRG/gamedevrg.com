@@ -16,6 +16,7 @@
             --soft: #8f9bc0;
             --card: #192040;
             --imag: #ff6fa5;
+            --sand: #d4a64f;
             --ok: #4fd49b;
             --line: #2d3861;
             --blue: #7cc8ff;
@@ -41,6 +42,7 @@
             --soft: #5d6b8a;
             --card: #fff;
             --imag: #c2185b;
+            --sand: #a9791c;
             --ok: #1b8a5a;
             --line: #c3cbdd;
             --blue: #3a9be0;
@@ -293,6 +295,49 @@
         }
 
         .opb.bad {
+            border-color: var(--imag);
+            box-shadow: 0 3px 0 var(--imag);
+            color: var(--imag)
+        }
+
+        /* sand pits: same chips as the operations, with a sand-coloured edge */
+        #pitchips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 2px 0 12px;
+            min-height: 2.2rem;
+            align-items: stretch
+        }
+
+        #pitchips:empty::before {
+            content: "no sand pits. players can move on from every number";
+            color: var(--soft);
+            font-size: .9rem
+        }
+
+        .opb.pit {
+            border-color: var(--sand);
+            box-shadow: 0 3px 0 var(--sand)
+        }
+
+        .opb.pit:active,
+        .opb.pit:focus-visible {
+            border-color: var(--imag);
+            box-shadow: 0 3px 0 var(--imag);
+            color: var(--imag)
+        }
+
+        @media (hover: hover) {
+            .opb.pit:hover {
+                border-color: var(--imag);
+                box-shadow: 0 3px 0 var(--imag);
+                color: var(--imag)
+            }
+        }
+
+        .opb.pit.bad {
             border-color: var(--imag);
             box-shadow: 0 3px 0 var(--imag);
             color: var(--imag)
@@ -589,7 +634,8 @@
             transition: transform .1s, box-shadow .1s, opacity .1s
         }
 
-        #rndop {
+        #rndop,
+        #rndpit {
             min-width: 44px;
             padding: 8px 8px;
             display: inline-flex;
@@ -1982,6 +2028,28 @@
                         all syntax</button></div>
                 <div id="syn" hidden></div>
             </section>
+            <section class="dgroup" id="pitgroup">
+                <h3>sand pits <small id="pitcnt"></small></h3>
+                <p class="hint" style="margin-top:0">a sand pit is a number players can land on but not move on from, so
+                    all they can do is undo. use them to block shortcuts. add one number, or a range like 5 to 8 to cover every number from 5 up to 8. up to 6, and never on the start or the goal</p>
+                <div id="pitchips" aria-live="polite"></div>
+                <div class="center"><button class="linkbtn" id="pitclr" hidden>clear all</button></div>
+                <div class="addrow"><input id="pitn" placeholder="e.g. 7 or 5 to 8" aria-label="type a number or a range for a sand pit"
+                        autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
+                        enterkeyhint="done"><button class="addbtn" id="addpit" disabled>add</button><button
+                        class="addbtn" id="rndpit" title="add a random sand pit (a number or a range) that blocks a route"
+                        aria-label="add a random sand pit"><svg viewBox="0 0 24 24" width="22" height="22" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"
+                            aria-hidden="true">
+                            <rect x="3.5" y="3.5" width="17" height="17" />
+                            <rect x="6.8" y="6.8" width="2.4" height="2.4" fill="currentColor" stroke="none" />
+                            <rect x="14.8" y="6.8" width="2.4" height="2.4" fill="currentColor" stroke="none" />
+                            <rect x="10.8" y="10.8" width="2.4" height="2.4" fill="currentColor" stroke="none" />
+                            <rect x="6.8" y="14.8" width="2.4" height="2.4" fill="currentColor" stroke="none" />
+                            <rect x="14.8" y="14.8" width="2.4" height="2.4" fill="currentColor" stroke="none" />
+                        </svg></button></div>
+                <p class="hint" id="pithint"></p>
+            </section>
             <section class="dgroup">
                 <h3>par</h3>
                 <div class="stepper"><button id="pm" aria-label="one fewer move">−</button>
@@ -2113,17 +2181,21 @@
         const b64d = s => atob(s.replace(/-/g, '+').replace(/_/g, '/'));
         const opEnc = s => FIX[s] || (s.startsWith('mod ') ? 'o' + s.slice(4) : OPC[s[0]] + s.slice(1).replace('−', '-'));
         function opDec(t) { for (const k in FIX) if (FIX[k] === t) return k; if (t[0] === 'o') return 'mod ' + t.slice(1); const c = Object.keys(OPC).find(k => OPC[k] === t[0]); return c ? c + (/^[×÷]$/.test(c) ? t.slice(1).replace(/^-/, '−') : t.slice(1)) : null; }
-        /* code = start;goal;par;number type;ops[;flags[;difficulty[;title[;author]]]]  (flags: r = roots, h = forced hardcore; difficulty: 2 easy, 4 medium, 6 hard, 8 challenge; title and author are URL-escaped; trailing empty fields are left off) */
-        const encodeLevel = v => { const f = [v.s, v.g, v.p, MC[v.n], v.o.map(opEnc).join(','), (v.rt ? 'r' : '') + (v.hc ? 'h' : ''), v.dv ? String(v.dv) : '', v.t ? encodeURIComponent(v.t) : '', v.a ? encodeURIComponent(v.a) : '']; while (f.length > 5 && f[f.length - 1] === '') f.pop(); return b64e(f.join(';')); };
+        /* code = start;goal;par;number type;ops[;flags[;difficulty[;title[;author[;sand pits]]]]]  (flags: r = roots, h = forced hardcore; difficulty: 2 easy, 4 medium, 6 hard, 8 challenge; title and author are URL-escaped; sand pits: numbers or ranges like 5~8, separated by commas, up to 6; trailing empty fields are left off) */
+        const encodeLevel = v => { const f = [v.s, v.g, v.p, MC[v.n], v.o.map(opEnc).join(','), (v.rt ? 'r' : '') + (v.hc ? 'h' : ''), v.dv ? String(v.dv) : '', v.t ? encodeURIComponent(v.t) : '', v.a ? encodeURIComponent(v.a) : '', v.pt && v.pt.length ? v.pt.join(',') : '']; while (f.length > 5 && f[f.length - 1] === '') f.pop(); return b64e(f.join(';')); };
         function decodeLevel(code) {
             try {
-                const parts = b64d(String(code).trim()).split(';'), [s, g, p, n, o, rf, dv, tt, au] = parts, mode = Object.keys(MC).find(k => MC[k] === n), ops = o.split(',').map(opDec);
+                const parts = b64d(String(code).trim()).split(';'), [s, g, p, n, o, rf, dv, tt, au, pt] = parts, mode = Object.keys(MC).find(k => MC[k] === n), ops = o.split(',').map(opDec);
                 const numOk = t => /^-?\d+(\.\d+)?(\/\d+)?$/.test(t) && !/\/0+$/.test(t), argOk = t => /^\d+(\.\d)?(\/\d+)?$/.test(t) && !/\/0+$/.test(t) && +t.split('/')[0] > 0;
-                if (parts.length > 9 || (rf !== undefined && !/^(r|h|rh)?$/.test(rf)) || (rf === '' && parts.length === 6) || (dv !== undefined && !/^[2468]?$/.test(dv)) || !mode || !numOk(s) || !numOk(g) || !/^\d{1,2}$/.test(p) || +p < 1 || ops.length < 1) return null;
+                if (parts.length > 10 || (rf !== undefined && !/^(r|h|rh)?$/.test(rf)) || (rf === '' && parts.length === 6) || (dv !== undefined && !/^[2468]?$/.test(dv)) || !mode || !numOk(s) || !numOk(g) || !/^\d{1,2}$/.test(p) || +p < 1 || ops.length < 1) return null;
                 if (ops.some(x => !x || (/^[+−×÷]/.test(x) && !argOk(/^[×÷]−/.test(x) ? x.slice(2) : x.slice(1))) || (x.startsWith('mod ') && !/^\d{1,2}$/.test(x.slice(4)) || x === 'mod 0' || x === 'mod 1'))) return null;
                 const t = tt ? decodeURIComponent(tt) : '', a = au ? decodeURIComponent(au) : '';
                 if (Array.from(t).length > 40 || Array.from(a).length > 24 || /[\u0000-\u001f\u007f]/.test(t + a)) return null;
-                return { s, g, p: +p, n: mode, o: ops, rt: !!rf && rf.includes('r'), hc: !!rf && rf.includes('h'), dv: dv ? +dv : 0, t: t.trim(), a: a.trim() };
+                const pits = pt ? pt.split(',') : [];   /* sand pits: numbers you can land on but not move from. "5~8" is every number from 5 to 8 */
+                const nv = t => t.includes('/') ? +t.split('/')[0] / +t.split('/')[1] : parseFloat(t), rg = x => x.split('~');
+                const pitOk = x => { const r = rg(x); return r.length <= 2 && r.every(numOk) && (r.length === 1 || nv(r[0]) < nv(r[1])); }, covers = (x, t) => { const r = rg(x); return r.length === 1 ? nv(r[0]) === nv(t) : nv(t) >= nv(r[0]) && nv(t) <= nv(r[1]); };
+                if (pits.length > 6 || !pits.every(pitOk) || new Set(pits).size !== pits.length || pits.some(x => covers(x, s) || covers(x, g))) return null;
+                return { s, g, p: +p, n: mode, o: ops, rt: !!rf && rf.includes('r'), hc: !!rf && rf.includes('h'), dv: dv ? +dv : 0, t: t.trim(), a: a.trim(), pt: pits };
             } catch (e) { return null; }
         }
 
@@ -2135,14 +2207,14 @@
             const an = !fresh && !(window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches); let n = 0;
             chars.forEach((c, i) => { if (c === '/') return; const t = el.children[i]; clearTimeout(t._st); if (t.dataset.ch === c) return; const d = n++ * 50; if (d === 0) setTile(t, c, an, rev); else t._st = setTimeout(() => setTile(t, c, an, rev), d); });
         }
-        function solveCap(start, goal, ops, cap) {
+        function solveCap(start, goal, ops, cap, pk) { /* pk: a list of sand pits (numbers or ranges). they can be landed on, but nothing continues from them */
             let seen = new Set([key(start)]), fr = [start];
             for (let d = 1; fr.length; d++) {
                 const nx = [];
                 for (const n of fr) for (const o of ops) {
                     const v = o.f(n);
                     if (!v || seen.has(key(v))) continue;
-                    if (same(v, goal)) return d > 99 ? -2 : d; seen.add(key(v)); nx.push(v);
+                    if (same(v, goal)) return d > 99 ? -2 : d; seen.add(key(v)); if (!(pk && inPits(pk, v))) nx.push(v);
                     if (seen.size > cap) return -1;
                 }
                 fr = nx;
@@ -2159,10 +2231,10 @@
         const acctName = () => { try { return Array.from((localStorage.getItem('username') || '').trim()).slice(0, 24).join(''); } catch (e) { return ''; } };
         /* levels the search couldn't settle, but that you solved by hand in a playtest: VER = { k: which level, m: moves you used } */
         let VER = null, pendingVer = null, curVer = false;
-        const verKey = (st, go) => [st, go, mode, ops.join(','), ROOTS && mode !== 'frac' ? 1 : 0].join('|');
+        const verKey = (st, go) => [st, go, mode, ops.join(','), ROOTS && mode !== 'frac' ? 1 : 0, pits.join(',')].join('|');
         let MT = { t: '', a: '', dv: 0 }, lastLv = null; /* title, author, difficulty (0 = not set) */
         const metaObj = () => ({ dv: MT.dv, t: MT.t.trim(), a: MT.a.trim() });
-        let mode = 'whole', ops = [], code = '', slack = 0, wantPar = null, curMin = null, curPar = 1, curUnsolvable = false;
+        let mode = 'whole', ops = [], pits = [], code = '', slack = 0, wantPar = null, curMin = null, curPar = 1, curUnsolvable = false;
         const numRe = () => mode === 'frac' ? /^-?\d+(\/\d+)?$/ : mode === 'dec' ? /^-?\d+(\.\d{1,2})?$/ : /^-?\d+$/;
         const argRe = () => mode === 'frac' ? /^\d+(\/\d+)?$/ : mode === 'dec' ? /^\d+(\.\d)?$/ : /^\d+$/;
         const okNum = (t, re) => re.test(t) && !/\/0+$/.test(t) && Math.abs(parseFloat(t)) < 1e6;
@@ -2258,6 +2330,114 @@
             return null;
         }
         $('rndop').onclick = () => { const s = randomOp(); if (!s) return toast('no new operation to add'); ops.push(s); upd(); };
+
+        /* ---------- sand pits ----------
+           a sand pit is a number you can land on but not move on from (you can only undo). a range, written "5~8" in the code, is every number from 5 up to 8.
+           the editor keeps them as strings, like the start and goal. pitEntry turns one into {n,d,b} (a range also has hi: {n,d,b}) */
+        const MAXPIT = 6;
+        const pitVal = x => x.n / x.d * Math.sqrt(x.b || 1);
+        const pitCmp = (x, y) => { if ((x.b || 1) === 1 && (y.b || 1) === 1) { const t = x.n * y.d - y.n * x.d; return t < 0 ? -1 : t > 0 ? 1 : 0; } const t = pitVal(x) - pitVal(y); return Math.abs(t) < 1e-9 ? 0 : t < 0 ? -1 : 1; };
+        const pitHas = (p, x) => p.hi ? pitCmp(x, p) >= 0 && pitCmp(x, p.hi) <= 0 : same(p, x);
+        const inPits = (pl, x) => !!pl && pl.some(p => pitHas(p, x));   /* is x in any sand pit? */
+        const pitStr = x => x.d === 1 ? String(x.n) : mode === 'frac' ? x.n + '/' + x.d : String(+(x.n / x.d).toFixed(6)); /* one canonical way to write a number, so 0.50 and .5 can't both be pits */
+        const pitEntry = t => { const r = String(t).split('~'), lo = parseNum(r[0]); if (!lo) return null; if (r.length > 1) { const hi = parseNum(r[1]); if (!hi) return null; lo.hi = hi; } return lo; };
+        const pitList = () => pits.map(pitEntry).filter(Boolean);
+        const pitLabel = t => {
+            if (t.includes('~')) return opEsc(t.split('~').map(q => q.replace('-', '−')).join('–'));
+            const m = /^(-?)(\d+)\/(\d+)$/.exec(t); return m ? (m[1] ? '−' : '') + '<span class="fr"><span>' + m[2] + '</span><span>' + m[3] + '</span></span>' : opEsc(t.replace('-', '−'));
+        };
+        const pitModeBad = t => !t.split('~').every(q => okNum(q, numRe()));   /* needs another number type */
+        const pitBadAt = (t, sa, ga) => { if (pitModeBad(t)) return true; const e = pitEntry(t); if (!e || (e.hi && pitCmp(e, e.hi) >= 0)) return true; return !!(sa && pitHas(e, sa)) || !!(ga && pitHas(e, ga)); };
+        const pitSG = () => { const st = $('s').value.trim().replace('−', '-'), go = $('g').value.trim().replace('−', '-'); return [okNum(st, numRe()) ? parseNum(st) : null, okNum(go, numRe()) ? parseNum(go) : null]; };
+        function renderPits(sa, ga) {
+            $('pitchips').innerHTML = pits.map((t, i) => '<button type="button" class="opb pit' + (pitBadAt(t, sa, ga) ? ' bad' : '') + '" data-p="' + i + '" aria-label="remove sand pit ' + opEsc(t.replace('~', ' to ')) + '" title="click to remove">' + pitLabel(t) + '</button>').join('');
+            document.querySelectorAll('#pitchips [data-p]').forEach(b => b.onclick = () => { pits.splice(+b.dataset.p, 1); upd(); });
+            $('pitcnt').textContent = pits.length ? '(' + pits.length + ')' : '';
+            $('pitclr').hidden = pits.length < 2;
+        }
+        const pitExamples = () => mode === 'dec' ? '2.5   -1.5   1 to 3' : mode === 'frac' ? '1/2   7/4   2 to 5' : '7   -3   5 to 8';
+        /* one typed number -> { err } or { x, s } */
+        function pitNum(t) {
+            t = t.replace(/^(-?)\./, '$10.');
+            if (!okNum(t, numRe())) {
+                if (/\/0+$/.test(t)) return { err: "can't divide by zero" };
+                if (t.includes('/') && mode !== 'frac') return { err: 'fractions need the "fractions" number type above' };
+                if (t.includes('.') && mode === 'whole') return { err: 'decimals need the "decimals" number type above' };
+                if (/\.\d{3,}/.test(t)) return { err: 'at most 2 decimals' };
+                return { err: mode === 'whole' ? 'use a whole number' : mode === 'dec' ? 'use a number with at most 2 decimals' : 'use a whole number or a fraction like 3/4' };
+            }
+            const x = parseNum(t); return x ? { x, s: pitStr(x) } : { err: 'that number is too big' };
+        }
+        /* typed text -> a sand pit: "7", or a range written 5 to 8, 5-8, 5..8 or 5~8. returns null (empty), {wait}, {err} or {s, dup?} */
+        function parsePit(raw) {
+            const t = raw.toLowerCase().replace(/[\s\u00a0]+/g, '').replace(/−/g, '-');
+            if (!t) return null;
+            const NUM = '-?(?:\\d+\\.?\\d*|\\.\\d+)(?:/\\d+)?', one = new RegExp('^' + NUM + '$'), two = new RegExp('^(' + NUM + ')(?:to|\\.\\.|~|–|—|-)(' + NUM + ')$'), m = one.test(t) ? null : two.exec(t);
+            if (!one.test(t) && !m) return /^-?\d*[./]?\d*$/.test(t) || new RegExp('^' + NUM + '(?:t|to|\\.\\.?|~|–|—|-)-?\\d*[./]?\\d*$').test(t) ? { wait: true } : { err: 'type a number like 7, or a range like 5 to 8' };
+            const lo0 = pitNum(m ? m[1] : t), hi0 = m ? pitNum(m[2]) : null;
+            if (lo0.err) return lo0; if (hi0 && hi0.err) return hi0;
+            const [sa, ga] = pitSG(), list = pitList(); let lo = lo0.x, hi = hi0 && hi0.x;
+            if (hi && pitCmp(lo, hi) > 0) [lo, hi] = [hi, lo];
+            if (hi && pitCmp(lo, hi) === 0) hi = null;   /* 5 to 5 is just 5 */
+            const e = hi ? Object.assign({}, lo, { hi }) : lo, s = pitStr(lo) + (hi ? '~' + pitStr(hi) : '');
+            if (sa && pitHas(e, sa)) return { err: hi ? "that range covers the start" : "a sand pit can't be on the start" };
+            if (ga && pitHas(e, ga)) return { err: hi ? "that range covers the goal" : "a sand pit can't be on the goal" };
+            if (hi ? list.some(p => p.hi && same(p, lo) && same(p.hi, hi)) : list.some(p => !p.hi && same(p, lo))) return { s, dup: true };
+            if (!hi && list.some(p => p.hi && pitHas(p, lo))) return { err: 'that number is already inside a sand pit range' };
+            if (pits.length >= MAXPIT) return { err: 'a level can have up to ' + MAXPIT + ' sand pits' };
+            return { s };
+        }
+        let curPit = null;
+        function syncPitAdder() {
+            curPit = parsePit($('pitn').value);
+            const h = $('pithint'), btn = $('addpit'), full = pits.length >= MAXPIT; h.classList.remove('err'); $('pitn').classList.toggle('bad', !!(curPit && curPit.err));
+            btn.disabled = !curPit || !curPit.s || !!curPit.dup; btn.textContent = curPit && curPit.dup ? 'added' : 'add'; $('rndpit').disabled = full;
+            if (!curPit) h.textContent = full ? 'that is the most a level can have (' + MAXPIT + '). tap one above to remove it' : 'try ' + pitExamples();
+            else if (curPit.wait) h.textContent = 'keep typing...';
+            else if (curPit.err) { h.classList.add('err'); h.textContent = curPit.err; }
+            else h.textContent = curPit.dup ? curPit.s.replace('~', ' to ') + ' is already a sand pit' : 'press enter to add ' + (curPit.s.includes('~') ? 'every number from ' + curPit.s.replace('~', ' to ') : curPit.s) + ' as ' + (curPit.s.includes('~') ? 'a sand pit range' : 'a sand pit');
+        }
+        function addPit() {
+            if (!curPit || !curPit.s || curPit.dup) return syncPitAdder();
+            pits.push(curPit.s); $('pitn').value = ''; upd();
+            if (!matchMedia('(pointer:coarse)').matches) $('pitn').focus();
+        }
+        /* a random sand pit (a number, or about a third of the time a range) around a number the level's routes pass through, picked so the level can still be solved (and not much slower than before) */
+        function randomPit() {
+            if (pits.length >= MAXPIT) return toast('up to ' + MAXPIT + ' sand pits');
+            const [a, b] = pitSG(), os = ops.map(s => mk(s, mode));
+            if (!a || !b || curMin === null || curVer || !ops.length || os.some(o => !o) || ops.some(s => !opOk(s)) || pits.some(t => pitBadAt(t, a, b))) return toast('build a solvable level first');
+            const base = pitList(), D = Math.max(2, curMin + 1), cand = [], seen = new Set([key(a)]); let fr = [a];
+            for (let d = 1; d <= D && fr.length && seen.size < 4000; d++) {
+                const nx = [];
+                for (const n of fr) for (const o of os) {
+                    const v = o.f(n), k = v && key(v); if (!v || seen.has(k)) continue; seen.add(k);
+                    if (same(v, b) || inPits(base, v)) continue;
+                    nx.push(v); cand.push({ v, d });
+                }
+                fr = nx;
+            }
+            const shuf = arr => { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; };
+            const rnd2 = () => Math.floor(Math.random() * 2);
+            let tries = 0;
+            for (const c of shuf(cand.filter(c => c.d < curMin)).concat(shuf(cand.filter(c => c.d >= curMin)))) { /* numbers strictly between start and goal on a shortest route come first */
+                if (++tries > 30) break;
+                const opts = [];
+                if (c.v.b > 1 || Math.random() < .35) { const x = pitVal(c.v), lo = Math.floor(x) - rnd2(); let hi = Math.ceil(x) + rnd2(); if (hi <= lo) hi = lo + 1; opts.push({ e: Object.assign(F(lo), { hi: F(hi) }), s: lo + '~' + hi }); }   /* a root like √2 can only be covered by a range */
+                if (c.v.b === 1 && okNum(pitStr(c.v), numRe())) opts.push({ e: c.v, s: pitStr(c.v) });
+                for (const o of opts) {
+                    if (pitHas(o.e, a) || pitHas(o.e, b)) continue;
+                    const r = solveCap(a, b, os, 100000, base.concat([o.e]));
+                    if (r === null || r < 0 || r > Math.min(20, curMin + 2)) continue;
+                    pits.push(o.s); upd(); return;
+                }
+            }
+            toast('no sand pit fits without making the level unsolvable');
+        }
+        $('pitn').oninput = syncPitAdder;
+        $('pitn').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); addPit(); } };
+        $('addpit').onclick = addPit;
+        $('rndpit').onclick = randomPit;
         const SYN = [
             ['+2', 'add', '+2'], ['−3', 'subtract', '-3 or −3'], ['×3', 'multiply', '*3, x3 or ×3'], ['÷3', 'divide', '/3, :3 or ÷3'], ['mod 5', 'remainder', 'mod 5, mod5 or %5'],
             ['x²', 'square', 'x², x^2, ^2, sq or square'], ['x³', 'cube', 'x³, x^3, ^3 or cube'], ['|x|', 'absolute value', '|x|, abs or absolute'],
@@ -2298,24 +2478,26 @@
         $('pp').onclick = () => { slack++; upd(); };
         $('pm').onclick = () => { if (slack > 0) slack--; upd(); };
 
-        function saveDraft() { try { localStorage.setItem(DRAFT, JSON.stringify({ n: mode, rt: ROOTS, hc: HC, t: MT.t, a: MT.a, dv: MT.dv, s: $('s').value, g: $('g').value, o: ops, p: curMin === null ? wantPar : curMin + slack, vk: VER && VER.k, vm: VER && VER.m })); } catch (e) { } }
+        function saveDraft() { try { localStorage.setItem(DRAFT, JSON.stringify({ n: mode, rt: ROOTS, hc: HC, pt: pits, t: MT.t, a: MT.a, dv: MT.dv, s: $('s').value, g: $('g').value, o: ops, p: curMin === null ? wantPar : curMin + slack, vk: VER && VER.k, vm: VER && VER.m })); } catch (e) { } }
         function upd() {
             $('chips').innerHTML = ops.map((s, i) => '<button type="button" class="opb' + (opOk(s) ? '' : ' bad') + '" data-x="' + i + '" aria-label="remove ' + s + '" title="click to remove">' + opLabel(s) + '</button>').join('');
             document.querySelectorAll('[data-x]').forEach(b => b.onclick = () => { ops.splice(+b.dataset.x, 1); upd(); });
             $('cnt').textContent = ops.length ? '(' + ops.length + ')' : '';
             $('clr').hidden = ops.length < 2;
-            const st = $('s').value.trim().replace('−', '-'), go = $('g').value.trim().replace('−', '-'), sOk = okNum(st, numRe()), gOk = okNum(go, numRe());
+            const st = $('s').value.trim().replace('−', '-'), go = $('g').value.trim().replace('−', '-'), sOk = okNum(st, numRe()), gOk = okNum(go, numRe()), sa = sOk ? parseNum(st) : null, ga = gOk ? parseNum(go) : null; renderPits(sa, ga);
             setFlip($('pvs'), sOk ? st : '?'); setFlip($('pvg'), gOk ? go : '?'); $('pvs').closest('.board').style.setProperty('--ns', Math.max(1.2, Math.min(2.6, 120 / (Math.max(st.length, go.length, 1) * 13.8))) + 'rem'); $('s').classList.toggle('bad', !sOk); $('g').classList.toggle('bad', !gOk);
             const S = $('status'); let min = null, playable = false, unsolvable = false, verified = false, needVerify = false; code = ''; lastLv = null;
             S.className = 'no';
             if (!sOk || !gOk) S.textContent = 'start and goal need to be valid ' + (mode === 'whole' ? 'whole numbers' : mode === 'dec' ? 'numbers (up to 2 decimals)' : 'numbers or fractions');
             else if (!ops.length) S.textContent = 'add at least one operation';
             else if (ops.some(s => !opOk(s))) S.textContent = 'switch the number type or remove the red operations';
+            else if (pits.some(pitModeBad)) S.textContent = 'switch the number type or remove the red sand pits';
+            else if (pits.some(t => pitBadAt(t, sa, ga))) S.textContent = "a sand pit can't cover the start or the goal. remove the red one";
             else {
                 const a = parseNum(st), b = parseNum(go), os = ops.map(s => mk(s, mode));
                 if (!a || !b || os.some(o => !o)) S.textContent = 'those numbers are too big';
                 else if (same(a, b)) S.textContent = 'the start and the goal are the same number';
-                else { playable = true; min = solveCap(a, b, os, 400000); const vk = verKey(st, go); if (pendingVer !== null) { VER = { k: vk, m: pendingVer }; pendingVer = null; } if (min === -1 && VER && VER.k === vk) { min = VER.m; verified = true; S.className = 'ok'; S.textContent = 'verified by you: solved in ' + min + (min === 1 ? ' move' : ' moves') + ' (the shortest may be fewer)'; } else if (min === -1) { min = null; needVerify = true; S.textContent = "couldn't check every route. you can try it yourself, or remove some operations"; } else if (min === -2) { min = null; S.textContent = 'the shortest route is over 99 moves, which is too long for a level'; } else if (min === null) { unsolvable = true; S.textContent = 'no way to reach the goal with these operations'; } else if (!verified) { S.className = 'ok'; S.textContent = 'solvable! shortest route: ' + min + (min === 1 ? ' move' : ' moves'); } }
+                else { playable = true; min = solveCap(a, b, os, 400000, pitList()); const vk = verKey(st, go); if (pendingVer !== null) { VER = { k: vk, m: pendingVer }; pendingVer = null; } if (min === -1 && VER && VER.k === vk) { min = VER.m; verified = true; S.className = 'ok'; S.textContent = 'verified by you: solved in ' + min + (min === 1 ? ' move' : ' moves') + ' (the shortest may be fewer)'; } else if (min === -1) { min = null; needVerify = true; S.textContent = "couldn't check every route. you can try it yourself, or remove some operations"; } else if (min === -2) { min = null; S.textContent = 'the shortest route is over 99 moves, which is too long for a level'; } else if (min === null) { unsolvable = true; S.textContent = pits.length ? 'no way to reach the goal with these operations and sand pits' : 'no way to reach the goal with these operations'; } else if (!verified) { S.className = 'ok'; S.textContent = 'solvable! shortest route: ' + min + (min === 1 ? ' move' : ' moves'); } }
             }
             curMin = min; curVer = verified;
             syncRoute();
@@ -2326,23 +2508,23 @@
                 const p = min + slack; setFlip($('par'), String(p), true);
                 $('parhint').textContent = slack === 0 ? 'exactly the shortest route (hardest)' : slack + ' spare ' + (slack === 1 ? 'move' : 'moves') + ' on top of the shortest route (' + min + ')';
                 $('pm').disabled = slack === 0; $('pp').disabled = p >= 20;
-                lastLv = { s: st, g: go, p, n: mode, o: ops, rt: ROOTS && mode !== 'frac', hc: HC }; code = encodeLevel(Object.assign({}, lastLv, metaObj()));
+                lastLv = { s: st, g: go, p, n: mode, o: ops, rt: ROOTS && mode !== 'frac', hc: HC, pt: pits.slice() }; code = encodeLevel(Object.assign({}, lastLv, metaObj()));
             }
             curPar = min !== null ? min + slack : Math.max(1, Math.min(20, wantPar !== null ? wantPar : 5)); curUnsolvable = unsolvable;
             /* no solution (or too many states to check): par can't follow a shortest route, but the level can still be played */
-            if (min === null && playable) { lastLv = { s: st, g: go, p: Math.max(1, Math.min(20, wantPar !== null ? wantPar : 5)), n: mode, o: ops, rt: ROOTS && mode !== 'frac', hc: HC }; code = encodeLevel(Object.assign({}, lastLv, metaObj())); }
+            if (min === null && playable) { lastLv = { s: st, g: go, p: Math.max(1, Math.min(20, wantPar !== null ? wantPar : 5)), n: mode, o: ops, rt: ROOTS && mode !== 'frac', hc: HC, pt: pits.slice() }; code = encodeLevel(Object.assign({}, lastLv, metaObj())); }
             $('vfy').hidden = !(needVerify && code); $('vfy').onclick = () => { if (code) location.href = '../custom/?level=' + code + '&from=editor&verify=1'; };
             $('code').value = code; $('cc').disabled = $('cl').disabled = !code;
             const pl = $('play'), ps = !code ? 'off' : unsolvable ? 'warn' : 'ok';
             pl.className = 'btn go ' + ps; pl.innerHTML = (ps === 'warn' ? ICON_WARN : ICON_PLAY) + 'playtest'; pl.setAttribute('aria-disabled', ps === 'off'); pl.setAttribute('href', code ? '../custom/?level=' + code + '&from=editor' : '#');
             if (ps === 'warn') { pl.dataset.tip = 'your level has no solution.'; pl.setAttribute('aria-label', 'playtest. your level has no solution.'); } else { delete pl.dataset.tip; pl.removeAttribute('aria-label'); }
-            $('sol').disabled = ps === 'off'; clearSolutions(); syncAdder(); saveDraft();
+            $('sol').disabled = ps === 'off'; clearSolutions(); syncAdder(); syncPitAdder(); saveDraft();
         }
         $('play').onclick = e => { if (!code) e.preventDefault(); };
 
         /* for every move count L up to maxLen, find the routes of exactly L moves (shortest first). a route ends the moment it hits the goal and never repeats a number.
            each length keeps its first capLen routes but still counts the rest, so no move count gets crowded out by shorter ones */
-        function findSolutions(start, goal, os, maxLen, capLen, capNodes) {
+        function findSolutions(start, goal, os, maxLen, capLen, capNodes, pk) {
             const groups = [], path = [], seen = new Set([key(start)]);
             for (let L = 1; L <= maxLen; L++) {
                 const g = { len: L, routes: [], total: 0, exact: true }; let nodes = 0, stopped = false;
@@ -2352,7 +2534,7 @@
                         if (++nodes > capNodes) { stopped = true; return; }
                         const v = o.f(x); if (!v) continue;
                         if (same(v, goal)) { if (depth + 1 === L) { g.total++; if (g.routes.length < capLen) g.routes.push(path.concat({ s: o.s, v })); } continue; }
-                        const k = key(v); if (depth + 1 >= L || seen.has(k)) continue;
+                        const k = key(v); if (depth + 1 >= L || seen.has(k) || (pk && inPits(pk, v))) continue; /* a route can't go on from a sand pit */
                         seen.add(k); path.push({ s: o.s, v }); dfs(v, depth + 1); path.pop(); seen.delete(k);
                     }
                 };
@@ -2367,7 +2549,7 @@
         function renderRoute() {
             const box = $('rtbox'), a = parseNum($('s').value.trim().replace('−', '-')), b = parseNum($('g').value.trim().replace('−', '-')), os = ops.map(s => mk(s, mode));
             if (!a || !b || os.some(o => !o) || curMin === null) { box.hidden = true; return; }
-            const r = findSolutions(a, b, os, curMin, 1, 300000), route = r.groups.length && r.groups[0].routes[0];
+            const r = findSolutions(a, b, os, curMin, 1, 300000, pitList()), route = r.groups.length && r.groups[0].routes[0];
             const fmt = x => x.b > 1 ? surdFmt(x) : (x.d === 1 ? String(x.n) : mode === 'frac' ? x.n + '/' + x.d : String(+(x.n / x.d).toFixed(6))).replace('-', '−');
             box.innerHTML = route ? '<div class="route"><span class="v">' + fmt(a) + '</span>' + route.map(st => '<span class="o">' + st.s + '</span><span class="v">' + fmt(st.v) + '</span>').join('') + '</div>' : '<p class="solnote">could not rebuild the route. try the solutions list below.</p>';
             box.hidden = false;
@@ -2388,7 +2570,7 @@
             if (curUnsolvable) { $('solcnt').textContent = '(0)'; list.innerHTML = "<p class=\"solnote\">no routes. the goal can't be reached with these operations.</p>"; return; }
             const a = parseNum($('s').value.trim().replace('−', '-')), b = parseNum($('g').value.trim().replace('−', '-')), os = ops.map(s => mk(s, mode));
             if (!a || !b || os.some(o => !o)) return;
-            const r = findSolutions(a, b, os, maxLen, capLen, 300000);
+            const r = findSolutions(a, b, os, maxLen, capLen, 300000, pitList());
             const fmt = x => x.b > 1 ? surdFmt(x) : (x.d === 1 ? String(x.n) : mode === 'frac' ? x.n + '/' + x.d : String(+(x.n / x.d).toFixed(6))).replace('-', '−');
             const sum = r.groups.reduce((n, g) => n + g.total, 0), partial = r.groups.some(g => !g.exact) || r.stoppedAt !== null;
             $('solcnt').textContent = '(' + sum + (partial ? '+' : '') + ')';
@@ -2413,7 +2595,7 @@
         $('cc').onclick = () => code && copy(code, 'code'); $('cl').onclick = () => code && copy(LIVE + code, 'link');
 
         /* paste a level code (or a full level link) into the code box to edit that level */
-        function loadLevel(lv) { mode = lv.n; ROOTS = !!lv.rt; HC = !!lv.hc; MT = { t: lv.t, a: lv.a, dv: lv.dv }; ops = lv.o.slice(); $('s').value = lv.s; $('g').value = lv.g; wantPar = lv.p; syncMode(); upd(); }
+        function loadLevel(lv) { mode = lv.n; ROOTS = !!lv.rt; HC = !!lv.hc; pits = (lv.pt || []).slice(); MT = { t: lv.t, a: lv.a, dv: lv.dv }; ops = lv.o.slice(); $('s').value = lv.s; $('g').value = lv.g; wantPar = lv.p; syncMode(); upd(); }
         const levelFrom = v => { const m = v.match(/[?&]level=([^&#\s]+)/); return decodeLevel(m ? m[1] : v); };
         $('code').oninput = () => {
             const v = $('code').value.trim(); if (v === code) return;
@@ -2448,14 +2630,15 @@
         /* destructive buttons ask for a second tap instead of a popup */
         function armed(btn, idle, ask, fn) { let t = 0; btn.onclick = () => { if (btn.dataset.arm) { clearTimeout(t); delete btn.dataset.arm; btn.textContent = idle; fn(); } else { btn.dataset.arm = 1; btn.textContent = ask; t = setTimeout(() => { delete btn.dataset.arm; btn.textContent = idle; }, 2500); } }; }
         armed($('clr'), 'clear all', 'tap again to clear', () => { ops = []; upd(); });
-        armed($('new'), 'new level', 'tap again to start over', () => { mode = 'whole'; ROOTS = false; HC = false; MT = { t: '', a: acctName(), dv: 0 }; ops = []; slack = 0; wantPar = null; solMax = null; $('s').value = '1'; $('g').value = '10'; $('opn').value = ''; syncMode(); upd(); });
+        armed($('pitclr'), 'clear all', 'tap again to clear', () => { pits = []; upd(); });
+        armed($('new'), 'new level', 'tap again to start over', () => { mode = 'whole'; ROOTS = false; HC = false; pits = []; MT = { t: '', a: acctName(), dv: 0 }; ops = []; slack = 0; wantPar = null; solMax = null; $('s').value = '1'; $('g').value = '10'; $('opn').value = ''; syncMode(); upd(); });
 
         /* start from a ?level= link if there is one, otherwise from the last unfinished draft */
         {
             const lv0 = decodeLevel(new URLSearchParams(location.search).get('level') || '');
             if (lv0) { const vm = +(new URLSearchParams(location.search).get('verified') || 0); if (Number.isInteger(vm) && vm >= 1 && vm <= 99) pendingVer = vm; loadLevel(lv0); try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { } }
             else {
-                try { const d = JSON.parse(localStorage.getItem(DRAFT) || 'null'); if (d && MC[d.n] && Array.isArray(d.o) && d.o.every(x => typeof x === 'string') && typeof d.s === 'string' && typeof d.g === 'string') { mode = d.n; ROOTS = !!d.rt; HC = !!d.hc; MT = { t: typeof d.t === 'string' ? d.t.slice(0, 40) : '', a: typeof d.a === 'string' ? d.a.slice(0, 24) : '', dv: [2, 4, 6, 8].includes(d.dv) ? d.dv : 0 }; if (typeof d.vk === 'string' && Number.isInteger(d.vm)) VER = { k: d.vk, m: d.vm }; ops = d.o; $('s').value = d.s; $('g').value = d.g; wantPar = Number.isInteger(d.p) ? d.p : null; } } catch (e) { }
+                try { const d = JSON.parse(localStorage.getItem(DRAFT) || 'null'); if (d && MC[d.n] && Array.isArray(d.o) && d.o.every(x => typeof x === 'string') && typeof d.s === 'string' && typeof d.g === 'string') { mode = d.n; ROOTS = !!d.rt; HC = !!d.hc; pits = Array.isArray(d.pt) ? d.pt.filter(x => typeof x === 'string' && /^-?\d+([./]\d+)?(~-?\d+([./]\d+)?)?$/.test(x)).slice(0, 6) : []; MT = { t: typeof d.t === 'string' ? d.t.slice(0, 40) : '', a: typeof d.a === 'string' ? d.a.slice(0, 24) : '', dv: [2, 4, 6, 8].includes(d.dv) ? d.dv : 0 }; if (typeof d.vk === 'string' && Number.isInteger(d.vm)) VER = { k: d.vk, m: d.vm }; ops = d.o; $('s').value = d.s; $('g').value = d.g; wantPar = Number.isInteger(d.p) ? d.p : null; } } catch (e) { }
                 try { if (!MT.a && !localStorage.getItem(DRAFT)) MT.a = acctName(); } catch (e) { } /* brand new editor: start with the account name */
                 syncMode(); upd();
             }

@@ -3262,6 +3262,7 @@
             </div>
             <div id="pips" aria-live="polite"></div>
             <div class="lbl" id="left"></div>
+            <div class="lbl" id="pitnote" hidden style="color:#d4a64f"></div>
             <div id="trail"></div>
             <div id="ops"></div>
             <div class="tools"><button id="undo">undo</button><button id="reset">restart level</button><button
@@ -3347,6 +3348,10 @@
                             like √2 or 3√5. fractions already allow it. starts a new level</span></div><button
                         class="sw" id="swRoots" role="switch" aria-checked="false"
                         aria-label="roots of non-squares"></button>
+                </div>
+                <div class="srow gameonly nodaily" id="rowSand">
+                    <div><b>sand pits</b><span>some levels have numbers, or a whole stretch of numbers, that you can land on but not move from, so you can only undo. on the complex plane they are shaded polygons. starts a new level</span></div><button
+                        class="sw" id="swSand" role="switch" aria-checked="false" aria-label="sand pits"></button>
                 </div>
                 <div class="srow gameonly nodaily">
                     <div><b>hardcore mode</b><span>only 3 undos per level, no restarting, and you can't go over
@@ -4357,6 +4362,14 @@
         Object.assign(I18N.es, { lang_en: 'inglés', lang_es: 'español', lang_ja: 'japonés', lang_zh: 'chino' });
         Object.assign(I18N.ja, { lang_en: '英語', lang_es: 'スペイン語', lang_ja: '日本語', lang_zh: '中国語' });
         Object.assign(I18N.zh, { lang_en: '英语', lang_es: '西班牙语', lang_ja: '日语', lang_zh: '中文' });
+        Object.assign(I18N.en, {"sand_b": "sand pits", "sand_d": "some levels have numbers, or a whole stretch of numbers, that you can land on but not move from, so you can only undo. on the complex plane they are shaded polygons. starts a new level"});
+        Object.assign(I18N.es, {"sand_b": "trampas de arena", "sand_d": "algunos niveles tienen números, o un tramo entero de números, en los que puedes caer pero de los que no puedes salir, así que solo puedes deshacer. en el plano complejo son polígonos sombreados. empieza un nivel nuevo"});
+        Object.assign(I18N.ja, {"sand_b": "バンカー", "sand_d": "着地はできるけれど、そこから動けない数（または数の範囲）があるレベルが出ます。元に戻すことしかできません。複素平面では色のついた多角形になります。新しいレベルが始まります"});
+        Object.assign(I18N.zh, {"sand_b": "沙坑", "sand_d": "有些关卡带有可以落入但无法继续移动的数（或一段数的范围），只能撤销。在复平面上是带阴影的多边形。会开始新关卡"});
+        Object.assign(I18N.en, { sand_stuck: "stuck in the sand! you can only undo.", sand_note: "sand pits:" });
+        Object.assign(I18N.es, { sand_stuck: "¡atascado en la arena! solo puedes deshacer.", sand_note: "trampas de arena:" });
+        Object.assign(I18N.ja, { sand_stuck: "砂にはまった！元に戻すことしかできません。", sand_note: "バンカー:" });
+        Object.assign(I18N.zh, { sand_stuck: "陷进沙坑了！只能撤销。", sand_note: "沙坑：" });
         Object.assign(I18N.en, { howto_b: "how to play", howto_p1: "you start with a number and need to turn it into the goal.", howto_p2: "every move applies one of the operations shown to your number. tap an operation to use it.", howto_p3: "par is a number of moves that is guaranteed to work. aim to finish in par or fewer, since every move past par counts as one over.", howto_p4: "stuck? undo your last move or restart the level.", howto_p5: "by default, division only works when the result is a whole number, so a greyed-out ÷ means your number doesn't divide evenly." });
         Object.assign(I18N.es, { howto_b: "cómo jugar", howto_p1: "empiezas con un número y tienes que convertirlo en la meta.", howto_p2: "cada movimiento aplica una de las operaciones mostradas a tu número. toca una operación para usarla.", howto_p3: "el par es un número de movimientos que seguro funciona. intenta terminar en par o menos, porque cada movimiento después del par cuenta como uno de más.", howto_p4: "¿atascado? deshaz tu último movimiento o reinicia el nivel.", howto_p5: "por defecto, la división solo funciona cuando el resultado es un número entero, así que un ÷ en gris significa que tu número no se divide exacto." });
         Object.assign(I18N.ja, { howto_b: "遊び方", howto_p1: "最初の数を、ゴールの数に変えるのが目的です。", howto_p2: "1手ごとに、表示されている演算のどれかが今の数に適用されます。使いたい演算をタップしてください。", howto_p3: "パーは「これだけあれば必ずゴールできる」手数です。パー以内でのクリアを目指しましょう。パーを超えた手数は、1手ごとにオーバーとして数えられます。", howto_p4: "行き詰まったら、1手戻すか、レベルをやり直せます。", howto_p5: "初期設定では、割り算は結果が整数になるときだけ使えます。÷がグレーになっているときは、今の数が割り切れないということです。" });
@@ -4427,7 +4440,7 @@
             document.querySelectorAll('#langSeg button').forEach(b => b.onclick = () => setLang(b.dataset.l));
             applyStatic();
         }
-        let settings = { flip: true, anim: true, theme: 'dark', num: 'whole', gdec: false, gfrac: false, roots: false, hc: false };
+        let settings = { flip: true, anim: true, theme: 'dark', num: 'whole', gdec: false, gfrac: false, roots: false, hc: false, sandpits: false };
         try { Object.assign(settings, JSON.parse(localStorage.getItem('hs1') || '{}')) } catch (e) { }
         settings.anims = Object.assign({ flip: true, ball: true, zoom: true, confetti: true, slide: true, theme: true, ui: true }, settings.anims || {});
         if (!['whole', 'dec', 'frac'].includes(settings.num)) settings.num = settings.dec ? 'dec' : 'whole';
@@ -4486,6 +4499,15 @@
         function stopFx() { clearTimeout(fxTimer); cancelAnimationFrame(fxRaf); const c = $('fx'); c.getContext('2d').clearRect(0, 0, c.width, c.height); }
         function nice(r, n = 6) { const t = r / n, m = Math.pow(10, Math.floor(Math.log10(t))), f = t / m; return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * m }
         function tf(v) { return String(+v.toFixed(3)) }
+        /* a sand pit is one number {n,d,b}, or a range: the same plus hi = {n,d,b}, which covers every number from the first up to hi (both ends included) */
+        const pitVal = x => x.n / x.d * Math.sqrt(x.b || 1);
+        const pitCmp = (x, y) => { if ((x.b || 1) === 1 && (y.b || 1) === 1) { const t = x.n * y.d - y.n * x.d; return t < 0 ? -1 : t > 0 ? 1 : 0; } const t = pitVal(x) - pitVal(y); return Math.abs(t) < 1e-9 ? 0 : t < 0 ? -1 : 1; };
+        const pitHas = (p, x) => p.poly ? (!!x.c && p.pts.some(q => q.re === x.re && q.im === x.im)) : p.hi ? (!x.c && pitCmp(x, p) >= 0 && pitCmp(x, p.hi) <= 0) : same(p, x);
+        const inPits = (pits, x) => !!pits && pits.some(p => pitHas(p, x));   /* is x in any sand pit? you can land on it, but then you can only undo */
+        const pitFmt = p => p.poly ? '{' + p.pts.map(fmtC).join(', ') + '}' : p.hi ? fmt(p) + '–' + fmt(p.hi) : fmt(p);   /* as shown to the player */
+        const pitTxt = p => p.poly ? pitFmt(p) : p.hi ? fmt(p) + '~' + fmt(p.hi) : fmt(p);   /* as saved in a score */
+        const pitParse = t => { const r = String(t).split('~'), lo = parseNum(r[0]); if (!lo) return null; if (r.length > 1) { const hi = parseNum(r[1]); if (!hi) return null; lo.hi = hi; } return lo; };
+        const inPit = x => !!L && inPits(L.pits, x);
         function draw(vw, bl, vals, g, won) {
             const W = $('nl').clientWidth || 640, H = W < 520 ? 160 : 200, pad = W < 520 ? 28 : 44, Y = H - 58, R = 7, sp = vw.hi - vw.lo, x = v => pad + (v - vw.lo) / sp * (W - 2 * pad);
             const hgt = (a, b) => Math.max(4, Math.min(Y - 30, 100, Math.abs(x(b) - x(a)) * .25));
@@ -4513,6 +4535,7 @@
                 }
                 else h += `<path d="M${a} ${Y - R} Q${(a + b) / 2} ${cy} ${b} ${Y - R}" fill="none" stroke="${col}" stroke-width="2" stroke-dasharray="6 5" opacity="${op}"/>`;
             }
+            (L.pits || []).forEach(p => { const pv = val(p), px = x(pv), pe = p.hi ? x(val(p.hi)) : px, a = Math.max(12, Math.min(px, pe)), z = Math.min(W - 12, Math.max(px, pe)); if (a > z) return; const cx = (a + z) / 2; h += `<ellipse cx="${cx}" cy="${Y}" rx="${(z - a) / 2 + 10}" ry="4" fill="#d4a64f"/><text x="${cx}" y="${Y - 11}" style="font-size:11px;font-weight:700;fill:#d4a64f">${p.hi ? tf(pv) + '–' + tf(val(p.hi)) : tf(pv)}</text>`; });   /* sand pits: a range is one wide patch */
             const rows = [[], [], []];
             vals.forEach((v, i) => {
                 if (i === vals.length - 1 && bl) return;
@@ -4544,6 +4567,7 @@
             }
             const vals = [val(L.start), ...hist.map((h, i) => val(hist[i + 1] ? hist[i + 1].prev : cur))], g = val(L.goal), won = same(cur, L.goal);
             let lo = Math.min(g, ...vals), hi = Math.max(g, ...vals); if (hi - lo < 1) { lo -= 1; hi += 1 }
+            { const sp0 = hi - lo; (L.pits || []).forEach(p => { [val(p), val(p.hi || p)].forEach(pv => { if (pv >= lo - sp0 && pv <= hi + sp0) { lo = Math.min(lo, pv - sp0 * .05); hi = Math.max(hi, pv + sp0 * .05); } }); }); }   /* sand pits near the action stay in view */
             const tgt = { lo, hi }, hit = pend && vals.length > 1; pend = false;
             const diff = !view || Math.abs(view.lo - lo) + Math.abs(view.hi - hi) > 1e-9;
             const hitA = hit && animOn('ball'), zoomA = diff && animOn('zoom');
@@ -4563,14 +4587,14 @@
         const hcOn = () => settings.hc && !dailyMode;
         let L = null, cur = null, hist = [], holes = 0, total = 0, counted = false, gaveUp = false, busy = false, timers = [];
         function stopReplay() { timers.forEach(clearTimeout); timers = []; busy = false; gaveUp = false; }
-        function bestPath(start, goal, ops) {
+        function bestPath(start, goal, ops, pits) {
             const par = new Map([[key(start), null]]); let fr = [start];
             for (let d = 0; d < 9; d++) {
                 const nx = [];
                 for (const n of fr) for (const o of ops) {
                     const v = o.f(n); if (!v || par.has(key(v))) continue;
                     par.set(key(v), { from: n, o }); if (same(v, goal)) { const path = []; let c = v; while (par.get(key(c))) { const e = par.get(key(c)); path.unshift(e.o); c = e.from; } return path; }
-                    nx.push(v);
+                    if (!inPits(pits, v)) nx.push(v);   /* nothing continues from a sand pit */
                 }
                 fr = nx;
             }
@@ -4585,7 +4609,7 @@
         function giveUp() {
             if (busy || same(cur, L.goal)) return;
             stopReplay(); gaveUp = true; busy = true; cur = L.start; hist = []; pend = false; render();
-            const steps = bestPath(L.start, L.goal, L.ops); rp = { steps, done: 0 };
+            const steps = bestPath(L.start, L.goal, L.ops, L.pits); rp = { steps, done: 0 };
             if (!steps.length) { busy = false; render(); return; }
             steps.forEach((o, i) => {
                 timers.push(setTimeout(() => { rp.done = i + 1; hist.push({ prev: cur, s: o.s }); cur = o.f(cur); pend = true; if (i === steps.length - 1) busy = false; render(); }, 400 + i * 600));
@@ -4610,6 +4634,47 @@
             const m = /^([+−])(\d*)(i?)$/.exec(s), sg = m[1] === '−' ? -1 : 1, k = sg * (m[2] === '' ? 1 : +m[2]);
             return m[3] ? { s, f: x => C(x.re, x.im + k) } : { s, f: x => C(x.re + k, x.im) };
         }
+        /* complex sand pits: an irregular polygon on the plane. it covers every Gaussian integer inside it (kept in pts), and you can land on those but not move from them.
+           the polygon is star-shaped around a number that lies on a shortest route, so it is always a simple shape (it can be concave, like a dart) */
+        function randPoly(c) {
+            const k = ri(4, 6), cx = c.re + (Math.random() - .5) * .5, cy = c.im + (Math.random() - .5) * .5, a0 = Math.random() * 2 * Math.PI, st = 2 * Math.PI / k, poly = [];
+            for (let i = 0; i < k; i++) { const a = a0 + (i + (Math.random() - .5) * .5) * st, r = .6 + Math.random() * 1.3; poly.push([+(cx + r * Math.cos(a)).toFixed(2), +(cy + r * Math.sin(a)).toFixed(2)]); }
+            return poly;
+        }
+        /* the numbers inside a polygon, or null when some number sits too close to an edge to tell whether it is in or out (so the picture never looks ambiguous) */
+        function polyCovers(poly) {
+            const xs = poly.map(q => q[0]), ys = poly.map(q => q[1]), out = [];
+            for (let a = Math.floor(Math.min(...xs)); a <= Math.ceil(Math.max(...xs)); a++) for (let b = Math.floor(Math.min(...ys)); b <= Math.ceil(Math.max(...ys)); b++) {
+                let inside = false, md = 9;
+                for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+                    const xi = poly[i][0], yi = poly[i][1], xj = poly[j][0], yj = poly[j][1], dx = xj - xi, dy = yj - yi;
+                    if ((yi > b) !== (yj > b) && a < dx * (b - yi) / dy + xi) inside = !inside;
+                    const t = Math.max(0, Math.min(1, ((a - xi) * dx + (b - yi) * dy) / (dx * dx + dy * dy)));
+                    md = Math.min(md, Math.hypot(a - xi - t * dx, b - yi - t * dy));
+                }
+                if (md < .15) return null;
+                if (inside) out.push({ c: 1, re: a, im: b });
+            }
+            return out;
+        }
+        /* returns { pits, par } or null. par = the shortest route that avoids the pits */
+        function placeCPits(start, goal, ops, par, tier, tp) {
+            const cand = routeNodes(start, goal, ops, par); if (!cand.length) return null;
+            for (let i = cand.length - 1; i > 0; i--) { const j = ri(0, i); [cand[i], cand[j]] = [cand[j], cand[i]]; }
+            const want = ri(1, Math.min(tier >= 4 ? 2 : 1, cand.length)), pits = []; let np = par;
+            for (const c of cand) {
+                if (pits.length >= want) break;
+                if (inPits(pits, c)) continue;
+                for (let t = 0; t < 8; t++) {
+                    const poly = randPoly(c), pts = polyCovers(poly);
+                    if (!pts || !pts.length || pts.length > 6 || !pts.some(q => same(q, c)) || pts.some(q => same(q, start) || same(q, goal) || inPits(pits, q))) continue;
+                    const pit = { poly, pts }, p2 = solveAvoid(start, goal, ops, pits.concat([pit]));
+                    if (!p2 || (tier === 8 ? p2 >= tp : p2 > tier + 1)) continue;   /* still solvable, and still within what the difficulty allows */
+                    pits.push(pit); np = p2; break;
+                }
+            }
+            return pits.length ? { pits, par: np } : null;
+        }
         function genComplex(tier) {
             CAP = tier === 8 ? 40000 : 200000;
             const tp = tier === 8 ? ri(5, 7) : 0;
@@ -4625,7 +4690,9 @@
                 else if (!par || par < Math.max(2, tier - 1) || par > tier + 1) continue;
                 const need = tier === 8 ? (tries < 1200 ? 2 : 1) : (tries < 2000 ? 2 : 1);
                 if (need > 1 && countBest(start, v, pool) < need) continue;
-                L = { start, goal: v, ops: pool, limit: tier === 8 ? tp : par, pack: 'complex' }; cur = start; hist = []; undosUsed = 0; counted = false; render(); return true;
+                let lim = tier === 8 ? tp : par, pits;
+                if (settings.sandpits) { const pp = placeCPits(start, v, pool, par, tier, tp); if (!pp) continue; pits = pp.pits; if (tier !== 8) lim = pp.par; }   /* sand pits option: par becomes the shortest route that avoids them */
+                L = { start, goal: v, ops: pool, limit: lim, pack: 'complex', pits }; cur = start; hist = []; undosUsed = 0; counted = false; render(); return true;
             }
             return false;
         }
@@ -4649,6 +4716,8 @@
             const pts = [L.start, ...hist.map((h, i) => hist[i + 1] ? hist[i + 1].prev : cur)], won = same(cur, g);
             const all = [...pts, g, { re: 0, im: 0 }];
             let r0 = Math.min(...all.map(q => q.re)) - 1, r1 = Math.max(...all.map(q => q.re)) + 1, i0 = Math.min(...all.map(q => q.im)) - 1, i1 = Math.max(...all.map(q => q.im)) + 1;
+            { const sp = Math.max(r1 - r0, i1 - i0, 4), a0 = r0 - sp, a1 = r1 + sp, b0 = i0 - sp, b1 = i1 + sp;   /* sand pits near the action stay in view */
+              (L.pits || []).forEach(pt => { if (!pt.poly) return; const xs = pt.poly.map(q => q[0]), ys = pt.poly.map(q => q[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys); if (x1 < a0 || x0 > a1 || y1 < b0 || y0 > b1) return; r0 = Math.min(r0, x0 - .3); r1 = Math.max(r1, x1 + .3); i0 = Math.min(i0, y0 - .3); i1 = Math.max(i1, y1 + .3); }); }
             if (r1 - r0 < 6) { const m = (r0 + r1) / 2; r0 = m - 3; r1 = m + 3; } if (i1 - i0 < 4) { const m = (i0 + i1) / 2; i0 = m - 2; i1 = m + 2; }
             /* the plane grows taller when the numbers spread upwards, so the grid keeps equal units without shrinking */
             const tgt = { r0, r1, i0, i1 };
@@ -4666,6 +4735,7 @@
             for (let a = Math.ceil(vr0 / st) * st; a <= vr1; a += st) { const x = X(a); h += `<line x1="${x}" y1="${Y(vi0)}" x2="${x}" y2="${Y(vi1)}" stroke="var(--blue)" stroke-width="1" opacity=".18"/>`; if (a && x > 12 && x < W - 12) h += `<text x="${x}" y="${Math.min(H - 4, Math.max(12, Y(0) + 15))}" opacity=".7" style="font-size:11px">${a}</text>`; }
             for (let b = Math.ceil(vi0 / st) * st; b <= vi1; b += st) { const y = Y(b); h += `<line x1="${X(vr0)}" y1="${y}" x2="${X(vr1)}" y2="${y}" stroke="var(--blue)" stroke-width="1" opacity=".18"/>`; if (b && y > 10 && y < H - 6 && !(y < 26 && X(0) < 120)) h += `<text x="${Math.max(10, Math.min(W - 10, X(0) - 10))}" y="${y + 4}" opacity=".7" style="font-size:11px;text-anchor:end">${b === 1 ? '' : b === -1 ? '−' : b < 0 ? '−' + -b : b}i</text>`; }
             h += `<line x1="${X(vr0)}" y1="${Y(0)}" x2="${X(vr1)}" y2="${Y(0)}" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"/><line x1="${X(0)}" y1="${Y(vi0)}" x2="${X(0)}" y2="${Y(vi1)}" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"/>`;
+            (L.pits || []).forEach(pt => { if (pt.poly) h += `<polygon points="${pt.poly.map(q => X(q[0]).toFixed(1) + ',' + Y(q[1]).toFixed(1)).join(' ')}" fill="#d4a64f" fill-opacity=".26" stroke="#f2c14e" stroke-width="2.5" stroke-linejoin="round"/>`; });   /* sand pits: shaded polygons */
             const gx = X(g.re), gy = Y(g.im); holePos = { x: gx, y: gy };
             h += `<ellipse cx="${gx}" cy="${gy}" rx="10" ry="4" fill="var(--hole)" stroke="var(--hole)" stroke-width="1.5"/><line x1="${gx}" y1="${gy}" x2="${gx}" y2="${gy - 34}" stroke="var(--ink)" stroke-width="2.5"/><path d="M${gx} ${gy - 34} L${gx + 18} ${gy - 27} L${gx} ${gy - 20}Z" fill="var(--imag)"/>`;
             for (let i = 0; i < pts.length - 1; i++) { const last = i === pts.length - 2; h += `<path d="M${P(pts[i])} L${P(pts[i + 1])}" fill="none" stroke="${last ? 'var(--imag)' : 'var(--soft)'}" stroke-width="2" stroke-dasharray="6 5" opacity="${last ? 1 : .55}"/>`; }
@@ -4693,6 +4763,69 @@
             ROOTS = false; NB = 100000; CAP = 1e9;
             L = { start: F(1), goal: F(10), ops: [mk('+3'), mk('×2')], limit: 3 }; cur = L.start; hist = []; undosUsed = 0; counted = false; render();
         }
+
+        /* ---------- sand pits ----------
+           a sand pit is a number you can land on but not move from: stuck there, you can only undo.
+           they are picked from numbers that lie on shortest routes (so they block some solutions) and every level is checked to still be solvable. */
+        function solveAvoid(start, goal, ops, blocked) { /* blocked: a list of sand pits (numbers or ranges) */
+            let seen = new Set([key(start)]), fr = [start];
+            for (let d = 1; d <= 8; d++) {
+                const nx = []; if (seen.size > CAP) return null;
+                for (const n of fr) for (const o of ops) {
+                    const v = o.f(n);
+                    if (!v || seen.has(key(v))) continue;
+                    if (same(v, goal)) return d;
+                    seen.add(key(v)); if (!inPits(blocked, v)) nx.push(v);   /* a pit can be landed on, but nothing continues from it */
+                }
+                fr = nx;
+            }
+            return null;
+        }
+        /* every number (not the start or goal) that lies on some shortest route from start to goal */
+        function routeNodes(start, goal, ops, par) {
+            const layers = [new Map([[key(start), start]])], seen = new Set([key(start)]), edges = [null];
+            for (let d = 1; d <= par; d++) {
+                const nx = new Map(), ed = []; if (seen.size > CAP) return [];
+                for (const [pk, n] of layers[d - 1]) for (const o of ops) {
+                    const v = o.f(n); if (!v) continue; const vk = key(v);
+                    if (seen.has(vk) && !nx.has(vk)) continue;
+                    nx.set(vk, v); ed.push([pk, vk]);
+                }
+                for (const k of nx.keys()) seen.add(k);
+                layers.push(nx); edges.push(ed);
+            }
+            const good = new Set([key(goal)]);
+            for (let d = par; d >= 1; d--) edges[d].forEach(([pk, vk]) => { if (good.has(vk)) good.add(pk); });
+            const out = [];
+            for (let d = 1; d < par; d++) for (const [k, v] of layers[d]) if (good.has(k) && k !== key(goal)) out.push(v);
+            return out;
+        }
+        /* a range of sand: every number from lo to hi. it is built around a number that lies on a route and is 2 to 4 whole numbers wide */
+        function pitRangeAround(c) {
+            const v = c.n / c.d * Math.sqrt(c.b || 1), lo = Math.floor(v) - ri(0, 1); let hi = Math.ceil(v) + ri(0, 1); if (hi <= lo) hi = lo + 1;
+            return { n: lo, d: 1, b: 1, hi: { n: hi, d: 1, b: 1 } };
+        }
+        const pitCopy = p => p.hi ? { n: p.n, d: p.d, b: p.b, hi: { n: p.hi.n, d: p.hi.d, b: p.hi.b } } : { n: p.n, d: p.d, b: p.b };
+        /* returns { pits, par } or null. par = the shortest route that avoids the pits.
+           each pit is one number on a shortest route or, about 4 times in 10, a range of numbers around one. a root like √2 can only be covered by a range
+           (a level code can't hold a single root as a pit) */
+        function placePits(start, goal, ops, par, tier, tp) {
+            const cand = routeNodes(start, goal, ops, par); if (!cand.length) return null;
+            for (let i = cand.length - 1; i > 0; i--) { const j = ri(0, i); [cand[i], cand[j]] = [cand[j], cand[i]]; }
+            const want = ri(1, Math.min(tier === 8 ? 3 : tier >= 4 ? 2 : 1, cand.length)), pits = []; let np = par;
+            for (const c of cand) {
+                if (pits.length >= want) break;
+                if (inPits(pits, c)) continue;   /* already inside a range */
+                const tries = []; if (c.b > 1 || ri(1, 10) <= 4) tries.push(pitRangeAround(c)); if (!(c.b > 1)) tries.push(c);   /* the range first, then the plain number */
+                for (const pit of tries) {
+                    if (pitHas(pit, start) || pitHas(pit, goal)) continue;
+                    const p2 = solveAvoid(start, goal, ops, pits.concat([pit]));
+                    if (!p2 || (tier === 8 ? p2 >= tp : p2 > tier + 1)) continue;   /* still solvable, and still within what the difficulty allows */
+                    pits.push(pit); np = p2; break;
+                }
+            }
+            return pits.length ? { pits: pits.map(pitCopy), par: np } : null;
+        }
         function genLevel(tier) {
             ROOTS = !!settings.roots;
             NB = tier === 8 ? 3000 : 100000; CAP = tier === 8 ? 40000 : 1e9;
@@ -4719,7 +4852,9 @@
                 } else if (!par || par < Math.max(2, tier - 1) || par > tier + 1) continue;
                 const need = tier === 8 ? (tries < 1200 ? 2 : 1) : (tries < 2000 ? 2 : 1);
                 if (need > 1 && countBest(start, v, pool) < need) continue;
-                L = { start, goal: v, ops: pool, limit: tier === 8 ? tp : par }; cur = start; hist = []; undosUsed = 0; counted = false; render(); return true;
+                let lim = tier === 8 ? tp : par, pits;
+                if (settings.sandpits) { const pp = placePits(start, v, pool, par, tier, tp); if (!pp) continue; pits = pp.pits; if (tier !== 8) lim = pp.par; }   /* sand pits option: par becomes the shortest route that avoids them */
+                L = { start, goal: v, ops: pool, limit: lim, pits }; cur = start; hist = []; undosUsed = 0; counted = false; render(); return true;
             }
             return false;
         }
@@ -4786,7 +4921,7 @@
                 mm.textContent = settings.hc ? tr('hardcore') : tr('normal'); mm.className = settings.hc ? 'mhc' : 'mnorm';
             }
             $('cur').classList.toggle('winp', same(cur, L.goal));
-            const used = hist.length, won = same(cur, L.goal), over = dailyMode ? 0 : used - L.limit; /* daily levels have no par */
+            const used = hist.length, won = same(cur, L.goal), stuck = !won && inPit(cur), over = dailyMode ? 0 : used - L.limit; /* daily levels have no par */
             $('lbplay').hidden = !dailyMode;
             $('psub').textContent = dailyMode ? tr('psub_daily') : tr('psub_par');
             const sc = over < 0 ? tr('sc_under', { n: -over }) : over === 0 ? tr('sc_par') : tr('sc_over', { n: over });
@@ -4804,8 +4939,8 @@
             $('ops').innerHTML = '';
             L.ops.forEach(o => {
                 const b = document.createElement('button'); b.innerHTML = opLabel(o.s);
-                const v = o.f(cur); b.disabled = won || !v || busy || full;
-                if (!won && !v) { const w = whyNot(o.s); b.title = w; b.innerHTML = opLabel(o.s) + '<small>' + w + '</small>'; }
+                const v = o.f(cur); b.disabled = won || !v || busy || full || stuck;
+                if (!won && !v && !stuck) { const w = whyNot(o.s); b.title = w; b.innerHTML = opLabel(o.s) + '<small>' + w + '</small>'; }
                 b.onclick = () => { hist.push({ prev: cur, s: o.s }); cur = v; pend = true; render(); }; $('ops').appendChild(b);
             });
             drawLine();
@@ -4818,8 +4953,10 @@
             $('undo').style.display = $('reset').style.display = gaveUp ? 'none' : '';
             const m = $('msg'); m.className = ''; m.innerHTML = '';
             if (full && !busy) { m.className = 'lose'; m.textContent = left > 0 ? tr('lose1') : tr('lose2'); }
+            else if (stuck && !busy) { m.className = 'lose'; m.textContent = tr('sand_stuck'); }
+            { const pn = $('pitnote'), pl = L.pits || []; pn.hidden = !pl.length; pn.textContent = pl.length ? tr('sand_note') + ' ' + pl.map(pitFmt).join(', ') : ''; }
             if (won) {
-                if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); L.pack === 'complex' || saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: !!settings.hc, num: settings.num, rt: !!ROOTS, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
+                if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); L.pack === 'complex' || saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: !!settings.hc, num: settings.num, rt: !!ROOTS, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s), pt: (L.pits || []).map(pitTxt) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
                 m.className = gaveUp ? 'lose' : 'win';
                 m.innerHTML = dailyMode ? tr('win_daily', { m: tr('moves', { n: used }) }) + '<br><span id="dnote"></span><br><button id="nx">' + tr('back_cal') + '</button>' : gaveUp ? tr(used < L.limit ? 'give_under' : 'give_par', { m: tr('moves', { n: used }) }) + '<br><button id="nx">' + tr('next_level') + '</button>' : tr('win', { n: used, sc }) + '<br><button id="nx">' + tr('next_level') + '</button>';
                 $('nx').onclick = dailyMode ? openDaily : newLevel; $('nx').focus(); if ($('dnote')) $('dnote').textContent = dailyNote;
@@ -4829,7 +4966,7 @@
         function applySettings() {
             if (settings.theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); else document.documentElement.removeAttribute('data-theme');
             $('swTheme').setAttribute('aria-checked', settings.theme === 'light');
-            $('swFlip').setAttribute('aria-checked', settings.flip); document.querySelectorAll('#numSeg button').forEach(b => b.setAttribute('aria-checked', b.dataset.m === settings.num)); $('swGdec').setAttribute('aria-checked', !!settings.gdec); $('swGdec').disabled = settings.num !== 'dec'; $('rowGdec').style.opacity = settings.num === 'dec' ? '' : '.45'; $('swRoots').setAttribute('aria-checked', !!settings.roots || settings.num === 'frac'); $('swRoots').disabled = settings.num === 'frac'; $('rowRoots').style.opacity = settings.num === 'frac' ? '.45' : ''; $('swGfrac').setAttribute('aria-checked', !!settings.gfrac); $('swGfrac').disabled = settings.num !== 'frac'; $('rowGfrac').style.opacity = settings.num === 'frac' ? '' : '.45'; $('swHc').setAttribute('aria-checked', !!settings.hc); $('swAnim').setAttribute('aria-checked', settings.anim);
+            $('swFlip').setAttribute('aria-checked', settings.flip); document.querySelectorAll('#numSeg button').forEach(b => b.setAttribute('aria-checked', b.dataset.m === settings.num)); $('swGdec').setAttribute('aria-checked', !!settings.gdec); $('swGdec').disabled = settings.num !== 'dec'; $('rowGdec').style.opacity = settings.num === 'dec' ? '' : '.45'; $('swSand').setAttribute('aria-checked', !!settings.sandpits); $('swRoots').setAttribute('aria-checked', !!settings.roots || settings.num === 'frac'); $('swRoots').disabled = settings.num === 'frac'; $('rowRoots').style.opacity = settings.num === 'frac' ? '.45' : ''; $('swGfrac').setAttribute('aria-checked', !!settings.gfrac); $('swGfrac').disabled = settings.num !== 'frac'; $('rowGfrac').style.opacity = settings.num === 'frac' ? '' : '.45'; $('swHc').setAttribute('aria-checked', !!settings.hc); $('swAnim').setAttribute('aria-checked', settings.anim);
             document.documentElement.classList.toggle('hc', !!settings.hc); document.body.classList.toggle('noanim', !settings.anim); document.documentElement.classList.toggle('noanim', !settings.anim);
             document.documentElement.classList.toggle('noui', settings.anims.ui === false); document.documentElement.classList.toggle('nofade', settings.anims.theme === false);
             document.querySelectorAll('[data-anim]').forEach(b => b.setAttribute('aria-checked', settings.anims[b.dataset.anim] !== false)); $('rowAdv').hidden = !settings.anim;
@@ -4878,7 +5015,7 @@
             clearTimeout(ssTimer);
             if (on) {
                 if (id === 'settings') { st.classList.toggle('frommenu', fromMenu); st.classList.toggle('indaily', !!dailyMode && !fromMenu); }
-                if (id === 'settings') decAtOpen = settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac + '|' + !!settings.roots; else if (id === 'scores') renderScores();
+                if (id === 'settings') decAtOpen = settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac + '|' + !!settings.roots + '|' + !!settings.sandpits; else if (id === 'scores') renderScores();
                 parallax(bgBase + d * Math.round(innerWidth * (adv ? .6 : .3)));
                 st.classList.remove('off', 'offL'); st.hidden = false; st.scrollTop = 0;
                 mn.classList.add(away); if (nw) nw.classList.add(away);
@@ -4890,7 +5027,7 @@
                 ssTimer = setTimeout(() => { mn.hidden = true; if (nw) nw.hidden = true; dropAnims(mn, nw); }, an ? SW_DUR + 80 : 0);
             } else {
                 mn.hidden = false; if (nw) nw.hidden = false; parallax(adv ? bgBase - Math.round(innerWidth * .3) : bgBase);
-                if (!adv && (!lb || dailyMode)) { view = null; if (id === 'settings' && (settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac + '|' + !!settings.roots) !== decAtOpen && !dailyMode) newLevel(); else render(); }
+                if (!adv && (!lb || dailyMode)) { view = null; if (id === 'settings' && (settings.num + '|' + !!settings.gdec + '|' + !!settings.gfrac + '|' + !!settings.roots + '|' + !!settings.sandpits) !== decAtOpen && !dailyMode) newLevel(); else render(); }
                 getComputedStyle(nw || mn).transform;
                 mn.classList.remove('away', 'awayR'); if (nw) nw.classList.remove('away', 'awayR'); st.classList.add(off);
                 if (an) {
@@ -4946,11 +5083,12 @@
             let ops = null;
             if (start && goal && Array.isArray(e.o)) {
                 try { ROOTS = !!e.rt; ops = e.o.map(s => mk(s, settings.num)); } catch (x) { ops = null; }
-                if (ops && (ops.some(o => !o) || (e.d === 8 ? !(solve(start, goal, ops) <= e.par) : solve(start, goal, ops) !== e.par))) ops = null;
+                const pits = (Array.isArray(e.pt) ? e.pt : []).map(pitParse).filter(Boolean), sv = () => pits.length ? solveAvoid(start, goal, ops, pits) : solve(start, goal, ops);
+                if (ops && (ops.some(o => !o) || (e.d === 8 ? !(sv() <= e.par) : sv() !== e.par))) ops = null; else if (ops) ops.pits = pits;
             }
             if (ops) {
                 stopReplay(); stopFx(); pend = false;
-                L = { start, goal, ops, limit: e.par }; cur = start; hist = []; undosUsed = 0; counted = false;
+                L = { start, goal, ops, limit: e.par, pits: ops.pits || [] }; cur = start; hist = []; undosUsed = 0; counted = false;
             } else newLevel(); /* older scores didn't save their moves, so they get a fresh level at the same difficulty and mode */
             showPanel('scores', false);
         }
@@ -4974,6 +5112,7 @@
         document.querySelectorAll('[data-anim]').forEach(b => b.onclick = () => { settings.anims[b.dataset.anim] = settings.anims[b.dataset.anim] === false; saveSettings(); applySettings(); });
         $('swGdec').onclick = () => { if (settings.num !== 'dec') return; settings.gdec = !settings.gdec; saveSettings(); applySettings(); };
         $('swGfrac').onclick = () => { if (settings.num !== 'frac') return; settings.gfrac = !settings.gfrac; saveSettings(); applySettings(); };
+        $('swSand').onclick = () => { settings.sandpits = !settings.sandpits; saveSettings(); applySettings(); };
         $('swRoots').onclick = () => { if (settings.num === 'frac') return; settings.roots = !settings.roots; saveSettings(); applySettings(); };
         $('swHc').onclick = () => { settings.hc = !settings.hc; saveSettings(); applySettings(); };
         $('swAnim').onclick = () => { settings.anim = !settings.anim; saveSettings(); applySettings(); };
@@ -5005,7 +5144,8 @@
         function levelLink() {
             const opEnc = s => SH_FIX[s] || (s.startsWith('mod ') ? 'o' + s.slice(4) : SH_OPC[s[0]] + s.slice(1)), num = x => fmt(x).replace('−', '-');
             const parts = [num(L.start), num(L.goal), Math.max(1, Math.min(99, L.limit)), SH_MC[settings.num], L.ops.map(o => opEnc(o.s)).join(',')];
-            if (ROOTS && settings.num !== 'frac') parts.push('r');
+            const pit = (L.pits || []).map(p => p.hi ? num(p) + '~' + num(p.hi) : num(p)).join(',');   /* sand pits go in the last field of the code. a range is written lo~hi */
+            if (pit) parts.push(ROOTS && settings.num !== 'frac' ? 'r' : '', '', '', '', pit); else if (ROOTS && settings.num !== 'frac') parts.push('r');
             return SH_URL + btoa(parts.join(';')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
         }
         let shT = 0;
@@ -6468,4 +6608,4 @@ function calcClose() { if (calcOpen) calcSet(false); }
     </script>
 </body>
 
-</html> 
+</html>

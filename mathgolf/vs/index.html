@@ -3176,6 +3176,10 @@
                             always on for fractions</span></div><button type="button" class="sw" role="switch"
                         data-sw="roots" aria-label="roots of non-squares" aria-checked="false"></button>
                 </div>
+<div class="srow" id="row_sandpits">
+                    <div><b>sand pits</b><span class="d">levels get sand pits: numbers, or a whole stretch of numbers, that you can land on but not move from, so you can only undo. they are placed to block some routes, and every level can still be solved</span></div>
+                    <button type="button" class="sw" role="switch" data-sw="sandpits" aria-label="sand pits" aria-checked="false"></button>
+                </div>
                 </details>
                 <details class="sgroup" open>
                     <summary>scoring</summary>
@@ -3306,6 +3310,7 @@
             <div id="gtag" hidden></div>
             <div id="pips" aria-live="polite"></div>
             <div class="lbl" id="left"></div>
+            <div class="lbl" id="pitnote" hidden style="color:#d4a64f"></div>
             <div id="trail"></div>
             <div id="ops"></div>
             <div class="tools"><button id="undo">undo</button><button id="reset">restart level</button><button id="gback" hidden>back to grid</button></div>
@@ -3547,7 +3552,7 @@
         let otherUnread = false, chatTeam = false, curView = '', chatOpen = false, unread = 0, chatReady = false, toastT = 0; const baseTitle = document.title;
         let leaving = false; addEventListener('beforeunload', () => { leaving = true; }); addEventListener('pagehide', () => { leaving = true; }); addEventListener('pageshow', () => { leaving = false; });
         const isHost = () => !!state && state.hostId === you;
-        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, replay: true, calc: true, timer: 0, showprog: true, overpar: -1, mode: 'race', endless: false, totaltime: 180, hostplays: true, teams: false, profanity: true, firstfinish: false, howto: false, gridw: 3, gridh: 3, gridtime: 0, randdiff: false, favdiff: 0, weighted: false, pt2: 1, pt4: 2, pt6: 3, pt8: 4, offdiff: 0 };
+        const DEFAULTS = { max: 5, rounds: 5, difficulty: 4, numbers: 'whole', gdec: false, gfrac: false, roots: false, replay: true, calc: true, timer: 0, showprog: true, overpar: -1, mode: 'race', endless: false, totaltime: 180, hostplays: true, teams: false, profanity: true, firstfinish: false, howto: false, gridw: 3, gridh: 3, gridtime: 0, randdiff: false, favdiff: 0, weighted: false, pt2: 1, pt4: 2, pt6: 3, pt8: 4, offdiff: 0, sandpits: false };
         /* random difficulties: which ones are switched off (a bit mask: easy 1, medium 2, hard 4, challenge 8; never all four) */
         const OFFBIT = { 2: 1, 4: 2, 6: 4, 8: 8 };
         const offClean = v => { v = (parseInt(v, 10) || 0) & 15; return v === 15 ? 0 : v; };
@@ -3762,7 +3767,7 @@
             o.offdiff = offClean(o.offdiff !== undefined ? o.offdiff : (typeof isHost === 'function' && isHost() ? store.get('vs_offdiff') : 0));   /* host-side rule, kept in this browser too like the ones below */
             /* host-side rule: kept in this browser too, in case the server doesn't echo it back */
             o.firstfinish = o.mode === 'race' && (o.firstfinish !== undefined ? !!o.firstfinish : (typeof isHost === 'function' && isHost() && store.get('vs_firstfinish') === '1'));
-            o.calc = o.calc !== false;
+            o.calc = o.calc !== false; o.sandpits = !!o.sandpits;
             o.howto = o.howto !== undefined ? !!o.howto : (typeof isHost === 'function' && isHost() && store.get('vs_howto') === '1');
             return o;
         }
@@ -3884,7 +3889,7 @@
            settings presets
            ===================================================================== */
         /* the order of this list is part of the share code: only ever add new settings at the end */
-        const PS_KEYS = ['mode', 'teams', 'rounds', 'endless', 'totaltime', 'gridw', 'gridh', 'gridtime', 'showprog', 'firstfinish', 'replay', 'difficulty', 'randdiff', 'favdiff', 'offdiff', 'numbers', 'gdec', 'gfrac', 'roots', 'weighted', 'pt2', 'pt4', 'pt6', 'pt8', 'timer', 'overpar', 'max', 'hostplays', 'profanity', 'calc', 'howto'];
+        const PS_KEYS = ['mode', 'teams', 'rounds', 'endless', 'totaltime', 'gridw', 'gridh', 'gridtime', 'showprog', 'firstfinish', 'replay', 'difficulty', 'randdiff', 'favdiff', 'offdiff', 'numbers', 'gdec', 'gfrac', 'roots', 'weighted', 'pt2', 'pt4', 'pt6', 'pt8', 'timer', 'overpar', 'max', 'hostplays', 'profanity', 'calc', 'howto', 'sandpits'];
         const PS_DEF = Object.assign({}, DEFAULTS, { firstfinish: false, howto: false, calc: true });
         const PS_TIME = [[60, '1 min'], [120, '2 min'], [180, '3 min'], [300, '5 min'], [600, '10 min']];
         const PS_DIFF = [[2, 'easy'], [4, 'medium'], [6, 'hard'], [8, 'challenge']];
@@ -3910,7 +3915,8 @@
                 { k: 'numbers', t: 'seg', l: 'numbers', d: 'whole numbers, decimals or fractions', o: [['whole', 'whole numbers'], ['dec', 'decimals'], ['frac', 'fractions']] },
                 { k: 'gdec', t: 'sw', l: 'decimal goals', d: 'the goal can be a decimal like 3.5', show: s => s.numbers === 'dec' },
                 { k: 'gfrac', t: 'sw', l: 'fraction goals', d: 'the goal can be a fraction like 7/4', show: s => s.numbers === 'frac' },
-                { k: 'roots', t: 'sw', l: 'roots of non-squares', d: 'allow √ on numbers that aren\'t perfect squares', show: s => s.numbers !== 'frac' }
+                { k: 'roots', t: 'sw', l: 'roots of non-squares', d: 'allow √ on numbers that aren\'t perfect squares', show: s => s.numbers !== 'frac' },
+                { k: 'sandpits', t: 'sw', l: 'sand pits', d: 'some levels have numbers (or ranges of numbers) you can land on but not move from. only undo gets you out' }
             ]],
             ['scoring', [
                 { k: 'weighted', t: 'sw', l: 'weighted points', d: 'harder levels are worth more points', show: s => s.mode !== 'race' },
@@ -3973,7 +3979,7 @@
             if (st.mode === 'points' && st.endless) a.push('endless ' + (st.totaltime / 60) + ' min'); else if (st.mode !== 'grid') a.push(st.rounds + (st.rounds === 1 ? ' round' : ' rounds'));
             a.push(st.randdiff ? 'random difficulties' : dn[st.difficulty]);
             a.push(st.numbers === 'whole' ? 'whole numbers' : st.numbers === 'dec' ? 'decimals' : 'fractions');
-            if (st.teams) a.push('teams'); if (st.weighted) a.push('weighted points');
+            if (st.teams) a.push('teams'); if (st.weighted) a.push('weighted points'); if (st.sandpits) a.push('sand pits');
             if (st.timer) a.push(st.timer / 60 + ' min per round'); if (st.overpar >= 0) a.push(st.overpar === 0 ? 'par only' : '+' + st.overpar + ' over par');
             if (!st.calc) a.push('no calculators'); if (!st.hostplays) a.push('host watches');
             return a.join(' · ');
@@ -5477,6 +5483,70 @@ function calcClose() { if (calcOpen) calcSet(false); }
         }
         const val = x => x.n / x.d * Math.sqrt(x.b || 1);
 
+        /* ---------- sand pits ----------
+           a sand pit is a number you can land on but not move from: stuck there, you can only undo.
+           they are picked from numbers that lie on shortest routes (so they block some solutions) and every level is checked to still be solvable. */
+        function solveAvoid(start, goal, ops, blocked) { /* blocked: a list of sand pits (numbers or ranges) */
+            let seen = new Set([key(start)]), fr = [start];
+            for (let d = 1; d <= 8; d++) {
+                const nx = []; if (seen.size > CAP) return null;
+                for (const n of fr) for (const o of ops) {
+                    const v = o.f(n);
+                    if (!v || seen.has(key(v))) continue;
+                    if (same(v, goal)) return d;
+                    seen.add(key(v)); if (!inPits(blocked, v)) nx.push(v);   /* a pit can be landed on, but nothing continues from it */
+                }
+                fr = nx;
+            }
+            return null;
+        }
+        /* every number (not the start or goal) that lies on some shortest route from start to goal */
+        function routeNodes(start, goal, ops, par) {
+            const layers = [new Map([[key(start), start]])], seen = new Set([key(start)]), edges = [null];
+            for (let d = 1; d <= par; d++) {
+                const nx = new Map(), ed = []; if (seen.size > CAP) return [];
+                for (const [pk, n] of layers[d - 1]) for (const o of ops) {
+                    const v = o.f(n); if (!v) continue; const vk = key(v);
+                    if (seen.has(vk) && !nx.has(vk)) continue;
+                    nx.set(vk, v); ed.push([pk, vk]);
+                }
+                for (const k of nx.keys()) seen.add(k);
+                layers.push(nx); edges.push(ed);
+            }
+            const good = new Set([key(goal)]);
+            for (let d = par; d >= 1; d--) edges[d].forEach(([pk, vk]) => { if (good.has(vk)) good.add(pk); });
+            const out = [];
+            for (let d = 1; d < par; d++) for (const [k, v] of layers[d]) if (good.has(k) && k !== key(goal)) out.push(v);
+            return out;
+        }
+        /* a range of sand: every number from lo to hi. it is built around a number that lies on a route and is 2 to 4 whole numbers wide */
+        function pitRangeAround(c) {
+            const v = c.n / c.d * Math.sqrt(c.b || 1), lo = Math.floor(v) - ri(0, 1); let hi = Math.ceil(v) + ri(0, 1); if (hi <= lo) hi = lo + 1;
+            return { n: lo, d: 1, b: 1, hi: { n: hi, d: 1, b: 1 } };
+        }
+        const pitCopy = p => p.hi ? { n: p.n, d: p.d, b: p.b, hi: { n: p.hi.n, d: p.hi.d, b: p.hi.b } } : { n: p.n, d: p.d, b: p.b };
+        /* returns { pits, par } or null. par = the shortest route that avoids the pits.
+           each pit is one number on a shortest route or, about 4 times in 10, a range of numbers around one. a root like √2 can only be covered by a range
+           (a level code can't hold a single root as a pit) */
+        function placePits(start, goal, ops, par, tier, tp) {
+            const cand = routeNodes(start, goal, ops, par); if (!cand.length) return null;
+            for (let i = cand.length - 1; i > 0; i--) { const j = ri(0, i); [cand[i], cand[j]] = [cand[j], cand[i]]; }
+            const want = ri(1, Math.min(tier === 8 ? 3 : tier >= 4 ? 2 : 1, cand.length)), pits = []; let np = par;
+            for (const c of cand) {
+                if (pits.length >= want) break;
+                if (inPits(pits, c)) continue;   /* already inside a range */
+                const tries = []; if (c.b > 1 || ri(1, 10) <= 4) tries.push(pitRangeAround(c)); if (!(c.b > 1)) tries.push(c);   /* the range first, then the plain number */
+                for (const pit of tries) {
+                    if (pitHas(pit, start) || pitHas(pit, goal)) continue;
+                    const p2 = solveAvoid(start, goal, ops, pits.concat([pit]));
+                    if (!p2 || (tier === 8 ? p2 >= tp : p2 > tier + 1)) continue;   /* still solvable, and still within what the difficulty allows */
+                    pits.push(pit); np = p2; break;
+                }
+            }
+            return pits.length ? { pits: pits.map(pitCopy), par: np } : null;
+        }
+        const inPit = x => !!Lv && inPits(Lv.pits, x);
+
         /* makes one level for the room's settings: { start, goal, ops: ["+3", "×2", ...], limit (par), nb (biggest number allowed) } */
         function genLevel(tier, cfg) {
             ROOTS = !!cfg.roots; MODE = cfg.numbers;
@@ -5504,7 +5574,9 @@ function calcClose() { if (calcOpen) calcSet(false); }
                 } else if (!par || par < Math.max(2, tier - 1) || par > tier + 1) continue;
                 const need = tier === 8 ? (tries < 1200 ? 2 : 1) : (tries < 2000 ? 2 : 1);
                 if (need > 1 && countBest(start, v, pool) < need) continue;
-                return { start, goal: v, ops: pool.map(o => o.s), limit: tier === 8 ? tp : par, nb: NB };
+                let lp = tier === 8 ? tp : par, pits;
+                if (cfg.sandpits) { const pp = placePits(start, v, pool, par, tier, tp); if (!pp) continue; pits = pp.pits; if (tier !== 8) lp = pp.par; }
+                return { start, goal: v, ops: pool.map(o => o.s), limit: lp, nb: NB, pits };
             }
             return null;
         }
@@ -5621,6 +5693,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
                 }
                 else h += `<path d="M${a} ${Y - R} Q${(a + b) / 2} ${cy} ${b} ${Y - R}" fill="none" stroke="${col}" stroke-width="2" stroke-dasharray="6 5" opacity="${op}"/>`;
             }
+            (Lv.pits || []).forEach(p => { const pv = val(p), px = x(pv), pe = p.hi ? x(val(p.hi)) : px, a = Math.max(12, Math.min(px, pe)), z = Math.min(W - 12, Math.max(px, pe)); if (a > z) return; const cx = (a + z) / 2; h += `<ellipse cx="${cx}" cy="${Y}" rx="${(z - a) / 2 + 10}" ry="4" fill="#d4a64f"/><text x="${cx}" y="${Y - 11}" style="font-size:11px;font-weight:700;fill:#d4a64f">${p.hi ? tf(pv) + '–' + tf(val(p.hi)) : tf(pv)}</text>`; });   /* sand pits: a range is one wide patch */
             const rows = [[], [], []];
             vals.forEach((v, i) => {
                 if (i === vals.length - 1 && bl) return;
@@ -5642,6 +5715,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
             cancelAnimationFrame(nlRaf);
             const vals = [val(Lv.start), ...hist.map((h, i) => val(hist[i + 1] ? hist[i + 1].prev : cur))], g = val(Lv.goal), won = same(cur, Lv.goal);
             let lo = Math.min(g, ...vals), hi = Math.max(g, ...vals); if (hi - lo < 1) { lo -= 1; hi += 1 }
+            { const sp0 = hi - lo; (Lv.pits || []).forEach(p => { [val(p), val(p.hi || p)].forEach(pv => { if (pv >= lo - sp0 && pv <= hi + sp0) { lo = Math.min(lo, pv - sp0 * .05); hi = Math.max(hi, pv + sp0 * .05); } }); }); }   /* sand pits near the action stay in view */
             const tgt = { lo, hi }, hit = nlPend && vals.length > 1; nlPend = false;
             const diff = !nlView || Math.abs(nlView.lo - lo) + Math.abs(nlView.hi - hi) > 1e-9;
             const hitA = hit && animOn('ball'), zoomA = diff && animOn('zoom');
@@ -5802,7 +5876,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
         function loadLevel(i, startAt) {
             stopReplay();
             const lv = match.levels[i]; if (!lv) return; NB = lv.nb;
-            Lv = { start: lv.start, goal: lv.goal, limit: lv.limit, nb: lv.nb, tier: lv.tier || 0, ops: lv.ops.map(s => mk(s, MODE)) };
+            Lv = { start: lv.start, goal: lv.goal, limit: lv.limit, nb: lv.nb, tier: lv.tier || 0, ops: lv.ops.map(s => mk(s, MODE)), pits: (lv.pits || []).map(p => { const q = F(p.n, p.d, p.b || 1); if (q && p.hi) { const h = F(p.hi.n, p.hi.d, p.hi.b || 1); if (h) q.hi = h; } return q; }).filter(Boolean) };
             cur = Lv.start; hist = []; lockedRound = false; nlView = null; nlPend = false; roundStartAt = startAt || Date.now(); if (paused) pausedLoad = true; match.round = i; round = i;
             if (match.mode !== 'grid') $('glevel').textContent = match.mode === 'points' ? (i + 1) + (match.cfg.endless ? '' : ' / ' + match.total) : (i + 1) + ' / ' + match.total; setMsg('');
             if (match.cfg.timer > 0) { $('grclock').textContent = fmtCd(match.cfg.timer * 1000); $('grwrap').classList.remove('low'); }
@@ -5813,7 +5887,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
         function render() {
             if (!Lv || !match) return;
             NB = Lv.nb;   /* the host's browser may be making other levels in the background */
-            const used = hist.length, won = same(cur, Lv.goal), cap = capMoves(), over = used - Lv.limit, full = !won && used >= cap, em = beatM(), short = won && !!em && used >= em;
+            const used = hist.length, won = same(cur, Lv.goal), stuck = !won && inPit(cur), cap = capMoves(), over = used - Lv.limit, full = !won && used >= cap, em = beatM(), short = won && !!em && used >= em;
             $('cur').classList.toggle('winp', won && !short);
             setFlip($('cur'), fmtS(cur), fmt(cur)); setFlip($('goal'), fmtS(Lv.goal), fmt(Lv.goal));
             $('goalfull').textContent = fmtS(Lv.goal) !== fmt(Lv.goal) ? fmt(Lv.goal) : '';
@@ -5832,8 +5906,8 @@ function calcClose() { if (calcOpen) calcSet(false); }
             $('ops').innerHTML = '';
             Lv.ops.forEach(o => {
                 const b = document.createElement('button'); b.innerHTML = opLabel(o.s);
-                const v = o.f(cur); b.disabled = won || !v || full || lockedRound || paused;
-                if (!won && !v && !lockedRound) { const w = whyNot(o.s); b.title = w; b.innerHTML = opLabel(o.s) + '<small>' + w + '</small>'; }
+                const v = o.f(cur); b.disabled = won || !v || full || lockedRound || paused || stuck;
+                if (!won && !v && !stuck && !lockedRound) { const w = whyNot(o.s); b.title = w; b.innerHTML = opLabel(o.s) + '<small>' + w + '</small>'; }
                 b.onclick = () => {
                     if (lockedRound || !v || paused) return;
                     hist.push({ prev: cur, s: o.s }); cur = v; nlPend = true; render();
@@ -5844,7 +5918,8 @@ function calcClose() { if (calcOpen) calcSet(false); }
             drawLine();
             $('undo').disabled = !used || (won && !short) || lockedRound;
             $('reset').disabled = lockedRound;
-            if (!lockedRound) setMsg(full ? 'out of moves. undo a move or restart the level.' : '');
+            { const pn = $('pitnote'), pl = Lv.pits || []; pn.hidden = !pl.length; pn.textContent = pl.length ? 'sand pits: ' + pl.map(pitFmt).join(', ') : ''; }
+            if (!lockedRound) { if (stuck) setMsg('stuck in the sand! you can only undo.', 'lose'); else setMsg(full ? 'out of moves. undo a move or restart the level.' : ''); }
         }
 
         /* a level is over: solved or out of time. tell the server, show a quick note, and go to the next one */

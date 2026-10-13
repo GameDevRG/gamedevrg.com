@@ -3006,6 +3006,7 @@
             </div>
             <div id="pips" aria-live="polite"></div>
             <div class="lbl" id="left"></div>
+            <div class="lbl" id="pitnote" hidden style="color:#d4a64f"></div>
             <div id="trail"></div>
             <div id="ops"></div>
             <div class="tools"><button id="undo">undo</button><button id="reset">restart level</button><button
@@ -4067,6 +4068,10 @@
         Object.assign(I18N.es, { lang_en: 'inglés', lang_es: 'español', lang_ja: 'japonés', lang_zh: 'chino' });
         Object.assign(I18N.ja, { lang_en: '英語', lang_es: 'スペイン語', lang_ja: '日本語', lang_zh: '中国語' });
         Object.assign(I18N.zh, { lang_en: '英语', lang_es: '西班牙语', lang_ja: '日语', lang_zh: '中文' });
+        Object.assign(I18N.en, { sand_stuck: "stuck in the sand! you can only undo.", sand_note: "sand pits:" });
+        Object.assign(I18N.es, { sand_stuck: "¡atascado en la arena! solo puedes deshacer.", sand_note: "trampas de arena:" });
+        Object.assign(I18N.ja, { sand_stuck: "砂にはまった！元に戻すことしかできません。", sand_note: "バンカー:" });
+        Object.assign(I18N.zh, { sand_stuck: "陷进沙坑了！只能撤销。", sand_note: "沙坑：" });
         let lang = 'en';
         try { const s = localStorage.getItem('lang'); if (LANGS.includes(s)) lang = s } catch (e) { }
         function tr(k, v) {
@@ -4172,6 +4177,14 @@
         function stopFx() { clearTimeout(fxTimer); cancelAnimationFrame(fxRaf); const c = $('fx'); c.getContext('2d').clearRect(0, 0, c.width, c.height); }
         function nice(r, n = 6) { const t = r / n, m = Math.pow(10, Math.floor(Math.log10(t))), f = t / m; return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * m }
         function tf(v) { return String(+v.toFixed(3)) }
+        /* a sand pit is one number {n,d,b}, or a range: the same plus hi = {n,d,b}, which covers every number from the first up to hi (both ends included) */
+        const pitVal = x => x.n / x.d * Math.sqrt(x.b || 1);
+        const pitCmp = (x, y) => { if ((x.b || 1) === 1 && (y.b || 1) === 1) { const t = x.n * y.d - y.n * x.d; return t < 0 ? -1 : t > 0 ? 1 : 0; } const t = pitVal(x) - pitVal(y); return Math.abs(t) < 1e-9 ? 0 : t < 0 ? -1 : 1; };
+        const pitHas = (p, x) => p.hi ? (!x.c && pitCmp(x, p) >= 0 && pitCmp(x, p.hi) <= 0) : same(p, x);
+        const inPits = (pits, x) => !!pits && pits.some(p => pitHas(p, x));   /* is x in any sand pit? you can land on it, but then you can only undo */
+        const pitFmt = p => p.hi ? fmt(p) + '–' + fmt(p.hi) : fmt(p);   /* as shown to the player */
+        const pitEntry = t => { const r = String(t).split('~'), lo = parseNum(r[0]); if (!lo) return null; if (r.length > 1) { const hi = parseNum(r[1]); if (!hi) return null; lo.hi = hi; } return lo; };   /* "5" or "5~8" from a level code */
+        const inPit = x => !!L && inPits(L.pits, x);
         function draw(vw, bl, vals, g, won) {
             const W = $('nl').clientWidth || 640, H = W < 520 ? 160 : 200, pad = W < 520 ? 28 : 44, Y = H - 58, R = 7, sp = vw.hi - vw.lo, x = v => pad + (v - vw.lo) / sp * (W - 2 * pad);
             const hgt = (a, b) => Math.max(4, Math.min(Y - 30, 100, Math.abs(x(b) - x(a)) * .25));
@@ -4199,6 +4212,7 @@
                 }
                 else h += `<path d="M${a} ${Y - R} Q${(a + b) / 2} ${cy} ${b} ${Y - R}" fill="none" stroke="${col}" stroke-width="2" stroke-dasharray="6 5" opacity="${op}"/>`;
             }
+            (L.pits || []).forEach(p => { const pv = val(p), px = x(pv), pe = p.hi ? x(val(p.hi)) : px, a = Math.max(12, Math.min(px, pe)), z = Math.min(W - 12, Math.max(px, pe)); if (a > z) return; const cx = (a + z) / 2; h += `<ellipse cx="${cx}" cy="${Y}" rx="${(z - a) / 2 + 10}" ry="4" fill="#d4a64f"/><text x="${cx}" y="${Y - 11}" style="font-size:11px;font-weight:700;fill:#d4a64f">${p.hi ? tf(pv) + '–' + tf(val(p.hi)) : tf(pv)}</text>`; });   /* sand pits: a range is one wide patch */
             const rows = [[], [], []];
             vals.forEach((v, i) => {
                 if (i === vals.length - 1 && bl) return;
@@ -4221,6 +4235,7 @@
             cancelAnimationFrame(raf);
             const vals = [val(L.start), ...hist.map((h, i) => val(hist[i + 1] ? hist[i + 1].prev : cur))], g = val(L.goal), won = same(cur, L.goal);
             let lo = Math.min(g, ...vals), hi = Math.max(g, ...vals); if (hi - lo < 1) { lo -= 1; hi += 1 }
+            { const sp0 = hi - lo; (L.pits || []).forEach(p => { [val(p), val(p.hi || p)].forEach(pv => { if (pv >= lo - sp0 && pv <= hi + sp0) { lo = Math.min(lo, pv - sp0 * .05); hi = Math.max(hi, pv + sp0 * .05); } }); }); }   /* sand pits near the action stay in view */
             const tgt = { lo, hi }, hit = pend && vals.length > 1; pend = false;
             const diff = !view || Math.abs(view.lo - lo) + Math.abs(view.hi - hi) > 1e-9;
             const hitA = hit && animOn('ball'), zoomA = diff && animOn('zoom');
@@ -4241,14 +4256,14 @@
         const hcOn = () => forceHc;
         let edWin = Infinity, L = null, cur = null, hist = [], holes = 0, total = 0, counted = false, gaveUp = false, busy = false, timers = [];
         function stopReplay() { timers.forEach(clearTimeout); timers = []; busy = false; gaveUp = false; }
-        function bestPath(start, goal, ops) {
+        function bestPath(start, goal, ops, pits) {
             const par = new Map([[key(start), null]]); let fr = [start];
             for (let d = 0; fr.length && par.size < 400000; d++) {
                 const nx = [];
                 for (const n of fr) for (const o of ops) {
                     const v = o.f(n); if (!v || par.has(key(v))) continue;
                     par.set(key(v), { from: n, o }); if (same(v, goal)) { const path = []; let c = v; while (par.get(key(c))) { const e = par.get(key(c)); path.unshift(e.o); c = e.from; } return path; }
-                    nx.push(v);
+                    if (!inPits(pits, v)) nx.push(v);   /* nothing continues from a sand pit */
                 }
                 fr = nx;
             }
@@ -4263,7 +4278,7 @@
         function giveUp() {
             if (busy || same(cur, L.goal)) return;
             stopReplay(); gaveUp = true; busy = true; cur = L.start; hist = []; pend = false; render();
-            const steps = bestPath(L.start, L.goal, L.ops); rp = { steps, done: 0 };
+            const steps = bestPath(L.start, L.goal, L.ops, L.pits); rp = { steps, done: 0 };
             if (!steps.length) { busy = false; render(); return; }
             steps.forEach((o, i) => {
                 timers.push(setTimeout(() => { rp.done = i + 1; hist.push({ prev: cur, s: o.s }); cur = o.f(cur); pend = true; if (i === steps.length - 1) busy = false; render(); }, 400 + i * 600));
@@ -4378,7 +4393,7 @@
                 mm.textContent = forceHc ? tr('hardcore') : tr('normal'); mm.className = forceHc ? 'mhc' : 'mnorm';
             }
             $('cur').classList.toggle('winp', same(cur, L.goal));
-            const used = hist.length, won = same(cur, L.goal), over = dailyMode ? 0 : used - L.limit; /* daily levels have no par */
+            const used = hist.length, won = same(cur, L.goal), stuck = !won && inPit(cur), over = dailyMode ? 0 : used - L.limit; /* daily levels have no par */
             $('lbplay').hidden = !dailyMode;
             $('psub').textContent = dailyMode ? tr('psub_daily') : tr('psub_par');
             const sc = over < 0 ? tr('sc_under', { n: -over }) : over === 0 ? tr('sc_par') : tr('sc_over', { n: over });
@@ -4396,8 +4411,8 @@
             $('ops').innerHTML = '';
             L.ops.forEach(o => {
                 const b = document.createElement('button'); b.innerHTML = opLabel(o.s);
-                const v = o.f(cur); b.disabled = won || !v || busy || full;
-                if (!won && !v) { const w = whyNot(o.s); b.title = w; b.innerHTML = opLabel(o.s) + '<small>' + w + '</small>'; }
+                const v = o.f(cur); b.disabled = won || !v || busy || full || stuck;
+                if (!won && !v && !stuck) { const w = whyNot(o.s); b.title = w; b.innerHTML = opLabel(o.s) + '<small>' + w + '</small>'; }
                 b.onclick = () => { hist.push({ prev: cur, s: o.s }); cur = v; pend = true; render(); }; $('ops').appendChild(b);
             });
             drawLine();
@@ -4410,6 +4425,8 @@
             $('undo').style.display = $('reset').style.display = gaveUp ? 'none' : '';
             const m = $('msg'); m.className = ''; m.innerHTML = '';
             if (full && !busy) { m.className = 'lose'; m.textContent = left > 0 ? tr('lose1') : tr('lose2'); }
+            else if (stuck && !busy) { m.className = 'lose'; m.textContent = tr('sand_stuck'); }
+            { const pn = $('pitnote'), pl = L.pits || []; pn.hidden = !pl.length; pn.textContent = pl.length ? tr('sand_note') + ' ' + pl.map(pitFmt).join(', ') : ''; }
             if (won) {
                 if (FROM_ED && !gaveUp) { edWin = Math.min(edWin, used); BACK = BACK.split('&verified=')[0] + '&verified=' + edWin; } /* the editor learns that you solved it, and in how many moves */
                 if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: forceHc, num: settings.num, rt: !!ROOTS, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
@@ -4832,17 +4849,21 @@
         const b64d = s => atob(s.replace(/-/g, '+').replace(/_/g, '/'));
         const opEnc = s => FIX[s] || (s.startsWith('mod ') ? 'o' + s.slice(4) : OPC[s[0]] + s.slice(1).replace('−', '-'));
         function opDec(t) { for (const k in FIX) if (FIX[k] === t) return k; if (t[0] === 'o') return 'mod ' + t.slice(1); const c = Object.keys(OPC).find(k => OPC[k] === t[0]); return c ? c + (/^[×÷]$/.test(c) ? t.slice(1).replace(/^-/, '−') : t.slice(1)) : null; }
-        /* code = start;goal;par;number type;ops[;flags[;difficulty[;title[;author]]]]  (flags: r = roots, h = forced hardcore; difficulty: 2 easy, 4 medium, 6 hard, 8 challenge; title and author are URL-escaped; trailing empty fields are left off) */
-        const encodeLevel = v => { const f = [v.s, v.g, v.p, MC[v.n], v.o.map(opEnc).join(','), (v.rt ? 'r' : '') + (v.hc ? 'h' : ''), v.dv ? String(v.dv) : '', v.t ? encodeURIComponent(v.t) : '', v.a ? encodeURIComponent(v.a) : '']; while (f.length > 5 && f[f.length - 1] === '') f.pop(); return b64e(f.join(';')); };
+        /* code = start;goal;par;number type;ops[;flags[;difficulty[;title[;author[;sand pits]]]]]  (flags: r = roots, h = forced hardcore; difficulty: 2 easy, 4 medium, 6 hard, 8 challenge; title and author are URL-escaped; sand pits: numbers or ranges like 5~8, separated by commas, up to 6; trailing empty fields are left off) */
+        const encodeLevel = v => { const f = [v.s, v.g, v.p, MC[v.n], v.o.map(opEnc).join(','), (v.rt ? 'r' : '') + (v.hc ? 'h' : ''), v.dv ? String(v.dv) : '', v.t ? encodeURIComponent(v.t) : '', v.a ? encodeURIComponent(v.a) : '', v.pt && v.pt.length ? v.pt.join(',') : '']; while (f.length > 5 && f[f.length - 1] === '') f.pop(); return b64e(f.join(';')); };
         function decodeLevel(code) {
             try {
-                const parts = b64d(String(code).trim()).split(';'), [s, g, p, n, o, rf, dv, tt, au] = parts, mode = Object.keys(MC).find(k => MC[k] === n), ops = o.split(',').map(opDec);
+                const parts = b64d(String(code).trim()).split(';'), [s, g, p, n, o, rf, dv, tt, au, pt] = parts, mode = Object.keys(MC).find(k => MC[k] === n), ops = o.split(',').map(opDec);
                 const numOk = t => /^-?\d+(\.\d+)?(\/\d+)?$/.test(t) && !/\/0+$/.test(t), argOk = t => /^\d+(\.\d)?(\/\d+)?$/.test(t) && !/\/0+$/.test(t) && +t.split('/')[0] > 0;
-                if (parts.length > 9 || (rf !== undefined && !/^(r|h|rh)?$/.test(rf)) || (rf === '' && parts.length === 6) || (dv !== undefined && !/^[2468]?$/.test(dv)) || !mode || !numOk(s) || !numOk(g) || !/^\d{1,2}$/.test(p) || +p < 1 || ops.length < 1) return null;
+                if (parts.length > 10 || (rf !== undefined && !/^(r|h|rh)?$/.test(rf)) || (rf === '' && parts.length === 6) || (dv !== undefined && !/^[2468]?$/.test(dv)) || !mode || !numOk(s) || !numOk(g) || !/^\d{1,2}$/.test(p) || +p < 1 || ops.length < 1) return null;
                 if (ops.some(x => !x || (/^[+−×÷]/.test(x) && !argOk(/^[×÷]−/.test(x) ? x.slice(2) : x.slice(1))) || (x.startsWith('mod ') && !/^\d{1,2}$/.test(x.slice(4)) || x === 'mod 0' || x === 'mod 1'))) return null;
                 const t = tt ? decodeURIComponent(tt) : '', a = au ? decodeURIComponent(au) : '';
                 if (Array.from(t).length > 40 || Array.from(a).length > 24 || /[\u0000-\u001f\u007f]/.test(t + a)) return null;
-                return { s, g, p: +p, n: mode, o: ops, rt: !!rf && rf.includes('r'), hc: !!rf && rf.includes('h'), dv: dv ? +dv : 0, t: t.trim(), a: a.trim() };
+                const pits = pt ? pt.split(',') : [];   /* sand pits: numbers you can land on but not move from. "5~8" is every number from 5 to 8 */
+                const nv = t => t.includes('/') ? +t.split('/')[0] / +t.split('/')[1] : parseFloat(t), rg = x => x.split('~');
+                const pitOk = x => { const r = rg(x); return r.length <= 2 && r.every(numOk) && (r.length === 1 || nv(r[0]) < nv(r[1])); }, covers = (x, t) => { const r = rg(x); return r.length === 1 ? nv(r[0]) === nv(t) : nv(t) >= nv(r[0]) && nv(t) <= nv(r[1]); };
+                if (pits.length > 6 || !pits.every(pitOk) || new Set(pits).size !== pits.length || pits.some(x => covers(x, s) || covers(x, g))) return null;
+                return { s, g, p: +p, n: mode, o: ops, rt: !!rf && rf.includes('r'), hc: !!rf && rf.includes('h'), dv: dv ? +dv : 0, t: t.trim(), a: a.trim(), pt: pits };
             } catch (e) { return null; }
         }
 
@@ -4852,14 +4873,14 @@
         const realNum = settings.num;
         saveSettings = function () { try { localStorage.setItem('hs1', JSON.stringify(Object.assign({}, settings, { num: realNum }))) } catch (e) { } };
         /* false only when every number the level can reach has been checked and the goal isn't one of them (no depth limit; gives up and says "maybe" past 400000 numbers) */
-        function reachable(start, goal, ops) {
-            const seen = new Set([key(start)]); let fr = [start];
-            while (fr.length) { const nx = []; for (const n of fr) for (const o of ops) { const v = o.f(n); if (!v || seen.has(key(v))) continue; if (same(v, goal)) return true; seen.add(key(v)); nx.push(v); if (seen.size > 400000) return true; } fr = nx; }
+        function reachable(start, goal, ops, pits) {
+            const seen = new Set([key(start)]); let fr = [start];   /* sand pits can be landed on, but nothing continues from them */
+            while (fr.length) { const nx = []; for (const n of fr) for (const o of ops) { const v = o.f(n); if (!v || seen.has(key(v))) continue; if (same(v, goal)) return true; seen.add(key(v)); if (!inPits(pits, v)) nx.push(v); if (seen.size > 400000) return true; } fr = nx; }
             return false;
         }
         let LV = null;
         const lvCode = new URLSearchParams(location.search).get('level'), lv = lvCode && decodeLevel(lvCode);
-        function loadLv() { ROOTS = !!LV.rt; forceHc = !!LV.hc && !VERIFY; document.documentElement.classList.toggle('hc', forceHc); document.title = (LV.t ? LV.t : 'custom level') + ' · hole in √-1'; stopReplay(); stopFx(); pend = false; L = { start: parseNum(LV.s), goal: parseNum(LV.g), ops: LV.o.map(s => mk(s, LV.n)), limit: LV.p }; cur = L.start; hist = []; undosUsed = 0; counted = false; dailyNote = ''; render(); }
+        function loadLv() { ROOTS = !!LV.rt; forceHc = !!LV.hc && !VERIFY; document.documentElement.classList.toggle('hc', forceHc); document.title = (LV.t ? LV.t : 'custom level') + ' · hole in √-1'; stopReplay(); stopFx(); pend = false; L = { start: parseNum(LV.s), goal: parseNum(LV.g), ops: LV.o.map(s => mk(s, LV.n)), limit: LV.p, pits: (LV.pt || []).map(pitEntry).filter(Boolean) }; cur = L.start; hist = []; undosUsed = 0; counted = false; dailyNote = ''; render(); }
         newLevel = loadLv;
         $('tomenu').onclick = () => { location.href = BACK; };
         if (FROM_ED) document.body.classList.add('fromed');
@@ -6031,7 +6052,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
         { const mo = new MutationObserver(calcSync); ['main', 'settings', 'scores', 'adv', 'lb'].forEach(k => { const e = k === 'main' ? document.querySelector('main') : $(k); if (e) mo.observe(e, { attributes: true, attributeFilter: ['hidden'] }); }); calcSync(); }
         i18nInit();
         let good = false;
-        if (lv) { try { NB = 100000; settings.num = lv.n; applySettings(); LV = lv; ROOTS = !!lv.rt; const a = parseNum(lv.s), b = parseNum(lv.g), os = lv.o.map(s => mk(s, lv.n)); good = !!a && !!b && os.every(Boolean) && (FROM_ED || reachable(a, b, os)); } catch (e) { good = false; } }
+        if (lv) { try { NB = 100000; settings.num = lv.n; applySettings(); LV = lv; ROOTS = !!lv.rt; const a = parseNum(lv.s), b = parseNum(lv.g), os = lv.o.map(s => mk(s, lv.n)); const pp = (lv.pt || []).map(pitEntry); good = !!a && !!b && os.every(Boolean) && pp.every(p => p && !pitHas(p, a) && !pitHas(p, b)) && (FROM_ED || reachable(a, b, os, pp)); } catch (e) { good = false; } }
         if (good) { loadLv(); showView('random'); }
         else { $('menu').hidden = true; /* an invalid link shows only the error, not the main menu behind it */ $('netmsg').textContent = tr('cu_bad'); $('netok').textContent = tr(FROM_ED ? 'cu_editor' : 'mainmenu'); $('netok').onclick = () => { location.href = BACK; }; $('netdlg').addEventListener('close', () => { location.href = BACK; }); $('netdlg').showModal(); }
     </script>
