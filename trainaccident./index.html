@@ -212,6 +212,51 @@
   .mini-video { aspect-ratio: 16 / 9; background: #000; }
   .mini-video iframe { display: block; width: 100%; height: 100%; border: 0; }
   .mini .yt-note { margin: 0; font-size: 15px; }
+  .mini-video { background: var(--img, #000); }
+  .mini-expand, .np-info { display: none; }
+  .mini-expand .ex-icon { display: none; }
+
+  /* full-screen "now playing" (phones) */
+  .mini.full {
+    position: fixed; inset: calc(var(--bar-h, 56px) + env(safe-area-inset-top, 0px)) 0 0 0; z-index: 28; width: auto; max-width: none;
+    display: flex; flex-direction: column; gap: 18px; overflow-y: auto;
+    padding: 12px 22px calc(env(safe-area-inset-bottom, 0px) + 24px);
+    background: #000; color: #fff; box-shadow: none;
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+  }
+  .mini.full[hidden] { display: none; }
+  .mini.full .mini-title, .mini.full #mini-next, .mini.full #mini-play, .mini.full .ex-text { display: none; }
+  .mini.full .mini-bar { justify-content: space-between; margin: 0; }
+  .mini.full .mini-btn { background: none; color: #fff; padding: 2px 8px; font-size: 30px; line-height: 1; }
+  .mini.full .ex-icon { display: block; }
+  .mini.full .mini-video {
+    position: relative; overflow: hidden; width: min(100%, 52vh); margin: 0 auto; aspect-ratio: 1;
+  }
+  .mini.full .mini-video[hidden] { display: block; }
+  .mini.full .mini-video iframe { position: absolute; top: 0; left: 50%; width: 177.78%; height: 100%; transform: translateX(-50%); }
+  .mini.full .yt-note { font-size: 15px; opacity: .8; }
+  .mini.full .np-info { display: block; }
+  .np-info::before {
+    content: ""; display: block; height: 15px; margin: 0 -22px 18px;
+    background: linear-gradient(#fff 0 3px, transparent 3px 6px, #fff 6px 9px, transparent 9px 12px, #fff 12px 15px);
+  }
+  .np-title { margin: 0; font-size: 30px; font-weight: 600; line-height: 1.1; }
+  .np-artist { margin: 4px 0 18px; font-size: 18px; opacity: .7; }
+  .np-bar { height: 6px; background: rgba(255, 255, 255, .25); cursor: pointer; }
+  .np-fill { width: 0; height: 100%; background: linear-gradient(90deg, #fcdb68, #98cb78, #6d9bec, #c878a0); }
+  .np-times { display: flex; justify-content: space-between; margin-top: 6px; font-size: 14px; opacity: .8; }
+  .np-controls { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 22px; }
+  .np-btn {
+    display: grid; place-items: center; width: 64px; height: 64px; border: 0; cursor: pointer; color: #000;
+    background: linear-gradient(100deg, #9078c8, #6d9bec);
+  }
+  .np-btn.big { width: 88px; height: 88px; background: linear-gradient(100deg, #98cb78, #72a6b2); }
+  .np-btn:disabled { opacity: .35; cursor: default; }
+  .np-btn:not(:disabled):hover { filter: brightness(1.08) saturate(1.1); }
+  .np-btn:focus-visible, .mini.full .mini-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  .np-btn .i-pause { display: none; }
+  .np-btn.is-playing .i-play { display: none; }
+  .np-btn.is-playing .i-pause { display: block; }
   .track-body { margin-top: 26px; max-width: 640px; }
   .track-body p { margin: 0 0 18px; font-size: 22px; white-space: pre-line; }
   .details { display: grid; grid-template-columns: max-content 1fr; gap: 6px 24px; margin: 0 0 22px; font-size: 20px; }
@@ -277,8 +322,14 @@
       height: calc(100dvh - var(--bar-h) - env(safe-area-inset-top, 0px));
     }
     .topbar { font-size: 22px; height: 60px; }
-    .content { padding: 20px 28px 32px 16px; }
-    .card::after, .release::after { right: -14px; }
+    .content { padding: 20px 16px 32px 16px; }
+    .card { padding-right: 44px; }
+    .mini-expand { display: inline-block; }
+    /* phone player: square, cropped to the cover art */
+    .mini { width: 264px; }
+    .mini-btn { padding: 4px 10px; font-size: 15px; }
+    .mini-video { aspect-ratio: 1; position: relative; overflow: hidden; }
+    .mini-video iframe { position: absolute; top: 0; left: 50%; width: 177.78%; height: 100%; transform: translateX(-50%); }
   }
 </style>
 </head>
@@ -308,7 +359,7 @@
     </nav>
     <div class="side-foot">
       train accident: the website<br>
-      last updated 4/15/2026
+      last updated 10.14.2026
     </div>
   </aside>
 
@@ -322,10 +373,22 @@
       <span class="mini-title" id="mini-title"></span>
       <button type="button" class="mini-btn" id="mini-next" hidden>next</button>
       <button type="button" class="mini-btn" id="mini-play">pause</button>
+      <button type="button" class="mini-btn mini-expand" id="mini-expand" aria-label="expand player" aria-expanded="false"><span class="ex-text">expand</span><svg class="ex-icon" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg></button>
       <button type="button" class="mini-btn" id="mini-close" aria-label="close player">&times;</button>
     </div>
     <div class="mini-video" id="mini-video"></div>
     <p class="yt-note" id="mini-note" hidden></p>
+    <div class="np-info">
+      <h2 class="np-title" id="np-title"></h2>
+      <p class="np-artist" id="np-artist"></p>
+      <div class="np-bar" id="np-bar"><div class="np-fill" id="np-fill"></div></div>
+      <div class="np-times"><span id="np-cur">0:00</span><span id="np-rem">-0:00</span></div>
+      <div class="np-controls">
+        <button type="button" class="np-btn" id="np-prev" aria-label="previous"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M6 5h2.5v14H6zM20 5v14L9.5 12z"/></svg></button>
+        <button type="button" class="np-btn big" id="np-play" aria-label="play"><svg class="i-play" viewBox="0 0 24 24" width="34" height="34" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg><svg class="i-pause" viewBox="0 0 24 24" width="34" height="34" fill="currentColor" aria-hidden="true"><path d="M6 4h4.5v16H6zM13.5 4H18v16h-4.5z"/></svg></button>
+        <button type="button" class="np-btn" id="np-next" aria-label="next"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M15.5 5H18v14h-2.5zM4 5l10.5 7L4 19z"/></svg></button>
+      </div>
+    </div>
   </div>
   <div class="page active" id="page-home">
     <div class="topbar g-home">home</div>
@@ -442,7 +505,7 @@
   }
   menuBtn.addEventListener('click', function () { setMenu(!document.body.classList.contains('menu-open')); });
   document.getElementById('scrim').addEventListener('click', function () { setMenu(false); });
-  window.addEventListener('resize', function () { if (window.innerWidth > 820) setMenu(false); });
+  window.addEventListener('resize', function () { if (window.innerWidth > 820) { setMenu(false); setFull(false); } });
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   function setNav(name) {
@@ -604,6 +667,9 @@ var IMG = {"2XSjT9XbX6s": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
   var miniPlay = document.getElementById('mini-play');
   var miniNote = document.getElementById('mini-note');
   var miniNext = document.getElementById('mini-next');
+  var miniExpand = document.getElementById('mini-expand');
+  var npTitle = document.getElementById('np-title'), npArtist = document.getElementById('np-artist'), npBar = document.getElementById('np-bar'), npFill = document.getElementById('np-fill');
+  var npCur = document.getElementById('np-cur'), npRem = document.getElementById('np-rem'), npPrev = document.getElementById('np-prev'), npPlay = document.getElementById('np-play'), npNext = document.getElementById('np-next');
   var M = { queue: null, qi: 0, advancing: false, v: null, frame: null, ready: false, pos: 0, dur: 0, playing: false, timer: null, subs: [] };
 
   function mTitle() { return (M.queue ? (M.qi + 1) + '/' + M.queue.length + '  ' : '') + M.v.n; }
@@ -614,12 +680,24 @@ var IMG = {"2XSjT9XbX6s": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
     M.pos = 0;
     M.playing = true;
     miniTitle.textContent = mTitle();
+    mArt(M.v);
     mSend('loadVideoById', [M.v.id]);
     mNotify();
   }
   function mNotify() {
     miniPlay.textContent = M.playing ? 'pause' : 'play';
     miniNext.hidden = !(M.queue && M.qi < M.queue.length - 1);
+    if (M.v) {
+      var d = M.dur || M.v.len;
+      npTitle.textContent = M.v.n;
+      npArtist.textContent = M.v.by;
+      npFill.style.width = Math.min(100, M.pos / d * 100) + '%';
+      npCur.textContent = fmt(M.pos);
+      npRem.textContent = '-' + fmt(Math.max(0, d - M.pos));
+      npPlay.classList.toggle('is-playing', !!M.playing);
+      npPlay.setAttribute('aria-label', M.playing ? 'pause' : 'play');
+      npNext.disabled = !(M.queue && M.qi < M.queue.length - 1);
+    }
     M.subs.forEach(function (fn) { fn(); });
   }
   function mSend(func, args) {
@@ -676,6 +754,7 @@ var IMG = {"2XSjT9XbX6s": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
     M.v = v;
     M.dur = v.len;
     miniTitle.textContent = mTitle();
+    mArt(v);
     miniNote.hidden = true;
     miniVideo.hidden = false;
     mini.hidden = false;
@@ -708,8 +787,33 @@ var IMG = {"2XSjT9XbX6s": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
   miniPlay.addEventListener('click', function () {
     if (M.frame) mToggle(); else if (M.v) mStart(M.v);
   });
-  document.getElementById('mini-close').addEventListener('click', mStop);
+  document.getElementById('mini-close').addEventListener('click', function () { setFull(false); mStop(); });
   miniNext.addEventListener('click', function () { if (M.queue && M.qi < M.queue.length - 1) mGo(M.qi + 1); });
+
+  // full-screen "now playing" on phones: the same pinned player, restyled (the video stays visible, cropped to the square art)
+  function mArt(v) { miniVideo.style.setProperty('--img', 'url("' + IMG[v.img] + '") center / cover no-repeat'); }
+  function setFull(on) {
+    if (on && !M.v) return;
+    mini.classList.toggle('full', on);
+    document.body.classList.toggle('np-open', on);
+    miniExpand.setAttribute('aria-expanded', on ? 'true' : 'false');
+    miniExpand.setAttribute('aria-label', on ? 'collapse player' : 'expand player');
+  }
+  function mPrev() {
+    if (M.queue && M.qi > 0 && M.pos < 3) mGo(M.qi - 1);
+    else { M.pos = 0; mSend('seekTo', [0, true]); mNotify(); }
+  }
+  miniExpand.addEventListener('click', function () { setFull(!mini.classList.contains('full')); });
+  npPlay.addEventListener('click', function () { if (M.frame) mToggle(); else if (M.v) mStart(M.v, M.queue); });
+  npNext.addEventListener('click', function () { if (M.queue && M.qi < M.queue.length - 1) mGo(M.qi + 1); });
+  npPrev.addEventListener('click', mPrev);
+  npBar.addEventListener('click', function (e) {
+    if (!M.v || !M.ready) return;
+    var r = npBar.getBoundingClientRect();
+    M.pos = (e.clientX - r.left) / r.width * (M.dur || M.v.len);
+    mSend('seekTo', [M.pos, true]);
+    mNotify();
+  });
 
   // the popup's controls drive the mini player; closing the popup does not stop the music
   function player(t) {
@@ -749,7 +853,7 @@ var IMG = {"2XSjT9XbX6s": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
     popup.hidden = true;
   }
   popup.addEventListener('click', function (e) { if (e.target === popup) closePopup(); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closePopup(); setMenu(false); } });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closePopup(); setMenu(false); setFull(false); } });
 
   function openTrack(v) {
     if (stopPlayer) { stopPlayer(); stopPlayer = null; }
