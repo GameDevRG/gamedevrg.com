@@ -173,8 +173,8 @@
   .back:hover { filter: brightness(1.08) saturate(1.1); }
   .back:focus-visible { outline: 3px solid #000; outline-offset: 2px; }
   .path { margin: 14px 0 16px; font-size: 22px; font-weight: 600; }
-  .album-head { display: flex; gap: 22px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 22px; }
-  .album-head .thumb { width: 180px; flex: none; }
+  .album-head { display: flex; gap: 22px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 22px; }
+  .album-head .thumb { width: 180px; max-width: 100%; flex: none; }
   .album-head .path { margin: 14px 0 4px; }
   .album-head .count { margin: 0; font-size: 20px; opacity: .7; }
   .album-head .track-title { margin: 0 0 12px; }
@@ -196,16 +196,17 @@
   .yt iframe { display: block; width: 100%; height: 100%; border: 0; }
   .yt-note { flex: 1 0 100%; margin: 0; font-size: 16px; }
   .mini {
-    position: absolute; right: 16px; bottom: 16px; z-index: 18;
+    position: absolute; right: 16px; bottom: 16px; z-index: 28;
     width: 376px; max-width: calc(100% - 32px); padding: 8px;
     background: rgba(255, 255, 255, .55);
     -webkit-backdrop-filter: blur(28px); backdrop-filter: blur(28px);
     box-shadow: 0 10px 40px rgba(0, 0, 0, .18); color: #000;
   }
-  .mini[hidden], .mini-video[hidden] { display: none; }
+  .mini[hidden], .mini-video[hidden], .mini-btn[hidden] { display: none; }
   .mini-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
   .mini-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 16px; font-weight: 600; }
   .mini-btn { border: 0; padding: 4px 14px; cursor: pointer; color: #000; font: inherit; font-size: 16px; background: linear-gradient(100deg, #98cb78, #72a6b2); }
+  .play-album { margin-top: 14px; }
   .mini-btn:hover { filter: brightness(1.08) saturate(1.1); }
   .mini-btn:focus-visible { outline: 3px solid #000; outline-offset: 2px; }
   .mini-video { aspect-ratio: 16 / 9; background: #000; }
@@ -319,6 +320,7 @@
   <div class="mini" id="mini" hidden>
     <div class="mini-bar">
       <span class="mini-title" id="mini-title"></span>
+      <button type="button" class="mini-btn" id="mini-next" hidden>next</button>
       <button type="button" class="mini-btn" id="mini-play">pause</button>
       <button type="button" class="mini-btn" id="mini-close" aria-label="close player">&times;</button>
     </div>
@@ -533,9 +535,10 @@ var IMG = {"2XSjT9XbX6s": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
     return b;
   }
 
-  var stopPlayer = null;
+  var stopPlayer = null, albumUnsub = null;
   function view() {
     if (stopPlayer) { stopPlayer(); stopPlayer = null; }
+    if (albumUnsub) { albumUnsub(); albumUnsub = null; }
     rel.innerHTML = '';
     var w = mk('div', 'rel-view');
     rel.appendChild(w);
@@ -568,6 +571,19 @@ var IMG = {"2XSjT9XbX6s": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
     info.appendChild(back);
     info.appendChild(mk('p', 'path', 'releases / ' + a.n));
     info.appendChild(mk('p', 'count', a.tracks.length + (a.tracks.length === 1 ? ' track' : ' tracks')));
+    var pa = mk('button', 'play play-album', 'play album');
+    pa.type = 'button';
+    function syncAlbum() {
+      var on = M.queue === a.tracks && M.frame;
+      pa.textContent = on ? (M.playing ? 'pause album' : 'resume album') : 'play album';
+    }
+    pa.addEventListener('click', function () {
+      if (M.queue === a.tracks && M.frame) mToggle(); else mStart(a.tracks[0], a.tracks);
+    });
+    M.subs.push(syncAlbum);
+    albumUnsub = function () { M.subs = M.subs.filter(function (f) { return f !== syncAlbum; }); };
+    syncAlbum();
+    info.appendChild(pa);
     head.appendChild(cover);
     head.appendChild(info);
     var g = mk('div', 'grid');
@@ -578,6 +594,7 @@ var IMG = {"2XSjT9XbX6s": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
     });
     w.appendChild(head);
     w.appendChild(g);
+    cover.style.width = info.offsetHeight + 'px';
   }
 
   // mini player: one pinned YouTube player that keeps playing while you browse
@@ -586,10 +603,23 @@ var IMG = {"2XSjT9XbX6s": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
   var miniTitle = document.getElementById('mini-title');
   var miniPlay = document.getElementById('mini-play');
   var miniNote = document.getElementById('mini-note');
-  var M = { v: null, frame: null, ready: false, pos: 0, dur: 0, playing: false, timer: null, subs: [] };
+  var miniNext = document.getElementById('mini-next');
+  var M = { queue: null, qi: 0, advancing: false, v: null, frame: null, ready: false, pos: 0, dur: 0, playing: false, timer: null, subs: [] };
 
+  function mTitle() { return (M.queue ? (M.qi + 1) + '/' + M.queue.length + '  ' : '') + M.v.n; }
+  function mGo(i) {
+    M.qi = i;
+    M.v = M.queue[i];
+    M.dur = M.v.len;
+    M.pos = 0;
+    M.playing = true;
+    miniTitle.textContent = mTitle();
+    mSend('loadVideoById', [M.v.id]);
+    mNotify();
+  }
   function mNotify() {
     miniPlay.textContent = M.playing ? 'pause' : 'play';
+    miniNext.hidden = !(M.queue && M.qi < M.queue.length - 1);
     M.subs.forEach(function (fn) { fn(); });
   }
   function mSend(func, args) {
@@ -605,6 +635,7 @@ var IMG = {"2XSjT9XbX6s": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
   function mStop() {
     mDrop();
     M.v = null;
+    M.queue = null;
     M.pos = 0;
     mini.hidden = true;
     miniNote.hidden = true;
@@ -629,15 +660,22 @@ var IMG = {"2XSjT9XbX6s": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
     if (!i) return;
     if (typeof i.currentTime === 'number') M.pos = i.currentTime;
     if (i.duration) M.dur = i.duration;
-    if (i.playerState === 1 || i.playerState === 3) M.playing = true;
-    else if (i.playerState === 0 || i.playerState === 2) { M.playing = false; if (i.playerState === 0) M.pos = 0; }
+    if (i.playerState === 1 || i.playerState === 3) { M.playing = true; M.advancing = false; }
+    else if (i.playerState === 2) M.playing = false;
+    else if (i.playerState === 0) {
+      M.pos = 0;
+      if (M.queue && M.qi < M.queue.length - 1) { if (!M.advancing) { M.advancing = true; mGo(M.qi + 1); } return; }
+      M.playing = false;
+    }
     mNotify();
   }
-  function mStart(v) {
+  function mStart(v, queue) {
     mStop();
+    M.queue = queue || null;
+    M.qi = queue ? queue.indexOf(v) : 0;
     M.v = v;
     M.dur = v.len;
-    miniTitle.textContent = v.n;
+    miniTitle.textContent = mTitle();
     miniNote.hidden = true;
     miniVideo.hidden = false;
     mini.hidden = false;
@@ -671,6 +709,7 @@ var IMG = {"2XSjT9XbX6s": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w
     if (M.frame) mToggle(); else if (M.v) mStart(M.v);
   });
   document.getElementById('mini-close').addEventListener('click', mStop);
+  miniNext.addEventListener('click', function () { if (M.queue && M.qi < M.queue.length - 1) mGo(M.qi + 1); });
 
   // the popup's controls drive the mini player; closing the popup does not stop the music
   function player(t) {
