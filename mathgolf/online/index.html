@@ -536,6 +536,16 @@
             border-color: var(--sand)
         }
 
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px 14px;
+            margin-top: 8px;
+            font-size: .85rem;
+            font-weight: 700;
+            color: var(--soft)
+        }
+
         .acts {
             display: flex;
             flex-wrap: wrap;
@@ -713,6 +723,9 @@
                     <select id="fsort">
                         <option value="new" data-i="newest">newest first</option>
                         <option value="old" data-i="oldest">oldest first</option>
+                        <option value="views" data-i="mostviewed">most viewed</option>
+                        <option value="likes" data-i="mostliked">most liked</option>
+                        <option value="beat" data-i="mostbeaten">most completed</option>
                     </select>
                 </div>
             </div>
@@ -772,7 +785,10 @@
                 seeby: 'see levels by {name}', n1: '1 level', nN: '{n} levels', none: 'no levels found. try a different search', empty: 'nothing here yet. be the first to publish a level from the level editor',
                 loading: 'loading…', fail: "couldn't load levels", retry: 'try again',
                 deltitle: 'delete this level?', delbody: 'this removes {title} for everyone. enter your password to confirm', pw: 'password', delgo: 'delete level', cancel: 'cancel', deleted: 'level deleted',
-                needpw: 'enter your password', wrongpw: 'incorrect password', delfail: "couldn't delete it, try again"
+                needpw: 'enter your password', wrongpw: 'incorrect password', delfail: "couldn't delete it, try again",
+                mostviewed: 'most viewed', mostliked: 'most liked', mostbeaten: 'most completed',
+                view1: '1 view', viewN: '{n} views', like1: '1 like', likeN: '{n} likes', beat1: 'beaten by 1 player', beatN: 'beaten by {n} players',
+                likebtn: 'like', unlikebtn: 'liked', needlogin: 'log in to like levels', likefail: "couldn't like it, try again"
             },
             es: {
                 homepage: 'inicio', login: 'iniciar sesión', signed: 'sesión iniciada como {name}', title: 'niveles en línea', sub: 'niveles publicados por otros jugadores',
@@ -784,7 +800,10 @@
                 seeby: 'ver niveles de {name}', n1: '1 nivel', nN: '{n} niveles', none: 'no se encontraron niveles. prueba otra búsqueda', empty: 'aún no hay nada. sé el primero en publicar un nivel desde el editor',
                 loading: 'cargando…', fail: 'no se pudieron cargar los niveles', retry: 'reintentar',
                 deltitle: '¿eliminar este nivel?', delbody: 'esto elimina {title} para todos. escribe tu contraseña para confirmar', pw: 'contraseña', delgo: 'eliminar nivel', cancel: 'cancelar', deleted: 'nivel eliminado',
-                needpw: 'escribe tu contraseña', wrongpw: 'contraseña incorrecta', delfail: 'no se pudo eliminar, inténtalo de nuevo'
+                needpw: 'escribe tu contraseña', wrongpw: 'contraseña incorrecta', delfail: 'no se pudo eliminar, inténtalo de nuevo',
+                mostviewed: 'más vistos', mostliked: 'más gustados', mostbeaten: 'más superados',
+                view1: '1 vista', viewN: '{n} vistas', like1: '1 me gusta', likeN: '{n} me gusta', beat1: 'superado por 1 jugador', beatN: 'superado por {n} jugadores',
+                likebtn: 'me gusta', unlikebtn: 'te gusta', needlogin: 'inicia sesión para dar me gusta', likefail: 'no se pudo, inténtalo de nuevo'
             },
             ja: {
                 homepage: 'ホーム', login: 'ログイン', signed: '{name}としてログイン中', title: 'オンラインレベル', sub: '他のプレイヤーが公開したレベル',
@@ -796,7 +815,10 @@
                 seeby: '{name} のレベルを見る', n1: '1 件のレベル', nN: '{n} 件のレベル', none: 'レベルが見つかりません。別の検索を試してください', empty: 'まだ何もありません。エディタから最初のレベルを公開しよう',
                 loading: '読み込み中…', fail: 'レベルを読み込めませんでした', retry: '再試行',
                 deltitle: 'このレベルを削除しますか？', delbody: '{title} がみんなから削除されます。確認のためパスワードを入力してください', pw: 'パスワード', delgo: 'レベルを削除', cancel: 'キャンセル', deleted: 'レベルを削除しました',
-                needpw: 'パスワードを入力してください', wrongpw: 'パスワードが違います', delfail: '削除できませんでした。もう一度お試しください'
+                needpw: 'パスワードを入力してください', wrongpw: 'パスワードが違います', delfail: '削除できませんでした。もう一度お試しください',
+                mostviewed: '閲覧数が多い順', mostliked: 'いいねが多い順', mostbeaten: 'クリア数が多い順',
+                view1: '1 回閲覧', viewN: '{n} 回閲覧', like1: 'いいね 1', likeN: 'いいね {n}', beat1: '1 人がクリア', beatN: '{n} 人がクリア',
+                likebtn: 'いいね', unlikebtn: 'いいね済み', needlogin: 'いいねするにはログインしてください', likefail: 'いいねできませんでした。もう一度お試しください'
             },
             zh: {
                 homepage: '首页', login: '登录', signed: '已登录：{name}', title: '在线关卡', sub: '其他玩家发布的关卡',
@@ -808,7 +830,10 @@
                 seeby: '查看 {name} 的关卡', n1: '1 个关卡', nN: '{n} 个关卡', none: '没有找到关卡。换个搜索试试', empty: '这里还没有内容。来编辑器发布第一个关卡吧',
                 loading: '加载中…', fail: '无法加载关卡', retry: '重试',
                 deltitle: '删除这个关卡？', delbody: '这会为所有人删除 {title}。请输入密码确认', pw: '密码', delgo: '删除关卡', cancel: '取消', deleted: '关卡已删除',
-                needpw: '请输入密码', wrongpw: '密码不正确', delfail: '无法删除，请重试'
+                needpw: '请输入密码', wrongpw: '密码不正确', delfail: '无法删除，请重试',
+                mostviewed: '浏览最多', mostliked: '点赞最多', mostbeaten: '通关最多',
+                view1: '1 次浏览', viewN: '{n} 次浏览', like1: '1 个赞', likeN: '{n} 个赞', beat1: '1 人通关', beatN: '{n} 人通关',
+                likebtn: '点赞', unlikebtn: '已点赞', needlogin: '登录后才能点赞', likefail: '无法点赞，请重试'
             }
         };
         const tr = (k, v) => { let s = (T[lang] && T[lang][k]) || T.en[k] || k; if (v) for (const x in v) s = s.split('{' + x + '}').join(v[x]); return s; };
@@ -839,7 +864,7 @@
             st.q = (p.get('q') || '').slice(0, 60); st.author = (p.get('author') || '').slice(0, 40);
             const dv = p.get('difficulty'); st.difficulty = ['0', '2', '4', '6', '8'].includes(dv) ? dv : '';
             const m = p.get('mode'); st.mode = ['whole', 'dec', 'frac'].includes(m) ? m : '';
-            st.sand = p.get('sand') === '1'; st.sort = p.get('sort') === 'old' ? 'old' : 'new';
+            st.sand = p.get('sand') === '1'; st.sort = ['old', 'views', 'likes', 'beat'].includes(p.get('sort')) ? p.get('sort') : 'new';
         }
         function writeUrl() {
             const p = new URLSearchParams();
@@ -870,7 +895,7 @@
             setState('load', tr('loading')); $('more').hidden = true;
             const p = new URLSearchParams({ page: st.page, limit: 12, sort: st.sort });
             if (st.q) p.set('q', st.q); if (st.author) p.set('author', st.author); if (st.difficulty !== '') p.set('difficulty', st.difficulty);
-            if (st.mode) p.set('mode', st.mode); if (st.sand) p.set('sand', '1');
+            if (st.mode) p.set('mode', st.mode); if (st.sand) p.set('sand', '1'); if (acctName()) p.set('me', acctName());
             try {
                 const res = await fetch(API + '/levels?' + p), data = await res.json();
                 if (my !== reqId) return; /* a newer search has started */
@@ -916,11 +941,33 @@
             if (l.sand) tags.appendChild(el('span', 'sandtag', l.sand === 1 ? tr('sand1') : tr('sandN', { n: l.sand })));
             li.appendChild(tags);
 
+            const stats = el('p', 'stats'), sv = el('span'), sl = el('span'), sb = el('span');
+            const cnt = (n, one, many) => n === 1 ? tr(one) : tr(many, { n });
+            const paint = () => { sv.textContent = cnt(l.views || 0, 'view1', 'viewN'); sl.textContent = cnt(l.likes || 0, 'like1', 'likeN'); sb.textContent = cnt(l.beats || 0, 'beat1', 'beatN'); };
+            paint(); stats.append(sv, sl, sb); li.appendChild(stats);
+
             const acts = el('div', 'acts'), play = el('a', 'btn go sm', tr('play')); play.href = playHref(l);
             const cp = el('button', 'btn sm', tr('copy')); cp.type = 'button';
             cp.onclick = () => copy(new URL(playHref(l).replace('&from=online', ''), location.href).href);
             const ed = el('a', 'btn sm', tr('edit')); ed.href = '../editor/?level=' + encodeURIComponent(l.code);
-            acts.append(play, cp, ed);
+            acts.append(play);
+            if (!(acctName() && acctName() === l.owner)) { /* you can't like your own level */
+                const lk = el('button', 'btn sm' + (l.liked ? ' on' : ''), tr(l.liked ? 'unlikebtn' : 'likebtn')); lk.type = 'button'; lk.setAttribute('aria-pressed', !!l.liked);
+                lk.onclick = async () => {
+                    if (!acctName()) { toast(tr('needlogin')); return; }
+                    lk.disabled = true;
+                    try {
+                        const res = await fetch(API + '/levels/' + encodeURIComponent(l.id) + '/like', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: acctName() }) });
+                        const data = await res.json().catch(() => ({}));
+                        if (!res.ok) throw new Error(data.message || 'error');
+                        l.liked = data.liked; l.likes = data.likes;
+                        lk.classList.toggle('on', l.liked); lk.setAttribute('aria-pressed', l.liked); lk.textContent = tr(l.liked ? 'unlikebtn' : 'likebtn'); paint();
+                    } catch (e) { toast(tr('likefail')); }
+                    lk.disabled = false;
+                };
+                acts.append(lk);
+            }
+            acts.append(cp, ed);
             if (acctName() && acctName() === l.owner) {
                 const d = el('button', 'btn sm danger', tr('del')); d.type = 'button';
                 d.onclick = () => openDelete(l, li); acts.appendChild(d);

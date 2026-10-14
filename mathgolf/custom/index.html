@@ -4453,7 +4453,7 @@
             { const pn = $('pitnote'), pl = L.pits || []; pn.hidden = !pl.length; pn.textContent = pl.length ? tr('sand_note') + ' ' + pl.map(pitFmt).join(', ') : ''; }
             if (won) {
                 if (FROM_ED && !gaveUp) { edWin = Math.min(edWin, used); BACK = BACK.split('&verified=')[0] + '&verified=' + edWin; } /* the editor learns that you solved it, and in how many moves */
-                if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: forceHc, num: settings.num, rt: !!ROOTS, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
+                if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { reportLevel('beat'); holes++; total += Math.max(over, 0); saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: forceHc, num: settings.num, rt: !!ROOTS, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
                 m.className = gaveUp ? 'lose' : 'win';
                 m.innerHTML = dailyMode ? tr('win_daily', { m: tr('moves', { n: used }) }) + '<br><span id="dnote"></span><br><button id="nx">' + tr('back_cal') + '</button>' : gaveUp ? tr(used < L.limit ? 'give_under' : 'give_par', { m: tr('moves', { n: used }) }) + '<br><button id="nx">' + tr('cu_retry') + '</button>' : tr('win', { n: used, sc }) + '<br><button id="nx">' + tr('cu_retry') + '</button>';
                 $('nx').onclick = newLevel; { const nm = document.createElement('button'); nm.textContent = tr(FROM_ED ? 'cu_editor' : FROM_ON ? 'cu_online' : 'mainmenu'); nm.onclick = () => { location.href = BACK; }; $('nx').after(' ', nm); } $('nx').focus(); if ($('dnote')) $('dnote').textContent = dailyNote;
@@ -4905,6 +4905,13 @@
         }
         let LV = null;
         const lvCode = new URLSearchParams(location.search).get('level'), lv = lvCode && decodeLevel(lvCode);
+        /* published levels count views and completions on the server (it ignores codes that were never published, and plays from the editor never count) */
+        function reportLevel(kind) {
+            if (!LV || FROM_ED || !lvCode) return;
+            if (kind === 'beat' && !user) return; /* only signed-in players count as having beaten it */
+            if (kind === 'view') { try { const k = 'lvseen:' + lvCode; if (sessionStorage.getItem(k)) return; sessionStorage.setItem(k, '1'); } catch (e) { } } /* one view per visit */
+            fetch(API + '/levels/' + kind, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: lvCode, username: user }) }).catch(() => { });
+        }
         function loadLv() { ROOTS = !!LV.rt; forceHc = !!LV.hc && !VERIFY; document.documentElement.classList.toggle('hc', forceHc); document.title = (LV.t ? LV.t : 'custom level') + ' · hole in √-1'; stopReplay(); stopFx(); pend = false; L = { start: parseNum(LV.s), goal: parseNum(LV.g), ops: LV.o.map(s => mk(s, LV.n)), limit: LV.p, pits: (LV.pt || []).map(pitEntry).filter(Boolean) }; cur = L.start; hist = []; undosUsed = 0; counted = false; dailyNote = ''; render(); }
         newLevel = loadLv;
         $('tomenu').onclick = () => { location.href = BACK; };
@@ -6078,7 +6085,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
         i18nInit();
         let good = false;
         if (lv) { try { NB = 100000; settings.num = lv.n; applySettings(); LV = lv; ROOTS = !!lv.rt; const a = parseNum(lv.s), b = parseNum(lv.g), os = lv.o.map(s => mk(s, lv.n)); const pp = (lv.pt || []).map(pitEntry); good = !!a && !!b && os.every(Boolean) && pp.every(p => p && !pitHas(p, a) && !pitHas(p, b)) && (FROM_ED || reachable(a, b, os, pp)); } catch (e) { good = false; } }
-        if (good) { loadLv(); showView('random'); }
+        if (good) { loadLv(); showView('random'); reportLevel('view'); }
         else { $('menu').hidden = true; /* an invalid link shows only the error, not the main menu behind it */ $('netmsg').textContent = tr('cu_bad'); $('netok').textContent = tr(FROM_ED ? 'cu_editor' : FROM_ON ? 'cu_online' : 'mainmenu'); $('netok').onclick = () => { location.href = BACK; }; $('netdlg').addEventListener('close', () => { location.href = BACK; }); $('netdlg').showModal(); }
     </script>
     <script>
