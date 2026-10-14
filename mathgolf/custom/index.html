@@ -4188,7 +4188,14 @@
         function draw(vw, bl, vals, g, won) {
             const W = $('nl').clientWidth || 640, H = W < 520 ? 160 : 200, pad = W < 520 ? 28 : 44, Y = H - 58, R = 7, sp = vw.hi - vw.lo, x = v => pad + (v - vw.lo) / sp * (W - 2 * pad);
             const hgt = (a, b) => Math.max(4, Math.min(Y - 30, 100, Math.abs(x(b) - x(a)) * .25));
-            let h = `<line x1="10" y1="${Y}" x2="${W - 10}" y2="${Y}" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"/>`;
+            const SAND = '#d4a64f', pitsIn = (L.pits || []).map(p => { const a = x(val(p)), b = p.hi ? x(val(p.hi)) : a; return { p, a, b, lo: Math.min(a, b), hi: Math.max(a, b) }; }).filter(q => q.hi >= 10 && q.lo <= W - 10);
+            let h = '';   /* sand pits are drawn like a sketch: the line goes dashed between two open circles (one circle for a single number) */
+            { let at = 10; [...pitsIn].filter(q => q.p.hi).sort((u, v) => u.lo - v.lo).forEach(q => { const a = Math.max(10, q.lo), z = Math.min(W - 10, q.hi); if (a > at) h += `<line x1="${at}" y1="${Y}" x2="${a}" y2="${Y}" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"/>`; h += `<line x1="${a}" y1="${Y}" x2="${z}" y2="${Y}" stroke="${SAND}" stroke-width="2.5" stroke-dasharray="7 6"/>`; at = Math.max(at, z); }); if (at < W - 10) h += `<line x1="${at}" y1="${Y}" x2="${W - 10}" y2="${Y}" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"/>`; }
+            const pitEnds = [], pitXs = [];   /* pitEnds: what gets a circle and a label; pitXs: every x a pit number sits at */
+            pitsIn.forEach(q => {
+                if (q.p.hi && q.hi - q.lo < 34) { const X = Math.min(W - 10, Math.max(10, (q.lo + q.hi) / 2)); pitEnds.push({ X, t: tf(val(q.p)) + '–' + tf(val(q.p.hi)) }); pitXs.push(q.a, q.b); return; }   /* too narrow for two circles: one circle, one label */
+                (q.p.hi ? [[q.a, val(q.p)], [q.b, val(q.p.hi)]] : [[q.a, val(q.p)]]).forEach(([X, v]) => { if (X >= 10 && X <= W - 10) { pitEnds.push({ X, t: tf(v) }); pitXs.push(X); } });
+            });
             const lands = [];
             vals.forEach((v, i) => { if (i === vals.length - 1 && bl) return; if (vals.slice(0, i).includes(v)) return; lands.push({ v, i, X: x(v) }); });
             if (!lands.some(l => l.v === g)) lands.unshift({ v: g, i: -1, X: x(g) });
@@ -4198,7 +4205,7 @@
                 const X = x(t);
                 if (X < 10 || X > W - 10) continue;
                 h += `<line x1="${X}" y1="${Y - 5}" x2="${X}" y2="${Y + 5}" stroke="var(--blue)" stroke-width="1.5"/>`;
-                if (!lands.some(l => Math.abs(l.X - X) < lw(l) + tf(t).length * 4)) h += `<text x="${X}" y="${Y + 24}" opacity=".7">${tf(t)}</text>`;
+                if (!lands.some(l => Math.abs(l.X - X) < lw(l) + tf(t).length * 4) && !pitEnds.some(e => Math.abs(e.X - X) < (e.t.length + tf(t).length) * 4 + 6)) h += `<text x="${X}" y="${Y + 24}" opacity=".7">${tf(t)}</text>`;
             }
             const gx = x(g); holePos = { x: gx, y: Y };
             h += `<ellipse cx="${gx}" cy="${Y}" rx="11" ry="4.5" fill="var(--hole)" stroke="var(--hole)" stroke-width="1.5"/>`;
@@ -4212,15 +4219,15 @@
                 }
                 else h += `<path d="M${a} ${Y - R} Q${(a + b) / 2} ${cy} ${b} ${Y - R}" fill="none" stroke="${col}" stroke-width="2" stroke-dasharray="6 5" opacity="${op}"/>`;
             }
-            (L.pits || []).forEach(p => { const pv = val(p), px = x(pv), pe = p.hi ? x(val(p.hi)) : px, a = Math.max(12, Math.min(px, pe)), z = Math.min(W - 12, Math.max(px, pe)); if (a > z) return; const cx = (a + z) / 2; h += `<ellipse cx="${cx}" cy="${Y}" rx="${(z - a) / 2 + 10}" ry="4" fill="#d4a64f"/><text x="${cx}" y="${Y - 11}" style="font-size:11px;font-weight:700;fill:#d4a64f">${p.hi ? tf(pv) + '–' + tf(val(p.hi)) : tf(pv)}</text>`; });   /* sand pits: a range is one wide patch */
+            pitEnds.forEach(e => { h += `<circle cx="${e.X}" cy="${Y}" r="7" fill="var(--bg)" stroke="${SAND}" stroke-width="2.5"/>`; });   /* sand pits: open circles at the ends */
             /* sand pits that are off screen: a sand-coloured arrow at the edge they lie past, with the nearest pit's number and how many more there are */
             { const all = (L.pits || []).map(p => { const a = x(val(p)), b = p.hi ? x(val(p.hi)) : a; return { p, lo: Math.min(a, b), hi: Math.max(a, b) }; }),
-                  offL = all.filter(q => q.hi < 12).sort((u, v) => v.hi - u.hi), offR = all.filter(q => q.lo > W - 12).sort((u, v) => u.lo - v.lo),
+                  offL = all.filter(q => q.hi < 10).sort((u, v) => v.hi - u.hi), offR = all.filter(q => q.lo > W - 10).sort((u, v) => u.lo - v.lo),
                   nm = q => q.p.hi ? tf(val(q.p)) + '–' + tf(val(q.p.hi)) : tf(val(q.p));
               [[offL, -1], [offR, 1]].forEach(([o, d]) => {
                   if (!o.length) return; const ex = d < 0 ? 10 : W - 10, tx = ex - d * 10;
-                  h += `<path d="M${ex} ${Y} L${tx} ${Y - 7} L${tx} ${Y + 7}Z" fill="#d4a64f"/>`;
-                  h += `<text x="${tx - d * 5}" y="${Y - 12}" style="font-size:12px;font-weight:700;fill:#d4a64f;text-anchor:${d < 0 ? 'start' : 'end'}">${nm(o[0])}${o.length > 1 ? ' +' + (o.length - 1) : ''}</text>`;
+                  h += `<path d="M${ex} ${Y} L${tx} ${Y - 7} L${tx} ${Y + 7}Z" fill="${SAND}"/>`;
+                  h += `<text x="${tx - d * 5}" y="${Y - 12}" style="font-size:13px;font-weight:700;fill:${SAND};text-anchor:${d < 0 ? 'start' : 'end'}">${nm(o[0])}${o.length > 1 ? ' +' + (o.length - 1) : ''}</text>`;
               }); }
             const rows = [[], [], []];
             vals.forEach((v, i) => {
@@ -4229,7 +4236,11 @@
             });
             /* place labels by importance (hole, ball, tee, then newest hits) and skip any that can't fit without touching */
             const lblW = l => ((l.i === 0 ? teeW() : 0) + tf(l.v).length) * 8 + 6, pr = l => l.v === g ? 0 : l.i === vals.length - 1 ? 1 : l.i === 0 ? 2 : 3 + vals.length - l.i;
-            [...lands].sort((a, b) => pr(a) - pr(b)).forEach(l => {
+            [...pitEnds].sort((u, v) => u.X - v.X).forEach(e => {   /* pit numbers go first, and are always shown */
+                const w = e.t.length * 8 + 6, r = Math.max(0, rows.findIndex(row => row.every(q => Math.abs(q.x - e.X) > (q.w + w) / 2)));
+                rows[r].push({ x: e.X, w }); h += `<text x="${e.X}" y="${Y + 24 + r * 16}" style="font-size:13px;font-weight:700;fill:${SAND}">${e.t}</text>`;
+            });
+            [...lands].filter(l => !pitXs.some(X => Math.abs(X - l.X) < 1)).sort((a, b) => pr(a) - pr(b)).forEach(l => {
                 const w = lblW(l), r = rows.findIndex(row => row.every(q => Math.abs(q.x - l.X) > (q.w + w) / 2));
                 if (r < 0) return; rows[r].push({ x: l.X, w });
                 h += `<text x="${l.X}" y="${Y + 24 + r * 16}" style="font-size:13px;font-weight:700;fill:${l.v === g ? 'var(--imag)' : 'var(--ink)'}">${l.i === 0 ? tr('tee') + ' ' : ''}${tf(l.v)}</text>`;
@@ -4690,7 +4701,7 @@
             if (v === 'random') { view = null; pend = false; if (L) { updateNs(); render(); } }
         }
         /* ---------- daily levels (needs the server: server.js + daily.js) ---------- */
-        const API = 'https://gamedevrg-com-backend.onrender.com'; /* change to your server's address */
+        const API = 'https://gamedevrg-com-backend.vercel.app'; /* your server's address (Vercel) */
         const DSTART = '2026-01-01'; /* must match DAILY_START on the server */
         let user = '', calY = 0, calM = 0, todayStr = '';
         try { user = localStorage.getItem('username') || ''; } catch (e) { }
