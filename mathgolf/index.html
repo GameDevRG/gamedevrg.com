@@ -134,6 +134,7 @@
             --gold: #ffe08a;
             --orange: #ff9a3c;
             --purple: #b48cff;
+            --peach: #f27d52;
             box-sizing: border-box;
             padding-top: env(safe-area-inset-top, 0px);
             padding-bottom: env(safe-area-inset-bottom, 0px)
@@ -159,7 +160,8 @@
             --onimag: #fff;
             --gold: #e0a526;
             --orange: #e8730c;
-            --purple: #7a3fe0
+            --purple: #7a3fe0;
+            --peach: #b8481a
         }
 
         html {
@@ -2009,6 +2011,24 @@
             box-shadow: 0 0 0 var(--ink)
         }
 
+        .mopt.peach {
+            border-color: var(--peach);
+            box-shadow: 0 4px 0 var(--peach)
+        }
+
+        @media (hover: hover) {
+            .mopt.peach:hover {
+                border-color: var(--ink);
+                box-shadow: 0 4px 0 var(--ink)
+            }
+        }
+
+        .mopt.peach:active,
+        .mopt.peach.pressed {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 var(--ink)
+        }
+
         .mopt.purple {
             border-color: var(--purple);
             box-shadow: 0 4px 0 var(--purple)
@@ -2045,6 +2065,10 @@
 
         #menu .mopt.orange {
             --ac: var(--orange)
+        }
+
+        #menu .mopt.peach {
+            --ac: var(--peach)
         }
 
         #menu .mopt.purple {
@@ -3133,13 +3157,13 @@
         <div class="mopts">
             <button class="mopt red" id="mopt2"><b>main levels</b><span>hand-made levels for each
                     difficulty</span></button>
-            <button class="mopt" id="mopt1"><b>random levels</b><span>endless, freshly generated levels at the
+            <button class="mopt peach" id="mopt1"><b>random levels</b><span>endless, freshly generated levels at the
                     difficulty you pick</span></button>
             <button class="mopt gold" id="moptD"><b>daily levels</b><span>a new challenge every day, plus a calendar of
                     past days</span></button>
             <button class="mopt green" id="moptV"><b>versus mode</b><span>make or join a room and play against
                     friends</span></button>
-            <button class="mopt orange" id="moptE"><b>level editor</b><span>make your own level and share
+            <button class="mopt" id="moptE"><b>level editor</b><span>make your own level and share
                     it</span></button>
             <button class="mopt purple" id="moptO"><b>online levels</b><span>play levels other players published, or
                     search by author</span></button>
