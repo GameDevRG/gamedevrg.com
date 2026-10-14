@@ -3477,6 +3477,7 @@
                 "cu_retry": "retry",
                 "cu_bad": "that level code isn't valid",
                 "cu_editor": "back to editor",
+                "cu_online": "back to online levels",
                 "cu_by": "by {a}",
                 "lv_on": "on",
                 "lv_off": "off",
@@ -3666,6 +3667,7 @@
                 "cu_retry": "reintentar",
                 "cu_bad": "ese código de nivel no es válido",
                 "cu_editor": "volver al editor",
+                "cu_online": "volver a niveles en línea",
                 "cu_by": "por {a}",
                 "lv_on": "activado",
                 "lv_off": "desactivado",
@@ -3855,6 +3857,7 @@
                 "cu_retry": "もう一度",
                 "cu_bad": "そのレベルコードは正しくないよ",
                 "cu_editor": "エディタに戻る",
+                "cu_online": "オンラインレベルに戻る",
                 "cu_by": "作者: {a}",
                 "lv_on": "オン",
                 "lv_off": "オフ",
@@ -4044,6 +4047,7 @@
                 "cu_retry": "重试",
                 "cu_bad": "这个关卡代码无效",
                 "cu_editor": "返回编辑器",
+                "cu_online": "返回在线关卡",
                 "cu_by": "作者：{a}",
                 "lv_on": "开",
                 "lv_off": "关",
@@ -4452,7 +4456,7 @@
                 if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: forceHc, num: settings.num, rt: !!ROOTS, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
                 m.className = gaveUp ? 'lose' : 'win';
                 m.innerHTML = dailyMode ? tr('win_daily', { m: tr('moves', { n: used }) }) + '<br><span id="dnote"></span><br><button id="nx">' + tr('back_cal') + '</button>' : gaveUp ? tr(used < L.limit ? 'give_under' : 'give_par', { m: tr('moves', { n: used }) }) + '<br><button id="nx">' + tr('cu_retry') + '</button>' : tr('win', { n: used, sc }) + '<br><button id="nx">' + tr('cu_retry') + '</button>';
-                $('nx').onclick = newLevel; { const nm = document.createElement('button'); nm.textContent = tr(FROM_ED ? 'cu_editor' : 'mainmenu'); nm.onclick = () => { location.href = BACK; }; $('nx').after(' ', nm); } $('nx').focus(); if ($('dnote')) $('dnote').textContent = dailyNote;
+                $('nx').onclick = newLevel; { const nm = document.createElement('button'); nm.textContent = tr(FROM_ED ? 'cu_editor' : FROM_ON ? 'cu_online' : 'mainmenu'); nm.onclick = () => { location.href = BACK; }; $('nx').after(' ', nm); } $('nx').focus(); if ($('dnote')) $('dnote').textContent = dailyNote;
             }
             $('score').textContent = holes ? tr(total === 0 ? 'score_even' : 'score_over', { h: holes, x: total }) : '';
         }
@@ -4888,8 +4892,9 @@
         }
 
         const FROM_ED = new URLSearchParams(location.search).get('from') === 'editor', VERIFY = FROM_ED && new URLSearchParams(location.search).get('verify') === '1';
-        let BACK = FROM_ED ? '../editor/?level=' + encodeURIComponent(new URLSearchParams(location.search).get('level') || '') : '../';
-        if (FROM_ED) $('tomenu').dataset.i = 'cu_editor';
+        const FROM_ON = !FROM_ED && new URLSearchParams(location.search).get('from') === 'online'; /* opened from the online levels list: back goes there */
+        let BACK = FROM_ED ? '../editor/?level=' + encodeURIComponent(new URLSearchParams(location.search).get('level') || '') : FROM_ON ? '../online/' : '../';
+        if (FROM_ED) $('tomenu').dataset.i = 'cu_editor'; else if (FROM_ON) $('tomenu').dataset.i = 'cu_online';
         const realNum = settings.num;
         saveSettings = function () { try { localStorage.setItem('hs1', JSON.stringify(Object.assign({}, settings, { num: realNum }))) } catch (e) { } };
         /* false only when every number the level can reach has been checked and the goal isn't one of them (no depth limit; gives up and says "maybe" past 400000 numbers) */
@@ -6074,7 +6079,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
         let good = false;
         if (lv) { try { NB = 100000; settings.num = lv.n; applySettings(); LV = lv; ROOTS = !!lv.rt; const a = parseNum(lv.s), b = parseNum(lv.g), os = lv.o.map(s => mk(s, lv.n)); const pp = (lv.pt || []).map(pitEntry); good = !!a && !!b && os.every(Boolean) && pp.every(p => p && !pitHas(p, a) && !pitHas(p, b)) && (FROM_ED || reachable(a, b, os, pp)); } catch (e) { good = false; } }
         if (good) { loadLv(); showView('random'); }
-        else { $('menu').hidden = true; /* an invalid link shows only the error, not the main menu behind it */ $('netmsg').textContent = tr('cu_bad'); $('netok').textContent = tr(FROM_ED ? 'cu_editor' : 'mainmenu'); $('netok').onclick = () => { location.href = BACK; }; $('netdlg').addEventListener('close', () => { location.href = BACK; }); $('netdlg').showModal(); }
+        else { $('menu').hidden = true; /* an invalid link shows only the error, not the main menu behind it */ $('netmsg').textContent = tr('cu_bad'); $('netok').textContent = tr(FROM_ED ? 'cu_editor' : FROM_ON ? 'cu_online' : 'mainmenu'); $('netok').onclick = () => { location.href = BACK; }; $('netdlg').addEventListener('close', () => { location.href = BACK; }); $('netdlg').showModal(); }
     </script>
     <script>
         /* parallax: the grid scrolls at half speed (shifted down by the other half), unless motion is reduced or animations are off */

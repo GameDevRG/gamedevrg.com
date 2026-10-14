@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>online levels · hole in √-1</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Chakra+Petch:ital,wght@0,400;0,500;0,700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #10162a;
+            --grid: #1c2542;
+            --ink: #e9edfa;
+            --soft: #8f9bc0;
+            --card: #192040;
+            --imag: #ff6fa5;
+            --sand: #d4a64f;
+            --ok: #4fd49b;
+            --line: #2d3861;
+            --blue: #7cc8ff;
+            --red: #e5484d;
+            --yellow: #ffd54a;
+            --gold: #ffe08a;
+            --orange: #ff9a3c;
+            --purple: #b48cff;
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px)
+        }
+
+        :root[data-theme="light"] {
+            --bg: #eef1f6;
+            --grid: #d5dbe8;
+            --ink: #14213d;
+            --soft: #5d6b8a;
+            --card: #fff;
+            --imag: #c2185b;
+            --sand: #a9791c;
+            --ok: #1b8a5a;
+            --line: #c3cbdd;
+            --blue: #3a9be0;
+            --red: #d32f2f;
+            --yellow: #b7791f;
+            --gold: #e0a526;
+            --orange: #e8730c;
+            --purple: #7a3fe0
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        [hidden] {
+            display: none !important
+        }
+
+        html {
+            scroll-padding-top: calc(52px + env(safe-area-inset-top, 0px))
+        }
+
+        body {
+            margin: 0;
+            min-height: 100dvh;
+            background-color: var(--bg);
+            background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 28px 28px;
+            color: var(--ink);
+            font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+            text-align: center;
+            text-transform: lowercase;
+            overflow-x: hidden
+        }
+
+        .pg {
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto;
+            padding: calc(38px + 6vh) 16px calc(40px + env(safe-area-inset-bottom, 0px))
+        }
+
+        header {
+            margin-bottom: 18px
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -.02em
+        }
+
+        h1 .rad {
+            position: relative;
+            display: inline-block;
+            padding-left: .5em;
+            color: var(--imag);
+            white-space: nowrap;
+            line-height: 1;
+            vertical-align: baseline
+        }
+
+        h1 .rad svg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: .5em;
+            height: 100%;
+            overflow: visible;
+            display: block
+        }
+
+        h1 .vin {
+            position: relative;
+            display: inline-block;
+            line-height: .95;
+            padding: .2em 3px 0 1px;
+            margin-left: -1px
+        }
+
+        h1 .vin::before {
+            content: "";
+            position: absolute;
+            left: -1px;
+            right: 0;
+            top: -1.5px;
+            height: 3px;
+            background: currentColor
+        }
+
+        h2.pgh {
+            margin: 14px 0 0;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--purple)
+        }
+
+        .sub {
+            color: var(--soft);
+            margin: 4px 0 0;
+            font-size: .95rem
+        }
+
+        /* ---------- site top bar (same as the other pages) ---------- */
+        #topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 40;
+            height: calc(38px + env(safe-area-inset-top, 0px));
+            padding: env(safe-area-inset-top, 0px) 12px 0;
+            background: #000;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Chakra Petch', system-ui, sans-serif;
+            text-align: left;
+            text-transform: lowercase;
+            white-space: nowrap
+        }
+
+        #topbar .logo {
+            flex: 0 0 auto;
+            margin-right: 10px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 17px;
+            letter-spacing: -.01em;
+            text-decoration: none;
+            line-height: 1
+        }
+
+        #topbar .logo small {
+            font-size: .62em;
+            font-weight: 500;
+            color: #cfcfcf;
+            letter-spacing: 0
+        }
+
+        #topbar .tbtn {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 26px;
+            padding: 0 20px;
+            border: 0;
+            background: #3b82f6;
+            color: #fff;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 15px;
+            line-height: 1;
+            text-decoration: none;
+            text-transform: lowercase;
+            cursor: pointer
+        }
+
+        #topbar .tbtn:hover {
+            background: #5a95f7
+        }
+
+        #topbar #tacct {
+            margin-left: auto
+        }
+
+        #topbar .twho {
+            flex: 0 1 auto;
+            min-width: 0;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #cfcfcf;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none
+        }
+
+        #topbar .twho b {
+            color: #fff;
+            font-weight: 700;
+            text-transform: none
+        }
+
+        #topbar .twho:hover {
+            text-decoration: underline
+        }
+
+        #topbar .logo:focus-visible,
+        #topbar .tbtn:focus-visible,
+        #topbar .twho:focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 2px
+        }
+
+        /* ---------- controls ---------- */
+        .panel {
+            background: var(--card);
+            border: 2px solid var(--line);
+            padding: 14px;
+            text-align: left
+        }
+
+        .searchrow {
+            display: flex;
+            gap: 8px
+        }
+
+        input[type="search"],
+        input[type="password"],
+        select {
+            width: 100%;
+            min-width: 0;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 9px 10px;
+            border: 2px solid var(--line);
+            border-radius: 0;
+            background: var(--bg);
+            color: var(--ink);
+            text-transform: none;
+            -webkit-appearance: none;
+            appearance: none
+        }
+
+        input::placeholder {
+            color: var(--soft);
+            opacity: .7;
+            font-weight: 600
+        }
+
+        select {
+            text-transform: lowercase;
+            padding-right: 28px;
+            background-image: linear-gradient(45deg, transparent 50%, var(--soft) 50%), linear-gradient(135deg, var(--soft) 50%, transparent 50%);
+            background-position: calc(100% - 15px) 52%, calc(100% - 10px) 52%;
+            background-size: 5px 5px, 5px 5px;
+            background-repeat: no-repeat
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 10px
+        }
+
+        .filters label {
+            display: block;
+            font-size: .8rem;
+            color: var(--soft);
+            margin-bottom: 3px
+        }
+
+        @media (max-width: 480px) {
+            .filters {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .filters .wide {
+                grid-column: 1 / -1
+            }
+        }
+
+        .btn,
+        .tools button {
+            min-height: 44px;
+            padding: 10px 18px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            border: 2px solid var(--line);
+            background: var(--card);
+            color: var(--ink);
+            cursor: pointer;
+            text-decoration: none;
+            text-transform: lowercase;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0
+        }
+
+        .btn.sm {
+            min-height: 36px;
+            padding: 6px 12px;
+            font-size: .9rem
+        }
+
+        .btn:disabled {
+            opacity: .4;
+            cursor: not-allowed
+        }
+
+        .btn.go {
+            border-color: var(--purple);
+            color: var(--purple);
+            background: var(--bg);
+            box-shadow: 0 3px 0 var(--purple)
+        }
+
+        .btn.go:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 var(--purple)
+        }
+
+        .btn.danger {
+            border-color: var(--red);
+            color: var(--red)
+        }
+
+        .btn.on {
+            border-color: var(--purple);
+            color: var(--purple)
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            margin-top: 10px
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 6px 5px 12px;
+            border: 2px solid var(--purple);
+            color: var(--purple);
+            font-weight: 700;
+            font-size: .9rem
+        }
+
+        .chip b {
+            text-transform: none
+        }
+
+        .chip button {
+            border: 0;
+            background: none;
+            color: inherit;
+            font: inherit;
+            font-size: 1.2rem;
+            line-height: 1;
+            padding: 0 6px;
+            cursor: pointer
+        }
+
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible,
+        select:focus-visible {
+            outline: 3px solid var(--ink);
+            outline-offset: 2px
+        }
+
+        /* ---------- results ---------- */
+        #count {
+            margin: 16px 0 8px;
+            color: var(--soft);
+            font-size: .9rem;
+            min-height: 1.3em
+        }
+
+        #list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 0;
+            margin: 0;
+            list-style: none
+        }
+
+        .lv {
+            background: var(--card);
+            border: 2px solid var(--line);
+            padding: 14px;
+            text-align: left
+        }
+
+        .lv .top {
+            display: flex;
+            gap: 10px;
+            align-items: baseline;
+            justify-content: space-between
+        }
+
+        .lv h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 800;
+            text-transform: none;
+            overflow-wrap: anywhere
+        }
+
+        .lv h3.none {
+            color: var(--soft);
+            font-style: italic;
+            font-weight: 700;
+            text-transform: lowercase
+        }
+
+        .dv {
+            flex: none;
+            font-size: .75rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border: 2px solid var(--c, var(--line));
+            color: var(--c, var(--soft))
+        }
+
+        .dv2 {
+            --c: var(--ok)
+        }
+
+        .dv4 {
+            --c: var(--yellow)
+        }
+
+        .dv6 {
+            --c: var(--orange)
+        }
+
+        .dv8 {
+            --c: var(--imag)
+        }
+
+        .by {
+            margin: 4px 0 0;
+            font-size: .9rem;
+            color: var(--soft)
+        }
+
+        .by .au {
+            border: 0;
+            background: none;
+            padding: 0;
+            font: inherit;
+            font-weight: 800;
+            color: var(--purple);
+            text-transform: none;
+            text-decoration: underline;
+            cursor: pointer
+        }
+
+        .route {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 10px 0 0
+        }
+
+        .route .n {
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-transform: none
+        }
+
+        .route .arrow {
+            color: var(--soft)
+        }
+
+        .route .op {
+            font-size: .85rem;
+            font-weight: 700;
+            padding: 1px 7px;
+            border: 1px solid var(--line);
+            color: var(--soft);
+            text-transform: none
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px
+        }
+
+        .tags span {
+            font-size: .8rem;
+            font-weight: 700;
+            padding: 1px 8px;
+            background: var(--bg);
+            border: 1px solid var(--line);
+            color: var(--soft)
+        }
+
+        .tags .sandtag {
+            color: var(--sand);
+            border-color: var(--sand)
+        }
+
+        .acts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px
+        }
+
+        .state {
+            padding: 28px 10px;
+            color: var(--soft)
+        }
+
+        .state.err {
+            color: var(--imag)
+        }
+
+        .spin {
+            display: inline-block;
+            width: 26px;
+            height: 26px;
+            border: 3px solid var(--line);
+            border-top-color: var(--purple);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+            vertical-align: middle
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        #more {
+            margin-top: 14px
+        }
+
+        .foot {
+            margin-top: 26px;
+            color: var(--soft);
+            font-size: .9rem
+        }
+
+        .foot .btn {
+            margin-top: 10px
+        }
+
+        /* ---------- delete dialog + toast ---------- */
+        dialog {
+            width: min(92vw, 420px);
+            max-width: 420px;
+            padding: 20px 18px 18px;
+            border: 2px solid var(--ink);
+            background: var(--card);
+            color: var(--ink);
+            box-shadow: 4px 4px 0 var(--ink);
+            text-align: center;
+            text-transform: lowercase;
+            font-family: inherit
+        }
+
+        dialog::backdrop {
+            background: rgba(5, 7, 15, .6)
+        }
+
+        dialog h3 {
+            margin: 0 0 6px;
+            font-size: 1.15rem;
+            font-weight: 800
+        }
+
+        dialog p {
+            margin: 6px 0 10px;
+            color: var(--soft);
+            font-size: .9rem
+        }
+
+        dialog p b {
+            color: var(--ink);
+            text-transform: none
+        }
+
+        dialog .err {
+            color: var(--imag);
+            min-height: 1.3em
+        }
+
+        dialog .tools {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 6px
+        }
+
+        #toast {
+            position: fixed;
+            left: 50%;
+            bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+            transform: translateX(-50%);
+            max-width: calc(100% - 32px);
+            padding: 8px 16px;
+            background: var(--card);
+            border: 2px solid var(--ink);
+            box-shadow: 3px 3px 0 var(--ink);
+            font-weight: 700;
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .15s
+        }
+
+        #toast.show {
+            opacity: 1
+        }
+
+        .sr {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .spin {
+                animation-duration: 2s
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav id="topbar" aria-label="site">
+        <a class="logo" href="/gamedevrg.com/">gamedevrg<small>.com</small></a>
+        <a class="tbtn" href="/gamedevrg.com/" data-i="homepage">homepage</a>
+        <a class="tbtn" id="tacct" href="../../account/" data-i="login">log in</a>
+    </nav>
+    <main class="pg">
+        <header>
+            <h1>hole in <span class="rad"><svg viewBox="0 0 12 20" preserveAspectRatio="none" aria-hidden="true">
+                        <path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="3"
+                            stroke-linejoin="miter" vector-effect="non-scaling-stroke" />
+                    </svg><span class="vin">-1</span></span></h1>
+            <h2 class="pgh" data-i="title">online levels</h2>
+            <p class="sub" data-i="sub">levels published by other players</p>
+        </header>
+
+        <section class="panel" aria-label="search">
+            <form class="searchrow" id="sform" role="search">
+                <input id="q" type="search" data-ip="ph" placeholder="title or author" autocomplete="off"
+                    spellcheck="false" maxlength="60" aria-label="search">
+                <button class="btn go" type="submit" data-i="search">search</button>
+            </form>
+            <div class="filters">
+                <div><label for="fdv" data-i="difficulty">difficulty</label>
+                    <select id="fdv">
+                        <option value="" data-i="all">all</option>
+                        <option value="2" data-i="easy">easy</option>
+                        <option value="4" data-i="medium">medium</option>
+                        <option value="6" data-i="hard">hard</option>
+                        <option value="8" data-i="challenge">challenge</option>
+                        <option value="0" data-i="nodiff">none</option>
+                    </select>
+                </div>
+                <div><label for="fmode" data-i="numbers">numbers</label>
+                    <select id="fmode">
+                        <option value="" data-i="all">all</option>
+                        <option value="whole" data-i="whole">whole numbers</option>
+                        <option value="dec" data-i="dec">decimals</option>
+                        <option value="frac" data-i="frac">fractions</option>
+                    </select>
+                </div>
+                <div class="wide"><label for="fsort" data-i="sort">sort</label>
+                    <select id="fsort">
+                        <option value="new" data-i="newest">newest first</option>
+                        <option value="old" data-i="oldest">oldest first</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <button class="btn sm" type="button" id="fsand" aria-pressed="false" data-i="sandonly">sand pits
+                    only</button>
+                <button class="btn sm" type="button" id="fmine" hidden data-i="mine">my levels</button>
+            </div>
+            <div class="row" id="authorrow" hidden>
+                <span class="chip"><span id="authortxt"></span><button type="button" id="authorx"
+                        data-iaria="clear" aria-label="clear">×</button></span>
+            </div>
+        </section>
+
+        <p id="count" aria-live="polite"></p>
+        <ul id="list"></ul>
+        <div class="state" id="state" hidden></div>
+        <button class="btn" id="more" type="button" hidden data-i="more">load more</button>
+
+        <div class="foot">
+            <div data-i="foot">want yours here? make a level in the editor, then publish it from there</div>
+            <a class="btn" href="../editor/" data-i="editor">level editor</a>
+            <a class="btn" href="../" data-i="menu">main menu</a>
+        </div>
+    </main>
+
+    <dialog id="deldlg" aria-labelledby="deltl">
+        <h3 id="deltl" data-i="deltitle">delete this level?</h3>
+        <p id="delbody"></p>
+        <input id="delpw" type="password" data-ip="pw" placeholder="password" autocomplete="current-password"
+            aria-label="password">
+        <p class="err" id="delerr" role="alert"></p>
+        <div class="tools">
+            <button class="btn danger" id="delgo" type="button" data-i="delgo">delete level</button>
+            <button class="btn" id="delx" type="button" data-i="cancel">cancel</button>
+        </div>
+    </dialog>
+    <div id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+        const API = 'https://gamedevrg-com-backend.vercel.app';
+        const $ = id => document.getElementById(id);
+        try { if ((JSON.parse(localStorage.getItem('hs1') || '{}')).theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) { }
+
+        /* ---------- language (same "lang" setting as the other pages) ---------- */
+        const LANGS = ['en', 'es', 'ja', 'zh'];
+        let lang = 'en';
+        try { const s = localStorage.getItem('lang'); if (LANGS.includes(s)) lang = s; } catch (e) { }
+        const T = {
+            en: {
+                homepage: 'homepage', login: 'log in', signed: 'signed in as {name}', title: 'online levels', sub: 'levels published by other players',
+                ph: 'title or author', search: 'search', difficulty: 'difficulty', all: 'all', easy: 'easy', medium: 'medium', hard: 'hard', challenge: 'challenge', nodiff: 'none',
+                numbers: 'numbers', whole: 'whole numbers', dec: 'decimals', frac: 'fractions', sort: 'sort', newest: 'newest first', oldest: 'oldest first',
+                sandonly: 'sand pits only', mine: 'my levels', byauthor: 'levels by {name}', clear: 'clear', more: 'load more',
+                foot: 'want yours here? make a level in the editor, then publish it from there', editor: 'level editor', menu: 'main menu',
+                by: 'by {name}', untitled: 'untitled level', par: 'par {n}', sand1: '1 sand pit', sandN: '{n} sand pits', play: 'play', copy: 'copy link', copied: 'link copied', edit: 'open in editor', del: 'delete',
+                seeby: 'see levels by {name}', n1: '1 level', nN: '{n} levels', none: 'no levels found. try a different search', empty: 'nothing here yet. be the first to publish a level from the level editor',
+                loading: 'loading…', fail: "couldn't load levels", retry: 'try again',
+                deltitle: 'delete this level?', delbody: 'this removes {title} for everyone. enter your password to confirm', pw: 'password', delgo: 'delete level', cancel: 'cancel', deleted: 'level deleted',
+                needpw: 'enter your password', wrongpw: 'incorrect password', delfail: "couldn't delete it, try again"
+            },
+            es: {
+                homepage: 'inicio', login: 'iniciar sesión', signed: 'sesión iniciada como {name}', title: 'niveles en línea', sub: 'niveles publicados por otros jugadores',
+                ph: 'título o autor', search: 'buscar', difficulty: 'dificultad', all: 'todas', easy: 'fácil', medium: 'media', hard: 'difícil', challenge: 'desafío', nodiff: 'ninguna',
+                numbers: 'números', whole: 'enteros', dec: 'decimales', frac: 'fracciones', sort: 'orden', newest: 'más recientes primero', oldest: 'más antiguos primero',
+                sandonly: 'solo con trampas de arena', mine: 'mis niveles', byauthor: 'niveles de {name}', clear: 'quitar', more: 'cargar más',
+                foot: '¿quieres el tuyo aquí? crea un nivel en el editor y publícalo desde allí', editor: 'editor de niveles', menu: 'menú principal',
+                by: 'por {name}', untitled: 'nivel sin título', par: 'par {n}', sand1: '1 trampa de arena', sandN: '{n} trampas de arena', play: 'jugar', copy: 'copiar enlace', copied: 'enlace copiado', edit: 'abrir en el editor', del: 'eliminar',
+                seeby: 'ver niveles de {name}', n1: '1 nivel', nN: '{n} niveles', none: 'no se encontraron niveles. prueba otra búsqueda', empty: 'aún no hay nada. sé el primero en publicar un nivel desde el editor',
+                loading: 'cargando…', fail: 'no se pudieron cargar los niveles', retry: 'reintentar',
+                deltitle: '¿eliminar este nivel?', delbody: 'esto elimina {title} para todos. escribe tu contraseña para confirmar', pw: 'contraseña', delgo: 'eliminar nivel', cancel: 'cancelar', deleted: 'nivel eliminado',
+                needpw: 'escribe tu contraseña', wrongpw: 'contraseña incorrecta', delfail: 'no se pudo eliminar, inténtalo de nuevo'
+            },
+            ja: {
+                homepage: 'ホーム', login: 'ログイン', signed: '{name}としてログイン中', title: 'オンラインレベル', sub: '他のプレイヤーが公開したレベル',
+                ph: 'タイトルまたは作者', search: '検索', difficulty: '難易度', all: 'すべて', easy: 'かんたん', medium: 'ふつう', hard: 'むずかしい', challenge: 'チャレンジ', nodiff: 'なし',
+                numbers: '数', whole: '整数', dec: '小数', frac: '分数', sort: '並び順', newest: '新しい順', oldest: '古い順',
+                sandonly: 'バンカーありのみ', mine: '自分のレベル', byauthor: '{name} のレベル', clear: '解除', more: 'もっと見る',
+                foot: 'あなたのレベルも公開しよう。エディタでレベルを作って、そこから公開できます', editor: 'レベルエディタ', menu: 'メインメニュー',
+                by: '作者: {name}', untitled: '無題のレベル', par: 'パー {n}', sand1: 'バンカー 1', sandN: 'バンカー {n}', play: 'プレイ', copy: 'リンクをコピー', copied: 'リンクをコピーしました', edit: 'エディタで開く', del: '削除',
+                seeby: '{name} のレベルを見る', n1: '1 件のレベル', nN: '{n} 件のレベル', none: 'レベルが見つかりません。別の検索を試してください', empty: 'まだ何もありません。エディタから最初のレベルを公開しよう',
+                loading: '読み込み中…', fail: 'レベルを読み込めませんでした', retry: '再試行',
+                deltitle: 'このレベルを削除しますか？', delbody: '{title} がみんなから削除されます。確認のためパスワードを入力してください', pw: 'パスワード', delgo: 'レベルを削除', cancel: 'キャンセル', deleted: 'レベルを削除しました',
+                needpw: 'パスワードを入力してください', wrongpw: 'パスワードが違います', delfail: '削除できませんでした。もう一度お試しください'
+            },
+            zh: {
+                homepage: '首页', login: '登录', signed: '已登录：{name}', title: '在线关卡', sub: '其他玩家发布的关卡',
+                ph: '标题或作者', search: '搜索', difficulty: '难度', all: '全部', easy: '简单', medium: '中等', hard: '困难', challenge: '挑战', nodiff: '无',
+                numbers: '数字', whole: '整数', dec: '小数', frac: '分数', sort: '排序', newest: '最新优先', oldest: '最早优先',
+                sandonly: '仅含沙坑', mine: '我的关卡', byauthor: '{name} 的关卡', clear: '清除', more: '加载更多',
+                foot: '想发布你的关卡？在编辑器里制作，然后从那里发布', editor: '关卡编辑器', menu: '主菜单',
+                by: '作者：{name}', untitled: '无标题关卡', par: '标准杆 {n}', sand1: '1 个沙坑', sandN: '{n} 个沙坑', play: '开始', copy: '复制链接', copied: '已复制链接', edit: '在编辑器中打开', del: '删除',
+                seeby: '查看 {name} 的关卡', n1: '1 个关卡', nN: '{n} 个关卡', none: '没有找到关卡。换个搜索试试', empty: '这里还没有内容。来编辑器发布第一个关卡吧',
+                loading: '加载中…', fail: '无法加载关卡', retry: '重试',
+                deltitle: '删除这个关卡？', delbody: '这会为所有人删除 {title}。请输入密码确认', pw: '密码', delgo: '删除关卡', cancel: '取消', deleted: '关卡已删除',
+                needpw: '请输入密码', wrongpw: '密码不正确', delfail: '无法删除，请重试'
+            }
+        };
+        const tr = (k, v) => { let s = (T[lang] && T[lang][k]) || T.en[k] || k; if (v) for (const x in v) s = s.split('{' + x + '}').join(v[x]); return s; };
+        function applyLang() {
+            document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
+            document.querySelectorAll('[data-i]').forEach(e => { e.textContent = tr(e.dataset.i); });
+            document.querySelectorAll('[data-ip]').forEach(e => { e.placeholder = tr(e.dataset.ip); });
+            document.querySelectorAll('[data-iaria]').forEach(e => { e.setAttribute('aria-label', tr(e.dataset.iaria)); });
+            showAcct();
+        }
+
+        /* ---------- who is signed in (the account page stores the name as localStorage "username") ---------- */
+        const acctName = () => { try { return Array.from((localStorage.getItem('username') || '').trim()).slice(0, 24).join(''); } catch (e) { return ''; } };
+        function showAcct() {
+            const a = $('tacct'), n = acctName();
+            if (n) { a.className = 'twho'; a.replaceChildren(...tr('signed', { name: '\u0001' }).split('\u0001').flatMap((t, i, arr) => i < arr.length - 1 ? [t, Object.assign(document.createElement('b'), { textContent: n })] : [t])); a.title = n; }
+            else { a.className = 'tbtn'; a.textContent = tr('login'); a.removeAttribute('title'); }
+            $('fmine').hidden = !n;
+        }
+
+        /* ---------- state (kept in the address bar, so a search can be shared) ---------- */
+        const st = { q: '', author: '', difficulty: '', mode: '', sand: false, sort: 'new', page: 1, pages: 1, total: 0 };
+        let reqId = 0, delTarget = null;
+        const DV = { 2: 'easy', 4: 'medium', 6: 'hard', 8: 'challenge' };
+
+        function readUrl() {
+            const p = new URLSearchParams(location.search);
+            st.q = (p.get('q') || '').slice(0, 60); st.author = (p.get('author') || '').slice(0, 40);
+            const dv = p.get('difficulty'); st.difficulty = ['0', '2', '4', '6', '8'].includes(dv) ? dv : '';
+            const m = p.get('mode'); st.mode = ['whole', 'dec', 'frac'].includes(m) ? m : '';
+            st.sand = p.get('sand') === '1'; st.sort = p.get('sort') === 'old' ? 'old' : 'new';
+        }
+        function writeUrl() {
+            const p = new URLSearchParams();
+            if (st.q) p.set('q', st.q); if (st.author) p.set('author', st.author); if (st.difficulty !== '') p.set('difficulty', st.difficulty);
+            if (st.mode) p.set('mode', st.mode); if (st.sand) p.set('sand', '1'); if (st.sort !== 'new') p.set('sort', st.sort);
+            const s = p.toString(); try { history.replaceState(null, '', location.pathname + (s ? '?' + s : '')); } catch (e) { }
+        }
+        function syncControls() {
+            $('q').value = st.q; $('fdv').value = st.difficulty; $('fmode').value = st.mode; $('fsort').value = st.sort;
+            $('fsand').setAttribute('aria-pressed', st.sand); $('fsand').classList.toggle('on', st.sand);
+            $('fmine').classList.toggle('on', !!st.author && st.author.toLowerCase() === acctName().toLowerCase());
+            $('authorrow').hidden = !st.author;
+            $('authortxt').replaceChildren(...tr('byauthor', { name: '\u0001' }).split('\u0001').flatMap((t, i, arr) => i < arr.length - 1 ? [t, Object.assign(document.createElement('b'), { textContent: st.author })] : [t]));
+        }
+
+        /* ---------- loading ---------- */
+        function setState(kind, text, retry) {
+            const s = $('state'); s.hidden = !kind; s.className = 'state' + (kind === 'err' ? ' err' : '');
+            if (!kind) return;
+            s.replaceChildren();
+            if (kind === 'load') { s.appendChild(Object.assign(document.createElement('span'), { className: 'spin' })); s.appendChild(document.createElement('br')); }
+            s.appendChild(document.createTextNode(text));
+            if (retry) { s.appendChild(document.createElement('br')); const b = Object.assign(document.createElement('button'), { className: 'btn sm', type: 'button', textContent: tr('retry') }); b.style.marginTop = '10px'; b.onclick = retry; s.appendChild(b); }
+        }
+        async function load(reset) {
+            const my = ++reqId;
+            if (reset) { st.page = 1; $('list').replaceChildren(); $('count').textContent = ''; $('more').hidden = true; writeUrl(); syncControls(); }
+            setState('load', tr('loading')); $('more').hidden = true;
+            const p = new URLSearchParams({ page: st.page, limit: 12, sort: st.sort });
+            if (st.q) p.set('q', st.q); if (st.author) p.set('author', st.author); if (st.difficulty !== '') p.set('difficulty', st.difficulty);
+            if (st.mode) p.set('mode', st.mode); if (st.sand) p.set('sand', '1');
+            try {
+                const res = await fetch(API + '/levels?' + p), data = await res.json();
+                if (my !== reqId) return; /* a newer search has started */
+                if (!res.ok) throw new Error(data.message || 'error');
+                st.pages = data.pages; st.total = data.total;
+                data.levels.forEach(l => $('list').appendChild(card(l)));
+                $('count').textContent = st.total === 1 ? tr('n1') : tr('nN', { n: st.total });
+                setState(st.total ? '' : 'none', st.total ? '' : (st.q || st.author || st.difficulty !== '' || st.mode || st.sand ? tr('none') : tr('empty')));
+                $('more').hidden = st.page >= st.pages;
+            } catch (e) {
+                if (my !== reqId) return;
+                setState('err', tr('fail'), () => load(reset && !$('list').children.length));
+            }
+        }
+
+        /* ---------- one level card (user text only ever goes in through textContent) ---------- */
+        const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+        function ago(ms) {
+            const s = Math.round((Date.now() - ms) / 1000), f = new Intl.RelativeTimeFormat(lang === 'zh' ? 'zh-CN' : lang, { numeric: 'auto' });
+            for (const [u, n] of [['year', 31536000], ['month', 2592000], ['week', 604800], ['day', 86400], ['hour', 3600], ['minute', 60]]) if (s >= n) return f.format(-Math.floor(s / n), u);
+            return f.format(0, 'second');
+        }
+        const playHref = l => '../custom/?level=' + encodeURIComponent(l.code) + '&from=online';
+        function card(l) {
+            const li = el('li', 'lv'), top = el('div', 'top');
+            top.appendChild(l.title ? el('h3', null, l.title) : el('h3', 'none', tr('untitled')));
+            if (DV[l.difficulty]) top.appendChild(el('span', 'dv dv' + l.difficulty, tr(DV[l.difficulty])));
+            li.appendChild(top);
+
+            const by = el('p', 'by'), au = el('button', 'au', l.owner); au.type = 'button'; au.title = tr('seeby', { name: l.owner });
+            au.onclick = () => { st.author = l.owner; $('q').value = st.q = ''; load(true); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+            by.append(...tr('by', { name: '\u0001' }).split('\u0001').flatMap((t, i, arr) => i < arr.length - 1 ? [t, au] : [t]), ' · ' + ago(l.createdAt));
+            li.appendChild(by);
+
+            const route = el('p', 'route');
+            route.append(el('span', 'n', l.start), el('span', 'arrow', '→'), el('span', 'n', l.goal));
+            (l.ops || []).slice(0, 8).forEach(o => route.appendChild(el('span', 'op', o)));
+            if ((l.ops || []).length > 8) route.appendChild(el('span', 'op', '+' + (l.ops.length - 8)));
+            li.appendChild(route);
+
+            const tags = el('div', 'tags');
+            tags.append(el('span', null, tr(l.mode)), el('span', null, tr('par', { n: l.par })));
+            if (l.sand) tags.appendChild(el('span', 'sandtag', l.sand === 1 ? tr('sand1') : tr('sandN', { n: l.sand })));
+            li.appendChild(tags);
+
+            const acts = el('div', 'acts'), play = el('a', 'btn go sm', tr('play')); play.href = playHref(l);
+            const cp = el('button', 'btn sm', tr('copy')); cp.type = 'button';
+            cp.onclick = () => copy(new URL(playHref(l).replace('&from=online', ''), location.href).href);
+            const ed = el('a', 'btn sm', tr('edit')); ed.href = '../editor/?level=' + encodeURIComponent(l.code);
+            acts.append(play, cp, ed);
+            if (acctName() && acctName() === l.owner) {
+                const d = el('button', 'btn sm danger', tr('del')); d.type = 'button';
+                d.onclick = () => openDelete(l, li); acts.appendChild(d);
+            }
+            li.appendChild(acts);
+            return li;
+        }
+
+        /* ---------- toast + copy ---------- */
+        let toastT = 0;
+        function toast(t) { const e = $('toast'); e.textContent = t; e.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove('show'), 1600); }
+        async function copy(t) { try { await navigator.clipboard.writeText(t); } catch (e) { const x = document.createElement('textarea'); x.value = t; document.body.appendChild(x); x.select(); try { document.execCommand('copy'); } catch (z) { } x.remove(); } toast(tr('copied')); }
+
+        /* ---------- delete one of your own levels ---------- */
+        function openDelete(l, li) {
+            delTarget = { l, li };
+            const body = $('delbody'); body.replaceChildren(...tr('delbody', { title: '\u0001' }).split('\u0001').flatMap((t, i, arr) => i < arr.length - 1 ? [t, el('b', null, l.title || tr('untitled'))] : [t]));
+            $('delpw').value = ''; $('delerr').textContent = ''; $('delgo').disabled = false; $('deldlg').showModal(); $('delpw').focus();
+        }
+        async function doDelete() {
+            if (!delTarget) return;
+            const pw = $('delpw').value; if (!pw) { $('delerr').textContent = tr('needpw'); return; }
+            $('delgo').disabled = true; $('delerr').textContent = '';
+            try {
+                const res = await fetch(API + '/levels/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: acctName(), password: pw, id: delTarget.l.id }) });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) { $('delerr').textContent = data.message === 'Incorrect password' ? tr('wrongpw') : tr('delfail'); $('delgo').disabled = false; return; }
+                delTarget.li.remove(); st.total = Math.max(0, st.total - 1);
+                $('count').textContent = st.total === 1 ? tr('n1') : tr('nN', { n: st.total });
+                if (!st.total) setState('none', tr('empty'));
+                $('deldlg').close(); toast(tr('deleted'));
+            } catch (e) { $('delerr').textContent = tr('delfail'); $('delgo').disabled = false; }
+            $('delpw').value = '';
+        }
+        $('delgo').onclick = doDelete; $('delx').onclick = () => $('deldlg').close();
+        $('delpw').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doDelete(); } });
+        $('deldlg').addEventListener('close', () => { $('delpw').value = ''; delTarget = null; });
+
+        /* ---------- controls ---------- */
+        $('sform').onsubmit = e => { e.preventDefault(); st.q = $('q').value.trim(); load(true); };
+        let deb = 0; $('q').addEventListener('input', () => { clearTimeout(deb); deb = setTimeout(() => { const v = $('q').value.trim(); if (v !== st.q) { st.q = v; load(true); } }, 350); });
+        $('fdv').onchange = () => { st.difficulty = $('fdv').value; load(true); };
+        $('fmode').onchange = () => { st.mode = $('fmode').value; load(true); };
+        $('fsort').onchange = () => { st.sort = $('fsort').value; load(true); };
+        $('fsand').onclick = () => { st.sand = !st.sand; load(true); };
+        $('fmine').onclick = () => { const n = acctName(); st.author = st.author.toLowerCase() === n.toLowerCase() ? '' : n; load(true); };
+        $('authorx').onclick = () => { st.author = ''; load(true); };
+        $('more').onclick = () => { st.page++; load(false); };
+        addEventListener('focus', showAcct); addEventListener('storage', showAcct); addEventListener('pageshow', () => { showAcct(); syncControls(); });
+
+        readUrl(); applyLang(); syncControls(); load(true);
+    </script>
+</body>
+
+</html>

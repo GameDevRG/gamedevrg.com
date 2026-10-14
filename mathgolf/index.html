@@ -133,6 +133,7 @@
             --onimag: #10162a;
             --gold: #ffe08a;
             --orange: #ff9a3c;
+            --purple: #b48cff;
             box-sizing: border-box;
             padding-top: env(safe-area-inset-top, 0px);
             padding-bottom: env(safe-area-inset-bottom, 0px)
@@ -157,7 +158,8 @@
             --cell: #f6f8fc;
             --onimag: #fff;
             --gold: #e0a526;
-            --orange: #e8730c
+            --orange: #e8730c;
+            --purple: #7a3fe0
         }
 
         html {
@@ -2007,6 +2009,24 @@
             box-shadow: 0 0 0 var(--ink)
         }
 
+        .mopt.purple {
+            border-color: var(--purple);
+            box-shadow: 0 4px 0 var(--purple)
+        }
+
+        @media (hover: hover) {
+            .mopt.purple:hover {
+                border-color: var(--ink);
+                box-shadow: 0 4px 0 var(--ink)
+            }
+        }
+
+        .mopt.purple:active,
+        .mopt.purple.pressed {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 var(--ink)
+        }
+
         #menu .mopt {
             --ac: var(--blue)
         }
@@ -2025,6 +2045,10 @@
 
         #menu .mopt.orange {
             --ac: var(--orange)
+        }
+
+        #menu .mopt.purple {
+            --ac: var(--purple)
         }
 
         #menu .mopt.white {
@@ -2129,6 +2153,10 @@
 
         #moptE {
             --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M4 20l1-4.5L16.5 4h3l.5.5v3L8.5 19z%22/%3E%3Cpath d=%22M14.5 6l3.5 3.5%22/%3E%3C/svg%3E")
+        }
+
+        #moptO {
+            --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%228.5%22/%3E%3Cpath d=%22M3.5 12h17M12 3.5c-3.2 3.2-3.2 13.8 0 17M12 3.5c3.2 3.2 3.2 13.8 0 17%22/%3E%3C/svg%3E")
         }
 
         #moptC {
@@ -3113,6 +3141,8 @@
                     friends</span></button>
             <button class="mopt orange" id="moptE"><b>level editor</b><span>make your own level and share
                     it</span></button>
+            <button class="mopt purple" id="moptO"><b>online levels</b><span>play levels other players published, or
+                    search by author</span></button>
             <button class="mopt white" id="moptC"><b>play from code</b><span>paste a level code or link someone
                     shared</span></button>
             <button class="mopt white" id="moptS"><b>your stats</b><span>daily streaks and more</span></button>
@@ -4394,6 +4424,10 @@
         Object.assign(I18N.zh, {"cplane": "复平面"});
         Object.assign(I18N.zh, {"mp_sub": "选择一个游戏包查看关卡", "mp_back": "返回游戏包"});
         Object.assign(I18N.zh, {"pk_calc_b": "微积分", "pk_calc_d": "导数等"});
+Object.assign(I18N.en, {"onl_t": "online levels", "onl_s": "play levels other players published, or search by author"});
+Object.assign(I18N.es, {"onl_t": "niveles en línea", "onl_s": "juega niveles publicados por otros jugadores o busca por autor"});
+Object.assign(I18N.ja, {"onl_t": "オンラインレベル", "onl_s": "他のプレイヤーが公開したレベルを遊ぼう。作者で検索もできます"});
+Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布的关卡，或按作者搜索"});
         let lang = 'en';
         try { const s = localStorage.getItem('lang'); if (LANGS.includes(s)) lang = s } catch (e) { }
         function tr(k, v) {
@@ -5468,6 +5502,7 @@
         }
         window.addEventListener('pageshow', e => { if (e.persisted) { $('menu').getAnimations().forEach(a => a.cancel()); parallax(0); } }); /* coming back with the back button */
         $('moptE').onclick = () => slideAway('editor/');
+        $('moptO').onclick = () => slideAway('online/');
         $('moptV').onclick = () => slideAway('vs/');
         const goCode = () => { let v = $('codein').value.trim(); if (!v) return; const q = /[?&]level=([^&#\s]+)/.exec(v); if (q) v = decodeURIComponent(q[1]); location.href = 'custom/?level=' + encodeURIComponent(v); };
         $('codego').onclick = goCode; $('codein').onkeydown = e => { if (e.key === 'Enter') goCode(); }; $('codex').onclick = () => $('codedlg').close();

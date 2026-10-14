@@ -30,6 +30,7 @@
             --cell: #0f1528;
             --onimag: #10162a;
             --orange: #ff9a3c;
+            --purple: #b48cff;
             box-sizing: border-box;
             padding-top: env(safe-area-inset-top, 0px);
             padding-bottom: env(safe-area-inset-bottom, 0px)
@@ -55,7 +56,8 @@
             --gold: #e0a526;
             --cell: #f6f8fc;
             --onimag: #fff;
-            --orange: #e8730c
+            --orange: #e8730c;
+            --purple: #7a3fe0
         }
 
         body {
@@ -1915,6 +1917,14 @@
         body.notebelow #notepanel { z-index: 37 }
         body::after { content: ''; display: block; height: 64px }
         #calcpanel, #notepanel { text-transform: lowercase }   /* same look as the game pages */
+    
+        /* publish online */
+        #pubgrp [hidden] { display: none !important }
+        #pubgrp .tools button.go { border-color: var(--purple); color: var(--purple); background: var(--bg); box-shadow: 0 3px 0 var(--purple) }
+        #pubgrp .tools button.go:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--purple) }
+        #pubgrp .tools button.go:disabled { box-shadow: none }
+        #pubgrp .tools a.btn { border-color: var(--purple); color: var(--purple) }
+        #pubgrp h3 { color: var(--purple) }
     </style>
 </head>
 
@@ -2075,6 +2085,18 @@
                     autocomplete="off" spellcheck="false">
                 <div class="tools"><button id="cc">copy code</button><button id="cl">copy link</button></div>
             </section>
+            <section class="dgroup" id="pubgrp">
+                <h3>publish online</h3>
+                <p class="hint" id="pubhint" style="margin-top:0"></p>
+                <div id="pubform">
+                    <label for="pubpw">password</label><input id="pubpw" class="fld" type="password"
+                        placeholder="your account password" autocomplete="current-password">
+                    <div class="tools"><button id="pub" class="go" type="button">publish level</button></div>
+                </div>
+                <p class="hint" id="pubmsg" aria-live="polite"></p>
+                <div class="tools" style="margin-top:0"><a class="btn" id="publogin" href="../../account/?from=editor"
+                        hidden>log in</a><a class="btn" id="publink" href="../online/" hidden>view online levels</a></div>
+            </section>
         </div>
         <div class="tools"><button id="new">new level</button><button id="imp">import level</button><a class="btn"
                 href="../">main menu</a></div>
@@ -2222,6 +2244,7 @@
             return null; /* every reachable number was checked: the goal can't be reached */
         }
         const LIVE = 'https://gamedevrg.github.io/gamedevrg.com/mathgolf/custom/?level=';
+        const API = 'https://gamedevrg-com-backend.vercel.app';
         const $ = id => document.getElementById(id);
         try { if ((JSON.parse(localStorage.getItem('hs1') || '{}')).theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) { }
         const ICON_PLAY = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 1.5v13l11-6.5z" fill="currentColor"/></svg>', ICON_WARN = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 1.8 15 14H1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="miter"/><path d="M8 6.2v3.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"/><rect x="7" y="11" width="2" height="2" fill="currentColor"/></svg>';
@@ -2234,7 +2257,7 @@
         const verKey = (st, go) => [st, go, mode, ops.join(','), ROOTS && mode !== 'frac' ? 1 : 0, pits.join(',')].join('|');
         let MT = { t: '', a: '', dv: 0 }, lastLv = null; /* title, author, difficulty (0 = not set) */
         const metaObj = () => ({ dv: MT.dv, t: MT.t.trim(), a: MT.a.trim() });
-        let mode = 'whole', ops = [], pits = [], code = '', slack = 0, wantPar = null, curMin = null, curPar = 1, curUnsolvable = false;
+        let mode = 'whole', ops = [], pits = [], code = '', slack = 0, wantPar = null, curMin = null, curPar = 1, curUnsolvable = false, pubBusy = false, pubFor = null;
         const numRe = () => mode === 'frac' ? /^-?\d+(\/\d+)?$/ : mode === 'dec' ? /^-?\d+(\.\d{1,2})?$/ : /^-?\d+$/;
         const argRe = () => mode === 'frac' ? /^\d+(\/\d+)?$/ : mode === 'dec' ? /^\d+(\.\d)?$/ : /^\d+$/;
         const okNum = (t, re) => re.test(t) && !/\/0+$/.test(t) && Math.abs(parseFloat(t)) < 1e6;
@@ -2456,12 +2479,12 @@
         $('hc').onclick = () => { HC = !HC; syncMode(); upd(); };
         function syncMeta() { if ($('ttl').value !== MT.t) $('ttl').value = MT.t; if ($('aut').value !== MT.a) $('aut').value = MT.a; document.querySelectorAll('[data-d]').forEach(b => b.setAttribute('aria-checked', +b.dataset.d === MT.dv)); }
         /* title / author / difficulty only change the code, so they skip the solver */
-        function metaChanged() { if (lastLv) { code = encodeLevel(Object.assign({}, lastLv, metaObj())); $('code').value = code; $('play').setAttribute('href', '../custom/?level=' + code + '&from=editor'); } saveDraft(); }
+        function metaChanged() { if (lastLv) { code = encodeLevel(Object.assign({}, lastLv, metaObj())); $('code').value = code; $('play').setAttribute('href', '../custom/?level=' + code + '&from=editor'); } saveDraft(); syncPub(); }
         $('ttl').oninput = () => { MT.t = $('ttl').value; metaChanged(); };
         /* top bar search (same placeholder behaviour as the other pages: nothing to search yet) */
         { const go = () => { const q = $('tsearch').value.trim(); if (!q) return; /* TODO: point this at the site's search page */ }; $('tgo').onclick = go; $('tsearch').addEventListener('keydown', e => { if (e.key === 'Enter') go(); }); }
         /* top bar: who is signed in (the account page stores the name as localStorage "username"), or a log in button */
-        function showAcct() { const a = $('tacct'), n = acctName(); if (n) { a.className = 'twho'; a.replaceChildren('signed in as ', Object.assign(document.createElement('b'), { textContent: n })); a.title = n; } else { a.className = 'tbtn'; a.textContent = 'log in'; a.removeAttribute('title'); } }
+        function showAcct() { const a = $('tacct'), n = acctName(); if (n) { a.className = 'twho'; a.replaceChildren('signed in as ', Object.assign(document.createElement('b'), { textContent: n })); a.title = n; } else { a.className = 'tbtn'; a.textContent = 'log in'; a.removeAttribute('title'); } syncPub(); }
         showAcct(); addEventListener('focus', showAcct); addEventListener('storage', showAcct); addEventListener('pageshow', showAcct);
         $('aut').oninput = () => { MT.a = $('aut').value; metaChanged(); };
         /* re-read the signed-in account name (e.g. after signing in on another tab) and put it in the author field */
@@ -2518,7 +2541,7 @@
             const pl = $('play'), ps = !code ? 'off' : unsolvable ? 'warn' : 'ok';
             pl.className = 'btn go ' + ps; pl.innerHTML = (ps === 'warn' ? ICON_WARN : ICON_PLAY) + 'playtest'; pl.setAttribute('aria-disabled', ps === 'off'); pl.setAttribute('href', code ? '../custom/?level=' + code + '&from=editor' : '#');
             if (ps === 'warn') { pl.dataset.tip = 'your level has no solution.'; pl.setAttribute('aria-label', 'playtest. your level has no solution.'); } else { delete pl.dataset.tip; pl.removeAttribute('aria-label'); }
-            $('sol').disabled = ps === 'off'; clearSolutions(); syncAdder(); syncPitAdder(); saveDraft();
+            $('sol').disabled = ps === 'off'; clearSolutions(); syncAdder(); syncPitAdder(); saveDraft(); syncPub();
         }
         $('play').onclick = e => { if (!code) e.preventDefault(); };
 
@@ -2593,6 +2616,32 @@
 
         async function copy(t, label) { try { await navigator.clipboard.writeText(t); } catch (e) { const x = document.createElement('textarea'); x.value = t; document.body.appendChild(x); x.select(); try { document.execCommand('copy'); } catch (z) { } x.remove(); } toast(label + ' copied', true); }
         $('cc').onclick = () => code && copy(code, 'code'); $('cl').onclick = () => code && copy(LIVE + code, 'link');
+
+        /* publish online: the server stores the level code under your account. it needs your password each time (this page never keeps it) and a level that is proven solvable, with a title */
+        function syncPub() {
+            const n = acctName(), title = MT.t.trim(), solvable = !!lastLv && curMin !== null;
+            if (pubFor !== null && pubFor !== code) { pubFor = null; $('pubmsg').textContent = ''; $('pubmsg').className = 'hint'; $('publink').hidden = true; } /* the level changed since the last attempt */
+            $('pubhint').textContent = !n ? 'log in to publish this level, so other players can find and play it' : !solvable ? 'this level needs a solution before it can be published. fix the problem above, or playtest it' : !title ? 'give your level a title (under "about this level") so people can find it' : 'publish this level as ' + n + '. anyone can then find it in online levels';
+            $('pubform').hidden = !n; $('publogin').hidden = !!n;
+            $('pub').disabled = pubBusy || !(n && solvable && title);
+        }
+        $('pubpw').oninput = () => $('pubpw').classList.remove('need');
+        $('pubpw').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('pub').click(); } });
+        $('pub').onclick = async () => {
+            const n = acctName(), pw = $('pubpw').value, msg = $('pubmsg');
+            if (pubBusy || !n || !lastLv || curMin === null || !MT.t.trim()) return;
+            if (!pw) { msg.className = 'hint need'; msg.textContent = 'enter your password to publish'; $('pubpw').classList.add('need'); $('pubpw').focus(); return; }
+            if (!MT.a.trim()) { MT.a = n; syncMeta(); metaChanged(); } /* the code you share names its author too */
+            const sent = code; pubBusy = true; syncPub(); msg.className = 'hint'; msg.textContent = 'publishing…'; $('publink').hidden = true;
+            try {
+                const res = await fetch(API + '/levels/publish', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: n, password: pw, code: sent }) });
+                const data = await res.json().catch(() => ({}));
+                if (res.ok) { msg.className = 'hint'; msg.textContent = 'published! it is now in online levels'; toast('level published', true); $('publink').href = '../online/?author=' + encodeURIComponent(n); $('publink').hidden = false; }
+                else if (res.status === 409) { msg.className = 'hint err'; msg.textContent = 'this exact level is already published. change something (like the title) to publish a new version'; $('publink').href = '../online/?q=' + encodeURIComponent(MT.t.trim()); $('publink').hidden = false; }
+                else { msg.className = 'hint err'; msg.textContent = data.message === 'Incorrect password' ? 'incorrect password' : (data.message || "couldn't publish, try again"); }
+            } catch (e) { msg.className = 'hint err'; msg.textContent = "couldn't reach the server. try again in a moment"; }
+            pubFor = sent; pubBusy = false; $('pubpw').value = ''; syncPub();
+        };
 
         /* paste a level code (or a full level link) into the code box to edit that level */
         function loadLevel(lv) { mode = lv.n; ROOTS = !!lv.rt; HC = !!lv.hc; pits = (lv.pt || []).slice(); MT = { t: lv.t, a: lv.a, dv: lv.dv }; ops = lv.o.slice(); $('s').value = lv.s; $('g').value = lv.g; wantPar = lv.p; syncMode(); upd(); }
