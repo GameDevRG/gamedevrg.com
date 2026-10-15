@@ -416,10 +416,13 @@
             cursor: not-allowed
         }
 
-        /* settings presets: yellow */
-        #psopen { border-color: var(--yellow); box-shadow: 0 4px 0 var(--yellow) }
+        /* host a local room: yellow. settings presets: green */
+        #createlocal { border-color: var(--yellow); box-shadow: 0 4px 0 var(--yellow) }
+        #psopen { border-color: var(--ok); box-shadow: 0 4px 0 var(--ok) }
         #psopen:hover:not(:disabled) { border-color: var(--ink); box-shadow: 0 4px 0 var(--ink) }
         #psopen:active:not(:disabled) { box-shadow: 0 0 0 var(--ink) }
+        #createlocal:hover:not(:disabled) { border-color: var(--ink); box-shadow: 0 4px 0 var(--ink) }
+        #createlocal:active:not(:disabled) { box-shadow: 0 0 0 var(--ink) }
         /* preset buttons press down like the other buttons instead of scaling */
         .psbox .btn { box-shadow: 0 3px 0 var(--line) }
         .psbox .btn.go { box-shadow: 0 3px 0 var(--yellow) }
@@ -520,6 +523,46 @@
             letter-spacing: .02em;
             color: var(--imag)
         }
+
+        #localhelp { max-width: 540px; text-align: left; text-transform: none }
+        #localhelp h3 { text-align: center; text-transform: lowercase }
+        #helpbody { max-height: 62dvh; overflow: auto; padding: 0 6px 0 0; margin: 0 0 14px; border-top: 2px solid var(--line); border-bottom: 2px solid var(--line); line-height: 1.45; font-size: .95rem }
+        #helpbody h4 { margin: 14px 0 4px; font-size: 1rem; color: var(--imag) }
+        #helpbody p { margin: 6px 0; text-align: left }
+        #helpbody ol, #helpbody ul { margin: 4px 0 8px; padding-left: 22px }
+        #helpbody li { margin: 0 0 7px }
+        #helpbody code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .88em; padding: 1px 6px; background: var(--cell); border: 1px solid var(--line); overflow-wrap: anywhere }
+        #localdlg .cdbtns { flex-wrap: wrap }
+        #agreedlg, #joinwarn { max-width: 520px; text-align: left; text-transform: none }
+        #agreedlg h3, #joinwarn h3 { text-align: center; text-transform: lowercase }
+        #agreebody { max-height: 46dvh; overflow: auto; padding: 0 6px 0 0; margin: 0 0 12px; border-top: 2px solid var(--line); border-bottom: 2px solid var(--line); line-height: 1.45; font-size: .95rem }
+        #agreebody h4, #joinwarn h4 { margin: 12px 0 4px; font-size: 1rem; color: var(--imag) }
+        #agreebody p, #joinwarn p { margin: 6px 0; text-align: left }
+        #agreebody ul, #joinwarn ul { margin: 4px 0 8px; padding-left: 20px }
+        #agreebody li, #joinwarn li { margin: 0 0 5px }
+        .chk { display: flex; gap: 10px; align-items: flex-start; margin: 0 0 10px; cursor: pointer; line-height: 1.35; text-transform: none }
+        /* checkboxes: same look as the buttons (hard border and shadow), a pink fill and a drawn tick when ticked */
+        .chk input {
+            -webkit-appearance: none; appearance: none; flex: 0 0 auto; width: 26px; height: 26px; margin: 0; cursor: pointer;
+            display: grid; place-content: center; background: var(--cell); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink);
+            transition: background .12s, border-color .12s, transform .08s, box-shadow .08s
+        }
+        .chk input::after {
+            content: ''; width: 13px; height: 7px; margin-top: -3px; border-left: 3px solid var(--onimag); border-bottom: 3px solid var(--onimag);
+            transform: rotate(-45deg) scale(0); transition: transform .14s cubic-bezier(.2, 1.6, .4, 1)
+        }
+        .chk input:checked { background: var(--imag); border-color: var(--ink) }
+        .chk input:checked::after { transform: rotate(-45deg) scale(1) }
+        .chk:hover input:not(:checked) { border-color: var(--imag); box-shadow: 3px 3px 0 var(--imag) }
+        .chk:active input { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink) }
+        .chk input:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px }
+        .chk.small input { width: 22px; height: 22px; box-shadow: 2px 2px 0 var(--ink) }
+        .chk.small input::after { width: 11px; height: 6px; border-width: 2.5px; margin-top: -2px }
+        .chk.big input:checked { box-shadow: 3px 3px 0 var(--ink) }
+        .chk.big { font-weight: 700; font-size: 1.05rem }
+        .chk.small { font-size: .88rem; color: var(--soft) }
+        dialog .cdbtns button:disabled { opacity: .4; cursor: not-allowed }
+        #rcode.long, #qrcode.long { font-size: 1.25rem; letter-spacing: 0; overflow-wrap: anywhere; line-height: 1.25 }
 
         #rlinkline {
             margin-top: 6px;
@@ -1469,6 +1512,19 @@
             white-space: nowrap
         }
 
+        /* shown while the connection to the room is being re-established (the server restarts every few minutes on Vercel).
+           it fades in after a short delay, so a reconnect that takes a split second is never even seen */
+        #reconnect {
+            position: fixed; inset: 0; z-index: 90; display: flex; align-items: center; justify-content: center; padding: 20px;
+            background: rgba(0, 0, 0, .45); backdrop-filter: blur(1.5px); -webkit-backdrop-filter: blur(1.5px);
+            color: #fff; font-weight: 700; font-size: 1.15rem; text-align: center; text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
+            opacity: 0; animation: rcIn .3s .6s ease forwards
+        }
+        #reconnect[hidden] { display: none }
+        #reconnect span::after { content: ''; display: inline-block; width: 1.4em; text-align: left; animation: rcDots 1.2s steps(4, end) infinite }
+        @keyframes rcIn { to { opacity: 1 } }
+        @keyframes rcDots { 0% { content: '' } 25% { content: '.' } 50% { content: '..' } 75% { content: '...' } }
+
         .connmsg {
             margin: 6px 0 0;
             color: var(--imag);
@@ -2362,6 +2418,7 @@
         .spscroll .sprow.th{position:sticky;top:0;z-index:2}
         #specboard .sphead{text-align:center;font-size:clamp(1.1rem,3vh,2rem)}
         #spcode{letter-spacing:.04em;font-variant-numeric:tabular-nums;}
+        #spcode.long{font-size:clamp(1.2rem,3.2vw,2.2rem);letter-spacing:0;overflow-wrap:anywhere;line-height:1.2}
         #speccol .lbl{letter-spacing:.2em;text-transform:lowercase;font-size:clamp(.8rem,1.9vh,1.2rem)}
         #splink{font-size:clamp(.7rem,1.7vh,1rem);color:var(--soft);text-align:center;word-break:break-all;text-transform:none;letter-spacing:.02em}
         #specboard .sphead{letter-spacing:.04em;position:relative}
@@ -2970,6 +3027,7 @@
 </head>
 
 <body>
+    <div id="reconnect" role="status" aria-live="polite" hidden><span>connection reset. reconnecting</span></div>
     <nav id="topbar" aria-label="site">
         <a class="logo" href="/gamedevrg.com/">gamedevrg<small>.com</small></a>
         <a class="tbtn" href="/gamedevrg.com/">homepage</a>
@@ -3004,13 +3062,14 @@
             </div>
             <button class="mopt" id="create"><b>create a room</b><span>you'll be the host. pick public or private, then share the
                     code, pick the settings and chat while everyone joins</span></button>
+            <button class="mopt" id="createlocal"><b>host a local room</b><span>run the room on your own computer instead of the main server. friends join with a port:ip-code</span></button>
             <button class="mopt" id="browse"><b>public rooms</b><span>see every public room and jump into one</span></button>
             <button class="mopt" id="psopen"><b>settings presets</b><span>make sets of room settings, save them, share them with a code, and load them whenever you have a room</span></button>
             <div class="joinbox">
                 <b>join a room</b>
-                <span>got a code or link from a friend? enter the code here</span>
-                <div class="row"><input id="codein" inputmode="numeric" pattern="[0-9]*" maxlength="5"
-                        autocomplete="off" placeholder="5-digit code" aria-label="room code"><button class="btn"
+                <span>got a code or link from a friend? enter the code here. (local rooms look like 3000:203.0.113.7-50673)</span>
+                <div class="row"><input id="codein" maxlength="60"
+                        autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="room code" aria-label="room code"><button class="btn"
                         id="join">join</button></div>
             </div>
             <p id="lmsg" role="status"></p>
@@ -3477,6 +3536,106 @@
         </div>
     </div>
 
+    <dialog id="agreedlg">
+        <h3 class="t">before you host a local room</h3>
+        <div id="agreebody" tabindex="0">
+            <p>a local room runs on <b>your own computer</b> instead of the game's main server. that's great for no limits and no waiting, but it means you are acting as a small server on the internet. please read all of this.</p>
+            <h4>what you're putting out there</h4>
+            <ul>
+                <li><b>your public ip address.</b> it is part of the room code and the link (like <i>3000:203.0.113.7-50673</i>). everyone you share it with, and anyone they pass it on to, learns your ip address, which can reveal roughly where you live (usually the city) and who your internet provider is.</li>
+                <li><b>an open port.</b> to let people in you have to forward a port on your router. while local.js is running, that port is reachable from the whole internet, not only by your friends. anyone who finds your address and port can talk to your server.</li>
+                <li><b>the game page.</b> your server also hands out the game page (/play). people you invite are sent to it over plain http.</li>
+            </ul>
+            <h4>what you can see, and what others can see</h4>
+            <ul>
+                <li>players connect straight to your computer, so it sees their ip addresses, nicknames and chat messages. local.js keeps this in memory only and doesn't save it to disk; it prints only startup info and errors to your console. please don't record or share what you see.</li>
+                <li>a local room <b>doesn't go through the main server</b>. it isn't monitored, moderated or backed up by the game's site. you are responsible for your room and for what people say in it. the profanity filter is on by default, and you can kick people or disband the room at any time.</li>
+                <li>local rooms use <b>plain http, not https</b>, so traffic isn't encrypted. people on the same network as a player could read it. never type passwords or personal details in a local room, and tell your players the same.</li>
+                <li>accounts aren't carried over to a local room. everybody, you included, joins as a <b>guest</b>, using the same name as their account if they're signed in. names can't be verified, so don't assume someone is who they say.</li>
+            </ul>
+            <h4>risks</h4>
+            <ul>
+                <li>anyone who has the code can join, and the code contains your ip. don't post it publicly unless you're fine with that.</li>
+                <li>software on a port that is open to the internet attracts scans and attacks. local.js only serves the versus routes and one page (no files, no database, no accounts), but no software is perfect, and you are responsible for your own computer and network.</li>
+                <li>forwarding a port may be against the rules on school, work or shared networks, or with your internet provider. check first.</li>
+            </ul>
+            <h4>precautions</h4>
+            <ul>
+                <li>only share the code with people you trust.</li>
+                <li>run local.js as a normal user, never as administrator or root, and keep node and your system up to date.</li>
+                <li>forward only the one port, use a port nothing else on your computer uses, and remove the forward (and stop local.js with ctrl+c) when you're done.</li>
+                <li>safer options: play on the same wifi using the lan address, or use a vpn or tunnelling tool instead of opening your router.</li>
+                <li>tell your friends what they're joining, and kick anyone who misbehaves.</li>
+            </ul>
+            <h4>transparency</h4>
+            <p>this is a feature of the game, not a service run for you. the game's site doesn't see, store or control anything in your local room, and it can't help you if something goes wrong with your computer or network. you use it at your own risk.</p>
+        </div>
+        <label class="chk big"><input type="checkbox" id="agreeok"><span>i understand</span></label>
+        <label class="chk small"><input type="checkbox" id="agreenever"><span>don't ever show me this annoying popup ever again!</span></label>
+        <div class="cdbtns"><button class="ghost" id="agreex" type="button">cancel</button><button id="agreego" type="button" disabled>continue</button></div>
+    </dialog>
+    <dialog id="joinwarn">
+        <h3 class="t">joining a local room</h3>
+        <p>this room runs on somebody's personal computer at <b id="jwhost"></b>, not on the game's servers. we can't vouch for it or for the person hosting it.</p>
+        <ul>
+            <li id="jwguest">you'll join as a <b>guest</b> called <b id="jwname"></b>. your account isn't used or shared: only the name is.</li>
+            <li>the host's computer will see <b>your ip address</b>, your nickname and everything you type in the room.</li>
+            <li>the connection is <b>plain http, not encrypted</b>. never enter passwords or personal details, and don't sign in to anything on it.</li>
+            <li>the game page itself may be served from the host's computer, so it could differ from the real game.</li>
+            <li>only join if you know and trust whoever sent you this code or link.</li>
+        </ul>
+        <div class="cdbtns"><button class="ghost" id="jwno" type="button">cancel</button><button class="danger" id="jwyes" type="button">join anyway</button></div>
+    </dialog>
+    <dialog id="localdlg">
+        <h3 class="t">host a local room</h3>
+        <p class="hint" style="text-transform:none">the room runs on your computer. first start the local server: <b>node local.js 3000</b>. then forward that port on your router so friends outside your network can reach it, and enter the port here.</p>
+        <div class="row"><input id="lport" inputmode="numeric" maxlength="5" placeholder="port" aria-label="port"><button class="btn" id="lgo" type="button">create</button></div>
+        <p id="lerr" role="status" style="text-transform:none"></p>
+        <div class="cdbtns"><button class="ghost" id="lhelp" type="button">how do i set this up?</button><button class="ghost" id="lx" type="button">cancel</button></div>
+    </dialog>
+    <dialog id="localhelp">
+        <h3 class="t">setting up a local server</h3>
+        <div id="helpbody" tabindex="0">
+            <p>a local room runs on a tiny server on <b>your</b> computer. it takes about five minutes the first time. you do this once, and after that it's just one command.</p>
+            <h4>1. get the files</h4>
+            <ul>
+                <li>make a folder and put these three files in it: <code>local.js</code>, <code>vs.js</code> and <code>index.html</code> (all from the game's files).</li>
+                <li>install <b>node.js</b> (version 18 or newer) from nodejs.org if you don't have it. check with <code>node -v</code> in a terminal.</li>
+            </ul>
+            <h4>2. install and start it</h4>
+            <ol>
+                <li>open a terminal in that folder.</li>
+                <li>run <code>npm install express cors</code> (only the first time).</li>
+                <li>run <code>node local.js 3000</code>. any port works, 3000 is just the default. (ports under 1024 need administrator rights, so avoid them.)</li>
+                <li>it prints your addresses. open the <code>http://localhost:3000/play</code> one to check that the game loads. if windows asks whether to let node through the firewall, allow it.</li>
+            </ol>
+            <h4>3. let friends in (port forwarding)</h4>
+            <p>friends on the internet can only reach you if your router passes their connection on to your computer:</p>
+            <ol>
+                <li>open your router's settings page (often <code>192.168.0.1</code> or <code>192.168.1.1</code>).</li>
+                <li>find "port forwarding" (sometimes called virtual server or nat).</li>
+                <li>forward <b>tcp</b> port 3000 to your computer's address on your network, the one local.js prints as "on your network", port 3000.</li>
+                <li>save. if you can, give your computer a fixed address in the router so it doesn't change later.</li>
+            </ol>
+            <h4>4. host the room</h4>
+            <ul>
+                <li>keep local.js running, put the same port in the box and press <b>create</b>.</li>
+                <li>share the code or link with people you trust. the code is <code>port:ip-roomcode</code>.</li>
+                <li>when you're finished, press ctrl+c in the terminal to stop the server, and remove the port forward.</li>
+            </ul>
+            <h4>playing on the same wifi (no router setup)</h4>
+            <p>friends on your wifi don't need port forwarding. give them the code but replace the ip in the middle with your address on your network, like <code>3000:192.168.1.23-50673</code>.</p>
+            <h4>it doesn't work</h4>
+            <ul>
+                <li><b>"couldn't reach a local server on port…"</b> means local.js isn't running, or it's on a different port. start it, and use the same port number here.</li>
+                <li><b>friends can't connect:</b> check the port forward (tcp, right port, right computer) and the firewall. a quick test is to try the code from a phone on mobile data, not your wifi.</li>
+                <li><b>forwarding is impossible</b> on some connections (mobile hotspots, some providers, school or work networks, because many customers share one public address). use the same-wifi option above, or a vpn tool like tailscale or zerotier that puts everyone on one private network, and use that address in the code.</li>
+                <li><b>wrong ip:</b> if the public address is missing or wrong, work it out yourself (search "what is my ip") and swap it into the code by hand.</li>
+            </ul>
+            <p>please read the safety notes in the popup you saw before hosting. a local room puts your ip address and an open port on the internet.</p>
+        </div>
+        <div class="cdbtns"><button id="lhelpx" type="button">got it</button></div>
+    </dialog>
     <dialog id="createdlg">
         <h3 class="t">create a room</h3>
         <div class="vispick">
@@ -3535,8 +3694,17 @@
         if (!clientId) { clientId = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36)); store.set('vs_client', clientId); }
 
         /* ---------- server calls ---------- */
+        /* a local room is hosted on somebody's own computer: every /vs call and the event stream go there (vsBase) instead of to Vercel.
+           its code is port:ip-roomcode, and a session for one carries sess.local = { host, port, full, base } */
+        let vsBase = null;
+        const LOCAL_RE = /^(\d{1,5}):([A-Za-z0-9.\-]+?)-(\d{5})$/;
+        function parseLocal(str) {
+            const m = LOCAL_RE.exec(String(str || '').trim()); if (!m) return null;
+            const port = +m[1]; if (port < 1 || port > 65535) return null;
+            return { port, host: m[2], code: m[3], full: port + ':' + m[2] + '-' + m[3], base: 'http://' + m[2] + ':' + port };
+        }
         async function api(path, body) {
-            const r = await fetch(API + path, body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : undefined);
+            const r = await fetch(((vsBase && /^\/(vs|local)\//.test(path)) ? vsBase : API) + path, body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : undefined);
             const j = await r.json().catch(() => ({}));
             if (!r.ok) { const e = new Error(j.message || 'the server answered ' + r.status); e.status = r.status; throw e; }
             return j;
@@ -3545,7 +3713,7 @@
         /* an account name is checked on the server; if the server restarted and forgot it, fall back to a guest with that name */
         async function enter(path, body) {
             const name = account || $('nick').value.trim();
-            const req = Object.assign({ name, account: !!account, clientId }, body);
+            const req = Object.assign({ name, account: !!account && !vsBase, clientId }, body);   /* a local room (vsBase) never gets the account: same name, but as a guest */
             try { return await api(path, req); }
             catch (e) { if (account && /doesn't exist/.test(e.message)) return api(path, Object.assign(req, { account: false })); throw e; }
         }
@@ -3567,9 +3735,17 @@
             catch (e) { const x = document.createElement('textarea'); x.value = text; document.body.appendChild(x); x.select(); try { document.execCommand('copy'); } catch (z) { } x.remove(); }
             btn.textContent = 'copied!'; clearTimeout(btn._t); btn._t = setTimeout(() => { btn.textContent = label; }, 1600);
         }
-        const roomLink = code => location.origin + location.pathname.replace(/index\.html$/, '') + '?room=' + code;
+        const curLocal = () => (typeof sess !== 'undefined' && sess && sess.local) || null;
+        const shownCode = code => { const l = curLocal(); return l ? l.full : code; };
+        /* the link for a local room opens this page (on https it then jumps to the host's own http address, see init) */
+        const roomLink = code => {
+            const l = curLocal();
+            if (l) return (location.protocol === 'https:' ? location.origin + location.pathname.replace(/index\.html$/, '') : 'http://' + l.host + ':' + l.port + '/play') + '?localhost=' + l.full;
+            return location.origin + location.pathname.replace(/index\.html$/, '') + '?room=' + code;
+        };
         const shownLink = code => roomLink(code).replace(/^https?:\/\//, '');
-        const setUrl = code => { try { history.replaceState(null, '', location.pathname + (code ? '?room=' + code : '')); } catch (e) { } };
+        const setUrl = (code, local) => { try { history.replaceState(null, '', location.pathname + (code ? (local ? '?localhost=' : '?room=') + code : '')); } catch (e) { } };
+        const setCode = (el, code) => { el.textContent = shownCode(code); el.classList.toggle('long', shownCode(code).length > 8); };
 
         /* ---------- state ---------- */
         let sess = null, you = '', state = null, es = null, joined = false, chatSeen = 0, lastFrom = null, sendQ = Promise.resolve();
@@ -3615,19 +3791,22 @@
             $('ijoin').firstChild.textContent = on ? '…' : 'join room';
             $('join').textContent = on ? '…' : 'join';
         }
-        async function go(path, body) {
+        async function go(path, body, local) {
             const name = account || $('nick').value.trim();
             if (!name) { lmsg('pick a nickname first', 'err'); $('nick').focus(); return; }
             if (!account) store.set('vs_nick', name);
             lmsg(''); busy(true);
-            const slow = setTimeout(() => lmsg('the server is waking up, this can take up to a minute…', 'info'), 4000);
+            vsBase = local ? local.base : null;
+            const slow = local ? 0 : setTimeout(() => lmsg('the server is waking up, this can take up to a minute…', 'info'), 4000);
             try {
                 const j = await enter(path, body);
-                sess = { code: j.code, token: j.token }; store.set('vs_session', JSON.stringify(sess), true);
-                setUrl(j.code); lmsg('joining…', 'info'); connect();
+                if (local && !local.full) local.full = local.port + ':' + local.host + '-' + j.code;
+                sess = { code: j.code, token: j.token }; if (local) sess.local = local;
+                store.set('vs_session', JSON.stringify(sess), true);
+                setUrl(local ? local.full : j.code, !!local); lmsg('joining…', 'info'); connect();
             } catch (e) {
-                busy(false);
-                if (isNet(e)) { lmsg(''); netErr(); } else lmsg(e.message, 'err');
+                vsBase = null; busy(false);
+                if (isNet(e)) { lmsg(''); if (local) showMsg("couldn't reach the local room at " + local.host + ':' + local.port + ". is the host's local server running, and is that port open (forwarded on their router)?"); else netErr(); } else lmsg(e.message, 'err');
             } finally { clearTimeout(slow); }
         }
         $('create').onclick = () => {
@@ -3637,6 +3816,40 @@
         $('createpub').onclick = () => { $('createdlg').close(); go('/vs/create', { public: true }); };
         $('createpriv').onclick = () => { $('createdlg').close(); go('/vs/create', { public: false }); };
         $('createx').onclick = () => $('createdlg').close();
+        /* a local room: asks the local server on this computer for its public address, then creates the room there */
+        const AGREE_KEY = 'vs_local_agree';   /* "don't show me again" for the hosting agreement */
+        const openLocalSetup = () => { $('lport').value = store.get('vs_lport') || '3000'; $('lerr').textContent = ''; $('localdlg').showModal(); };
+        $('createlocal').onclick = () => {
+            if (!account && !$('nick').value.trim()) { lmsg('pick a nickname first', 'err'); $('nick').focus(); return; }
+            if (store.get(AGREE_KEY) === '1') { openLocalSetup(); return; }
+            $('agreeok').checked = false; $('agreenever').checked = false; $('agreego').disabled = true;
+            $('agreedlg').showModal(); $('agreebody').scrollTop = 0;
+        };
+        $('agreeok').onchange = () => { $('agreego').disabled = !$('agreeok').checked; };
+        $('agreex').onclick = () => $('agreedlg').close();
+        $('agreego').onclick = () => {
+            if (!$('agreeok').checked) return;
+            if ($('agreenever').checked) store.set(AGREE_KEY, '1');
+            $('agreedlg').close(); openLocalSetup();
+        };
+        $('lx').onclick = () => $('localdlg').close();
+        $('lhelp').onclick = () => { $('localhelp').showModal(); $('helpbody').scrollTop = 0; };
+        $('lhelpx').onclick = () => $('localhelp').close();
+        $('lport').onkeydown = e => { if (e.key === 'Enter') $('lgo').click(); };
+        $('lgo').onclick = async () => {
+            const port = parseInt($('lport').value, 10), err = $('lerr');
+            if (!(port >= 1 && port <= 65535)) { err.textContent = 'enter a port between 1 and 65535'; return; }
+            store.set('vs_lport', String(port)); err.textContent = ''; $('lgo').disabled = true;
+            let info = null;
+            try { vsBase = 'http://localhost:' + port; info = await api('/local/info'); }
+            catch (e) { err.textContent = "couldn't reach a local server on port " + port + ". start it with: node local.js " + port + (location.protocol === 'https:' ? ". (if it is running, try opening http://localhost:" + port + "/play instead of this page)" : ''); }
+            vsBase = null; $('lgo').disabled = false;
+            if (!info) return;
+            const host = info.ip || info.lan;
+            if (!host) { err.textContent = "the local server couldn't work out its address. are you online?"; return; }
+            $('localdlg').close();
+            go('/vs/create', { public: false }, { host, port, base: 'http://localhost:' + port });   // the host talks to its own server directly, friends use the public address
+        };
         /* the public room list */
         const MODEN = { race: 'race', points: 'points', grid: 'grid' };
         async function loadRooms() {
@@ -3657,30 +3870,80 @@
         $('browse').onclick = () => { $('roomsdlg').showModal(); loadRooms(); };
         $('roomsrefresh').onclick = loadRooms;
         $('roomsx').onclick = () => $('roomsdlg').close();
-        const doJoin = () => { const c = $('codein').value.replace(/\D/g, ''); if (c.length !== 5) { lmsg('room codes have 5 digits', 'err'); $('codein').focus(); return; } go('/vs/join', { code: c }); };
+        /* a warning before anybody connects to a room on somebody's computer. coming from the https site we only ever leave it after this was accepted ('ack'),
+           and the page on the host's computer doesn't ask a second time, but only for a room hosted by the very server that served that page */
+        let localAck = false;
+        function confirmLocalJoin(loc) {
+            const own = location.host === loc.host + (loc.port === 80 ? '' : ':' + loc.port);
+            if (localAck && own) { localAck = false; return Promise.resolve(true); }
+            localAck = false;
+            return new Promise(res => {
+                const d = $('joinwarn'); $('jwhost').textContent = loc.host + ':' + loc.port; $('jwname').textContent = account || $('nick').value.trim() || $('iname').value.trim();
+                const done = v => { d.close(); res(v); };
+                $('jwno').onclick = () => done(false); $('jwyes').onclick = () => done(true); d.oncancel = () => res(false);
+                d.showModal();
+            });
+        }
+        const doJoin = async () => {
+            const raw = $('codein').value.trim(), loc = parseLocal(raw);
+            if (loc) {
+                if (!(await confirmLocalJoin(loc))) return;
+                if (location.protocol === 'https:') { location.href = 'http://' + loc.host + ':' + loc.port + '/play?localhost=' + encodeURIComponent(loc.full) + '&ack=1&name=' + encodeURIComponent((account || $('nick').value || '').trim().slice(0, 20)); return; }   /* an https page can't talk to a plain http server: use the host's own page */
+                go('/vs/join', { code: loc.code }, { host: loc.host, port: loc.port, full: loc.full, base: loc.base }); return;
+            }
+            const c = raw.replace(/\D/g, ''); if (c.length !== 5 || /[^\d]/.test(raw)) { lmsg('room codes have 5 digits (a local room code looks like 3000:203.0.113.7-50673)', 'err'); $('codein').focus(); return; }
+            go('/vs/join', { code: c });
+        };
         $('join').onclick = doJoin;
         /* invite link: show the name box (if you're not signed in) and one join button */
         function showInvite(code) {
             initLanding(); $('codein').value = code; $('icode').textContent = code;
             $('iacct').hidden = !account; $('iguest').hidden = !!account; $('iaccname').textContent = account || '';
             $('iname').value = $('nick').value; lmsg('');
+            const loc = parseLocal(code); if (loc) lmsg('this room is hosted on a computer at ' + loc.host + ':' + loc.port + '. only join rooms from people you trust.', 'info');
             view('invite'); if (!account) $('iname').focus();
         }
         const inviteJoin = () => { if (!account) $('nick').value = $('iname').value; doJoin(); };
         $('ijoin').onclick = inviteJoin;
         $('iname').onkeydown = e => { if (e.key === 'Enter') inviteJoin(); };
         $('iother').onclick = e => { e.preventDefault(); $('codein').value = ''; lmsg(''); setUrl(null); view('landing'); };
-        $('codein').oninput = e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 5); };
+        $('codein').oninput = e => { let v = e.target.value.replace(/\s/g, ''); if (/^\d+$/.test(v)) v = v.slice(0, 5); e.target.value = v; };
         $('codein').onkeydown = e => { if (e.key === 'Enter') doJoin(); };
-        $('nick').onkeydown = e => { if (e.key === 'Enter') { if ($('codein').value.length === 5) doJoin(); else $('create').click(); } };
+        $('nick').onkeydown = e => { if (e.key === 'Enter') { if ($('codein').value.length === 5 || parseLocal($('codein').value)) doJoin(); else $('create').click(); } };
 
         /* ---------- live connection ---------- */
         function closeStream() { if (es) { es.close(); es = null; } }
-        function connect() {
+        /* when the stream drops (Vercel cuts connections after a few minutes and may restart the server) the player stays exactly where they are:
+           the screen is dimmed with "connection reset. reconnecting…" and we keep trying until we're back in the room. the server loads the room
+           back from the database if it was restarted. we only give up when the room is really gone, we were removed from it, or it takes minutes */
+        let rcTimer = 0, rcSince = 0, rcTries = 0, rcGone = 0, rcRefused = 0;
+        const RC_GIVE_UP_MS = 150000;
+        function rcReset() { clearTimeout(rcTimer); rcTimer = 0; rcSince = 0; rcTries = 0; rcGone = 0; rcRefused = 0; }
+        function lostStream() {
+            if (!sess || leaving) return;
+            setConn(false);
+            if (rcTimer) return;
+            closeStream();
+            rcSince = rcSince || Date.now();
+            rcTimer = setTimeout(async () => {
+                rcTimer = 0; if (!sess || leaving) return;
+                rcTries++;
+                try {   /* this also makes the server load the room back from the database, if it was restarted */
+                    const j = await api('/vs/room/' + sess.code);
+                    if (!j.exists) { rcGone++; if (rcGone >= 3) return giveUp('this room closed.'); }
+                    else { rcGone = 0; if (rcTries > 1 && ++rcRefused >= 4) return giveUp("you were disconnected for too long and were removed from the room."); }
+                } catch (e) { /* the server is still waking up (or we're offline): keep trying */ }
+                if (Date.now() - rcSince > RC_GIVE_UP_MS) return giveUp("couldn't reconnect to the server. check your connection and rejoin.");
+                connect(true);
+            }, Math.min(800 + rcTries * 400, 3000));
+        }
+        function giveUp(text) { exitRoom(); showMsg(text); }
+        function connect(again) {
             closeStream(); joined = false;
-            es = new EventSource(API + '/vs/events?code=' + encodeURIComponent(sess.code) + '&token=' + encodeURIComponent(sess.token));
+            es = new EventSource((vsBase || API) + '/vs/events?code=' + encodeURIComponent(sess.code) + '&token=' + encodeURIComponent(sess.token));
             es.addEventListener('hello', e => {
-                const d = JSON.parse(e.data); you = d.you; state = d.state; joined = true;
+                const d = JSON.parse(e.data); you = d.you; state = d.state; joined = true; rcReset();
+                const prevUi = ui;
                 d.history.forEach(addChat); chatReady = true; setConn(true);
                 if (d.match) {
                     if (!match || match.id !== d.match.id) startMatch(d.match); /* picks up where the server says this player is */
@@ -3692,7 +3955,11 @@
                 if (d.match) { if (mine && mine.status === 'finished') { stopGameTimers(); ui = 'results'; } }
                 else if (match && standings && standings.id === match.id && standings.final) { if (ui === 'game' || ui === 'spec') { stopGameTimers(); ui = 'results'; } }
                 else if (ui === 'game' || ui === 'spec') { stopGameTimers(); match = null; ui = 'room'; }
-                enterRoom(); firstFinishCheck();
+                if (again && ui === prevUi && ui !== 'loading') {   /* reconnected: refresh what's on screen without jumping back to the top */
+                    if (ui === 'room') renderRoom(); else if (ui === 'game') { renderRace(); if (isGrid() && began) renderGrid(); } else if (ui === 'spec') renderSpec(); else renderResults();
+                    updChatTo(); if (typeof updPause === 'function') updPause();
+                } else enterRoom();
+                firstFinishCheck();
             });
             es.addEventListener('state', e => { state = JSON.parse(e.data); renderRoom(); if (ui === 'results') renderResults(); });
             es.addEventListener('start', e => { startMatch(JSON.parse(e.data)); showUi(); tick(); });
@@ -3726,15 +3993,14 @@
             es.onopen = () => setConn(true);
             es.onerror = () => {
                 if (!es || leaving) return; /* the browser aborts the stream while the page unloads: that's not the room closing */
-                if (es.readyState === EventSource.CLOSED) { /* the server said no: the room is gone or we were removed */
-                    const was = joined; exitRoom();
-                    showMsg(was ? 'this room closed. the server may have restarted.' : "couldn't get back into that room. it may have closed.");
-                } else setConn(false);
+                setConn(false);
+                /* CONNECTING: the browser is retrying by itself. CLOSED: the server answered with an error (restarting, room not loaded yet...), so we retry ourselves */
+                if (es.readyState === EventSource.CLOSED) lostStream();
             };
         }
-        function setConn(ok) { document.querySelectorAll('.connmsg').forEach(el => { el.hidden = ok; }); }
+        function setConn(ok) { const el = $('reconnect'); if (el) el.hidden = ok || !sess; }
         function exitRoom() {
-            closeStream(); clearMatch(); sess = null; state = null; joined = false; you = '';
+            rcReset(); closeStream(); clearMatch(); sess = null; vsBase = null; state = null; joined = false; you = '';
             chatReady = false; unread = 0; hideToast(); updateBadge();
             store.del('vs_session', true); setUrl('');
             $('chatlog').innerHTML = '<div id="chatempty">say hi! messages show up here for everyone in the room.</div>'; $('teamlog').innerHTML = ''; otherUnread = false; lastBy.pub = lastBy.team = null; chatSeen = 0; lastFrom = null;
@@ -3747,7 +4013,7 @@
         function renderRoom() {
             if (!state) return;
             const host = isHost(), s = state.settings, mem = state.members, h = mem.find(m => m.id === state.hostId), me = mem.find(m => m.id === you);
-            $('rvis').textContent = state.public ? 'public room' : 'private room'; $('rcode').textContent = state.code; $('rlink').textContent = shownLink(state.code);
+            $('rvis').textContent = state.public ? 'public room' : 'private room'; setCode($('rcode'), state.code); $('rlink').textContent = shownLink(state.code);
             $('me').textContent = me ? me.name : ''; $('rename').hidden = !(me && !me.account); $('hostname').textContent = h ? h.name : ''; $('hostyou').textContent = host ? ' (you!)' : '';
             $('mcount').textContent = '(' + mem.length + '/' + s.max + ')';
             const ul = $('mlist'), prev = new Set([...ul.children].map(li => li.dataset.id));
@@ -5396,7 +5662,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
         document.addEventListener('visibilitychange', () => { if (!document.hidden && chatOpen && unread) { unread = 0; updateBadge(); } });
 
         /* ---------- buttons ---------- */
-        $('copycode').onclick = () => state && copy(state.code, $('copycode'), 'copy code');
+        $('copycode').onclick = () => state && copy(shownCode(state.code), $('copycode'), 'copy code');
         $('copylink').onclick = () => state && copy(roomLink(state.code), $('copylink'), 'copy link');
         $('exitbtn').onclick = async () => {
             if (!sess) return;
@@ -5429,7 +5695,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
             if (!state) return;
             const link = roomLink(state.code); $('qrstyle').textContent = qrPlain ? 'use colored qr' : 'use plain black & white qr';
             try { $('qrbox').innerHTML = qrSvg(link); } catch (e) { $('qrbox').textContent = ''; }
-            $('qrcode').textContent = state.code; $('qrlink').textContent = shownLink(state.code); $('qrdlg').showModal();
+            setCode($('qrcode'), state.code); $('qrlink').textContent = shownLink(state.code); $('qrdlg').showModal();
         };
         $('qrx').onclick = () => $('qrdlg').close();
         $('qrdlg').addEventListener('click', e => { if (e.target === $('qrdlg')) $('qrdlg').close(); });
@@ -6168,7 +6434,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
             lockedRound = true; const moves = hist.length, idx = match.round, mid = match.id;
             const path = hist.map(x => Lv.ops.findIndex(o => o.s === x.s));   /* which button each move was, so the others can watch it */
             render(); setMsg('solved in ' + mv(moves) + '! checking who was first…', 'win');
-            for (let i = 0; i < 20;) {
+            for (let i = 0; i < 120;) {
                 try { await api('/vs/solve', { code: sess.code, token: sess.token, matchId: mid, round: idx, moves, path }); return; }
                 catch (e) {
                     if (e.status && e.status !== 429 && e.status < 500) { if (match && match.id === mid && match.round === idx) { lockedRound = false; render(); setMsg(e.message, 'lose'); } return; }
@@ -6275,7 +6541,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
         async function claimCell() {
             lockedRound = true; const moves = hist.length, idx = match.round, mid = match.id;
             render(); setMsg('solved in ' + mv(moves) + '! locking it in…', 'win');
-            for (let i = 0; i < 20;) {
+            for (let i = 0; i < 120;) {
                 try { const j = await api('/vs/cell', { code: sess.code, token: sess.token, matchId: mid, cell: idx, moves }); if (j.won === false && match && match.id === mid && match.round === idx && Lv) { lockedRound = false; render(); setMsg(j.reason || 'somebody was faster', 'lose'); } return; }
                 catch (e) {
                     if (e.status && e.status !== 429 && e.status < 500) { if (match && match.id === mid && match.round === idx && Lv) { lockedRound = false; render(); setMsg(e.message, 'lose'); } return; }
@@ -6358,7 +6624,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
             return el;
         }
         function specInit() {
-            if (!state) return; $('spcode').textContent = state.code;
+            if (!state) return; setCode($('spcode'), state.code);
             try { $('spqr').innerHTML = qrSvg(roomLink(state.code), '', true); $('splink').textContent = 'scan to join · ' + shownLink(state.code); } catch (e) { $('spqr').textContent = ''; }
         }
         function specTick() {
@@ -6640,14 +6906,18 @@ function calcClose() { if (calcOpen) calcSet(false); }
 
         /* ---------- start ---------- */
         (function init() {
-            const qRoom = (new URLSearchParams(location.search).get('room') || '').replace(/\D/g, '').slice(0, 5);
+            const qp = new URLSearchParams(location.search);
+            const qRoom = (qp.get('room') || '').replace(/\D/g, '').slice(0, 5), qLoc = parseLocal(qp.get('localhost'));
             let saved = null; try { saved = JSON.parse(store.get('vs_session', true) || 'null'); } catch (e) { }
-            if (saved && saved.code && saved.token && (!qRoom || qRoom === saved.code)) {
-                sess = saved; setUrl(saved.code); view('loading'); connect(); return;
+            const savedKey = saved && saved.code ? (saved.local ? saved.local.full : saved.code) : '', wanted = qLoc ? qLoc.full : qRoom;
+            if (saved && saved.code && saved.token && (!wanted || wanted === savedKey)) {
+                sess = saved; if (saved.local) vsBase = saved.local.base; setUrl(saved.local ? saved.local.full : saved.code, !!saved.local); view('loading'); connect(); return;
             }
-            if (saved && saved.code) { api('/vs/leave', { code: saved.code, token: saved.token }).catch(() => { }); store.del('vs_session', true); }
+            if (saved && saved.code) { if (saved.local) vsBase = saved.local.base; api('/vs/leave', { code: saved.code, token: saved.token }).catch(() => { }); vsBase = null; store.del('vs_session', true); }
+            const qName = (qp.get('name') || '').replace(/[\u0000-\u001f]/g, '').trim().slice(0, 20); if (qName && qLoc && !account) store.set('vs_nick', qName);   /* the name carries over to the host's page, as a guest */
+            localAck = qp.get('ack') === '1' && location.protocol === 'http:';   /* came here from the https site after accepting the warning there */
             initLanding();
-            if (qRoom.length === 5) showInvite(qRoom); else view('landing');
+            if (qLoc) showInvite(qLoc.full); else if (qRoom.length === 5) showInvite(qRoom); else view('landing');
         })();
     </script>
 </body>
