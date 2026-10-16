@@ -38,6 +38,8 @@
 			font-weight: 600;
 			cursor: grab;
 			position: fixed;
+			top: 0;
+			left: 0;
 			z-index: 1;
 		}
 
@@ -263,6 +265,9 @@
 			align-items: center;
 			gap: 10px;
 			padding: 0 72px;
+			box-sizing: border-box;
+			overflow: visible;
+			white-space: nowrap;
 			z-index: 9999;
 		}
 
@@ -278,11 +283,12 @@
 		}
 
 		#backgroundText {
-			position: absolute;
+			position: fixed;
 			top: 0;
 			left: 0;
-			width: 100vw;
-			height: 100vh;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
 
 			display: flex;
 			flex-direction: column;
@@ -304,21 +310,27 @@
 
 
 		#logo {
-			width: 1000px;
+			width: min(1000px, 80vw);
+			max-height: 45vh;
+			object-fit: contain;
 			height: auto;
 			margin-bottom: 10px;
 			opacity: 0.5;
 		}
 
 		#welcomeText {
-			font-size: 48px;
+			font-size: clamp(18px, 3.5vw, 48px);
 			font-weight: 400;
 			color: #ffffff77;
+			padding: 0 80px;
 		}
 
 		.searchWrap {
 			position: relative;
+			flex: 1 1 auto;
 			width: 400px;
+			max-width: 400px;
+			min-width: 0;
 		}
 
 		#searchBox {
@@ -618,6 +630,13 @@
 			<div class="settings-section">
 				<h3 style="color: #94a3b8; margin: 0 0 15px 0; font-size: 16px;" data-i18n="display">display</h3>
 				<div class="setting-item desktop-only">
+					<span class="setting-label" data-i18n="buttonSize">button size</span>
+					<div class="slider-container">
+						<input type="range" class="slider" id="sizeSlider" min="0.5" max="2" step="0.1" value="1">
+						<div class="slider-value" id="sizeValue">1.0</div>
+					</div>
+				</div>
+				<div class="setting-item desktop-only">
 					<span class="setting-label" data-i18n="textSize">text size</span>
 					<div class="slider-container">
 						<input type="range" class="slider" id="glowSlider" min="0" max="2" step="0.1" value="1">
@@ -671,6 +690,7 @@
 				physics: "physics",
 				display: "display",
 				textSize: "text size",
+				buttonSize: "button size",
 				language: "language",
 				tapSensitivity: "tap sensitivity",
 				stuffYou: "stuff you probably do not need to change",
@@ -695,6 +715,8 @@
 				home_fractal: "fractalengine",
 				home_mathgolf: "mathgolf",
 				home_qreate: "qreate",
+				home_quote: "quote generator",
+				home_about: "what is this website",
 
 				welcome: "welcome to my (very) awesome website",
 
@@ -707,6 +729,7 @@
 				physics: "física",
 				display: "pantalla",
 				textSize: "tamaño del texto",
+				buttonSize: "tamaño de los botones",
 				language: "idioma",
 				tapSensitivity: "sensibilidad táctil",
 				stuffYou: "cosas que probablemente no necesites cambiar",
@@ -731,6 +754,8 @@
 				home_fractal: "fractalengine",
 				home_mathgolf: "mathgolf",
 				home_qreate: "qreate",
+				home_quote: "generador de citas",
+				home_about: "qué es este sitio web",
 
 				welcome: "bienvenido a mi sitio web (muy) increíble",
 
@@ -743,6 +768,7 @@
 				physics: "物理",
 				display: "表示",
 				textSize: "文字サイズ",
+				buttonSize: "ボタンのサイズ",
 				language: "言語",
 				tapSensitivity: "タップ感度",
 				stuffYou: "たぶん変更する必要のない項目",
@@ -767,6 +793,8 @@
 				home_fractal: "フラクタルエンジン",
 				home_mathgolf: "mathgolf",
 				home_qreate: "qreate",
+				home_quote: "名言ジェネレーター",
+				home_about: "このウェブサイトとは",
 
 				welcome: "ようこそ、私の（とても）すごいウェブサイトへ",
 
@@ -779,6 +807,7 @@
 				physics: "物理",
 				display: "显示",
 				textSize: "文字大小",
+				buttonSize: "按钮大小",
 				language: "语言",
 				tapSensitivity: "触控灵敏度",
 				stuffYou: "你大概不需要更改的内容",
@@ -803,6 +832,8 @@
 				home_fractal: "fractalengine",
 				home_mathgolf: "mathgolf",
 				home_qreate: "qreate",
+				home_quote: "名言生成器",
+				home_about: "这是什么网站",
 
 				welcome: "欢迎来到我的（非常）很棒的网站",
 
@@ -832,6 +863,9 @@
 				el.placeholder = placeholder;
 				el.setAttribute("aria-label", placeholder);
 			});
+
+			// desktop physics buttons resize to fit the new text
+			if (window.refitButtons) window.refitButtons();
 		}
 
 		const languageSelect = document.getElementById("languageSelect");
@@ -857,7 +891,9 @@
 			"home_account",
 			"home_fractal",
 			"home_mathgolf",
-			"home_qreate"
+			"home_qreate",
+			"home_quote",
+			"home_about"
 		];
 
 		function handleButtonClick(label) {
@@ -875,6 +911,10 @@
 				window.location.href = "mathgolf/";
 			} else if (label === "home_qreate") {
 				window.location.href = "qreate/";
+			} else if (label === "home_about") {
+				window.location.href = "article/?id=about-this-website";
+			} else if (label === "home_quote") {
+				window.location.href = "quote/";
 			} else if (label === "home_music") {
 				window.location.href = "trainaccident./";
 			} else {
@@ -972,7 +1012,7 @@
 		// ================= DESKTOP: physics menu =================
 
 		function startDesktop() {
-			const { Engine, Render, Runner, Bodies, World, Mouse, MouseConstraint, Events, Query } = Matter;
+			const { Engine, Render, Runner, Bodies, Body, World, Mouse, MouseConstraint, Events, Query } = Matter;
 
 			const engine = Engine.create();
 			const world = engine.world;
@@ -981,6 +1021,7 @@
 				gravity: 1.0,
 				bounce: 0.5,
 				glow: 1.0,
+				size: 1.0, // general button size (scales width, height and text together)
 				tapThreshold: 200
 			};
 
@@ -1004,24 +1045,26 @@
 			Runner.run(runner, engine);
 
 			// black border thing
-			const ground = Bodies.rectangle(window.innerWidth / 2, window.innerHeight - 30, window.innerWidth, 60, {
-				isStatic: true,
-				render: { fillStyle: 'rgba(0,0,0,1)' }
-			});
-			const leftWall = Bodies.rectangle(30, window.innerHeight / 2, 60, window.innerHeight, {
-				isStatic: true,
-				render: { fillStyle: 'rgba(0,0,0,1)' }
-			});
-			const rightWall = Bodies.rectangle(window.innerWidth - 30, window.innerHeight / 2, 60, window.innerHeight, {
-				isStatic: true,
-				render: { fillStyle: 'rgba(0,0,0,1)' }
-			});
-			const ceiling = Bodies.rectangle(window.innerWidth / 2, 30, window.innerWidth, 60, {
-				isStatic: true,
-				render: { fillStyle: 'rgba(0,0,0,1)' }
-			});
+			// BORDER = visible thickness of the black frame. The walls are much thicker than that
+			// (they extend off-screen) so a fast button can never tunnel through them.
+			const BORDER = 60;
+			const WALL = 1000;
+			const wallOpts = { isStatic: true, render: { fillStyle: 'rgba(0,0,0,1)' } };
+			let ground, leftWall, rightWall, ceiling;
 
-			World.add(world, [ground, leftWall, rightWall, ceiling]);
+			function buildWalls() {
+				const W = window.innerWidth;
+				const H = window.innerHeight;
+				if (ground) World.remove(world, [ground, leftWall, rightWall, ceiling]);
+
+				ground = Bodies.rectangle(W / 2, H - BORDER + WALL / 2, W + WALL * 2, WALL, wallOpts);
+				ceiling = Bodies.rectangle(W / 2, BORDER - WALL / 2, W + WALL * 2, WALL, wallOpts);
+				leftWall = Bodies.rectangle(BORDER - WALL / 2, H / 2, WALL, H + WALL * 2, wallOpts);
+				rightWall = Bodies.rectangle(W - BORDER + WALL / 2, H / 2, WALL, H + WALL * 2, wallOpts);
+
+				World.add(world, [ground, leftWall, rightWall, ceiling]);
+			}
+			buildWalls();
 
 			// Mouse - DISABLED by default for tap priority
 			const mouse = Mouse.create(render.canvas);
@@ -1037,6 +1080,37 @@
 			World.add(world, mouseConstraint);
 
 			const buttonBodies = [];
+
+			// ---- make each button exactly as wide as its text, and scale it by the button size setting ----
+			const BTN_PAD = 44; // total horizontal padding (px) at size 1
+			const BTN_H = 50;   // button height (px) at size 1
+
+			function fitButton(body) {
+				const ctx = render.context;
+				ctx.save();
+				ctx.font = `bold ${14 * settings.glow * settings.size}px "Chakra Petch", sans-serif`;
+				const textW = ctx.measureText(t(body.label)).width;
+				ctx.restore();
+
+				const target = Math.max(60 * settings.size, Math.ceil(textW + BTN_PAD * settings.size));
+				const targetH = BTN_H * settings.size;
+				if (Math.abs(target - body.btnWidth) < 0.5 && Math.abs(targetH - body.btnHeight) < 0.5) return;
+
+				// Body.scale works in world space, so un-rotate first to stretch along the button's own width
+				const angle = body.angle;
+				Body.setAngle(body, 0);
+				Body.scale(body, target / body.btnWidth, targetH / body.btnHeight);
+				Body.setAngle(body, angle);
+				body.btnWidth = target;
+				body.btnHeight = targetH;
+			}
+
+			function fitAllButtons() {
+				buttonBodies.forEach(fitButton);
+				buttonBodies.forEach(b => containBody(b));
+			}
+			// lets the language selector re-fit the buttons
+			window.refitButtons = fitAllButtons;
 
 			labels.forEach((text, i) => {
 				const width = 180 + Math.random() * 120;
@@ -1062,6 +1136,9 @@
 						isButton: true
 					}
 				);
+				body.btnWidth = width;
+				body.btnHeight = height;
+				fitButton(body);
 
 				World.add(world, body);
 				buttonBodies.push(body);
@@ -1146,9 +1223,16 @@
 				buttonBodies.forEach(body => body.restitution = settings.bounce);
 			});
 
+			document.getElementById('sizeSlider').addEventListener('input', (e) => {
+				settings.size = parseFloat(e.target.value);
+				document.getElementById('sizeValue').textContent = settings.size.toFixed(1);
+				fitAllButtons();
+			});
+
 			document.getElementById('glowSlider').addEventListener('input', (e) => {
 				settings.glow = parseFloat(e.target.value);
 				document.getElementById('glowValue').textContent = settings.glow.toFixed(1);
+				fitAllButtons();
 			});
 
 			document.getElementById('tapSlider').addEventListener('input', (e) => {
@@ -1160,7 +1244,7 @@
 			Events.on(render, 'afterRender', () => {
 				const ctx = render.context;
 				ctx.save();
-				ctx.font = `bold ${14 * settings.glow}px "Chakra Petch", sans-serif`;
+				ctx.font = `bold ${14 * settings.glow * settings.size}px "Chakra Petch", sans-serif`;
 				ctx.textAlign = 'center';
 				ctx.textBaseline = 'middle';
 				ctx.shadowColor = `rgba(29, 78, 216, ${0.7 * settings.glow})`;
@@ -1170,7 +1254,13 @@
 					if (body.label && body.isButton) {
 						ctx.save();
 						ctx.translate(body.position.x, body.position.y);
-						ctx.rotate(body.angle);
+						// keep the text readable: if the button is past 90° from upright, flip the text 180°
+						// hysteresis: a button resting on its side sits right at the 90° switch point, and tiny
+						// jitters would flip the text back and forth every frame, so only flip once it is clearly past it
+						const c = Math.cos(body.angle);
+						if (c < -0.25) body.textFlipped = true;
+						else if (c > 0.25) body.textFlipped = false;
+						ctx.rotate(body.angle + (body.textFlipped ? Math.PI : 0));
 
 						ctx.fillStyle = '#000';
 						ctx.fillText(t(body.label), 0, 0);
@@ -1180,16 +1270,87 @@
 				ctx.restore();
 			});
 
-			// Resize
-			window.addEventListener('resize', () => {
-				Render.lookAt(render, {
-					min: { x: 0, y: 0 },
-					max: { x: window.innerWidth, y: window.innerHeight }
+			// ---- keep every button inside the frame ----
+			const MAX_SPEED = 120; // px per physics step; just a safety limit, well above anything a normal fling reaches
+
+			// moves a body back inside the frame if it has escaped.
+			// `tol` is how far (px) a body may poke into a wall before we step in. The walls are very thick, so
+			// a button can't tunnel through them at MAX_SPEED; the default tolerance is therefore bigger than
+			// one frame of travel, which lets the physics engine handle every normal impact (including the
+			// bounce) and keeps this as a last-resort rescue. Only the window-resize check uses 0.
+			function containBody(body, tol = MAX_SPEED + 10) {
+				const W = window.innerWidth;
+				const H = window.innerHeight;
+				const minX = BORDER, maxX = W - BORDER;
+				const minY = BORDER, maxY = H - BORDER;
+				const b = body.bounds;
+				let dx = 0, dy = 0;
+
+				if (b.max.x - b.min.x > maxX - minX) dx = (minX + maxX) / 2 - body.position.x; // wider than the frame: centre it
+				else if (b.min.x < minX - tol) dx = minX - b.min.x;
+				else if (b.max.x > maxX + tol) dx = maxX - b.max.x;
+
+				if (b.max.y - b.min.y > maxY - minY) dy = (minY + maxY) / 2 - body.position.y;
+				else if (b.min.y < minY - tol) dy = minY - b.min.y;
+				else if (b.max.y > maxY + tol) dy = maxY - b.max.y;
+
+				if (dx || dy) {
+					Body.setPosition(body, { x: body.position.x + dx, y: body.position.y + dy });
+					// bounce the velocity that was pushing it outwards back in (instead of killing it)
+					const v = body.velocity;
+					Body.setVelocity(body, {
+						x: dx ? Math.sign(dx) * Math.abs(v.x) * settings.bounce : v.x,
+						y: dy ? Math.sign(dy) * Math.abs(v.y) * settings.bounce : v.y
+					});
+				}
+			}
+
+			// before every physics step: keep the grab point inside the frame and cap the speed
+			Events.on(engine, 'beforeUpdate', () => {
+				const W = window.innerWidth;
+				const H = window.innerHeight;
+				mouse.position.x = Math.max(BORDER, Math.min(W - BORDER, mouse.position.x));
+				mouse.position.y = Math.max(BORDER, Math.min(H - BORDER, mouse.position.y));
+
+				buttonBodies.forEach(body => {
+					const sp = Math.hypot(body.velocity.x, body.velocity.y);
+					if (sp > MAX_SPEED) {
+						const k = MAX_SPEED / sp;
+						Body.setVelocity(body, { x: body.velocity.x * k, y: body.velocity.y * k });
+					}
 				});
-				render.canvas.width = window.innerWidth;
-				render.canvas.height = window.innerHeight;
-				Matter.Mouse.setOffset(mouse, { x: 0, y: 0 });
 			});
+
+			// after every physics step: last-resort safety net
+			Events.on(engine, 'afterUpdate', () => {
+				buttonBodies.forEach(b => containBody(b));
+			});
+
+			// Resize
+			function handleResize() {
+				const W = window.innerWidth;
+				const H = window.innerHeight;
+
+				// resize the canvas properly (keeps the pixel ratio / mouse scaling in sync)
+				render.options.width = W;
+				render.options.height = H;
+				render.bounds.min.x = 0;
+				render.bounds.min.y = 0;
+				render.bounds.max.x = W;
+				render.bounds.max.y = H;
+				Render.setPixelRatio(render, render.options.pixelRatio);
+				render.canvas.style.width = W + 'px';
+				render.canvas.style.height = H + 'px';
+				Mouse.setOffset(mouse, { x: 0, y: 0 });
+				Mouse.setScale(mouse, { x: 1, y: 1 });
+
+				// move the walls to the new window size, then pull any stray buttons back in
+				buildWalls();
+				buttonBodies.forEach(b => containBody(b, 0));
+			}
+			window.addEventListener('resize', handleResize);
+			handleResize();
+			if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAllButtons);
 		}
 
 
