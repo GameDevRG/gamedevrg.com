@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>article · gamedevrg.com</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --blue: #3b82f6;
+            --page: #f2f2f2;
+            --card: #ffffff;
+            --ink: #000000;
+            /* change this to restyle all the article text */
+            --article-font: 'Chakra Petch', system-ui, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            min-height: 100dvh;
+            padding-top: calc(38px + env(safe-area-inset-top, 0px));
+            background: var(--page);
+            color: var(--ink);
+            font-family: var(--article-font);
+        }
+
+        /* ===== site top bar (copied from the other pages) ===== */
+        #topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 40;
+            height: calc(38px + env(safe-area-inset-top, 0px));
+            padding: env(safe-area-inset-top, 0px) 12px 0;
+            background: #000;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Chakra Petch', system-ui, sans-serif;
+            text-align: left;
+            text-transform: lowercase;
+            white-space: nowrap
+        }
+
+        #topbar .logo {
+            flex: 0 0 auto;
+            margin-right: 10px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 17px;
+            letter-spacing: -.01em;
+            text-decoration: none;
+            line-height: 1
+        }
+
+        #topbar .logo small {
+            font-size: .62em;
+            font-weight: 500;
+            color: #cfcfcf;
+            letter-spacing: 0
+        }
+
+        #topbar .tbtn {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: auto;
+            height: 26px;
+            padding: 0 20px;
+            border: 0;
+            border-radius: 0;
+            background: #3b82f6;
+            color: #fff;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 15px;
+            line-height: 1;
+            text-decoration: none;
+            text-transform: lowercase;
+            cursor: pointer
+        }
+
+        #topbar .tbtn:hover {
+            background: #5a95f7
+        }
+
+        #topbar input {
+            flex: 0 1 312px;
+            width: auto;
+            min-width: 0;
+            height: 26px;
+            padding: 0 8px;
+            border: 2px solid #3b82f6;
+            border-radius: 0;
+            background: #262626;
+            color: #fff;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 400;
+            text-align: left;
+            text-transform: none;
+            text-overflow: ellipsis;
+            outline: 0
+        }
+
+        #topbar input::placeholder {
+            color: #8a8a8a;
+            font-style: italic;
+            opacity: 1;
+            text-overflow: ellipsis
+        }
+
+        #topbar input:focus {
+            border-color: #8ab8ff
+        }
+
+        #topbar #tacct {
+            margin-left: auto
+        }
+
+        #topbar .twho {
+            flex: 0 1 auto;
+            min-width: 0;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #cfcfcf;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none
+        }
+
+        #topbar .twho b {
+            color: #fff;
+            font-weight: 700
+        }
+
+        #topbar .twho:hover {
+            text-decoration: underline
+        }
+
+        #topbar .logo:focus-visible,
+        #topbar .tbtn:focus-visible,
+        #topbar .twho:focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 2px
+        }
+
+        @media (max-width: 520px) {
+            #topbar {
+                padding-left: 8px;
+                padding-right: 8px;
+                gap: 4px
+            }
+
+            #topbar .twho {
+                max-width: 96px;
+                font-size: 12px
+            }
+
+            #topbar .logo {
+                margin-right: 2px;
+                font-size: 13px
+            }
+
+            #topbar .logo small {
+                display: none
+            }
+
+            #topbar .tbtn {
+                padding: 0 8px;
+                font-size: 13px
+            }
+
+            #topbar input {
+                font-size: 12px;
+                padding: 0 6px
+            }
+        }
+
+        /* ===== search bar in the page (searches the articles) ===== */
+        .searchwrap {
+            position: relative;
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto
+        }
+
+        #asearch {
+            display: block;
+            width: 100%;
+            height: 52px;
+            padding: 0 14px;
+            border: 3px solid var(--blue);
+            border-radius: 0;
+            background: #fff;
+            color: #000;
+            font-family: inherit;
+            font-size: clamp(17px, 2vw, 22px);
+            text-align: center;
+            outline: 0
+        }
+
+        #asearch::placeholder {
+            color: #000;
+            opacity: 1
+        }
+
+        #asearch:focus {
+            border-color: #1d4ed8
+        }
+
+        #aresults {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 30;
+            max-height: 60vh;
+            overflow-y: auto;
+            background: #fff;
+            border: 3px solid #1d4ed8;
+            border-top: 0;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, .2);
+            text-align: left
+        }
+
+        #aresults[hidden] {
+            display: none
+        }
+
+        #aresults a,
+        #aresults .none {
+            display: block;
+            padding: 12px 16px;
+            border-top: 1px solid #e5e5e5;
+            color: #000;
+            text-decoration: none
+        }
+
+        #aresults a:first-child,
+        #aresults .none:first-child {
+            border-top: 0
+        }
+
+        #aresults a:hover,
+        #aresults a.active {
+            background: #eaf1ff
+        }
+
+        #aresults .rt {
+            display: block;
+            font-size: 20px;
+            font-weight: 700
+        }
+
+        #aresults .rs {
+            display: block;
+            margin-top: 2px;
+            color: #555;
+            font-size: 15px;
+            line-height: 1.3
+        }
+
+        #aresults .none {
+            color: #555
+        }
+
+        /* ===== page: nothing loaded ===== */
+        main {
+            padding: 10px 16px 80px
+        }
+
+        main.empty-view {
+            padding-top: 40px
+        }
+
+        .empty {
+            max-width: 960px;
+            margin: 30px auto 0;
+            text-align: center
+        }
+
+        .empty h1 {
+            margin: 0 0 36px;
+            font-size: clamp(22px, 3vw, 30px);
+            font-weight: 800
+        }
+
+        .empty .etext {
+            margin-top: 100px
+        }
+
+        .empty .etext p {
+            margin: 0;
+            font-size: clamp(17px, 2.2vw, 24px);
+            line-height: 1.3
+        }
+
+        /* ===== page: an article ===== */
+        .card {
+            position: relative;
+            width: 100%;
+            max-width: 1070px;
+            margin: 58px auto 0;
+            padding: 28px 44px 70px;
+            background: var(--card);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .2)
+        }
+
+        .back {
+            position: absolute;
+            top: 19px;
+            left: -17px;
+            padding: 8px 30px;
+            background: var(--blue);
+            color: #fff;
+            font-family: inherit;
+            font-size: 22px;
+            line-height: 1.1;
+            text-decoration: none
+        }
+
+        .back:hover {
+            background: #5a95f7
+        }
+
+        .back:focus-visible {
+            outline: 3px solid #000;
+            outline-offset: 2px
+        }
+
+        .card .title {
+            margin: 0;
+            text-align: center;
+            font-size: 26px;
+            font-weight: 800;
+            line-height: 1.2
+        }
+
+        .card .pub {
+            margin: 2px 0 0;
+            text-align: center;
+            font-size: 14px
+        }
+
+        .card .headline {
+            margin: 56px 0 34px;
+            text-align: center;
+            color: var(--blue);
+            font-size: clamp(28px, 4.2vw, 44px);
+            font-weight: 800;
+            line-height: 1.15
+        }
+
+        .card .text p {
+            margin: 0 0 30px;
+            text-indent: 80px;
+            text-align: left;
+            font-size: clamp(18px, 2.2vw, 24px);
+            line-height: 1.25
+        }
+
+        .card .text strong {
+            font-weight: 800
+        }
+
+        @media (max-width: 1120px) {
+            .back {
+                left: 0
+            }
+        }
+
+        @media (max-width: 700px) {
+            main {
+                padding: 10px 12px 60px
+            }
+
+            .card {
+                margin-top: 20px;
+                padding: 20px 18px 40px
+            }
+
+            .back {
+                position: static;
+                display: inline-block;
+                margin: 0 0 16px;
+                padding: 8px 22px;
+                font-size: 18px
+            }
+
+            .card .headline {
+                margin: 32px 0 24px
+            }
+
+            .card .text p {
+                text-indent: 36px;
+                margin-bottom: 22px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav id="topbar" aria-label="site">
+        <a class="logo" href="../">gamedevrg<small>.com</small></a>
+        <a class="tbtn" href="../">homepage</a>
+        <input id="tsearch" type="search" placeholder="you can type things here. (this is the search bar)"
+            aria-label="search" autocomplete="off">
+        <button class="tbtn" id="tgo" type="button">search</button>
+        <a class="tbtn" id="tacct" href="../account/?from=article">log in</a>
+    </nav>
+
+    <main id="main" aria-live="polite"></main>
+
+    <script>
+        const $ = id => document.getElementById(id);
+
+        /* ---------- top bar (same behaviour as the other pages) ---------- */
+        { const go = () => { const q = $('tsearch').value.trim(); if (!q) return; /* TODO: point this at the site's search page */ }; $('tgo').onclick = go; $('tsearch').addEventListener('keydown', e => { if (e.key === 'Enter') go(); }); }
+        const acctName = () => { try { return Array.from((localStorage.getItem('username') || '').trim()).slice(0, 24).join(''); } catch (e) { return ''; } };
+        function showAcct() { const a = $('tacct'), n = acctName(); if (n) { a.className = 'twho'; a.replaceChildren('signed in as ', Object.assign(document.createElement('b'), { textContent: n })); a.title = n; } else { a.className = 'tbtn'; a.textContent = 'log in'; a.removeAttribute('title'); } }
+        showAcct(); addEventListener('focus', showAcct); addEventListener('storage', showAcct); addEventListener('pageshow', showAcct);
+
+        /* ---------- articles ----------
+           every article lives in articles.json (next to this file) as
+           { id, title, published, headline, text: [paragraph, ...] }
+           use **double stars** around text to make it bold. */
+        const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const fmt = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        const parasOf = a => Array.isArray(a.text) ? a.text : String(a.text || '').split(/\n\s*\n/);
+
+        /* the search bar that sits in the page: it searches the articles */
+        const SEARCH = '<div class="searchwrap"><input id="asearch" type="search" placeholder="this is a search bar. (you can type here)" aria-label="search articles" autocomplete="off" spellcheck="false" aria-controls="aresults"><div id="aresults" role="listbox" hidden></div></div>';
+        let ARTICLES = [], LOAD_FAILED = false;
+
+        function findArticles(q) {
+            q = q.trim().toLowerCase(); if (!q) return [];
+            return ARTICLES.map(a => {
+                const title = String(a.title || '').toLowerCase(), head = String(a.headline || '').toLowerCase(), body = parasOf(a).join(' ').replace(/\*\*/g, '');
+                let score = 0, snip = '';
+                if (title.includes(q)) score = 3;
+                else if (head.includes(q)) score = 2;
+                else { const i = body.toLowerCase().indexOf(q); if (i >= 0) { score = 1; const st = Math.max(0, i - 40); snip = (st ? '\u2026' : '') + body.slice(st, i + q.length + 60) + '\u2026'; } }
+                return { a, score, snip };
+            }).filter(r => r.score).sort((x, y) => y.score - x.score);
+        }
+
+        function initSearch() {
+            const input = $('asearch'), box = $('aresults'); let act = -1;
+            const items = () => Array.from(box.querySelectorAll('a'));
+            const close = () => { box.hidden = true; box.textContent = ''; act = -1; };
+            const mark = () => items().forEach((el, i) => el.classList.toggle('active', i === act));
+            function render() {
+                const q = input.value; act = -1;
+                if (!q.trim()) return close();
+                if (LOAD_FAILED) { box.innerHTML = '<div class="none">' + esc("couldn't load the articles.") + '</div>'; box.hidden = false; return; }
+                const found = findArticles(q);
+                box.innerHTML = found.length
+                    ? found.map(r => '<a href="?id=' + encodeURIComponent(r.a.id) + '" role="option"><span class="rt">' + esc(r.a.title) + '</span><span class="rs">' + esc(r.snip || r.a.headline || '') + '</span></a>').join('')
+                    : '<div class="none">no articles found for \u201c' + esc(q.trim()) + '\u201d</div>';
+                box.hidden = false;
+            }
+            input.addEventListener('input', render);
+            input.addEventListener('focus', render);
+            input.addEventListener('keydown', e => {
+                const list = items();
+                if (e.key === 'ArrowDown' && list.length) { e.preventDefault(); act = (act + 1) % list.length; mark(); }
+                else if (e.key === 'ArrowUp' && list.length) { e.preventDefault(); act = (act - 1 + list.length) % list.length; mark(); }
+                else if (e.key === 'Enter') { const t = list[act >= 0 ? act : 0]; if (t) { e.preventDefault(); location.href = t.getAttribute('href'); } }
+                else if (e.key === 'Escape') { close(); input.blur(); }
+            });
+            document.addEventListener('pointerdown', e => { if (!e.target.closest('.searchwrap')) close(); });
+        }
+
+        function showEmpty(title, lines) {
+            const main = $('main');
+            main.className = 'empty-view';
+            main.innerHTML = '<div class="empty"><h1>' + esc(title) + '</h1>' + SEARCH + '<div class="etext">' + lines.map(t => '<p>' + esc(t) + '</p>').join('') + '</div></div>';
+            initSearch();
+        }
+
+        function showArticle(a) {
+            $('main').className = '';
+            $('main').innerHTML = SEARCH +
+                '<article class="card">' +
+                '<a class="back" id="back" href="../">\u2190 back</a>' +
+                '<h1 class="title">' + esc(a.title) + '</h1>' +
+                (a.published ? '<p class="pub">published ' + esc(a.published) + '</p>' : '') +
+                '<h2 class="headline">' + esc(a.headline) + '</h2>' +
+                '<div class="text">' + parasOf(a).map(p => '<p>' + fmt(p) + '</p>').join('') + '</div>' +
+                '</article>';
+            document.title = String(a.title).replace(/\.$/, '') + ' \u00b7 gamedevrg.com';
+            initSearch();
+            /* "back" goes to wherever you came from, if that was this site */
+            $('back').addEventListener('click', e => {
+                try { if (document.referrer && new URL(document.referrer).origin === location.origin && history.length > 1) { e.preventDefault(); history.back(); } } catch (x) { }
+            });
+        }
+
+        (async () => {
+            const id = new URLSearchParams(location.search).get('id');
+            try {
+                const res = await fetch('articles.json', { cache: 'no-cache' });
+                if (!res.ok) throw new Error(res.status);
+                const data = await res.json();
+                ARTICLES = (Array.isArray(data) ? data : (data && data.articles) || []).filter(x => x && x.id);
+            } catch (e) { LOAD_FAILED = true; }
+
+            if (!id) return showEmpty('this is the article page.', ['i will post articles on this page about things.', "there is no article loaded. that's why this page looks so empty."]);
+            if (LOAD_FAILED) return showEmpty("couldn't load the articles.", ['try again in a moment.', "(if you opened this file straight from your computer, the browser blocks loading articles.json. open it through a web server instead.)"]);
+            const a = ARTICLES.find(x => x.id === id);
+            if (!a) return showEmpty('article not found.', ['there is no article called "' + id + '".']);
+            showArticle(a);
+        })();
+    </script>
+</body>
+
+</html>
