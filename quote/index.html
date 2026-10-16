@@ -3,125 +3,207 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0f0f14">
     <title>inspire me</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Ovo&display=swap" rel="stylesheet">
     <style>
+        /* ---------------------------------------------------------------
+           Colours and gradient positions are registered custom properties.
+           Browsers can't animate a gradient directly, but they CAN animate
+           registered <color> / <percentage> properties, so everything below
+           eases smoothly from one palette to the next.
+           --------------------------------------------------------------- */
+        @property --bg {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #0f0f14;
+        }
+
+        @property --accent {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: rgba(255, 255, 255, 0.25);
+        }
+
+        @property --c1 {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #24324d;
+        }
+
+        @property --c2 {
+            syntax: '<color>';
+            inherits: true;
+            initial-value: #1b263b;
+        }
+
+        @property --x {
+            syntax: '<percentage>';
+            inherits: true;
+            initial-value: 50%;
+        }
+
+        @property --y {
+            syntax: '<percentage>';
+            inherits: true;
+            initial-value: 50%;
+        }
+
+        :root {
+            --bg: #0f0f14;
+            --accent: rgba(255, 255, 255, 0.25);
+            --c1: #24324d;
+            --c2: #1b263b;
+            --x: 50%;
+            --y: 50%;
+            transition:
+                --x 5s cubic-bezier(0.22, 1, 0.36, 1),
+                --y 5s cubic-bezier(0.22, 1, 0.36, 1),
+                --c1 4s ease,
+                --c2 4s ease,
+                --bg 3s ease,
+                --accent 3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+
         body {
             margin: 0;
-            height: 100vh;
+            min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
-            justify-content: center;
-            align-items: center;
             background: var(--bg);
             font-family: "Ovo", serif;
             color: white;
             text-align: center;
-            position: relative;
-            overflow: hidden;
+            /* room for the settings button, and for notches / home bars on phones */
+            padding:
+                calc(64px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(64px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
-
-        :root {
-            --bg: #0f0f14;
+        /* the gradient layers stay put while the page scrolls */
+        #bgGradient,
+        #bgGradient2 {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
         }
 
+        #bgGradient {
+            opacity: 0.12;
+            background: radial-gradient(circle at var(--x) var(--y), var(--c1) 0%, var(--c2) 35%, #0f0f14 70%);
+        }
+
+        /* a soft second glow that drifts the opposite way */
+        #bgGradient2 {
+            opacity: 0.6;
+            background: radial-gradient(circle at calc(100% - var(--x)) calc(100% - var(--y)), var(--accent) 0%, transparent 55%);
+        }
 
         #container {
+            /* margin: auto centres it, and still lets the page scroll if the text is tall */
+            margin: auto;
+            width: 100%;
             max-width: 600px;
             padding: 20px;
             position: relative;
             z-index: 2;
         }
 
-        #bgGradient {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.12;
-            transition: all 5s cubic-bezier(0.22, 1, 0.36, 1);
-            z-index: 1;
-        }
-
         #output {
-            font-size: 1.5rem;
+            font-size: clamp(1.25rem, 5vw, 1.5rem);
+            line-height: 1.45;
             font-style: italic;
+            overflow-wrap: anywhere;
             opacity: 0;
             filter: blur(10px);
             transition: opacity 1.5s ease, filter 1.5s ease, color 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             margin-bottom: 10px;
         }
 
-        #output.show {
-            opacity: 1;
-            filter: blur(0);
-        }
-
         #attribution {
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 4vw, 1.2rem);
             font-style: normal;
             opacity: 0;
             filter: blur(10px);
             transition: opacity 1.5s ease, filter 1.5s ease, color 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
+        #output.show,
         #attribution.show {
             opacity: 1;
             filter: blur(0);
         }
 
-
         button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            border: 1px solid var(--accent);
-            background: rgba(255, 255, 255, 0);
+            font-family: "Ovo", serif;
             color: #fff;
             font-size: 1rem;
-            cursor: pointer;
+            min-height: 44px;
+            /* comfortable tap target */
+            padding: 10px 22px;
+            border: 1px solid var(--accent);
             border-radius: 6px;
-            transition: all 0.3s ease;
-            z-index: 3;
+            background: rgba(255, 255, 255, 0);
+            -webkit-backdrop-filter: blur(20px);
             backdrop-filter: blur(20px);
-            font-family: "Ovo", serif;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: background 0.3s ease, transform 0.3s ease;
         }
 
-        button:hover {
-            background: rgba(255, 255, 255, 0.05);
-            transform: translateY(-2px);
+        button:focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 3px;
         }
 
-        #bgGradient,
-        #bgGradient2 {
-            position: absolute;
-            inset: 0;
-            opacity: 0.12;
-            transition: all 5s cubic-bezier(0.22, 1, 0.36, 1);
-            z-index: 1;
+        button:active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* hover effects only on devices that actually hover (not stuck after a tap on phones) */
+        @media (hover: hover) {
+            button:hover {
+                background: rgba(255, 255, 255, 0.05);
+                transform: translateY(-2px);
+            }
+        }
+
+        #inspireBtn {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            padding: 12px 30px;
+            position: relative;
+            z-index: 3;
         }
 
         #settingsBtn {
             position: fixed;
-            top: 15px;
-            right: 15px;
+            top: calc(12px + env(safe-area-inset-top));
+            right: calc(12px + env(safe-area-inset-right));
+            margin: 0;
+            padding: 8px 16px;
             z-index: 10;
-            padding: 8px 14px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            border: 1px solid var(--accent);
-            background: rgba(255, 255, 255, 0);
-            backdrop-filter: blur(20px);
         }
 
         #overlay {
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0);
+            -webkit-backdrop-filter: blur(0px);
             backdrop-filter: blur(0px);
             transition: all 0.5s ease;
             pointer-events: none;
@@ -130,21 +212,23 @@
 
         #overlay.active {
             background: rgba(0, 0, 0, 0.4);
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             pointer-events: auto;
         }
 
+        /* settings: scrolls on short screens (landscape phones), closes when you tap outside the panel */
         #settingsMenu {
             position: fixed;
             inset: 0;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: calc(20px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
             opacity: 0;
             transform: scale(0.98);
-            transition: all 0.5s ease;
+            visibility: hidden;
+            transition: opacity 0.5s ease, transform 0.5s ease, visibility 0s linear 0.5s;
             z-index: 6;
             pointer-events: none;
             color: white;
@@ -154,101 +238,149 @@
         #settingsMenu.active {
             opacity: 1;
             transform: scale(1);
+            visibility: visible;
+            transition-delay: 0s;
             pointer-events: auto;
         }
 
-        #settingsMenu h2 {
-            margin-bottom: 10px;
+        .panel {
+            margin: auto;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .panel h2 {
+            margin: 0 0 10px;
+            font-weight: normal;
         }
 
         .section {
-            margin: 10px 0;
+            margin: 14px 0;
         }
 
-        .section button {
-            margin: 5px;
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            border: 1px solid var(--accent);
-            background: rgba(255, 255, 255, 0);
-            backdrop-filter: blur(20px);
+        .section h3 {
+            margin: 0 0 8px;
+            font-weight: normal;
         }
 
+        .opts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
 
-        .ovo-regular {
-            font-family: "Ovo", serif;
-            font-weight: 400;
-            font-style: normal;
+        .opts button {
+            padding: 8px 16px;
+            min-width: 56px;
+        }
+
+        .opts button.on {
+            background: rgba(255, 255, 255, 0.14);
+            border-color: rgba(255, 255, 255, 0.55);
+        }
+
+        #closeBtn {
+            margin-top: 18px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            :root,
+            #output,
+            #attribution {
+                transition-duration: 0.3s !important;
+            }
+
+            #output,
+            #attribution {
+                filter: none;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div id="bgGradient"></div>
-    <div id="bgGradient2"></div>
-    <div id="container">
-        <div id="output"></div>
+    <div id="bgGradient" aria-hidden="true"></div>
+    <div id="bgGradient2" aria-hidden="true"></div>
+
+    <main id="container">
+        <div id="output" aria-live="polite"></div>
         <div id="attribution"></div>
-        <button onclick="generateText()">inspire me</button>
-    </div>
-    <button id="settingsBtn" onclick="toggleSettings()">settings</button>
+        <button id="inspireBtn" type="button">inspire me</button>
+    </main>
 
-    <div id="overlay" onclick="toggleSettings()"></div>
+    <button id="settingsBtn" type="button" aria-expanded="false" aria-controls="settingsMenu">settings</button>
 
-    <div id="settingsMenu">
-        <h2 style="font-weight: normal;">settings</h2>
+    <div id="overlay"></div>
 
-        <div class="section">
-            <h3 style="font-weight: normal;">tone</h3>
-            <button onclick="setTone('default')">Warm</button>
-            <button onclick="setTone('soft')">Soft</button>
-            <button onclick="setTone('dark')">Comforting</button>
-        </div>
+    <div id="settingsMenu" role="dialog" aria-modal="true" aria-label="settings" aria-hidden="true">
+        <div class="panel">
+            <h2>settings</h2>
 
+            <div class="section">
+                <h3>tone</h3>
+                <div class="opts" role="group" aria-label="tone">
+                    <button type="button" data-tone="default">Warm</button>
+                    <button type="button" data-tone="soft">Soft</button>
+                    <button type="button" data-tone="dark">Comforting</button>
+                </div>
+            </div>
 
-        <div class="section">
-            <h3 style="font-weight: normal;">sentence count</h3>
-            <button onclick="setSentenceCount(1)">1</button>
-            <button onclick="setSentenceCount(2)">2</button>
-            <button onclick="setSentenceCount(3)">3</button>
+            <div class="section">
+                <h3>sentence count</h3>
+                <div class="opts" role="group" aria-label="sentence count">
+                    <button type="button" data-count="1">1</button>
+                    <button type="button" data-count="2">2</button>
+                    <button type="button" data-count="3">3</button>
+                </div>
+            </div>
+
+            <button id="closeBtn" type="button">close</button>
         </div>
     </div>
 
 
     <script>
         let markov = {};
+        let dataFailed = false;
         const attributions = ["-someone", "-unknown", "-anonymous", "-unsigned", "-a stranger", "-unsaid", "-this webpage"];
 
         let tone = "default";
         let sentenceCount = 1;
 
-
+        /* x / y: where the gradient glow sits (percent). c1 / c2: its two colours. text / accent: the text colours. */
         const palettes = [
-            { bg: 'radial-gradient(circle at 20% 80%, #3a1f7a 0%, #2d1b69 35%, #0f0f14 70%)', text: '#e6d5ff', accent: '#b39eff' },
-            { bg: 'radial-gradient(circle at 80% 20%, #005f4f 0%, #004d40 35%, #0f0f14 70%)', text: '#e0f2f1', accent: '#80cbc4' },
-            { bg: 'radial-gradient(circle at 40% 40%, #7a5a00 0%, #664d00 35%, #0f0f14 70%)', text: '#fff3e0', accent: '#ffb74d' },
-            { bg: 'radial-gradient(circle at 60% 60%, #4a7a00 0%, #336600 35%, #0f0f14 70%)', text: '#e8f5e8', accent: '#aed581' },
-            { bg: 'radial-gradient(circle at 30% 70%, #7a003d 0%, #660033 35%, #0f0f14 70%)', text: '#fce4ec', accent: '#f48fb1' },
-            { bg: 'radial-gradient(circle at 70% 30%, #00407a 0%, #003366 35%, #0f0f14 70%)', text: '#e1f5fe', accent: '#4fc3f7' },
-            { bg: 'radial-gradient(circle at 50% 10%, #7a3d00 0%, #663300 35%, #0f0f14 70%)', text: '#fff8e1', accent: '#ffa726' },
-            { bg: 'radial-gradient(circle at 10% 50%, #24324d 0%, #1b263b 35%, #0f0f14 70%)', text: '#f0f4f8', accent: '#778da9' }
+            { x: 20, y: 80, c1: '#3a1f7a', c2: '#2d1b69', text: '#e6d5ff', accent: '#b39eff' },
+            { x: 80, y: 20, c1: '#005f4f', c2: '#004d40', text: '#e0f2f1', accent: '#80cbc4' },
+            { x: 40, y: 40, c1: '#7a5a00', c2: '#664d00', text: '#fff3e0', accent: '#ffb74d' },
+            { x: 60, y: 60, c1: '#4a7a00', c2: '#336600', text: '#e8f5e8', accent: '#aed581' },
+            { x: 30, y: 70, c1: '#7a003d', c2: '#660033', text: '#fce4ec', accent: '#f48fb1' },
+            { x: 70, y: 30, c1: '#00407a', c2: '#003366', text: '#e1f5fe', accent: '#4fc3f7' },
+            { x: 50, y: 10, c1: '#7a3d00', c2: '#663300', text: '#fff8e1', accent: '#ffa726' },
+            { x: 10, y: 50, c1: '#24324d', c2: '#1b263b', text: '#f0f4f8', accent: '#778da9' }
         ];
-
-
 
         let currentPaletteIndex = -1;
 
+        const $ = id => document.getElementById(id);
+        const root = document.documentElement;
+
+        /* ---------- data ---------- */
+
         async function loadData() {
-            const res = await fetch("data.txt");
-            const text = await res.text();
-            buildMarkov(text);
+            try {
+                const res = await fetch("data.txt");
+                if (!res.ok) throw new Error(res.status);
+                buildMarkov(await res.text());
+            } catch (e) {
+                dataFailed = true;
+            }
         }
 
         function buildMarkov(text) {
-            const words = text.split(/\s+/);
+            const words = text.split(/\s+/).filter(Boolean);
 
             for (let i = 0; i < words.length - 1; i++) {
                 const word = words[i];
@@ -262,25 +394,46 @@
             }
         }
 
+        /* ---------- colours ---------- */
 
+        function hexToRgba(hex, alpha) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        function darkenHex(hex, factor = 0.2) {
+            const r = Math.floor(parseInt(hex.slice(1, 3), 16) * factor);
+            const g = Math.floor(parseInt(hex.slice(3, 5), 16) * factor);
+            const b = Math.floor(parseInt(hex.slice(5, 7), 16) * factor);
+
+            return `rgb(${r}, ${g}, ${b})`;
+        }
 
         function getNextPalette() {
             currentPaletteIndex = (currentPaletteIndex + 1) % palettes.length;
             return palettes[currentPaletteIndex];
         }
 
-        function generateText() {
-            const output = document.getElementById("output");
-            const attribution = document.getElementById("attribution");
-            const bgGradient = document.getElementById("bgGradient");
+        /* setting these starts the smooth transitions declared on :root */
+        function applyPalette(p) {
+            root.style.setProperty('--x', p.x + '%');
+            root.style.setProperty('--y', p.y + '%');
+            root.style.setProperty('--c1', p.c1);
+            root.style.setProperty('--c2', p.c2);
+            root.style.setProperty('--bg', darkenHex(p.accent, 0.18));
+            root.style.setProperty('--accent', hexToRgba(p.accent, 0.25));
+        }
 
-            output.classList.remove("show");
-            attribution.classList.remove("show");
+        /* ---------- text ---------- */
 
+        function makeQuote() {
             const keys = Object.keys(markov);
+            if (!keys.length) return null;
+
             let word = keys[Math.floor(Math.random() * keys.length)];
             let result = [word];
-
             let sentences = 0;
 
             while (sentences < sentenceCount && result.length < 80) {
@@ -298,83 +451,93 @@
 
                 if (word.endsWith(".") || word.endsWith("!") || word.endsWith("?")) {
                     sentences++;
-
                 }
             }
 
+            return `"${result.join(" ")}"`;
+        }
 
+        let timers = [];
+        const later = (fn, ms) => timers.push(setTimeout(fn, ms));
+
+        function generateText() {
+            const output = $("output");
+            const attribution = $("attribution");
+
+            /* a new click cancels anything still on its way, so old text can't pop in late */
+            timers.forEach(clearTimeout);
+            timers = [];
+
+            const hadText = output.textContent !== '';
             const nextPalette = getNextPalette();
-            document.documentElement.style.setProperty(
-                '--bg',
-                darkenHex(nextPalette.accent, 0.18)
-            );
 
+            /* start everything moving at once: background, glow position, and the old text's colour,
+               while the old text fades out */
+            applyPalette(nextPalette);
+            output.style.color = nextPalette.text;
+            attribution.style.color = nextPalette.accent;
+            output.classList.remove("show");
+            attribution.classList.remove("show");
 
-            document.documentElement.style.setProperty(
-                '--accent',
-                hexToRgba(nextPalette.accent, 0.25)
-            );
+            later(() => {
+                const quote = makeQuote();
+                output.textContent = quote || (dataFailed ? "(couldn't load data.txt)" : "(still loading, try again in a moment)");
+                attribution.textContent = quote ? attributions[Math.floor(Math.random() * attributions.length)] : '';
 
-
-            output.textContent = '';
-            attribution.textContent = '';
-
-            bgGradient.style.background = nextPalette.bg;
-
-            setTimeout(() => {
-                output.textContent = `"${result.join(" ")}"`;
-                output.style.color = nextPalette.text;
-
-                const randomAttribution = attributions[Math.floor(Math.random() * attributions.length)];
-                attribution.textContent = randomAttribution;
-                attribution.style.color = nextPalette.accent;
-
-                setTimeout(() => {
+                later(() => {
                     output.classList.add("show");
-
-                    setTimeout(() => {
-                        attribution.classList.add("show");
-                    }, 200);
+                    later(() => attribution.classList.add("show"), 200);
                 }, 50);
-            }, 1200);
+            }, hadText ? 1300 : 250);
         }
 
-        loadData();
-        function toggleSettings() {
-            document.getElementById("overlay").classList.toggle("active");
-            document.getElementById("settingsMenu").classList.toggle("active");
+        /* ---------- settings ---------- */
 
+        function setSettings(open) {
+            $("overlay").classList.toggle("active", open);
+            $("settingsMenu").classList.toggle("active", open);
+            $("settingsMenu").setAttribute("aria-hidden", String(!open));
+            $("settingsBtn").setAttribute("aria-expanded", String(open));
+            if (open) $("closeBtn").focus(); else $("settingsBtn").focus();
         }
-// jews
+        const settingsOpen = () => $("settingsMenu").classList.contains("active");
+
         function setTone(newTone) {
-
             tone = newTone;
+            syncOptions();
         }
 
-        function hexToRgba(hex, alpha) {
-            const r = parseInt(hex.slice(1, 3), 16);
-            const g = parseInt(hex.slice(3, 5), 16);
-            const b = parseInt(hex.slice(5, 7), 16);
-            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        function setSentenceCount(n) {
+            sentenceCount = n;
+            syncOptions();
         }
 
-        function darkenHex(hex, factor = 0.4) {
-            const r = Math.floor(parseInt(hex.slice(1, 3), 16) * factor);
-            const g = Math.floor(parseInt(hex.slice(3, 5), 16) * factor);
-            const b = Math.floor(parseInt(hex.slice(5, 7), 16) * factor);
-
-            return `rgb(${r}, ${g}, ${b})`;
+        /* highlight the chosen options */
+        function syncOptions() {
+            document.querySelectorAll("[data-tone]").forEach(b => {
+                const on = b.dataset.tone === tone;
+                b.classList.toggle("on", on);
+                b.setAttribute("aria-pressed", String(on));
+            });
+            document.querySelectorAll("[data-count]").forEach(b => {
+                const on = +b.dataset.count === sentenceCount;
+                b.classList.toggle("on", on);
+                b.setAttribute("aria-pressed", String(on));
+            });
         }
-        function darkenHex(hex, factor = 0.2) {
-            const r = Math.floor(parseInt(hex.slice(1, 3), 16) * factor);
-            const g = Math.floor(parseInt(hex.slice(3, 5), 16) * factor);
-            const b = Math.floor(parseInt(hex.slice(5, 7), 16) * factor);
 
-            return `rgb(${r}, ${g}, ${b})`;
-        }
+        $("inspireBtn").addEventListener("click", generateText);
+        $("settingsBtn").addEventListener("click", () => setSettings(!settingsOpen()));
+        $("closeBtn").addEventListener("click", () => setSettings(false));
+        $("overlay").addEventListener("click", () => setSettings(false));
+        /* the settings layer sits above the overlay, so tapping the empty space around the panel closes it too */
+        $("settingsMenu").addEventListener("click", e => { if (e.target === $("settingsMenu")) setSettings(false); });
+        document.addEventListener("keydown", e => { if (e.key === "Escape" && settingsOpen()) setSettings(false); });
+        document.querySelectorAll("[data-tone]").forEach(b => b.addEventListener("click", () => setTone(b.dataset.tone)));
+        document.querySelectorAll("[data-count]").forEach(b => b.addEventListener("click", () => setSentenceCount(+b.dataset.count)));
 
-
-
+        syncOptions();
+        loadData();
     </script>
 </body>
 
