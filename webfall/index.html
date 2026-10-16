@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>webfall</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root{--bg:#eef3fb;--ink:#0f1b33;--mute:#56637e;--card:#fff;--line:#c4d2ea;--acc:#2563eb;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1424;--ink:#e6edfb;--mute:#8e9cbb;--card:#16203a;--line:#27365a;--acc:#3b82f6}}
+:root[data-theme="dark"]{--bg:#0d1424;--ink:#e6edfb;--mute:#8e9cbb;--card:#16203a;--line:#27365a;--acc:#3b82f6}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "Space Mono",ui-monospace,Menlo,Consolas,monospace}
+header{padding:16px;max-width:900px;margin:auto}
+h1{margin:0 0 4px;font-size:26px;letter-spacing:-.04em;font-weight:700}
+h1 span{color:var(--acc)}
+.sub{color:var(--mute);margin:0 0 12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+input[type=text]{flex:1 1 240px;padding:10px 12px;border:1px solid var(--line);border-radius:0;background:var(--card);color:var(--ink);font:inherit}
+button,label.btn{padding:10px 14px;border:1px solid var(--line);border-radius:0;background:var(--card);color:var(--ink);font:inherit;cursor:pointer}
+button.go{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+#status{margin:10px 0 0;color:var(--mute);min-height:1.4em}
+details{margin-top:8px;color:var(--mute)}
+input::placeholder,textarea::placeholder{color:#7390c8;color:color-mix(in srgb,var(--acc) 50%,var(--mute));opacity:1}
+textarea{width:100%;height:90px;margin-top:6px;border:1px solid var(--line);border-radius:0;background:var(--card);color:var(--ink);padding:8px;font:12px "Space Mono",ui-monospace,monospace;border-radius:0}
+#stage{position:relative;overflow:hidden;background:#fff;color:#111;color-scheme:light;border-top:1px solid var(--line);min-height:200px}
+#stage.empty{display:none}
+#frame{display:block;border:0;width:100%;height:600px;background:#fff}
+#frame.hide{visibility:hidden}
+.piece{position:absolute;left:0;top:0;will-change:transform;user-select:none;cursor:grab;transform-origin:center}
+.piece *{pointer-events:none;-webkit-user-drag:none}
+.piece{touch-action:none}
+#stage{user-select:none;-webkit-user-select:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>web<span>fall</span></h1>
+  <p class="sub">type or paste what a qr code says (a link), or upload a qr image. the page loads, then everything on it falls. drag the pieces around.</p>
+  <div class="row">
+    <input id="q" type="text" placeholder="https://example.com" autocomplete="off" spellcheck="false">
+    <button class="go" id="go">load &amp; drop</button>
+    <label class="btn">scan qr image<input id="file" type="file" accept="image/*" hidden></label>
+    <button id="demo">demo page</button>
+    <button id="again">drop again</button>
+  </div>
+  <div id="status"></div>
+  <details><summary>paste raw html instead</summary>
+    <textarea id="raw" placeholder="paste any html here"></textarea>
+    <button id="rawgo" style="margin-top:6px">drop this html</button>
+  </details>
+</header>
+<div id="stage" class="empty"><iframe id="frame" sandbox="allow-same-origin" title="page"></iframe></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const stage=$('#stage'), frame=$('#frame');
+const M=window.Matter;
+let engine,runner,pieces=[],raf=0,mc,H=0;
+const status=t=>$('#status').textContent=t;
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const enc=encodeURIComponent;
+const FETCHERS=[
+ ['direct',u=>u,'text'],
+ ['allorigins',u=>'https://api.allorigins.win/raw?url='+enc(u),'text'],
+ ['allorigins-json',u=>'https://api.allorigins.win/get?url='+enc(u),'json'],
+ ['codetabs',u=>'https://api.codetabs.com/v1/proxy/?quest='+enc(u),'text'],
+ ['corsproxy',u=>'https://corsproxy.io/?url='+enc(u),'text'],
+ ['thingproxy',u=>'https://thingproxy.freeboard.io/fetch/'+u,'text']];
+const PROXIES=FETCHERS.filter(f=>f[2]==='text').map(f=>f[1]);
+let fetchLog=[];
+let fontStyle,fontCount=0;
+let lastHtml='';
+
+const DEMO=`<!DOCTYPE html><html><head><style>
+body{margin:0;font-family:Helvetica,Arial,sans-serif;background:#f6f3ee;color:#222}
+header{background:#3b82f6;color:#fff;padding:28px 40px}header h1{margin:0;font-size:34px}header p{margin:4px 0 0;opacity:.85}
+nav{padding:12px 40px;background:#1e293b}nav a{color:#cbd5e1;margin-right:18px;text-decoration:none}
+main{padding:30px 40px;max-width:760px}
+.card{background:#fff;border:1px solid #ddd;border-radius:12px;padding:18px 22px;margin:18px 0;box-shadow:0 2px 8px #0002}
+.card h2{margin:0 0 6px;color:#e4572e}
+button{background:#e4572e;color:#fff;border:0;border-radius:8px;padding:10px 18px;font-size:15px}
+footer{padding:20px 40px;color:#777}
+</style></head><body>
+<header><h1>Totally Stable Co.</h1><p>est. 1987 - we never fall apart</p></header>
+<nav><a href="#">Home</a><a href="#">Products</a><a href="#">About</a><a href="#">Contact</a></nav>
+<main><div class="card"><h2>Sturdy Chairs</h2><p>Rock solid foundations, guaranteed by gravity.</p><button>Buy now</button></div>
+<div class="card"><h2>Reliable Tables</h2><p>Nothing has ever gone wrong here.</p><input type="range"></div></main>
+<footer>&copy; Totally Stable Co.</footer></body></html>`;
+
+function toUrl(t){
+  t=t.trim();
+  try{const u=new URL(t);if(/^https?:$/.test(u.protocol))return u.href}catch(e){}
+  if(/^[\w-]+(\.[\w-]+)+(\/\S*)?$/.test(t))return 'https://'+t;
+  return null;
+}
+const BAD=/not allowed|access denied|forbidden|blocked|rate limit|limited to|too many requests|captcha|just a moment|attention required/i;
+// try every route at once; the first real answer wins
+async function fetchPage(url,isCss){
+  const log=[];
+  const tries=FETCHERS.map(async([name,mk,kind])=>{
+    const c=new AbortController(),t=setTimeout(()=>c.abort(),10000);
+    try{
+      const r=await fetch(mk(url),{signal:c.signal});
+      if(!r.ok)throw new Error(name+' '+r.status);
+      let h=await r.text();
+      if(kind==='json')h=JSON.parse(h).contents||'';
+      if(h.length<5)throw new Error(name+' empty');
+      if(!isCss&&(!/<[a-z!]/i.test(h)||(h.length<2500&&BAD.test(h))))throw new Error(name+' refused');
+      return h;
+    }catch(e){
+      log.push(e.name==='AbortError'?name+' timeout':/^(Failed|NetworkError|Load)/i.test(e.message)?name+' blocked':e.message);
+      throw e;
+    }finally{clearTimeout(t)}
+  });
+  try{return await Promise.any(tries)}
+  catch(e){fetchLog=log;throw new Error('fetch failed')}
+}
+const absCss=(css,href)=>css.replace(/url\(\s*(['"]?)(?!data:|https?:|#)([^)'"]+)\1\s*\)/g,(m,q,u)=>{try{return 'url("'+new URL(u,href).href+'")'}catch(e){return m}});
+async function inlineCss(doc,base){
+  const links=[...doc.querySelectorAll('link[rel~=stylesheet]')].slice(0,12);
+  await Promise.all(links.map(async l=>{
+    try{const href=new URL(l.getAttribute('href'),base).href;
+      const s=doc.createElement('style');s.textContent=absCss(await fetchPage(href,true),href);l.replaceWith(s)}
+    catch(e){l.remove()}
+  }));
+}
+
+async function load(input){
+  input=input.trim();
+  if(!input)return status('enter a link or qr contents first.');
+  const u=toUrl(input);
+  if(u){
+    status('fetching '+u+' ...');
+    try{build(await fetchPage(u),u)}
+    catch(e){
+      status("couldn't load that page ("+[...new Set(fetchLog)].join(', ')+"). the site or the free proxies are probably blocking it. paste the page source in the box below and it will still fall.");
+      document.querySelector('details').open=true;$('#raw').focus();
+    }
+  }else{
+    build('<body style="font-family:sans-serif;padding:30px"><h1>the qr code says:</h1><p>'+esc(input)+'</p></body>',location.href);
+  }
+}
+
+async function build(html,base){
+  teardown();
+  stage.classList.remove('empty');
+  status('rendering page ...');
+  const doc=new DOMParser().parseFromString(html,'text/html');
+  doc.querySelectorAll('script,iframe,noscript,object,embed,video,audio,canvas,meta[http-equiv]').forEach(e=>e.remove());
+  doc.querySelectorAll('*').forEach(e=>{
+    [...e.attributes].forEach(a=>{if(/^on/i.test(a.name))e.removeAttribute(a.name)});
+    if(e.tagName==='IMG'){e.removeAttribute('srcset');e.removeAttribute('loading')}
+  });
+  await inlineCss(doc,base);
+  status('loading page fonts ...');
+  fontCount=await inlineFonts(doc,base);
+  status('rendering page ...');
+  const b=doc.createElement('base');b.href=base;doc.head.prepend(b);
+  frame.style.height=Math.round(window.innerHeight*0.8)+'px';
+  await new Promise(r=>{frame.onload=r;frame.srcdoc='<!DOCTYPE html>'+doc.documentElement.outerHTML;setTimeout(r,6000)});
+  const fd=frame.contentDocument;
+  await Promise.race([Promise.all([...fd.images].map(i=>i.complete||new Promise(r=>{i.onload=i.onerror=r}))),sleep(4000)]);
+  try{await Promise.race([fd.fonts.ready,sleep(1500)])}catch(e){}
+  await settle(fd);
+  frame.style.height=Math.max(fd.documentElement.scrollHeight,300)+'px';
+  await sleep(100);
+  await copyFonts(fd);
+  makePieces();
+}
+
+async function toData(url){
+  for(const f of PROXIES){
+    try{
+      const c=new AbortController(),t=setTimeout(()=>c.abort(),9000);
+      const r=await fetch(f(url),{signal:c.signal});clearTimeout(t);
+      if(!r.ok)continue;
+      const b=await r.blob();
+      if(b.size<100||b.size>2e6)continue;
+      return await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.readAsDataURL(b)});
+    }catch(e){}
+  }
+  return null;
+}
+// download each @font-face file and embed it as a data uri, so it works even without cors headers
+async function inlineFonts(doc,base){
+  let n=0;
+  const rank=f=>/woff2/i.test(f||'')?0:/woff/i.test(f||'')?1:2;
+  for(const st of [...doc.querySelectorAll('style')]){
+    const blocks=st.textContent.match(/@font-face\s*\{[^}]*\}/g)||[];
+    const out=new Map();
+    await Promise.all(blocks.slice(0,30).map(async b=>{
+      const ur=/unicode-range\s*:([^;}]*)/i.exec(b);
+      if(ur&&!/U\+0000/i.test(ur[1])){out.set(b,'');return} // skip non-latin subsets
+      const m=[...b.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)\s*(?:format\(\s*["']?([^"')]+)["']?\s*\))?/g)];
+      if(!m.length||n>=24)return;
+      m.sort((a,c)=>rank(a[2])-rank(c[2]));
+      const p=m[0];if(p[1].startsWith('data:'))return;
+      let abs;try{abs=new URL(p[1],base).href}catch(e){return}
+      n++;
+      const d=await toData(abs);
+      const fmt=p[2]?` format("${p[2]}")`:'';
+      out.set(b,b.replace(/src\s*:[^;}]*/i,()=>'src:'+(d?`url("${d}")`:`url("${abs}")`)+fmt));
+    }));
+    let t=st.textContent;out.forEach((v,k)=>{t=t.replace(k,()=>v)});st.textContent=t;
+  }
+  return n;
+}
+// the clones live in this document, so it needs the page's @font-face rules too
+async function copyFonts(fd){
+  if(fontStyle)fontStyle.remove();
+  let css='';const loads=[];
+  for(const sh of fd.styleSheets){
+    let rs;try{rs=sh.cssRules}catch(e){continue}
+    for(const r of rs)if(r.type===5){
+      css+=r.cssText+'\n';
+      const w=(r.style.fontWeight||'400').split(' ')[0];
+      loads.push(document.fonts.load((r.style.fontStyle||'normal')+' '+w+' 16px '+r.style.fontFamily).catch(()=>0));
+    }
+  }
+  fontStyle=document.createElement('style');fontStyle.textContent=css;document.head.appendChild(fontStyle);
+  await Promise.race([Promise.all(loads),sleep(4000)]);
+}
+
+// give opening animations time to play out before the page is captured
+async function settle(fd){
+  status('letting the page finish its animations ...');
+  const t0=Date.now();
+  await sleep(2000);
+  while(Date.now()-t0<7000){
+    let running=[];
+    try{running=fd.getAnimations().filter(a=>{
+      if(a.playState!=='running'&&a.playState!=='pending')return false;
+      const t=a.effect&&a.effect.getComputedTiming();
+      return t&&isFinite(t.endTime); // endless loops never finish, so ignore them
+    })}catch(e){}
+    if(!running.length)break;
+    await sleep(250);
+  }
+  await sleep(400);
+  status('rendering page ...');
+}
+
+// work out which pieces are really in front of which by hit-testing the rendered page
+function stack(fd,ps,ox,oy){
+  const idx=new Map();ps.forEach((p,i)=>idx.set(p.e,i));
+  const owner=el=>{for(let n=el;n;n=n.parentElement){const i=idx.get(n);if(i!==undefined)return i}return -1};
+  const score=ps.map(()=>0);
+  const pts=[[.5,.5],[.25,.25],[.75,.75],[.25,.75],[.75,.25]];
+  let calls=0;
+  for(let i=0;i<ps.length;i++)for(let j=i+1;j<ps.length;j++){
+    const A=ps[i].T,B=ps[j].T;
+    const x0=Math.max(A.x,B.x),x1=Math.min(A.x+A.w,B.x+B.w),y0=Math.max(A.y,B.y),y1=Math.min(A.y+A.h,B.y+B.h);
+    if(x1-x0<2||y1-y0<2)continue;
+    let res=-1; // fallback: later in the page = in front
+    if(calls<4000)for(const[fx,fy]of pts){
+      calls++;
+      const list=fd.elementsFromPoint(x0+(x1-x0)*fx-ox,y0+(y1-y0)*fy-oy);
+      let pa=-1,pb=-1;
+      list.forEach((el,k)=>{const o=owner(el);if(o===i&&pa<0)pa=k;if(o===j&&pb<0)pb=k});
+      if(pa>=0&&pb>=0){res=pa<pb?1:-1;break}
+    }
+    score[i]+=res;score[j]-=res; // res=1 means i is in front of j
+  }
+  ps.map((p,i)=>i).sort((a,b)=>score[a]-score[b]||a-b).forEach((i,rank)=>{
+    ps[i].z=rank+1;ps[i].el.style.zIndex=rank+1;
+  });
+}
+
+const CLEAR='rgba(0, 0, 0, 0)';
+const alpha=c=>{
+  if(!c||c==='transparent')return 0;
+  if(/\/\s*0(?:\.0*)?\s*\)/.test(c))return 0;
+  const m=c.match(/rgba?\(([^)]+)\)/);
+  if(!m)return 1;
+  const p=m[1].split(/[ ,\/]+/).filter(Boolean);
+  return p.length>3?parseFloat(p[3]):1;
+};
+function hasBox(cs){
+  return alpha(cs.backgroundColor)>0||cs.backgroundImage!=='none'||cs.boxShadow!=='none'||
+    ['Top','Right','Bottom','Left'].some(s=>parseFloat(cs['border'+s+'Width'])>0&&cs['border'+s+'Style']!=='none'&&alpha(cs['border'+s+'Color'])>0);
+}
+// does this image / input / button actually draw anything?
+function leafVisible(e,cs){
+  const t=e.tagName.toLowerCase(),box=hasBox(cs),ty=(e.type||'').toLowerCase();
+  if(t==='img')return !(e.complete&&e.naturalWidth===0);
+  if(t==='svg')return true;
+  if(t==='button')return box||!!e.textContent.trim()||!!e.querySelector('img,svg');
+  if(/^(checkbox|radio|range|color|file)$/.test(ty))return cs.appearance!=='none'||box;
+  if(/^(button|submit|reset)$/.test(ty))return box||!!e.value;
+  return box||!!e.value||!!e.placeholder||t==='select';
+}
+// visible area of an element after ancestor overflow clipping and the page edges
+function clipOf(e,fw,W,H,ox,oy){
+  const c={l:0,t:0,r:W,b:H};
+  let abs=/^(absolute|fixed)$/.test(fw.getComputedStyle(e).position);
+  for(let p=e.parentElement;p&&p.tagName!=='HTML';p=p.parentElement){
+    const cs=fw.getComputedStyle(p);
+    if(abs&&cs.position==='static')continue;
+    if(p.tagName!=='BODY'&&(cs.overflowX!=='visible'||cs.overflowY!=='visible')){
+      const q=p.getBoundingClientRect();
+      if(cs.overflowX!=='visible'){c.l=Math.max(c.l,q.left+ox);c.r=Math.min(c.r,q.right+ox)}
+      if(cs.overflowY!=='visible'){c.t=Math.max(c.t,q.top+oy);c.b=Math.min(c.b,q.bottom+oy)}
+    }
+    abs=/^(absolute|fixed)$/.test(cs.position);
+  }
+  return c;
+}
+function deepStyle(fw,src,dst){
+  if(src.nodeType!==1)return;
+  const cs=fw.getComputedStyle(src);let t='';
+  for(let i=0;i<cs.length;i++){const p=cs[i];t+=p+':'+cs.getPropertyValue(p)+';'}
+  dst.style.cssText=t;
+  for(let i=0;i<src.children.length;i++)if(dst.children[i])deepStyle(fw,src.children[i],dst.children[i]);
+}
+
+function makePieces(){
+  const fd=frame.contentDocument,fw=frame.contentWindow;
+  const sr=stage.getBoundingClientRect(),fr=frame.getBoundingClientRect();
+  const ox=fr.left-sr.left,oy=fr.top-sr.top,W=stage.clientWidth;
+  H=frame.offsetHeight;
+  const bgc=[fw.getComputedStyle(fd.documentElement).backgroundColor,fw.getComputedStyle(fd.body).backgroundColor].find(c=>c!==CLEAR)||'#fff';
+  stage.style.background=bgc;
+
+  const items=[];
+  const SKIP=/^(SCRIPT|STYLE|LINK|META|HEAD|TITLE|BASE|BR|WBR|OPTION|NOSCRIPT)$/;
+  const walk=e=>{
+    if(items.length>=300||SKIP.test(e.tagName))return;
+    const cs=fw.getComputedStyle(e);
+    if(cs.display==='none'||cs.visibility==='hidden'||+cs.opacity===0)return;
+    if(/^(IMG|INPUT|TEXTAREA|SELECT|BUTTON|svg)$/i.test(e.tagName)){if(leafVisible(e,cs))items.push({e,leaf:1});return}
+    const kids=[...e.children];
+    const blockKid=kids.some(k=>{const d=fw.getComputedStyle(k).display;return d!=='none'&&d!=='contents'&&!/^inline/.test(d)});
+    const box=hasBox(cs);
+    if(!blockKid&&e.textContent.trim()){
+      const hid=parseFloat(cs.fontSize)===0||(alpha(cs.color)===0&&cs.textShadow==='none');
+      if(!hid||box)items.push({e,text:1,box});
+      return;
+    }
+    if(box)items.push({e,bg:1});
+    kids.forEach(walk);
+  };
+  [...fd.body.children].forEach(walk);
+
+  engine=M.Engine.create();engine.enableSleeping=true;
+  M.Composite.add(engine.world,[
+    M.Bodies.rectangle(W/2,H+30,W*3,60,{isStatic:true}),
+    M.Bodies.rectangle(-30,H/2,60,H*4,{isStatic:true}),
+    M.Bodies.rectangle(W+30,H/2,60,H*4,{isStatic:true})]);
+  stage.style.height=H+'px';
+
+  items.forEach((it,i)=>{
+    const e=it.e,rr=e.getBoundingClientRect();
+    const r={x:rr.left+ox,y:rr.top+oy,w:rr.width,h:rr.height};
+    let T=r;
+    if(it.text&&!it.box){ // tight hitbox around the actual text
+      const rg=fd.createRange();rg.selectNodeContents(e);
+      const rs=[...rg.getClientRects()].filter(q=>q.width>0.5&&q.height>0.5);
+      if(!rs.length)return; // no visible text = no hitbox
+      {
+        const x0=Math.min(...rs.map(q=>q.left)),y0=Math.min(...rs.map(q=>q.top));
+        const x1=Math.max(...rs.map(q=>q.right)),y1=Math.max(...rs.map(q=>q.bottom));
+        T={x:x0+ox,y:y0+oy,w:x1-x0,h:y1-y0};
+      }
+    }
+    if(r.w<1||r.h<1)return;
+    const cl=clipOf(e,fw,W,H,ox,oy);
+    const X0=Math.max(T.x,cl.l),Y0=Math.max(T.y,cl.t),X1=Math.min(T.x+T.w,cl.r),Y1=Math.min(T.y+T.h,cl.b);
+    const clipped=X0>T.x+.5||Y0>T.y+.5||X1<T.x+T.w-.5||Y1<T.y+T.h-.5;
+    T={x:X0,y:Y0,w:X1-X0,h:Y1-Y0};
+    if(T.w<3||T.h<3)return; // off-screen, fully clipped, or too tiny to see
+    const c=e.cloneNode(!it.bg);
+    deepStyle(fw,e,c);
+    if(/^(INPUT|TEXTAREA|SELECT)$/.test(e.tagName)){c.value=e.value;if(e.checked)c.checked=true}
+    if(e.tagName==='IMG'){c.removeAttribute('srcset');c.src=e.currentSrc||e.src}
+    c.removeAttribute&&c.removeAttribute('href');c.querySelectorAll&&c.querySelectorAll('[href]').forEach(a=>a.removeAttribute('href'));
+    const s=c.style;
+    s.position='absolute';s.left=(r.x-T.x)+'px';s.top=(r.y-T.y)+'px';s.right=s.bottom='auto';
+    s.width=r.w+'px';s.height=r.h+'px';s.margin='0';s.transform='none';s.translate='none';
+    s.float='none';s.boxSizing='border-box';s.transition='none';s.animation='none';
+    if(cs0(fw,e)==='inline')s.display='block';
+    const w=document.createElement('div');w.className='piece';
+    w.style.width=T.w+'px';w.style.height=T.h+'px';
+    if(clipped)w.style.overflow='hidden';
+    w.style.zIndex=it.bg?i:1000+i;
+    w.appendChild(c);stage.appendChild(w);
+    const b=M.Bodies.rectangle(T.x+T.w/2,T.y+T.h/2,T.w,T.h,{isStatic:true,restitution:.25,friction:.5,frictionAir:.005,sleepThreshold:90,
+      collisionFilter:it.bg?{category:2,mask:1}:{category:4,mask:5}});
+    pieces.push({el:w,b,w:T.w,h:T.h,e,T,z:+w.style.zIndex});
+  });
+  stack(fd,pieces,ox,oy); // real front-to-back order, from what is actually on top in the page
+  // matter grabs the first body under the cursor, so add the topmost pieces first
+  [...pieces].sort((a,b)=>b.z-a.z).forEach(p=>M.Composite.add(engine.world,p.b));
+  frame.classList.add('hide');
+  stage.ondragstart=e=>e.preventDefault();
+  stage.onmousedown=e=>e.preventDefault();
+  const mouse=M.Mouse.create(stage);
+  mouse.element.removeEventListener('mousewheel',mouse.mousewheel);
+  mouse.element.removeEventListener('DOMMouseScroll',mouse.mousewheel);
+  mc=M.MouseConstraint.create(engine,{mouse,constraint:{stiffness:.2,render:{visible:false}}});
+  M.Composite.add(engine.world,mc);
+  runner=M.Runner.create();M.Runner.run(runner,engine);
+  draw();
+  status(pieces.length+' pieces, '+fontCount+' page fonts. dropping in a moment - you can grab them.');
+  setTimeout(drop,1500);
+}
+const cs0=(fw,e)=>fw.getComputedStyle(e).display;
+
+function drop(){
+  if(!engine)return;
+  engine.gravity.y=1;
+  pieces.forEach(p=>{
+    const delay=(H-p.b.position.y)/H*1400+Math.random()*200;
+    setTimeout(()=>{if(!engine)return;M.Body.setStatic(p.b,false);M.Body.setAngularVelocity(p.b,(Math.random()-.5)*.08)},delay);
+  });
+}
+
+function draw(){
+  pieces.forEach(p=>{
+    const {x,y}=p.b.position;
+    p.el.style.transform=`translate(${x-p.w/2}px,${y-p.h/2}px) rotate(${p.b.angle}rad)`;
+  });
+  raf=requestAnimationFrame(draw);
+}
+
+function teardown(){
+  cancelAnimationFrame(raf);
+  if(runner)M.Runner.stop(runner);
+  if(engine){M.Composite.clear(engine.world,false);M.Engine.clear(engine)}
+  engine=runner=null;
+  pieces.forEach(p=>p.el.remove());pieces=[];
+  stage.style.height='';frame.classList.remove('hide');
+}
+function again(){
+  if(!frame.contentDocument||!frame.contentDocument.body||!frame.srcdoc)return status('load a page first.');
+  teardown();requestAnimationFrame(()=>makePieces());
+}
+
+// QR image scanning
+$('#file').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const fr=new FileReader();
+  fr.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      const cv=document.createElement('canvas');
+      const s=Math.min(1,1200/Math.max(img.width,img.height));
+      cv.width=img.width*s;cv.height=img.height*s;
+      const cx=cv.getContext('2d');cx.drawImage(img,0,0,cv.width,cv.height);
+      const d=cx.getImageData(0,0,cv.width,cv.height);
+      const res=window.jsQR&&jsQR(d.data,d.width,d.height);
+      if(res&&res.data){$('#q').value=res.data;status('qr decoded.');load(res.data)}
+      else status("couldn't find a qr code in that image.");
+    };
+    img.src=fr.result;
+  };
+  fr.readAsDataURL(f);e.target.value='';
+});
+
+$('#go').onclick=()=>load($('#q').value);
+$('#q').addEventListener('keydown',e=>{if(e.key==='Enter')load(e.target.value)});
+$('#demo').onclick=()=>build(DEMO,location.href);
+$('#again').onclick=again;
+$('#rawgo').onclick=()=>{const v=$('#raw').value;if(v.trim())build(v,location.href)};
+</script>
+</body>
+</html>
