@@ -2415,6 +2415,7 @@ body[data-kind="classic"] .only-complex {display:none !important}
         .ddrop [role^="menuitem"]:focus-visible { box-shadow: inset 0 0 0 2px var(--accent) }
         .ddrop .tick { flex: none; width: 14px; color: var(--accent); text-align: center; font-size: 12px }
         .ddrop .subarrow { margin-left: auto; padding-left: 14px; display: flex; color: var(--muted) }
+        .ddrop .lhint { margin-left: auto; padding-left: 22px; color: var(--muted); opacity: .8; font-size: .92em }
         .ddrop .subarrow svg { width: 10px; height: 10px }
         /* the on/off switch for toggles in a menu (auto light/dark) */
         .ddrop .tsw { margin-left: auto; flex: none; position: relative; box-sizing: border-box; width: 30px; height: 16px; border-radius: 999px; border: 1px solid var(--muted); transition: background .15s, border-color .15s }
@@ -2882,6 +2883,25 @@ html[data-ui="paper"] #app .btn, html[data-ui="paper"] #app .cbtn, html[data-ui=
         /* custom equation box: the input's text must stay invisible and match the highlight overlay's size, or the two layers show as doubled text.
            the themed field rules (colour, 13px font size) out-ranked .eqinput / #ceq, so pin them here for every theme */
         html[data-ui] #app input#ceq { color: transparent; font-size: 16px }
+        /* every themed field rule (colour, 12.5-13.5px size, border width) out-ranked .eqinput, so the real text showed through the colour overlay.
+           the input and its overlay now take identical metrics from the same variables, in every theme */
+        .eqbox { --eqfs: 15px; --eqh: 36px; --eqbw: 1px }
+        .eqwrap .eqbox { --eqfs: 16px; --eqh: 42px }
+        .fnin .eqbox { --eqfs: 14px; --eqh: 30px }
+        html[data-ui="brutal"] .eqbox, html[data-ui="gdrg"] .eqbox, html[data-ui="contrast"] .eqbox { --eqbw: 2px }
+        html[data-ui] #app .eqbox input.eqinput {
+            color: transparent; -webkit-text-fill-color: transparent; caret-color: var(--ink);
+            font-family: var(--mono); font-size: var(--eqfs); font-weight: 400; font-style: normal; line-height: normal;
+            letter-spacing: 0; text-transform: none; font-variant-ligatures: none;
+            height: var(--eqh); padding: 0 10px; border-width: var(--eqbw); box-sizing: border-box
+        }
+        html[data-ui] #app .eqbox input.eqinput::selection { background: color-mix(in srgb, var(--accent) 35%, transparent); color: transparent }
+        html[data-ui] #app .eqbox .eqhl {
+            font-family: var(--mono); font-size: var(--eqfs); font-weight: 400; line-height: normal;
+            letter-spacing: 0; text-transform: none; font-variant-ligatures: none;
+            height: var(--eqh); padding: 0 10px; border-width: var(--eqbw); box-sizing: border-box; color: var(--ink)
+        }
+        html[data-ui] #app .eqbox .eqhl .tk-kw, html[data-ui] #app .eqbox .eqhl .tk-param { font-weight: 400 }
         html[data-ui="brutal"] .eqhl { border-width: 2px }
 
         /* "i" speech bubbles: the dropdowns' swing entrance (ddswing), hinged at the bubble's tail so it swings out of its button */
@@ -3114,7 +3134,16 @@ html[data-ui="paper"] #app .btn, html[data-ui="paper"] #app .cbtn, html[data-ui=
             document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', go) : go();
         })();
     </script>
-    <header id="topbar">
+    <style>
+/* ported from gravity basins: wider saved-view popup, rename box, wrapping details, base look for the tab rename box */
+#markPop{width:280px;max-width:calc(100vw - 16px)}
+#markPop .mname{display:block;box-sizing:border-box;width:100%;margin:0 0 10px;padding:6px 9px;border:1px solid var(--line);border-radius:8px;background:var(--field);color:var(--ink);font:600 13px var(--sans);outline:none}
+#markPop .mname::placeholder{color:var(--muted);font-weight:500}
+#markPop .mname:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent)}
+#markPop dl{display:flex;flex-wrap:wrap;align-items:baseline;gap:5px 12px}#markPop dt{flex:0 0 auto}#markPop dd{flex:1 1 auto;overflow-wrap:break-word}
+#app input[type=text].tedit{position:fixed;z-index:5000;margin:0;height:30px;padding:0 8px;box-sizing:border-box;font-weight:600;letter-spacing:normal;text-transform:none;background:var(--panel);color:var(--ink);border:2px solid var(--accent);border-radius:8px;box-shadow:0 6px 18px -6px rgba(0,0,0,.55);outline:none}
+</style>
+<header id="topbar">
         <a class="tbLogo" href="./" aria-label="fractalengine: back to the main page" title="back to the main page"><span class="logo-f">f(<span class="acc">e²</span>)</span> <span class="logo-name">fractal<span class="acc">engine<span class="sup3d">2D</span></span></span></a>
         <nav id="tbMenus" aria-label="menus"></nav>
         <button id="tbSetups" class="tbGear" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="uiPop" title="interface setups" aria-label="interface setups">
@@ -3281,12 +3310,14 @@ html[data-ui="paper"] #app .btn, html[data-ui="paper"] #app .cbtn, html[data-ui=
         </div>
         <label class="check"><input class="sw" type="checkbox" id="autoiter" checked> more iterations as you zoom in</label>
         <p class="hint" style="margin:2px 0 8px">the slider sets the count at the starting zoom; each ×10 of zoom adds 100 more, up to 4000.</p>
+        <label class="check"><input class="sw" type="checkbox" id="adaptres" checked> lower resolution while moving</label>
+        <p class="hint" style="margin:2px 0 8px">heavy views (deep zoom, many iterations) draw at a lower resolution while you pan or zoom, then sharpen when you stop. turn off to always render at full resolution.</p>
         <div class="field">
           <div class="head"><label class="lbl" for="bail" style="margin:0">escape radius</label><span id="bailv">32</span></div>
           <input id="bail" type="range" min="0.3" max="3" step="0.01" value="1.505">
         </div>
         <div style="margin-top:14px"><label class="lbl" for="cmode">coloring</label>
-          <select id="cmode"><option value="0">escape time</option><option value="1">convergence (roots)</option></select></div>
+          <select id="cmode"><option value="0">escape time</option><option value="1">convergence (roots)</option><option value="2">escape + convergence</option></select></div>
         <div class="row" style="grid-template-columns:1fr 84px;margin-top:14px">
           <label for="degree" style="color:var(--ink)">degree, for smooth bands</label>
           <input id="degree" type="number" min="1.1" max="16" step="0.1" value="2">
@@ -3377,6 +3408,7 @@ html[data-ui="paper"] #app .btn, html[data-ui="paper"] #app .cbtn, html[data-ui=
           <button class="btn" id="copyImage" type="button">copy image</button>
           <button class="btn" id="savePng" type="button">save image</button>
           <button class="btn" id="copyLink" type="button">copy link</button>
+<button class="btn" id="shareLink" type="button">share link</button><button class="btn" id="expSetup" type="button">export setup (.json)</button><button class="btn" id="impSetup" type="button">import setup…</button>
         </div>
         <div class="btnrow only-complex">
           <select id="shaderFmt" aria-label="shader export format">
@@ -3426,6 +3458,7 @@ html[data-ui="paper"] #app .btn, html[data-ui="paper"] #app .cbtn, html[data-ui=
                             <select id="uiTheme">
                                 <option value="solid">flat</option>
                                 <option value="glass">frosted glass</option>
+                                <option value="liquid">liquid glass</option>
                                 <option value="gdrg">gamedevrg.com</option>
                                 <option value="terminal">terminal</option>
                                 <option value="paper">paper</option>
@@ -3493,11 +3526,12 @@ html[data-ui="paper"] #app .btn, html[data-ui="paper"] #app .cbtn, html[data-ui=
                 log: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4.5l4 3.5-4 3.5M8.5 12h4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
                 pop: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5L7.5 8.5M12 10v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
             };
+            ICON.grp = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5l5.5 3-5.5 3-5.5-3 5.5-3zM2.5 8.5L8 11.5l5.5-3M2.5 11.5L8 14.5l5.5-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
             const badge = document.createElement('span'); badge.id = 'conBadge'; badge.hidden = true; badge.textContent = '0';
             function makeTab(id, label, tid, unitId) {
                 const b = document.createElement('button'); b.type = 'button'; b.className = 'dtab'; b.id = tid;
                 b.setAttribute('role', 'tab'); b.setAttribute('aria-controls', unitId); b.dataset.panel = id;
-                b.innerHTML = ICON[id] || ICON.sec; const tl = document.createElement('span'); tl.className = 'tl'; tl.textContent = label; b.appendChild(tl); return b;
+                b.innerHTML = ICON[id] || (/^grp\d/.test(id) ? ICON.grp : ICON.sec); const tl = document.createElement('span'); tl.className = 'tl'; tl.textContent = label; b.appendChild(tl); return b;
             }
             const P = {
                 ctl: { id: 'ctl', name: 'controls', unit: $('ctlUnit'), tab: makeTab('ctl', 'controls', 'tabCtl', 'ctlUnit'), loc: 'left', home: 'left', win: null, w: 420, h: 0 },
@@ -3729,6 +3763,12 @@ html[data-ui="paper"] #app .btn, html[data-ui="paper"] #app .cbtn, html[data-ui=
             function groupInto(ids, hostId) {
                 ids = [].concat(ids);
                 const b = P[hostId]; if (!b || !ids.length || !P[ids[0]]) return;
+                if (ids.includes('log')) {   // the log never becomes a category: it stays a tab or a bar of its own, the others still group
+                    ids = ids.filter(i => i !== 'log');
+                    if (P.log.loc === 'group') leaveGroup(P.log);
+                    place('log', docks[b.loc] ? b.loc : 'left');
+                    if (!ids.length || ids.includes(b.id)) return;
+                }
                 const hostFloat = b.loc === 'float' && !!b.win;
                 if (ids.includes(b.id) || b.id === 'log' || (!docks[b.loc] && !hostFloat)) { ids.forEach(i => place(i, docks[b.loc] ? b.loc : 'left')); return; }
                 const edge = b.loc, a0 = P[ids[0]], from = a0.win ? a0.win.getBoundingClientRect() : null;
@@ -3760,7 +3800,7 @@ html[data-ui="paper"] #app .btn, html[data-ui="paper"] #app .cbtn, html[data-ui=
 
             /* ---------- renaming a tab: click its name (on the tab you're already on), double-click any, or F2 ---------- */
             function rename(id, v) {
-                const p = P[id]; if (!p) return;
+                const p = P[id]; if (!p || !p.group) return;   // only custom groups have a name of their own
                 p.name = v; p.unit.dataset.title = v;
                 const tl = p.tab.querySelector('.tl'); if (tl) tl.textContent = v;
                 if (p.winTitle) p.winTitle.textContent = v;
@@ -3769,7 +3809,7 @@ html[data-ui="paper"] #app .btn, html[data-ui="paper"] #app .cbtn, html[data-ui=
                 L('ui', 'tab renamed → ' + v, 'debug');
             }
             function startRename(id) {
-                const p = P[id]; if (!p || p.editing || !p.tab.isConnected) return;
+                const p = P[id]; if (!p || !p.group || p.editing || !p.tab.isConnected) return;
                 const tl = p.tab.querySelector('.tl'); if (!tl) return;
                 const r = tl.getBoundingClientRect(), cs = getComputedStyle(p.tab);
                 p.editing = true;
@@ -3890,6 +3930,7 @@ html[data-ui="paper"] #app .btn, html[data-ui="paper"] #app .cbtn, html[data-ui=
             function dropTarget(x, y, id, dragWin) {
                 const inside = r => x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
                 const many = !!dragWin && winPanels(dragWin).length > 1;   // a window with several tabs can't go back into the controls
+                const hasLog = id === 'log' || (!!dragWin && winPanels(dragWin).some(q => q.id === 'log'));   // the log can be a tab or a bar, never a category of something else
                 if (id && P[id] && P[id].sec && !many) {   // a section dropped on the controls goes back into them (not on their tab strip: that adds a tab)
                     const el = ctlEl(), r = el && el.getBoundingClientRect();
                     if (r && inside(r) && !(el.classList.contains('dock') && inside(docks[el.dataset.edge].tabs.getBoundingClientRect()))) return { back: true, el };
@@ -3900,7 +3941,7 @@ html[data-ui="paper"] #app .btn, html[data-ui="paper"] #app .cbtn, html[data-ui=
                 if (tw) {
                     const host = P[tw._active];
                     if (inside(tw.querySelector('.phead').getBoundingClientRect())) return { win: tw, join: true, zone: 'tab' };
-                    if (!host || host.id === 'log' || host.id === id) return { win: tw, join: true, zone: 'tab', noCat: !!host && host.id === 'log' };
+                    if (!host || host.id === 'log' || host.id === id || hasLog) return { win: tw, join: true, zone: 'tab', noCat: hasLog ? 'dragLog' : (!!host && host.id === 'log') };
                     return { win: tw, join: true, zone: 'body', host: host.id };
                 }
                 for (const e of EDGES) {
@@ -3909,7 +3950,7 @@ html[data-ui="paper"] #app .btn, html[data-ui="paper"] #app .cbtn, html[data-ui=
                     if (!inside(d.el.getBoundingClientRect())) continue;
                     if (inside(d.tabs.getBoundingClientRect())) return { edge: e, join: true, zone: 'tab' };   // over the tabs: a new tab
                     const host = d.active && P[d.active];                                                   // over the body: a category of the panel showing
-                    if (!host || host.id === 'log' || host.id === id) return { edge: e, join: true, zone: 'tab', noCat: !!host && host.id === 'log' };
+                    if (!host || host.id === 'log' || host.id === id || hasLog) return { edge: e, join: true, zone: 'tab', noCat: hasLog ? 'dragLog' : (!!host && host.id === 'log') };
                     return { edge: e, join: true, zone: 'body', host: host.id };
                 }
                 const dist = { left: x, right: innerWidth - x, top: y - app.getBoundingClientRect().top, bottom: innerHeight - y }; let best = null;
@@ -3935,7 +3976,7 @@ html[data-ui="paper"] #app .btn, html[data-ui="paper"] #app .cbtn, html[data-ui=
                 const r = t.win ? (t.zone === 'body' ? t.win.querySelector('.pbody') : t.win.querySelector('.phead')).getBoundingClientRect() : t.back ? t.el.getBoundingClientRect() : t.zone === 'body' ? docks[t.edge].slot.getBoundingClientRect() : t.zone === 'tab' ? docks[t.edge].tabs.getBoundingClientRect() : targetRect(t);
                 if (prev.hidden) { prev.style.transition = 'none'; prev.style.left = r.left + 'px'; prev.style.top = r.top + 'px'; prev.style.width = r.width + 'px'; prev.style.height = r.height + 'px'; prev.hidden = false; void prev.offsetWidth; prev.style.transition = ''; }
                 prev.style.left = r.left + 'px'; prev.style.top = r.top + 'px'; prev.style.width = r.width + 'px'; prev.style.height = r.height + 'px';
-                prevLbl.textContent = t.back ? 'put back in the controls' : t.zone === 'body' ? 'add to \u201c' + P[t.host].name + '\u201d as a category' : t.join ? (t.noCat ? 'add as a tab \u00b7 the log takes no categories' : 'add as a tab') : 'snap to the ' + t.edge;
+                prevLbl.textContent = t.back ? 'put back in the controls' : t.zone === 'body' ? 'add to \u201c' + P[t.host].name + '\u201d as a category' : t.join ? (t.noCat === 'dragLog' ? 'add as a tab \u00b7 the log can\u2019t be a category' : t.noCat ? 'add as a tab \u00b7 the log takes no categories' : 'add as a tab') : 'snap to the ' + t.edge;
                 prev.hidden = false;
             }
             function finishDrag(id, ev) {
@@ -4011,12 +4052,12 @@ html[data-ui="paper"] #app .btn, html[data-ui="paper"] #app .cbtn, html[data-ui=
                 const p = P[id], b = p.tab;
                 b.addEventListener('click', e => {
                     if (suppress) { suppress = false; return; }
-                    if (e.target.closest('.tl') && (p.loc === 'float' ? !!p.win && p.win._active === id : docks[p.loc] && docks[p.loc].active === id)) { startRename(id); return; }   // a click on the name of the tab you're on edits it
+                    if (p.group && e.target.closest('.tl') && (p.loc === 'float' ? !!p.win && p.win._active === id : docks[p.loc] && docks[p.loc].active === id)) { startRename(id); return; }   // a click on the name of the tab you're on edits it
                     activate(id);
                 });
-                b.addEventListener('dblclick', e => { if (e.target.closest('.tl')) startRename(id); });
+                b.addEventListener('dblclick', e => { if (P[id] && P[id].group && e.target.closest('.tl')) startRename(id); });
                 b.addEventListener('keydown', e => {
-                    if (e.key === 'F2') { e.preventDefault(); startRename(id); return; }
+                    if (e.key === 'F2' && p.group) { e.preventDefault(); startRename(id); return; }
                     const here = p.loc === 'float' ? (p.win ? winPanels(p.win).filter(i => !P[i].hidden) : []) : hereOf(p.loc), k = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
                     if (!k || here.length < 2) return;
                     e.preventDefault(); const nx = here[(here.indexOf(id) + k + here.length) % here.length]; activate(nx); P[nx].tab.focus();
@@ -4650,9 +4691,10 @@ vec3 shade(vec2 p){
   vec2 c, z;
   if(uJulia==1){ z=p; c=uC; } else { c=p; z=startZ(c); }
   vec3 inside=vec3(0.012,0.012,0.018);
-  if(uColorMode==0){
+  if(uColorMode!=1){
     for(int i=0;i<5000;i++){
       if(i>=uMaxIter) break;
+      vec2 zp=z;
       z=f(z,c);
       float m2=dot(z,z);
       if(!(m2<uBail2)){
@@ -4663,6 +4705,7 @@ vec3 shade(vec2 p){
         }
         return pal(sm*0.03*uDensity+uOffset);
       }
+      if(uColorMode==2){ vec2 dz=z-zp; if(dot(dz,dz)<1e-12) return pal(float(i)*0.05*uDensity+uOffset+0.5)*0.6; }
     }
     return inside;
   } else {
@@ -4718,9 +4761,10 @@ vec3 shade(vec2 p){
   vec2 c, z;
   if(uJulia==1){ z=p; c=uC; } else { c=p; z=startZ(c); }
   vec3 inside=vec3(0.012,0.012,0.018);
-  if(uColorMode==0){
+  if(uColorMode!=1){
     for(int i=0;i<5000;i++){
       if(i>=uMaxIter) break;
+      vec2 zp=z;
       z=f(z,c);
       float m2=dot(z,z);
       if(!(m2<uBail2)){
@@ -4731,6 +4775,7 @@ vec3 shade(vec2 p){
         }
         return pal(sm*0.03*uDensity+uOffset);
       }
+      if(uColorMode==2){ vec2 dz=z-zp; if(dot(dz,dz)<1e-12) return pal(float(i)*0.05*uDensity+uOffset+0.5)*0.6; }
     }
     return inside;
   } else {
@@ -4773,7 +4818,7 @@ function shaderExportInfoLines(){
     S.mode === 'mandel' ? ('start z0: ' + S.z0.trim()) : ('julia c: ' + S.c[0] + ' + ' + S.c[1] + 'i'),
     'view: center ' + S.view.x + ' + ' + S.view.y + 'i, scale ' + S.view.s,
     'iterations: ' + S.iter + ', bail: ' + S.bail + ', degree: ' + S.degree,
-    'color mode: ' + (S.colorMode ? 'convergence (roots)' : 'escape time') + ', palette: ' + P.name,
+    'color mode: ' + ['escape time', 'convergence (roots)', 'escape + convergence'][S.colorMode] + ', palette: ' + P.name,
     S.params.length ? ('parameters: ' + S.params.map(p => p.name + ' = ' + p.value).join(', ')) : ''
   ].filter(Boolean);
 }
@@ -5156,8 +5201,9 @@ vec3 shadeP(vec2 e0){
     vec2 dn=pdelta(Zn,C,d,dC);
     vec2 Zm=refZ(n+1);
     vec2 z=Zm+uS*dn;
-    if(uColorMode==0){
+    if(uColorMode!=1){
       float m2=dot(z,z);
+      if(uColorMode==2){ vec2 dd2=z-(Zn+uS*d); if(dot(dd2,dd2)<1e-12){ if(uProbe==1) return vec3(0.0); return pal(float(i)*0.05*uDensity+uOffset+0.5)*0.6; } }
       if(!(m2<uBail2)){
         if(uProbe==1) return vec3(0.0);
         float sm=float(i);
@@ -5327,21 +5373,48 @@ function shadeRgb(rgbStr, f){
 }
 
 const PRESETS = [
-  {id:'mandelbrot', name:'mandelbrot set',            eq:'z^2 + c',                 mode:'mandel', view:[-0.5,0,1.35]},
-  {id:'julia',      name:'julia set',                 eq:'z^2 + c',                 mode:'julia',  view:[0,0,1.4], c:[-0.8,0.156], iter:300},
-  {id:'rabbit',     name:'douady rabbit',             eq:'z^2 + c',                 mode:'julia',  view:[0,0,1.5], c:[-0.123,0.745]},
-  {id:'ship',       name:'burning ship',              eq:'abs(z)^2 + conj(c)',      mode:'mandel', view:[-0.5,0.5,1.7], iter:300},
-  {id:'tricorn',    name:'tricorn',                   eq:'conj(z)^2 + c',           mode:'mandel', view:[-0.3,0,1.6]},
-  {id:'cubic',      name:'cubic multibrot',           eq:'z^3 + c',                 mode:'mandel', view:[0,0,1.5], degree:3},
-  {id:'quintic',    name:'quintic multibrot',         eq:'z^5 + c',                 mode:'mandel', view:[0,0,1.3], degree:5},
-  {id:'fraction',   name:'fractional power',          eq:'z^(2 + a) + c',           mode:'mandel', view:[-0.4,0,1.6], a:0.5},
-  {id:'morph',      name:'morphing quadratic',        eq:'z^2 + a*z + c',           mode:'mandel', view:[-0.3,0,1.6], a:0.6},
-  {id:'logistic',   name:'logistic map',              eq:'c*z*(1 - z)',             mode:'mandel', z0:'0.5', view:[1,0,1.8]},
-  {id:'sine',       name:'sine julia',                eq:'c*sin(z)',                mode:'julia',  z0:'pi/2', view:[0,0,4], c:[1,0.3], iter:150, mview:[0,0,4]},
-  {id:'exp',        name:'exponential julia',         eq:'c*exp(z)',                mode:'julia',  view:[0.5,0,4], c:[0.35,0.2], iter:150, mview:[0,0,3]},
-  {id:'newton3',    name:'newton, z³ − 1',            eq:'z - (z^3 - 1)/(3z^2)',    mode:'julia',  view:[0,0,2], colorMode:1, iter:60, inset:false},
-  {id:'newton5',    name:'newton, z⁵ − 1',            eq:'z - (z^5 - 1)/(5z^4)',    mode:'julia',  view:[0,0,2], colorMode:1, iter:60, inset:false},
-  {id:'relaxed',    name:'relaxed newton (uses a)',   eq:'z - a*(z^3 - 1)/(3z^2)',  mode:'julia',  view:[0,0,2], colorMode:1, iter:80, a:1.0, inset:false}
+  /* classic sets */
+  {grp:'classic sets', id:'mandelbrot', name:'mandelbrot set',            eq:'z^2 + c',                 mode:'mandel', view:[-0.5,0,1.35]},
+  {grp:'classic sets', id:'julia',      name:'julia set',                 eq:'z^2 + c',                 mode:'julia',  view:[0,0,1.4], c:[-0.8,0.156], iter:300},
+  {grp:'classic sets', id:'rabbit',     name:'douady rabbit',             eq:'z^2 + c',                 mode:'julia',  view:[0,0,1.5], c:[-0.123,0.745]},
+  {grp:'classic sets', id:'tricorn',    name:'tricorn (mandelbar)',       eq:'conj(z)^2 + c',           mode:'mandel', view:[-0.3,0,1.6]},
+  {grp:'classic sets', id:'cubic',      name:'cubic multibrot',           eq:'z^3 + c',                 mode:'mandel', view:[0,0,1.5], degree:3},
+  {grp:'classic sets', id:'quintic',    name:'quintic multibrot',         eq:'z^5 + c',                 mode:'mandel', view:[0,0,1.3], degree:5},
+  {grp:'classic sets', id:'cubebar',    name:'cubic tricorn',             eq:'conj(z)^3 + c',           mode:'mandel', view:[0,0,1.5], degree:3},
+  {grp:'classic sets', id:'fraction',   name:'fractional power',          eq:'z^(2 + a) + c',           mode:'mandel', view:[-0.4,0,1.6], a:0.5},
+  {grp:'classic sets', id:'morph',      name:'morphing quadratic',        eq:'z^2 + a*z + c',           mode:'mandel', view:[-0.3,0,1.6], a:0.6},
+  {grp:'classic sets', id:'logistic',   name:'logistic map',              eq:'c*z*(1 - z)',             mode:'mandel', z0:'0.5', view:[1,0,1.8]},
+  /* absolute-value folds */
+  {grp:'absolute-value folds', id:'ship',      name:'burning ship',            eq:'abs(z)^2 + conj(c)',                    mode:'mandel', view:[-0.5,0.5,1.7], iter:300},
+  {grp:'absolute-value folds', id:'ship3',     name:'burning ship, cubed',     eq:'abs(z)^3 + c',                          mode:'mandel', view:[0,0,1.5], degree:3, iter:300},
+  {grp:'absolute-value folds', id:'celtic',    name:'celtic mandelbrot',       eq:'abs(re(z^2)) + i*im(z^2) + c',          mode:'mandel', view:[-0.5,0,1.7], iter:300},
+  {grp:'absolute-value folds', id:'celticbar', name:'celtic mandelbar',        eq:'abs(re(conj(z)^2)) + i*im(conj(z)^2) + c', mode:'mandel', view:[-0.3,0,1.7], iter:300},
+  {grp:'absolute-value folds', id:'buffalo',   name:'buffalo',                 eq:'abs(z^2) + c',                          mode:'mandel', view:[-0.4,-0.1,1.7], iter:300},
+  {grp:'absolute-value folds', id:'heart',     name:'heart mandelbrot',        eq:'(abs(re(z)) + i*im(z))^2 + c',          mode:'mandel', view:[-0.4,0,1.2], iter:300},
+  {grp:'absolute-value folds', id:'perpship',  name:'perpendicular burning ship', eq:'(abs(re(z)) - i*im(z))^2 + c',       mode:'mandel', view:[-0.4,0,1.7], iter:300},
+  /* rational and magnetic maps */
+  {grp:'rational & magnetic', id:'magnet1', name:'magnet, type I',  eq:'((z^2 + c - 1)/(2*z + c - 2))^2', mode:'mandel', view:[1,0,2.8], c:[1.6,0.4], jview:[1,0,3.2], colorMode:2, bail:100, iter:120},
+  {grp:'rational & magnetic', id:'magnet2', name:'magnet, type II', eq:'((z^3 + 3*(c - 1)*z + (c - 1)*(c - 2))/(3*z^2 + 3*(c - 2)*z + (c - 1)*(c - 2) + 1))^2', mode:'mandel', view:[1,0,2.8], c:[1.2,0.5], jview:[1,0,2.2], colorMode:2, bail:100, iter:120},
+  {grp:'rational & magnetic', id:'feather', name:'feather',         eq:'z^3/(1 + z^2) + c', mode:'mandel', view:[0,0,0.9], c:[0.3,0.4], iter:200},
+  {grp:'rational & magnetic', id:'laurent', name:'z² + c/z²',       eq:'z^2 + c/z^2', z0:'c^0.25', mode:'mandel', view:[0,0,0.3], c:[0.04,0.0], jview:[0,0,1.6], iter:200},
+  {grp:'rational & magnetic', id:'inverse', name:'inverted mandelbrot (z² + 1/c)', eq:'z^2 + 1/c', mode:'mandel', view:[0,0,2.2], iter:200},
+  {grp:'rational & magnetic', id:'nova',    name:'nova (uses a)',   eq:'z - a*(z^3 - 1)/(3*z^2) + c', z0:'1', mode:'mandel', view:[0,0,1.6], c:[0.1,0.1], jview:[0,0,1.6], colorMode:2, a:1.0, iter:80, bail:32},
+  {grp:'rational & magnetic', id:'tetration', name:'tetration (c^z)', eq:'c^z', z0:'1', mode:'mandel', view:[-0.9,0,3.0], iter:150, bail:32},
+  /* transcendental maps */
+  {grp:'transcendental', id:'sine',    name:'sine julia',          eq:'c*sin(z)',        mode:'julia',  z0:'pi/2', view:[0,0,4], c:[1,0.3], iter:150, mview:[0,0,4]},
+  {grp:'transcendental', id:'exp',     name:'exponential julia',   eq:'c*exp(z)',        mode:'julia',  view:[0.5,0,4], c:[0.35,0.2], iter:150, mview:[0,0,3]},
+  {grp:'transcendental', id:'cosine',  name:'cosine set',          eq:'c*cos(z)',        mode:'mandel', view:[0,0,4], c:[1,0.3], jview:[0,0,5], iter:150},
+  {grp:'transcendental', id:'sinemand',name:'sine + c',            eq:'sin(z) + c',      mode:'mandel', z0:'pi/2', view:[0,0,4], c:[1,0.3], jview:[0,0,5], iter:150},
+  {grp:'transcendental', id:'expmand', name:'exponential + c',     eq:'exp(z) + c',      mode:'mandel', view:[0.8,0,3], c:[-1,1], jview:[0,0,5], iter:150},
+  {grp:'transcendental', id:'gauss',   name:'gaussian + c',        eq:'exp(-z^2) + c',   mode:'mandel', view:[0,0,3.2], c:[0.2,0.5], jview:[0,0,2.2], iter:150},
+  {grp:'transcendental', id:'collatz', name:'collatz (analytic)',  eq:'(7*z + 2 - (5*z + 2)*cos(pi*z))/4', mode:'julia', view:[0,0,3], iter:80, bail:32, inset:false},
+  /* newton and relatives */
+  {grp:'newton & relatives', id:'newton3', name:'newton, z³ − 1',            eq:'z - (z^3 - 1)/(3z^2)',    mode:'julia',  view:[0,0,2], colorMode:1, iter:60, inset:false},
+  {grp:'newton & relatives', id:'newton5', name:'newton, z⁵ − 1',            eq:'z - (z^5 - 1)/(5z^4)',    mode:'julia',  view:[0,0,2], colorMode:1, iter:60, inset:false},
+  {grp:'newton & relatives', id:'newton8', name:'newton, z⁸ + 15z⁴ − 16',    eq:'z - (z^8 + 15*z^4 - 16)/(8*z^7 + 60*z^3)', mode:'julia', view:[0,0,2], colorMode:1, iter:80, inset:false},
+  {grp:'newton & relatives', id:'newtoncyc', name:'newton, z³ − 2z + 2 (cycle)', eq:'z - (z^3 - 2*z + 2)/(3*z^2 - 2)', mode:'julia', view:[-0.3,0,1.6], colorMode:1, iter:60, inset:false},
+  {grp:'newton & relatives', id:'halley',  name:'halley, z³ − 1',            eq:'z - 2*(z^3 - 1)*3*z^2/(2*9*z^4 - (z^3 - 1)*6*z)', mode:'julia', view:[0,0,2], colorMode:1, iter:60, inset:false},
+  {grp:'newton & relatives', id:'relaxed', name:'relaxed newton (uses a)',   eq:'z - a*(z^3 - 1)/(3z^2)',  mode:'julia',  view:[0,0,2], colorMode:1, iter:80, a:1.0, inset:false}
 ];
 
 const CLASSICS = [
@@ -5352,7 +5425,29 @@ const CLASSICS = [
   {id:'koch',       name:'koch snowflake',       minD:0, maxD:6,  defD:4,  view:[0,0.05,1.7],
     desc:'each edge of a triangle is replaced by four shorter edges with a triangular bump, again and again.'},
   {id:'dragon',     name:'dragon curve',         minD:1, maxD:16, defD:12, view:[0.15,0.05,1.3],
-    desc:'a single folded strip of paper: take the curve, copy it, rotate the copy a quarter turn, and join them — repeatedly.'}
+    desc:'a single folded strip of paper: take the curve, copy it, rotate the copy a quarter turn, and join them — repeatedly.'},
+  {id:'levy', name:'lévy c curve', minD:1, maxD:15, defD:12, view:[0,0,1.15], render:'line', gen:d => genLevy(d),
+    desc:'replace every segment by two segments meeting at a right angle, over and over. the curve folds into a ragged c shape.'},
+  {id:'hilbert', name:'hilbert curve', minD:1, maxD:7, defD:5, view:[0,0,1.15], render:'line', gen:d => genHilbert(d),
+    desc:'a single unbroken line that passes through every cell of a grid, and fills the square in the limit.'},
+  {id:'gosper', name:'gosper curve', minD:1, maxD:5, defD:4, view:[0,0,1.15], render:'line', gen:d => genGosper(d),
+    desc:'the flowsnake: a line made of seven copies of itself that fills a hexagon-like island with a fractal coastline.'},
+  {id:'arrowhead', name:'sierpinski arrowhead', minD:1, maxD:9, defD:7, view:[0,0,1.15], render:'line', gen:d => genArrow(d),
+    desc:'one continuous line that traces out the sierpinski triangle.'},
+  {id:'minkowski', name:'minkowski island', minD:0, maxD:4, defD:3, view:[0,0,1.15], render:'line', gen:d => genMinkowski(d),
+    desc:'each side of a square is replaced by eight shorter sides with square bumps and dents, again and again.'},
+  {id:'vicsek', name:'vicsek fractal', minD:1, maxD:5, defD:4, view:[0,0,1.15], render:'rects', gen:d => genVicsek(d),
+    desc:'a square split into a 3×3 grid, keeping only the centre and the four edge squares, so a plus sign is left each time.'},
+  {id:'cantor', name:'cantor dust', minD:1, maxD:6, defD:5, view:[0,0,1.15], render:'rects', gen:d => genCantor(d),
+    desc:'the cantor set in two dimensions: keep only the four corner squares of a 3×3 grid, again and again.'},
+  {id:'tsquare', name:'t-square', minD:1, maxD:7, defD:5, view:[0,0,1.15], render:'rects', gen:d => genTSquare(d),
+    desc:'put a half-size square on each corner of a square, then do the same for every new square.'},
+  {id:'pythagoras', name:'pythagoras tree', minD:1, maxD:12, defD:10, view:[0,0,1.15], render:'polys', gen:d => genPythagoras(d),
+    desc:'a square carries a right triangle, whose two legs carry two smaller squares, and so on, branching like a tree.'},
+  {id:'htree', name:'h-tree', minD:1, maxD:12, defD:9, view:[0,0,1.15], render:'segs', gen:d => genHTree(d),
+    desc:'an h shape whose four tips each carry a smaller h turned a quarter turn. it fills the plane with a branching grid.'},
+  {id:'fern', name:'barnsley fern', minD:1, maxD:6, defD:4, view:[0,0,1.15], render:'points', gen:d => genFern(d),
+    desc:'a fern drawn by four simple affine maps applied at random. the number of points doubles with each step of detail.'}
 ];
 
 const FN_COLORS = ['#ffd166','#06d6a0','#ef476f','#4cc9f0','#f78c6b','#c77dff'];
@@ -5362,7 +5457,7 @@ const mq = window.matchMedia('(max-width:760px)');
 let sideVis = 1, introCap = 0, forceHQ = false;
 const S = {
   eq:'', z0:'0', mode:'mandel', c:[-0.8,0.156], iter:250, bail:32, degree:2,
-  colorMode:0, palette:'spectrum', customPalettes:[], density:1, offset:0, aa:true, deep:true, autoIter:true, showInset:true,
+  colorMode:0, palette:'spectrum', customPalettes:[], density:1, offset:0, aa:true, deep:true, autoIter:true, adaptRes:true, showInset:true,
   params:[{name:'a', value:0.5, min:-3, max:3, animate:false, aMin:-2, aMax:2}],
   kind:'complex', classic:{id:'sierpinski', depth:6},
   view:toView([-0.5,0,1.35]), inset:toView([-0.5,0,1.5]),
@@ -5487,7 +5582,7 @@ function draw(){
   /* while the view is moving, expensive frames (deep zoom, many iterations) are drawn at a lower resolution and
      the browser stretches them; the sharp frame follows as soon as movement stops */
   let q = 1;
-  if (lowQ && !forceHQ && S.kind === 'complex'){
+  if (S.adaptRes && lowQ && !forceHQ && S.kind === 'complex'){
     const it = iterEff();
     if (S.deep && deepWanted(g)) q = it > 1500 ? 0.35 : 0.5; else if (it > 600) q = 0.6;
   }
@@ -5665,8 +5760,10 @@ function orbitOf(start){
     if (!isFinite(zn[0]) || !isFinite(zn[1])){ status = 'escaped'; break; }
     pts.push(zn);
     const m2 = zn[0] * zn[0] + zn[1] * zn[1];
-    if (S.colorMode === 0){ if (m2 >= B2){ status = 'escaped'; break; } }
-    else {
+    if (S.colorMode !== 1){
+      if (m2 >= B2){ status = 'escaped'; break; }
+      if (S.colorMode === 2){ const dx = zn[0] - z[0], dy = zn[1] - z[1]; if (dx * dx + dy * dy < 1e-12){ status = 'converged'; break; } }
+    } else {
       const dx = zn[0] - z[0], dy = zn[1] - z[1];
       if (dx * dx + dy * dy < 1e-10){ status = 'converged'; break; }
       if (m2 > 1e12){ status = 'escaped'; break; }
@@ -5767,6 +5864,120 @@ function genDragon(depth){
   }
   return pts;
 }
+
+/* ---------- more classic fractals. each generator returns shapes already fitted to the [-1, 1] box ---------- */
+function lsys(axiom, rules, depth){ let s = axiom; for (let k = 0; k < depth; k++){ let t = ''; for (const ch of s) t += rules[ch] || ch; s = t; } return s; }
+function turtlePts(str, angDeg, drawChars, startAng){
+  const da = angDeg * Math.PI / 180, pts = [[0, 0]]; let a = startAng || 0, x = 0, y = 0;
+  for (const ch of str){
+    if (drawChars.includes(ch)){ x += Math.cos(a); y += Math.sin(a); pts.push([x, y]); }
+    else if (ch === '+') a += da; else if (ch === '-') a -= da;
+  }
+  return pts;
+}
+function boxOf(pts){
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  pts.forEach(p => { if (p[0] < x0) x0 = p[0]; if (p[0] > x1) x1 = p[0]; if (p[1] < y0) y0 = p[1]; if (p[1] > y1) y1 = p[1]; });
+  return {k:2 / Math.max(x1 - x0, y1 - y0, 1e-9), cx:(x0 + x1) / 2, cy:(y0 + y1) / 2};
+}
+const fitPts = pts => { const b = boxOf(pts); return pts.map(p => [(p[0] - b.cx) * b.k, (p[1] - b.cy) * b.k]); };
+function fitRects(rs){                                    // [x, y, size] squares
+  const b = boxOf(rs.flatMap(r => [[r[0], r[1]], [r[0] + r[2], r[1] + r[2]]]));
+  return rs.map(r => [(r[0] - b.cx) * b.k, (r[1] - b.cy) * b.k, r[2] * b.k]);
+}
+function fitPolys(ps){
+  const b = boxOf(ps.flat());
+  return ps.map(q => q.map(p => [(p[0] - b.cx) * b.k, (p[1] - b.cy) * b.k]));
+}
+const genLevy = depth => {
+  let pts = [[-0.5, 0], [0.5, 0]];
+  for (let k = 0; k < depth; k++){
+    const out = [pts[0]];
+    for (let i = 1; i < pts.length; i++){
+      const a = pts[i - 1], b = pts[i], dx = b[0] - a[0], dy = b[1] - a[1];
+      out.push([(a[0] + b[0]) / 2 - dy / 2, (a[1] + b[1]) / 2 + dx / 2], b);
+    }
+    pts = out;
+  }
+  return fitPts(pts);
+};
+const genHilbert = depth => fitPts(turtlePts(lsys('A', {A:'-BF+AFA+FB-', B:'+AF-BFB-FA+'}, depth), 90, 'F'));
+const genGosper = depth => fitPts(turtlePts(lsys('A', {A:'A-B--B+A++AA+B-', B:'+A-BB--B-A++A+B'}, depth), 60, 'AB'));
+const genArrow = depth => fitPts(turtlePts(lsys('A', {A:'B-A-B', B:'A+B+A'}, depth), 60, 'AB', depth % 2 ? Math.PI / 3 : 0));
+function genMinkowski(depth){
+  let pts = [[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1]];
+  for (let k = 0; k < depth; k++){
+    const out = [pts[0]];
+    for (let i = 1; i < pts.length; i++){
+      const a = pts[i - 1], b = pts[i], ux = (b[0] - a[0]) / 4, uy = (b[1] - a[1]) / 4, vx = -uy, vy = ux;
+      const q = (m, n) => [a[0] + m * ux + n * vx, a[1] + m * uy + n * vy];
+      out.push(q(1, 0), q(1, 1), q(2, 1), q(2, 0), q(2, -1), q(3, -1), q(3, 0), b);
+    }
+    pts = out;
+  }
+  return fitPts(pts);
+}
+function gridRects(cells, depth){
+  const out = [];
+  (function rec(x, y, size, d){
+    if (d <= 0){ out.push([x, y, size]); return; }
+    const s = size / 3;
+    cells.forEach(c => rec(x + c[0] * s, y + c[1] * s, s, d - 1));
+  })(0, 0, 1, depth);
+  return fitRects(out);
+}
+const genVicsek = depth => gridRects([[1,0],[0,1],[1,1],[2,1],[1,2]], depth);
+const genCantor = depth => gridRects([[0,0],[2,0],[0,2],[2,2]], depth);
+function genTSquare(depth){
+  const out = [];
+  (function rec(cx, cy, size, d){
+    out.push([cx - size / 2, cy - size / 2, size]);
+    if (d <= 0) return;
+    [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(s => rec(cx + s[0] * size / 2, cy + s[1] * size / 2, size / 2, d - 1));
+  })(0, 0, 1, depth - 1);
+  return fitRects(out);
+}
+function genPythagoras(depth){
+  const out = [];
+  (function rec(A, B, d){
+    const ex = B[0] - A[0], ey = B[1] - A[1];
+    const C = [B[0] - ey, B[1] + ex], D = [A[0] - ey, A[1] + ex];
+    out.push([A, B, C, D]);
+    if (d <= 1) return;
+    const cx = C[0] - D[0], cy = C[1] - D[1];
+    const E = [(D[0] + C[0]) / 2 - cy / 2, (D[1] + C[1]) / 2 + cx / 2];
+    rec(D, E, d - 1); rec(E, C, d - 1);
+  })([-0.5, 0], [0.5, 0], depth);
+  return fitPolys(out);
+}
+function genFern(depth){
+  let seed = 20240607; const rnd = () => { seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const N = 3000 * Math.pow(2, depth - 1), pts = [];
+  let x = 0, y = 0;
+  for (let i = 0; i < N + 20; i++){
+    const r = rnd(); let nx, ny;
+    if (r < 0.01){ nx = 0; ny = 0.16 * y; }
+    else if (r < 0.86){ nx = 0.85 * x + 0.04 * y; ny = -0.04 * x + 0.85 * y + 1.6; }
+    else if (r < 0.93){ nx = 0.2 * x - 0.26 * y; ny = 0.23 * x + 0.22 * y + 1.6; }
+    else { nx = -0.15 * x + 0.28 * y; ny = 0.26 * x + 0.24 * y + 0.44; }
+    x = nx; y = ny; if (i >= 20) pts.push([x, y]);
+  }
+  const f = fitPts(pts), bins = Array.from({length:64}, () => []);
+  f.forEach(p => { const a = Math.atan2(p[1], p[0]) / (2 * Math.PI); bins[Math.min(63, Math.floor((((a % 1) + 1) % 1) * 64))].push(p); });
+  return bins;
+}
+function genHTree(depth){
+  const out = [];
+  (function rec(cx, cy, len, d, horiz){
+    const dx = horiz ? len / 2 : 0, dy = horiz ? 0 : len / 2;
+    const a = [cx - dx, cy - dy], b = [cx + dx, cy + dy];
+    out.push([a, b]);
+    if (d <= 1) return;
+    rec(a[0], a[1], len / Math.SQRT2, d - 1, !horiz); rec(b[0], b[1], len / Math.SQRT2, d - 1, !horiz);
+  })(0, 0, 1, depth, true);
+  const b = boxOf(out.flat());
+  return out.map(s => s.map(p => [(p[0] - b.cx) * b.k, (p[1] - b.cy) * b.k]));
+}
 /* colors a piece by where it actually sits in space (angle around the figure's centre),
    rather than by its arbitrary position in the recursion order — so empty gaps read as
    gaps between neighbouring colors, instead of the palette jumping around at random. */
@@ -5812,6 +6023,41 @@ function drawClassic(g){
       const cx = (pts[i-1][0]+pts[i][0])/2, cy = (pts[i-1][1]+pts[i][1])/2;
       octx.strokeStyle = jsPal(P, spaceT(cx, cy));
       octx.beginPath(); octx.moveTo(a[0],a[1]); octx.lineTo(b[0],b[1]); octx.stroke();
+    }
+  } else if (cfg.gen){
+    const key = cfg.id + ':' + depth, data = classicCache[key] || (classicCache[key] = cfg.gen(depth));
+    if (cfg.render === 'rects'){
+      data.forEach(sq => {
+        const a = W2S(sq[0], sq[1]+sq[2], g), b = W2S(sq[0]+sq[2], sq[1], g);
+        octx.fillStyle = jsPal(P, spaceT(sq[0]+sq[2]/2, sq[1]+sq[2]/2));
+        octx.fillRect(Math.min(a[0],b[0]), Math.min(a[1],b[1]), Math.abs(b[0]-a[0])+0.6, Math.abs(b[1]-a[1])+0.6);
+      });
+    } else if (cfg.render === 'polys'){
+      data.forEach(q => {
+        octx.beginPath(); let cx = 0, cy = 0;
+        q.forEach((p, i) => { const s = W2S(p[0], p[1], g); if (i) octx.lineTo(s[0], s[1]); else octx.moveTo(s[0], s[1]); cx += p[0] / q.length; cy += p[1] / q.length; });
+        octx.closePath(); octx.fillStyle = jsPal(P, spaceT(cx, cy)); octx.fill();
+      });
+    } else if (cfg.render === 'line'){
+      octx.lineJoin = 'round'; octx.lineCap = 'round'; octx.lineWidth = data.length > 20000 ? 1 : 1.5;
+      for (let i = 1; i < data.length; i++){
+        const a = W2S(data[i-1][0], data[i-1][1], g), b = W2S(data[i][0], data[i][1], g);
+        octx.strokeStyle = jsPal(P, spaceT((data[i-1][0]+data[i][0])/2, (data[i-1][1]+data[i][1])/2));
+        octx.beginPath(); octx.moveTo(a[0], a[1]); octx.lineTo(b[0], b[1]); octx.stroke();
+      }
+    } else if (cfg.render === 'segs'){
+      octx.lineCap = 'round'; octx.lineWidth = 1.4;
+      data.forEach(s => {
+        const a = W2S(s[0][0], s[0][1], g), b = W2S(s[1][0], s[1][1], g);
+        octx.strokeStyle = jsPal(P, spaceT((s[0][0]+s[1][0])/2, (s[0][1]+s[1][1])/2));
+        octx.beginPath(); octx.moveTo(a[0], a[1]); octx.lineTo(b[0], b[1]); octx.stroke();
+      });
+    } else if (cfg.render === 'points'){
+      const sz = data.length > 0 ? 1.6 : 1.6;
+      data.forEach((bin, k) => {
+        octx.fillStyle = jsPal(P, (((k + 0.5) / 64 + S.offset + S.phase) % 1 + 1) % 1);
+        bin.forEach(p => { const s = W2S(p[0], p[1], g); octx.fillRect(s[0], s[1], sz, sz); });
+      });
     }
   }
   octx.restore();
@@ -6313,7 +6559,12 @@ mq.addEventListener('change', () => { if (!S.docked && !cmapFlying) floatCmap();
    7. ui wiring
    ===================================================================== */
 const presetSel = $('#preset');
-PRESETS.forEach(p => presetSel.add(new Option(p.name, p.id)));
+{ const groups = {};
+  PRESETS.forEach(p => {
+    let tgt = presetSel;
+    if (p.grp){ if (!groups[p.grp]){ groups[p.grp] = document.createElement('optgroup'); groups[p.grp].label = p.grp; presetSel.appendChild(groups[p.grp]); } tgt = groups[p.grp]; }
+    tgt.appendChild(new Option(p.name, p.id));
+  }); }
 presetSel.add(new Option('custom', ''));
 
 const CHIPS = [['z','z'],['c','c'],['a','a'],['i','i'],['π','pi'],['^','^'],['( )','()'],['sin','sin()'],['cos','cos()'],['exp','exp()'],['log','log()'],['abs','abs()'],['conj','conj()']];
@@ -6504,6 +6755,7 @@ function tick(t){
 }
 function startAnim(){ if (!animRaf){ lastT = performance.now(); animRaf = requestAnimationFrame(tick); } }
 
+$('#adaptres').addEventListener('change', e => { S.adaptRes = e.target.checked; bump(); render(); });
 $('#autoiter').addEventListener('change', e => { S.autoIter = e.target.checked; bump(); render(); });
 $('#iter').addEventListener('input', e => { S.iter = +e.target.value; $('#iterv').textContent = S.iter; bump(); render(); });
 $('#bail').addEventListener('input', e => {
@@ -6771,13 +7023,13 @@ function showSide(open) {
 }
 toggleBtn.addEventListener('click', () => showSide(app.classList.contains('collapsed')));
 
-const UI_THEMES = ['solid', 'glass', 'gdrg', 'terminal', 'paper', 'synth', 'brutal', 'slate', 'amethyst', 'blueprint', 'sakura', 'forest', 'contrast'];
+const UI_THEMES = ['solid', 'glass', 'liquid', 'gdrg', 'terminal', 'paper', 'synth', 'brutal', 'slate', 'amethyst', 'blueprint', 'sakura', 'forest', 'contrast'];
 const THEME_FONTS = { terminal: 'family=JetBrains+Mono:wght@400;500;700', paper: 'family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700', synth: 'family=Exo+2:wght@400;500;600;700', brutal: 'family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700' };
 function loadThemeFont(k) { const f = THEME_FONTS[k]; if (!f || document.getElementById('tf-' + k)) return; const l = document.createElement('link'); l.id = 'tf-' + k; l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?' + f + '&display=swap'; document.head.appendChild(l); }
 function setSide(style) {
     if (!UI_THEMES.includes(style)) style = 'solid';
-    S.side = style; app.dataset.side = style; store.set('side', style);
-    if (style === 'solid' || style === 'glass') delete document.documentElement.dataset.ui; else { document.documentElement.dataset.ui = style; loadThemeFont(style); }   // the root flag reaches the top bar and the body-level popups too
+    S.side = style; app.dataset.side = style === 'liquid' ? 'glass' : style; app.toggleAttribute('data-liquid', style === 'liquid'); store.set('side', style);
+    if (style === 'solid' || style === 'glass' || style === 'liquid') delete document.documentElement.dataset.ui; else { document.documentElement.dataset.ui = style; loadThemeFont(style); }   // the root flag reaches the top bar and the body-level popups too
     $('#uiTheme').value = style;
 }
 $('#uiTheme').addEventListener('change', e => setSide(e.target.value));
@@ -6901,7 +7153,7 @@ Object.keys(THEMES).forEach(k => THEMES[k].addEventListener('click', () => setTh
 /* ---------- state snapshots: used by saved views and the link ---------- */
 function snap(){
   return {v:2, eq:S.eq, z0:S.z0, m:S.mode, c:S.c.slice(), it:S.iter, b:S.bail, d:S.degree, cm:S.colorMode,
-    pal:S.palette, de:S.density, o:S.offset, vw:[S.view.x, S.view.y, S.view.s], dp:S.deep, ai:S.autoIter, vh:(S.deep && S.kind === 'complex' && S.view.s < 1e-9) ? hpStrings() : undefined, iv:[S.inset.x, S.inset.y, S.inset.s],
+    pal:S.palette, de:S.density, o:S.offset, vw:[S.view.x, S.view.y, S.view.s], dp:S.deep, ai:S.autoIter, ar:S.adaptRes, vh:(S.deep && S.kind === 'complex' && S.view.s < 1e-9) ? hpStrings() : undefined, iv:[S.inset.x, S.inset.y, S.inset.s],
     df:[S.def.mandel, S.def.julia], si:S.showInset,
     pr:S.params.map(p => ({n:p.name, v:p.value, mn:p.min, mx:p.max, an:p.animate, ai:p.aMin, ax:p.aMax})),
     k:S.kind, ci:S.classic.id, cd:S.classic.depth};
@@ -6949,12 +7201,12 @@ function loadSnap(o, fly){
   S.iter = Math.round(numIn(o.it, 250, 20, 2000));
   S.bail = numIn(o.b, 32, 1.5, 1000);
   S.degree = numIn(o.d, 2, 1.1, 16);
-  S.colorMode = o.cm === 1 ? 1 : 0;
+  S.colorMode = (o.cm === 1 || o.cm === 2) ? o.cm : 0;
   S.palette = loadPaletteId(o);
   S.density = numIn(o.de, 1, 0.1, 4);
   S.offset = numIn(o.o, 0, 0, 1);
   S.showInset = o.si !== false;
-  S.deep = o.dp !== false; S.autoIter = o.ai !== false;
+  S.deep = o.dp !== false; S.autoIter = o.ai !== false; S.adaptRes = o.ar !== false;
   S.kind = o.k === 'classic' ? 'classic' : 'complex';
   if (CLASSICS.some(c => c.id === o.ci)) S.classic.id = o.ci;
   if (typeof o.cd === 'number' && isFinite(o.cd)) S.classic.depth = Math.round(o.cd);
@@ -7096,7 +7348,88 @@ function currentLabel(){
   return S.kind === 'classic' ? (CLASSICS.find(c => c.id === S.classic.id) || {name:''}).name : S.eq;
 }
 function updateAddCaption(){ if (addTileCap) addTileCap.textContent = currentLabel(); }
+function removeMark(m, el){
+  el.classList.add('out');
+  setTimeout(() => { marks = marks.filter(k => k !== m); store.set('views', marks); renderMarks(); }, 170);
+}
+/* the info window opened from a saved view's menu button */
+const markTile = m => m.name || m.s.eq;
+const markPop = (() => {
+  let box = null, cur = null, btn = null;
+  const onoff = v => v === undefined || v === null ? '–' : (v ? 'on' : 'off');
+  function rows(m){
+    const s = m.s, r = [];
+    const saved = parseInt(m.id, 36);
+    r.push(['zoom', '×' + (m.z || '1')]);
+    if (saved > 1e11) r.push(['saved', new Date(saved).toLocaleString([], {dateStyle:'medium', timeStyle:'short'})]);
+    if (s.k === 'classic'){
+      if (typeof s.cd === 'number') r.push(['depth', String(s.cd)]);
+      return r;
+    }
+    r.push(['type', s.m === 'julia' ? 'julia' : 'mandelbrot']);
+    if (s.m === 'julia' && Array.isArray(s.c) && s.c.length === 2 && s.c.every(Number.isFinite))
+      r.push(['c', (+s.c[0]).toFixed(4) + (s.c[1] < 0 ? ' − ' : ' + ') + Math.abs(+s.c[1]).toFixed(4) + 'i']);
+    const pal = findPalette(s.pal); if (pal) r.push(['palette', pal.name]);
+    if (typeof s.it === 'number') r.push(['iterations', String(s.it)]);
+    if (typeof s.b === 'number') r.push(['bailout', String(s.b)]);
+    if (typeof s.eq === 'string') r.push(['equation', s.eq]);
+    if (typeof s.z0 === 'string' && s.z0.trim() && s.z0.trim() !== '0') r.push(['start z', s.z0]);
+    if (Array.isArray(s.pr) && s.pr.length) r.push(['parameters', s.pr.map(p => p.n + ' = ' + (+p.v).toFixed(2)).join(', ')]);
+    r.push(['deep zoom', onoff(s.dp)]);
+    return r;
+  }
+  function build(m, el){
+    box.textContent = '';
+    const dflt = m.s.k === 'classic' ? ((CLASSICS.find(c => c.id === m.s.ci) || {name:'geometric fractal'}).name) : (m.s.m === 'julia' ? 'julia' : 'mandelbrot');
+    const h = document.createElement('input');
+    h.type = 'text'; h.className = 'mname'; h.maxLength = 40; h.autocomplete = 'off'; h.spellcheck = false;
+    h.value = m.name || ''; h.placeholder = dflt;
+    h.setAttribute('aria-label', 'name this saved view');
+    const commit = () => {
+      const v = h.value.trim().slice(0, 40);
+      if ((m.name || '') === v) return;
+      if (v) m.name = v; else delete m.name;
+      store.set('views', marks);
+      const t = el && el.querySelector('.cap b'); if (t) t.textContent = markTile(m);
+    };
+    h.addEventListener('input', commit);
+    h.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter' || e.key === 'Escape'){ e.preventDefault(); commit(); const b2 = btn; close(); if (b2) b2.focus(); } });
+    box.appendChild(h);
+    const dl = document.createElement('dl');
+    rows(m).forEach(([k, v]) => { const dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = k; dd.textContent = v; dl.appendChild(dt); dl.appendChild(dd); });
+    box.appendChild(dl);
+    const acts = document.createElement('div'); acts.className = 'macts';
+    const mk = (label, cls, fn) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = label; if (cls) b.className = cls; b.addEventListener('click', fn); acts.appendChild(b); return b; };
+    mk('jump to view', '', () => { close(); loadSnap(m.s, true); });
+    mk('copy link', '', async () => { const url = location.href.split('#')[0] + '#v=' + b64e(JSON.stringify(m.s)); close(); toast(await copyText(url) ? 'link copied' : 'could not copy the link'); });
+    mk('delete', 'danger', () => { close(); removeMark(m, el); });
+    box.appendChild(acts);
+  }
+  function place(){
+    if (!cur) return;
+    const r = btn.getBoundingClientRect(), w = box.offsetWidth, h = box.offsetHeight;
+    let left = Math.min(Math.max(8, r.right - w), innerWidth - w - 8);
+    let top = r.bottom + 6; if (top + h > innerHeight - 8) top = Math.max(8, r.top - h - 6);
+    box.style.left = left + 'px'; box.style.top = top + 'px';
+  }
+  function open(m, b, el){
+    if (!box){
+      box = document.createElement('div'); box.id = 'markPop'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', 'saved view details');
+      document.body.appendChild(box);
+      document.addEventListener('pointerdown', e => { if (cur && !box.contains(e.target) && !btn.contains(e.target)) close(); }, true);
+      document.addEventListener('keydown', e => { if (cur && e.key === 'Escape'){ const b2 = btn; close(); b2.focus(); } });
+      addEventListener('resize', () => close());
+      addEventListener('scroll', e => { if (cur && (e.target === document || (e.target.contains && e.target.contains(btn)))) place(); }, true);
+    }
+    close(); cur = m; btn = b; b.setAttribute('aria-expanded', 'true');
+    build(m, el); box.classList.add('show'); place();
+    const first = box.querySelector('button'); if (first && b.matches(':focus-visible')) first.focus();
+  }
+  function close(){ if (!cur) return; box.classList.remove('show'); btn.setAttribute('aria-expanded', 'false'); cur = null; btn = null; }
+  return {toggle(m, b, el){ cur === m ? close() : open(m, b, el); }, close};
+})();
 function renderMarks(newId){
+  markPop.close();
   const box = $('#marks'); box.textContent = '';
   marks.forEach(m => {
     const el = document.createElement('div'); el.className = 'mark';
@@ -7105,18 +7438,17 @@ function renderMarks(newId){
     go.title = 'fly back to this view';
     if (/^data:image\/jpeg;base64,/.test(m.thumb || '')){ const img = document.createElement('img'); img.src = m.thumb; img.alt = ''; go.appendChild(img); }
     const cap = document.createElement('span'); cap.className = 'cap';
-    const b = document.createElement('b'); b.textContent = m.s.eq;
+    const b = document.createElement('b'); b.textContent = markTile(m);
     cap.appendChild(b);
     const kindLbl = m.s.k === 'classic' ? 'geometric fractal' : (m.s.m === 'julia' ? 'julia' : 'mandelbrot');
     cap.appendChild(document.createTextNode(kindLbl + ', zoom ×' + (m.z || '1')));
     go.appendChild(cap);
     go.addEventListener('click', () => loadSnap(m.s, true));
-    const x = document.createElement('button'); x.type = 'button'; x.className = 'x'; x.textContent = '×'; x.setAttribute('aria-label', 'delete this view');
-    x.addEventListener('click', () => {
-      el.classList.add('out');
-      setTimeout(() => { marks = marks.filter(k => k !== m); store.set('views', marks); renderMarks(); }, 170);
-    });
-    el.appendChild(go); el.appendChild(x); box.appendChild(el);
+    const more = document.createElement('button'); more.type = 'button'; more.className = 'more';
+    more.setAttribute('aria-label', 'about this saved view'); more.setAttribute('aria-haspopup', 'dialog'); more.setAttribute('aria-expanded', 'false');
+    more.innerHTML = '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle class="rd" cx="3.5" cy="8" r="1.4"/><circle class="rd" cx="8" cy="8" r="1.4"/><circle class="rd" cx="12.5" cy="8" r="1.4"/><rect class="sq" x="2.2" y="6.7" width="2.6" height="2.6" style="display:none"/><rect class="sq" x="6.7" y="6.7" width="2.6" height="2.6" style="display:none"/><rect class="sq" x="11.2" y="6.7" width="2.6" height="2.6" style="display:none"/></svg>';
+    more.addEventListener('click', e => { e.stopPropagation(); markPop.toggle(m, more, el); });
+    el.appendChild(go); el.appendChild(more); box.appendChild(el);
   });
   const add = document.createElement('button');
   add.type = 'button'; add.className = 'mark add';
@@ -7230,7 +7562,7 @@ function syncUI(){
   syncClassicUI();
   $('#showInset').checked = S.showInset;
   $('#cycle').checked = S.cycle;
-  $('#iter').value = S.iter; $('#iterv').textContent = S.iter; $('#autoiter').checked = S.autoIter;
+  $('#iter').value = S.iter; $('#iterv').textContent = S.iter; $('#autoiter').checked = S.autoIter; $('#adaptres').checked = S.adaptRes;
   $('#bail').value = Math.log10(S.bail).toFixed(3);
   $('#bailv').textContent = S.bail < 10 ? S.bail.toFixed(1) : Math.round(S.bail);
   $('#degree').value = S.degree;
@@ -7246,7 +7578,8 @@ function applyPreset(p){
   const d = Object.assign({mode:'mandel', z0:'0', c:[-0.8,0.156], a:0.5, iter:250, degree:2, colorMode:0, bail:32, jview:[0,0,1.6], mview:[-0.5,0,1.5], inset:true}, p);
   S.kind = 'complex';
   S.eq = d.eq; S.z0 = d.z0; S.mode = d.mode; S.c = d.c.slice();
-  S.params = [{name:'a', value:d.a, min:-3, max:3, animate:false, aMin:-2, aMax:2}];
+  S.params = d.params ? d.params.map(q => ({name:q.name, value:q.value, min:q.min ?? -3, max:q.max ?? 3, animate:false, aMin:Math.max(q.min ?? -3, -2), aMax:Math.min(q.max ?? 3, 2)}))
+                      : [{name:'a', value:d.a, min:-3, max:3, animate:false, aMin:-2, aMax:2}];
   S.iter = d.iter; S.degree = d.degree; S.colorMode = d.colorMode; S.bail = d.bail; S.showInset = d.inset;
   S.def = {mandel:d.mode === 'mandel' ? d.view : d.mview, julia:d.mode === 'julia' ? d.view : d.jview};
   S.view = toView(S.def[S.mode]); S.inset = toView(S.def.mandel);
@@ -7497,6 +7830,23 @@ if (!(loadSnap(readHash(), false) && (S.kind === 'classic' || prog))) applyPrese
     attach();
 })();
 
+
+/* ---------- share link, export and import of a whole setup (ported from gravity basins) ---------- */
+(() => {
+  const link = () => location.href.split('#')[0] + '#v=' + b64e(JSON.stringify(snap()));
+  $('#shareLink').addEventListener('click', async () => {
+    const u = link(); try { history.replaceState(null, '', u.slice(u.indexOf('#'))); } catch (e) {}
+    if (navigator.share){ try { await navigator.share({title: document.title, url: u}); return; } catch (e) { if (e.name === 'AbortError') return; } }
+    toast(await copyText(u) ? 'link copied' : 'could not copy the link');
+  });
+  $('#expSetup').addEventListener('click', () => {
+    const b = new Blob([JSON.stringify(snap(), null, 1)], {type: 'application/json'}), a = document.createElement('a');
+    a.href = URL.createObjectURL(b); a.download = 'fractalengine-setup.json'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); toast('setup exported');
+  });
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'application/json,.json'; inp.hidden = true; document.body.appendChild(inp);
+  $('#impSetup').addEventListener('click', () => inp.click());
+  inp.addEventListener('change', () => { const f = inp.files[0]; if (!f) return; f.text().then(t => { try { loadSnap(JSON.parse(t), true); toast('imported ' + f.name); } catch (e) { toast('that file is not a setup'); } inp.value = ''; }); });
+})();
 startIntro();
 })();
 </script>
@@ -7749,13 +8099,21 @@ startIntro();
         (() => {
             const $ = id => document.getElementById(id);
             const fs = () => !!document.fullscreenElement, cx = () => document.body.dataset.kind === 'complex';
-            const SQ = v => v !== 'solid' && v !== 'glass' && v !== 'paper' && v !== 'brutal' && !['slate', 'amethyst', 'blueprint', 'forest'].includes(v);   // the other themed skins have one fixed look, so the light/dark switch hides (paper and neo brutalist have both)
+            const SQ = v => v !== 'solid' && v !== 'glass' && v !== 'liquid' && v !== 'paper' && v !== 'brutal' && !['slate', 'amethyst', 'blueprint', 'forest'].includes(v);   // the other themed skins have one fixed look, so the light/dark switch hides (paper and neo brutalist have both)
             const ui = () => ($('uiTheme') || {}).value, setUi = v => { const el = $('uiTheme'); el.value = v; el.dispatchEvent(new Event('change', { bubbles: true })); };
             const schemeNow = () => ['auto', 'light', 'dark', 'black'].find(n => { const el = $('t' + n[0].toUpperCase() + n.slice(1)); return el && el.getAttribute('aria-pressed') === 'true'; }) || 'auto';
             const variantsOf = (themeId, list) => list.map(v => ({ label: v, radio: true, on: () => ui() === themeId && schemeNow() === v, run: () => { setUi(themeId); $('t' + v[0].toUpperCase() + v.slice(1)).click(); } }));
+            const LANG_NAMES = {
+                en: { en: 'english', es: 'spanish', ja: 'japanese', zh: 'chinese' },
+                es: { en: 'inglés', es: 'español', ja: 'japonés', zh: 'chino' },
+                ja: { en: '英語', es: 'スペイン語', ja: '日本語', zh: '中国語' },
+                zh: { en: '英语', es: '西班牙语', ja: '日语', zh: '中文' }
+            };
+            const langName = code => code === I18N.lang ? '' : ((LANG_NAMES[I18N.lang] || LANG_NAMES.en)[code] || '');   // the language you are in needs no second name
+
             const MENUS = [
                 { name: 'file', items: [
-                    { src: 'savePng', label: 'save image', key: 's' }, { src: 'copyImage', label: 'copy image' }, { src: 'copyLink', label: 'copy link' },
+                    { src: 'savePng', label: 'save image', key: 's' }, { src: 'copyImage', label: 'copy image' }, { src: 'copyLink', label: 'copy link' }, { src: 'shareLink', label: 'share link' }, '-', { src: 'expSetup', label: 'export setup (.json)' }, { src: 'impSetup', label: 'import setup…' },
                     '-',
                     { src: 'copyShader', label: 'copy shader', when: cx }, { src: 'saveShader', label: 'save shader', when: cx }] },
                 { name: 'view', items: [
@@ -7773,7 +8131,8 @@ startIntro();
                     '-',
                     { src: 'aa', label: 'smooth edges', check: true, when: cx },
                     { src: 'deep', label: 'deep zoom precision', check: true, when: cx },
-                    { src: 'autoiter', label: 'more iterations when zoomed', check: true, when: cx }] },
+                    { src: 'autoiter', label: 'more iterations when zoomed', check: true, when: cx },
+                    { src: 'adaptres', label: 'lower resolution while moving', check: true, when: cx }] },
                 { name: 'color', items: [
                     { label: 'next color theme', key: 'p', run: () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'p', bubbles: true })) },
                     { src: 'cycle', label: 'cycle colors', check: true, key: 'c' }, { src: 'cycleReset', label: 'reset cycle' },
@@ -7783,6 +8142,7 @@ startIntro();
                     /* themes that come in more than one brightness get a second menu that opens beside them. picking a variant there also switches to that theme. */
                     { label: 'flat', radio: true, on: () => ui() === 'solid', run: () => setUi('solid'), sub: variantsOf('solid', ['light', 'dark', 'black']) },
                     { label: 'frosted glass', radio: true, on: () => ui() === 'glass', run: () => setUi('glass'), sub: variantsOf('glass', ['light', 'dark', 'black']) },
+                    { label: 'liquid glass', radio: true, on: () => ui() === 'liquid', run: () => setUi('liquid'), sub: variantsOf('liquid', ['light', 'dark', 'black']) },
                     { label: 'gamedevrg.com', radio: true, on: () => ui() === 'gdrg', run: () => setUi('gdrg') },
                     { label: 'terminal', radio: true, on: () => ui() === 'terminal', run: () => setUi('terminal') },
                     { label: 'paper', radio: true, on: () => ui() === 'paper', run: () => setUi('paper'), sub: variantsOf('paper', ['light', 'dark']) },
@@ -7799,10 +8159,11 @@ startIntro();
                     { label: 'auto', toggle: true, when: () => !SQ(ui()), on: () => schemeNow() === 'auto',
                         run: () => { if (schemeNow() === 'auto') $(matchMedia('(prefers-color-scheme: dark)').matches ? 'tDark' : 'tLight').click(); else $('tAuto').click(); } }] },
                 { name: 'language', items: [
-                    { label: 'English', radio: true, on: () => I18N.lang === 'en', run: () => I18N.set('en') },
-                    { label: 'Español', radio: true, on: () => I18N.lang === 'es', run: () => I18N.set('es') },
-                    { label: '日本語', radio: true, on: () => I18N.lang === 'ja', run: () => I18N.set('ja') },
-                    { label: '中文', radio: true, on: () => I18N.lang === 'zh', run: () => I18N.set('zh') }] }
+                    /* each entry shows its own name on the left and, in lower contrast on the right, what it is called in the language you have selected right now */
+                    { label: 'english', hint: () => langName('en'), radio: true, on: () => I18N.lang === 'en', run: () => I18N.set('en') },
+                    { label: 'español', hint: () => langName('es'), radio: true, on: () => I18N.lang === 'es', run: () => I18N.set('es') },
+                    { label: '日本語', hint: () => langName('ja'), radio: true, on: () => I18N.lang === 'ja', run: () => I18N.set('ja') },
+                    { label: '中文', hint: () => langName('zh'), radio: true, on: () => I18N.lang === 'zh', run: () => I18N.set('zh') }] }
             ];
             /* one highlight bar per dropdown that glides to whichever item is hovered, focused or marked active, instead of each item lighting up on its own */
             window.__feGlideHL = function glideHL(drop) {
@@ -7883,6 +8244,7 @@ startIntro();
                     const tick = document.createElement('span'); tick.className = 'tick'; tick.textContent = (on && !it.toggle) ? '\u2713' : ''; b.appendChild(tick);
                     const lab = document.createElement('span'); lab.textContent = typeof it.label === 'function' ? it.label() : it.label; b.appendChild(lab);
                     if (it.key) { const k = document.createElement('span'); k.className = 'key'; k.textContent = it.key; b.appendChild(k); }
+                    if (it.hint) { const h = it.hint(); if (h) { const k = document.createElement('span'); k.className = 'lhint'; k.textContent = h; b.appendChild(k); } }
                     let sw = null;
                     if (it.toggle) { sw = document.createElement('span'); sw.className = 'tsw' + (on ? ' on' : ''); sw.appendChild(document.createElement('i')); b.appendChild(sw); }
                     if (it.sub) {
@@ -8135,7 +8497,7 @@ startIntro();
 ['fractal type','tipo de fractal','フラクタルの種類','分形类型'],['what is this?','¿qué es esto?','これは何?','这是什么?'],['shape','forma','形状','形状'],
 ['mandelbulb','mandelbulb','マンデルバルブ','曼德尔球'],['mandelbox','mandelbox','マンデルボックス','曼德尔盒'],['sierpinski tetrahedron','tetraedro de sierpinski','シェルピンスキーの四面体','谢尔宾斯基四面体'],['menger sponge','esponja de menger','メンガーのスポンジ','门格海绵'],['quaternion julia','julia cuaterniónico','四元数ジュリア','四元数朱利亚'],['burning ship 3d','barco en llamas 3d','バーニングシップ 3D','燃烧船 3D'],['julia bulb','julia bulb','ジュリアバルブ','朱利亚球'],['apollonian gasket','empaquetado apolíneo','アポロニアンギャスケット','阿波罗尼奥斯垫片'],['custom equation','ecuación personalizada','カスタム方程式','自定义方程'],
 ['step scale','escala de paso','ステップスケール','步长缩放'],['power','potencia','べき乗','幂次'],['level of detail','nivel de detalle','詳細度','细节层次'],['bailout','bailout','発散半径','逃逸半径'],['scale','escala','スケール','缩放'],['fold style','estilo de pliegue','折りたたみの種類','折叠样式'],['thickness','grosor','厚さ','厚度'],['parameters','parámetros','パラメータ','参数'],['add parameter','añadir parámetro','パラメータを追加','添加参数'],
-['rendering','renderizado','レンダリング','渲染'],['max steps','pasos máximos','最大ステップ数','最大步数'],['max distance','distancia máxima','最大距離','最大距离'],['precision','precisión','精度','精度'],['fog','niebla','フォグ','雾'],['ambient occlusion','oclusión ambiental','アンビエントオクルージョン','环境光遮蔽'],['soft shadows','sombras suaves','ソフトシャドウ','柔和阴影'],['specular highlight','brillo especular','スペキュラハイライト','镜面高光'],['post-processing','posprocesado','ポストプロセス','后期处理'],['enable post-processing','activar posprocesado','ポストプロセスを有効にする','启用后期处理'],['bloom','resplandor','ブルーム','泛光'],['threshold','umbral','しきい値','阈值'],['intensity','intensidad','強度','强度'],['radius','radio','半径','半径'],['volumetric lighting','iluminación volumétrica','ボリュームライティング','体积光照'],['depth of field','profundidad de campo','被写界深度','景深'],['vignette','viñeta','ビネット','暗角'],['strength','fuerza','強さ','强度'],['film grain','grano de película','フィルムグレイン','胶片颗粒'],['show fps','mostrar fps','FPSを表示','显示帧率'],['render resolution','resolución de render','レンダー解像度','渲染分辨率'],['tuning','ajustes finos','チューニング','调校'],['reset tuning to defaults','restablecer ajustes por defecto','チューニングを初期値に戻す','将调校恢复默认'],
+['rendering','renderizado','レンダリング','渲染'],['max steps','pasos máximos','最大ステップ数','最大步数'],['max distance','distancia máxima','最大距離','最大距离'],['precision','precisión','精度','精度'],['fog','niebla','フォグ','雾'],['ambient occlusion','oclusión ambiental','アンビエントオクルージョン','环境光遮蔽'],['soft shadows','sombras suaves','ソフトシャドウ','柔和阴影'],['specular highlight','brillo especular','スペキュラハイライト','镜面高光'],['post-processing','posprocesado','ポストプロセス','后期处理'],['enable post-processing','activar posprocesado','ポストプロセスを有効にする','启用后期处理'],['bloom','resplandor','ブルーム','泛光'],['threshold','umbral','しきい値','阈值'],['intensity','intensidad','強度','强度'],['radius','radio','半径','半径'],['volumetric lighting','iluminación volumétrica','ボリュームライティング','体积光照'],['depth of field','profundidad de campo','被写界深度','景深'],['vignette','viñeta','ビネット','暗角'],['strength','fuerza','強さ','强度'],['film grain','grano de película','フィルムグレイン','胶片颗粒'],['show fps','mostrar fps','fpsを表示','显示帧率'],['render resolution','resolución de render','レンダー解像度','渲染分辨率'],['tuning','ajustes finos','チューニング','调校'],['reset tuning to defaults','restablecer ajustes por defecto','チューニングを初期値に戻す','将调校恢复默认'],
 ['field of view','campo de visión','視野角','视野'],['rotate speed','velocidad de giro','回転速度','旋转速度'],['flight speed','velocidad de vuelo','飛行速度','飞行速度'],['lighting','iluminación','ライティング','光照'],['azimuth','acimut','方位角','方位角'],['elevation','elevación','仰角','仰角'],
 ['color themes','temas de color','カラーテーマ','配色方案'],['classic','clásico','クラシック','经典'],['hue','tono','色相','色调'],['custom','personalizado','カスタム','自定义'],['density','densidad','密度','密度'],['shift','desplazamiento','シフト','偏移'],['cycle colors','ciclar colores','色を循環','循环颜色'],['reset cycle','restablecer ciclo','循環をリセット','重置循环'],
 ['save and share','guardar y compartir','保存と共有','保存与分享'],['keyboard','teclado','キーボード','键盘'],['sidebar','barra lateral','サイドバー','侧边栏'],['zoom','zoom','ズーム','缩放'],['zoom in and out','acercar y alejar','拡大・縮小','放大和缩小'],['hide or show the controls','ocultar o mostrar los controles','コントロールの表示/非表示','隐藏或显示控件'],['reset the view','restablecer la vista','表示をリセット','重置视图'],['next color theme','siguiente tema de color','次のカラーテーマ','下一个配色'],
@@ -8252,9 +8614,9 @@ startIntro();
 ["plane pitch", "cabeceo del plano", "平面のピッチ", "平面俯仰"],
 ["plane roll", "alabeo del plano", "平面のロール", "平面翻滚"],
 ["slice zoom", "zoom del corte", "スライスのズーム", "切片缩放"],
-["offset x", "desfase x", "オフセットX", "偏移 X"],
-["offset y", "desfase y", "オフセットY", "偏移 Y"],
-["offset z", "desfase z", "オフセットZ", "偏移 Z"],
+["offset x","desfase x","オフセットx","偏移 x"],
+["offset y","desfase y","オフセットy","偏移 y"],
+["offset z","desfase z","オフセットz","偏移 z"],
 ["inversion factor", "factor de inversión", "反転係数", "反转系数"],
 ["depth (along normal)", "profundidad (en la normal)", "深度 (法線方向)", "深度 (沿法线)"],
 ["orbit / look around", "órbita / mirar alrededor", "オービット/見回す", "环绕/环顾"],
@@ -8308,11 +8670,13 @@ startIntro();
 ["code", "código", "コード", "代码"],
 ["delete", "borrar", "削除", "删除"],
 ["drag to orbit. scroll or pinch to zoom toward the pointer.", "arrastra para orbitar. usa la rueda o pellizca para hacer zoom hacia el puntero.", "ドラッグで回転。スクロールかピンチでポインタ位置にズーム。", "拖动来环绕。滚动或双指缩放,会朝指针处放大。"],
-["drag to pan · scroll to zoom toward the pointer · shift-drag to rotate", "arrastra para mover · rueda para hacer zoom hacia el puntero · mayús + arrastrar para rotar", "ドラッグで移動 · スクロールでポインタ位置にズーム · Shift+ドラッグで回転", "拖动平移 · 滚动朝指针缩放 · Shift+拖动旋转"],
+["drag to pan · scroll to zoom toward the pointer · shift-drag to rotate","arrastra para mover · rueda para hacer zoom hacia el puntero · mayús + arrastrar para rotar","ドラッグで移動 · スクロールでポインタ位置にズーム · shift+ドラッグで回転","拖动平移 · 滚动朝指针缩放 · shift+拖动旋转"],
 ["drag the edge of a bar to resize it. double-click the edge to reset.", "arrastra el borde de una barra para cambiar su tamaño. doble clic en el borde para restablecerlo.", "バーの端をドラッグでサイズ変更。端をダブルクリックでリセット。", "拖动栏的边缘来调整大小。双击边缘可重置。"],
-["this page needs webgl 2, which your browser or device does not provide.", "esta página necesita webgl 2, y tu navegador o dispositivo no lo tiene.", "このページにはWebGL 2が必要ですが、お使いのブラウザや端末は対応していません。", "这个页面需要 WebGL 2,但你的浏览器或设备不支持。"],
-["try a recent version of chrome, edge, firefox or safari.", "prueba con una versión reciente de chrome, edge, firefox o safari.", "最新版のChrome、Edge、Firefox、Safariを試してみてください。", "试试较新版本的 Chrome、Edge、Firefox 或 Safari。"],
-["ray-marched, distance-estimated 3d fractals, drawn live on the gpu. drag the view to look around.", "fractales 3d con ray marching y estimación de distancia, dibujados en vivo en la gpu. arrastra la vista para mirar alrededor.", "レイマーチングと距離推定で描く3Dフラクタルを、GPUでリアルタイム描画。ドラッグで見回せます。", "基于光线步进和距离估计的 3D 分形,在 GPU 上实时绘制。拖动视图来环顾四周。"]]);
+["this page needs webgl 2, which your browser or device does not provide.","esta página necesita webgl 2, y tu navegador o dispositivo no lo tiene.","このページにはwebgl 2が必要ですが、お使いのブラウザや端末は対応していません。","这个页面需要 webgl 2,但你的浏览器或设备不支持。"],
+["try a recent version of chrome, edge, firefox or safari.","prueba con una versión reciente de chrome, edge, firefox o safari.","最新版のchrome、edge、firefox、safariを試してみてください。","试试较新版本的 chrome、edge、firefox 或 safari。"],
+["ray-marched, distance-estimated 3d fractals, drawn live on the gpu. drag the view to look around.","fractales 3D con ray marching y estimación de distancia, dibujados en vivo en la gpu. arrastra la vista para mirar alrededor.","レイマーチングと距離推定で描く3Dフラクタルを、gpuでリアルタイム描画。ドラッグで見回せます。","基于光线步进和距离估计的 3D 分形,在 gpu 上实时绘制。拖动视图来环顾四周。"]]);
+                        /* more translations: tooltips, presets, palettes, shape and fractal names, settings, long help text (no capitals except 2D / 3D) */
+            add([["fractalengine: back to the main page","fractalengine: volver a la página principal","fractalengine: メインページに戻る","fractalengine:返回主页"],["about this app","sobre esta app","このアプリについて","关于这个应用"],["color","color","カラー","颜色"],["interface setups","configuraciones de interfaz","インターフェース設定","界面布局方案"],["settings","ajustes","設定","设置"],["fractal view. drag to pan, scroll or pinch to zoom.","vista del fractal. arrastra para mover, rueda o pellizca para hacer zoom.","フラクタル表示。ドラッグで移動、スクロールかピンチでズーム。","分形视图。拖动平移,滚动或双指捏合缩放。"],["zoom","zoom","ズーム","缩放"],["drag to pan. scroll or pinch to zoom.","arrastra para mover. rueda o pellizca para hacer zoom.","ドラッグで移動。スクロールかピンチでズーム。","拖动平移。滚动或双指捏合缩放。"],["click or drag to choose c. scroll to zoom. double-click to reset.","haz clic o arrastra para elegir c. rueda para hacer zoom. doble clic para reiniciar.","クリックかドラッグでcを選べます。スクロールでズーム、ダブルクリックでリセット。","点击或拖动来选择 c。滚动缩放,双击重置。"],["c map","mapa de c","cマップ","c 地图"],["controls","controles","コントロール","控件"],["log","registro","ログ","日志"],["pop this panel out into a window","sacar este panel a una ventana","このパネルをウィンドウに切り出す","把这个面板弹出成窗口"],["drag to pop out into a window","arrastra para sacarlo a una ventana","ドラッグしてウィンドウに切り出す","拖动来弹出成窗口"],["drag to move — drop on the sidebar to dock, or pull it off the sidebar to float","arrastra para mover: suéltalo en la barra lateral para acoplarlo, o sácalo de ella para que flote","ドラッグで移動。サイドバーにドロップするとドッキング、サイドバーから引き出すと浮きます","拖动来移动:放到侧边栏上就停靠,从侧边栏拉出来就浮动"],["complex map","mapa complejo","複素写像","复数映射"],["geometric","geométrico","幾何学","几何"],["equation","ecuación","方程式","方程"],["applied at every step","se aplica en cada paso","毎ステップで適用","每一步都会应用"],["insert z","insertar z","zを挿入","插入 z"],["insert c","insertar c","cを挿入","插入 c"],["insert a","insertar a","aを挿入","插入 a"],["insert i","insertar i","iを挿入","插入 i"],["insert π","insertar π","πを挿入","插入 π"],["insert ^","insertar ^","^を挿入","插入 ^"],["insert ( )","insertar ( )","( )を挿入","插入 ( )"],["insert sin","insertar sin","sinを挿入","插入 sin"],["insert cos","insertar cos","cosを挿入","插入 cos"],["insert exp","insertar exp","expを挿入","插入 exp"],["insert log","insertar log","logを挿入","插入 log"],["insert abs","insertar abs","absを挿入","插入 abs"],["insert conj","insertar conj","conjを挿入","插入 conj"],["insert sqr","insertar sqr","sqrを挿入","插入 sqr"],["insert boxfold","insertar boxfold","boxfoldを挿入","插入 boxfold"],["insert spherefold","insertar spherefold","spherefoldを挿入","插入 spherefold"],["insert tetrafold","insertar tetrafold","tetrafoldを挿入","插入 tetrafold"],["insert octafold","insertar octafold","octafoldを挿入","插入 octafold"],["insert sortfold","insertar sortfold","sortfoldを挿入","插入 sortfold"],["insert invert","insertar invert","invertを挿入","插入 invert"],["insert kalifold","insertar kalifold","kalifoldを挿入","插入 kalifold"],["insert fractfold","insertar fractfold","fractfoldを挿入","插入 fractfold"],["insert cyclefold","insertar cyclefold","cyclefoldを挿入","插入 cyclefold"],["insert ballfold","insertar ballfold","ballfoldを挿入","插入 ballfold"],["insert cubefold","insertar cubefold","cubefoldを挿入","插入 cubefold"],["insert foldx","insertar foldx","foldxを挿入","插入 foldx"],["insert foldy","insertar foldy","foldyを挿入","插入 foldy"],["insert foldz","insertar foldz","foldzを挿入","插入 foldz"],["names (z, c, i, pi, e)","nombres (z, c, i, pi, e)","名前 (z, c, i, pi, e)","名称 (z, c, i, pi, e)"],["names (z, c, pi, e)","nombres (z, c, pi, e)","名前 (z, c, pi, e)","名称 (z, c, pi, e)"],["your parameters","tus parámetros","自分のパラメータ","你的参数"],["functions","funciones","関数","函数"],["numbers","números","数値","数字"],["operators","operadores","演算子","运算符"],["unknown","desconocido","不明","未知"],["preset","preajuste","プリセット","预设"],["mandelbrot set","conjunto de mandelbrot","マンデルブロ集合","曼德博集"],["julia set","conjunto de julia","ジュリア集合","朱利亚集"],["douady rabbit","conejo de douady","ドゥアディのウサギ","杜阿迪兔子"],["tricorn (mandelbar)","tricornio (mandelbar)","トライコーン (マンデルバー)","三角帽 (mandelbar)"],["cubic multibrot","multibrot cúbico","3次マルチブロ","三次 multibrot"],["quintic multibrot","multibrot quíntico","5次マルチブロ","五次 multibrot"],["cubic tricorn","tricornio cúbico","3次トライコーン","三次三角帽"],["fractional power","potencia fraccionaria","分数べき","分数幂"],["morphing quadratic","cuadrática cambiante","変形する2次式","变形二次式"],["logistic map","mapa logístico","ロジスティック写像","逻辑斯谛映射"],["burning ship","barco en llamas","バーニングシップ","燃烧的船"],["burning ship, cubed","barco en llamas al cubo","バーニングシップ (3乗)","燃烧的船 (三次)"],["celtic mandelbrot","mandelbrot celta","ケルティック・マンデルブロ","凯尔特曼德博"],["celtic mandelbar","mandelbar celta","ケルティック・マンデルバー","凯尔特 mandelbar"],["buffalo","búfalo","バッファロー","水牛"],["heart mandelbrot","mandelbrot corazón","ハート型マンデルブロ","心形曼德博"],["perpendicular burning ship","barco en llamas perpendicular","垂直バーニングシップ","垂直燃烧的船"],["magnet, type I","magnet, tipo 1","マグネット (タイプ1)","磁铁 (1 型)"],["magnet, type II","magnet, tipo 2","マグネット (タイプ2)","磁铁 (2 型)"],["feather","pluma","羽根","羽毛"],["inverted mandelbrot (z² + 1/c)","mandelbrot invertido (z² + 1/c)","反転マンデルブロ (z² + 1/c)","反转曼德博 (z² + 1/c)"],["nova (uses a)","nova (usa a)","ノヴァ (aを使う)","新星 (用到 a)"],["tetration (c^z)","tetración (c^z)","テトレーション (c^z)","超幂 (c^z)"],["sine julia","julia seno","サイン・ジュリア","正弦朱利亚"],["exponential julia","julia exponencial","指数ジュリア","指数朱利亚"],["cosine set","conjunto coseno","コサイン集合","余弦集"],["sine + c","seno + c","サイン + c","正弦 + c"],["exponential + c","exponencial + c","指数 + c","指数 + c"],["gaussian + c","gaussiana + c","ガウス + c","高斯 + c"],["collatz (analytic)","collatz (analítico)","コラッツ (解析的)","考拉兹 (解析)"],["newton, z³ − 1","newton, z³ − 1","ニュートン, z³ − 1","牛顿, z³ − 1"],["newton, z⁵ − 1","newton, z⁵ − 1","ニュートン, z⁵ − 1","牛顿, z⁵ − 1"],["newton, z⁸ + 15z⁴ − 16","newton, z⁸ + 15z⁴ − 16","ニュートン, z⁸ + 15z⁴ − 16","牛顿, z⁸ + 15z⁴ − 16"],["newton, z³ − 2z + 2 (cycle)","newton, z³ − 2z + 2 (ciclo)","ニュートン, z³ − 2z + 2 (循環)","牛顿, z³ − 2z + 2 (循环)"],["halley, z³ − 1","halley, z³ − 1","ハレー, z³ − 1","哈雷, z³ − 1"],["relaxed newton (uses a)","newton relajado (usa a)","緩和ニュートン (aを使う)","松弛牛顿 (用到 a)"],["iteration mode","modo de iteración","反復モード","迭代模式"],["mandelbrot","mandelbrot","マンデルブロ","曼德博"],["julia","julia","ジュリア","朱利亚"],["start z₀","z₀ inicial","開始 z₀","起点 z₀"],["show the c map (click or drag on it to pick c)","mostrar el mapa de c (haz clic o arrastra para elegir c)","cマップを表示 (クリックかドラッグでcを選択)","显示 c 地图 (点击或拖动来选择 c)"],["parameter name","nombre del parámetro","パラメータ名","参数名"],["value","valor","値","数值"],["remove this parameter","quitar este parámetro","このパラメータを削除","删除这个参数"],["min","mín","最小","最小"],["max","máx","最大","最大"],["sweep automatically","barrer automáticamente","自動でスイープ","自动扫动"],["from","desde","開始","从"],["to","hasta","終了","到"],["iterations","iteraciones","反復回数","迭代次数"],["more iterations as you zoom in","más iteraciones al acercar","ズームするほど反復を増やす","放大时自动增加迭代"],["lower resolution while moving","menos resolución al moverse","動かしている間は解像度を下げる","移动时降低分辨率"],["escape radius","radio de escape","発散半径","逃逸半径"],["coloring","coloreado","配色","着色"],["escape time","tiempo de escape","発散時間","逃逸时间"],["convergence (roots)","convergencia (raíces)","収束 (根)","收敛 (根)"],["escape + convergence","escape + convergencia","発散 + 収束","逃逸 + 收敛"],["degree, for smooth bands","grado, para bandas suaves","次数 (滑らかな帯用)","次数,用于平滑色带"],["smooth edges (2×2 sampling)","bordes suaves (muestreo 2×2)","エッジをなめらかに (2×2サンプリング)","平滑边缘 (2×2 采样)"],["deep zoom precision","precisión de zoom profundo","ディープズーム精度","深度缩放精度"],["geometric fractal","fractal geométrico","幾何学フラクタル","几何分形"],["sierpinski triangle","triángulo de sierpinski","シェルピンスキーの三角形","谢尔宾斯基三角形"],["sierpinski carpet","alfombra de sierpinski","シェルピンスキーのカーペット","谢尔宾斯基地毯"],["koch snowflake","copo de nieve de koch","コッホ雪片","科赫雪花"],["dragon curve","curva del dragón","ドラゴン曲線","龙形曲线"],["lévy c curve","curva c de lévy","レヴィのc曲線","莱维 c 曲线"],["hilbert curve","curva de hilbert","ヒルベルト曲線","希尔伯特曲线"],["gosper curve","curva de gosper","ゴスパー曲線","戈斯珀曲线"],["sierpinski arrowhead","punta de flecha de sierpinski","シェルピンスキーの矢じり","谢尔宾斯基箭头"],["minkowski island","isla de minkowski","ミンコフスキー島","闵可夫斯基岛"],["vicsek fractal","fractal de vicsek","ヴィチェク・フラクタル","维切克分形"],["cantor dust","polvo de cantor","カントール塵","康托尔尘埃"],["t-square","t-cuadrado","ティースクエア","t 方块"],["pythagoras tree","árbol de pitágoras","ピタゴラスの木","毕达哥拉斯树"],["h-tree","árbol h","エイチツリー","h 树"],["barnsley fern","helecho de barnsley","バーンズリーのシダ","巴恩斯利蕨"],["depth","profundidad","深さ","深度"],["magenta","magenta","マゼンタ","洋红"],["aurora","aurora","オーロラ","极光"],["red","rojo","赤","红"],["orange","naranja","オレンジ","橙"],["amber","ámbar","アンバー","琥珀"],["lime","lima","ライム","青柠"],["green","verde","緑","绿"],["teal","verde azulado","ティール","青绿"],["blue","azul","青","蓝"],["indigo","índigo","インディゴ","靛蓝"],["violet","violeta","バイオレット","紫罗兰"],["pink","rosa","ピンク","粉"],["mono","mono","モノ","单色"],["lava","lava","溶岩","熔岩"],["vapor","vapor","ベイパー","蒸汽"],["overlays","superposiciones","オーバーレイ","叠加层"],["coordinate plane","plano de coordenadas","座標平面","坐标平面"],["orbit trace","traza de órbita","軌道トレース","轨道追踪"],["clear lines","borrar líneas","線を消去","清除线条"],["reference functions","funciones de referencia","参照関数","参考函数"],["add function","añadir función","関数を追加","添加函数"],["shader export format","formato de exportación del shader","シェーダー書き出し形式","着色器导出格式"],["glsl — as run here (webgl2)","glsl: tal como corre aquí (webgl2)","glsl — ここでの実行そのまま (webgl2)","glsl — 与这里运行的完全一致 (webgl2)"],["glsl — shadertoy-style (values baked in)","glsl: estilo shadertoy (valores fijados)","glsl — shadertoy形式 (値を埋め込み)","glsl — shadertoy 风格 (数值已写死)"],["copy shader","copiar shader","シェーダーをコピー","复制着色器"],["save shader","guardar shader","シェーダーを保存","保存着色器"],["save the current view","guardar la vista actual","今の表示を保存","保存当前视图"],["save fractal","guardar fractal","フラクタルを保存","保存分形"],["terminal","terminal","ターミナル","终端"],["synthwave","synthwave","シンセウェーブ","合成波"],["sakura","sakura","さくら","樱花"],["auto","auto","自動","自动"],["follow ↓","seguir ↓","追従 ↓","跟随 ↓"],["resize the left bar","cambiar el tamaño de la barra izquierda","左バーのサイズを変更","调整左侧栏大小"],["resize the right bar","cambiar el tamaño de la barra derecha","右バーのサイズを変更","调整右侧栏大小"],["resize the top bar","cambiar el tamaño de la barra superior","上バーのサイズを変更","调整顶部栏大小"],["resize the bottom bar","cambiar el tamaño de la barra inferior","下バーのサイズを変更","调整底部栏大小"],["close settings","cerrar ajustes","設定を閉じる","关闭设置"],["animation","animación","アニメーション","动画"],["interface animations","animaciones de la interfaz","インターフェースのアニメーション","界面动画"],["menus, tabs, windows and bars sliding, gliding and fading.","menús, pestañas, ventanas y barras que se deslizan y se desvanecen.","メニュー、タブ、ウィンドウ、バーのスライドやフェード。","菜单、标签页、窗口和栏的滑动与淡入淡出。"],["view animations","animaciones de la vista","表示のアニメーション","视图动画"],["the opening zoom-in, smooth zooming and panning.","el zoom de entrada, y el zoom y desplazamiento suaves.","起動時のズームイン、なめらかなズームと移動。","开场的放大动画,以及平滑的缩放和平移。"],["camera & view animations","animaciones de cámara y vista","カメラと表示のアニメーション","相机与视图动画"],["the opening fly-in, smooth zoom and view reset.","el vuelo de entrada, el zoom suave y el reinicio de la vista.","起動時のフライイン、なめらかなズーム、表示のリセット。","开场的飞入动画、平滑缩放和视图重置。"],["wobbly windows","ventanas gelatinosas","ぷるぷるウィンドウ","晃动的窗口"],["windows hang from your cursor and wobble as you drag them.","las ventanas cuelgan del cursor y se bambolean al arrastrarlas.","ドラッグするとウィンドウがカーソルからぶら下がって揺れます。","拖动时窗口会挂在光标上晃来晃去。"],["cycle the colors","ciclar los colores","色を循環させる","循环变换颜色"],["cycle the colours","ciclar los colores","色を循環させる","循环变换颜色"],["auto-rotate the fractal","girar el fractal automáticamente","フラクタルを自動回転","自动旋转分形"],["on-screen","en pantalla","画面表示","屏幕显示"],["show hints","mostrar pistas","ヒントを表示","显示提示"],["the how-to-move text over the views.","el texto de cómo moverse sobre las vistas.","表示の上に出る操作説明テキスト。","视图上方的操作说明文字。"],["show readout","mostrar lectura","数値表示を出す","显示读数"],["zoom and distance numbers.","números de zoom y distancia.","ズームや距離の数値。","缩放和距离的数值。"],["show zoom buttons","mostrar botones de zoom","ズームボタンを表示","显示缩放按钮"],["saved on this device","guardado en este dispositivo","この端末に保存","保存在此设备上"],["reset interface","restablecer interfaz","インターフェースをリセット","重置界面"],["close interface setups","cerrar configuraciones de interfaz","インターフェース設定を閉じる","关闭界面布局方案"],["name for this setup","nombre de esta configuración","この設定の名前","这个布局方案的名称"],["name this setup","ponle nombre a esta configuración","この設定に名前をつける","给这个布局方案起个名"],["save","guardar","保存","保存"],["include theme & interface settings","incluir tema y ajustes de interfaz","テーマとインターフェース設定を含める","包含主题和界面设置"],["save how your bars, windows and tabs are arranged, and bring it back later.","guarda cómo tienes ordenadas tus barras, ventanas y pestañas, y recupéralo luego.","バー、ウィンドウ、タブの並びを保存して、あとで呼び出せます。","保存你的栏、窗口和标签页的排布,之后随时调出来。"],["shaders","shaders","シェーダー","着色器"],["3d fractal view. drag to orbit, scroll or pinch to zoom.","vista del fractal 3D. arrastra para orbitar, rueda o pellizca para hacer zoom.","3Dフラクタル表示。ドラッグで回転、スクロールかピンチでズーム。","3D 分形视图。拖动环绕,滚动或双指捏合缩放。"],["2d slice view of the fractal. drag to pan, scroll or pinch to zoom.","vista de la rebanada 2D del fractal. arrastra para mover, rueda o pellizca para hacer zoom.","フラクタルの2Dスライス表示。ドラッグで移動、スクロールかピンチでズーム。","分形的 2D 切片视图。拖动平移,滚动或双指捏合缩放。"],["mandelbulb","mandelbulb","マンデルバルブ","曼德博球"],["mandelbox","mandelbox","マンデルボックス","曼德博盒"],["julia bulb","julia bulb","ジュリアバルブ","朱利亚球"],["folding ifs (tetra / octa / menger)","ifs plegable (tetra / octa / menger)","折り畳みifs (四面体 / 八面体 / メンガー)","折叠 ifs (四面体 / 八面体 / 门格尔)"],["folding ifs","ifs plegable","折り畳みifs","折叠 ifs"],["more info","más información","詳細","更多信息"],["bailout","límite de escape","発散しきい値","逃逸阈值"],["c · real","c · real","c · 実部","c · 实部"],["tetrahedron","tetraedro","四面体","四面体"],["octahedron","octaedro","八面体","八面体"],["menger-style","estilo menger","メンガー風","门格尔式"],["tilt-shift","tilt-shift","ティルトシフト","移轴"],["off: measure it at the point you orbit instead","apagado: se mide en el punto que orbitas","オフ: 代わりに周回している点で測る","关闭:改为在你环绕的那个点上测量"],["measure detail at the camera","medir el detalle en la cámara","ディテールをカメラ位置で測る","在相机处测量细节"],["off: whole iterations only","apagado: solo iteraciones enteras","オフ: 整数回の反復のみ","关闭:只用整数次迭代"],["in-between detail levels","niveles de detalle intermedios","中間のディテールレベル","中间的细节级别"],["off: dither between levels per pixel","apagado: tramado entre niveles por píxel","オフ: ピクセルごとにレベル間をディザ","关闭:按像素在级别之间抖动过渡"],["blend levels smoothly","mezclar niveles suavemente","レベルをなめらかにブレンド","平滑混合级别"],["off: change instantly","apagado: cambia al instante","オフ: すぐに切り替わる","关闭:立刻切换"],["ease detail changes","suavizar los cambios de detalle","ディテールの変化をなじませる","缓和细节变化"],["detail ramp-up on load","subida gradual del detalle al cargar","読み込み時にディテールを徐々に上げる","加载时逐步提升细节"],["detail per zoom","detalle por zoom","ズームごとのディテール","每次缩放的细节"],["max extra iterations","máx. de iteraciones extra","追加反復の上限","额外迭代上限"],["rise time","tiempo de subida","上昇時間","上升时间"],["fall time","tiempo de bajada","下降時間","下降时间"],["ramp-up length","duración de la subida","立ち上げの長さ","逐步提升的时长"],["resolution while moving","resolución al moverse","移動中の解像度","移动时的分辨率"],["deep zoom","zoom profundo","ディープズーム","深度缩放"],["relative camera positioning","posición relativa de la cámara","相対カメラ位置","相对相机定位"],["off: plain 32-bit math at every depth","apagado: matemática simple de 32 bits a toda profundidad","オフ: どの深さでも素の32ビット演算","关闭:所有深度都用普通的 32 位运算"],["deep-zoom correction","corrección de zoom profundo","ディープズーム補正","深度缩放校正"],["correction starts at distance","la corrección empieza a esta distancia","補正を始める距離","校正开始的距离"],["keep reference point within","mantener el punto de referencia dentro de","基準点を保つ範囲","参考点保持在范围内"],["pivot sampling radius","radio de muestreo del pivote","ピボットのサンプリング半径","支点采样半径"],["step-out tolerance (0 = off)","tolerancia de salida (0 = apagado)","ステップアウト許容値 (0 = オフ)","跳出容差 (0 = 关闭)"],["shading","sombreado","シェーディング","着色"],["specular sharpness","nitidez especular","スペキュラの鋭さ","高光锐度"],["specular strength","fuerza especular","スペキュラの強さ","高光强度"],["shadow softness","suavidad de sombras","影のやわらかさ","阴影柔和度"],["occlusion strength","fuerza de oclusión","オクルージョンの強さ","遮蔽强度"],["surface sample size","tamaño de muestra de superficie","表面サンプルのサイズ","表面采样大小"],["off","apagado","オフ","关闭"],[", ready to paste into shadertoy's image tab.","listo para pegar en la pestaña image de shadertoy.","、そのままshadertoyのimageタブに貼り付けられます。",",可以直接粘贴到 shadertoy 的 image 标签页里。"],["handle on a section title, and drop it on the controls to put it back.","de un título de sección y suéltalo sobre los controles para devolverlo.","ハンドルをドラッグし、コントロールの上にドロップすると元に戻せます。","手柄,把它放到控件上就能放回去。"],["this uses the same formula as the built-in themes: color = a + b·cos(2π·(c·t + d)), worked out separately for red, green and blue as the theme runs from 0 to 1.","usa la misma fórmula que los temas integrados: color = a + b·cos(2π·(c·t + d)), calculada por separado para rojo, verde y azul mientras el tema va de 0 a 1.","組み込みテーマと同じ式を使っています: color = a + b·cos(2π·(c·t + d))。tが0から1まで動く間に、赤・緑・青それぞれ別々に計算されます。","用的是和内置主题一样的公式:color = a + b·cos(2π·(c·t + d)),主题从 0 走到 1 的过程中,红、绿、蓝三个通道分别计算。"],["write any complex map, or browse a gallery of geometric fractals. it is compiled to a gpu shader and drawn live.","escribe cualquier mapa complejo o explora una galería de fractales geométricos. se compila a un shader de gpu y se dibuja en vivo.","好きな複素写像を書くか、幾何学フラクタルのギャラリーを見て回れます。gpuシェーダーにコンパイルされ、リアルタイムで描画されます。","可以自己写任意复数映射,也可以逛逛几何分形图库。它会被编译成 gpu 着色器并实时绘制。"],["switch between the live complex-map engine below — where you write your own equation and it is compiled to run on the gpu — and a gallery of classic geometric fractals built from a simple repeated rule.","cambia entre el motor de mapas complejos en vivo (donde escribes tu propia ecuación y se compila para correr en la gpu) y una galería de fractales geométricos clásicos hechos con una regla simple que se repite.","下にあるリアルタイムの複素写像エンジン (自分で式を書くとgpu上で動くようにコンパイルされます) と、単純なルールの繰り返しで作る古典的な幾何学フラクタルのギャラリーを切り替えます。","在下面的实时复数映射引擎 (你自己写方程,编译后在 gpu 上运行) 和用简单规则反复叠出来的经典几何分形图库之间切换。"],["the rule applied at every pixel, every step. the colored zones below work like a code editor: names, numbers, functions and operators each get their own color as you type.","la regla que se aplica en cada píxel, en cada paso. las zonas de color de abajo funcionan como un editor de código: nombres, números, funciones y operadores se pintan de su propio color mientras escribes.","毎ピクセル、毎ステップで適用されるルールです。下の色付きの欄はコードエディタのように、名前・数値・関数・演算子が入力に合わせてそれぞれの色で表示されます。","每个像素、每一步都会应用的规则。下面带颜色的区域就像代码编辑器:名称、数字、函数和运算符在你输入时会各自显示不同的颜色。"],["extra named numbers you can use inside the equation above. give each one a single-letter name, a range it can be dragged across, and — optionally — a range to sweep between automatically.","números con nombre extra que puedes usar dentro de la ecuación de arriba. dale a cada uno un nombre de una sola letra, un rango por el que arrastrarlo y, si quieres, un rango para que barra solo automáticamente.","上の式の中で使える、名前付きの追加の数値です。それぞれに1文字の名前、ドラッグで動かせる範囲、そしてお好みで自動スイープする範囲を設定できます。","可以在上面的方程里使用的额外命名数值。给每个起一个单字母名称、一个可拖动的范围,还可以选择设一个自动扫动的范围。"],["controls for how the escape-time calculation itself runs: how many steps to try, how far a point must travel to count as \"escaped\", and how those steps turn into a picture.","controles de cómo corre el cálculo del tiempo de escape: cuántos pasos probar, cuánto debe viajar un punto para contar como \"escapado\", y cómo esos pasos se convierten en imagen.","発散時間の計算そのものの設定です。何ステップ試すか、どれだけ遠くへ行けば「発散した」とみなすか、そのステップをどう絵にするか。","控制逃逸时间计算本身怎么跑:试多少步、一个点要跑多远才算\"逃逸\",以及这些步数怎么变成图像。"],["the slider sets the count at the starting zoom; each ×10 of zoom adds 100 more, up to 4000.","el control deslizante fija la cantidad en el zoom inicial; cada ×10 de zoom suma 100 más, hasta 4000.","スライダーは開始時のズームでの回数を決めます。ズームが×10になるごとに100ずつ増え、最大4000までです。","滑块设定的是起始缩放下的次数;每放大 ×10 就再加 100,最多到 4000。"],["heavy views (deep zoom, many iterations) draw at a lower resolution while you pan or zoom, then sharpen when you stop. turn off to always render at full resolution.","las vistas pesadas (zoom profundo, muchas iteraciones) se dibujan con menos resolución mientras te mueves o haces zoom, y se afinan al parar. desactívalo para dibujar siempre a resolución completa.","重いビュー (ディープズームや反復回数が多いとき) は、移動やズーム中は低い解像度で描き、止まるとシャープになります。オフにすると常にフル解像度で描画します。","画面比较吃力时 (深度缩放、迭代次数多),在你平移或缩放时会用较低分辨率绘制,停下来后再变清晰。关掉就会一直用完整分辨率渲染。"],["keeps the centre at arbitrary precision and renders deep views by perturbation, so you can zoom far past where the gpu's floats run out. raise iterations as you go deeper.","mantiene el centro con precisión arbitraria y dibuja las vistas profundas por perturbación, así que puedes acercarte mucho más allá de donde se agotan los flotantes de la gpu. sube las iteraciones a medida que profundizas.","中心を任意精度で保持し、ディープなビューは摂動法で描画するので、gpuの浮動小数点が限界になるよりずっと奥までズームできます。深く行くほど反復回数を上げてください。","把中心点保持在任意精度,并用摄动法渲染很深的视图,所以能放大到远超 gpu 浮点数极限的地方。越往深处走,越要调高迭代次数。"],["a small gallery of fractals built by repeating one simple geometric rule, rather than iterating a complex-number equation. pan and zoom work the same way as the complex map.","una pequeña galería de fractales hechos repitiendo una regla geométrica simple, en vez de iterar una ecuación de números complejos. mover y hacer zoom funciona igual que en el mapa complejo.","複素数の式を反復する代わりに、単純な幾何学ルールを繰り返して作るフラクタルの小さなギャラリーです。移動とズームは複素写像と同じように使えます。","一个小图库,里面的分形是靠重复一条简单的几何规则做出来的,而不是迭代复数方程。平移和缩放的用法和复数映射一样。"],["a triangle repeatedly split into three smaller triangles, leaving the middle one out each time.","un triángulo que se divide una y otra vez en tres más pequeños, dejando fuera el del medio cada vez.","三角形を3つの小さな三角形に分け、そのたびに真ん中だけ抜く、を繰り返します。","一个三角形不断分成三个更小的三角形,每次都把中间那个去掉。"],["higher depths look finer but take more to draw — if it starts to lag while panning, bring the depth down a little.","más profundidad se ve más fino pero tarda más en dibujarse; si empieza a ir lento al mover, baja un poco la profundidad.","深さを上げるほど細かくなりますが、描画に時間がかかります。移動中にカクつくなら、深さを少し下げてみてください。","深度越高越精细,但画起来也越慢;如果平移时开始卡,就把深度调低一点。"],["the palette used to paint escape-time (or classic-fractal) values. pick a built-in theme, or design and save your own in the custom palette editor.","la paleta con la que se pintan los valores de tiempo de escape (o de fractales clásicos). elige un tema integrado o diseña y guarda el tuyo en el editor de paletas personalizadas.","発散時間 (または古典フラクタル) の値を塗るパレットです。組み込みテーマから選ぶか、カスタムパレットエディタで自分用を作って保存できます。","用来给逃逸时间 (或经典分形) 的数值上色的调色板。可以选内置主题,也可以在自定义调色板编辑器里设计并保存你自己的。"],["convergence coloring uses hue instead, and the shift slider rotates it.","el coloreado por convergencia usa el tono en su lugar, y el control de desplazamiento lo rota.","収束での配色は色相を使い、シフトのスライダーで回転させられます。","收敛着色改用色相,偏移滑块可以转动它。"],["extra drawing on top of the fractal: a coordinate grid, and — for the complex map — a trace of where a point travels as the equation is applied to it again and again.","dibujo extra encima del fractal: una cuadrícula de coordenadas y, en el mapa complejo, la traza de por dónde viaja un punto al aplicarle la ecuación una y otra vez.","フラクタルの上に重ねる描画です。座標グリッドと、複素写像では、点に式を何度も適用したときの軌跡を表示できます。","画在分形上面的额外内容:坐标网格,以及在复数映射里,一个点被方程反复作用时经过的轨迹。"],["a faint line follows your cursor, showing the path that point takes at each step. click to pin one. double-click zoom is off while this is on.","una línea tenue sigue tu cursor y muestra el camino que recorre ese punto en cada paso. haz clic para fijar una. el zoom con doble clic se desactiva mientras esto está activo.","カーソルに薄い線がついてきて、その点が各ステップでたどる道を見せます。クリックで固定できます。オンの間はダブルクリックズームが使えません。","一条淡淡的线跟着光标走,显示那个点每一步经过的路径。点击可以固定一条。开启期间双击缩放不可用。"],["ordinary y = f(x) functions, drawn as a line on top of the fractal. useful for things like newton's method, where the reference function is the curve being solved.","funciones y = f(x) normales, dibujadas como una línea sobre el fractal. útil para cosas como el método de newton, donde la función de referencia es la curva que se está resolviendo.","通常のy = f(x)の関数を、フラクタルの上に線として描きます。ニュートン法のように、参照関数が解こうとしている曲線そのものになる場面で便利です。","普通的 y = f(x) 函数,以线条画在分形上面。适合牛顿法这类场景,参考函数就是正在求解的那条曲线。"],["no functions yet. add one to draw y = f(x) on top of the fractal. it can use any of your parameters too.","todavía no hay funciones. añade una para dibujar y = f(x) sobre el fractal. también puede usar cualquiera de tus parámetros.","まだ関数がありません。追加すると、フラクタルの上にy = f(x)を描けます。自分のパラメータも使えます。","还没有函数。添加一个,就能把 y = f(x) 画在分形上面,也可以用上你的任何参数。"],["keep a gallery of views in this browser, copy the current picture or its glsl shader, or copy a link that reopens exactly this view for someone else.","guarda una galería de vistas en este navegador, copia la imagen actual o su shader glsl, o copia un enlace que reabre exactamente esta vista para otra persona.","このブラウザに表示のギャラリーを保存したり、今の画像やglslシェーダーをコピーしたり、まったく同じ表示を誰かが開けるリンクをコピーしたりできます。","在这个浏览器里保存一个视图图库,复制当前图片或它的 glsl 着色器,或者复制一个能让别人打开完全相同视图的链接。"],["\"as run here\" is the exact shader this page compiles, with the current values noted in a comment at the top. \"shadertoy-style\" bakes those values in as constants and wraps it in","\"as run here\" es el shader exacto que compila esta página, con los valores actuales anotados en un comentario arriba. \"shadertoy-style\" fija esos valores como constantes y lo envuelve en","「as run here」はこのページがコンパイルするシェーダーそのもので、現在の値が先頭のコメントに書かれます。「shadertoy-style」は値を定数として埋め込み、","\"as run here\" 就是这个页面实际编译的着色器,当前的数值会写在顶部的注释里。\"shadertoy-style\" 会把这些数值写成常量,并包进"],["saved views stay in this browser. the \"save fractal\" card keeps the view you're looking at right now.","las vistas guardadas se quedan en este navegador. la tarjeta \"save fractal\" guarda la vista que estás mirando ahora mismo.","保存した表示はこのブラウザに残ります。「save fractal」カードは、今見ている表示を保存します。","保存的视图会留在这个浏览器里。\"save fractal\" 卡片保存的是你现在正看着的视图。"],["shortcuts for the most common actions, so you don't need to reach for the sidebar.","atajos para las acciones más comunes, para que no tengas que ir a la barra lateral.","よく使う操作のショートカットです。サイドバーまで手を伸ばさなくて済みます。","最常用操作的快捷键,这样就不用每次都去够侧边栏了。"],["how the controls panel itself looks: flat or frosted glass, or light or dark. on desktop, drag the","cómo se ve el panel de controles: plano o cristal esmerilado, claro u oscuro. en escritorio, arrastra el icono","コントロールパネルの見た目を選びます。フラット、すりガラス、ライト、ダークなど。デスクトップでは、セクションタイトルの","控件面板本身的样子:扁平或磨砂玻璃,浅色或深色。在桌面端,拖动任意章节标题上的"],["handle on any section title to pop it into its own window, and drop the window back on the sidebar to dock it again.","de cualquier título de sección para sacarla a su propia ventana, y suelta la ventana de vuelta en la barra lateral para acoplarla otra vez.","ハンドルをドラッグするとウィンドウとして切り出せて、ウィンドウをサイドバーに戻せばまたドッキングできます。","手柄,就能把它弹出成独立窗口,再把窗口拖回侧边栏就能重新停靠。"],["drag a tab out to float it as a window. drag a window to any screen edge to snap it into a bar there, or onto a bar to add it as a tab. sections work the same way: drag the","saca una pestaña arrastrándola para que flote como ventana. arrastra una ventana a cualquier borde de la pantalla para encajarla en una barra, o sobre una barra para añadirla como pestaña. las secciones funcionan igual: arrastra el icono","タブをドラッグで引き出すとウィンドウとして浮きます。ウィンドウを画面の端までドラッグするとバーに吸着し、バーの上に落とすとタブとして追加されます。セクションも同じで、","把标签页拖出来就变成浮动窗口。把窗口拖到屏幕任意边缘就会吸附成一条栏,拖到某条栏上就会作为标签页加入。章节也一样:拖动"],["each shape below is a distance-estimated surface, sphere-traced from the camera every frame. mandelbulb and mandelbox are escape-time formulas generalized to 3d, sierpinski, menger and the folding ifs are exact folded constructions, quaternion julia, burning ship and julia bulb are more escape-time formulas, the apollonian gasket is a sphere-inversion packing, and custom lets you write your own.","cada forma de abajo es una superficie con distancia estimada, trazada con esferas desde la cámara en cada fotograma. mandelbulb y mandelbox son fórmulas de tiempo de escape generalizadas a 3D; sierpinski, menger y los ifs plegables son construcciones plegadas exactas; julia cuaterniónico, barco en llamas y julia bulb son más fórmulas de tiempo de escape; el empaquetado apolíneo es un empaquetado por inversión de esferas, y custom te deja escribir la tuya.","下の各形状は距離推定で表した曲面で、毎フレームカメラからスフィアトレーシングで描いています。mandelbulbとmandelboxは発散時間の式を3Dに一般化したもの、sierpinski・menger・folding ifsは折り畳みによる厳密な構成、quaternion julia・burning ship・julia bulbもほかの発散時間の式、apollonian gasketは球面反転による充填で、customなら自分で式を書けます。","下面每个形状都是用距离估计表示的曲面,每一帧都从相机出发做球体追踪。mandelbulb 和 mandelbox 是推广到 3D 的逃逸时间公式;sierpinski、menger 和 folding ifs 是精确的折叠构造;quaternion julia、burning ship 和 julia bulb 也是逃逸时间公式;apollonian gasket 是球面反演堆叠;custom 让你自己写。"],["how far each ray advances per step, remembered separately for each shape. higher reaches farther in the same number of steps, but too high can tear thin details; lower is safer for tricky or thin surfaces at the cost of more steps.","cuánto avanza cada rayo por paso, recordado por separado para cada forma. un valor más alto llega más lejos con los mismos pasos, pero demasiado alto puede rasgar detalles finos; uno más bajo es más seguro para superficies delicadas o finas, a costa de más pasos.","各レイが1ステップで進む距離で、形状ごとに別々に記憶されます。大きいと同じステップ数でより遠くまで届きますが、大きすぎると細かいディテールが裂けることがあります。小さいほうが薄い面や難しい面には安全ですが、ステップ数が増えます。","每条光线每一步前进多远,每种形状分别记住自己的值。数值高,同样步数能走得更远,但太高会把细小的细节撕裂;数值低对复杂或很薄的表面更稳妥,代价是需要更多步数。"],["how many times the formula is repeated, which is what carves fine structure into the surface. this is the detail at the normal framing; more is added as you zoom in (see the switch under fog), and the readout shows the level in use.","cuántas veces se repite la fórmula, que es lo que talla la estructura fina en la superficie. este es el detalle con el encuadre normal; se añade más al acercarte (mira el interruptor bajo niebla) y la lectura muestra el nivel en uso.","式を何回繰り返すかで、これが表面の細かい構造を刻みます。通常の構図でのディテールで、ズームインすると増えていきます (fogの下のスイッチを参照)。数値表示には使用中のレベルが出ます。","公式重复多少次,表面的精细结构就是靠这个刻出来的。这是常规取景下的细节量;放大时会再增加 (见雾下面的开关),读数会显示当前使用的级别。"],["the classic mandelbulb uses power 8. lower powers give smoother, rounder blobs; odd or fractional powers give lopsided, asymmetric ones.","el mandelbulb clásico usa potencia 8. potencias bajas dan formas más suaves y redondeadas; potencias impares o fraccionarias dan formas desiguales y asimétricas.","古典的なmandelbulbはべき乗8です。低いべき乗だとなめらかで丸い形に、奇数や分数のべき乗だといびつで非対称な形になります。","经典的 mandelbulb 用的是 8 次幂。幂低一些会得到更光滑、更圆的团块;奇数或分数幂则会得到歪斜、不对称的形状。"],["a box-fold and a sphere-fold, applied over and over. scale near 3 gives the densest, most cavernous structure.","un pliegue de caja y un pliegue de esfera, aplicados una y otra vez. una escala cercana a 3 da la estructura más densa y cavernosa.","ボックスフォールドとスフィアフォールドを何度も繰り返します。スケールが3付近だと、最も密で洞窟のような構造になります。","一次盒折叠加一次球折叠,反复套用。缩放接近 3 时,结构最密、最像洞穴。"],["at each step, space is pulled toward whichever of four corners is closest, then scaled up — the 3d cousin of the sierpinski triangle.","en cada paso, el espacio se jala hacia la más cercana de cuatro esquinas y luego se agranda: el primo 3D del triángulo de sierpinski.","毎ステップで、空間は4つの角のうち最も近いものへ引き寄せられてから拡大されます。シェルピンスキーの三角形の3D版のいとこです。","每一步,空间都会被拉向最近的那个角 (一共四个),然后放大,算是谢尔宾斯基三角形的 3D 表亲。"],["a cube with a cross-shaped hole punched through it, repeated at every remaining sub-cube. each extra iteration triples the detail, so it adds up fast. up to 16 iterations are available, but single-precision floats run out of digits around level 13 or 14, so beyond that the extra levels only show up when you zoom in close.","un cubo con un agujero en cruz, repetido en cada subcubo restante. cada iteración extra triplica el detalle, así que crece rapidísimo. hay hasta 16 iteraciones, pero los flotantes de precisión simple se quedan sin dígitos hacia el nivel 13 o 14, así que más allá los niveles extra solo se ven al acercarte mucho.","立方体に十字形の穴を貫通させ、残った小さな立方体すべてで繰り返します。反復が1つ増えるごとにディテールは3倍になるので、あっという間に増えます。最大16回まで使えますが、単精度浮動小数点は13〜14段目あたりで桁が足りなくなるので、それ以降の段はかなり近づいたときにだけ見えます。","一个被十字形孔贯穿的立方体,在每个剩下的小立方体里继续重复。每多一次迭代细节就变成三倍,所以涨得飞快。最多可用 16 次迭代,不过单精度浮点数大约到第 13 或 14 级就没有足够的位数了,再往后多出来的层级只有凑得很近才看得到。"],["a julia set of the quaternion square map, cut by a 3d slice. the four c values pick which julia set; small changes reshape it completely.","un conjunto de julia del mapa cuadrado de cuaterniones, cortado por una rebanada 3D. los cuatro valores de c eligen qué conjunto de julia ves; cambios pequeños lo transforman por completo.","四元数の2乗写像のジュリア集合を、3Dの断面で切ったものです。4つのcの値でどのジュリア集合になるかが決まり、少し変えただけで姿が一変します。","四元数平方映射的朱利亚集,用一个 3D 切片切开来看。四个 c 值决定是哪个朱利亚集,稍微改一点就会整个变样。"],["the mandelbulb formula with the absolute value taken of every coordinate before each step, which cuts sharp, ship-like masts and hulls into the bulb.","la fórmula del mandelbulb tomando el valor absoluto de cada coordenada antes de cada paso, lo que talla mástiles y cascos afilados, como de barco, en el bulb.","各ステップの前にすべての座標の絶対値を取るmandelbulbの式で、鋭い帆柱や船体のような形がbulbに刻まれます。","mandelbulb 的公式,只是每一步之前先对每个坐标取绝对值,这样会在球体上刻出锋利的、像船桅和船体一样的形状。"],["like the mandelbulb, but every step adds the same fixed point c instead of the starting point, so c chooses the shape.","como el mandelbulb, pero en cada paso se suma el mismo punto fijo c en lugar del punto inicial, así que c decide la forma.","mandelbulbに似ていますが、毎ステップで開始点ではなく同じ固定点cを足すので、cが形を決めます。","和 mandelbulb 类似,但每一步加上的是同一个固定点 c,而不是起始点,所以形状由 c 决定。"],["space is repeatedly folded and inverted in spheres, leaving a endless packing of ever-smaller spheres. the factor sets how tightly they pack.","el espacio se pliega e invierte en esferas una y otra vez, dejando un empaquetado infinito de esferas cada vez más pequeñas. el factor define qué tan apretadas quedan.","空間を球で折り畳んだり反転したりを繰り返し、どんどん小さくなる球が無限に詰まった形になります。ファクターで詰まり具合が決まります。","空间被反复折叠、并在球面上反演,留下一堆越来越小、无穷无尽的球。这个系数决定它们挤得多紧。"],["a family of exact fractals built from folds, a scale and an offset. tetrahedron folds give a sierpinski-style gasket, octahedron folds give its 6-cornered cousin, and the menger-style folds give sponge-like shapes. changing fold style resets the scale, offset and thickness to values that suit it.","una familia de fractales exactos hechos con pliegues, una escala y un desplazamiento. los pliegues de tetraedro dan un empaquetado estilo sierpinski, los de octaedro su primo de 6 puntas, y los estilo menger dan formas como esponjas. cambiar el estilo de pliegue reinicia la escala, el desplazamiento y el grosor a valores que le van bien.","折り畳み、スケール、オフセットで作る厳密なフラクタルの一族です。四面体の折り畳みはシェルピンスキー風のガスケット、八面体の折り畳みは6つの角を持つそのいとこ、メンガー風の折り畳みはスポンジのような形になります。折り畳みの種類を変えると、スケール・オフセット・厚みがそれに合う値にリセットされます。","一族用折叠、缩放和偏移构造出来的精确分形。四面体折叠得到谢尔宾斯基式的海绵垫,八面体折叠得到它的六角表亲,门格尔式折叠则得到像海绵一样的形状。更换折叠方式时,缩放、偏移和厚度会重置成适合它的数值。"],["write your own iteration step, applied to an ordinary 3d point z, starting from z = position. it's compiled to a gpu shader and drawn live, the same way the 2d engine compiles complex equations — but here every operator works component by component on x, y and z, and the distance to the surface is estimated numerically rather than analytically, so it's an approximation: some formulas may need the precision or iteration count tuned to look their best.","escribe tu propio paso de iteración, aplicado a un punto 3D normal z, empezando desde z = posición. se compila a un shader de gpu y se dibuja en vivo, igual que el motor 2D compila ecuaciones complejas, pero aquí cada operador trabaja componente a componente en x, y y z, y la distancia a la superficie se estima numéricamente en vez de analíticamente, así que es una aproximación: algunas fórmulas pueden necesitar ajustar la precisión o las iteraciones para verse al máximo.","自分で反復ステップを書けます。通常の3D点zに適用され、z = 位置から始まります。2Dエンジンが複素数の式をコンパイルするのと同じように、gpuシェーダーにコンパイルされてリアルタイムで描画されます。ただしここでは演算子はxyzの各成分ごとに働き、表面までの距離は解析的ではなく数値的に推定されるので近似です。式によっては、精度や反復回数を調整するときれいに見えます。","自己写迭代步骤,作用在普通的 3D 点 z 上,从 z = 位置 开始。它会被编译成 gpu 着色器并实时绘制,和 2D 引擎编译复数方程的方式一样,不过这里每个运算符都是对 x、y、z 分量分别运算,而且到表面的距离是数值估计的、不是解析求出的,所以只是近似:有些公式可能要调一调精度或迭代次数才好看。"],["custom formulas only get an approximate distance estimate, which can occasionally overshoot and tear the surface. lowering step scale takes smaller, safer steps — slower to render, but cleaner. if you see torn or noisy patches, especially when zoomed out, try turning this down.","las fórmulas personalizadas solo tienen una estimación de distancia aproximada, que a veces se pasa y rasga la superficie. bajar la escala de paso da pasos más cortos y seguros: renderiza más lento, pero más limpio. si ves parches rasgados o ruidosos, sobre todo alejado, prueba a bajar esto.","カスタム式では距離の推定が近似になるため、ときどき行き過ぎて表面が裂けることがあります。ステップスケールを下げると小さく安全に進むので、遅くなりますがきれいになります。特に引いたときに裂けたりざらついた部分が出たら、これを下げてみてください。","自定义公式只能得到近似的距离估计,偶尔会冲过头把表面撕裂。调低步长缩放会让每一步更小更稳,渲染更慢但画面更干净。如果看到撕裂或有噪点的区域,尤其是缩小的时候,试试把它调低。"],["extra named numbers you can use inside the equation above. give each one a single-letter name and a range it can be dragged across.","números con nombre extra que puedes usar dentro de la ecuación de arriba. dale a cada uno un nombre de una sola letra y un rango por el que arrastrarlo.","上の式の中で使える、名前付きの追加の数値です。それぞれに1文字の名前と、ドラッグで動かせる範囲を設定します。","可以在上面的方程里使用的额外命名数值。给每个起一个单字母名称和一个可拖动的范围。"],["controls for the ray march itself: how many steps a ray gets before giving up, how far it's allowed to travel, and how close it must come to the surface to count as a hit.","controles del propio ray march: cuántos pasos tiene un rayo antes de rendirse, hasta dónde puede viajar y qué tan cerca debe llegar a la superficie para contar como impacto.","レイマーチそのものの設定です。1本のレイが諦めるまでに何ステップ使えるか、どこまで進めるか、表面にどれだけ近づけば命中とみなすか。","光线步进本身的控制:一条光线放弃前能走多少步、最远能走多远、离表面多近才算命中。"],["the level of detail sliders set how detailed the shape is at the normal framing. with this on, more detail is added the closer the camera gets, measured at the camera itself (not at what it's looking at) and eased over time, so it never drops suddenly.","los controles de nivel de detalle fijan cuánto detalle tiene la forma con el encuadre normal. con esto activado, se añade más detalle cuanto más se acerca la cámara, medido en la propia cámara (no en lo que mira) y suavizado con el tiempo, así que nunca baja de golpe.","ディテールレベルのスライダーは、通常の構図での細かさを決めます。これをオンにすると、カメラが近づくほどディテールが増え、見ている先ではなくカメラ自身の位置で測り、時間をかけてなじませるので、急に落ちることがありません。","细节级别滑块设定的是常规取景下形状有多精细。开启后,相机越靠近细节越多,距离是按相机本身 (而不是它看的位置) 来量的,并且会随时间缓缓过渡,所以不会突然掉下来。"],["a second pass over the finished picture, run as its own gpu shader: bloom lets bright highlights glow softly into their surroundings, volumetric lighting fills the scene with a lit haze whose shafts and shadows are worked out in 3d, wherever the fractal blocks the sun, depth of field blurs whatever is nearer or farther than a chosen focus distance, and there's a vignette, chromatic aberration and film grain on top of that. filmic tonemapping changes how the raw brightness is rolled off into a displayable image before any of this is applied. turning the whole thing off restores the plain, uncorrected picture.","una segunda pasada sobre la imagen terminada, ejecutada como su propio shader de gpu: el bloom deja que los brillos suaves se difuminen en su entorno, la luz volumétrica llena la escena de una neblina iluminada cuyos haces y sombras se calculan en 3D donde el fractal tapa el sol, la profundidad de campo desenfoca lo que esté más cerca o más lejos de una distancia de enfoque elegida, y encima hay viñeta, aberración cromática y grano de película. el tonemapping fílmico cambia cómo el brillo bruto se comprime en una imagen mostrable antes de aplicar todo esto. apagarlo todo devuelve la imagen simple sin corregir.","仕上がった絵にもう一段かける処理で、独立したgpuシェーダーとして動きます。ブルームは明るい部分をやわらかく周囲ににじませ、ボリューメトリックライトは光に照らされたもやでシーンを満たし (フラクタルが太陽をさえぎる場所の光の筋や影は3Dで計算されます)、被写界深度は選んだピント距離より近い・遠いものをぼかし、さらにビネット、色収差、フィルムグレインも加わります。フィルミックトーンマッピングは、これらの前に生の明るさを表示できる画像へ落とし込む方法を変えます。全体をオフにすると、補正なしのそのままの絵に戻ります。","对完成的画面再做一遍处理,作为独立的 gpu 着色器运行:泛光让明亮的高光柔和地渗进周围,体积光用被照亮的薄雾充满场景 (分形挡住太阳的地方,光束和阴影是按 3D 算出来的),景深会把比所选对焦距离更近或更远的东西虚化,再加上暗角、色差和胶片颗粒。电影感色调映射会改变原始亮度被压缩成可显示图像的方式,它在以上所有效果之前生效。整个关掉就会还原成没经过修正的原始画面。"],["a hazy mist lit by the sun. it gathers around the fractal and glows brightest when you look toward the sun. wherever the fractal blocks the light, the mist behind it stays dark, so shafts and shadow volumes appear in 3d and change as you move. more density gives a thicker mist, and higher quality takes more samples along each ray (smoother, but slower).","una neblina brumosa iluminada por el sol. se junta alrededor del fractal y brilla más cuando miras hacia el sol. donde el fractal tapa la luz, la neblina de detrás se queda oscura, así que aparecen haces y volúmenes de sombra en 3D que cambian al moverte. más densidad da una neblina más espesa, y más calidad toma más muestras por rayo (más suave, pero más lento).","太陽に照らされたもやです。フラクタルの周りに集まり、太陽の方を向くいちばん明るく光ります。フラクタルが光をさえぎる場所では、その奥のもやは暗いままなので、光の筋や影のボリュームが3Dで現れ、動くと変化します。密度を上げるともやが濃くなり、品質を上げると1本のレイあたりのサンプルが増えます (なめらかになりますが遅くなります)。","被太阳照亮的薄雾。它聚在分形周围,朝太阳看的时候最亮。分形挡住光的地方,后面的雾保持暗,于是会出现光束和阴影体,而且会随着你的移动变化。密度越高雾越浓,质量越高每条光线取的采样越多 (更平滑,但更慢)。"],["distances are measured from the camera by default. in orbit mode, \"from zoom focus\" instead centers the depth of field on the point you're orbiting and zooming toward: the start distance becomes a radius around that point, everything inside stays sharp and both nearer and farther things blur, regardless of where the camera is. blur far blurs anything farther than the start distance, blur near blurs anything closer, and the blur ramps from none to full over the falloff distance. both sliders are logarithmic, so you can dial in tiny distances when zoomed far in. \"scale with zoom\" instead multiplies both distances by how far in the orbit camera has zoomed, so the blur keeps the same look as you dive in.","las distancias se miden desde la cámara por defecto. en modo órbita, \"from zoom focus\" centra la profundidad de campo en el punto que orbitas y hacia el que haces zoom: la distancia de inicio pasa a ser un radio alrededor de ese punto, todo lo de dentro queda nítido y tanto lo más cercano como lo más lejano se desenfoca, esté donde esté la cámara. blur far desenfoca todo lo más lejano que la distancia de inicio, blur near todo lo más cercano, y el desenfoque sube de nada a total a lo largo de la distancia de caída. ambos controles son logarítmicos, así que puedes afinar distancias minúsculas al acercarte mucho. \"scale with zoom\" multiplica ambas distancias por cuánto ha acercado la cámara orbital, para que el desenfoque se vea igual al sumergirte.","距離はデフォルトではカメラから測ります。オービットモードで「from zoom focus」を選ぶと、被写界深度の中心が、周回してズームしている先の点になります。開始距離はその点を中心とした半径になり、内側はくっきり、それより近いものも遠いものも、カメラの位置に関係なくぼけます。blur farは開始距離より遠いものを、blur nearは近いものをぼかし、ぼけは減衰距離をかけてゼロから最大まで強まります。どちらのスライダーも対数目盛りなので、深くズームしたときは細かい距離も合わせられます。「scale with zoom」は、オービットカメラがどれだけズームインしたかを両方の距離にかけるので、潜っていってもボケ方が同じに見えます。","距离默认从相机算起。在环绕模式下,\"from zoom focus\" 会把景深的中心放在你正在环绕并朝它缩放的那个点上:起始距离变成以该点为中心的半径,里面保持清晰,更近和更远的东西都会虚化,和相机在哪里无关。blur far 会虚化比起始距离更远的东西,blur near 会虚化更近的,虚化程度在衰减距离内从无逐渐变到最大。两个滑块都是对数刻度,所以放大很深时也能调出很小的距离。\"scale with zoom\" 则会把两个距离都乘上环绕相机已经放大了多少,这样你越潜越深时虚化的观感保持不变。"],["presets and individual levers for trading detail against speed. lower the render resolution or pixel density on slower devices, or turn off the automatic quality drop during interaction if you'd rather keep it steady.","preajustes y palancas individuales para cambiar detalle por velocidad. baja la resolución de render o la densidad de píxeles en dispositivos lentos, o apaga la bajada automática de calidad durante la interacción si prefieres que se mantenga estable.","ディテールと速度を引き換えにするプリセットと個別のつまみです。遅い端末ではレンダー解像度やピクセル密度を下げたり、操作中の自動画質ダウンをオフにして一定に保ったりできます。","用来拿细节换速度的预设和各个单项调节。在较慢的设备上可以降低渲染分辨率或像素密度;如果希望画质保持稳定,也可以关掉操作期间自动降画质。"],["switch each level-of-detail mechanism on or off on its own, and adjust settings that have no other control. saved on this device.","activa o desactiva cada mecanismo de nivel de detalle por separado, y ajusta opciones que no tienen otro control. se guarda en este dispositivo.","ディテールレベルの各仕組みを個別にオン・オフでき、ほかに操作手段のない設定も調整できます。この端末に保存されます。","可以单独开关每一种细节级别机制,也能调整那些没有其他控件的设置。保存在此设备上。"],["send the camera as a pivot plus a tiny offset instead of one rounded position","envía la cámara como un pivote más un desplazamiento diminuto, en vez de una sola posición redondeada","丸めた1つの位置ではなく、ピボットと小さなオフセットに分けてカメラを送ります","把相机拆成一个支点加一个很小的偏移来传递,而不是一个被舍入的位置"],["the camera orbits the origin. drag to rotate, scroll or pinch to zoom, or turn on auto-rotate to let it spin on its own. switch to free fly to pilot the camera by hand — wasd (or a joystick on touch) to move, drag to look around, and scroll or the speed slider to change how fast you fly. barrel roll is a flight simulator: the camera flies like a plane, steered by where your pointer sits relative to the middle of the view, and it can turn all the way over.","la cámara orbita el origen. arrastra para rotar, rueda o pellizca para hacer zoom, o activa la rotación automática para que gire sola. cambia a vuelo libre para pilotar la cámara a mano: wasd (o un joystick en táctil) para moverte, arrastra para mirar, y rueda o el control de velocidad para cambiar lo rápido que vuelas. barrel roll es un simulador de vuelo: la cámara vuela como un avión, dirigida por dónde está tu puntero respecto al centro de la vista, y puede dar la vuelta completa.","カメラは原点の周りを回ります。ドラッグで回転、スクロールかピンチでズーム、auto-rotateをオンにすると勝手に回ります。free flyに切り替えるとカメラを手動で操縦できます。wasd (タッチではジョイスティック) で移動、ドラッグで見回し、スクロールか速度スライダーで飛ぶ速さを変えます。barrel rollはフライトシミュレーターで、カメラが飛行機のように飛び、ポインタが表示の中心からどこにあるかで操舵し、完全にひっくり返ることもできます。","相机围着原点转。拖动旋转,滚动或双指捏合缩放,也可以打开自动旋转让它自己转。切到自由飞行就能手动驾驶相机:wasd (触屏上是摇杆) 移动,拖动环顾四周,滚动或用速度滑块调整飞行快慢。barrel roll 是飞行模拟器:相机像飞机一样飞,靠指针相对视图中心的位置来操控,还能整个翻转过来。"],["the flight speed becomes a top speed: the closer the nearest surface ahead of you, the slower you move, so you can glide right up to detail without crashing into it or having to keep changing the speed.","la velocidad de vuelo pasa a ser una velocidad máxima: cuanto más cerca la superficie más próxima delante de ti, más lento te mueves, así que puedes deslizarte justo hasta el detalle sin estrellarte ni tener que cambiar la velocidad todo el rato.","飛行速度が最高速度になります。目の前の一番近い表面が近いほど、動きがゆっくりになるので、ぶつかったり速度を何度も変えたりせずに、ディテールのすぐそばまでふわっと近づけます。","飞行速度变成最高速度:前方最近的表面越近,你就飞得越慢,这样就能一路滑到细节跟前,既不会撞上去,也不用不停地改速度。"],["keep the pointer over the view. above the middle pitches up (hold it and you loop), below dives, and off to the side banks and turns, so up and to the side makes the camera roll and corkscrew. the further from the middle, the faster it turns, and there is no limit on your angle. w and s fly forward and back (up and down on the touch joystick; touch and hold off-center to steer).","mantén el puntero sobre la vista. por encima del centro sube el morro (si lo mantienes das una vuelta), por debajo pica, y hacia los lados ladea y gira, así que arriba y a un lado hace que la cámara ruede y dé tirabuzones. cuanto más lejos del centro, más rápido gira, y no hay límite de ángulo. w y s vuelan hacia delante y atrás (arriba y abajo en el joystick táctil; mantén pulsado fuera del centro para dirigir).","ポインタを表示の上に置いたままにします。中心より上だと機首が上がり (そのままだとループします)、下だと急降下、横だとバンクして曲がるので、斜め上ならカメラはロールしながらきりもみします。中心から離れるほど速く回り、角度の制限はありません。wとsで前進・後退です (タッチのジョイスティックでは上下。中心から外れた場所を長押しで操舵)。","把指针放在视图上。在中心上方会抬头 (一直按着就会翻筋斗),在下方会俯冲,偏向一侧会倾斜转弯,所以朝斜上方会让相机一边翻滚一边螺旋。离中心越远转得越快,角度没有限制。w 和 s 前进和后退 (触屏摇杆上是上和下;在偏离中心处长按来操控方向)。"],["cuts the fractal with a flat plane and draws the intersection as a flat 2d image, brightened wherever the surface passes close to that plane. the view smoothly splits so the slice appears beside the 3d view, and the cutting plane itself is drawn in the 3d view so you can see exactly where it sits. drag the 2d view to move the plane, shift-drag (or the rotate button on touch) to spin it, scroll or pinch to zoom, and drag the divider between the two views to resize them.","corta el fractal con un plano y dibuja la intersección como una imagen 2D plana, más brillante donde la superficie pasa cerca del plano. la vista se divide suavemente para que la rebanada aparezca junto a la vista 3D, y el propio plano de corte se dibuja en la vista 3D para que veas exactamente dónde está. arrastra la vista 2D para mover el plano, mayús + arrastrar (o el botón de rotar en táctil) para girarlo, rueda o pellizca para hacer zoom, y arrastra el divisor entre las dos vistas para cambiar su tamaño.","フラクタルを平らな面で切り、その断面を平らな2D画像として描きます。表面が面の近くを通る場所ほど明るくなります。表示がなめらかに分割されて断面が3Dビューの隣に現れ、切断面そのものも3Dビューに描かれるので、どこにあるかがはっきり分かります。2Dビューをドラッグで面を移動、shift+ドラッグ (タッチでは回転ボタン) で回転、スクロールかピンチでズーム、2つのビューの間の仕切りをドラッグするとサイズを変えられます。","用一个平面切开分形,把截面画成平面的 2D 图像,表面离这个平面越近的地方越亮。视图会平滑地分开,让切片出现在 3D 视图旁边,切割平面本身也会画在 3D 视图里,你能清楚看到它在哪里。拖动 2D 视图来移动平面,shift+拖动 (触屏上用旋转按钮) 来转动它,滚动或双指捏合缩放,拖动两个视图之间的分隔条来调整大小。"],["one-click looks, like the shader packs people add to minecraft. a pack gives the scene a real sky with a sun, lights surfaces with sky-coloured ambient light, adds reflections of the sky and a thin rim of light, fills the air with sunlit haze, and finishes with a colour grade. it also sets the lighting, fog and post-processing to suit, and you can tweak anything afterwards. choose \"off\" to go back to the plain look.","looks de un clic, como los paquetes de shaders que la gente añade a minecraft. un paquete le da a la escena un cielo de verdad con sol, ilumina las superficies con luz ambiente del color del cielo, añade reflejos del cielo y un fino borde de luz, llena el aire de neblina soleada y termina con una gradación de color. también ajusta la iluminación, la niebla y el posprocesado para que le vayan bien, y puedes retocar lo que quieras después. elige \"off\" para volver al aspecto simple.","ワンクリックで変わるルックで、人々がマインクラフトに入れるシェーダーパックのようなものです。パックはシーンに太陽のある本物の空を与え、空の色の環境光で表面を照らし、空の反射と細いリムライトを加え、日差しを受けたもやで空気を満たし、最後にカラーグレーディングで仕上げます。照明、フォグ、ポストプロセスもそれに合わせて設定され、そのあと何でも調整できます。「off」を選ぶと素のルックに戻ります。","一键换风格,就像大家给 minecraft 装的光影包。光影包会给场景一个带太阳的真实天空,用天空色的环境光照亮表面,加上天空的反射和一圈细细的轮廓光,用洒满阳光的薄雾充满空气,最后再做一遍调色。它也会把光照、雾和后期处理设成合适的样子,之后你想调什么都行。选 \"off\" 就回到最朴素的样子。"],["the sun's direction, fog and the bloom, volumetric lighting and vignette that a pack turns on are all in the sections below. volumetric lighting and shadows make this the heaviest look to draw, so turn the quality down if it feels slow.","la dirección del sol, la niebla y el bloom, la luz volumétrica y la viñeta que activa un paquete están en las secciones de abajo. la luz volumétrica y las sombras hacen de este el aspecto más pesado de dibujar, así que baja la calidad si se siente lento.","太陽の向き、フォグ、そしてパックがオンにするブルーム、ボリューメトリックライト、ビネットは、すべて下のセクションにあります。ボリューメトリックライトと影のせいで、これは描画がいちばん重いルックなので、重く感じたら品質を下げてください。","太阳的方向、雾,以及光影包打开的泛光、体积光和暗角,都在下面的章节里。体积光和阴影让这成为最吃性能的风格,所以如果觉得卡,就把质量调低。"],["a single directional light, like sunlight. azimuth spins it around the fractal, elevation raises or lowers it.","una sola luz direccional, como la luz del sol. el azimut la hace girar alrededor del fractal, la elevación la sube o la baja.","太陽光のような1つの平行光源です。方位角でフラクタルの周りを回り、仰角で上げ下げします。","一盏平行光,像阳光一样。方位角让它绕着分形转,仰角让它升高或降低。"],["the surface is colored by an orbit trap — roughly, how close each point came to the origin while the fractal formula was iterating. pick a built-in theme, or design your own.","la superficie se colorea con una trampa de órbita: más o menos, qué tan cerca estuvo cada punto del origen mientras se iteraba la fórmula del fractal. elige un tema integrado o diseña el tuyo.","表面の色は軌道トラップで決まります。ざっくり言うと、フラクタルの式を反復している間に各点が原点にどれだけ近づいたかです。組み込みテーマから選ぶか、自分で作れます。","表面是按轨道陷阱上色的,大致就是每个点在分形公式迭代期间离原点有多近。可以选内置主题,也可以设计你自己的。"],["keep a gallery of views in this browser, copy the current picture, or copy a link that reopens exactly this view for someone else.","guarda una galería de vistas en este navegador, copia la imagen actual o copia un enlace que reabre exactamente esta vista para otra persona.","このブラウザに表示のギャラリーを保存したり、今の画像をコピーしたり、まったく同じ表示を誰かが開けるリンクをコピーしたりできます。","在这个浏览器里保存一个视图图库,复制当前图片,或者复制一个能让别人打开完全相同视图的链接。"],["nothing to export yet","todavía no hay nada que exportar","まだ書き出せるものがありません","还没有可以导出的内容"],["shader saved","shader guardado","シェーダーを保存しました","着色器已保存"],["put back in the controls","devolver a los controles","コントロールに戻す","放回控件里"],["new group","grupo nuevo","新しいグループ","新建分组"],["fly back to this view","volver volando a esta vista","この表示に飛んで戻る","飞回这个视图"],["jump to this view","saltar a esta vista","この表示にジャンプ","跳到这个视图"],["load this setup","cargar esta configuración","この設定を読み込む","载入这个布局方案"],["delete this setup","borrar esta configuración","この設定を削除","删除这个布局方案"],["rename this tab","renombrar esta pestaña","このタブの名前を変更","重命名这个标签页"],["saved view details","detalles de la vista guardada","保存した表示の詳細","已保存视图的详情"],["about this saved view","sobre esta vista guardada","この保存した表示について","关于这个已保存的视图"],["type a value","escribe un valor","値を入力","输入一个数值"],["jump to view","ir a la vista","表示へジャンプ","跳到视图"],["saved","guardado","保存日時","保存时间"],["type","tipo","種類","类型"],["palette","paleta","パレット","调色板"],["start z","z inicial","開始z","起点 z"],["camera distance","distancia de la cámara","カメラ距離","相机距离"],["original layout restored","diseño original restaurado","元のレイアウトに戻しました","已恢复原始布局"],["give it a name first","ponle un nombre primero","先に名前をつけてください","先给它起个名字"],["that name is taken, pick another","ese nombre ya está en uso, elige otro","その名前は使われています。別の名前にしてください","这个名字已经有了,换一个吧"],["volumetric lighting is too heavy for this gpu, so it was turned off","la luz volumétrica es demasiado pesada para esta gpu, así que se apagó","ボリューメトリックライトはこのgpuには重すぎるため、オフにしました","体积光对这块 gpu 来说太吃力了,所以已经关掉了"]]);
             let lang = 'en'; try { const v = localStorage.getItem('fe2d.lang'); if (D[v]) lang = v; } catch (e) { }
             const HTML = { en: 'en', es: 'es', ja: 'ja', zh: 'zh-CN' }, AT = ['title', 'aria-label', 'placeholder'];
             const SKIP = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, CANVAS: 1, NOSCRIPT: 1 };
@@ -8357,8 +8721,13 @@ startIntro();
                 document.documentElement.lang = HTML[l];
                 mo.disconnect(); walk(document.body); connect();
             }
-            window.I18N = { get lang() { return lang; }, set, add, tr: s => pick(s) || s };
-            connect(); if (lang !== 'en') set(lang);
+            /* the tab title is outside <body>, so the walker never reaches it; strings that later scripts add need a second pass on a reload */
+            const titleEn = document.title.replace(/^fractalengine\s*/, '');
+            const syncTitle = () => { document.title = 'fractalengine ' + (pick(titleEn) || titleEn); };
+            const setAll = l => { set(l); syncTitle(); };
+            const addAll = (...a) => { add(...a); if (lang !== 'en') queueMicrotask(() => setAll(lang)); else syncTitle(); };
+            window.I18N = { get lang() { return lang; }, set: setAll, add: addAll, tr: s => pick(s) || s };
+            connect(); if (lang !== 'en') setAll(lang);
         })();
     </script>
     <script>
@@ -8409,7 +8778,7 @@ startIntro();
                 syncers.push(() => { r.value = src.value; paint(); if (when) f.hidden = !when(); });
             }
             /* ---- interface setups: name, save and load the arrangement of bars, windows and tabs (and optionally the theme and these switches) ---- */
-            const SK = 'fe2d.setups', NICE = { solid: 'flat', glass: 'frosted glass', gdrg: 'gamedevrg.com', terminal: 'terminal', paper: 'paper', synth: 'synthwave', brutal: 'neo brutalist', slate: 'slate', amethyst: 'amethyst', blueprint: 'blueprint', sakura: 'sakura', forest: 'forest', contrast: 'high contrast' };
+            const SK = 'fe2d.setups', NICE = { solid: 'flat', glass: 'frosted glass', liquid: 'liquid glass', gdrg: 'gamedevrg.com', terminal: 'terminal', paper: 'paper', synth: 'synthwave', brutal: 'neo brutalist', slate: 'slate', amethyst: 'amethyst', blueprint: 'blueprint', sakura: 'sakura', forest: 'forest', contrast: 'high contrast' };
             const readSetups = () => { try { const v = JSON.parse(localStorage.getItem(SK)); return Array.isArray(v) ? v : []; } catch (e) { return []; } };
             const writeSetups = a => { try { localStorage.setItem(SK, JSON.stringify(a)); } catch (e) { } };
             const wide = () => !matchMedia('(max-width:760px)').matches && !!window.__feLayout;
@@ -8532,6 +8901,116 @@ startIntro();
             $('spReset').addEventListener('click', () => { Object.assign(SET, window.__feSetDefaults); window.__feApplySet(); window.__feSaveSet(); sync(); });
         })();
     </script>
+<script>if (window.I18N && I18N.add) I18N.add([["share link","compartir enlace","リンクを共有","分享链接"],["export setup (.json)","exportar configuración (.json)","設定を書き出す (.json)","导出设置 (.json)"],["import setup…","importar configuración…","設定を読み込む…","导入设置…"]]);</script>
+<style>
+/* search bar lives in the empty part of the top bar on desktop; on phones it stays at the top of the sidebar */
+@media (min-width: 761px) {
+  #topbar #searchbar { flex: 1 1 0; min-width: 140px; max-width: none; margin: 0 6px 0 12px; padding: 0; border: 0; background: none; position: relative; z-index: 2 }
+  #topbar #searchbar .sfield { max-width: none }
+  #topbar #searchbar input { height: 30px; box-sizing: border-box }
+}
+</style>
+<script>
+(() => {
+  const sb = document.getElementById('searchbar'), tb = document.getElementById('topbar'), cu = document.getElementById('ctlUnit'), q = document.getElementById('q'), mqd = matchMedia('(min-width: 761px)');
+  if (!sb || !tb || !cu || !q) return;
+  const place = () => { if (mqd.matches){ if (sb.parentNode !== tb) tb.insertBefore(sb, document.getElementById('tbSetups')); } else if (sb.parentNode === tb) cu.insertBefore(sb, cu.firstChild); };
+  mqd.addEventListener('change', place); place();
+  /* typing in the top bar needs the controls it filters: open the sidebar if it is hidden */
+  q.addEventListener('focus', () => { const t = document.getElementById('toggle'); if (mqd.matches && t && t.getAttribute('aria-expanded') === 'false') t.click(); });
+})();
+</script>
+<style>
+/* frosted glass legibility: the picture behind the glass changes, so the glass evens it out (denser tint, flatter contrast) and the grays that sit on it are computed from the text color instead of staying a fixed gray */
+#app[data-side="glass"] .dock, #app[data-side="glass"] .pwin, #app[data-side="glass"] .floatwin {
+  --muted: color-mix(in srgb, var(--ink) 76%, var(--panel));
+  --line: color-mix(in srgb, var(--ink) 28%, transparent);
+  --chip: color-mix(in srgb, var(--ink) 12%, transparent);
+}
+#app[data-side="glass"] .dock { background-color: color-mix(in srgb, var(--panel) 78%, transparent); -webkit-backdrop-filter: blur(40px) saturate(1.5) contrast(.82); backdrop-filter: blur(40px) saturate(1.5) contrast(.82) }
+#app[data-side="glass"] .pwin, #app[data-side="glass"] .floatwin { background-color: color-mix(in srgb, var(--panel) 80%, transparent); -webkit-backdrop-filter: blur(40px) saturate(1.5) contrast(.82); backdrop-filter: blur(40px) saturate(1.5) contrast(.82) }
+/* small gray text gets a soft halo in the panel color, so it stays readable over any patch of the picture */
+#app[data-side="glass"] .lbl, #app[data-side="glass"] .hint, #app[data-side="glass"] details.info summary, #app[data-side="glass"] section > h2, #app[data-side="glass"] .head span, #app[data-side="glass"] .dtab .tl, #app[data-side="glass"] .check {
+  text-shadow: 0 0 6px color-mix(in srgb, var(--panel) 85%, transparent), 0 0 1px color-mix(in srgb, var(--panel) 70%, transparent)
+}
+#app[data-side="glass"] input[type=range]::-webkit-slider-runnable-track { box-shadow: 0 0 0 1px color-mix(in srgb, var(--panel) 40%, transparent) }
+</style>
+<style>
+/* liquid glass: the glass surfaces bend what is behind them (an svg displacement map built from the surface's own size and corner radius, with a little colour dispersion) and carry a lit rim. Where the browser cannot do that, plain frosted blur is used. */
+#app[data-liquid] .dock, #app[data-liquid] .pwin, #app[data-liquid] .floatwin {
+  background-color: color-mix(in srgb, var(--panel) 46%, transparent);
+  background-image: var(--spec, none); background-size: 100% 100%; background-repeat: no-repeat;
+  -webkit-backdrop-filter: var(--lgf, blur(14px) saturate(1.7) brightness(1.06) contrast(.9));
+  backdrop-filter: var(--lgf, blur(14px) saturate(1.7) brightness(1.06) contrast(.9));
+  box-shadow: inset 0 0 14px rgba(255,255,255,.08), inset 0 0 3px rgba(255,255,255,.1), inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.22), inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.14), 0 10px 30px rgba(0,30,90,.25);
+}
+</style>
+<script>if (window.I18N && I18N.add) I18N.add([["liquid glass","cristal líquido","リキッドガラス","液态玻璃"]]);</script>
+<script>
+(() => {
+  const app = document.getElementById('app'); if (!app) return;
+  /* only Chromium honours svg filters inside backdrop-filter; elsewhere the css fallback (frosted blur) stays */
+  if (!(/Chrome|Chromium|Edg/.test(navigator.userAgent) && !/iPhone|iPad/.test(navigator.userAgent))) return;
+  const NS = 'http://www.w3.org/2000/svg', SEL = '.dock, .pwin, .floatwin';
+  const PH = {bevel: 16, thick: 26}, LIGHT = [-.6, -.8], BEND = 64, FROST = 18, CA = 0;
+  const svg = document.createElementNS(NS, 'svg'), defs = document.createElementNS(NS, 'defs');
+  svg.setAttribute('width', '0'); svg.setAttribute('height', '0'); svg.setAttribute('aria-hidden', 'true'); svg.style.position = 'absolute'; svg.appendChild(defs); document.body.appendChild(svg);
+  const hgt = t => Math.pow(1 - Math.pow(1 - t, 4), .25);
+  const shift = (t, W, n) => { const e = .002, a = Math.max(0, t - e), b = Math.min(1, t + e), slope = (PH.bevel / W) * (hgt(b) - hgt(a)) / (b - a), th = Math.atan(slope), th2 = Math.asin(Math.sin(th) / n); return (PH.thick + PH.bevel * hgt(t)) * Math.tan(th - th2); };
+  function build(w, h, R, W, inner){
+    const k = 1, cw = Math.max(2, Math.round(w * k)), ch = Math.max(2, Math.round(h * k)), N = 64, tab = [], mx = {};
+    [['r', 1.48], ['g', 1.52], ['b', 1.56]].forEach(c => { let m = 0; for (let i = 0; i <= N; i++){ const v = shift(i / N, W, c[1]); if (c[0] === 'g') tab[i] = v; if (v > m) m = v; } mx[c[0]] = m; });
+    for (let q = 0; q <= N; q++) tab[q] /= mx.g;
+    /* the bend eases in from nothing at the very edge, so the picture meets the outside without a seam */
+    const I0 = 10, v0 = tab[I0]; for (let q = 0; q < I0; q++){ const u = q / I0; tab[q] = v0 * u * u * u * (u * (u * 6 - 15) + 10); }
+    const c1 = document.createElement('canvas'), c2 = document.createElement('canvas'); c1.width = c2.width = cw; c1.height = c2.height = ch;
+    const x1 = c1.getContext('2d'), x2 = c2.getContext('2d'), im = x1.createImageData(cw, ch), sp = x2.createImageData(cw, ch), d = im.data, e = sp.data;
+    const r = Math.min(R * k, cw / 2, ch / 2), b = Math.max(1, Math.min(W * k, Math.min(cw, ch) / 2)), hx = cw / 2 - r, hy = ch / 2 - r;
+    for (let j = 0; j < ch; j++) for (let i = 0; i < cw; i++){
+      const px = i + .5 - cw / 2, py = j + .5 - ch / 2, qx = Math.abs(px) - hx, qy = Math.abs(py) - hy, ox = Math.max(qx, 0), oy = Math.max(qy, 0), len = Math.hypot(ox, oy), dist = len + Math.min(Math.max(qx, qy), 0) - r;
+      let nx, ny; if (len > 0){ nx = ox / len * Math.sign(px); ny = oy / len * Math.sign(py); } else if (qx > qy){ nx = Math.sign(px); ny = 0; } else { nx = 0; ny = Math.sign(py); }
+      let dd = -dist; /* distance in from the bending edge */
+      if (inner){ if (inner === 'right'){ dd = cw / 2 - px; nx = 1; ny = 0; } else if (inner === 'left'){ dd = px + cw / 2; nx = -1; ny = 0; } else if (inner === 'bottom'){ dd = ch / 2 - py; nx = 0; ny = 1; } else { dd = py + ch / 2; nx = 0; ny = -1; } }
+      const t = Math.min(1, Math.max(0, dd / b)), tt = t * N, i0 = Math.min(N - 1, Math.floor(tt)), pr = tab[i0] + (tab[i0 + 1] - tab[i0]) * (tt - i0), o = (j * cw + i) * 4;
+      d[o] = 128 - 127 * nx * pr; d[o + 1] = 128 - 127 * ny * pr; d[o + 2] = 128; d[o + 3] = 255;
+      const dot = nx * LIGHT[0] + ny * LIGHT[1], edge = Math.pow(1 - t, 4), a = dd < 0 ? 0 : edge * (dot > 0 ? .16 * Math.pow(dot, 1.3) : .06 * Math.pow(-dot, 1.3));
+      e[o] = e[o + 1] = e[o + 2] = 255; e[o + 3] = 255 * Math.min(1, a);
+    }
+    x1.putImageData(im, 0, 0); x2.putImageData(sp, 0, 0); return {map: c1.toDataURL(), spec: c2.toDataURL(), max: mx};
+  }
+  const mk = (n, a) => { const el = document.createElementNS(NS, n); for (const k in a) el.setAttribute(k, a[k]); return el; };
+  const items = new Map(); let uid = 0, raf = 0; const pending = new Set();
+  function attach(el){
+    if (items.has(el)) return; const id = 'lq' + (++uid), f = mk('filter', {id, 'color-interpolation-filters': 'sRGB', x: 0, y: 0, width: '100%', height: '100%'}), img = mk('feImage', {result: 'map', preserveAspectRatio: 'none'}); f.appendChild(img);
+    const disp = []; [['r', '1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'], ['g', '0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0'], ['b', '0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0']].forEach(c => {
+      const dm = mk('feDisplacementMap', {in: 'SourceGraphic', in2: 'map', xChannelSelector: 'R', yChannelSelector: 'G', result: 'd' + c[0]}); f.appendChild(dm); f.appendChild(mk('feColorMatrix', {in: 'd' + c[0], type: 'matrix', values: c[1], result: c[0]})); disp.push(dm); });
+    f.appendChild(mk('feBlend', {in: 'r', in2: 'g', mode: 'screen', result: 'rg'})); f.appendChild(mk('feBlend', {in: 'rg', in2: 'b', mode: 'screen'})); defs.appendChild(f);
+    const it = {id, img, disp, ro: new ResizeObserver(() => queue(el)), mo: new MutationObserver(() => queue(el))}; items.set(el, it); it.ro.observe(el); it.mo.observe(el, {attributes: true, attributeFilter: ['data-edge']}); queue(el);
+  }
+  function detach(el){ const it = items.get(el); if (!it) return; it.ro.disconnect(); it.mo.disconnect(); const f = document.getElementById(it.id); if (f) f.remove(); items.delete(el); pending.delete(el); el.style.removeProperty('--lgf'); el.style.removeProperty('--spec'); }
+  function queue(el){ pending.add(el); if (!raf) raf = requestAnimationFrame(() => { raf = 0; const l = [...pending]; pending.clear(); l.forEach(layout); }); }
+  function layout(el){
+    const it = items.get(el); if (!it || !el.isConnected) return; const r = el.getBoundingClientRect(), w = Math.round(r.width), h = Math.round(r.height); if (w < 8 || h < 8) return;
+    const br = getComputedStyle(el).borderTopLeftRadius; let R = parseFloat(br) || 0; if (br.indexOf('%') > -1) R = R / 100 * Math.min(w, h); R = Math.min(R, w / 2, h / 2);
+    const E = el.classList.contains('dock') ? el.dataset.edge : '', inner = {left: 'right', right: 'left', top: 'bottom', bottom: 'top'}[E] || null;
+    const o = build(w, h, R, inner ? 72 : Math.min(Math.min(w, h) * .5, 56), inner), keys = ['r', 'g', 'b'];
+    it.img.setAttribute('width', w); it.img.setAttribute('height', h); it.img.setAttribute('href', o.map);
+    it.disp.forEach((dm, i) => dm.setAttribute('scale', 2 * o.max.g * BEND / 44 * (1 + (i - 1) * CA)));
+    el.style.setProperty('--spec', 'url(' + o.spec + ')');
+    el.style.setProperty('--lgf', 'url(#' + it.id + ') blur(' + (FROST / 6) + 'px) saturate(1.7) brightness(1.06) contrast(.9)');
+  }
+  const sync = () => { const on = app.hasAttribute('data-liquid'), want = new Set(on ? app.querySelectorAll(SEL) : []); [...items.keys()].forEach(el => { if (!want.has(el) || !el.isConnected) detach(el); }); want.forEach(attach); };
+  new MutationObserver(recs => { for (const r of recs){ if (r.type === 'attributes'){ sync(); return; } for (const n of [...r.addedNodes, ...r.removedNodes]) if (n.nodeType === 1 && (n.matches(SEL) || n.querySelector(SEL))){ sync(); return; } } }).observe(app, {attributes: true, attributeFilter: ['data-liquid'], childList: true, subtree: true});
+  sync();
+})();
+</script>
+<style>
+/* docked sidebars are flush with the screen on every side but one, so only the side that faces the picture gets the lit rim */
+#app[data-liquid] .dock[data-edge="left"] { box-shadow: inset -1.5px 0 1px -.5px rgba(255,255,255,.22), inset -14px 0 14px -10px rgba(255,255,255,.08), 10px 0 30px -14px rgba(0,30,90,.3) }
+#app[data-liquid] .dock[data-edge="right"] { box-shadow: inset 1.5px 0 1px -.5px rgba(255,255,255,.22), inset 14px 0 14px -10px rgba(255,255,255,.08), -10px 0 30px -14px rgba(0,30,90,.3) }
+#app[data-liquid] .dock[data-edge="top"] { box-shadow: inset 0 -1.5px 1px -.5px rgba(255,255,255,.22), inset 0 -14px 14px -10px rgba(255,255,255,.08), 0 10px 30px -14px rgba(0,30,90,.3) }
+#app[data-liquid] .dock[data-edge="bottom"] { box-shadow: inset 0 1.5px 1px -.5px rgba(255,255,255,.22), inset 0 14px 14px -10px rgba(255,255,255,.08), 0 -10px 30px -14px rgba(0,30,90,.3) }
+</style>
 </body>
 
 </html>
