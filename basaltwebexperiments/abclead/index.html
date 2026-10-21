@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Leaderboard</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+	<style>
+		body {
+			margin: 0;
+			background-color: #0b0b0b;
+			background-image: radial-gradient(#333 1px, transparent 0);
+			background-size: 40px 40px;
+			background-position: center;
+			font-family: Arial, sans-serif;
+			color: white;
+
+			/* center the strip */
+			display: flex;
+			justify-content: center;
+			align-items: flex-start;
+			padding-top: 40px;
+		}
+
+		/* the long centered strip */
+		.container {
+			width: 70%;
+			background: #0e0e0e;
+			border: 2px solid #2a2a2a;
+			padding: 30px;
+			border-radius: 10px;
+		}
+
+		h1 {
+			margin-top: 0;
+			margin-bottom: 20px;
+			font-size: 34px;
+			letter-spacing: 1px;
+		}
+
+		/* your card */
+		.your-card {
+			background: #151515;
+			border: 2px solid #2f2f2f;
+			padding: 12px 16px;
+			margin-bottom: 20px;
+			border-radius: 8px;
+			display: flex;
+			justify-content: space-between;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			overflow: hidden;
+			border-radius: 8px;
+		}
+
+		th {
+			background: #1b1b1b;
+			padding: 12px;
+			text-align: left;
+			font-size: 14px;
+			letter-spacing: 1px;
+		}
+
+		td {
+			padding: 12px;
+			border-bottom: 1px solid #222;
+		}
+
+		/* base row */
+		tr {
+			background: #101010;
+			color: #888;
+		}
+
+		/* top 3 styles */
+		.gold {
+			background: linear-gradient(90deg, #d4af371e, transparent);
+			color: #d4af37;
+		}
+
+		.silver {
+			background: linear-gradient(90deg, #c0c0c01e, transparent);
+			color: #c0c0c0;
+		}
+
+		.bronze {
+			background: linear-gradient(90deg, #cd7f321e, transparent);
+			color: #cd7f32;
+		}
+
+		/* hover effect */
+		tr:hover {
+			background: #1a1a1a;
+		}
+
+		.table-frame {
+			border: 2px solid #2f2f2f;
+			border-radius: 8px;
+			overflow: hidden;
+			/* keeps rounded corners clean */
+		}
+
+		/* fake table row container */
+		.your-place-row {
+			width: 100%;
+			margin-bottom: 20px;
+		}
+
+		/* identical look to leaderboard rows */
+		.row {
+			display: grid;
+			grid-template-columns: var(--col-1) var(--col-2) var(--col-3);
+
+
+			padding: 12px;
+			background: #101010;
+			color: #888;
+			border-bottom: 1px solid #222;
+		}
+
+		/* match table header spacing */
+		.row:first-child {
+			border-radius: 8px;
+			border: 1px solid #2f2f2f;
+		}
+
+		/* SAME rank styles reused */
+		.row.gold {
+			background: linear-gradient(90deg, #d4af371e, transparent);
+			color: #d4af37;
+		}
+
+		.row.silver {
+			background: linear-gradient(90deg, #c0c0c01e, transparent);
+			color: #c0c0c0;
+		}
+
+		.row.bronze {
+			background: linear-gradient(90deg, #cd7f321e, transparent);
+			color: #cd7f32;
+		}
+
+		/* hover identical feel */
+		.row:hover {
+			background: #1a1a1a;
+		}
+
+		/* red state */
+		.row.error {
+			background: rgba(255, 0, 0, 0.15);
+			color: #ff4d4d;
+			border: 1px solid rgba(255, 0, 0, 0.4);
+		}
+
+		/* override grid for centered message */
+		.row.error.single {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			gap: 0;
+		}
+
+		/* link styling */
+		.row.error a {
+			color: #ff8080;
+			text-decoration: underline;
+		}
+
+		button {
+			background: #1e8b3c;
+			border: 1px solid #2f2f2f;
+			border-radius: 8px;
+			color: white;
+
+			padding: 10px 14px;
+			margin-right: 8px;
+
+			font-size: 14px;
+			cursor: pointer;
+
+			transition: 0.15s ease;
+		}
+
+		:root {
+			--col-1: 80px;
+			--col-2: 1fr;
+			--col-3: 120px;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			table-layout: fixed;
+		}
+
+		th:nth-child(1),
+		td:nth-child(1) {
+			width: var(--col-1);
+		}
+
+		th:nth-child(2),
+		td:nth-child(2) {
+			width: var(--col-2);
+		}
+
+		th:nth-child(3),
+		td:nth-child(3) {
+			width: var(--col-3);
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="container">
+
+		<h1>alphabetical speedrun</h1>
+		<p>
+			this is the leaderboard for alphabetical speedrun. your score will automatically be updated if you are logged in.
+		</p>
+
+		<div style="margin-bottom: 10px;">
+			<button id="backBtn">
+				&larr; back
+			</button>
+
+			<button onclick="window.location.href = BASE + 'alphabetical'">
+				return to game
+			</button>
+
+			<button onclick="window.location.href = BASE + 'leaderboards'">
+				return to leaderboards menu
+			</button>
+		</div>
+
+
+		<!-- YOUR CARD -->
+		<div class="your-place-row">
+			<div id="yourRow" class="row">
+				<div>#--</div>
+				<div>you</div>
+				<div>loading...</div>
+			</div>
+		</div>
+
+
+
+
+		<div class="table-frame">
+			<table>
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>user</th>
+						<th>score</th>
+					</tr>
+				</thead>
+
+				<tbody id="board"></tbody>
+			</table>
+		</div>
+
+	</div>
+
+	<script>
+
+		const API_URL = "https://gamedevrg-com-backend.onrender.com";
+		const BASE = "https://gamedevrg.com/basaltwebexperiments/"; // folder the pages live in (change here if it moves)
+
+		// "back" goes to whatever page you came from; if there isn't one (opened directly, new tab), it goes to the game
+		document.getElementById("backBtn").onclick = () => {
+			if (history.length > 1 && document.referrer && new URL(document.referrer).origin === location.origin) history.back();
+			else window.location.href = BASE + "alphabetical";
+		};
+		const CURRENT_USER = localStorage.getItem("username");
+
+		// usernames are user-chosen text, so never put them into innerHTML raw
+		const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+		async function load() {
+			let data;
+			try {
+				const res = await fetch(`${API_URL}/leaderboard/abcLeaderboard`);
+				if (!res.ok) throw new Error("bad status");
+				data = await res.json();
+			} catch (e) {
+				document.getElementById("board").innerHTML = '<tr><td colspan="3">couldn\'t load the leaderboard. try again in a moment.</td></tr>';
+				document.getElementById("yourRow").children[2].textContent = "unavailable";
+				return;
+			}
+
+			const board = document.getElementById("board");
+			board.innerHTML = "";
+
+			let yourIndex = -1;
+			let yourData = null;
+
+			data.forEach((d, i) => {
+				const row = document.createElement("tr");
+
+				// top 3 styling
+				if (i === 0) row.classList.add("gold");
+				if (i === 1) row.classList.add("silver");
+				if (i === 2) row.classList.add("bronze");
+
+				row.innerHTML = `
+			<td>#${i + 1}</td>
+			<td>${esc(d.username)}</td>
+			<td>${Number(d.time).toFixed(3)}</td>
+
+		`;
+
+				board.appendChild(row);
+
+				// find current user
+				if (d.username === CURRENT_USER) {
+					yourIndex = i;
+					yourData = d;
+				}
+			});
+
+			updateYourRow(yourIndex, yourData);
+		}
+
+
+		function updateYourRow(rank, data) {
+			const el = document.getElementById("yourRow");
+
+			const isLoggedIn = !!CURRENT_USER;
+
+			// NOT LOGGED IN
+			if (!isLoggedIn) {
+				el.className = "row error single";
+				el.innerHTML = `
+			<div style="color: red;">
+  			<i class="fa-solid fa-triangle-exclamation"></i>
+  you are not signed in. log in or create an account
+  <a href="https://gamedevrg.com/basaltwebexperiments/account">here</a>
+  to view and publish your highscore.
+</div>
+
+		`;
+				return;
+			}
+
+			// LOGGED IN BUT NOT FOUND
+			if (!data) {
+				el.className = "row error";
+				el.children[0].textContent = "#";
+				el.children[1].textContent = CURRENT_USER;
+				el.children[2].textContent = "not ranked";
+				return;
+			}
+
+			// NORMAL STATE
+			el.className = "row";
+
+			el.children[0].textContent = `#${rank + 1}`;
+			el.children[1].textContent = data.username;
+			el.children[2].textContent = Number(data.time).toFixed(3);
+
+
+			// top 3 colors
+			if (rank === 0) el.classList.add("gold");
+			else if (rank === 1) el.classList.add("silver");
+			else if (rank === 2) el.classList.add("bronze");
+		}
+
+
+
+
+		load();
+
+	</script>
+
+</body>
+
+</html>
