@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Particle Organism Simulation</title>
+<style>
+body {
+margin: 0;
+overflow: hidden;
+background: #000;
+}
+canvas {
+display: block;
+}
+</style>
+</head>
+<body>
+<canvas id="organismCanvas"></canvas>
+<script>
+const canvas = document.getElementById('organismCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+class Particle {
+constructor(x, y) {
+this.x = x;
+this.y = y;
+this.vx = (Math.random() - 0.5) * 1;
+this.vy = (Math.random() - 0.5) * 1;
+this.radius = 2 + Math.random() * 3;
+this.energy = 5; // Energy value when eaten
+}
+
+
+update() {
+this.x += this.vx;
+this.y += this.vy;
+
+
+
+// Bounce off walls
+if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+// Cap speed to prevent excessive drifting
+let speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+if (speed > 2) {
+this.vx = (this.vx / speed) * 2;
+this.vy = (this.vy / speed) * 2;
+}
+}
+
+draw() {
+ctx.beginPath();
+ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+ctx.fillStyle = '#0f0';
+ctx.fill();
+}
+}
+
+class Food {
+constructor(x, y) {
+this.x = x;
+this.y = y;
+this.radius = 3;
+this.energy = 10;
+}
+
+draw() {
+ctx.beginPath();
+ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+ctx.fillStyle = '#ff0';
+ctx.fill();
+}
+}
+
+class Organism {
+constructor(x, y, count = 3) {
+this.particles = [];
+let radius = 10; // Smaller initial radius
+for (let i = 0; i < count; i++) {
+let angle = (i / count) * Math.PI * 2;
+this.particles.push(new Particle(x + Math.cos(angle) * radius, y + Math.sin(angle) * radius));
+}
+this.mouth = { x: x, y: y, radius: 5 };
+this.energy = 50;
+this.maxEnergy = 100;
+this.speed = 0.5;
+this.target = null;
+this.membraneHealth = 100; // Skin strength
+this.metabolismRate = 0; // No natural energy decay
+this.tendrils = [];
+for (let i = 0; i < 4; i++) { // 4 tendrils
+this.tendrils.push({ angle: (i / 4) * Math.PI * 2, length: 15 }); // Initial shorter length
+}
+this.springLength = 20; // Initial smaller rest length
+this.springStrength = 0.1; // How strong the springs are
+this.inDanger = false; // Flag for fleeing
+this.name = generateJapaneseName();
+}
+
+update(foods, organisms, looseParticles) {
+// Update particles
+this.particles.forEach(p => p.update());
+
+// Apply spring forces to maintain connected wall
+for (let i = 0; i < this.particles.length; i++) {
+let p1 = this.particles[i];
+let p2 = this.particles[(i + 1) % this.particles.length]; // Connect to next, wrapping around
+let dx = p2.x - p1.x;
+let dy = p2.y - p1.y;
+let dist = Math.sqrt(dx * dx + dy * dy);
+let force = (dist - this.springLength) * this.springStrength;
+let nx = dx / dist;
+let ny = dy / dist;
+p1.vx += nx * force;
+p1.vy += ny * force;
+p2.vx -= nx * force;
+p2.vy -= ny * force;
+}
+
+// Repulsion to prevent collapse
+for (let i = 0; i < this.particles.length; i++) {
+for (let j = i + 1; j < this.particles.length; j++) {
+let p1 = this.particles[i];
+let p2 = this.particles[j];
+let dx = p2.x - p1.x;
+let dy = p2.y - p1.y;
+let dist = Math.sqrt(dx * dx + dy * dy);
+if (dist < this.springLength * 0.8 && dist > 0) { // If closer than 80% of rest length
+let force = (this.springLength * 0.8 - dist) * this.springStrength * 2; // Stronger repulsion
+let nx = dx / dist;
+let ny = dy / dist;
+p1.vx -= nx * force;
+p1.vy -= ny * force;
+p2.vx += nx * force;
+p2.vy += ny * force;
+}
+}
+}
+
+// Calculate center
+let centerX = this.particles.reduce((sum, p) => sum + p.x, 0) / this.particles.length;
+let centerY = this.particles.reduce((sum, p) => sum + p.y, 0) / this.particles.length;
+
+// Cohesion: pull particles towards center if too far
+this.particles.forEach(p => {
+let dx = centerX - p.x;
+let dy = centerY - p.y;
+let dist = Math.sqrt(dx * dx + dy * dy);
+if (dist > 20) {
+p.vx += (dx / dist) * 0.05;
+p.vy += (dy / dist) * 0.05;
+}
+});
+
+// Update tendrils: oscillate angles and lengths (scale with size)
+this.tendrils.forEach(t => {
+t.angle += 0.02; // Slow rotation
+t.length = 15 + (this.particles.length - 3) * 2; // Grow with particle count
+t.length += Math.sin(Date.now() * 0.001 + t.angle) * 2; // Waving
+});
+
+// Tendril interaction: if a tendril touches another organism, pull towards it
+this.tendrils.forEach(t => {
+let tx = centerX + Math.cos(t.angle) * t.length;
+let ty = centerY + Math.sin(t.angle) * t.length;
+organisms.forEach(other => {
+if (other !== this) {
+let distToOther = Math.sqrt((other.mouth.x - tx) ** 2 + (other.mouth.y - ty) ** 2);
+if (distToOther < 10) { // Tendril touches
+let dx = tx - centerX;
+let dy = ty - centerY;
+let dist = Math.sqrt(dx * dx + dy * dy);
+if (dist > 0) {
+this.particles.forEach(p => {
+p.vx += (dx / dist) * 0.05; // Pull towards tendril
+p.vy += (dy / dist) * 0.05;
+});
+}
+}
+}
+});
+});
+
+// Mouth follows the center
+this.mouth.x = centerX;
+this.mouth.y = centerY;
+
+// Determine if in danger: low health or near a larger organism
+this.inDanger = this.membraneHealth < 50;
+organisms.forEach(other => {
+if (other !== this && other.particles.length > this.particles.length + 2) {
+let dist = Math.sqrt((other.mouth.x - centerX) ** 2 + (other.mouth.y - centerY) ** 2);
+if (dist < 50) {
+this.inDanger = true;
+}
+}
+});
+
+// Seek behavior
+if (this.inDanger) {
+// Flee from threats
+let fleeX = 0, fleeY = 0;
+organisms.forEach(other => {
+if (other !== this) {
+let dist = Math.sqrt((other.mouth.x - centerX) ** 2 + (other.mouth.y - centerY) ** 2);
+if (dist < 100) {
+let dx = centerX - other.mouth.x;
+let dy = centerY - other.mouth.y;
+let force = 1 / (dist + 1); // Inverse distance
+fleeX += dx * force;
+fleeY += dy * force;
+}
+}
+});
+if (fleeX !== 0 || fleeY !== 0) {
+let dist = Math.sqrt(fleeX * fleeX + fleeY * fleeY);
+this.particles.forEach(p => {
+p.vx += (fleeX / dist) * this.speed * 0.02;
+p.vy += (fleeY / dist) * this.speed * 0.02;
+});
+}
+} else {
+// Normal seeking: food, prey, or group with others
+let nearestTarget = null;
+let minDist = Infinity;
+foods.forEach(food => {
+let dist = Math.sqrt((food.x - centerX) ** 2 + (food.y - centerY) ** 2);
+if (dist < minDist) {
+minDist = dist;
+nearestTarget = food;
+}
+});
+organisms.forEach(org => {
+if (org !== this) {
+let dist = Math.sqrt((org.mouth.x - centerX) ** 2 + (org.mouth.y - centerY) ** 2);
+if (dist < minDist) {
+minDist = dist;
+nearestTarget = org;
+}
+}
+});
+looseParticles.forEach(p => {
+let dist = Math.sqrt((p.x - centerX) ** 2 + (p.y - centerY) ** 2);
+if (dist < minDist) {
+minDist = dist;
+nearestTarget = p;
+}
+});
+
+// Attraction to other organisms if no better target and not too close
+if (!nearestTarget || minDist > 50) {
+let nearestOrg = null;
+let minOrgDist = Infinity;
+organisms.forEach(org => {
+if (org !== this) {
+let dist = Math.sqrt((org.mouth.x - centerX) ** 2 + (org.mouth.y - centerY) ** 2);
+if (dist < minOrgDist && dist > 30) { // Attract if not too close
+minOrgDist = dist;
+nearestOrg = org;
+}
+}
+});
+if (nearestOrg) {
+nearestTarget = nearestOrg;
+minDist = minOrgDist;
+}
+}
+
+if (nearestTarget && minDist < 100) {
+this.target = nearestTarget;
+let tx = nearestTarget.x || nearestTarget.mouth.x;
+let ty = nearestTarget.y || nearestTarget.mouth.y;
+let dx = tx - centerX;
+let dy = ty - centerY;
+let dist = Math.sqrt(dx * dx + dy * dy);
+if (dist > 0) {
+this.particles.forEach(p => {
+p.vx += (dx / dist) * this.speed * 0.01;
+p.vy += (dy / dist) * 0.01;
+});
+}
+if (dist < this.mouth.radius + (nearestTarget.radius || 5)) {
+if (nearestTarget instanceof Food) {
+this.eatFood(nearestTarget);
+foods.splice(foods.indexOf(nearestTarget), 1);
+} else if (nearestTarget instanceof Particle) {
+this.eatParticle(nearestTarget);
+if (this.membraneHealth < 100) {
+    this.membraneHealth++;
+}
+looseParticles.splice(looseParticles.indexOf(nearestTarget), 1);
+} else {
+this.attack(nearestTarget, organisms, looseParticles);
+}
+}
+} else {
+this.target = null;
+}
+}
+
+// Mouth can eat individual particles from other organisms
+organisms.forEach(other => {
+if (other !== this) {
+let particlesToEat = [];
+other.particles.forEach((p, index) => {
+let dist = Math.sqrt((p.x - this.mouth.x) ** 2 + (p.y - this.mouth.y) ** 2);
+if (dist < this.mouth.radius + p.radius) {
+particlesToEat.push(index);
+}
+});
+// Remove in reverse order to avoid index shifting
+particlesToEat.reverse().forEach(index => {
+this.eatWall(other, index, looseParticles);
+});
+}
+});
+
+// Combat: Check for collisions with other organisms
+organisms.forEach(other => {
+if (other !== this) {
+let dist = Math.sqrt((other.mouth.x - centerX) ** 2 + (other.mouth.y - centerY) ** 2);
+if (dist < 25) { // Collision threshold
+let relativeSpeed = Math.sqrt((this.speed - other.speed) ** 2); // Simplified
+if (relativeSpeed > 0.5) {
+other.membraneHealth -= 10; // Damage membrane
+if (other.membraneHealth <= 0) {
+this.tearApart(other, looseParticles);
+organisms.splice(organisms.indexOf(other), 1);
+}
+}
+}
+}
+});
+
+// Energy decay (metabolism) - set to 0, so no natural death
+this.energy -= this.metabolismRate;
+
+// Growth: Add particles and increase size over time
+if (this.energy > this.maxEnergy * 0.9 && this.particles.length < 20) {
+this.energy -= 10; // Cost to grow
+this.particles.push(new Particle(this.mouth.x + Math.random() * 10 - 5, this.mouth.y + Math.random() * 10 - 5));
+this.springLength += 2; // Increase size as it grows
+}
+
+// Reproduction
+if (this.energy > this.maxEnergy) {
+this.energy /= 2;
+let newOrg = new Organism(centerX + Math.random() * 50 - 25, centerY + Math.random() * 50 - 25, 3); // Always start with 3
+organisms.push(newOrg);
+}
+
+// Die if no particles left
+if (this.particles.length <= 0) {
+return false;
+}
+
+return true;
+}
+
+eatFood(food) {
+this.energy += food.energy;
+}
+
+eatParticle(particle) {
+this.energy += particle.energy;
+}
+
+eatWall(target, particleIndex, looseParticles) {
+let eatenParticle = target.particles.splice(particleIndex, 1)[0];
+this.energy += eatenParticle.energy;
+target.membraneHealth -= 5; // Damage for losing a particle
+looseParticles.push(eatenParticle);
+}
+
+attack(target, organisms, looseParticles) {
+target.membraneHealth -= 20;
+if (target.membraneHealth <= 0) {
+this.tearApart(target, looseParticles);
+organisms.splice(organisms.indexOf(target), 1);
+}
+}
+
+tearApart(target, looseParticles) {
+target.particles.forEach(p => {
+p.vx += (Math.random() - 0.5) * 2; // Scatter particles
+p.vy += (Math.random() - 0.5) * 2;
+looseParticles.push(p);
+});
+}
+
+draw() {
+// Calculate center for tendrils
+let centerX = this.particles.reduce((sum, p) => sum + p.x, 0) / this.particles.length;
+let centerY = this.particles.reduce((sum, p) => sum + p.y, 0) / this.particles.length;
+
+// Draw membrane (skin) as a filled shape
+let membraneColor = this.membraneHealth > 50 ? 'rgba(0, 255, 0, 0.3)' : 'rgba(255, 0, 0, 0.3)'; // Semi-transparent fill
+ctx.beginPath();
+ctx.moveTo(this.particles[0].x, this.particles[0].y);
+for (let i = 1; i < this.particles.length; i++) {
+ctx.lineTo(this.particles[i].x, this.particles[i].y);
+}
+ctx.closePath();
+ctx.fillStyle = membraneColor;
+ctx.fill();
+ctx.strokeStyle = this.membraneHealth > 50 ? '#0f0' : '#f00';
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Draw tendrils
+ctx.strokeStyle = '#0ff'; // Cyan tendrils
+ctx.lineWidth = 1;
+this.tendrils.forEach(t => {
+let tx = centerX + Math.cos(t.angle) * t.length;
+let ty = centerY + Math.sin(t.angle) * t.length;
+ctx.beginPath();
+ctx.moveTo(centerX, centerY);
+ctx.lineTo(tx, ty);
+ctx.stroke();
+});
+
+// Draw particles inside
+this.particles.forEach(p => p.draw());
+
+// Draw mouth
+ctx.beginPath();
+ctx.arc(this.mouth.x, this.mouth.y, this.mouth.radius, 0, Math.PI * 2);
+ctx.fillStyle = '#f00';
+ctx.fill();
+
+ctx.fillStyle = "#000"; // White text
+ctx.font = "14px Helvetica";
+ctx.textAlign = "center";
+ctx.fillText(this.name, this.mouth.x-1, this.mouth.y - this.mouth.radius - 5);
+ctx.fillText(this.name, this.mouth.x-1, this.mouth.y-1 - this.mouth.radius - 5);
+ctx.fillText(this.name, this.mouth.x, this.mouth.y-1 - this.mouth.radius - 5);
+ctx.fillText(this.name, this.mouth.x+1, this.mouth.y-1 - this.mouth.radius - 5);
+ctx.fillText(this.name, this.mouth.x-1, this.mouth.y - this.mouth.radius - 5);
+ctx.fillText(this.name, this.mouth.x-1, this.mouth.y+1 - this.mouth.radius - 5);
+ctx.fillText(this.name, this.mouth.x+1, this.mouth.y+1 - this.mouth.radius - 5);
+ctx.fillText(this.name, this.mouth.x, this.mouth.y+1 - this.mouth.radius - 5);
+ctx.fillStyle = "#fff"; // White text
+ctx.fillText(this.name, this.mouth.x, this.mouth.y - this.mouth.radius - 5); // Above mouth
+
+ctx.font = "10px Helvetica";
+ctx.fillStyle = "#000"; // White text
+ctx.fillText(this.membraneHealth, this.mouth.x-1, this.mouth.y - this.mouth.radius - 20);
+ctx.fillText(this.membraneHealth, this.mouth.x-1, this.mouth.y-1 - this.mouth.radius - 20);
+ctx.fillText(this.membraneHealth, this.mouth.x, this.mouth.y-1 - this.mouth.radius - 20);
+ctx.fillText(this.membraneHealth, this.mouth.x+1, this.mouth.y-1 - this.mouth.radius - 20);
+ctx.fillText(this.membraneHealth, this.mouth.x-1, this.mouth.y - this.mouth.radius - 20);
+ctx.fillText(this.membraneHealth, this.mouth.x-1, this.mouth.y+1 - this.mouth.radius - 20);
+ctx.fillText(this.membraneHealth, this.mouth.x+1, this.mouth.y+1 - this.mouth.radius - 20);
+ctx.fillText(this.membraneHealth, this.mouth.x, this.mouth.y+1 - this.mouth.radius - 20);
+ctx.fillStyle = "#ccc"; // White text
+ctx.fillText(this.membraneHealth + "", this.mouth.x, this.mouth.y - this.mouth.radius - 20); // Above mouth
+
+}
+}
+
+// Function to handle particle collisions
+function handleParticleCollisions(allParticles) {
+for (let i = 0; i < allParticles.length; i++) {
+for (let j = i + 1; j < allParticles.length; j++) {
+let p1 = allParticles[i];
+let p2 = allParticles[j];
+let dx = p2.x - p1.x;
+let dy = p2.y - p1.y;
+let dist = Math.sqrt(dx * dx + dy * dy);
+if (dist < p1.radius + p2.radius) {
+// Collision: bounce them apart
+let overlap = p1.radius + p2.radius - dist;
+let nx = dx / dist;
+let ny = dy / dist;
+p1.x -= nx * overlap / 2;
+p1.y -= ny * overlap / 2;
+p2.x += nx * overlap / 2;
+p2.y += ny * overlap / 2;
+// Swap velocities for bounce
+let tempVx = p1.vx;
+let tempVy = p1.vy;
+p1.vx = p2.vx;
+p1.vy = p2.vy;
+p2.vx = tempVx;
+p2.vy = tempVy;
+}
+}
+}
+}
+
+function generateJapaneseName() {
+    const syllables = ["a", "i", "u", "e", "o", "ka", "ki", "ku", "ke", "ko", 
+                       "sa", "shi", "su", "se", "so", "ta", "chi", "tsu", "te", "to",
+                       "na", "ni", "nu", "ne", "no", "ha", "hi", "fu", "he", "ho",
+                       "ma", "mi", "mu", "me", "mo", "ya", "yu", "yo", "ra", "ri", 
+                       "ru", "re", "ro", "wa", "wo", "n"];
+    let name = "";
+    let syllableCount = 2 + Math.floor(Math.random() * 4); // 2 to 5 syllables
+    for (let i = 0; i < syllableCount; i++) {
+        name += syllables[Math.floor(Math.random() * syllables.length)];
+    }
+    return name.charAt(0).toUpperCase() + name.slice(1); // Capitalize first letter
+}
+
+let organisms = [];
+let foods = [];
+let looseParticles = [];
+
+// Create initial organisms and foods
+for (let i = 0; i < 5; i++) {
+organisms.push(new Organism(Math.random() * canvas.width, Math.random() * canvas.height, 3));
+}
+for (let i = 0; i < 20; i++) {
+foods.push(new Food(Math.random() * canvas.width, Math.random() * canvas.height));
+}
+
+function animate() {
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+// Collect all particles for collision detection
+let allParticles = [];
+organisms.forEach(org => allParticles.push(...org.particles));
+allParticles.push(...looseParticles);
+
+// Handle particle collisions
+handleParticleCollisions(allParticles);
+
+// Update and draw foods
+foods.forEach(food => food.draw());
+
+// Draw loose particles
+looseParticles.forEach(p => p.draw());
+
+// Update organisms
+for (let i = organisms.length - 1; i >= 0; i--) {
+if (!organisms[i].update(foods, organisms, looseParticles)) {
+organisms.splice(i, 1);
+}
+}
+
+// Draw organisms
+organisms.forEach(org => org.draw());
+
+// Spawn new food occasionally
+if (Math.random() < 0.02) {
+foods.push(new Food(Math.random() * canvas.width, Math.random() * canvas.height));
+}
+
+requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+</body>
+</html>
