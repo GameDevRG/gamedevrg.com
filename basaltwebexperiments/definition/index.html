@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Word Definition Game</title>
+
+  <style>
+    body {
+      background: #0b0b0b;
+      color: #eaeaea;
+      font-family: helvetica, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      gap: 10px;
+      transition: filter 0.25s ease;
+    }
+
+    body.blurred > *:not(.overlay) {
+      filter: blur(6px);
+    }
+
+    #definition {
+      font-size: 22px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    #timer {
+      font-size: 16px;
+      opacity: 0.8;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 300px;
+      padding: 10px;
+      font-size: 18px;
+      border-radius: 6px;
+      border: 2px solid #333;
+      background: #111;
+      color: #eaeaea;
+      text-align: center;
+    }
+
+    .controls {
+      display: flex;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    button.control {
+      padding: 10px 22px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      color: #fff;
+    }
+
+    .submit { background: #1e8b3c; color: #000; }
+    .scores { background: #444; }
+    .skip { background: #c0392b; color: #fff; }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .overlay.active { display: flex; }
+
+    .modal {
+      background: #111;
+      border: 2px solid #333;
+      border-radius: 10px;
+      padding: 20px;
+      min-width: 360px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      border: 1px solid #333;
+      padding: 6px;
+      text-align: center;
+    }
+
+    th { background: #151515; }
+
+    .close {
+      margin-top: 12px;
+      width: 100%;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      background: #333;
+      color: #fff;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="definition"></div>
+  <div id="timer">Time elapsed: 0.00s</div>
+  <input id="inputWord" placeholder="Type the word here" autofocus />
+
+  <div class="controls">
+    <button class="control submit" id="submit">submit [enter]</button>
+    <button class="control skip" id="skip">skip</button>
+    <button class="control scores" id="scores">scores</button>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h2 style="text-align:center">score history</h2>
+      <table>
+        <thead>
+          <tr><th>#</th><th>definition</th><th>word</th><th>time (s)</th></tr>
+        </thead>
+        <tbody id="scoreTable"></tbody>
+      </table>
+      <button class="close" id="closeModal">close</button>
+    </div>
+  </div>
+
+  <script>
+    const definitions = [
+      { def: 'a place to buy things', answers: ['store', 'shop', 'market', 'bazaar', 'mall', 'emporium', 'boutique', 'supermarket', 'grocery', 'outlet', 'trading post', 'arcade', 'family mart'] },
+      { def: 'a large body of water', answers: ['ocean', 'sea', 'lake', 'pond', 'river', 'reservoir', 'bay', 'fjord', 'lagoon', 'gulf', 'loch', 'estuary'] },
+      { def: 'opposite of cold', answers: ['hot', 'warm', 'heated', 'toasty', 'boiling', 'scorching', 'sweltering', 'tropical'] },
+      { def: 'a flying creature', answers: ['bird', 'bat', 'insect', 'butterfly', 'moth', 'dragonfly', 'beetle', 'pterosaur', 'albatross', 'sparrow', 'hawk', 'eagle'] },
+      { def: 'a type of tree', answers: ['oak', 'pine', 'maple', 'birch', 'willow', 'redwood', 'cedar', 'sequoia', 'elm', 'cherry', 'spruce', 'palm', 'cypress', 'mahogany', 'sycamore'] },
+      { def: 'a tool used for writing', answers: ['pen', 'pencil', 'marker', 'quill', 'stylus', 'crayon', 'chalk', 'fountain pen', 'brush', 'highlighter', 'ink', 'calligraphy pen'] },
+      { def: 'a sweet treat', answers: ['candy', 'chocolate', 'cake', 'cookie', 'pie', 'brownie', 'fudge', 'marshmallow', 'tart', 'macaron', 'gelato', 'donut', 'bonbon', 'lollipop'] },
+      { def: 'a mode of transport', answers: ['car', 'bus', 'bicycle', 'train', 'plane', 'boat', 'subway', 'scooter', 'skateboard', 'helicopter', 'segway', 'tram', 'rickshaw', 'canoe', 'hoverboard'] },
+      { def: 'a celestial body', answers: ['sun', 'moon', 'star', 'planet', 'asteroid', 'comet', 'nebula', 'black hole', 'dwarf planet', 'meteor', 'satellite'] },
+      { def: 'a type of footwear', answers: ['shoe', 'boot', 'sandal', 'sneaker', 'loafer', 'heel', 'slipper', 'cleat', 'moccasin', 'flip-flop', 'oxford', 'espadrille'] },
+      { def: 'a kind of fruit', answers: ['apple', 'banana', 'orange', 'grape', 'mango', 'kiwi', 'pear', 'peach', 'plum', 'fig', 'lychee', 'pomegranate', 'papaya', 'guava', 'persimmon'] },
+      { def: 'a type of music', answers: ['rock', 'pop', 'jazz', 'classical', 'hip hop', 'rap', 'blues', 'metal', 'punk', 'folk', 'electronic', 'reggae', 'techno', 'soul', 'R&B'] },
+      { def: 'something you can drink', answers: ['water', 'tea', 'coffee', 'juice', 'milk', 'soda', 'wine', 'beer', 'smoothie', 'cocktail', 'lemonade', 'hot chocolate', 'kombucha', 'espresso'] },
+      { def: 'a natural phenomenon', answers: ['rain', 'snow', 'storm', 'earthquake', 'hurricane', 'tornado', 'volcano', 'fog', 'thunder', 'lightning', 'aurora', 'hail', 'tsunami'] },
+      { def: 'a household animal', answers: ['dog', 'cat', 'hamster', 'parrot', 'rabbit', 'fish', 'turtle', 'snake', 'ferret', 'guinea pig', 'canary', 'chinchilla', 'gecko'] },
+      { def: 'a type of clothing', answers: ['shirt', 'pants', 'dress', 'skirt', 'coat', 'jacket', 'hat', 'gloves', 'scarf', 'socks', 't-shirt', 'blouse', 'sweater', 'hoodie', 'shorts'] },
+      { def: 'something you read', answers: ['book', 'magazine', 'newspaper', 'manual', 'comic', 'novel', 'pamphlet', 'brochure', 'journal', 'e-book', 'storybook', 'textbook'] },
+      { def: 'a type of building', answers: ['house', 'apartment', 'skyscraper', 'castle', 'cabin', 'hut', 'barn', 'temple', 'church', 'mosque', 'palace', 'mansion', 'igloo', 'shack'] },
+      { def: 'a form of entertainment', answers: ['movie', 'game', 'show', 'concert', 'play', 'sport', 'puzzle', 'circus', 'comic', 'anime', 'concert', 'series', 'performance', 'opera'] },
+      { def: 'something that flies', answers: ['plane', 'bird', 'helicopter', 'kite', 'drone', 'butterfly', 'balloon', 'rocket', 'insect', 'fairy', 'airplane', 'fly', 'paper airplane', 'paper plane'] },
+
+      // --- Niche / abstract / harder definitions ---
+      { def: 'a type of cloud', answers: ['cumulus', 'stratus', 'cirrus', 'nimbus', 'cumulonimbus', 'altostratus', 'altocumulus'] },
+      { def: 'a precious stone', answers: ['diamond', 'ruby', 'sapphire', 'emerald', 'amethyst', 'opal', 'topaz', 'jade', 'garnet', 'pearl'] },
+      { def: 'a feeling of happiness', answers: ['joy', 'elation', 'bliss', 'contentment', 'cheerfulness', 'euphoria', 'delight', 'pleasure'] },
+      { def: 'a unit of time', answers: ['second', 'minute', 'hour', 'day', 'week', 'month', 'year', 'decade', 'century', 'millennium'] },
+      { def: 'something that cuts', answers: ['knife', 'scissors', 'sword', 'razor', 'axe', 'dagger', 'shears', 'cleaver', 'machete'] },
+      { def: 'a type of metal', answers: ['iron', 'gold', 'silver', 'copper', 'aluminum', 'platinum', 'titanium', 'bronze', 'nickel'] },
+      { def: 'a body part', answers: ['hand', 'foot', 'eye', 'ear', 'nose', 'mouth', 'leg', 'arm', 'finger', 'toe', 'knee', 'elbow', 'shoulder'] },
+      { def: 'a type of fish', answers: ['salmon', 'tuna', 'trout', 'cod', 'catfish', 'bass', 'mackerel', 'herring', 'carp', 'guppy'] },
+      { def: 'a type of bird', answers: ['sparrow', 'eagle', 'hawk', 'owl', 'parrot', 'pigeon', 'crow', 'flamingo', 'penguin', 'peacock'] },
+      { def: 'a body of land', answers: ['island', 'peninsula', 'continent', 'mountain', 'hill', 'valley', 'plateau', 'desert', 'plain'] },
+      { def: 'a unit of measurement', answers: ['meter', 'kilometer', 'inch', 'foot', 'yard', 'mile', 'gram', 'kilogram', 'liter', 'milliliter'] },
+      { def: 'a type of vehicle', answers: ['car', 'truck', 'bike', 'scooter', 'train', 'plane', 'boat', 'helicopter', 'submarine', 'tram', 'segway'] },
+      { def: 'a type of insect', answers: ['ant', 'bee', 'butterfly', 'beetle', 'moth', 'mosquito', 'fly', 'dragonfly', 'ladybug', 'grasshopper'] },
+      { def: 'a type of flower', answers: ['rose', 'tulip', 'lily', 'daisy', 'sunflower', 'orchid', 'lavender', 'marigold', 'peony', 'daffodil'] },
+      { def: 'a weapon', answers: ['sword', 'gun', 'bow', 'axe', 'dagger', 'spear', 'mace', 'club', 'crossbow', 'katana', 'pistol', 'bat', 'waraxe', 'rocket launcher'] },
+      { def: 'a shape', answers: ['circle', 'square', 'triangle', 'rectangle', 'pentagon', 'hexagon', 'octagon', 'oval', 'rhombus'] },
+      { def: 'a color', answers: ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'black', 'white', 'pink', 'brown', 'gray', 'cyan', 'magenta'] },
+      { def: 'a sound', answers: ['bang', 'click', 'whistle', 'hiss', 'buzz', 'pop', 'ding', 'clang', 'roar', 'meow', 'bark'] },
+      { def: 'something that grows', answers: ['plant', 'tree', 'flower', 'mushroom', 'grass', 'vine', 'algae', 'shrub'] },
+      { def: 'something round', answers: ['ball', 'circle', 'globe', 'disk', 'coin', 'wheel', 'sphere', 'bubble', 'earth'] },
+      { def: 'something sharp', answers: ['knife', 'needle', 'pin', 'thorn', 'sword', 'razor', 'spear', 'scissors'] },
+      { def: 'something soft', answers: ['pillow', 'blanket', 'cotton', 'feather', 'fur', 'plush', 'moss', 'wool'] },
+      { def: 'something fast', answers: ['cheetah', 'car', 'jet', 'bullet', 'train', 'arrow', 'rocket', 'horse'] },
+      { def: 'something slow', answers: ['turtle', 'snail', 'sloth', 'lag', 'crawl', 'molasses', 'glacier'] },
+      { def: 'a planet in the solar system', answers: ['Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto'] },
+      { def: 'something cold', answers: ['ice', 'snow', 'frost', 'glacier', 'freezer', 'cold water', 'chill', 'arctic'] },
+      { def: 'a precious metal', answers: ['gold', 'silver', 'platinum', 'palladium', 'rhodium', 'iridium', 'tungsten'] },
+      { def: 'something sticky', answers: ['glue', 'honey', 'tape', 'resin', 'gum', 'sap', 'chewing gum'] },
+      { def: 'a type of drink', answers: ['water', 'tea', 'coffee', 'juice', 'milk', 'soda', 'beer', 'wine', 'cocktail', 'smoothie'] },
+      { def: 'a type of nut', answers: ['almond', 'cashew', 'peanut', 'walnut', 'pecan', 'hazelnut', 'macadamia', 'pistachio'] },
+      { def: 'a type of bread', answers: ['white', 'wheat', 'rye', 'sourdough', 'bagel', 'brioche', 'ciabatta', 'focaccia', 'pita'] },
+      { def: 'something that floats', answers: ['boat', 'balloon', 'bubble', 'raft', 'ice', 'flotation device'] },
+      { def: 'something that sinks', answers: ['rock', 'anchor', 'coin', 'metal', 'weight', 'submarine'] },
+      { def: 'a feeling of sadness', answers: ['sadness', 'grief', 'melancholy', 'sorrow', 'depression', 'gloom', 'misery', 'despair'] },
+      { def: 'a type of fabric', answers: ['cotton', 'silk', 'wool', 'linen', 'nylon', 'polyester', 'velvet', 'denim', 'satin', 'leather'] },
+      { def: 'a type of hat', answers: ['cap', 'beanie', 'fedora', 'beret', 'helmet', 'cowboy hat', 'sombrero', 'top hat', 'sun hat'] },
+      { def: 'something edible', answers: ['fruit', 'vegetable', 'meat', 'fish', 'bread', 'cheese', 'egg', 'nut', 'grain', 'pasta', 'rice'] },
+      { def: 'something you can throw', answers: ['ball', 'frisbee', 'stone', 'spear', 'knife', 'boomerang', 'javelin', 'disc'] },
+      { def: 'a type of energy', answers: ['electricity', 'heat', 'kinetic', 'potential', 'solar', 'wind', 'nuclear', 'chemical', 'mechanical'] },
+      { def: 'something that spins', answers: ['wheel', 'fan', 'top', 'propeller', 'disc', 'record', 'gyroscope', 'earth',] },
+      { def: 'something that shines', answers: ['sun', 'lamp', 'lightbulb', 'star', 'flashlight', 'diamond', 'fire', 'glowstick'] },
+      { def: 'something that makes noise', answers: ['bell', 'speaker', 'horn', 'drum', 'alarm', 'radio', 'megaphone', 'whistle', 'instrument', 'chainsaw', 'explosion'] },
+      { def: 'something you sit on', answers: ['chair', 'stool', 'bench', 'sofa', 'cushion', 'rock', 'throne', 'beanbag'] },
+      { def: 'a type of dessert', answers: ['cake', 'pie', 'pudding', 'ice cream', 'cookie', 'brownie', 'tart', 'gelato', 'soufflé'] },
+      { def: 'something you wear on your hands', answers: ['glove', 'mitt', 'fingerless glove', 'gauntlet', 'mittens', 'work glove', 'sports glove'] },
+      { def: 'something you wear on your feet', answers: ['shoe', 'sock', 'boot', 'sandal', 'slipper', 'sneaker', 'cleat', 'flip-flop'] },
+      { def: 'a type of vehicle on water', answers: ['boat', 'ship', 'canoe', 'kayak', 'yacht', 'submarine', 'ferry', 'raft'] },
+      { def: 'a type of vehicle in the air', answers: ['plane', 'airplane', 'helicopter', 'glider', 'hot air balloon', 'drone', 'jet', 'hang glider'] },
+      { def: 'a part of a house', answers: ['roof', 'wall', 'floor', 'window', 'door', 'chimney', 'attic', 'basement', 'porch', 'living room', 'dining room', 'restroom', 'bathroom', 'hallway', 'garage', 'bedroom'] },
+      { def: 'a type of dessert topping', answers: ['frosting', 'whipped cream', 'sprinkles', 'caramel', 'chocolate sauce', 'syrup', 'icing'] },
+      { def: 'something you can climb', answers: ['mountain', 'tree', 'ladder', 'rock wall', 'stairs', 'hill', 'rope', 'tower'] },
+      { def: 'a type of liquid', answers: ['water', 'oil', 'juice', 'milk', 'blood', 'acid', 'syrup', 'honey', 'wine', 'urine'] },
+      { def: 'something you can open', answers: ['door', 'window', 'book', 'box', 'can', 'bottle', 'drawer', 'envelope'] },
+      { def: 'something you can close', answers: ['door', 'window', 'box', 'book', 'drawer', 'laptop', 'curtain'] },
+      { def: 'something soft to sleep on', answers: ['pillow', 'mattress', 'cushion', 'blanket', 'bed', 'futon'] },
+      { def: 'something you write on', answers: ['paper', 'whiteboard', 'blackboard', 'notebook', 'tablet', 'canvas', 'screen'] },
+      { def: 'something you can throw', answers: ['ball', 'frisbee', 'rock', 'boomerang', 'stick', 'javelin'] },
+      { def: 'something that floats', answers: ['boat', 'bubble', 'raft', 'ice', 'balloon', 'hot air balloon'] },
+      { def: 'a type of government', answers: ['democracy', 'monarchy', 'republic', 'dictatorship', 'theocracy', 'oligarchy', 'federation'] },
+      { def: 'something with wheels', answers: ['car', 'bicycle', 'motorcycle', 'bus', 'train', 'wheelchair', 'skateboard', 'rollerblade', 'suitcase'] },
+      { def: 'something you wear on your head', answers: ['hat', 'helmet', 'cap', 'crown', 'hood', 'beanie', 'turban'] },
+      { def: 'a profession', answers: ['doctor', 'teacher', 'engineer', 'artist', 'pilot', 'chef', 'nurse', 'farmer', 'lawyer', 'scientist'] },
+      { def: 'a type of paper', answers: ['notebook', 'newspaper', 'magazine', 'parchment', 'letter', 'poster', 'flyer'] },
+      { def: 'a type of boat', answers: ['canoe', 'kayak', 'yacht', 'sailboat', 'submarine', 'dinghy', 'ferry', 'barge'] },
+      { def: 'a type of gun', answers: ['pistol', 'rifle', 'shotgun', 'revolver', 'musket', 'blunderbuss', 'crossbow', 'laser gun'] },
+      { def: 'a type of tree fruit', answers: ['apple', 'pear', 'cherry', 'plum', 'peach', 'apricot', 'mango', 'pomegranate', 'fig'] },
+
+      { def: 'an american country', answers: ['united states', 'canada', 'mexico', 'brazil', 'argentina', 'chile', 'peru', 'colombia', 'venezuela', 'cuba', 'guatemala', 'bolivia', 'ecuador', 'uruguay', 'paraguay', 'honduras'] },
+      { def: 'a european country', answers: ['germany', 'france', 'italy', 'spain', 'united kingdom', 'portugal', 'netherlands', 'belgium', 'sweden', 'norway', 'finland', 'poland', 'greece', 'austria', 'switzerland', 'ireland', 'denmark'] },
+      { def: 'an asian country', answers: ['china', 'japan', 'india', 'south korea', 'north korea', 'thailand', 'vietnam', 'malaysia', 'indonesia', 'philippines', 'pakistan', 'bangladesh', 'nepal', 'sri lanka', 'mongolia', 'singapore', 'cambodia'] },
+      { def: 'an african country', answers: ['nigeria', 'south africa', 'egypt', 'kenya', 'morocco', 'ghana', 'algeria', 'ethiopia', 'uganda', 'tanzania', 'libya', 'senegal', 'tunisia', 'sudan', 'cameroon'] },
+      { def: 'an oceanian country', answers: ['australia', 'new zealand', 'fiji', 'papua new guinea', 'samoa', 'tonga', 'vanuatu', 'solomon islands', 'kiribati'] },
+      { def: 'a scandinavian country', answers: ['sweden', 'norway', 'denmark', 'finland', 'iceland'] },
+      { def: 'a country in the middle east', answers: ['saudi arabia', 'united arab emirates', 'qatar', 'israel', 'jordan', 'lebanon', 'oman', 'iran', 'iraq', 'kuwait', 'yemen'] },
+      { def: 'a landlocked country', answers: ['nepal', 'switzerland', 'austria', 'hungary', 'bolivia', 'paraguay', 'mali', 'zimbabwe', 'laos', 'kazakhstan'] },
+      { def: 'a tropical country', answers: ['brazil', 'thailand', 'indonesia', 'philippines', 'costa rica', 'malaysia', 'honduras', 'dominican republic', 'jamaica', 'fiji'] },
+      { def: 'a country known for deserts', answers: ['egypt', 'saudi arabia', 'namibia', 'morocco', 'libya', 'australia', 'iran', 'sudan', 'algeria'] },
+      { def: 'a country with a monarchy', answers: ['united kingdom', 'japan', 'sweden', 'norway', 'denmark', 'thailand', 'spain', 'belgium', 'netherlands', 'monaco'] },
+      { def: 'a country in south america', answers: ['brazil', 'argentina', 'chile', 'peru', 'colombia', 'venezuela', 'ecuador', 'bolivia', 'paraguay', 'uruguay'] },
+      { def: 'a country in north america', answers: ['united states', 'canada', 'mexico', 'guatemala', 'belize', 'honduras', 'costa rica', 'panama'] },
+      { def: 'a country in central america', answers: ['guatemala', 'honduras', 'el salvador', 'nicaragua', 'costa rica', 'panama', 'belize'] },
+      { def: 'a country in east asia', answers: ['china', 'japan', 'south korea', 'north korea', 'mongolia', 'taiwan'] },
+      { def: 'a country in southeast asia', answers: ['thailand', 'vietnam', 'malaysia', 'singapore', 'philippines', 'indonesia', 'cambodia', 'laos', 'myanmar', 'brunei', 'timor-leste'] },
+      { def: 'a country in west africa', answers: ['nigeria', 'ghana', 'senegal', 'côte d’ivoire', 'cote d’ivoire', 'mali', 'burkina faso', 'togo', 'benin'] },
+      { def: 'a country in east africa', answers: ['kenya', 'tanzania', 'uganda', 'ethiopia', 'somalia', 'rwanda', 'burundi'] },
+      { def: 'a country in southern africa', answers: ['south africa', 'zimbabwe', 'botswana', 'namibia', 'mozambique', 'lesotho', 'eswatini'] },
+      { def: 'a country in the caribbean', answers: ['cuba', 'jamaica', 'haiti', 'dominican republic', 'bahamas', 'trinidad and tobago', 'barbados', 'saint lucia', 'grenada'] },
+      { def: 'a country in the european union', answers: ['germany', 'fr*nch', 'italy', 'spain', 'netherlands', 'belgium', 'sweden', 'poland', 'austria', 'finland', 'portugal', 'greece'] },
+      { def: 'a country that uses the euro', answers: ['germany', 'fr*nch', 'italy', 'spain', 'portugal', 'belgium', 'netherlands', 'finland', 'austria', 'greece', 'ireland', 'slovakia', 'estonia', 'latvia', 'lithuania'] },
+      { def: 'a country in central asia', answers: ['kazakhstan', 'uzbekistan', 'turkmenistan', 'kyrgyzstan', 'tajikistan'] },
+      { def: 'a country in the balkans', answers: ['greece', 'albania', 'serbia', 'croatia', 'bosnia and herzegovina', 'montenegro', 'north macedonia', 'bulgaria', 'slovenia'] },
+      { def: 'a country in northern africa', answers: ['egypt', 'libya', 'algeria', 'morocco', 'tunisia', 'sudan', 'mauritania'] },
+      { def: 'a country in the pacific islands', answers: ['fiji', 'samoa', 'tonga', 'vanuatu', 'solomon islands', 'papua new guinea', 'kiribati', 'palau', 'micronesia'] }
+    ];
+
+    let startTime = null;
+    let timerInterval = null;
+    const history = [];
+
+    const definitionEl = document.getElementById('definition');
+    const timerEl = document.getElementById('timer');
+    const inputWord = document.getElementById('inputWord');
+    const scoreTable = document.getElementById('scoreTable');
+    const overlay = document.getElementById('overlay');
+
+    function updateTimer() {
+      if (!startTime) return;
+      const time = ((performance.now() - startTime)/1000).toFixed(2);
+      timerEl.textContent = `Time elapsed: ${time}s`;
+    }
+
+    function startTimer() {
+      startTime = performance.now();
+      clearInterval(timerInterval);
+      timerInterval = setInterval(updateTimer, 100);
+    }
+
+    function renderScores() {
+      scoreTable.innerHTML = '';
+      history.forEach((h,i)=>{
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${i+1}</td><td>${h.definition}</td><td>${h.word}</td><td>${h.time}</td>`;
+        scoreTable.appendChild(row);
+      });
+    }
+
+    function nextDefinition() {
+      const randomIndex = Math.floor(Math.random() * definitions.length);
+      definitionEl.textContent = definitions[randomIndex].def;
+      definitionEl.dataset.index = randomIndex;
+      inputWord.value = '';
+      startTimer();
+    }
+
+    function submitAnswer() {
+      const val = inputWord.value.trim().toLowerCase();
+      const defIndex = definitionEl.dataset.index;
+      const currentDef = definitions[defIndex];
+      if (currentDef.answers.includes(val)) {
+        const time = ((performance.now() - startTime)/1000).toFixed(2);
+        history.push({ definition: currentDef.def, word: val, time });
+        nextDefinition();
+      } else {
+        alert('Wrong! Try again.');
+      }
+    }
+
+    function skipDefinition() {
+      nextDefinition();
+    }
+
+    document.getElementById('skip').addEventListener('click', skipDefinition);
+    const submitBtn = document.getElementById('submit');
+
+    submitBtn.addEventListener('click', submitAnswer);
+
+    inputWord.addEventListener('keydown', e=>{
+      if(e.key==='Enter') {
+        e.preventDefault(); // prevent default form submission / page reload
+        submitAnswer();
+      }
+    });
+
+    document.getElementById('scores').addEventListener('click', ()=>{
+      renderScores();
+      overlay.classList.add('active');
+      document.body.classList.add('blurred');
+    });
+
+    document.getElementById('closeModal').addEventListener('click', ()=>{
+      overlay.classList.remove('active');
+      document.body.classList.remove('blurred');
+    });
+
+    nextDefinition();
+  </script>
+</body>
+</html>
