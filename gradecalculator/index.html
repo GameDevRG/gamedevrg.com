@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>grade calculator</title>
+    <style>
+        body { margin: 0; font-family: system-ui, sans-serif; background: #001f33; color: #fff; padding-top: 70px; }
+        .container { max-width: 900px; margin: 40px auto; padding: 0 12px; }
+        .card { background: #002b4a; border: 1px solid #1e5f8a; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+        .title { text-align: center; }
+        .subtitle { color: #4fc3f7; font-size: 14px; }
+        .head-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .results-value { font-size: 38px; font-weight: 800; margin: 8px 0 14px; }
+
+        .btn { padding: 6px 12px; border-radius: 4px; border: 2px solid transparent; cursor: pointer; margin-right: 6px; font-weight: bold; font-family: system-ui, sans-serif; color: #fff; }
+        .btn-purple { background: #8e2a5a; border-color: #b84a7d; }
+        .btn-blue { background: #2b6cb0; border-color: #5a8fd6; }
+        .btn-yellow { background: #c9a227; border-color: #e2c65c; }
+        .btn-red { background: #b91c1c; border-color: #e35d5d; }
+        :focus-visible { outline: 2px solid #4fc3f7; outline-offset: 2px; }
+
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #1e5f8a; padding: 8px; text-align: center; }
+        .row-label { display: flex; align-items: center; gap: 8px; }
+        .color-box { width: 12px; height: 12px; flex: none; }
+        .empty { opacity: 0.6; text-align: center; padding: 16px 0 4px; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 10, 20, 0.65); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal { width: 92%; max-width: 650px; background: rgba(0, 43, 74, 0.85); backdrop-filter: blur(14px); border: 1px solid rgba(120, 200, 255, 0.25); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid rgba(120, 200, 255, 0.15); }
+        .modal-header h3 { margin: 0; font-size: 18px; }
+        .modal-content { display: flex; flex-direction: column; gap: 12px; max-height: 60vh; overflow-y: auto; padding-right: 6px; line-height: 1.5; }
+        .modal-content label { display: flex; flex-direction: column; gap: 4px; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 8px; padding-top: 10px; }
+        .modal input[type="text"], .modal input[type="number"], .modal select { background: #00395f; border: none; border-radius: 6px; padding: 6px 8px; color: white; outline: none; font-size: 16px; }
+        .modal input:disabled { opacity: 0.4; }
+        .category-header, .category-edit { display: grid; grid-template-columns: 2fr 0.8fr 1fr 1fr 0.8fr auto; gap: 6px; align-items: center; margin-bottom: 6px; }
+        .category-edit input[type="text"], .category-edit input[type="number"] { width: 100%; box-sizing: border-box; min-width: 0; }
+        .grade-edit { display: grid; grid-template-columns: 60px 1fr 40px auto; gap: 8px; margin-bottom: 8px; align-items: center; }
+        input[type="color"] { width: 36px; height: 28px; padding: 0; border: none; background: none; cursor: pointer; }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 6px; }
+        .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-thumb { background: rgba(120, 200, 255, 0.3); border-radius: 10px; }
+
+        .assignment-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+        .a-name { font-size: 18px; font-weight: bold; }
+        .a-score { font-size: 18px; font-weight: bold; white-space: nowrap; }
+        .a-info { margin-top: 10px; font-size: 14px; opacity: 0.8; }
+        .tags { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+        .tag { font-size: 12px; padding: 2px 6px; border-radius: 4px; }
+        /* sliders: the filled part and the thumb take the category's colour (--c), --p is how far along it is */
+        .slider { -webkit-appearance: none; appearance: none; width: 100%; height: 28px; margin: 10px 0 0; background: transparent; cursor: pointer; --c: #4fc3f7; --p: 0%; }
+        .slider:focus { outline: none; }
+        .slider::-webkit-slider-runnable-track { height: 8px; border-radius: 999px; border: 1px solid #1e5f8a; background: linear-gradient(to right, var(--c) var(--p), #00395f var(--p)); }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; box-sizing: border-box; width: 24px; height: 24px; margin-top: -9px; border-radius: 50%; background: #fff; border: 4px solid var(--c); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); transition: transform 0.15s ease, box-shadow 0.15s ease; }
+        .slider::-moz-range-track { height: 8px; border-radius: 999px; border: 1px solid #1e5f8a; background: #00395f; }
+        .slider::-moz-range-progress { height: 8px; border-radius: 999px; background: var(--c); }
+        .slider::-moz-range-thumb { box-sizing: border-box; width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 4px solid var(--c); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); transition: transform 0.15s ease, box-shadow 0.15s ease; }
+        .slider:hover::-webkit-slider-thumb { transform: scale(1.1); }
+        .slider:hover::-moz-range-thumb { transform: scale(1.1); }
+        .slider:active::-webkit-slider-thumb { transform: scale(1.2); }
+        .slider:active::-moz-range-thumb { transform: scale(1.2); }
+        .slider:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 5px rgba(79, 195, 247, 0.4), 0 2px 8px rgba(0, 0, 0, 0.5); }
+        .slider:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 5px rgba(79, 195, 247, 0.4), 0 2px 8px rgba(0, 0, 0, 0.5); }
+        .a-row { display: flex; gap: 8px; margin-top: 8px; }
+        .a-row input { flex: 1; min-width: 0; padding: 6px; border-radius: 6px; background: #00395f; border: none; color: white; font-size: 16px; }
+
+        .top-banner { position: fixed; top: 0; left: 0; width: 100%; background: rgba(0, 21, 36, 0.55); backdrop-filter: blur(30px); border-bottom: 1px solid rgba(120, 200, 255, 0.2); z-index: 2000; cursor: pointer; transition: height 0.3s ease, background 0.3s ease; display: flex; align-items: flex-start; justify-content: space-between; padding: 12px 16px; height: 40px; overflow: hidden; box-sizing: content-box; }
+        .banner-content { position: absolute; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .banner-main { font-size: 20px; font-weight: 800; transition: opacity 0.15s ease; }
+        .banner-main.swap { opacity: 0; }
+        .banner-expanded { margin-top: 12px; opacity: 0; transform: translateY(-6px); pointer-events: none; transition: all 0.25s ease; display: flex; flex-direction: column; gap: 8px; }
+        .top-banner.expanded { height: 120px; background: rgb(0, 0, 0); }
+        .top-banner.expanded .banner-expanded { opacity: 1; transform: none; pointer-events: auto; }
+        .banner-link { font-size: 14px; color: #4fc3f7; text-decoration: none; padding: 6px 10px; border: 1px solid rgba(79, 195, 247, 0.4); border-radius: 6px; background: rgba(0, 43, 74, 0.4); }
+        .banner-link:hover { background: rgba(79, 195, 247, 0.15); }
+        body.banner-open .container { filter: blur(6px); transition: filter 0.3s ease; }
+        .banner-hint { font-size: 11px; opacity: 0.6; margin-top: 2px; transition: opacity 0.2s ease; }
+        .top-banner.expanded .banner-hint { opacity: 0; }
+
+        @media (max-width: 640px) {
+            .banner-content { position: static; transform: none; align-items: flex-start; text-align: left; }
+            .banner-main { font-size: 17px; }
+            .banner-actions .btn { padding: 6px 8px; font-size: 13px; margin-right: 4px; }
+            .category-header { display: none; }
+            .category-edit { grid-template-columns: 1fr 1fr 1fr 36px auto; margin-bottom: 14px; }
+            .category-edit input[type="text"] { grid-column: 1 / -1; }
+        }
+
+        @media print {
+            body { background: #fff; color: #000; padding: 0; }
+            .top-banner, .btn, .modal-overlay, .slider, .a-row button { display: none !important; }
+            .card { background: #fff; border-color: #999; break-inside: avoid; }
+            th, td { border-color: #999; }
+            .subtitle { color: #333; }
+            .a-row input { background: #fff; color: #000; border: 1px solid #999; }
+            .tag { border-color: #666 !important; color: #000 !important; background: #fff !important; }
+        }
+
+        @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+    </style>
+</head>
+
+<body>
+    <div class="top-banner" id="topBanner" onclick="toggleBanner()">
+        <div class="banner-content">
+            <div class="banner-main" id="bannerMain">grade calculator</div>
+            <div class="banner-hint">tap to expand</div>
+            <div class="banner-expanded">
+                <a class="banner-link" href="https://gamedevrg.com" onclick="event.stopPropagation()">return to gamedevrg.com</a>
+            </div>
+        </div>
+        <div class="banner-actions">
+            <button class="btn btn-red" onclick="resetAll(event)">reset all</button>
+            <button class="btn btn-blue" onclick="downloadPDF(event)">download pdf</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="categoryModal">
+        <div class="modal">
+            <div class="modal-header"><h3>Edit Categories</h3><button class="btn btn-red" onclick="closeModals()">close</button></div>
+            <div class="modal-content">
+                <label style="flex-direction:row; align-items:center; gap:8px;">
+                    <input type="checkbox" id="weightToggle" onchange="toggleWeights()"> Use weighted categories?
+                </label>
+                <div class="category-header"><span>Name</span><span>Weight</span><span>Score</span><span>Max</span><span>Color</span><span></span></div>
+                <div id="categoryList"></div>
+            </div>
+            <div class="modal-actions"><button class="btn btn-blue" onclick="addCategory()">add category</button></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="gradeModal">
+        <div class="modal">
+            <div class="modal-header"><h3>Edit Grade Brackets</h3><button class="btn btn-red" onclick="closeModals()">close</button></div>
+            <div class="modal-content">
+                <div id="gradeList"></div>
+                <button class="btn btn-blue" style="align-self:flex-start" onclick="addGradeBracket()">add bracket</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="assignmentModal">
+        <div class="modal">
+            <div class="modal-header"><h3>Add Assignment</h3><button class="btn btn-red" onclick="closeModals()">close</button></div>
+            <div class="modal-content">
+                <label>Type
+                    <select id="a_type">
+                        <option value="standard">Standard (new assignment, adds to the category)</option>
+                        <option value="modifier">Modifier (already in the category, changes its score)</option>
+                    </select>
+                </label>
+                <label>Name <input type="text" id="a_name" placeholder="Assignment name"></label>
+                <label>Category <select id="a_category"></select></label>
+                <label>Max score <input type="number" id="a_max" placeholder="100" min="0"></label>
+                <label>Original score <input type="number" id="a_original" placeholder="80"></label>
+                <label style="flex-direction:row; align-items:center; gap:8px;">
+                    <input type="checkbox" id="a_extra"> Extra credit (adds points, ignores max score)
+                </label>
+                <div id="a_error" style="color:#ff8080; min-height:1.2em"></div>
+            </div>
+            <div class="modal-actions"><button class="btn btn-blue" onclick="createAssignment()">create</button></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="infoModal">
+        <div class="modal">
+            <div class="modal-header"><h3 id="infoTitle"></h3><button class="btn btn-red" onclick="closeModals()">close</button></div>
+            <div class="modal-content" id="infoBody"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card title">
+            <h1>grade calculator</h1>
+            <div class="subtitle">robert gordon</div>
+            <p>This is a very complex calculator. Look at the manual first.</p>
+            <div>
+                <button class="btn btn-purple" onclick="showInfo('manual')">general user manual</button>
+                <button class="btn btn-blue" onclick="showInfo('info')">additional info</button>
+            </div>
+        </div>
+
+        <div class="card" id="results">
+            <div>results</div>
+            <div class="results-value" id="resultValue">--</div>
+            <button class="btn btn-yellow" onclick="openGradeModal()">edit grade brackets</button>
+        </div>
+
+        <div class="card">
+            <div class="head-row">
+                <div>categories</div>
+                <div>
+                    <button class="btn btn-purple" onclick="showInfo('cats')">help</button>
+                    <button class="btn btn-red" onclick="clearCategories()">clear all</button>
+                    <button class="btn btn-yellow" onclick="openModal()">edit values</button>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>NAME</th><th>WEIGHT</th><th>SCORE</th><th>MAX SCORE</th><th>PERCENTAGE</th></tr></thead>
+                    <tbody id="categoryTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="head-row">
+                <div>assignments</div>
+                <div>
+                    <button class="btn btn-purple" onclick="showInfo('asg')">help</button>
+                    <button class="btn btn-red" onclick="clearAssignments()">clear all</button>
+                    <button class="btn btn-blue" onclick="openAssignmentModal()">add assignment</button>
+                </div>
+            </div>
+            <div id="assignmentList"></div>
+        </div>
+    </div>
+
+    <script>
+        const KEY = "gradecalc-v1";
+        const DEFAULT = {
+            weighted: false, nextId: 1,
+            cats: [],
+            grades: [
+                { label: "A", min: 90, color: "#16a34a" }, { label: "B", min: 80, color: "#8e2a5a" },
+                { label: "C", min: 70, color: "#2b6cb0" }, { label: "D", min: 60, color: "#c9a227" },
+                { label: "F", min: 0, color: "#b91c1c" }
+            ],
+            asg: []
+        };
+        let state = load();
+        let showingResult = false, resultText = "--";
+
+        const $ = id => document.getElementById(id);
+        const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+        const fmt = n => Math.round(n * 100) / 100;
+        const num = v => { const n = parseFloat(v); return Number.isFinite(n) ? n : 0; };
+        const find = id => state.cats.find(c => c.id === id);
+
+        function load() {
+            try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && Array.isArray(s.cats) && Array.isArray(s.grades) && Array.isArray(s.asg)) return s; } catch (e) { }
+            return JSON.parse(JSON.stringify(DEFAULT));
+        }
+        function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { } }
+
+        /* ---------- math ---------- */
+        // a category's score and max once its assignments are counted
+        function totals(c) {
+            let s = c.score, m = c.max;
+            state.asg.filter(a => a.cat === c.id).forEach(a => {
+                if (a.type === "modifier") s += a.edited - a.orig;      // already in the total: only the change counts
+                else { s += a.edited; if (!a.extra) m += a.max; }       // new work: its points (and max) are added
+            });
+            return { s, m };
+        }
+        function overall() {
+            const t = state.cats.map(c => ({ c, ...totals(c) }));
+            if (state.weighted) {
+                const used = t.filter(x => x.m > 0 && x.c.weight > 0);
+                const w = used.reduce((a, x) => a + x.c.weight, 0);
+                return w ? used.reduce((a, x) => a + x.c.weight * (x.s / x.m), 0) / w * 100 : null;
+            }
+            const S = t.reduce((a, x) => a + x.s, 0), M = t.reduce((a, x) => a + x.m, 0);
+            return M > 0 ? S / M * 100 : null;
+        }
+        function letter(p) {
+            const g = [...state.grades].sort((a, b) => b.min - a.min).find(g => p >= g.min);
+            return g || { label: "F", color: "#b91c1c" };
+        }
+
+        /* ---------- rendering ---------- */
+        function renderResults() {
+            const p = overall(), el = $("resultValue");
+            if (p === null) { resultText = "--"; el.textContent = "--"; el.style.color = ""; }
+            else { const g = letter(p); resultText = fmt(p).toFixed(2) + "% " + g.label; el.textContent = resultText; el.style.color = g.color; }
+            if (showingResult) $("bannerMain").textContent = resultText;
+        }
+        function renderCats() {
+            $("categoryTable").innerHTML = state.cats.length ? state.cats.map(c => {
+                const t = totals(c);
+                return `<tr><td><div class="row-label"><div class="color-box" style="background:${esc(c.color)}"></div>${esc(c.name || "Unnamed")}</div></td>
+                <td>${state.weighted ? fmt(c.weight) + "%" : "--"}</td><td>${fmt(t.s)}</td><td>${fmt(t.m)}</td>
+                <td>${t.m > 0 ? fmt(t.s / t.m * 100).toFixed(1) + "%" : "--"}</td></tr>`;
+            }).join("") : `<tr><td colspan="5" class="empty">no categories yet. press "edit values" to add one.</td></tr>`;
+        }
+        const tag = (t, c, b) => `<span class="tag" style="color:${c};border:1px solid ${c};background:${b}">${t}</span>`;
+        function darken(hex, f = 0.4) {
+            const n = parseInt(String(hex).replace("#", ""), 16) || 0;
+            return `rgb(${Math.floor(((n >> 16) & 255) * f)}, ${Math.floor(((n >> 8) & 255) * f)}, ${Math.floor((n & 255) * f)})`;
+        }
+        function renderAssignments() {
+            $("assignmentList").innerHTML = state.asg.length ? state.asg.map(a => {
+                const c = find(a.cat) || { name: "(deleted category)", color: "#ffffff" };
+                const mod = a.type === "modifier", top = a.extra ? Math.max(a.orig * 2, 10) : a.max;
+                return `<div class="card" style="margin-top:10px">
+                <div class="assignment-row"><div><div class="a-name">${esc(a.name)}</div>
+                <div class="tags">${tag(esc(c.name), esc(c.color), darken(c.color, 0.2))}${tag(a.type, mod ? "#4fc3f7" : "#4ade80", mod ? "#002b4a" : "#0b2a14")}${a.extra ? tag("Extra Credit", "#e2c65c", "#3a3200") : ""}</div></div>
+                <div class="a-score"><span id="v${a.id}">${fmt(a.edited)}</span> / ${a.extra ? "∞" : fmt(a.max)}</div></div>
+                <div class="a-info">original: ${fmt(a.orig)}</div>
+                <input type="range" class="slider" id="s${a.id}" style="--c:${esc(c.color)}" min="0" max="${top}" step="any" value="${a.edited}" aria-label="score for ${esc(a.name)}" oninput="setScore(${a.id},this.value,this)">
+                <div class="a-row"><input type="number" id="n${a.id}" value="${a.edited}" aria-label="score for ${esc(a.name)}" oninput="setScore(${a.id},this.value,this)">
+                <button class="btn btn-red" onclick="removeAsg(${a.id})">delete</button></div></div>`;
+            }).join("") : `<div class="empty">no assignments yet. press "add assignment" to try a what-if score.</div>`;
+            document.querySelectorAll(".slider").forEach(fillSlider);
+        }
+        function fillSlider(el) {
+            const min = +el.min, max = +el.max;
+            el.style.setProperty("--p", max > min ? Math.max(0, Math.min(100, (el.value - min) / (max - min) * 100)) + "%" : "0%");
+        }
+        function renderAll() { renderResults(); renderCats(); renderAssignments(); }
+        function changed() { renderResults(); renderCats(); save(); }
+
+        /* ---------- assignments ---------- */
+        function setScore(id, v, src) {
+            const a = state.asg.find(x => x.id === id), n = parseFloat(v);
+            if (!a || v === "" || !Number.isFinite(n)) return;
+            a.edited = n;
+            ["s", "n"].forEach(p => { const e = $(p + id); if (e && e !== src) e.value = n; });   // keep slider and number box in step
+            $("v" + id).textContent = fmt(n);
+            fillSlider($("s" + id));
+            changed();
+        }
+        function removeAsg(id) { state.asg = state.asg.filter(a => a.id !== id); renderAssignments(); changed(); }
+        function clearAssignments() { if (state.asg.length && confirm("Remove all assignments?")) { state.asg = []; renderAssignments(); changed(); } }
+        function openAssignmentModal() {
+            if (!state.cats.length) { alert("Add a category first (edit values)."); return; }
+            $("a_category").innerHTML = state.cats.map(c => `<option value="${c.id}">${esc(c.name || "Unnamed")}</option>`).join("");
+            $("a_error").textContent = "";
+            openOverlay("assignmentModal");
+        }
+        function createAssignment() {
+            const type = $("a_type").value, name = $("a_name").value.trim(), extra = $("a_extra").checked && type === "standard";
+            const max = num($("a_max").value), orig = num($("a_original").value), cat = Number($("a_category").value);
+            const err = !name ? "Give the assignment a name." : !find(cat) ? "Pick a category." : (!extra && max <= 0) ? "Max score must be more than 0." : "";
+            if (err) { $("a_error").textContent = err; return; }
+            state.asg.push({ id: state.nextId++, type, name, cat, max: extra ? 0 : max, orig, edited: orig, extra });
+            ["a_name", "a_max", "a_original"].forEach(i => $(i).value = ""); $("a_extra").checked = false;
+            closeModals(); renderAssignments(); changed();
+        }
+
+        /* ---------- categories ---------- */
+        function renderCatModal() {
+            $("weightToggle").checked = state.weighted;
+            $("categoryList").innerHTML = state.cats.map(c => `<div class="category-edit">
+                <input type="text" value="${esc(c.name)}" placeholder="Name" aria-label="name" oninput="setCat(${c.id},'name',this.value)">
+                <input type="number" value="${c.weight}" placeholder="weight %" aria-label="weight" ${state.weighted ? "" : "disabled"} oninput="setCat(${c.id},'weight',this.value)">
+                <input type="number" value="${c.score}" placeholder="score" aria-label="score" oninput="setCat(${c.id},'score',this.value)">
+                <input type="number" value="${c.max}" placeholder="max" aria-label="max score" oninput="setCat(${c.id},'max',this.value)">
+                <input type="color" value="${esc(c.color)}" aria-label="color" oninput="setCat(${c.id},'color',this.value)">
+                <button class="btn btn-red" onclick="removeCat(${c.id})" aria-label="remove category">X</button></div>`).join("");
+        }
+        function setCat(id, k, v) { const c = find(id); if (!c) return; c[k] = k === "name" || k === "color" ? v : num(v); renderAssignments(); changed(); }
+        function addCategory() {
+            state.cats.push({ id: state.nextId++, name: "", weight: 0, score: 0, max: 0, color: "#ffffff" });
+            renderCatModal(); changed();
+        }
+        function removeCat(id) {
+            const n = state.asg.filter(a => a.cat === id).length;
+            if (n && !confirm("This category has " + n + " assignment(s). Remove them too?")) return;
+            state.cats = state.cats.filter(c => c.id !== id); state.asg = state.asg.filter(a => a.cat !== id);
+            renderCatModal(); renderAssignments(); changed();
+        }
+        function toggleWeights() { state.weighted = $("weightToggle").checked; renderCatModal(); changed(); }
+        function clearCategories() {
+            if (state.cats.length && confirm("Remove all categories and their assignments?")) { state.cats = []; state.asg = []; renderAll(); save(); }
+        }
+
+        /* ---------- grade brackets ---------- */
+        function renderGradeList() {
+            state.grades.sort((a, b) => b.min - a.min);
+            $("gradeList").innerHTML = state.grades.map((g, i) => `<div class="grade-edit">
+                <input type="text" value="${esc(g.label)}" aria-label="letter" onchange="setGrade(${i},'label',this.value)">
+                <input type="number" value="${g.min}" min="0" max="100" aria-label="minimum percent" onchange="setGrade(${i},'min',this.value)">
+                <input type="color" value="${esc(g.color)}" aria-label="color" onchange="setGrade(${i},'color',this.value)">
+                <button class="btn btn-red" onclick="removeGrade(${i})" aria-label="remove bracket">X</button></div>`).join("");
+        }
+        function setGrade(i, k, v) { state.grades[i][k] = k === "min" ? Math.max(0, Math.min(100, num(v))) : v; renderGradeList(); changed(); }
+        function removeGrade(i) { state.grades.splice(i, 1); renderGradeList(); changed(); }
+        function addGradeBracket() { state.grades.push({ label: "New", min: 50, color: "#ffffff" }); renderGradeList(); changed(); }
+        function openGradeModal() { renderGradeList(); openOverlay("gradeModal"); }
+
+        /* ---------- modals ---------- */
+        function openOverlay(id) { $(id).style.display = "flex"; }
+        function openModal() { renderCatModal(); openOverlay("categoryModal"); }
+        function closeModals() { document.querySelectorAll(".modal-overlay").forEach(o => o.style.display = "none"); }
+        document.querySelectorAll(".modal-overlay").forEach(o => o.addEventListener("mousedown", e => { if (e.target === o) closeModals(); }));
+        document.addEventListener("keydown", e => { if (e.key === "Escape") closeModals(); });
+
+        const HELP = {
+            manual: ["General user manual", `<p><b>1.</b> Press "edit values" under categories and enter each category's current score and max score from your gradebook (turn on weights if your class uses them).</p>
+                <p><b>2.</b> Press "add assignment" to try a what-if: pick a type, a category and the score, then drag the slider or type a new score.</p>
+                <p><b>3.</b> Your grade at the top updates as you change things. "edit grade brackets" sets the letter cutoffs.</p>
+                <p>Everything is saved in this browser. "reset all" puts the starting values back, and "download pdf" opens the print dialog (choose "save as PDF").</p>`],
+            info: ["Additional info", `<p><b>Unweighted:</b> total points earned divided by total points possible.</p>
+                <p><b>Weighted:</b> each category's percentage is multiplied by its weight, then divided by the weights of the categories that have points. A category with 0 max score is skipped.</p>
+                <p>Grades are calculated from the numbers you enter, so check them against your teacher's gradebook.</p>`],
+            cats: ["Categories", `<p>Each category starts from the score and max score you enter. Assignments you add are counted on top of that, so the table shows the totals with them included.</p>
+                <p>Weights are percentages, and they don't have to add up to 100.</p>`],
+            asg: ["Assignments", `<p><b>Standard:</b> a new assignment. Its score and max score are added to the category.</p>
+                <p><b>Modifier:</b> an assignment already counted in the category's score. Changing its score changes the category by the difference from the original.</p>
+                <p><b>Extra credit:</b> adds points with no max score.</p>`]
+        };
+        function showInfo(k) { $("infoTitle").textContent = HELP[k][0]; $("infoBody").innerHTML = HELP[k][1]; openOverlay("infoModal"); }
+
+        /* ---------- banner ---------- */
+        function toggleBanner() {
+            const open = $("topBanner").classList.toggle("expanded");
+            document.body.classList.toggle("banner-open", open);
+        }
+        function resetAll(e) {
+            e.stopPropagation();
+            if (!confirm("Reset everything to the starting values?")) return;
+            state = JSON.parse(JSON.stringify(DEFAULT)); save(); renderAll();
+        }
+        function downloadPDF(e) { e.stopPropagation(); window.print(); }
+        function setBannerText(t) {
+            const el = $("bannerMain"); el.classList.add("swap");
+            setTimeout(() => { el.textContent = t; el.classList.remove("swap"); }, 150);
+        }
+        window.addEventListener("scroll", () => {
+            const bottom = $("results").getBoundingClientRect().bottom;
+            if (bottom < 80 && !showingResult) { showingResult = true; setBannerText(resultText); }
+            else if (bottom >= 80 && showingResult) { showingResult = false; setBannerText("grade calculator"); }
+        });
+
+        renderAll();
+    </script>
+</body>
+
+</html>
