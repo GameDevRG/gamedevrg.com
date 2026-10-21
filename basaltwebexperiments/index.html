@@ -115,6 +115,21 @@
             color: #888;
         }
 
+        .search-status {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            text-align: center;
+        }
+
+        .search-status:empty {
+            display: none;
+        }
+
+        /* cards that don't match the search (not the [hidden] attribute, because .card sets its own display) */
+        .card.filtered-out {
+            display: none;
+        }
+
         /* GRID */
         .grid {
             display: grid;
@@ -265,6 +280,10 @@
             background: #fff;
             color: #000;
             font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
         }
 
         .close {
@@ -412,7 +431,9 @@
                 <div class="actions">
                     <button id="authButton" onclick="goToAccount()">log in</button>
 
-                    <input type="search" placeholder="search experiments" aria-label="search experiments">
+                    <input type="search" id="searchBox" placeholder="search experiments" aria-label="search experiments"
+                        enterkeyhint="search" autocomplete="off" spellcheck="false">
+                    <div class="search-status" id="searchStatus" aria-live="polite"></div>
                 </div>
             </div>
             <p id="loginStatusText"><br>you are not currently logged in.</p>
@@ -426,8 +447,8 @@
                 <div class="title">blind keyboard</div>
                 <div class="expanded-info">
                     <h2>blind keyboard</h2>
-                    <p>More details about experiment 1 go here.</p>
-                    <button class="play-btn">Play</button>
+                    <p>Put your knowledge of the QWERTY keyboard layout to the test and spell out difficult words with no key labels!</p>
+                    <a class="play-btn" href="https://gamedevrg.com/basaltwebexperiments/blindkeyboard">Play</a>
                 </div>
             </div>
 
@@ -436,8 +457,8 @@
                 <div class="title">alphabetical speedrun</div>
                 <div class="expanded-info">
                     <h2>alphabetical speedrun</h2>
-                    <p>More details about experiment 2 go here.</p>
-                    <button class="play-btn">Play</button>
+                    <p>Test how fast you can type every key in alphabetical order while being as accurate as you can!</p>
+                    <a class="play-btn" href="https://gamedevrg.com/basaltwebexperiments/alphabetical">Play</a>
                 </div>
             </div>
 
@@ -446,8 +467,9 @@
                 <div class="title">by definition</div>
                 <div class="expanded-info">
                     <h2>by definition</h2>
-                    <p>Extra description shown only when opened.</p>
-                    <button class="play-btn">Play</button>
+                    <p>Write the first word that comes to mind that is related to the prompt!</p>
+                    <p>There is also a hard version that does not allow you to guess the same word twice for a prompt.</p>
+                    <a class="play-btn" href="https://gamedevrg.com/basaltwebexperiments/definition">Play</a>
                 </div>
             </div>
 
@@ -456,8 +478,8 @@
                 <div class="title">distance wordle</div>
                 <div class="expanded-info">
                     <h2>distance wordle</h2>
-                    <p>experiment #004 - supports PC and mobile</p>
-                    <button class="play-btn" onclick="openDistanceWordle()">launch</button>
+                    <p>It&#39;s just like Wordle, but with a twist. Instead of indicating if the letters you guessed are in the mystery word, it&#39;s a game of hot-and-cold, using your physical keyboard as a way to show how close each letter is.</p>
+                    <a class="play-btn" href="https://gamedevrg.com/basaltwebexperiments/distancewordle">launch</a>
                 </div>
             </div>
 
@@ -466,8 +488,9 @@
                 <div class="title">peak literature generator</div>
                 <div class="expanded-info">
                     <h2>peak literature generator</h2>
-                    <p>Extra description shown only when opened.</p>
-                    <button class="play-btn">Play</button>
+                    <p>Tired of stories making sense? I&#39;ve got the perfect thing for you! Every word in these stories is randomly thrown in and arranged in a way that loosely follows English grammatical rules.</p>
+                    <p>Spoiler alert: A dog might jump over a mountain.</p>
+                    <a class="play-btn" href="https://gamedevrg.com/basaltwebexperiments/peakliterature">Play</a>
                 </div>
             </div>
 
@@ -476,8 +499,8 @@
                 <div class="title">hexagonal minesweeper</div>
                 <div class="expanded-info">
                     <h2>hexagonal minesweeper</h2>
-                    <p>Extra description shown only when opened.</p>
-                    <button class="play-btn">Play</button>
+                    <p>Surprisingly, this version is easier than the original Minesweeper. I still can&#39;t beat it, though, because I&#39;m not particularly good at Minesweeper.</p>
+                    <a class="play-btn" href="https://gamedevrg.com/basaltwebexperiments/hexagonal">Play</a>
                 </div>
             </div>
 
@@ -486,8 +509,8 @@
                 <div class="title">simple organism test</div>
                 <div class="expanded-info">
                     <h2>simple organism test</h2>
-                    <p>Extra description shown only when opened.</p>
-                    <button class="play-btn">Play</button>
+                    <p>Watch these little creatures go!</p>
+                    <a class="play-btn" href="https://gamedevrg.com/basaltwebexperiments/organism">Play</a>
                 </div>
             </div>
 
@@ -496,7 +519,6 @@
                 <div class="expanded-info">
                     <h2>credits</h2>
                     <p>basalt web experiments project created by Robert Gordon<br>with help from Atharv Kulkarni</p>
-                    <button class="play-btn">Play</button>
                 </div>
             </div>
 
@@ -522,10 +544,6 @@
 
         function unlockScroll() {
             document.body.style.overflow = '';
-        }
-
-        function openDistanceWordle() {
-            window.location.href = "distancewordle.html";
         }
 
         /*
@@ -632,6 +650,51 @@
             e.preventDefault();
             window.scrollBy({ left: e.deltaY * 2 });
         }, { passive: false });
+
+        /*
+          SEARCH
+          Matches every word you type against a card's name and description (not the button labels).
+          Cards that don't match are hidden, and the rest close up the gaps because the grid reflows.
+        */
+        const searchBox = document.getElementById('searchBox');
+        const searchStatus = document.getElementById('searchStatus');
+
+        const searchText = new Map();
+        cards.forEach(card => {
+            const parts = [card.querySelector('.title'), ...card.querySelectorAll('.expanded-info h2, .expanded-info p')];
+            searchText.set(card, parts.filter(Boolean).map(el => el.textContent).join(' ').toLowerCase().replace(/\s+/g, ' '));
+        });
+
+        function applySearch() {
+            const words = searchBox.value.toLowerCase().split(/\s+/).filter(Boolean);
+            let shown = 0;
+
+            cards.forEach(card => {
+                const match = words.every(w => searchText.get(card).includes(w));
+                card.classList.toggle('filtered-out', !match);
+                if (match) shown++;
+            });
+
+            if (!words.length) searchStatus.textContent = '';
+            else if (!shown) searchStatus.textContent = 'no experiments found';
+            else searchStatus.textContent = shown + (shown === 1 ? ' experiment found' : ' experiments found');
+
+            if (!phoneLayout.matches) window.scrollTo({ left: 0 }); // sideways layout: results start next to the panel
+        }
+
+        searchBox.addEventListener('input', applySearch);
+
+        searchBox.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                searchBox.blur(); // closes the phone keyboard
+                if (phoneLayout.matches) document.querySelector('.grid').scrollIntoView({ behavior: 'smooth' });
+            } else if (e.key === 'Escape' && searchBox.value) {
+                searchBox.value = '';
+                applySearch();
+            }
+        });
+
+        applySearch(); // the browser can restore the text after "back", so match the cards to it
 
         function setStatus(text) {
             const el = document.getElementById("loginStatusText");
