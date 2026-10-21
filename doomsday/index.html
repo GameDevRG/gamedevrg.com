@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>doomsday clock</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #0b0b0f;
+            color: #e8e8ff;
+            font-family: system-ui, sans-serif;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            height: 100vh;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        #countdown {
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+        }
+
+        button {
+            margin-bottom: 20px;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 50%;
+        }
+
+        /* Popup */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #popup {
+            padding: 25px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+            max-width: 320px;
+        }
+
+        #popup h2 {
+            margin-top: 0;
+        }
+
+        #closeBtn {
+            margin-top: 15px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 id="title">It's 8:03.</h1>
+    <div id="subtitle" style="font-size:0.9rem; opacity:0.7; margin-top:-5px;">
+        countdown to end of semester
+    </div>
+
+
+    <div id="countdown"></div>
+    <button onclick="openPopup()">more info</button>
+
+    <canvas id="clock"></canvas>
+
+    <div id="subtitle" style="font-size:0.9rem; opacity:0.7; margin-top:15px;">
+        the clock strikes midnight on the <strong>end of the semester.</strong><br>(the hour hand is the red one.)
+    </div>
+
+    <div id="overlay">
+        <div id="popup">
+            <h2>more info</h2>
+            <div id="info"></div>
+            <button id="closeBtn" onclick="closePopup()">close</button>
+        </div>
+    </div>
+
+    <script>
+        const startDate = new Date("2026-08-12T00:00:00");
+        const endDate = new Date("2026-12-18T00:00:00");
+
+        // Canvas setup
+        const canvas = document.getElementById("clock");
+        const ctx = canvas.getContext("2d");
+        const size = 300;
+        const scale = window.devicePixelRatio || 2;
+
+        canvas.width = size * scale;
+        canvas.height = size * scale;
+        canvas.style.width = size + "px";
+        canvas.style.height = size + "px";
+
+        ctx.scale(scale, scale);
+
+        const radius = size / 2;
+        ctx.translate(radius, radius);
+
+        function drawClock() {
+            ctx.clearRect(-radius, -radius, size, size);
+            drawFace();
+            drawTicks();
+            drawTime();
+        }
+
+        function drawFace() {
+            ctx.beginPath();
+            ctx.arc(0, 0, radius * 0.95, 0, 2 * Math.PI);
+            ctx.fillStyle = "#1a1a2e";
+            ctx.fill();
+        }
+
+        function drawTicks() {
+            for (let i = 0; i < 60; i++) {
+                const angle = i * Math.PI / 30;
+                ctx.beginPath();
+                ctx.rotate(angle);
+                ctx.moveTo(0, -radius * 0.85);
+                ctx.lineTo(0, -radius * (i % 5 === 0 ? 0.75 : 0.8));
+                ctx.strokeStyle = "#aaa";
+                ctx.lineWidth = (i % 5 === 0 ? 3 : 1);
+                ctx.stroke();
+                ctx.rotate(-angle);
+            }
+        }
+
+        function drawHand(angle, length, width, color) {
+            ctx.beginPath();
+            ctx.lineWidth = width;
+            ctx.lineCap = "round";
+            ctx.strokeStyle = color;
+            ctx.moveTo(0, 0);
+            ctx.rotate(angle);
+            ctx.lineTo(0, -length);
+            ctx.stroke();
+            ctx.rotate(-angle);
+        }
+
+        function drawTime() {
+            const now = new Date();
+
+            const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
+            const minuteAngle = (now.getMinutes() + seconds / 60) * Math.PI / 30;
+            const secondAngle = seconds * Math.PI / 30;
+
+            const total = endDate - startDate;
+            const elapsed = now - startDate;
+            const progress = Math.min(Math.max(elapsed / total, 0), 1);
+            const hourAngle = progress * 2 * Math.PI;
+
+            drawHand(hourAngle, radius * 0.5, 6, "#ff4d6d");
+            drawHand(minuteAngle, radius * 0.7, 4, "#ffd166");
+            drawHand(secondAngle, radius * 0.85, 2, "#06d6a0");
+        }
+
+        function updateCountdown() {
+            const now = new Date();
+            let diff = endDate - now;
+
+            if (diff <= 0) {
+                document.getElementById("countdown").innerText = "time's up.";
+                return 0;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            diff %= (1000 * 60 * 60 * 24);
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            diff %= (1000 * 60 * 60);
+            const minutes = Math.floor(diff / (1000 * 60));
+            diff %= (1000 * 60);
+            const seconds = Math.floor(diff / 1000);
+
+            document.getElementById("countdown").innerText =
+                `${days}d ${hours}h ${minutes}m ${seconds}s remaining`;
+
+            return Math.floor((endDate - now) / 1000);
+        }
+
+        function updateTitle(secondsLeft) {
+            document.getElementById("title").innerText =
+                `${Math.max(0, secondsLeft)} seconds to midnight`;
+        }
+
+        function updatePopup() {
+            const now = new Date();
+            const diff = endDate - now;
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const weeks = (days / 7).toFixed(2);
+
+            const total = endDate - startDate;
+            const elapsed = now - startDate;
+            const progress = Math.min(Math.max(elapsed / total, 0), 1);
+
+            const fakeHours = Math.floor(progress * 12);
+            const fakeMinutes = Math.floor((progress * 12 % 1) * 60);
+
+            const secondsLeft = updateCountdown();
+
+            document.getElementById("info").innerHTML = `
+    <p><b>current time:</b> ${now.toLocaleTimeString()}</p>
+    <p><b>end date:</b> ${endDate.toDateString()}</p>
+    <p><b>days left:</b> ${days}</p>
+    <p><b>weeks left:</b> ${weeks}</p>
+    <p><b>seconds left:</b> ${secondsLeft}</p>
+    <p><b>clock time:</b> ${fakeHours}:${fakeMinutes.toString().padStart(2, '0')}</p>
+  `;
+        }
+
+        function openPopup() {
+            document.getElementById("overlay").style.display = "flex";
+            updatePopup();
+        }
+
+        function closePopup() {
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        function tick() {
+            drawClock();
+            const secondsLeft = updateCountdown();
+            updateTitle(secondsLeft);
+            updateTitleFromDoomTime();
+            updatePopup();
+        }
+
+
+        setInterval(tick, 50);
+
+        function updateTitleFromDoomTime() {
+            const now = new Date();
+
+            const total = endDate - startDate;
+            const elapsed = now - startDate;
+            const progress = Math.min(Math.max(elapsed / total, 0), 1);
+
+            const fakeHours = Math.floor(progress * 12);
+            const fakeMinutes = Math.floor((progress * 12 % 1) * 60);
+
+            const timeString =
+                `${fakeHours}:${fakeMinutes.toString().padStart(2, "0")}`;
+
+            document.getElementById("title").innerText = `it's ${timeString}.`;
+        }
+
+    </script>
+
+</body>
+
+</html>
