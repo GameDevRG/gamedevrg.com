@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>hexagonal minesweeper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #0b0b0b; /* Changed to dark background */
+      color: #000;
+      font-family: "DotGothic16", sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .window {
+      border: 2px outset #c0c0c0;
+      background: #ffffff;
+      box-shadow: inset 1px 1px #ffffff, inset -1px -1px #808080, 2px 2px 5px rgba(0,0,0,0.3); /* Added drop shadow */
+      width: auto; /* Changed to auto to fit content */
+      height: auto;
+      min-height: 500px;
+      position: relative;
+      overflow: visible; /* Allow submenus to overflow without resizing window */
+    }
+
+    .title-bar {
+      background: linear-gradient(to right, #000080, #1084d0); /* Windows 95 blue gradient */
+      color: #ffffff;
+      padding: 2px 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .title {
+      flex-grow: 1;
+    }
+
+    .buttons {
+      display: flex;
+    }
+
+    .buttons button {
+      width: 16px;
+      height: 14px;
+      border: 1px outset #c0c0c0;
+      background: #c0c0c0;
+      color: #000;
+      font-size: 10px;
+      line-height: 1;
+      cursor: pointer;
+      margin-left: 2px;
+    }
+
+    .buttons button:hover {
+      background: #e0e0e0;
+    }
+
+    .close {
+      background: #c0c0c0;
+    }
+
+    .close:hover {
+      background: #ff0000;
+      color: #ffffff;
+    }
+
+    .menu-bar {
+      background: #c0c0c0;
+      border-bottom: 1px solid #808080;
+      padding: 2px;
+      display: flex;
+      font-size: 12px;
+    }
+
+    .menu-item {
+      margin-right: 10px;
+      padding: 2px 4px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .menu-item:hover {
+      background: #e0e0e0;
+      border: 1px inset #c0c0c0;
+    }
+
+    .menu-item.active {
+      background: #000080; /* Blue when active */
+      color: #ffffff;
+    }
+
+    .submenu {
+      display: none;
+      position: absolute;
+      background: #c0c0c0; /* Gray background */
+      border: 1px solid #808080;
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+      z-index: 10;
+      min-width: 100px;
+    }
+
+    .submenu-item {
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .submenu-item:hover {
+      background: #e0e0e0;
+    }
+
+    .content {
+      padding: 10px;
+      background: #ffffff;
+      color: #000;
+    }
+
+    h1 {
+      margin: 0 0 10px 0;
+      font-size: 16px;
+    }
+
+    p {
+      margin: 0 0 10px 0;
+      font-size: 12px;
+    }
+
+    #status {
+      margin: 10px 0;
+      font-weight: bold;
+      font-size: 12px;
+    }
+
+    #board {
+      position: relative;
+      margin-top: 10px;
+      background: #c0c0c0;
+      padding: 10px;
+      border: 1px inset #c0c0c0;
+    }
+
+    .hex {
+      width: 46px;
+      height: 40px;
+      background: #e0e0e0; /* Light gray for hexes */
+      clip-path: polygon(
+        25% 0%, 75% 0%,
+        100% 50%,
+        75% 100%, 25% 100%,
+        0% 50%
+      );
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s, transform 0.05s;
+      border: 1px outset #c0c0c0;
+      font-size: 14px;
+    }
+
+    .hex:hover:not(.revealed) {
+      transform: scale(1.05);
+      background: #f0f0f0;
+    }
+
+    .hex.revealed {
+      background: #ffffff;
+      cursor: default;
+      border: 1px inset #c0c0c0;
+    }
+
+    .hex.mine {
+      background: #ff0000;
+      color: #ffffff;
+    }
+
+    .hex.flagged {
+      background: #ffff00; /* Yellow for flag */
+    }
+
+    /* Minesweeper number colors - kept similar but adjusted for light theme */
+    .n1 { color: #0000ff; }
+    .n2 { color: #008000; }
+    .n3 { color: #ff0000; }
+    .n4 { color: #800080; }
+    .n5 { color: #800000; }
+    .n6 { color: #008080; }
+  </style>
+</head>
+<body>
+  <div class="window">
+    <div class="title-bar">
+      <div class="title">hexagonal minesweeper</div>
+      <div class="buttons">
+        <button class="minimize">_</button>
+        <button class="maximize">□</button>
+        <button class="close">×</button>
+      </div>
+    </div>
+    <div class="menu-bar">
+      <div class="menu-item" onclick="toggleSubmenu('file-submenu', this)"><u>F</u>ile</div>
+      <div class="menu-item" onclick="toggleSubmenu('edit-submenu', this)"><u>E</u>dit</div>
+      <div class="submenu" id="file-submenu">
+        <div class="submenu-item" onclick="resetGame()"><u>R</u>eset</div>
+      </div>
+      <div class="submenu" id="edit-submenu">
+        <div class="submenu-item" onclick="setGridSize(10,10)">10x10</div>
+        <div class="submenu-item" onclick="setGridSize(15,15)">15x15</div>
+        <div class="submenu-item" onclick="setGridSize(20,20)">20x20</div>
+      </div>
+    </div>
+    <div class="content">
+      <p>left click to reveal, right click to flag.</p>
+      <div id="status"></div>
+      <div id="board"></div>
+    </div>
+  </div>
+
+  <script>
+    let rows = 10;
+    let cols = 10;
+    let mineCount = 18;
+
+    const hexWidth = 46;
+    const hexHeight = 40;
+    const gap = 4;
+
+    // Correct hex math: vertical spacing = height * 0.866 (sqrt(3)/2)
+    const xOffset = hexWidth * 0.75 + gap;
+    const yOffset = hexHeight * 0.866 + gap + 6;
+
+    const board = document.getElementById('board');
+    const status = document.getElementById('status');
+
+    let grid = [];
+    let gameOver = false;
+
+    function index(r, c) {
+      return r * cols + c;
+    }
+
+    function neighbors(r, c) {
+      const even = r % 2 === 0;
+      const dirs = even
+        ? [[-1,0],[-1,-1],[0,-1],[0,1],[1,0],[1,-1]]
+        : [[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1]];
+
+      return dirs
+        .map(([dr, dc]) => [r + dr, c + dc])
+        .filter(([nr, nc]) => nr >= 0 && nr < rows && nc >= 0 && nc < cols);
+    }
+
+    function createBoard() {
+      grid = [];
+      board.innerHTML = '';
+      status.textContent = '';
+      gameOver = false;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const cell = {
+            r, c,
+            mine: false,
+            revealed: false,
+            flagged: false,
+            count: 0,
+            el: document.createElement('div')
+          };
+
+          cell.el.className = 'hex';
+          const x = c * xOffset;
+          const y = r * yOffset + (c % 2 ? yOffset / 2 : 0);
+          cell.el.style.left = x + 'px';
+          cell.el.style.top = y + 'px';
+
+          cell.el.addEventListener('click', () => reveal(cell));
+          cell.el.addEventListener('contextmenu', e => {
+            e.preventDefault();
+            toggleFlag(cell);
+          });
+
+          board.appendChild(cell.el);
+          grid.push(cell);
+        }
+      }
+
+      placeMines();
+      calculateCounts();
+
+      board.style.width = cols * xOffset + hexWidth + 'px';
+      board.style.height = rows * yOffset + hexHeight + 'px';
+    }
+
+    function placeMines() {
+      let placed = 0;
+      while (placed < mineCount) {
+        const i = Math.floor(Math.random() * grid.length);
+        if (!grid[i].mine) {
+          grid[i].mine = true;
+          placed++;
+        }
+      }
+    }
+
+    function calculateCounts() {
+      for (const cell of grid) {
+        if (cell.mine) continue;
+        const n = neighbors(cell.r, cell.c);
+        cell.count = n.filter(([r,c]) => grid[index(r,c)].mine).length;
+      }
+    }
+
+    function reveal(cell) {
+      if (cell.revealed || cell.flagged || gameOver) return;
+      cell.revealed = true;
+      cell.el.classList.add('revealed');
+
+      if (cell.mine) {
+        cell.el.classList.add('mine');
+        cell.el.textContent = '💣';
+        lose();
+        return;
+      }
+
+      if (cell.count > 0) {
+        cell.el.textContent = cell.count;
+        cell.el.classList.add('n' + cell.count);
+      } else {
+        for (const [r,c] of neighbors(cell.r, cell.c)) {
+          reveal(grid[index(r,c)]);
+        }
+      }
+
+      checkWin();
+    }
+
+    function toggleFlag(cell) {
+      if (cell.revealed || gameOver) return;
+      cell.flagged = !cell.flagged;
+      cell.el.classList.toggle('flagged');
+      cell.el.textContent = cell.flagged ? '🚩' : '';
+    }
+
+    function lose() {
+      gameOver = true;
+      status.textContent = 'you lost.';
+      for (const cell of grid) {
+        if (cell.mine && !cell.revealed) {
+          cell.el.classList.add('mine');
+          cell.el.textContent = '💣';
+        }
+      }
+    }
+
+    function checkWin() {
+      const unrevealed = grid.filter(c => !c.revealed);
+      if (unrevealed.every(c => c.mine)) {
+        gameOver = true;
+        status.textContent = 'you win!';
+      }
+    }
+
+    function toggleSubmenu(id, element) {
+      const submenu = document.getElementById(id);
+      const isVisible = submenu.style.display === 'block';
+      // Hide all submenus
+      document.querySelectorAll('.submenu').forEach(s => s.style.display = 'none');
+      document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+      if (!isVisible) {
+        submenu.style.display = 'block';
+        element.classList.add('active');
+        // Position the submenu below the menu-item
+        const rect = element.getBoundingClientRect();
+        const windowRect = document.querySelector('.window').getBoundingClientRect();
+        submenu.style.left = (rect.left - windowRect.left) + 'px';
+        submenu.style.top = (rect.bottom - windowRect.top) + 'px';
+      }
+    }
+
+    function resetGame() {
+      createBoard();
+      document.getElementById('file-submenu').style.display = 'none';
+      document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+    }
+
+    function setGridSize(newRows, newCols) {
+      rows = newRows;
+      cols = newCols;
+      mineCount = Math.floor(rows * cols * 0.18); // Adjust mine count proportionally
+      createBoard();
+      document.getElementById('edit-submenu').style.display = 'none';
+      document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+    }
+
+    createBoard();
+  </script>
+</body>
+</html>
