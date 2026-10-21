@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blind Keyboard</title>
+
+  <style>
+    body {
+      background: #0b0b0b;
+      color: #eaeaea;
+      font-family: helvetica, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      gap: 12px;
+      transition: filter 0.25s ease;
+    }
+
+
+body.blurred > *:not(.overlay) {
+      filter: blur(6px);
+}
+
+
+    #goal {
+      font-size: 22px;
+      letter-spacing: 2px;
+    }
+
+    #accuracy {
+      font-size: 14px;
+      opacity: 0.75;
+    }
+
+    #output {
+      width: 80%;
+      min-height: 60px;
+      border: 2px solid #333;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 20px;
+      background: #111;
+      font-family: 'courier new', monospace;
+    }
+
+    .correct { color: #eaeaea; }
+    .wrong { color: rgba(255, 80, 80, 0.5); }
+
+    .keyboard {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .row.offset-1 { margin-left: 24px; }
+    .row.offset-2 { margin-left: 48px; }
+
+    button.key {
+      width: 48px;
+      height: 48px;
+      background: #1a1a1a;
+      border: 2px solid #2a2a2a;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .wide { width: 300px; }
+
+    .controls {
+      display: flex;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    button.control {
+      padding: 10px 22px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      color: #fff;
+    }
+
+    .restart { background: #8b1e1e; }
+    .submit { background: #1e8b3c; }
+    .scores { background: #444; }
+
+    /* Modal overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .overlay.active {
+      display: flex;
+    }
+
+    /* Modal window */
+    .modal {
+      background: #111;
+      border: 2px solid #333;
+      border-radius: 10px;
+      padding: 20px;
+      min-width: 340px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .modal h2 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    table {
+      border-collapse: collapse;
+      font-size: 13px;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid #333;
+      padding: 6px 8px;
+      text-align: center;
+    }
+
+    th {
+      background: #151515;
+    }
+
+    .close {
+      margin-top: 12px;
+      width: 100%;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      background: #333;
+      color: #fff;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="goal"></div>
+  <div id="accuracy"></div>
+  <div id="output"></div>
+
+  <div class="keyboard" id="keyboard"></div>
+
+  <div class="controls">
+    <button class="control restart" id="restart">restart</button>
+    <button class="control submit" id="submit">submit</button>
+    <button class="control scores" id="scores">scores</button>
+  </div>
+
+  <!-- Score modal -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h2>score history</h2>
+      <table>
+        <thead>
+          <tr><th>#</th><th>word</th><th>accuracy</th></tr>
+        </thead>
+        <tbody id="scoreTable"></tbody>
+      </table>
+      <button class="close" id="closeModal">close</button>
+    </div>
+  </div>
+
+  <script>
+    const wordPool = [
+      'mnemonic','quixotic','xylophone','juxtapose','labyrinth',
+      'anathema','ephemeral','cacophony','obfuscate','idiosyncrasy',
+      'synecdoche','phlegmatic','chiaroscuro','sesquipedalian',
+      'onomatopoeia','circumlocution','perspicacious','defenestration',
+      'misogynistic','psilocybin',
+    
+      'rendezvous','conscientious','embarrassment','millennium',
+      'acquiesce','belligerent','bureaucracy','camouflage',
+      'indictment','pronunciation','miscellaneous','supersede',
+      'questionnaire','rhythm','zucchini','weird','occurrence',
+    
+      'schizophrenia','psychiatry','euclidean','hydraulic',
+      'silhouette','liaison','manoeuvre','entrepreneur',
+      'daiquiri','bourgeois','chauffeur','renaissance',
+    
+      'sacrilegious','perseverance','iridescent','subpoena',
+      'inoculate','equilibrium','paraphernalia','hierarchy',
+      'connoisseur','ostentatious','mischievous','archaeology',
+    
+      'antidisestablishmentarianism',
+      'floccinaucinihilipilification',
+      'pneumonoultramicroscopicsilicovolcanoconiosis',
+    
+      'pterodactyl','czar','knapsack','fjord','sphinx',
+      'tsunami','kaleidoscope','lyophilization','zeugma',
+      'metonymy','isthmus','panacea','chrysanthemum'
+    ];
+
+
+    let goalWord;
+    let correctPresses = 0;
+    let wrongPresses = 0;
+    let progressIndex = 0;
+    let history = [];
+
+    const goalEl = document.getElementById('goal');
+    const accuracyEl = document.getElementById('accuracy');
+    const output = document.getElementById('output');
+    const scoreTable = document.getElementById('scoreTable');
+    const overlay = document.getElementById('overlay');
+
+    function pickWord() {
+      goalWord = wordPool[Math.floor(Math.random() * wordPool.length)];
+      goalEl.textContent = `${goalWord}`;
+    }
+
+    function updateAccuracy() {
+      const total = correctPresses + wrongPresses;
+      const acc = total === 0 ? 100 : Math.round((correctPresses / total) * 100);
+      accuracyEl.textContent = `accuracy: ${acc}% (${correctPresses}/${total})`;
+      return acc;
+    }
+
+    function resetGame() {
+      output.innerHTML = '';
+      correctPresses = 0;
+      wrongPresses = 0;
+      progressIndex = 0;
+      pickWord();
+      updateAccuracy();
+    }
+
+    function submitScore() {
+      const acc = updateAccuracy();
+      history.push({ word: goalWord, accuracy: acc });
+      renderScores();
+      resetGame();
+    }
+
+    function renderScores() {
+      scoreTable.innerHTML = '';
+      history.forEach((entry, i) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${i + 1}</td><td>${entry.word}</td><td>${entry.accuracy}%</td>`;
+        scoreTable.appendChild(row);
+      });
+    }
+
+    function attemptInput(char) {
+      const expected = goalWord[progressIndex];
+      const ghost = output.querySelector('.wrong');
+      if (ghost) ghost.remove();
+
+      if (char === expected) {
+        const span = document.createElement('span');
+        span.className = 'correct';
+        span.textContent = char;
+        output.appendChild(span);
+        progressIndex++;
+        correctPresses++;
+      } else {
+        const span = document.createElement('span');
+        span.className = 'wrong';
+        span.textContent = char;
+        output.appendChild(span);
+        wrongPresses++;
+      }
+      updateAccuracy();
+    }
+
+    const rows = [
+      ['q','w','e','r','t','y','u','i','o','p'],
+      ['a','s','d','f','g','h','j','k','l'],
+      ['z','x','c','v','b','n','m',',']
+    ];
+
+    const keyboard = document.getElementById('keyboard');
+
+    rows.forEach((rowChars, i) => {
+      const row = document.createElement('div');
+      row.className = 'row';
+      if (i === 1) row.classList.add('offset-1');
+      if (i === 2) row.classList.add('offset-2');
+
+      rowChars.forEach(char => {
+        const key = document.createElement('button');
+        key.className = 'key';
+        key.addEventListener('click', () => attemptInput(char));
+        row.appendChild(key);
+      });
+      keyboard.appendChild(row);
+    });
+
+    
+
+    document.getElementById('restart').addEventListener('click', resetGame);
+    document.getElementById('submit').addEventListener('click', submitScore);
+
+    document.getElementById('scores').addEventListener('click', () => {
+      renderScores();
+      overlay.classList.add('active');
+      document.body.classList.add('blurred');
+    });
+
+    document.getElementById('closeModal').addEventListener('click', () => {
+      overlay.classList.remove('active');
+      document.body.classList.remove('blurred');
+    });
+
+    resetGame();
+  </script>
+
+</body>
+</html>
