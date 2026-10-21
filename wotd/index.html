@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>word of the day: type it fast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #e7effc;
+    --panel: #f5f8ff;
+    --ink: #0c1a36;
+    --soft: #566b91;
+    --faint: #a9bddf;
+    --line: #c5d5f0;
+    --hit: #3b82f6;
+    --miss: #c2185b;
+    --gold: #e0a100;
+    --accent: #3b82f6;
+    --on-accent: #ffffff;
+    --display: "Chakra Petch", "Helvetica Neue", Arial, sans-serif;
+    --num: "Spline Sans Mono", ui-monospace, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--display);
+    font-size: 17px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  button, input { font: inherit; color: inherit; }
+  body { text-transform: lowercase; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);
+    gap: 40px;
+  }
+  @media (max-width: 860px) { .wrap { grid-template-columns: 1fr; gap: 28px; } }
+
+  header.top {
+    grid-column: 1 / -1;
+    display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px 24px;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 10px;
+  }
+  header.top h1 { margin: 0; font-size: 1.1rem; font-weight: 700; letter-spacing: -0.01em; }
+  .reset { font-family: var(--num); font-size: 0.9rem; color: var(--soft); }
+  .reset b { color: var(--ink); font-weight: 600; }
+
+  /* ---- the word ---- */
+  .stage { padding-top: 12px; }
+  .date { color: var(--soft); margin: 0 0 4px; }
+  .word {
+    display: flex; flex-wrap: wrap;
+    font-size: clamp(3.2rem, 11vw, 7.5rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+    margin: 0 0 22px;
+    user-select: none;
+    min-height: 1.05em;
+  }
+  .word span {
+    color: var(--faint);
+    transition: color .06s;
+  }
+  .word span.ok { color: var(--hit); }
+  .word span.bad { color: var(--miss); }
+  .word span.next { border-bottom: 6px solid var(--accent); }
+
+  .field {
+    width: 100%;
+    font-size: 1.6rem;
+    font-weight: 600;
+    padding: 14px 16px;
+    background: var(--panel);
+    border: 2px solid var(--accent);
+    border-radius: 0;
+    letter-spacing: 0.04em;
+  }
+  .field:focus { border-color: var(--ink); outline-offset: 0; }
+  .field:disabled { opacity: .55; }
+  .hint { color: var(--soft); font-size: .9rem; margin: 8px 0 0; }
+
+  .clock {
+    font-family: var(--num);
+    font-size: clamp(2.2rem, 7vw, 3.4rem);
+    font-weight: 600;
+    margin: 22px 0 6px;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+  }
+  .stats { display: flex; gap: 28px; flex-wrap: wrap; color: var(--soft); }
+  .stats b { font-family: var(--num); color: var(--ink); font-weight: 600; }
+
+  .result {
+    margin-top: 18px;
+    padding: 16px 18px;
+    background: var(--panel);
+    border: 2px solid var(--accent);
+    border-radius: 0;
+  }
+  .result p { margin: 0 0 10px; }
+  .result p:last-child { margin: 0; }
+  #loadError { margin: 0 0 20px; }
+  .btn {
+    background: var(--accent); color: var(--on-accent);
+    border: 0; border-radius: 0;
+    padding: 10px 18px; font-weight: 600; cursor: pointer;
+  }
+  a.btn { display: inline-block; text-decoration: none; }
+  .btn.alt { background: transparent; color: var(--ink); border: 2px solid var(--accent); }
+  .btn:disabled { opacity: .5; cursor: default; }
+
+  /* ---- side column ---- */
+  aside h2 { margin: 0 0 10px; font-size: 1.1rem; font-weight: 700; }
+  .account {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 0;
+    padding: 14px;
+    margin-bottom: 26px;
+  }
+  .account form { display: grid; gap: 8px; }
+  .account input {
+    padding: 9px 10px; background: #fff; border: 1px solid var(--line); border-radius: 0; width: 100%;
+  }
+  .account .row { display: flex; gap: 8px; }
+  .account .row .btn { flex: 1; }
+  .msg { min-height: 1.4em; margin: 8px 0 0; font-size: .9rem; color: var(--miss); }
+  .msg.good { color: var(--ink); }
+  .who { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .link { background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; color: var(--soft); }
+
+  .yday { margin-bottom: 26px; padding: 12px 14px; background: var(--panel); border-left: 4px solid var(--gold); }
+  .yday p { margin: 0; }
+  .yday .ylabel { color: var(--soft); font-size: .9rem; }
+  .yday .ywho { margin-top: 2px; }
+  .yday .time { font-family: var(--num); font-variant-numeric: tabular-nums; }
+
+  ol.board { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--accent); }
+  ol.board li {
+    display: grid; grid-template-columns: 2.2em 1fr auto; gap: 8px;
+    padding: 8px 6px; border-bottom: 1px solid var(--line); align-items: baseline;
+  }
+  ol.board li.first { font-weight: 700; background: #f8edc4; }
+  ol.board li.me { box-shadow: inset 4px 0 0 var(--accent); background: #d3e3f6; }
+  ol.board li.first.me { background: #ecdfb0; }
+  .rank { font-family: var(--num); color: var(--soft); }
+  .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .time { font-family: var(--num); font-variant-numeric: tabular-nums; }
+  .empty { color: var(--soft); padding: 14px 0; }
+
+  @media (prefers-reduced-motion: reduce) { .word span { transition: none; } }
+
+  /* site top bar (same as the other pages) */
+        #topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 40;
+            height: calc(38px + env(safe-area-inset-top, 0px));
+            padding: env(safe-area-inset-top, 0px) 12px 0;
+            background: #000;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Chakra Petch', system-ui, sans-serif;
+            text-align: left;
+            text-transform: lowercase;
+            white-space: nowrap
+        }
+
+        body {
+            padding-top: calc(38px + env(safe-area-inset-top, 0px))
+        }
+
+        #topbar .logo {
+            flex: 0 0 auto;
+            margin-right: 10px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 17px;
+            letter-spacing: -.01em;
+            text-decoration: none;
+            line-height: 1
+        }
+
+        #topbar .logo small {
+            font-size: .62em;
+            font-weight: 500;
+            color: #cfcfcf;
+            letter-spacing: 0
+        }
+
+        #topbar .tbtn {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: auto;
+            height: 26px;
+            padding: 0 20px;
+            border: 0;
+            border-radius: 0;
+            background: #3b82f6;
+            color: #fff;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 15px;
+            line-height: 1;
+            text-decoration: none;
+            text-transform: lowercase;
+            cursor: pointer
+        }
+
+        #topbar .tbtn:hover {
+            background: #5a95f7
+        }
+
+        #topbar input {
+            flex: 0 1 312px;
+            width: auto;
+            min-width: 0;
+            height: 26px;
+            padding: 0 8px;
+            border: 2px solid #3b82f6;
+            border-radius: 0;
+            background: #262626;
+            color: #fff;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 400;
+            text-align: left;
+            text-transform: none;
+            text-overflow: ellipsis;
+            outline: 0
+        }
+
+        #topbar input::placeholder {
+            color: #8a8a8a;
+            font-style: italic;
+            opacity: 1;
+            text-overflow: ellipsis
+        }
+
+        #topbar input:focus {
+            border-color: #8ab8ff
+        }
+
+        #topbar #tacct {
+            margin-left: auto
+        }
+
+        #topbar .twho {
+            flex: 0 1 auto;
+            min-width: 0;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #cfcfcf;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none
+        }
+
+        #topbar .twho b {
+            color: #fff;
+            font-weight: 700
+        }
+
+        #topbar .twho:hover {
+            text-decoration: underline
+        }
+
+        @media (max-width: 520px) {
+            #topbar .twho {
+                max-width: 96px;
+                font-size: 12px
+            }
+        }
+
+        #topbar .logo:focus-visible,
+        #topbar .tbtn:focus-visible,
+        #topbar .twho:focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 2px
+        }
+
+        @media (max-width: 520px) {
+            #topbar {
+                padding-left: 8px;
+                padding-right: 8px;
+                gap: 4px
+            }
+
+            #topbar .logo {
+                margin-right: 2px;
+                font-size: 13px
+            }
+
+            #topbar .logo small {
+                display: none
+            }
+
+            #topbar .tbtn {
+                padding: 0 8px;
+                font-size: 13px
+            }
+
+            #topbar input {
+                font-size: 12px;
+                padding: 0 6px
+            }
+        }
+</style>
+</head>
+<body>
+<nav id="topbar" aria-label="site">
+  <a class="logo" href="../">gamedevrg<small>.com</small></a>
+  <a class="tbtn" href="../">homepage</a>
+  <input id="tsearch" type="search" placeholder="you can type things here. (this is the search bar)"
+    aria-label="search" autocomplete="off">
+  <button class="tbtn" id="tgo" type="button">search</button>
+  <a class="tbtn" id="tacct" href="../account/?from=wotd">log in</a>
+</nav>
+<div class="wrap">
+
+  <header class="top">
+    <h1>word of the day</h1>
+    <div class="reset">new word in <b id="countdown">--:--:--</b> (midnight pacific)</div>
+  </header>
+
+  <main class="stage">
+    <p class="date" id="dateLabel"></p>
+    <div class="word" id="word" aria-live="off"></div>
+
+    <div class="result" id="loadError" hidden>
+      <p>couldn’t load today’s word. check that the server is running.</p>
+      <p><button class="btn" id="retry" type="button">retry</button></p>
+    </div>
+
+    <input class="field" id="field" type="text" autocomplete="off" autocapitalize="off"
+           autocorrect="off" spellcheck="false" aria-label="type today’s word" placeholder="click here and start typing">
+    <p class="hint">the clock starts on your first key. press enter or esc to restart.</p>
+
+    <div class="clock" id="clock">0.00s</div>
+    <div class="stats">
+      <span>today’s best: <b id="bestToday">–</b></span>
+      <span>attempts: <b id="attempts">0</b></span>
+    </div>
+
+    <div class="result" id="result" hidden></div>
+  </main>
+
+  <aside>
+    <div class="account" id="account"></div>
+    <div class="yday" id="yday" hidden>
+      <p class="ylabel">yesterday’s first place</p>
+      <p class="ywho" id="ywho"></p>
+    </div>
+    <h2>today’s leaderboard</h2>
+    <ol class="board" id="board"></ol>
+    <div class="empty" id="boardEmpty" hidden>no times yet today. be the first.</div>
+  </aside>
+</div>
+
+<script>
+/* ===== SETTINGS ===== */
+// Where your server.js is running. Leave "" if this page is served by that same server.
+const API = "http://localhost:3000";
+// The account page saves the signed-in username in localStorage under "username".
+const ACCOUNT_URL = "../account/?from=wotd";
+const USER_KEY = "username";
+
+/* ===== STATE ===== */
+const $ = id => document.getElementById(id);
+let key = "";          // leaderboard name for today, from the server
+let word = "";         // today's word, from the server
+let yKey = "", yWord = "";   // yesterday's leaderboard name and word, from the server
+let resetAt = 0;       // when the server says the word changes (client clock)
+let state = "idle";            // idle | typing | done
+let startAt = 0, raf = 0;
+let attempts = 0, best = null; // today's, kept in this browser
+let user = null;
+let lastTime = null;
+
+const LS = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+
+async function loadDay() {
+  const d = await api("/wotd");
+  key = d.key;
+  word = String(d.word).toLowerCase();
+  resetAt = Date.now() + d.secondsLeft * 1000;
+  yKey = d.yesterday ? d.yesterday.key : "";
+  yWord = d.yesterday ? String(d.yesterday.word).toLowerCase() : "";
+  const saved = JSON.parse(LS.get("wotd-" + key) || "{}");
+  attempts = saved.attempts || 0;
+  best = typeof saved.best === "number" ? saved.best : null;
+  const [y, m, dd] = d.date.split("-").map(Number);
+  $("dateLabel").textContent = new Date(Date.UTC(y, m - 1, dd, 12))
+    .toLocaleDateString("en-US", { timeZone: "UTC", weekday: "long", month: "long", day: "numeric" }).toLowerCase();
+  renderWord("");
+  updateStats();
+}
+function saveDay() { LS.set("wotd-" + key, JSON.stringify({ attempts, best })); }
+function updateStats() {
+  $("attempts").textContent = attempts;
+  $("bestToday").textContent = best === null ? "–" : best.toFixed(2) + "s";
+}
+
+/* ===== WORD DISPLAY ===== */
+function renderWord(typed) {
+  const box = $("word");
+  box.innerHTML = "";
+  for (let i = 0; i < word.length; i++) {
+    const s = document.createElement("span");
+    s.textContent = word[i];
+    if (i < typed.length) s.className = typed[i].toLowerCase() === word[i] ? "ok" : "bad";
+    else if (i === typed.length) s.className = "next";
+    box.appendChild(s);
+  }
+}
+
+/* ===== GAME ===== */
+const field = $("field");
+
+function reset() {
+  cancelAnimationFrame(raf);
+  state = "idle";
+  field.value = ""; field.disabled = false;
+  $("clock").textContent = "0.00s";
+  $("result").hidden = true;
+  renderWord("");
+  field.focus();
+}
+
+function tick() {
+  if (state !== "typing") return;
+  $("clock").textContent = ((performance.now() - startAt) / 1000).toFixed(2) + "s";
+  raf = requestAnimationFrame(tick);
+}
+
+field.addEventListener("input", () => {
+  if (state === "done" || !word) return;
+  const v = field.value;
+  if (state === "idle" && v.length) {
+    state = "typing";
+    startAt = performance.now();
+    raf = requestAnimationFrame(tick);
+  }
+  renderWord(v);
+  if (state === "typing" && v.toLowerCase() === word) finish();
+});
+field.addEventListener("paste", e => e.preventDefault());
+field.addEventListener("drop", e => e.preventDefault());
+field.addEventListener("keydown", e => { if (e.key === "Escape") reset(); });
+
+// Enter restarts from anywhere (the field is disabled after a finish, so this listens on the document).
+// It stays out of the sign-in form and the "try again" button, which already handle Enter themselves.
+document.addEventListener("keydown", e => {
+  if (e.key !== "Enter" || e.repeat || !word) return;
+  const t = e.target;
+  if (t.closest && (t.closest("#account") || t.id === "again")) return;
+  e.preventDefault();
+  reset();
+});
+
+function finish() {
+  const t = (performance.now() - startAt) / 1000;
+  cancelAnimationFrame(raf);
+  state = "done";
+  field.disabled = true;
+  lastTime = t;
+  $("clock").textContent = t.toFixed(2) + "s";
+  attempts++;
+  const isBest = best === null || t < best;
+  if (isBest) best = t;
+  saveDay(); updateStats();
+  showResult(t, isBest);
+  submit(t);
+}
+
+function showResult(t, isBest) {
+  const r = $("result");
+  r.hidden = false;
+  r.innerHTML =
+    "<p><strong>" + t.toFixed(2) + " seconds.</strong> " +
+    (isBest ? "that’s your fastest run today." : "your best today is " + best.toFixed(2) + "s.") + "</p>" +
+    "<p id='postNote'></p>" +
+    "<p><button class='btn' id='again'>try again</button></p>";
+  $("again").addEventListener("click", reset);
+  $("again").focus();
+  postNote();
+}
+function postNote() {
+  const n = $("postNote");
+  if (!n) return;
+  n.textContent = user ? "posting to the leaderboard…" : "sign in to gamedevrg.com to put your time on the leaderboard.";
+}
+
+/* ===== API ===== */
+async function api(path, body) {
+  const res = await fetch(API + path, body
+    ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }
+    : undefined);
+  let data = null;
+  try { data = await res.json(); } catch (e) {}
+  if (!res.ok) throw new Error(String((data && data.message) || "something went wrong").toLowerCase());
+  return data;
+}
+
+async function submit(t) {
+  if (!user) return;
+  try {
+    // The server only keeps your fastest time per leaderboard, so every attempt is safe to send.
+    const out = await api("/score", { username: user, time: +t.toFixed(3), leaderboard: key });
+    const n = $("postNote");
+    if (n) n.textContent = out.best !== undefined && Math.abs(out.best - t) < 0.0005
+      ? "new personal best on the leaderboard."
+      : "posted. your leaderboard time is still " + Number(out.best).toFixed(2) + "s.";
+  } catch (e) {
+    const n = $("postNote");
+    if (n) n.textContent = "couldn’t reach the leaderboard: " + String(e.message).toLowerCase();
+  }
+  loadBoard();
+}
+
+async function loadYesterday() {
+  const box = $("yday");
+  if (!yKey) { box.hidden = true; return; }
+  try {
+    const rows = await api("/leaderboard/" + yKey);
+    const who = $("ywho");
+    who.textContent = "";
+    if (!rows.length) {
+      who.textContent = "nobody played yesterday’s word (" + yWord + ").";
+    } else {
+      const name = document.createElement("b");
+      name.textContent = rows[0].username.toLowerCase();
+      const time = document.createElement("span");
+      time.className = "time";
+      time.textContent = Number(rows[0].time).toFixed(2) + "s";
+      who.append(name, " in ", time, ". the word was " + yWord + ".");
+    }
+    box.hidden = false;
+  } catch (e) {
+    box.hidden = true;     // leave it out rather than show a half-empty box
+  }
+}
+
+async function loadBoard() {
+  if (!key) return;
+  const ol = $("board");
+  try {
+    const rows = await api("/leaderboard/" + key);
+    ol.innerHTML = "";
+    $("boardEmpty").hidden = rows.length > 0;
+    rows.slice(0, 50).forEach((r, i) => {
+      const li = document.createElement("li");
+      if (i === 0) li.className = "first";
+      if (user && r.username === user) li.className += " me";
+      const rank = document.createElement("span"); rank.className = "rank"; rank.textContent = i + 1;
+      const name = document.createElement("span"); name.className = "name"; name.textContent = r.username.toLowerCase();
+      const time = document.createElement("span"); time.className = "time"; time.textContent = Number(r.time).toFixed(2) + "s";
+      li.append(rank, name, time);
+      ol.appendChild(li);
+    });
+  } catch (e) {
+    ol.innerHTML = "";
+    $("boardEmpty").hidden = false;
+    $("boardEmpty").textContent = "couldn’t load the leaderboard. check that the server is running.";
+  }
+}
+
+/* ===== ACCOUNT =====
+   Signing in happens on gamedevrg.com/account. This page only reads who is signed in. */
+function readUser() {
+  const v = LS.get(USER_KEY);
+  return v && v.trim() ? v.trim() : null;
+}
+
+function renderAccount() {
+  const t = $("tacct");
+  if (user) {
+    t.className = "twho";
+    t.replaceChildren("signed in as ", Object.assign(document.createElement("b"), { textContent: user }));
+    t.title = user;
+  } else {
+    t.className = "tbtn";
+    t.textContent = "log in";
+    t.removeAttribute("title");
+  }
+  const box = $("account");
+  box.innerHTML = "";
+  if (user) {
+    const p = document.createElement("p");
+    p.className = "who";
+    p.textContent = "signed in as " + user.toLowerCase();
+    box.appendChild(p);
+    return;
+  }
+  const a = document.createElement("a");
+  a.className = "btn";
+  a.href = ACCOUNT_URL;
+  a.textContent = "sign in to gamedevrg.com";
+  box.appendChild(a);
+}
+
+// Runs when you come back to this tab, so signing in on the account page shows up here.
+async function syncUser() {
+  const now = readUser();
+  if (now === user) return;
+  user = now;
+  renderAccount();
+  if (user && best !== null && key) {
+    // if you already finished the word before signing in, post that time now
+    try { await api("/score", { username: user, time: +best.toFixed(3), leaderboard: key }); } catch (e) {}
+  }
+  loadBoard();
+  if (user && state === "done") {
+    const n = $("postNote");
+    if (n) n.textContent = "signed in. your best time today is on the leaderboard.";
+  }
+}
+window.addEventListener("focus", syncUser);
+window.addEventListener("storage", syncUser);
+window.addEventListener("pageshow", syncUser);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) syncUser(); });
+
+/* top bar search (same placeholder behaviour as the other pages: nothing to search yet) */
+{
+  const go = () => { const q = $("tsearch").value.trim(); if (!q) return; /* TODO: point this at the site's search page */ };
+  $("tgo").onclick = go;
+  $("tsearch").addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+}
+
+/* ===== COUNTDOWN + MIDNIGHT ROLLOVER ===== */
+function pad(n) { return String(n).padStart(2, "0"); }
+let rolling = false;
+function clockTick() {
+  if (!key) return;
+  const left = Math.max(0, Math.ceil((resetAt - Date.now()) / 1000));
+  $("countdown").textContent = pad(Math.floor(left / 3600)) + ":" + pad(Math.floor(left % 3600 / 60)) + ":" + pad(left % 60);
+  if (left === 0 && !rolling) rollover();
+}
+async function rollover() {            // midnight Pacific: ask the server for the new word
+  rolling = true;
+  const old = key;
+  try {
+    await loadDay();
+    if (key !== old) { reset(); loadBoard(); loadYesterday(); }
+  } catch (e) { /* try again on the next tick */ }
+  rolling = false;
+}
+
+/* ===== START ===== */
+async function start() {
+  field.disabled = true;
+  $("loadError").hidden = true;
+  try {
+    await loadDay();
+    reset();
+    loadBoard();
+    loadYesterday();
+    clockTick();
+  } catch (e) {
+    $("loadError").hidden = false;
+  }
+}
+$("retry").addEventListener("click", start);
+
+user = readUser();
+renderAccount();
+start();
+setInterval(clockTick, 1000);
+setInterval(loadBoard, 30000);
+</script>
+</body>
+</html>
