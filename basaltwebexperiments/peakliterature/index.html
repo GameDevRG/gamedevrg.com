@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Random Story Pages</title>
+<style>
+body {
+  background: #0b0b0b;
+  color: #eaeaea;
+  font-family: helvetica, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 12px;
+  overflow: hidden;
+}
+
+#storyContainer {
+  width: 80%;
+  max-width: 800px;
+  height: 70%;
+  background: #fff;
+  color: #000;
+  font-family: 'Times New Roman', serif;
+  padding: 20px;
+  border-radius: 8px;
+  overflow-y: auto;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  position: relative;
+  white-space: pre-wrap;
+  transition: transform 0.2s ease;
+  text-align: left;
+}
+
+.cover {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f39c12;
+  color: #000;
+  font-family: 'Times New Roman', serif;
+  width: 80%;
+  max-width: 800px;
+  height: 70%;
+  border-radius: 8px;
+  padding: 40px 20px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  text-align: center;
+}
+.cover h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+.cover p {
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+#pageNumber {
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+  font-size: 14px;
+  color: #333;
+}
+
+.controls { display: flex; gap: 14px; margin-top: 10px; }
+button {
+  padding: 10px 22px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #fff;
+  background: #1a1a1a;
+}
+button:hover { background: #333; }
+</style>
+</head>
+<body>
+
+<div id="storyContainer">
+  <div class="cover" id="cover">
+    <h1 id="storyTitle">Story Title</h1>
+    <p id="storyCharacters">Characters: </p>
+    <p>Written by Basalt Web Experiments</p>
+  </div>
+  <div id="story" style="display:none">Click next to start the story!</div>
+  <div id="pageNumber">Page 0</div>
+</div>
+
+<div class="controls">
+  <button onclick="previousPage()">Previous Page</button>
+  <button onclick="nextPage()">Next Page</button>
+</div>
+
+<script>
+const characters = generateNames(4);
+let pages = [];
+let currentPage = -1;
+
+const subjects = ["The cat","She","He","They","We","The dog","The dragon","The wizard","The children","My neighbor","The alien","The bird"];
+const verbs = ["jumps","runs","eats","sings","reads","bakes","flies","paints","dances","sleeps"];
+const objects = ["over the fence","in the park","a cake","loudly","quickly","beautifully","under the tree","on the hill","near the river","through the forest","inside the cave","on the roof"];
+const adjectives = ["happy","sad","quick","slow","bright","funny","weird","strange","colorful"];
+const prepositions = ["under","over","beside","behind","near","inside","around"];
+const conjunctions = ["and","but","so","because","while"];
+const titleFonts = ['Georgia','Palatino Linotype','Courier New','Verdana','Tahoma','Impact','Comic Sans MS'];
+
+function generateNames(count) {
+    const firstNames = ["John","Mary","Alice","Bob","Lena","Max","Oliver","Sophia","Ethan","Chloe"];
+    const lastNames = ["Smith","Johnson","Brown","Taylor","Jackson","Davis","Miller","Wilson","Clark","Lewis"];
+    const names = [];
+    for (let i=0;i<count;i++){names.push(`${random(firstNames)} ${random(lastNames)}`);}
+    return names;
+}
+
+function random(array){ return array[Math.floor(Math.random()*array.length)]; }
+function selectVerb(){ return random(verbs); }
+function randomSentence(){
+    let subj = random(subjects);
+    let obj = random(objects);
+    let adj = random(adjectives);
+    return `${subj} ${selectVerb()} ${adj} ${obj}`;
+}
+function generateDialogue(){
+    let name = random(characters);
+    let template = Math.floor(Math.random()*4);
+    let sentence = randomSentence();
+    switch(template){
+        case 0: return `"${sentence}." ${name} said.`;
+        case 1: return `"${sentence}." ${name} said with excitement.`;
+        case 2: return `"${sentence}!" ${name} screamed.`;
+        case 3: return `"${sentence}..." ${name} whispered.`;
+    }
+}
+
+function generateParagraph(){
+    let sentenceCount = Math.floor(Math.random() * 5) + 1;
+    let paragraph = '';
+    for (let i=0;i<sentenceCount;i++){
+        paragraph += Math.random() < 0.35 ? generateDialogue() + ' ' : randomSentence() + '. ';
+    }
+    return paragraph.trim();
+}
+
+function generatePage(){
+    let paragraphCount = Math.floor(Math.random() * 6) + 5;
+    let page='';
+    for(let i=0;i<paragraphCount;i++){
+        page += generateParagraph() + '\n\n';
+    }
+    return page;
+}
+
+function generateTitle(){
+    const templates = [
+        () => `${random(characters)}'s ${random(adjectives)} ${random(objects)}`,
+        () => `The ${random(adjectives)} of ${random(objects)}`,
+        () => `${random(objects)} of ${random(adjectives)}`,
+        () => `${random(adjectives)} ${random(adjectives)}`
+    ];
+    return random(templates)();
+}
+
+function showCover(){
+    let title = generateTitle();
+    let font = random(titleFonts);
+    let titleElement = document.getElementById('storyTitle');
+    titleElement.textContent = title;
+    titleElement.style.fontFamily = font;
+    document.getElementById('storyCharacters').textContent = 'Characters: ' + characters.join(', ');
+    document.getElementById('cover').style.display = 'flex';
+    document.getElementById('story').style.display = 'none';
+}
+
+function startStory(){
+    if(pages.length === 0) pages.push(generatePage());
+    currentPage = 0;
+    document.getElementById('cover').style.display = 'none';
+    document.getElementById('story').style.display = 'block';
+    updatePage();
+}
+
+function updatePage(){
+    let container = document.getElementById('storyContainer');
+    let storyDiv = document.getElementById('story');
+    let pageNumber = document.getElementById('pageNumber');
+    container.style.transform='translateX(-3px)';
+    setTimeout(()=>{container.style.transform='translateX(3px)';},80);
+    setTimeout(()=>{container.style.transform='translateX(0px)';},160);
+    storyDiv.textContent = pages[currentPage];
+    pageNumber.textContent = `Page ${currentPage+1}`;
+    storyDiv.scrollTop = 0;
+}
+
+function nextPage(){
+    if(currentPage < pages.length-1){ currentPage++; updatePage(); }
+    else { pages.push(generatePage()); currentPage++; updatePage(); }
+}
+function previousPage(){
+    if(currentPage>0){ currentPage--; updatePage(); }
+}
+
+showCover();
+document.getElementById('cover').addEventListener('click', startStory);
+</script>
+
+</body>
+</html>
