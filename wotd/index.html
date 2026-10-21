@@ -3,25 +3,44 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try { if ((JSON.parse(localStorage.getItem("hs1") || "{}")).theme === "light") document.documentElement.setAttribute("data-theme", "light"); } catch (e) { }</script>
 <title>word of the day: type it fast</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root {
+    color-scheme: dark;
+    --paper: #10162a;
+    --panel: #192040;
+    --ink: #e9edfa;
+    --soft: #8f9bc0;
+    --faint: #566398;
+    --line: #2d3861;
+    --hit: #3b82f6;
+    --miss: #ff6fa5;
+    --gold: #ffe08a;
+    --firstbg: #342f1c;
+    --mebg: #1b2b55;
+    --firstmebg: #2d3557;
+    --accent: #3b82f6;
+    --on-accent: #ffffff;
+    --display: "Chakra Petch", "Helvetica Neue", Arial, sans-serif;
+    --num: "Spline Sans Mono", ui-monospace, Menlo, Consolas, monospace;
+  }
+  :root[data-theme="light"] {
+    color-scheme: light;
     --paper: #e7effc;
     --panel: #f5f8ff;
     --ink: #0c1a36;
     --soft: #566b91;
     --faint: #a9bddf;
     --line: #c5d5f0;
-    --hit: #3b82f6;
     --miss: #c2185b;
     --gold: #e0a100;
-    --accent: #3b82f6;
-    --on-accent: #ffffff;
-    --display: "Chakra Petch", "Helvetica Neue", Arial, sans-serif;
-    --num: "Spline Sans Mono", ui-monospace, Menlo, Consolas, monospace;
+    --firstbg: #f8edc4;
+    --mebg: #d3e3f6;
+    --firstmebg: #ecdfb0;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
@@ -54,6 +73,8 @@
     padding-bottom: 10px;
   }
   header.top h1 { margin: 0; font-size: 1.1rem; font-weight: 700; letter-spacing: -0.01em; }
+  .themebtn { background: transparent; border: 2px solid var(--accent); border-radius: 0; padding: 1px 12px; cursor: pointer; font-weight: 500; }
+  .themebtn:hover { background: var(--accent); color: var(--on-accent); }
   .reset { font-family: var(--num); font-size: 0.9rem; color: var(--soft); }
   .reset b { color: var(--ink); font-weight: 600; }
 
@@ -88,6 +109,7 @@
     border-radius: 0;
     letter-spacing: 0.04em;
   }
+  .field::placeholder { color: var(--soft); color: color-mix(in srgb, var(--accent) 60%, var(--paper)); opacity: 1; }
   .field:focus { border-color: var(--ink); outline-offset: 0; }
   .field:disabled { opacity: .55; }
   .hint { color: var(--soft); font-size: .9rem; margin: 8px 0 0; }
@@ -133,7 +155,7 @@
   }
   .account form { display: grid; gap: 8px; }
   .account input {
-    padding: 9px 10px; background: #fff; border: 1px solid var(--line); border-radius: 0; width: 100%;
+    padding: 9px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 0; width: 100%;
   }
   .account .row { display: flex; gap: 8px; }
   .account .row .btn { flex: 1; }
@@ -153,9 +175,9 @@
     display: grid; grid-template-columns: 2.2em 1fr auto; gap: 8px;
     padding: 8px 6px; border-bottom: 1px solid var(--line); align-items: baseline;
   }
-  ol.board li.first { font-weight: 700; background: #f8edc4; }
-  ol.board li.me { box-shadow: inset 4px 0 0 var(--accent); background: #d3e3f6; }
-  ol.board li.first.me { background: #ecdfb0; }
+  ol.board li.first { font-weight: 700; background: var(--firstbg); }
+  ol.board li.me { box-shadow: inset 4px 0 0 var(--accent); background: var(--mebg); }
+  ol.board li.first.me { background: var(--firstmebg); }
   .rank { font-family: var(--num); color: var(--soft); }
   .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .time { font-family: var(--num); font-variant-numeric: tabular-nums; }
@@ -339,6 +361,7 @@
 
   <header class="top">
     <h1>word of the day</h1>
+    <button class="themebtn" id="themebtn" type="button">light mode</button>
     <div class="reset">new word in <b id="countdown">--:--:--</b> (midnight pacific)</div>
   </header>
 
@@ -642,6 +665,30 @@ window.addEventListener("focus", syncUser);
 window.addEventListener("storage", syncUser);
 window.addEventListener("pageshow", syncUser);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) syncUser(); });
+
+/* ===== LIGHT / DARK ===== */
+function currentTheme() { return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark"; }
+function showTheme() { $("themebtn").textContent = currentTheme() === "light" ? "dark mode" : "light mode"; }
+function setTheme(t) {
+  if (t === "light") document.documentElement.setAttribute("data-theme", "light");
+  else document.documentElement.removeAttribute("data-theme");
+  showTheme();
+}
+$("themebtn").addEventListener("click", () => {
+  const next = currentTheme() === "light" ? "dark" : "light";
+  setTheme(next);
+  try {
+    let saved = JSON.parse(localStorage.getItem("hs1") || "{}");
+    if (!saved || typeof saved !== "object") saved = {};
+    saved.theme = next;                                  // keep the site's other saved settings as they are
+    localStorage.setItem("hs1", JSON.stringify(saved));
+  } catch (e) {}
+});
+window.addEventListener("storage", e => {                // another tab or page changed it
+  if (e.key !== "hs1") return;
+  try { setTheme((JSON.parse(e.newValue || "{}") || {}).theme === "light" ? "light" : "dark"); } catch (err) {}
+});
+showTheme();
 
 /* top bar search (same placeholder behaviour as the other pages: nothing to search yet) */
 {
