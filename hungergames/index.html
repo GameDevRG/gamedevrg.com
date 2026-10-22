@@ -1,0 +1,1225 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>hunger games simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e4e7e1;--panel:#f4f5f0;--ink:#1b2622;--muted:#55635c;--line:#c5cbc2;--gold:#946200;--gold-soft:rgba(148,98,0,.14);--red:#b3261e;--blue:#1f6fa5;--storm:#8a2fa8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f171c;--panel:#17222a;--ink:#e6ebe7;--muted:#93a39b;--line:#2a3a44;--gold:#e0ab4a;--gold-soft:rgba(224,171,74,.14);--red:#ef6a5e;--blue:#6fb6e8;--storm:#d79af0;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f171c;--panel:#17222a;--ink:#e6ebe7;--muted:#93a39b;--line:#2a3a44;--gold:#e0ab4a;--gold-soft:rgba(224,171,74,.14);--red:#ef6a5e;--blue:#6fb6e8;--storm:#d79af0;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.4 'Chakra Petch',system-ui,sans-serif;text-transform:lowercase}
+.app{max-width:1500px;margin:0 auto;padding:12px 14px 18px}
+header{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-bottom:12px}
+h1{font:700 26px/1 'Chakra Petch',sans-serif;letter-spacing:.02em;margin:0;color:var(--gold)}
+#stats{display:flex;flex-wrap:wrap;gap:6px;flex:1;min-width:200px}
+.chip{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px 11px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.chip b{color:var(--ink)}.chip.warn{color:var(--storm);border-color:currentColor}
+.tools{display:flex;flex-wrap:wrap;gap:8px}
+.grp{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--panel)}
+.grp>*{border:0;border-radius:0;background:transparent}.grp>*+*{border-left:1px solid var(--line)}
+button,select{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;height:32px;padding:0 12px;cursor:pointer}
+.grp>button:hover,.grp>select:hover{background:var(--gold-soft)}
+.grp>.pri{background:var(--gold);color:var(--bg);font-weight:700;min-width:78px}.grp>.pri:hover{background:var(--gold);filter:brightness(1.12)}
+button:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:14px;align-items:start}
+@media(max-width:900px){main{grid-template-columns:minmax(0,1fr)}}
+@media(min-width:901px){.side{position:sticky;top:10px;max-height:calc(100vh - 20px);overflow:auto;scrollbar-width:thin}}
+.arena{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#1b2418;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+canvas{display:block;width:100%;height:clamp(420px,78vh,900px);touch-action:none;cursor:grab}
+canvas:active{cursor:grabbing}
+#ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;pointer-events:none;font:700 clamp(34px,8vw,84px)/1 'Chakra Petch',sans-serif;color:#fff;text-shadow:0 2px 14px #000}
+.mi{position:absolute;left:10px;top:10px;max-width:min(70%,460px);color:#fffe;font-size:12px;background:rgba(0,0,0,.55);padding:5px 10px;border-radius:10px;pointer-events:none}.mi .lg{display:flex;flex-wrap:wrap;gap:2px 10px;margin-top:3px;font-size:11px;opacity:.9}.mi .lg i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:baseline}
+.hint{position:absolute;left:10px;bottom:10px;max-width:calc(100% - 20px);color:#fffe;font-size:12px;background:rgba(0,0,0,.5);padding:3px 10px;border-radius:999px;pointer-events:none}
+.side{display:flex;flex-direction:column;gap:12px;min-width:0}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px}
+.box h2{font:700 17px 'Chakra Petch',sans-serif;margin:0 2px 8px}
+#det{font-size:13px}#det p{margin:4px 2px}#det .m{color:var(--muted)}
+.sts{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin:6px 2px 10px}
+.st{display:grid;grid-template-columns:50px 1fr 22px;gap:6px;align-items:center;font-size:12px;font-variant-numeric:tabular-nums}
+.st span:last-child{text-align:right;color:var(--muted)}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;display:block}
+.bar u{display:block;height:100%;border-radius:3px}
+.pills{display:flex;flex-wrap:wrap;gap:4px;margin:6px 2px}
+.pill{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:1px 9px;font-size:12px;color:var(--muted)}.pill b{color:var(--ink)}
+#list{max-height:260px;overflow:auto}
+.row{display:grid;grid-template-columns:12px 1fr 50px 54px;gap:8px;align-items:center;padding:4px 6px;border-radius:7px;cursor:pointer}
+.row:hover{background:var(--gold-soft)}.row.sel{background:var(--gold-soft);box-shadow:inset 3px 0 var(--gold)}
+.row i{width:10px;height:10px;border-radius:50%}
+.gs{margin-left:4px;font-weight:700}.gs.f{color:#e0568f}.gs.m{color:#3f8fd0}.gs.n{color:#9a6ad0}
+.row .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row .nm small{color:var(--muted);margin-left:4px}
+.row.dead{opacity:.5}.row.dead i{filter:grayscale(1)}.row.dead .nm{text-decoration:line-through}.row .k{text-align:right;color:var(--muted);font-size:12px}
+#log{max-height:260px;overflow:auto;font-size:13px}
+#log p{display:grid;grid-template-columns:36px 1fr;gap:6px;margin:0 0 2px;padding:4px 6px;border-left:3px solid var(--line);border-radius:0 6px 6px 0}
+#log .ts{color:var(--muted);font-size:11px;padding-top:1px;font-variant-numeric:tabular-nums}
+#log .death{color:var(--red);border-left-color:var(--red)}#log .gm{color:var(--gold);border-left-color:var(--gold)}#log .social{color:var(--blue);border-left-color:var(--blue)}#log .inj{color:#c9742c;border-left-color:#c9742c}
+.inv{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 2px}.slot{border:1px solid var(--line);border-radius:8px;padding:4px;text-align:center;background:var(--bg);position:relative;min-height:46px}.slot b{font-size:18px}.slot.e{border-style:dashed;opacity:.45}.slot.hand{border-color:var(--gold)}.slot i{position:absolute;right:5px;top:2px;font-style:normal;color:var(--gold);font-weight:700}.slot small{display:block;color:var(--muted);font-size:11px}.tl{max-height:220px;overflow:auto;border-top:1px solid var(--line)}.tl p{margin:3px 4px}
+details{margin-top:12px;color:var(--muted)}details summary{cursor:pointer}details ul{margin:6px 0;padding-left:20px}
+dialog{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:16px;width:min(640px,94vw);max-height:88vh;box-sizing:border-box}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+dialog h2{font:700 20px 'Chakra Petch',sans-serif;margin:0 0 4px;color:var(--gold)}
+dialog p{margin:0 0 8px;color:var(--muted);font-size:13px}
+#rows{max-height:50vh;overflow:auto;margin-bottom:10px}
+.crow{display:grid;grid-template-columns:34px 1fr 1fr 1fr 112px;gap:6px;align-items:center;margin:3px 0}.crow select{height:30px;padding:0 6px;border-radius:6px;min-width:0}
+.crow .hd{color:var(--muted);font-size:12px}
+@media(max-width:560px){.crow{grid-template-columns:30px 1fr 1fr}.crow .hd{grid-row:span 2}}
+input{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:5px 8px;min-width:0;text-transform:lowercase}
+input:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+.dact{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.sky{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:max-content;max-width:min(92%,640px);background:rgba(8,12,24,.8);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:10px 14px;text-align:center;pointer-events:none;opacity:0;transition:opacity .5s}
+.sky.on{opacity:1}.sky h3{margin:0 0 6px;font:700 15px 'Chakra Petch',sans-serif;color:#e8b84a}
+.sky .fc{display:inline-flex;align-items:center;gap:6px;margin:3px 4px;padding:2px 10px 2px 3px;border-radius:999px;background:rgba(255,255,255,.12);animation:fcin .6s both}
+.sky .fc b{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;color:#111;font-size:12px}
+@keyframes fcin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.sky .fc{animation:none}}
+.flagw{position:relative;display:inline-block;vertical-align:-2px;cursor:help;line-height:0;outline-offset:3px}.flagw svg{display:block;width:24px;height:16px;border:1px solid var(--line)}
+@media(min-width:901px){
+body.wide{overflow:hidden}
+body.wide .app{max-width:none;height:100vh;height:100dvh;box-sizing:border-box;padding:8px 10px;display:flex;flex-direction:column}
+body.wide header{margin-bottom:8px}
+body.wide main{flex:1;min-height:0;grid-template-columns:minmax(260px,22vw) minmax(0,1fr) minmax(330px,26vw);grid-template-rows:minmax(0,1.15fr) minmax(0,1fr);gap:10px;align-items:stretch}
+body.wide .side{display:contents}
+body.wide .arena{grid-column:2;grid-row:1/3;min-height:0}
+body.wide canvas{position:absolute;inset:0;width:100%;height:100%}
+body.wide #logb{grid-column:1;grid-row:1/3;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+body.wide #logb #log{flex:1;min-height:0;max-height:none}
+body.wide #det{grid-column:3;grid-row:1;min-height:0;overflow:auto;scrollbar-width:thin}
+body.wide #lstb{grid-column:3;grid-row:2;min-height:0;overflow:auto;scrollbar-width:thin}
+body.wide #lstb #list{max-height:none}
+body.wide details{display:none}
+}
+@media(max-width:900px){#wd{display:none}}
+#tip{position:fixed;display:none;z-index:50;white-space:nowrap;background:var(--bg);color:var(--ink);border:1px solid var(--line);padding:3px 9px;font:600 12px/1.3 'Chakra Petch',system-ui,sans-serif;text-transform:lowercase;pointer-events:none;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+#tip::before{content:'';position:absolute;top:-5px;left:var(--cx,50%);width:8px;height:8px;margin-left:-4px;background:var(--bg);border:solid var(--line);border-width:1px 0 0 1px;transform:rotate(45deg)}
+
+.nl{cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}.nl:hover{color:var(--gold)}
+*,*::before,*::after{border-radius:0!important}
+</style></head><body>
+<div class="app">
+<header>
+<h1>Hunger Games Simulator</h1><div id="stats"></div>
+<div class="tools">
+<div class="grp"><button id="pp" class="pri">Pause</button><select id="sp" aria-label="Speed"><option value="1" selected>1x</option><option value="2">2x</option><option value="4">4x</option><option value="8">8x</option><option value="16">16x</option></select></div>
+<div class="grp"><button id="ft">Fit map</button><button id="wd" title="Fill the whole screen with the map in the middle, the event log as a live chat on the left, and tribute details on the right">Layout: boxed</button><button id="fl">Follow: off</button><button id="bt">Blood: on</button><button id="ct">Countries: off</button><button id="ds" title="Tributes who lose all hope may give up. Turn off to disable.">Despair: on</button></div>
+<div class="grp"><input id="sd" placeholder="map seed (blank = random)" size="20" aria-label="Map seed, leave blank for a random arena"></div>
+<div class="grp"><button id="cu">Customize</button><button id="nw">New games</button></div>
+</div>
+</header>
+<main>
+<div class="arena"><canvas id="cv"></canvas><div id="ov"></div><div class="mi" id="mi"></div><div class="sky" id="sky" role="status"></div><div class="hint">Drag to pan · scroll to zoom · click a tribute or body for stats · solid bubble = said aloud · dashed italic = thought</div></div>
+<div class="side">
+<div class="box" id="det"></div>
+<div class="box" id="lstb"><h2>Tributes</h2><div id="list"></div></div>
+<div class="box" id="logb"><h2>Event log</h2><div id="log"></div></div>
+</div></main>
+<details><summary>How the simulation works</summary><ul>
+<li>Every game generates a new arena from a seed (type one in the box to replay a map). Terrain is built from layered noise into deep water, shallows, sand, scrub, meadow, forest, jungle, marsh, rock and peaks, with rivers running downhill from the highlands and lakes in the lowlands. Each arena has a theme, such as the Drowned Fen, Scorched Badlands, Iron Highlands, Emerald Jungle, Shattered Archipelago or Lakeland, that changes how much water, rock and woodland there is and how rich the resources are. The ground matters: jungle and forest hide people and slow them, marsh and deep water drag at them and make wounds fester, desert sand dries them out, and high ground sees farther. Wood grows in woods, stone on rock, fibre in meadow and reeds, berries along the meadow edges.</li>
+<li>Tributes scavenge wood, stone, fiber and berries, then craft knives, axes, spears, bows, arrows and bandages. They loot bodies too.</li>
+<li>Combat has windups, stamina, blocks and dodges, bleeding, kiting archers with real arrows in flight, and morale that breaks into flight.</li>
+<li>Tributes talk, and mostly by asking questions: they ask for food, bandages, spare weapons and crafting materials (or where to find them), ask what others know, ask who is dangerous so they can be cautious, and ask where a revenge target went. They also propose alliances. Some lie, framing innocents or pretending to be allies while plotting betrayal. Liars get caught when a listener saw the truth.</li>
+<li>Conversations have substance: witnesses describe where and when a kill happened and what weapon was used, listeners react (grief, doubt, vows of revenge), rumours get passed along second-hand, and tributes share small talk about their districts, the nights and the friends they have lost.</li>
+<li>Injuries matter: hits land on the head, torso, arms or legs. Leg wounds slow a tribute and stop sprinting, arm wounds weaken and slow attacks (a broken arm rules out bows and axes), head blows cause concussion (stumbling, poor aim), and blood loss weakens, then drops a tribute to the ground. Open wounds can get infected until bandaged. Injured tributes rest, avoid fights they can’t win and heal slowly. Weapons can be parried, and a hit can interrupt a wind-up. Blood stains the ground (toggle it with the Blood button).</li>
+<li>Romance: every tribute has an orientation (straight, gay / lesbian, bi / pan or ace), set at random and editable in Customize, and attraction follows it and each tribute&rsquo;s pronouns (they/them and other non-binary tributes are drawn to the genders their orientation implies: straight = he or she, gay = other non-binary tributes). Friends who spend enough calm time together can develop a crush, then work up to a confession. It can be returned or turned down kindly. Couples stay close, defend each other fiercely, and are crushed when one dies. They can also break up if trust collapses or one betrays the other.</li>
+<li>Tributes steal. Someone short on food, bandages, materials, arrows or a spare weapon may lift it from a non-ally standing nearby. Odds depend on skill and deceit, and improve at night, against someone busy or stunned, and hugely against a collapsed tribute. Get caught and the victim turns hostile; get away with it and the victim may only notice later. Bodies are the easy score: no roll, no witness grudge, and everything they carried (spare weapons included) is taken.</li>
+<li>Tributes are solid: they steer around each other and cannot walk through one another. Use Customize to set names and pronouns.</li>
+<li>Every tribute has a first and last name. Turn on <b>Countries</b> and each new game draws tributes from many different countries: names (first and last) are generated to match, the country shows as a flag in the tribute panel, and tributes sometimes mention where they are from and what home was like.</li>
+<li>Only people who see a kill know who did it. Finding a body tells you someone died, not who did it. Witnesses to a friend&rsquo;s death swear revenge.</li>
+<li>Tributes also think. Thoughts float above them as faint, dashed, italic bubbles: doubt about a rumour (&ldquo;that can&rsquo;t be true, i saw&hellip;&rdquo;), grief, fear, plans. Bubbles stack upward as more is said instead of replacing each other, and fallen tributes stay on the map, greyed out.</li>
+<li>Every night the anthem plays and the faces of everyone who fell since the last night are shown in the sky: an announcement in the arena and the event log. Friends of the fallen grieve, and killers notice their victims on display.</li>
+<li>Hope: every tribute has a hope stat that follows their morale, injuries, hunger, thirst and whether they have allies or a partner. If hope and morale both collapse and the situation is dire (badly hurt, starving, or utterly alone), a tribute near the storm wall or a firestorm may give up. A friend nearby can talk them out of it, and an attempt can fail, leaving them badly hurt. Turn this off with the Despair button.</li>
+<li>Stalemates break. When four or fewer remain and nobody has died for a while, a tribute who truly wants it (aggressive, deceitful, starving or cornered by the storm) may betray an ally or stop waiting and go after someone. It is rare, and partners only turn on each other after a very long standoff. If the last few still won&rsquo;t move, the safe circle slowly shrinks further.</li>
+<li>Personalities and grief: every tribute has a personality (kind, friendly, silly, neutral, cold, competitive, shy or stoic) that shifts how social or aggressive they are. When a partner, crush, friend or district partner dies, tributes grieve in proportion to how close they were and how they handle loss: they stop to mourn, lose morale and hope, fight worse and say so aloud. Cold tributes barely flinch and competitive ones turn it into resolve. A grieving tribute is vulnerable: some rivals see an easy target, while kind and friendly tributes (and allies) come to comfort them, which speeds their recovery.</li>
+<li>Layout: the <b>Layout</b> button switches between the boxed view and a full-screen view on wide screens. Full screen fills the window with the arena in the middle, the event log on the left as a live chat (newest at the bottom, scroll up to read back and it stays put), and the selected tribute and tribute list on the right. Your choice is remembered.</li>
+<li>Conversations have depth and variety. Every tribute has a hidden background (family, a fear, a wish, a hobby, a regret, a favourite memory) shown in their panel. Friends and allies open up about it, the other often opens up in return, and later they remember what was said and ask about it. Beyond asking for help and swapping rumours, tributes joke (it only lands if the listener is the type to laugh), share food unprompted, compliment each other, flirt, make plans with allies (including quiet talks about what happens when it comes down to just them), and pick fights with people they dislike. How each line is phrased depends on personality, and greetings and goodbyes change with how well they know each other.</li>
+<li>Gamemakers drop gifts, ignite firestorms and close a storm wall. Last tribute standing wins.</li>
+</ul></details></div>
+<dialog id="dg"><form method="dialog"><h2>Customize tributes</h2>
+<p>Edit first names, last names and pronouns. Changes apply to this game right away and are remembered in this browser for future games. Pronouns: she/her, he/him, they/them, it/its, or your own such as xe/xem/xyr.</p>
+<div id="rows"></div>
+<div class="dact"><button type="button" id="dr">Forget saved</button><button type="button" id="dc">Cancel</button><button value="ok" id="da">Apply</button></div></form></dialog>
+<div id="tip" role="tooltip"></div>
+<datalist id="prl"><option value="she/her"><option value="he/him"><option value="they/them"><option value="it/its"><option value="xe/xem/xyr"></datalist>
+<script>
+CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h){this.rect(x,y,w,h)};
+const $=s=>document.querySelector(s),cv=$('#cv'),ctx=cv.getContext('2d'),ov=$('#ov');
+const W=2400,H=1700,C={x:1200,y:850};let SIGHT=270,DL=1,night=false;const daylight=q=>clamp(.5+.8*Math.sin(2*Math.PI*q/150+1),0,1);
+const NAMES='marlo:he,isa:she,brant:he,wren:she,kade:he,sela:she,orin:he,tess:she,dax:he,lyra:she,finn:he,nova:she,rook:he,maeve:she,cato:he,pim:he,joss:he,ember:she,hale:he,yara:she,teo:he,bryn:she,quill:they,sable:she,ansel:he,mira:she,dorn:he,cleo:she,vex:they,lark:she,rue:she,ivo:he,nell:she,gale:he,pike:he,zora:she,hob:he,tamsin:she,rhys:he,odette:she'.split(',').map(s=>s.split(':'));
+
+const LAST='ashford,bellamy,calloway,dunmore,everett,fairbanks,garrow,hollis,ingram,jessop,kestrel,langley,marsh,navarre,oakes,pryce,rennick,sutter,thorne,underhill,voss,whitlock,yardley,zeller,alder,briar,crane,drummond,ellery,finch,hartwell,ivers,jarrett,keane,lowry,merrick,nash,orme,penrose,rowan,sterling,tarrant,upton,vale,wynn,ames,bryce,corwin,dale,emory,frost,gaines,haldane,irons,jory,knox,lyle,mercer,pike'.split(',');
+const CT=`united states|hey|burgers|jack,tyler,mason,ethan,caleb,wyatt,austin,dylan,cole,logan|emily,madison,hailey,brooke,kayla,savannah,paige,jenna,tiffany,becca|jordan,riley|miller,johnson,walker,hughes,carter,brooks,sullivan,parker,mitchell,reed,thompson,foster
+mexico|hola|tamales|diego,mateo,santiago,emiliano,javier,rodrigo,alejandro,ramon,luis,hector|valentina,camila,ximena,lucia,guadalupe,renata,itzel,marisol,paloma,fernanda|ariel,alex|hernandez,garcia,lopez,martinez,gonzalez,ramirez,flores,morales,cruz,vargas,ortega,castillo
+brazil|oi|feijoada|joao,thiago,rafael,gustavo,caio,mateus,lucas,bruno,vinicius,davi|beatriz,larissa,juliana,luana,gabriela,leticia,marina,tainara,bianca,isadora|darci,eli|silva,santos,oliveira,souza,pereira,costa,almeida,ribeiro,carvalho,barbosa,moreira,teixeira
+united kingdom|alright|fish and chips|oliver,harry,alfie,archie,freddie,toby,callum,rhys,hamish,dougal|poppy,imogen,florence,megan,eilidh,bronwen,harriet,tilly,rosie,fern|robin,morgan|smith,taylor,evans,murray,clarke,bennett,whitfield,campbell,davies,ashworth,hargreaves,penhale
+france|bonjour|crepes|lucien,hugo,theo,baptiste,etienne,mathis,remy,olivier,gaspard,antoine|margaux,amelie,colette,juliette,clemence,manon,odile,solene,chloe,elodie|camille,sacha|martin,bernard,dubois,moreau,laurent,lefevre,girard,fontaine,roux,mercier,garnier,beaumont
+germany|hallo|pretzels|lukas,felix,jonas,matthias,klaus,leon,florian,stefan,dieter,anton|greta,lena,hannah,ingrid,katja,sabine,liesel,mia,johanna,annika|kai,sascha|mueller,schmidt,fischer,weber,wagner,becker,hoffmann,schulz,koch,richter,bauer,kruger
+italy|ciao|pasta|marco,matteo,luca,giorgio,enzo,alessio,dante,lorenzo,nico,paolo|giulia,chiara,francesca,serena,elena,viola,alba,lucrezia,carlotta,aurora|dani,vale|rossi,russo,ferrari,esposito,bianchi,romano,colombo,ricci,marino,greco,conti,deluca
+russia|privet|borscht|dmitri,ivan,nikolai,sergei,alexei,boris,maxim,yuri,pavel,viktor|natasha,katya,olga,irina,svetlana,anya,mila,vera,tatiana,oksana|sasha,zhenya|ivanov,petrov,smirnov,volkov,sokolov,morozov,kuznetsov,orlov,popov,lebedev,fedorov,kozlov
+nigeria|how far|jollof rice|chidi,emeka,tunde,segun,obinna,ifeanyi,kelechi,femi,bayo,chinedu|ngozi,amara,folake,adaeze,yetunde,chioma,bisi,nneka,titi,ifeoma|ade,tobi|okafor,adeyemi,balogun,eze,nwosu,okonkwo,abubakar,ogunleye,olawale,chukwu,adebayo,igwe
+egypt|salaam|koshari|omar,youssef,karim,tarek,hassan,mostafa,ahmed,amr,khaled,samir|nour,laila,mariam,salma,fatma,hana,dalia,yasmin,rania,aya|hadi,wafa|mahmoud,ibrahim,salem,farouk,nasser,haddad,mansour,sayed,khalil,badawi,fahmy,zaki
+south africa|howzit|braai|thabo,sipho,pieter,johan,bongani,andile,riaan,jabu,lwazi,willem|naledi,thandi,lindiwe,zanele,anika,palesa,nomsa,marlene,busisiwe,elmarie|lesedi,kagiso|nkosi,dlamini,botha,naidoo,mokoena,pretorius,khumalo,venter,mthembu,steyn,joubert,ndlovu
+india|namaste|biryani|arjun,rohan,vikram,aditya,kabir,sanjay,rahul,ishaan,dev,pranav|priya,ananya,meera,kavya,diya,anjali,tara,nisha,sneha,ishita|kiran,jai|sharma,patel,singh,gupta,reddy,iyer,nair,mehta,kapoor,joshi,banerjee,chopra
+china|ni hao|dumplings|wei,jun,hao,ming,bo,lei,yong,feng,tao,kang|mei,lian,xiu,yan,ling,hua,jing,fang,xue,ying|yu,chun|wang,li,zhang,liu,chen,yang,zhao,huang,zhou,wu,xu,sun
+japan|konnichiwa|ramen|haruto,ren,kenji,takumi,sota,daichi,hiroshi,ryo,satoshi,kaito|yui,sakura,mio,aiko,rin,emi,noriko,akari,misaki,kasumi|akira,haru|sato,suzuki,takahashi,tanaka,watanabe,ito,yamamoto,nakamura,kobayashi,kato,yoshida,sasaki
+south korea|annyeong|kimchi stew|minjun,jihoon,seojun,hyun,taeyang,dongwoo,sungmin,joon,woojin,hyunwoo|jiwoo,soyeon,minji,yuna,haeun,seoyeon,eunji,narae,sumin,dahye|jiho,haneul|kim,lee,park,choi,jung,kang,cho,yoon,jang,lim,han,oh
+australia|g’day|meat pies|blake,flynn,lachlan,mitch,kane,hudson,bodhi,ryder,jarrah,cooper|matilda,ruby,sienna,tahlia,kirra,indi,evie,lyla,jaide,maddison|darcy,sam|wilson,nguyen,kelly,ryan,stewart,mckenzie,hartley,pearce,gallagher,lawson,hayes,morrison
+philippines|kumusta|adobo|jose,miguel,andres,rico,carlo,renz,arvin,mark,bong,nino|maria,liza,angeline,joy,rhea,cecilia,rowena,jasmine,trisha,lourdes|jay,mel|reyes,bautista,aquino,villanueva,dizon,ramos,navarro,mendoza,tolentino,pascual,magno,soriano
+ireland|howya|colcannon|cian,conor,seamus,declan,oisin,eoin,padraig,fionn,darragh,niall|aoife,siobhan,niamh,saoirse,roisin,orla,grainne,eimear,clodagh,sinead|kerry,rory|murphy,brennan,doyle,byrne,quinn,fitzgerald,mcgrath,keane,lynch,donnelly,hennessy,tierney
+sweden|hej|meatballs|erik,olle,anders,gustav,lars,magnus,axel,bjorn,sven,henrik|astrid,freja,linnea,ebba,sigrid,maja,elin,saga,ingela,klara|kim,eskil|andersson,johansson,lindqvist,nilsson,eriksson,larsson,berg,holm,sandberg,lund,strand,ekstrom
+argentina|che|empanadas|facundo,nicolas,agustin,tomas,joaquin,ignacio,lautaro,matias,santino,bautista|milagros,agustina,candela,abril,florencia,delfina,micaela,julieta,romina,macarena|gabi,cris|gomez,fernandez,rodriguez,diaz,perez,sosa,acosta,benitez,medina,herrera,aguirre,rios`.split('\n').map(l=>{const p=l.split('|');return{n:p[0],hi:p[1],dish:p[2],M:p[3].split(','),F:p[4].split(','),N:p[5].split(','),L:p[6].split(',')}});
+const fn=a=>a.sur?a.name+' '+a.sur:a.name,ct=a=>a.co?' ('+a.co.n+')':'';
+let countriesOn=false,gameCountries=false;try{countriesOn=localStorage.getItem('hgs-countries')==='on'}catch(e){}
+const WP={fists:{d:7,r:18,w:.35,cd:.9,acc:.7,bl:0,st:6},stick:{d:10,r:24,w:.4,cd:.9,acc:.72,bl:0,st:8},knife:{d:13,r:20,w:.25,cd:.6,acc:.78,bl:.55,st:6},axe:{d:30,r:26,w:.55,cd:1.2,acc:.68,bl:.5,st:14},spear:{d:24,r:44,w:.45,cd:1.1,acc:.72,bl:.45,st:10},sword:{d:24,r:32,w:.4,cd:1,acc:.8,bl:.6,st:10},bow:{d:20,r:380,w:.9,cd:1.6,acc:.8,bl:.5,st:6,rng:1}};
+const REC={stick:{wood:1},knife:{wood:1,stone:1},spear:{wood:2,stone:1},axe:{wood:1,stone:2,fiber:1},bow:{wood:2,fiber:2},arrows:{wood:1,stone:1}};
+const pv=k=>{const s=WP[k];return s.d*s.acc/s.cd*(1+Math.min(s.r,60)/150)*(s.rng?1.5:1)};
+const ew=a=>(a.w==='bow'&&(a.arrows<=0||a.arm>.7))||(a.w==='axe'&&a.arm>.8)?'fists':a.w;
+const pwr=a=>pv(ew(a))*(.4+.6*a.hp/100)*(.6+.4*a.st/100)*cond(a)*(1-.3*grv(a));
+const rnd=(a,b)=>a+Math.random()*(b-a),pick=a=>a[Math.floor(Math.random()*a.length)],clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),dd=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+const trust=(a,b)=>a.rel[b.id]||0,adj=(a,b,v)=>{a.rel[b.id]=clamp(trust(a,b)+v,-100,100)};
+let T,nodes,items,corpses,proj,fx,hazards,logs,t,cd,over,R,stormOn,nextDrop,nextHaz,sel,paused=false,speed=4,bg,dirty=true;
+let cam={x:W/2,y:H/2,z:.4},follow=false,vw=800,vh=600,minZ=.3,drag=null;
+const BR=8,AV=34;let fdt=.016;
+const PR={she:['she','her','her','herself'],he:['he','him','his','himself'],they:['they','them','their','themself'],it:['it','it','its','itself']};
+function parsePr(s){const p=String(s||'').toLowerCase().replace(/[^\p{L}'\-\/,\s]/gu,'').split(/[\/,\s]+/).filter(Boolean).slice(0,5);if(!p.length)return PR.they.slice();if(PR[p[0]])return PR[p[0]].slice();const o=p[1]||p[0];return[p[0],o,p[2]||o,p[3]||o+'self']}
+const prLabel=r=>PR[r[0]]&&PR[r[0]][1]===r[1]?r[0]+'/'+r[1]:r[0]+'/'+r[1]+(r[2]!==r[1]?'/'+r[2]:'');
+const ps=a=>a.pr[2],ob=a=>a.pr[1];
+const cleanName=s=>String(s||'').replace(/[<>&"]/g,'').trim().toLowerCase().slice(0,14);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let custom={};try{custom=JSON.parse(localStorage.getItem('hgs-custom')||'{}')||{};if(typeof custom!=='object')custom={}}catch(e){custom={}}
+const saveCustom=()=>{try{localStorage.setItem('hgs-custom',JSON.stringify(custom))}catch(e){}};
+const WT={fists:'blunt',stick:'blunt',knife:'cut',axe:'cut',spear:'pierce',sword:'cut',bow:'pierce'},PRY={fists:.05,stick:.25,knife:.2,axe:.2,spear:.3,sword:.4,bow:.05};
+let stains=[],showBlood=true;try{showBlood=localStorage.getItem('hgs-blood')!=='off'}catch(e){}
+function stain(x,y,r,al=.7){stains.push({x,y,r,al,t});if(stains.length>1100)stains.splice(0,100)}
+const bf=a=>a.blood>=70?1:clamp(.45+(a.blood-20)/50*.55,.45,1);
+function cond(a){return clamp((1-.35*a.arm)*(1-.3*a.leg)*(a.conc>0?.7:1)*bf(a)*(a.hunger<25?.85:1)*(a.thirst<25?.8:1)*(1-a.inf/300),.15,1)}
+function mob(a){return clamp((1-.55*a.leg)*bf(a)*(1-.15*a.pain/100),.2,1)}
+function slow(a){return 1+.5*a.arm+.3*a.pain/100+(a.conc>0?.3:0)}
+function acf(a){return(1-.35*a.pain/100)*(a.conc>0?.65:1)*(1-.45*a.arm)}
+function inj(a){return a.hp<60||a.leg>.35||a.arm>.45||a.blood<70||a.inf>25||a.conc>0}
+function dress(a){a.bleed=0;a.open=0;a.inf=Math.max(0,a.inf-15)}
+function injList(a){const L=[];
+ if(a.down)L.push('collapsed');
+ if(a.conc>0)L.push('concussed');
+ if(a.leg>=.8)L.push('broken or crippled leg, barely walking');else if(a.leg>=.45)L.push('serious leg wound, limping');else if(a.leg>.12)L.push('minor leg injury');
+ if(a.arm>=.8)L.push('broken or crippled arm, weak attacks');else if(a.arm>=.45)L.push('serious arm wound, weaker attacks');else if(a.arm>.12)L.push('minor arm injury');
+ if(a.bleed>0)L.push(a.bleed>=3?'bleeding heavily':a.bleed>=1.2?'bleeding':'minor bleeding');
+ if(a.blood<60)L.push('weak from blood loss');
+ if(a.inf>15)L.push(a.inf>60?'severe infection':a.inf>30?'infected, feverish':'wound infection starting');
+ return L}
+
+/* ===== procedural arena: seeded terrain, biomes, rivers, lakes, themed arenas ===== */
+const CS=6,GW=Math.ceil(W/CS),GH=Math.ceil(H/CS),GN=GW*GH;
+const TD=0,TS=1,TSAND=2,TSCRUB=3,TMEAD=4,TFOR=5,TDEN=6,TMARSH=7,TROCK=8,TPEAK=9;
+/* spd: move speed, vis: how visible someone standing here is, ob: how far an observer here can see,
+   th: thirst drain, inf: wound infection rate, st: stamina cost while moving */
+const TI=[
+ {spd:.3,vis:1,ob:1,th:.8,inf:1.4,st:7},
+ {spd:.65,vis:1,ob:1,th:.8,inf:1.3,st:1.5},
+ {spd:.85,vis:1.05,ob:1.05,th:1.3,inf:.8,st:1},
+ {spd:.95,vis:1,ob:1.05,th:1.2,inf:.9,st:0},
+ {spd:1,vis:1,ob:1,th:1,inf:1,st:0},
+ {spd:.85,vis:.75,ob:.85,th:1,inf:1,st:0},
+ {spd:.65,vis:.55,ob:.7,th:1.1,inf:1.2,st:1.5},
+ {spd:.6,vis:.8,ob:.9,th:1,inf:2,st:2},
+ {spd:.8,vis:1,ob:1.15,th:1,inf:.9,st:2},
+ {spd:.5,vis:1.1,ob:1.35,th:1,inf:.9,st:5}];
+const PAL=[[26,82,134],[84,158,196],[216,202,148],[176,164,98],[112,150,82],[72,114,70],[48,92,58],[88,118,92],[128,128,120],[200,204,208]];
+const PNAME=['deep water','shallows','sand','scrub','meadow','forest','jungle','marsh','rock','peak'];
+/* w: water share, mt: mountain share, mo: moisture bias, dp: share of water that is deep, riv/pd: rivers/ponds,
+   edge: 1 = ocean rim, 2 = cliff rim, rs: resource richness [wood, stone, fiber, berry] */
+const THEMES=[
+ {n:'Temperate Wilds',d:'a balanced mix of woods, meadow and water.',w:.2,mt:.1,mo:0,dp:.5,riv:3,pd:3,edge:0,rs:[1,1,1,1]},
+ {n:'Drowned Fen',d:'standing water and marsh everywhere; wounds fester in the mud.',w:.3,mt:.04,mo:.25,dp:.3,riv:4,pd:6,edge:0,rs:[.7,.4,1.3,.8]},
+ {n:'Scorched Badlands',d:'dry, open ground with little water. thirst is the real killer.',w:.09,mt:.14,mo:-.3,dp:.6,riv:1,pd:1,edge:0,rs:[.45,1.2,.6,.4]},
+ {n:'Iron Highlands',d:'high ridges and cliffs, plenty of stone, little timber.',w:.12,mt:.3,mo:-.05,dp:.5,riv:4,pd:3,edge:2,rs:[.7,1.7,.8,.6]},
+ {n:'Emerald Jungle',d:'thick jungle hides everyone and slows everything down.',w:.15,mt:.07,mo:.3,dp:.4,riv:4,pd:3,edge:0,rs:[1.3,.5,1,1.6]},
+ {n:'Stranded Island',d:'a single island ringed by open sea.',w:.4,mt:.07,mo:0,dp:.55,riv:1,pd:2,edge:1,rs:[.9,.8,1,1]},
+ {n:'Lakeland',d:'a chain of lakes and rivers with open shores.',w:.28,mt:.08,mo:.05,dp:.5,riv:2,pd:6,edge:0,rs:[1,.9,1.2,1.2]}];
+/* where each resource likes to grow, indexed by terrain type */
+const NW={wood:[0,0,0,.05,.1,.75,1,.2,.03,0],stone:[0,0,.06,.25,.04,.05,.04,0,.9,.5],fiber:[0,0,.12,.28,.7,.25,.2,1,.1,0],berry:[0,0,0,.1,.35,.35,.12,.05,0,0]};
+let TERR=new Uint8Array(GN),WATER=[];
+const gi=(x,y)=>Math.min(GH-1,Math.max(0,y/CS|0))*GW+Math.min(GW-1,Math.max(0,x/CS|0));
+const terrAt=(x,y)=>TERR[gi(x,y)];
+const mulberry=a=>()=>{a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+const hsh=(x,y,s)=>{let h=Math.imul(x|0,374761393)+Math.imul(y|0,668265263)+Math.imul(s|0,2246822519)|0;h=Math.imul(h^h>>>13,1274126177);return((h^h>>>16)>>>0)/4294967296};
+const vn=(x,y,s)=>{const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf),a=hsh(xi,yi,s),b=hsh(xi+1,yi,s),c=hsh(xi,yi+1,s),d=hsh(xi+1,yi+1,s);return a+(b-a)*u+(c-a+(a-b-c+d)*u)*v};
+const fbm=(x,y,s,o=5)=>{let a=1,f=1,sum=0,n=0;for(let i=0;i<o;i++){sum+=a*vn(x*f,y*f,s+i*131);n+=a;a*=.5;f*=2.03}return sum/n};
+const srt=a=>Float32Array.from(a).sort();
+const rankOf=(s,v)=>{let lo=0,hi=s.length;while(lo<hi){const m=(lo+hi)>>1;if(s[m]<v)lo=m+1;else hi=m}return lo/s.length};
+const seedFrom=s=>{s=String(s||'').trim();if(!s)return Math.floor(Math.random()*1e9);if(/^\d{1,9}$/.test(s))return+s;let h=2166136261;for(const c of s)h=Math.imul(h^c.codePointAt(0),16777619);return(h>>>0)%1e9};
+const walkable=(x,y)=>{const k=terrAt(x,y);return k!==TD&&k!==TPEAK};
+/* random dry-land point anywhere on the map / in a ring around the cornucopia */
+const landPt=(minD=0)=>{for(let k=0;k<80;k++){const x=rnd(80,W-80),y=rnd(80,H-80);if(Math.hypot(x-C.x,y-C.y)<minD)continue;if(walkable(x,y)&&terrAt(x,y)>TS)return{x,y}}return{x:C.x+rnd(-200,200),y:C.y+rnd(-200,200)}};
+const landPtC=(minD,maxD)=>{for(let k=0;k<60;k++){const a=rnd(0,7),r=minD+Math.random()*Math.max(0,maxD-minD),x=clamp(C.x+Math.cos(a)*r,40,W-40),y=clamp(C.y+Math.sin(a)*r,40,H-40);if(walkable(x,y)&&terrAt(x,y)>TS)return{x,y}}return{x:C.x+rnd(-60,60),y:C.y+rnd(-60,60)}};
+const rw=()=>{for(let k=0;k<14;k++){const an=rnd(0,7),r=Math.sqrt(Math.random())*Math.max(40,R-80),x=clamp(C.x+Math.cos(an)*r,40,W-40),y=clamp(C.y+Math.sin(an)*r,40,H-40);if(walkable(x,y))return{x,y}}return{x:C.x,y:C.y}};
+const nearWater=a=>{let b=null,bd=1e12;const lim=(R-30)*(R-30);for(const q of WATER){if((q.x-C.x)**2+(q.y-C.y)**2>lim)continue;const d=(q.x-a.x)**2+(q.y-a.y)**2;if(d<bd){bd=d;b=q}}return b};
+
+function genMap(){
+ nodes=[];
+ const seed=seedFrom($('#sd').value),S=seed|0,rg=mulberry(seed^0x9e3779b9),ra=(a,b)=>a+rg()*(b-a),TH=THEMES[Math.floor(rg()*THEMES.length)];
+ const fe=ra(.8,1.25)/700,fm=ra(.8,1.25)/520,ox=ra(0,500),oy=ra(0,500);
+ const raw=new Float32Array(GN),mo=new Float32Array(GN);
+ /* 1. elevation (domain-warped fBm + ridges, optional ocean/cliff rim) and moisture */
+ for(let j=0;j<GH;j++)for(let i=0;i<GW;i++){
+  const x=i*CS+CS/2,y=j*CS+CS/2,k=j*GW+i,
+   wx=x+(fbm(x*.004+ox,y*.004,S+9,3)-.5)*280,wy=y+(fbm(x*.004,y*.004+oy,S+19,3)-.5)*280;
+  let e=fbm(wx*fe+ox,wy*fe+oy,S,6);
+  const rd=1-Math.abs(fbm(wx*fe*1.3+7,wy*fe*1.3+3,S+33,4)*2-1);
+  e=e*.7+rd*rd*.3;
+  const ed=Math.min(x,y,W-x,H-y)/(Math.min(W,H)*.5);
+  if(TH.edge===1)e-=Math.pow(Math.max(0,1-ed/.3),2)*.45;
+  else if(TH.edge===2)e+=Math.pow(Math.max(0,1-ed/.22),2)*.35;
+  raw[k]=e;mo[k]=fbm(x*fm+ox+50,y*fm+oy+50,S+77,5)}
+ /* 2. level the cornucopia clearing so the bloodbath is always on open ground */
+ {const s0=srt(raw),tg=s0[Math.floor(GN*(TH.w+(1-TH.w-TH.mt)*.45))];
+  for(let j=0;j<GH;j++)for(let i=0;i<GW;i++){const k=j*GW+i,d=Math.hypot(i*CS-C.x,j*CS-C.y),u=clamp((560-d)/260,0,1);raw[k]+=(tg-raw[k])*u*u*(3-2*u)*.92}}
+ /* 3. rank-normalise so each theme controls how much water, rock and moisture there is */
+ const sr=srt(raw),sm=srt(mo),E=new Float32Array(GN),M=new Float32Array(GN);
+ for(let k=0;k<GN;k++){E[k]=rankOf(sr,raw[k]);M[k]=rankOf(sm,mo[k])}
+ const sea=TH.w,deepT=sea*TH.dp,wat=new Uint8Array(GN),rv=new Uint8Array(GN);
+ for(let k=0;k<GN;k++)wat[k]=E[k]<sea?(E[k]<deepT?2:1):0;
+ const inb=(i,j)=>i>=0&&j>=0&&i<GW&&j<GH;
+ const pond=(ci,cj,r)=>{const ph=rg()*6.28,m=Math.ceil(r*1.5);for(let dj=-m;dj<=m;dj++)for(let di=-m;di<=m;di++){const i=ci+di,j=cj+dj;if(!inb(i,j))continue;const d=Math.hypot(di,dj),a=Math.atan2(dj,di),lim=r*(.85+.25*Math.sin(a*3+ph)+.12*Math.sin(a*5+ph*2));if(d<=lim){const k=j*GW+i;wat[k]=Math.max(wat[k],d<lim*.5?2:1)}}};
+ const carve=(ci,cj,rad)=>{for(let dj=-rad;dj<=rad;dj++)for(let di=-rad;di<=rad;di++){const i=ci+di,j=cj+dj;if(!inb(i,j)||di*di+dj*dj>rad*rad+.5)continue;const k=j*GW+i;if(!wat[k]){wat[k]=1;rv[k]=1}}};
+ /* 4. extra lakes and tarns in the lowlands */
+ for(let n=0;n<TH.pd;n++)for(let tr=0;tr<40;tr++){const i=Math.floor(ra(20,GW-20)),j=Math.floor(ra(20,GH-20)),k=j*GW+i;if(!wat[k]&&E[k]>sea+.04&&E[k]<.7&&Math.hypot(i*CS-C.x,j*CS-C.y)>420){pond(i,j,Math.floor(ra(8,17)));break}}
+ /* 5. rivers: start high, run downhill with some meander, end at water (or a tarn if they get trapped) */
+ {const hiT=Math.max(sea+.25,1-TH.mt*1.6),hiC=[];for(let k=0;k<GN;k++)if(E[k]>hiT&&!wat[k])hiC.push(k);
+  const srcs=[];
+  for(let n=0;n<TH.riv&&hiC.length;n++)for(let tr=0;tr<40;tr++){const k=hiC[Math.floor(rg()*hiC.length)],x=(k%GW)*CS,y=Math.floor(k/GW)*CS;if(Math.hypot(x-C.x,y-C.y)<400||srcs.some(s=>Math.hypot(x-s.x,y-s.y)<420))continue;srcs.push({x,y,k});break}
+  for(const sc of srcs){
+   let i=sc.k%GW,j=Math.floor(sc.k/GW),px=0,py=0,climb=0;const seen=new Set(),path=[];
+   for(let n=0;n<1500;n++){const k=j*GW+i;path.push(k);seen.add(k);
+    if(n>3&&(wat[k]||rv[k]))break;
+    if(i<2||j<2||i>GW-3||j>GH-3)break;
+    let bk=-1,bi=0,bj=0,bs=1e9;
+    for(let dj=-1;dj<=1;dj++)for(let di=-1;di<=1;di++){if(!di&&!dj)continue;const ni=i+di,nj=j+dj,nk=nj*GW+ni;if(seen.has(nk))continue;
+     let s=E[nk]+hsh(ni,nj,S+n%5)*.01-(di*px+dj*py)*.0025;if(Math.hypot(ni*CS-C.x,nj*CS-C.y)<300)s+=.4;
+     if(s<bs){bs=s;bk=nk;bi=ni;bj=nj}}
+    if(bk<0)break;
+    climb=E[bk]>E[k]?climb+1:0;
+    if(climb>6){pond(i,j,Math.floor(ra(5,9)));break}
+    px=bi-i;py=bj-j;i=bi;j=bj}
+   if(path.length>30)path.forEach((k,p)=>carve(k%GW,Math.floor(k/GW),p<path.length*.5?1:2))}}
+ /* 6. keep the clearing dry, and make sure there is drinking water within reach */
+ for(let k=0;k<GN;k++)if(Math.hypot((k%GW)*CS-C.x,Math.floor(k/GW)*CS-C.y)<210){wat[k]=0;rv[k]=0}
+ {let md=1e9;for(let k=0;k<GN;k++)if(wat[k]){const d=Math.hypot((k%GW)*CS-C.x,Math.floor(k/GW)*CS-C.y);if(d<md)md=d}
+  if(md>850){const an=rg()*6.28,dist=ra(520,700);pond(Math.round((C.x+Math.cos(an)*dist)/CS),Math.round((C.y+Math.sin(an)*dist)/CS),11)}}
+ /* 7. wetness: closer to water means lusher ground */
+ const wd=new Uint16Array(GN).fill(65535),q=new Int32Array(GN);
+ {let qh=0,qt=0;for(let k=0;k<GN;k++)if(wat[k]){wd[k]=0;q[qt++]=k}
+  while(qh<qt){const k=q[qh++],i=k%GW,j=Math.floor(k/GW),d=wd[k]+1;if(d>40)continue;
+   for(const[di,dj]of[[1,0],[-1,0],[0,1],[0,-1]]){const ni=i+di,nj=j+dj;if(!inb(ni,nj))continue;const nk=nj*GW+ni;if(wd[nk]>d){wd[nk]=d;q[qt++]=nk}}}}
+ /* 8. classify every cell into a biome */
+ const cnt=new Array(10).fill(0);
+ for(let k=0;k<GN;k++){
+  if(wat[k]){TERR[k]=wat[k]===2?TD:TS;cnt[TERR[k]]++;continue}
+  const e=E[k],m=clamp(M[k]+TH.mo+(wd[k]<60?.2*Math.exp(-wd[k]/8):0)-(e>.85?.12:0),0,1),d=Math.hypot((k%GW)*CS-C.x,Math.floor(k/GW)*CS-C.y);
+  let ty;
+  if(e>1-TH.mt*.4)ty=TPEAK;else if(e>1-TH.mt)ty=TROCK;
+  else if(wd[k]<=2||e<sea+.03)ty=m>.66?TMARSH:m<.5?TSAND:TMEAD;
+  else if(e<sea+.1&&m>.74)ty=TMARSH;
+  else ty=m<.14?TSAND:m<.27?TSCRUB:m<.52?TMEAD:m<.76?TFOR:TDEN;
+  if(d<240&&(ty===TFOR||ty===TDEN||ty===TMARSH||ty===TROCK||ty===TPEAK||ty===TSAND))ty=m<.3?TSCRUB:TMEAD;
+  TERR[k]=ty;cnt[ty]++}
+ /* 9. drinking spots: shallow cells that touch land */
+ WATER=[];
+ {const sb=new Set();for(let k=0;k<GN;k++){if(TERR[k]!==TS)continue;const i=k%GW,j=Math.floor(k/GW);let sh=false;
+   for(let dj=-1;dj<=1&&!sh;dj++)for(let di=-1;di<=1;di++){if(inb(i+di,j+dj)&&TERR[(j+dj)*GW+i+di]>TS){sh=true;break}}
+   if(!sh)continue;const b=(i>>2)+','+(j>>2);if(sb.has(b))continue;sb.add(b);WATER.push({x:i*CS+CS/2,y:j*CS+CS/2,rv:rv[k]})}
+  if(!WATER.length)for(let k=0;k<GN;k+=37)if(TERR[k]===TS)WATER.push({x:(k%GW)*CS,y:Math.floor(k/GW)*CS,rv:0})}
+ /* 10. resource nodes, grown where they belong, in natural clumps */
+ const want=['wood','stone','fiber','berry'],base={wood:95,stone:40,fiber:70,berry:20},mins={wood:14,stone:10,fiber:12,berry:4};
+ want.forEach((kind,ki)=>{
+  const cntN=Math.round(base[kind]*TH.rs[ki]);let got=0,tries=0;
+  const add=(x,y)=>{if(nodes.some(n=>Math.abs(n.x-x)<20&&Math.abs(n.y-y)<20))return false;nodes.push({k:kind,x,y,n:kind==='berry'?2:3});got++;return true};
+  while(got<cntN&&tries<cntN*160){tries++;
+   const x=ra(40,W-40),y=ra(40,H-40);if(Math.hypot(x-C.x,y-C.y)<170)continue;
+   const w=NW[kind][terrAt(x,y)];if(w<=0)continue;
+   const patch=tries<cntN*100?Math.min(1,Math.pow(fbm(x/150+ki*40,y/150,S+ki*17,3),2)*3.2):1;
+   if(rg()>w*patch)continue;add(x,y)}
+  tries=0;while(got<mins[kind]&&tries++<3000){const x=ra(40,W-40),y=ra(40,H-40),ty=terrAt(x,y);if(ty>TS&&ty!==TPEAK&&Math.hypot(x-C.x,y-C.y)>170)add(x,y)}});
+ /* 11. paint the ground */
+ const SH=new Float32Array(GN);
+ for(let j=1;j<GH-1;j++)for(let i=1;i<GW-1;i++){const k=j*GW+i;SH[k]=clamp((raw[k+1]-raw[k-1]+raw[k+GW]-raw[k-GW])*10,-.3,.3)}
+ const CR=new Float32Array(GN),CG=new Float32Array(GN),CB=new Float32Array(GN),WF=new Float32Array(GN);
+ for(let k=0;k<GN;k++){
+  const i=k%GW,j=Math.floor(k/GW),x=i*CS+CS/2,y=j*CS+CS/2,ty=TERR[k],p=PAL[ty],v=(fbm(x*.025+3,y*.025+9,S+5,3)-.5)*2;
+  let r=p[0],g=p[1],b=p[2];
+  if(ty===TD){const u=clamp(E[k]/Math.max(.001,deepT),0,1);r=14+u*22;g=52+u*54;b=100+u*50}
+  else if(ty===TS&&rv[k]){r=92;g=162;b=200}
+  else if(ty===TPEAK){const u=clamp((E[k]-(1-TH.mt*.4))/(TH.mt*.4),0,1);r=g=b=170+u*70}
+  else if(ty===TMARSH){const u=fbm(x*.06,y*.06,S+8,2);r=70+u*50;g=104+u*30;b=84+u*20}
+  const f=1+(ty<=TS?0:SH[k]*(ty>=TROCK?1.3:.7)),vv=ty<=TS?v*7:v*16;
+  CR[k]=Math.max(0,(r+vv)*f);CG[k]=Math.max(0,(g+vv)*f);CB[k]=Math.max(0,(b+vv)*f);WF[k]=ty<=TS?1:0}
+ /* separate land and water colour fields, blended through a blurred water mask, give smooth shorelines */
+ const LR=new Float32Array(GN),LG=new Float32Array(GN),LB=new Float32Array(GN),VR=new Float32Array(GN),VG=new Float32Array(GN),VB=new Float32Array(GN);
+ for(let k=0;k<GN;k++){
+  if(TERR[k]>TS){LR[k]=CR[k];LG[k]=CG[k];LB[k]=CB[k];VR[k]=84;VG[k]=158;VB[k]=196}
+  else{VR[k]=CR[k];VG[k]=CG[k];VB[k]=CB[k];const i=k%GW,j=Math.floor(k/GW);let n=0,r=0,g=0,b=0;
+   for(let dj=-1;dj<=1;dj++)for(let di=-1;di<=1;di++){if(!inb(i+di,j+dj))continue;const nk=(j+dj)*GW+i+di;if(TERR[nk]>TS){n++;r+=CR[nk];g+=CG[nk];b+=CB[nk]}}
+   if(n){LR[k]=r/n;LG[k]=g/n;LB[k]=b/n}else{LR[k]=PAL[TSAND][0];LG[k]=PAL[TSAND][1];LB[k]=PAL[TSAND][2]}}}
+ const blur=src=>{const o=new Float32Array(GN);for(let j=0;j<GH;j++)for(let i=0;i<GW;i++){let n=0,s=0;for(let dj=-1;dj<=1;dj++)for(let di=-1;di<=1;di++){if(inb(i+di,j+dj)){n++;s+=src[(j+dj)*GW+i+di]}}o[j*GW+i]=s/n}return o};
+ const WB=blur(blur(WF));
+ const tw=W>>1,th2=H>>1,tmp=document.createElement('canvas');tmp.width=tw;tmp.height=th2;
+ const tg=tmp.getContext('2d'),im=tg.createImageData(tw,th2),dat=im.data;
+ for(let py=0;py<th2;py++){const gy=(py*2+1)/CS-.5,j0=Math.floor(gy),fy=gy-j0,ja=Math.min(GH-1,Math.max(0,j0)),jb=Math.min(GH-1,Math.max(0,j0+1));
+  for(let px=0;px<tw;px++){const gxx=(px*2+1)/CS-.5,i0=Math.floor(gxx),fx=gxx-i0,ia=Math.min(GW-1,Math.max(0,i0)),ib=Math.min(GW-1,Math.max(0,i0+1)),
+   k00=ja*GW+ia,k10=ja*GW+ib,k01=jb*GW+ia,k11=jb*GW+ib,w00=(1-fx)*(1-fy),w10=fx*(1-fy),w01=(1-fx)*fy,w11=fx*fy;
+   const wv=WB[k00]*w00+WB[k10]*w10+WB[k01]*w01+WB[k11]*w11,u=clamp((wv-.4)/.2,0,1),s=u*u*(3-2*u);
+   let r,g,b;
+   if(s<=0){r=LR[k00]*w00+LR[k10]*w10+LR[k01]*w01+LR[k11]*w11;g=LG[k00]*w00+LG[k10]*w10+LG[k01]*w01+LG[k11]*w11;b=LB[k00]*w00+LB[k10]*w10+LB[k01]*w01+LB[k11]*w11}
+   else if(s>=1){r=VR[k00]*w00+VR[k10]*w10+VR[k01]*w01+VR[k11]*w11;g=VG[k00]*w00+VG[k10]*w10+VG[k01]*w01+VG[k11]*w11;b=VB[k00]*w00+VB[k10]*w10+VB[k01]*w01+VB[k11]*w11}
+   else{const lr=LR[k00]*w00+LR[k10]*w10+LR[k01]*w01+LR[k11]*w11,lg=LG[k00]*w00+LG[k10]*w10+LG[k01]*w01+LG[k11]*w11,lb=LB[k00]*w00+LB[k10]*w10+LB[k01]*w01+LB[k11]*w11,
+    vr=VR[k00]*w00+VR[k10]*w10+VR[k01]*w01+VR[k11]*w11,vg=VG[k00]*w00+VG[k10]*w10+VG[k01]*w01+VG[k11]*w11,vb=VB[k00]*w00+VB[k10]*w10+VB[k01]*w01+VB[k11]*w11;
+    r=lr+(vr-lr)*s;g=lg+(vg-lg)*s;b=lb+(vb-lb)*s}
+   const fo=Math.max(0,1-Math.abs(wv-.5)*7)*(wv>.5?.5:.3),gr=(hsh(px,py,S)-.5)*9;
+   r+=(236-r)*fo+gr;g+=(246-g)*fo+gr;b+=(240-b)*fo+gr;
+   const o=(py*tw+px)*4;dat[o]=r>255?255:r<0?0:r;dat[o+1]=g>255?255:g<0?0:g;dat[o+2]=b>255?255:b<0?0:b;dat[o+3]=255}}
+ tg.putImageData(im,0,0);
+ bg=document.createElement('canvas');bg.width=W;bg.height=H;const gx=bg.getContext('2d');
+ gx.imageSmoothingEnabled=true;gx.imageSmoothingQuality='high';gx.drawImage(tmp,0,0,W,H);
+ /* 12. ground detail: tree crowns, reeds, pebbles, tufts, flowers */
+ const crown=(x,y,r,c1,c2)=>{gx.fillStyle='rgba(0,0,0,.22)';gx.beginPath();gx.arc(x+2,y+2.5,r,0,7);gx.fill();gx.fillStyle=c1;gx.beginPath();gx.arc(x,y,r,0,7);gx.fill();gx.fillStyle=c2;gx.beginPath();gx.arc(x-r*.25,y-r*.3,r*.55,0,7);gx.fill()};
+ gx.lineCap='round';
+ for(let k=0;k<GN;k++){const ty=TERR[k];if(ty<TSAND)continue;const i=k%GW,j=Math.floor(k/GW),x=i*CS+rg()*CS,y=j*CS+rg()*CS,u=rg();
+  if(ty===TFOR){if(u<.17)crown(x,y,5+rg()*3,'#2d5a38','#4f8a50')}
+  else if(ty===TDEN){if(u<.4)crown(x,y,5+rg()*4,'#1c4630','#3a7545')}
+  else if(ty===TMARSH){if(u<.12){gx.strokeStyle='rgba(40,70,50,.8)';gx.lineWidth=1.3;for(let n=0;n<3;n++){gx.beginPath();gx.moveTo(x+n*2.2,y+3);gx.lineTo(x+n*2.2+(n-1)*1.5,y-4-n);gx.stroke()}}
+   else if(u>.95){gx.fillStyle='rgba(70,120,140,.45)';gx.beginPath();gx.ellipse(x,y,4+rg()*4,2+rg()*2,0,0,7);gx.fill()}}
+  else if(ty===TROCK||ty===TPEAK){if(u<.08){gx.fillStyle=ty===TPEAK?'rgba(255,255,255,.7)':'rgba(70,70,64,.5)';gx.beginPath();const r=2+rg()*3.5;gx.moveTo(x-r,y+r*.6);gx.lineTo(x-r*.3,y-r);gx.lineTo(x+r,y+r*.4);gx.closePath();gx.fill()}}
+  else if(ty===TMEAD){if(u<.025){gx.fillStyle=['#e8d56a','#f2f2f2','#d98ab0'][Math.floor(rg()*3)];gx.beginPath();gx.arc(x,y,1.3,0,7);gx.fill()}}
+  else if(ty===TSCRUB){if(u<.05){gx.strokeStyle='rgba(120,104,52,.7)';gx.lineWidth=1.1;gx.beginPath();gx.moveTo(x-2,y+2);gx.lineTo(x-1,y-2);gx.moveTo(x,y+2);gx.lineTo(x+.5,y-3);gx.moveTo(x+2,y+2);gx.lineTo(x+2.5,y-1.5);gx.stroke()}}
+  else if(ty===TSAND){if(u<.03){gx.fillStyle='rgba(170,150,96,.45)';gx.beginPath();gx.ellipse(x,y,3+rg()*3,1,0,0,7);gx.fill()}}}
+ /* 13. overlay + log */
+ const pc=n=>Math.round(n/GN*100);
+ $('#mi').innerHTML=`<b>${TH.n}</b> · seed ${seed}<div class="lg">${PNAME.map((n,i)=>cnt[i]?`<span><i style="background:rgb(${PAL[i]})"></i>${n}</span>`:'').join('')}</div>`;
+ log(`The arena is the ${TH.n}: ${TH.d} (${pc(cnt[0]+cnt[1])}% water, ${pc(cnt[5]+cnt[6])}% woodland, ${pc(cnt[8]+cnt[9])}% highland, ${pc(cnt[2]+cnt[3])}% dry ground, seed ${seed}).`,'gm');
+}
+function log(m,c=''){logs.unshift({m,c,t});if(logs.length>200)logs.pop();dirty=true}
+function say(a,txt,delay=0,th=0){const q=a.sq=(a.sq||[]).filter(s=>s.t1>t);if(q.length>=6)q.shift();const t0=Math.max(t+delay,q.length?q[q.length-1].t0+1.1:0);q.push({txt:txt.toLowerCase(),t0,t1:t0+clamp(speed*3.5,8,48),th})}
+const ponder=(a,txt,delay=0)=>{if(txt)say(a,txt,delay,1)};
+function ambient(a){const al=T.filter(x=>x.alive).length,L=[];
+ if(a.hp<35)L.push('i don\u2019t know how much more i can take.');
+ if(a.blood<55)L.push('everything feels distant.');
+ if(a.hunger<30)L.push('so hungry. i need to eat soon.');
+ if(a.thirst<30)L.push('my throat is on fire. water.');
+ if(a.mor<35)L.push('i want to go home.');
+ if(a.hope<30)L.push('i don’t think i can keep going.','there’s no way out of this.');
+ if(night)L.push('every shadow looks like someone.');
+ if(a.co)L.push('i wonder if anyone back home is watching.',`i wonder if anyone back in ${a.co.n} is thinking of me.`);
+ if(al<=8)L.push(`only ${al} of us left.`);
+ if(a.rev!=null&&T[a.rev].alive)L.push(`${T[a.rev].name} will pay for this.`);
+ if(a.mate!=null&&T[a.mate].alive)L.push(`i have to keep ${T[a.mate].name} safe.`,`at least i have ${T[a.mate].name}.`);if(a.crush!=null&&a.mate==null&&T[a.crush].alive)L.push(`${T[a.crush].name}... i wish i knew what to say.`);
+ if(a.plot!=null)L.push(`soon, ${T[a.plot].name}. soon.`);
+ if(a.kills>2)L.push('i\u2019m not who i was before the arena.');
+ if(L.length)ponder(a,pick(L))}
+let despairOn=true;try{despairOn=localStorage.getItem('hgs-despair')!=='off'}catch(e){}
+function hopeTick(a,dt){
+ const al=[...a.allies].filter(i=>T[i].alive).length,mt=a.mate!=null&&T[a.mate].alive;
+ const tg=clamp(a.mor*.7+(mt?18:0)+Math.min(al,2)*6-(a.hp<30?14:0)-(a.hunger<15?10:0)-(a.thirst<15?10:0)-(a.pain>60?8:0)-(al===0&&!mt?8:0)-25*grv(a),0,100);
+ a.hope+=(tg-a.hope)*Math.min(1,dt*.12);
+ if(grv(a)>.2&&!a.busy&&Math.random()<dt*.03)ponder(a,griefLine(a));
+ if(!despairOn||a.down||a.busy||a.wind||t<90||a.dcd>t||a.hope>18||a.mor>25)return;
+ if(!(a.hp<35||a.blood<50||a.hunger<12||a.thirst<12||(al===0&&!mt&&a.mor<12)))return;
+ const hz=stormOn&&dd(a,C)>R-260?'storm':hazards.find(h=>dd(a,h)<420)?'fire':null;
+ if(!hz)return;
+ if(Math.random()>dt*.04*clamp(.6+a.cau*.8-a.aggr*.4,.2,1.4)*(1-a.hope/18))return;
+ a.dcd=t+60;
+ const fr=T.find(x=>x.alive&&x!==a&&trust(x,a)>25&&dd(x,a)<120);
+ if(fr&&Math.random()<.6){a.hope=Math.min(100,a.hope+26);a.mor=Math.min(100,a.mor+12);adj(a,fr,15);ponder(fr,pick([`stay with me, ${a.name}.`,`${a.name}, look at me. we keep going.`]),0);ponder(a,pick(['okay. okay.','i don’t want to do this alone.']),1.8);log(`${fn(fr)} stays with ${fn(a)} and talks ${ob(a)} out of giving up.`,'social');return}
+ ponder(a,pick(['i can’t do this anymore.','there’s no way out of this.']),0);think(a,'has lost all hope');
+ a.busy={t:4,l:'Giving up',f:()=>endIt(a,hz)};
+}
+const PERS={kind:{gr:1.15,cm:.9,ex:.05,soc:.15,ag:-.15},friendly:{gr:1,cm:.85,ex:.05,soc:.25,ag:-.05},silly:{gr:.9,cm:.5,ex:.1,soc:.1,ag:0},neutral:{gr:1,cm:.3,ex:.15,soc:0,ag:0},cold:{gr:.35,cm:.05,ex:.6,soc:-.2,ag:.1},competitive:{gr:.7,cm:.15,ex:.5,soc:0,ag:.15},shy:{gr:1,cm:.15,ex:.05,soc:-.25,ag:-.05},stoic:{gr:.6,cm:.25,ex:.2,soc:-.05,ag:0}},PL=Object.keys(PERS);
+const grv=a=>a.gr?a.gr*clamp((a.grT-t)/a.gD*1.5,0,1):0;
+const GL={kind:n=>[`${n}... i’m so sorry.`,`${n} didn’t deserve this.`,`i keep thinking about ${n}.`],friendly:n=>[`${n}... no. not ${n}.`,`i can’t believe ${n} is gone.`,`i miss ${n} already.`],silly:n=>[`${n} would have made a joke about this.`,'heh. ...no. it’s not funny.','why isn’t this funny.'],neutral:n=>[`${n} is gone.`,`i keep seeing ${n}’s face.`,'i didn’t get to say goodbye.'],cold:n=>[`${n}. ...fine. keep moving.`,'it doesn’t matter. it doesn’t.'],competitive:n=>[`i’ll win this for ${n}.`,'it should have been me.',`${n} deserved better.`],shy:n=>[`oh... ${n}.`,'i didn’t even say goodbye.',`i’m sorry, ${n}.`],stoic:n=>['...',`${n}. rest.`,'keep moving. keep moving.']};
+function griefLine(a){const n=T[a.grW]?T[a.grW].name:'them',L=GL[a.pers](n);if(a.gK==='mate')L.push(`${n}... please come back.`,'i love you. i’m sorry.');if(a.gK==='crush')L.push(`i never told ${n}...`,'i should have said something.');return pick(L)}
+function mourn(w,x,quiet){
+ if(!w.alive||w.mourned.has(x.id))return;
+ const r=trust(w,x),k=w.mate===x.id?'mate':w.crush===x.id?'crush':r>25?'friend':w.d===x.d?'dist':null,bnd=k==='mate'?1:k==='crush'?.85:r>50?.7:r>25?.45:k==='dist'?.2:0;
+ if(!bnd)return;w.mourned.add(x.id);
+ const lv=bnd*PERS[w.pers].gr;w.mor=Math.max(0,w.mor-34*lv);w.hope=Math.max(0,w.hope-20*lv);
+ if(lv<.3){if(!quiet&&w.pers==='cold'&&bnd>=.45)ponder(w,pick(['oh well. anyway.','one less. keep moving.']),1);return}
+ w.gr=Math.max(grv(w),lv);w.gD=50+lv*170;w.grT=t+w.gD;w.grW=x.id;w.gK=k;think(w,'grieving '+x.name);
+ if(!quiet)ponder(w,griefLine(w),1);
+ if(lv>=.5&&!w.down)w.busy={t:3+lv*7,l:'Grieving '+x.name,f:()=>{}};
+ if(lv>=.5&&k!=='mate')log(`${fn(w)} ${w.pers==='stoic'||w.pers==='shy'?'grieves quietly for':'breaks down over'} ${fn(x)}.`,'social');
+}
+function comfort(a,b){
+ a.talkCd[b.id]=t+45;const wn=T[b.grW]?T[b.grW].name:'them';
+ const A={kind:[`i’m so sorry about ${wn}.`,'you don’t have to be strong right now.'],friendly:[`hey. i’m here. i heard about ${wn}.`,'come here. sit with me a minute.'],silly:['i’m terrible at this. but i’m here.',`${wn} would hate seeing you like this. ...sorry. i’m here.`],neutral:[`i’m sorry about ${wn}.`,'if you want to talk, i’m listening.'],cold:[`${wn} is gone. you’ll want to keep moving.`],competitive:[`${wn} deserved better. we win this for them.`],shy:[`i... i’m sorry about ${wn}.`,'i don’t know what to say.'],stoic:['i know.','sit. breathe. then we go.']}[a.pers];
+ const L=A.map(x=>[0,x]);L.push([1,b.pers==='cold'||b.pers==='stoic'?'...thanks.':pick(['thank you. it helps.','i just can’t stop thinking about it.'])]);
+ const d=conv(a,b,L,0);
+ b.grT=Math.min(b.grT,t+(b.grT-t)*.65);b.mor=Math.min(100,b.mor+9);b.hope=Math.min(100,b.hope+12);adj(b,a,16);adj(a,b,8);
+ log(`${fn(a)} comforts ${fn(b)}, who is grieving ${wn}.`,'social');think(a,'comforts '+b.name);think(b,a.name+' comforts me');
+ const hold=Math.min(12,Math.max(4,d+.4));a.busy={t:hold,l:'Comforting '+b.name,f:()=>{}};if(!b.wind)b.busy={t:hold,l:'Being comforted by '+a.name,f:()=>{}};
+}
+let lastKill=0;
+function endgame(dt){
+ const al=T.filter(x=>x.alive);if(over||al.length>4||al.length<2)return;
+ const idle=t-lastKill;if(idle<100)return;
+ for(const a of al){
+  if(a.bt!=null){if(t>a.btT||!T[a.bt].alive)a.bt=null;continue}
+  if(a.down||a.hp<45||a.mor<35||Math.random()>dt*.003*(1+Math.min(2,(idle-100)/200)))continue;
+  const des=a.hunger<30||a.thirst<30||(stormOn&&R<250)||idle>300;
+  if(!(a.aggr>.55||des))continue;
+  const ev=al.filter(x=>x!==a),frs=ev.filter(x=>a.allies.has(x.id)&&dd(a,x)<260),others=ev.filter(x=>!a.allies.has(x.id));
+  if(frs.length&&(a.lie>.6||a.aggr>.7)){
+   const b=frs.sort((p,q)=>pwr(p)-pwr(q))[0];
+   if(a.mate===b.id&&!(idle>300&&a.lie>.75&&a.aggr>.6))continue;
+   if(pwr(a)<pwr(b)*.8&&a.lie<.8)continue;
+   a.allies.delete(b.id);b.allies.delete(a.id);if(a.mate===b.id)a.mate=b.mate=null;
+   adj(b,a,-70);adj(a,b,-60);b.mor=Math.max(0,b.mor-15);a.bt=b.id;a.btT=t+200;
+   log(`${fn(a)} turns on ${fn(b)}: only one of them can walk out.`,'social');think(a,'turns on '+b.name+' to end the stalemate');say(a,'i’m sorry. it has to be one of us.');ponder(b,'i knew this was coming.',1.5);
+  }else if(others.length){
+   const b=others.sort((p,q)=>(pwr(p)/pwr(a)+dd(a,p)/1500)-(pwr(q)/pwr(a)+dd(a,q)/1500))[0];
+   if(pwr(a)<pwr(b)*.8&&a.aggr<.75&&!des)continue;
+   a.bt=b.id;a.btT=t+200;
+   log(`${fn(a)} stops waiting and goes after ${fn(b)}.`,'social');think(a,'is tired of waiting; goes after '+b.name);ponder(a,'i can’t wait any longer.');
+  }
+ }
+}
+function endIt(a,hz){
+ if(!a.alive||a.down)return;const w=hz==='storm'?'storm wall':'flames';
+ if(Math.random()<(hz==='storm'?.6:.5)){log(`${fn(a)} walks out into the ${w} and does not come back.`,'death');die(a,null,'the '+w)}
+ else{a.hp=Math.max(10,a.hp-40);a.hope=Math.max(a.hope,24);a.dcd=t+150;log(`${fn(a)} walks out toward the ${w} but turns back, badly hurt.`,'inj');think(a,'tried to give up and survived')}
+}
+function reset(){
+ T=[];items=[];corpses=[];proj=[];fx=[];hazards=[];logs=[];stains=[];t=0;lastKill=0;cd=4;over=false;R=1500;stormOn=false;nextDrop=120;nextHaz=150;sel=null;genMap();
+ const used=new Set(Object.values(custom).map(c=>c&&typeof c.n==='string'?cleanName(c.n):'')),nm=NAMES.filter(x=>!used.has(x[0])).sort(()=>Math.random()-.5);
+ gameCountries=countriesOn;let cq=[];const usedL=new Set();
+ const rollId=cs=>{const co=countriesOn?(cq.length?cq:(cq=CT.slice().sort(()=>Math.random()-.5))).pop():null,cn=cleanName(cs.n);let f,p='they';
+  if(cn)f=cn;
+  else if(co){for(let k=0;k<30&&(!f||used.has(f));k++){const r=Math.random(),g=r<.07?'N':r<.54?'M':'F';f=pick(co[g]);p={M:'he',F:'she',N:'they'}[g]}if(used.has(f)){const x=nm.shift();f=x[0];p=x[1]}}
+  else{const x=nm.shift();f=x[0];p=x[1]}
+  used.add(f);let l=cleanName(cs.l);if(!l){for(let k=0;k<30;k++){l=pick(co?co.L:LAST);if(!usedL.has(l))break}}usedL.add(l);
+  return{f,p,l,co}};
+ for(let i=0;i<24;i++){const d=Math.floor(i/2)+1,ang=i/24*Math.PI*2,car=[1,2,4].includes(d),aggr=car?rnd(.55,.95):rnd(.1,.9);
+  const cs=custom[i]||{},idn=rollId(cs);
+  T.push({id:i,name:idn.f,sur:idn.l,co:idn.co,pr:typeof cs.p==='string'&&cs.p.trim()?parsePr(cs.p):parsePr(idn.p),d,x:C.x+Math.cos(ang)*150,y:C.y+Math.sin(ang)*150,vx:0,vy:0,hp:100,st:100,hunger:100,thirst:100,mor:80,bleed:0,w:'fists',arrows:0,inv:{wood:0,stone:0,fiber:0,food:0,bandage:0},alive:true,kills:0,career:car,aggr,cau:rnd(.1,.9),soc:rnd(.1,.9),skill:rnd(.85,1.15),brave:car||aggr>.6,spd:rnd(85,105),cool:0,stun:0,wind:null,busy:null,thought:'',say:null,drink:false,wp:null,wpT:0,rev:null,rel:{},allies:new Set(),know:{},known:new Set(),corp:new Set(),talkCd:{},seen:{},gCd:0,str:Math.random()<.5?1:-1,cause:'',lie:rnd(.05,.9),spare:[],heard:[],liars:new Set(),plot:null,tl:[],sw:'',why:'',lastTh:'',lastThT:-9,wary:new Set(),kdet:{},blood:100,leg:0,arm:0,conc:0,inf:0,open:0,pain:0,down:false,drip:0,resting:false,sq:[],dvx:0,dvy:0,ori:['straight','gay','bi','ace'].includes(cs.o)?cs.o:rOri(),mate:null,crush:null,bd:{},hope:rnd(70,95),dcd:0,bt:null,btT:0,pers:pick(PL),mourned:new Set(),gr:0,grT:0,gD:1,grW:null,gK:null,bk:mkBk(),lore:{},told:{}})}
+ for(const a of T){const P=PERS[a.pers];a.soc=clamp(a.soc+P.soc,.05,1);a.aggr=clamp(a.aggr+P.ag,.05,1)}
+ for(const a of T){for(const b of T){if(a===b)continue;adj(a,b,rnd(-8,8));if(a.d===b.d)adj(a,b,25);if(a.career&&b.career){a.allies.add(b.id);adj(a,b,35)}}}
+ ['sword','sword','bow','bow','spear','spear','axe','axe','knife','knife','knife','stick'].forEach(n=>{const a=rnd(0,7),r=rnd(25,70);items.push({k:'w',n,x:C.x+Math.cos(a)*r,y:C.y+Math.sin(a)*r})});
+ for(let i=0;i<8;i++){const a=rnd(0,7),r=rnd(25,70);items.push({k:'f',x:C.x+Math.cos(a)*r,y:C.y+Math.sin(a)*r})}
+ mk2();ov.textContent='';$('#sky').classList.remove('on');cam={x:C.x,y:C.y,z:minZ};follow=false;$('#fl').textContent='Follow: off';
+ log('Tributes rise on their plates. The countdown begins.','gm');ctLbl();speed=1;$('#sp').value='1';
+}
+function mk2(){for(let i=0;i<6;i++){const p=landPt(250);items.push({k:'w',n:pick(['knife','stick','axe','spear']),x:p.x,y:p.y})}for(let i=0;i<10;i++){const p=landPt(0);items.push({k:'f',x:p.x,y:p.y})}}
+function hurt(a,amt,by,why){
+ if(!a.alive)return;a.hp-=amt;a.mor=Math.max(0,a.mor-amt*.6);
+ if(by){a.last=by;adj(a,by,-35);for(const w of T)if(w.alive&&w!==a&&w!==by&&w.allies.has(a.id)&&dd(w,a)<SIGHT)adj(w,by,w.mate===a.id?-70:-25)}
+ if(a.hp<=0)die(a,by,why);
+}
+function die(a,by,why){
+ a.alive=false;a.hp=0;lastKill=t;a.cause=by?'killed by '+by.name:why;a.wind=null;a.busy=null;
+ if(by||a.bleed>0||why==='blood loss')for(let i=0;i<7;i++){const g=Math.random()*6.283,r=Math.random()*9;stain(a.x+Math.cos(g)*r,a.y+Math.sin(g)*r,rnd(4,9),.8)}
+ corpses.push({x:a.x,y:a.y,id:a.id,name:a.name,sur:a.sur,inv:a.inv,w:a.w,arrows:a.arrows,spare:a.spare.slice(),looted:false});
+ for(const w of T)w.allies.delete(a.id);
+ for(const w of T)if(w.alive&&w!==a&&(w.mate===a.id||dd(w,a)<SIGHT*.8))mourn(w,a,w.mate===a.id);
+ if(a.mate!=null){const p=T[a.mate];if(p.alive){p.mate=null;p.mor=Math.max(0,p.mor-35);p.hope=Math.max(0,p.hope-25);p.cau=Math.max(0,p.cau-.1);think(p,'lost '+a.name+', the one i loved');ponder(p,pick(['no. no. please no.',`${a.name}... i can’t do this without you.`]),1.5);log(`${fn(p)} is devastated by the death of ${fn(a)}.`,'social')}}
+ if(by){by.kills++;by.mor=Math.min(100,by.mor+10);ponder(by,by.aggr>.7?pick(['one less to worry about.','next.']):by.cau>.6?'it was them or me.':pick(['i had no choice.','i didn\u2019t want this.']),2.5);log(`${fn(by)} (D${by.d}) kills ${fn(a)} (D${a.d}). A cannon fires.`,'death');
+  for(const w of T){if(!w.alive||w===a||w===by)continue;if(dd(w,a)<SIGHT||dd(w,by)<SIGHT){
+   (w.know[by.id]=w.know[by.id]||[]).push(a.id);w.kdet[a.id]={t,x:a.x,y:a.y,w:by.w};const f=trust(w,a)>25;adj(w,by,f?-90:-25);w.mor-=10;think(w,'saw '+by.name+' kill '+a.name);ponder(w,f?pick([`${a.name}... no. no no.`,`i couldn\u2019t save ${ob(a)}.`]):w.cau>.5?pick([`${by.name} is dangerous. stay hidden.`,'don\u2019t move. don\u2019t breathe.']):pick([`${by.name} just killed ${a.name}. i\u2019ll remember that.`,`so ${by.name} is a killer.`]),1.5);
+   if(f){w.rev=by.id;w.mor-=15;say(w,'You killed '+a.name+'!');log(`${fn(w)} watched ${fn(by)} kill ${ps(w)} friend ${fn(a)} and swears revenge.`,'social')}}}}
+ else log(`${fn(a)} (D${a.d}) dies from ${why}. A cannon fires.`,'death');
+ const al=T.filter(x=>x.alive);
+ if(al.length<=1){over=true;const wn=al[0];if(wn){log(`${fn(wn)} of District ${wn.d}${ct(wn)} is the victor with ${wn.kills} kills.`,'gm');ov.innerHTML=`${esc(fn(wn))}<br>District ${wn.d}${ct(wn)} wins`}else{log('No victor emerges.','gm');ov.textContent='No victor'}}
+}
+function lackMat(a){
+ const c=[];if(a.w==='bow'&&a.arrows<3)c.push('arrows');
+ for(const k of['axe','spear','knife','stick','bow'])if(pv(k)>pv(a.w)+2)c.push(k);
+ let best=null,bm=99;
+ for(const k of c){let m=0;for(const x in REC[k])m+=Math.max(0,REC[k][x]-a.inv[x]);if(m<bm){bm=m;best=k}}
+ if(!best||bm===0)return null;
+ return Object.keys(REC[best]).find(x=>REC[best][x]>a.inv[x])||null}
+function needOf(a){
+ if(a.hunger<60&&a.inv.food<1)return'food';
+ if(a.bleed>0&&a.inv.bandage<1&&a.inv.fiber<2)return'bandage';
+ if(a.w==='fists'&&t>20)return'weapon';
+ return lackMat(a)}
+function give(f,to,k){
+ const ally=f.allies.has(to.id);
+ if(k==='food'){if(f.inv.food<1||(f.inv.food<2&&!ally)||f.hunger<35)return 0;f.inv.food--;to.inv.food=Math.min(4,to.inv.food+1);return 1}
+ if(k==='bandage'){if(f.inv.bandage<1)return 0;f.inv.bandage--;to.inv.bandage++;return 1}
+ if(k==='weapon'){const s=f.spare.filter(w=>pv(w)>pv(to.w)+2).sort((p,q)=>pv(q)-pv(p))[0];if(!s)return 0;f.spare.splice(f.spare.indexOf(s),1);equip(to,s);return 1}
+ if(f.inv[k]>=2||(f.inv[k]>=1&&ally)){f.inv[k]--;to.inv[k]=Math.min(5,to.inv[k]+1);return 1}
+ return 0}
+function sharePlaces(b,a,k){
+ const kinds=k==='food'?['berry']:k==='bandage'?['fiber']:[k];
+ const ns=[...b.known].filter(n=>n.n>0&&kinds.includes(n.k)&&!a.known.has(n)&&dd(n,C)<R-50).sort((p,q)=>dd(a,p)-dd(a,q)).slice(0,4);
+ for(const n of ns)a.known.add(n);return ns[0]||null}
+function askFor(a,b,k){
+ const nn=k,plea={food:pick(['haven\u2019t eaten in a long time.','my stomach\u2019s been empty since the horn.']),bandage:pick(['i\u2019m bleeding. i need something to stop it.','this wound won\u2019t close on its own.']),weapon:pick(['i\u2019m out here with my bare hands.','i can\u2019t fight with nothing.'])}[k]||'i\u2019m trying to build a better weapon.';
+ say(a,pick([`any ${nn} to spare?`,`could you help me out with ${nn}?`]),0);say(a,plea,LD);
+ think(a,'asks '+b.name+' for '+nn);const d=2*LD;
+ const tr=trust(b,a),will=b.allies.has(a.id)||(tr>-15&&Math.random()<clamp(.2+b.soc*.5+tr/200-b.cau*.1,.05,.9));
+ if(will&&give(b,a,k)){say(b,b.allies.has(a.id)?'of course. we look after our own.':pick(['here, take it.','you owe me one.']),d);say(a,pick(['thank you. i won\u2019t forget it.','i owe you.']),d+LD);adj(a,b,12);adj(b,a,6);think(b,'shares '+nn+' with '+a.name);log(`${fn(b)} shares ${ps(b)} ${nn} with ${fn(a)}, who asked for it.`,'social');return d+2*LD}
+ const nd=will?sharePlaces(b,a,k):null;
+ if(nd){const lab=k==='food'?'berries':k==='bandage'?'fiber':k;say(b,'i can\u2019t spare any, but i know where to look.',d);say(b,`there\u2019s ${lab} ${where(nd)}.`,d+LD);say(a,pick(['thanks. i\u2019ll check it out.','that helps. thank you.']),d+2*LD);adj(a,b,6);think(a,b.name+' points out where to find '+nn);log(`${fn(b)} tells ${fn(a)} where to find ${nn}.`,'social');return d+3*LD}
+ say(b,tr<0?'why would i help you?':pick(['i barely have enough for myself.','can\u2019t spare it. sorry.']),d);say(a,pick(['understood.','fine. i\u2019ll manage.']),d+LD);adj(a,b,-4);think(a,b.name+' refuses to help');ponder(a,pick(['everyone looks out for themselves here.','i\u2019ll have to find it on my own.']),d+LD);return d+2*LD}
+function askWhere(a,b){
+ const v=T[a.rev];say(a,`seen ${v.name}?`,0);say(a,`${ob(v)} and i have unfinished business.`,LD);think(a,'asks '+b.name+' where '+v.name+' went');
+ const s=b.seen[v.id],d=2*LD;
+ if(b.allies.has(v.id)){say(b,'i\u2019m not telling you.',d);say(b,`leave ${ob(v)} alone.`,d+LD);adj(a,b,-6);return d+2*LD}
+ if(s&&v.alive){say(b,`${v.name} went ${where(s)} not long ago.`,d);say(a,pick(['thank you. that\u2019s all i needed.',`i\u2019ll find ${ob(v)}.`]),d+LD);a.seen[v.id]={x:s.x,y:s.y};adj(a,b,8);log(`${fn(b)} tells ${fn(a)} where ${fn(v)} was last seen.`,'social');return d+2*LD}
+ say(b,pick([`haven\u2019t seen ${ob(v)}.`,'no idea.']),d);return d+LD}
+function askAbout(a,b){
+ const cs=T.filter(x=>x.alive&&x!==a&&x!==b&&!a.allies.has(x.id)&&!a.wary.has(x.id));
+ if(!cs.length)return 0;
+ const p=cs.map(x=>({x,s:Math.random()*.6+(a.seen[x.id]?.4:0)+(dd(a,x)<350?.2:0)+(trust(a,x)<0?.2:0)-(trust(a,x)>30?.6:0)})).sort((u,v)=>v.s-u.s)[0].x;
+ say(a,pick([`what do you know about ${p.name}?`,`is ${p.name} dangerous?`,`should i be careful of ${p.name}?`]),0);
+ think(a,'asks '+b.name+' about '+p.name+' to decide whether to be cautious');const d=LD;
+ const vic=b.know[p.id];
+ if(vic&&vic.length){const c={k:p.id,vs:vic,lie:0};let e=receive(a,b,c,speak(b,a,c,d));if(a.wary.has(p.id)){a.cau=Math.min(1,a.cau+.04);log(`${fn(b)} warns ${fn(a)} to keep ${ps(a)} distance from ${fn(p)}.`,'social')}return e}
+ const dead=T.filter(x=>!x.alive&&x.id!==p.id);
+ if(dead.length&&trust(b,p)<10&&!b.allies.has(p.id)&&Math.random()<b.lie*(b.allies.has(a.id)?.3:1)*.5){const v=pick(dead),c={k:p.id,vs:[v.id],lie:1};think(b,'lies to '+a.name+': claims '+p.name+' killed '+v.name);return receive(a,b,c,speak(b,a,c,d))}
+ const tr=trust(b,p);
+ if(tr<-20||b.liars.has(p.id)){
+  say(b,pick(['i don\u2019t trust them.','keep your distance.']),d);
+  say(b,b.liars.has(p.id)?`${p.name} lied to me. i won\u2019t forget it.`:pick([`there\u2019s something off about ${p.name}.`,`${p.name} watches everyone too closely.`,`i wouldn\u2019t turn my back on ${p.name}.`]),d+LD);
+  const e=d+2*LD;
+  if(Math.random()<clamp(.35+trust(a,b)/160-a.cau*.1,.1,.9)){adj(a,p,-12);a.wary.add(p.id);a.cau=Math.min(1,a.cau+.03);say(a,pick(['noted. thank you.',`i\u2019ll steer clear of ${ob(p)}.`]),e);think(a,'warned about '+p.name+' by '+b.name+'; will be careful');log(`${fn(b)} warns ${fn(a)} to keep ${ps(a)} distance from ${fn(p)}.`,'social')}
+  else{say(a,pick(['i\u2019ll make up my own mind.','maybe. maybe not.']),e);think(a,'doubts '+b.name+'\u2019s warning about '+p.name)}
+  return e+LD}
+ if(tr>30){say(b,pick(['they\u2019re alright.','i trust them.']),d);say(b,`i\u2019ve seen nothing to worry about with ${p.name}.`,d+LD);say(a,'good to know.',d+2*LD);adj(a,p,8);think(a,b.name+' vouches for '+p.name);return d+3*LD}
+ say(b,pick(['not sure.','haven\u2019t seen enough of them.']),d);say(b,`if i see ${p.name}, i\u2019ll let you know.`,d+LD);say(a,'thanks anyway.',d+2*LD);adj(a,b,2);think(a,b.name+' knows nothing about '+p.name);return d+3*LD}
+function info(a,b){
+ say(a,pick(['heard anything?','seen anyone dangerous?','what do you know?']),0);think(a,'asks '+b.name+' what they know');
+ let d=tell(b,a,LD);if(d===LD){say(b,pick(['nothing useful.','i\u2019ve kept my head down.']),d);d+=LD}
+ const d2=tell(a,b,d);if(d2===d){say(a,pick(['i haven\u2019t seen much either.','nothing i can share.']),d);d+=LD}else d=d2;return d}
+const mkBk=()=>({fam:pick(['a little sister','an older brother','my mother','my grandmother','my twin','a younger brother','my father','my best friend','my aunt',null]),fear:pick(['the dark','deep water','being forgotten','dying alone','blood','fire','heights','becoming someone i hate']),wish:pick(['to go home and sleep for a week','to see the sea once','to open a bakery','to finish school','to see my family again','to be left alone for a while','to be remembered','to make my parents proud','to travel somewhere warm']),hobby:pick(['carving wood','singing badly','fixing broken radios','swimming','drawing in the dirt','cooking for anyone who’d eat','climbing things i shouldn’t','telling stories','playing cards','whistling']),regret:pick(['i never said goodbye properly','i took more than i gave','i was too proud to apologize to someone','i left a promise unkept','i didn’t speak up when i should have']),memory:pick(['the harvest festival','my first snow','a summer by the river','the night the power came back','teaching someone to swim','a stranger being kind to me'])});
+const bkText=a=>[a.bk.fam?'family: '+a.bk.fam:'no family waiting',`fears ${a.bk.fear}`,`wants ${a.bk.wish}`,`hobby: ${a.bk.hobby}`].join(' · ');
+const yr=s=>s.replace(/^my /,'your ').replace(/^an? /,'your ');
+const RB={kind:['thank you for telling me that.','that sounds like someone worth fighting for.','i’m glad you trust me with that.'],friendly:['i’m really glad you told me.','we’ll get you back to them. promise.','that means a lot, hearing that.'],silly:['okay, now you’re making me emotional. rude.','that’s... actually really sweet.','don’t make me cry in a murder arena.'],neutral:['i understand.','that makes sense.','thanks for telling me.'],cold:['hm. noted.','that won’t help you here.','sentiment is a weakness. ...but fine.'],competitive:['then you’d better win.','use it. let it make you stronger.','good. hold onto that.'],shy:['oh. um. thank you for telling me.','i... that’s kind of beautiful.','i don’t know what to say. thank you.'],stoic:['...i hear you.','keep that close.','hm. yes.']};
+const CL={kind:['stay safe.','take care of yourself.'],friendly:['find me later, okay?','stay close if you can.'],silly:['don’t die. that’s my job.','try not to get murdered. i’d miss you.'],neutral:['see you around.','take care.'],cold:['don’t follow me.','we’re done here.'],competitive:['may the best one win.','don’t get soft on me.'],shy:['um. bye.','i should go. bye.'],stoic:['go.','stay alive.']};
+const OPS={kind:['hey. i’m not looking for a fight.','hi. are you alright?'],friendly:['hi! i’m not going to hurt you.','hey there. you look like you could use a friendly face.'],silly:['well, this is awkward. hi.','hello, fellow doomed person.'],neutral:['hey.','hello.'],cold:['...you.','what do you want.'],competitive:['you look like competition.','so. you’re still standing.'],shy:['um. hi.','oh. h-hi.'],stoic:['...hello.','you. hm.']};
+const OPF={kind:n=>`good to see you, ${n}.`,friendly:n=>`${n}! there you are.`,silly:n=>`${n}, my favorite person in a murder arena.`,neutral:n=>`hey, ${n}.`,cold:n=>'you’re still alive. good.',competitive:n=>'still in this? good. i like a worthy ally.',shy:n=>`oh. ${n}. hi.`,stoic:n=>`${n}.`};
+const THX={kind:['thank you. that means a lot.'],friendly:['aw, thanks! right back at you.'],silly:['i accept this. please continue.'],neutral:['thanks.'],cold:['...fine.'],competitive:['i know.'],shy:['oh. um. thank you.'],stoic:['hm. thanks.']};
+const RA={kind:['i don’t want trouble. please.'],friendly:['whoa, easy. i’m not your enemy.'],silly:['wow. rude. i’m crying. (not really.)'],neutral:['back off.'],cold:['you’re not worth my time.'],competitive:['try me.'],shy:['i... sorry. i’ll go.'],stoic:['...walk away.']};
+const OF={kind:['you look hungry. take this.'],friendly:['hey, here. i’ve got extra.'],silly:['complimentary snack. no refunds.'],neutral:['here. take some.'],cold:['take it. don’t owe me anything.'],competitive:['eat. i need you strong when it matters.'],shy:['um... you can have some of mine.'],stoic:['eat.']};
+const LI={kind:'can i tell you something?',friendly:'can i tell you something? i feel like i can.',silly:'okay, serious moment. brace yourself.',neutral:'can i tell you something?',cold:'...don’t make a big deal of this.',competitive:'this stays between us, okay?',shy:'um... can i tell you something?',stoic:'...i’ll say this once.'};
+const JK=['if this is a vacation, i’m asking for a refund.','at least the scenery is nice. the danger less so.','do you think the cameras get my good side?','i’d like to speak to the gamemakers’ manager.','my sponsor is probably a mime. all i get is silence.','i’m great at hide and seek. never been found. ...okay, nobody’s looked.','if we make it out, the first round’s on me. wherever one buys rounds.','i came for the free food. there is no free food.','somebody should review this place. one star. the neighbors are murderous.','they said it’d be an adventure. they didn’t say about the bugs.'];
+const TK=['fam','fear','wish','hobby','regret','memory'],LBL={fam:'their family',fear:'what scares them',wish:'what they hope for',hobby:'life back home',regret:'a regret',memory:'a cherished memory'};
+function opener(a,b){if(Math.random()>.5)return[];const r=trust(a,b);if(r<-10)return[];return[[0,r>25||a.allies.has(b.id)?OPF[a.pers](b.name):pick(OPS[a.pers])]]}
+function share(a,k){const v=a.bk[k];switch(k){case'fam':return v?(v.startsWith('my ')?`${v} is waiting for me. that’s who i’m doing this for.`:`i have ${v} waiting for me. that’s who i’m doing this for.`):'there’s nobody waiting for me. strange how that makes it easier and harder.';case'fear':return pick([`i’m scared of ${v}. out here more than ever.`,`i never told anyone this: i’m afraid of ${v}.`]);case'wish':return `if i get out of this, i just want ${v}.`;case'hobby':return `back home i spent every free hour ${v}.`;case'regret':return `${v}. it still bothers me.`;default:return `i keep thinking about ${v}. it gets me through the nights.`}}
+const hasLore=(a,b)=>a.lore[b.id]&&Object.keys(a.lore[b.id]).length>0;
+function deepTalk(a,b,d0=0){
+ a.told[b.id]=a.told[b.id]||new Set();const free=TK.filter(k=>!a.told[b.id].has(k));
+ if(!free.length)return hasLore(a,b)?remember(a,b,d0):smalltalk(a,b,d0);
+ const k=pick(free);
+ if(b.pers==='cold'&&trust(b,a)<20&&Math.random()<.5){const d=conv(a,b,[...opener(a,b),[0,LI[a.pers]],[1,'why are you telling me this?'],[0,'...i don’t know. forget it.']],d0);adj(b,a,1);return d}
+ a.told[b.id].add(k);(b.lore[a.id]=b.lore[a.id]||{})[k]=a.bk[k];
+ const same=k!=='fam'&&b.bk[k]===a.bk[k],L=[...opener(a,b),[0,LI[a.pers]],[0,share(a,k)],[1,same?pick(['wait. me too. exactly that.','that’s... exactly how i feel.']):pick(RB[b.pers])]];
+ let bump=7+(same?5:0),k2=null;
+ b.told[a.id]=b.told[a.id]||new Set();const fb=TK.filter(x=>!b.told[a.id].has(x));
+ if(fb.length&&trust(b,a)>-5&&Math.random()<.45+b.soc*.3){k2=pick(fb);b.told[a.id].add(k2);(a.lore[b.id]=a.lore[b.id]||{})[k2]=b.bk[k2];L.push([1,pick(['since you told me... can i say something too?','you trusted me, so.'])],[1,share(b,k2)],[0,pick(RB[a.pers])]);bump+=4}
+ const d=conv(a,b,L,d0);adj(b,a,bump);adj(a,b,bump*.7);a.mor=Math.min(100,a.mor+4);b.mor=Math.min(100,b.mor+4);
+ think(a,'opens up to '+b.name+' about '+LBL[k]);think(b,a.name+' told me about '+LBL[k]);
+ ponder(b,pick(['maybe i can trust them.','i didn’t expect that.','they’re not what i thought.']),d+LD);
+ if(Math.random()<.3)log(`${fn(a)} opens up to ${fn(b)} about ${LBL[k]}.`,'social');
+ return d}
+function remember(a,b,d0=0){
+ const l=a.lore[b.id],ks=l?Object.keys(l):[];if(!ks.length)return 0;const k=pick(ks),v=l[k];let L;
+ if(k==='fam')L=v?[[0,`do you think ${yr(v)} knows you’re still alive?`],[1,pick(['i hope so.','i hope they’re not watching.','every night i tell myself they are.'])]]:[[0,'you said nobody’s waiting for you. i meant it when i said i’d stick around.'],[1,'...thanks.']];
+ else if(k==='fear')L=[[0,`are you still scared of ${v}?`],[1,pick(['every second.','less, when you’re around.','yes. i just hide it better now.'])]];
+ else if(k==='wish')L=[[0,`you still want ${v}, right?`],[1,pick(['more than ever.','i do. don’t laugh.','it’s the only thing keeping me going.'])]];
+ else if(k==='hobby')L=[[0,`do you ever think about ${v}?`],[1,pick(['all the time.','it’s the thing i miss most.','every day. my hands remember it.'])]];
+ else if(k==='regret')L=[[0,'i keep thinking about what you told me. the regret.'],[1,pick(['it doesn’t get lighter.','telling you helped, a little.'])],[0,'you don’t have to carry it alone out here.']];
+ else L=[[0,`tell me more about ${v}.`],[1,pick(['we were all together. loud, warm, ordinary. i’d give anything for ordinary.','it wasn’t much. but it was ours.'])]];
+ const d=conv(a,b,L,d0);adj(a,b,4);adj(b,a,4);a.mor=Math.min(100,a.mor+3);b.mor=Math.min(100,b.mor+3);think(a,'remembers what '+b.name+' told me');return d}
+function jokeAround(a,b,d0=0){
+ const base={friendly:.8,kind:.65,silly:.9,neutral:.5,shy:.5,competitive:.3,cold:.12,stoic:.25}[b.pers];
+ const ok=Math.random()<clamp(base+trust(b,a)/150,.05,.95);let d;
+ if(ok){d=conv(a,b,[...opener(a,b),[0,pick(JK)],[1,pick(b.pers==='stoic'||b.pers==='cold'?['...hm. that was almost funny.','tch. don’t quit your day job.']:['ha! okay, that was good.','don’t make me laugh, someone will hear us.','you’re ridiculous.','i needed that, honestly.'])]],d0);adj(b,a,6);adj(a,b,5);a.mor=Math.min(100,a.mor+5);b.mor=Math.min(100,b.mor+5);think(b,a.name+' made me laugh')}
+ else{const bad=b.pers==='cold'&&trust(b,a)<0;d=conv(a,b,[...opener(a,b),[0,pick(JK)],[1,pick(b.pers==='competitive'?['focus. this isn’t a game.','save it for the sponsors.']:b.pers==='cold'?['not funny.','pointless.']:['...','um. not really the moment.'])],[0,pick(['tough crowd.','right. sorry.','too soon, huh.'])]],d0);if(bad){adj(b,a,-5)}else adj(b,a,1)}
+ return d}
+function offerFood(a,b,d0=0){
+ const d=conv(a,b,[...opener(a,b),[0,pick(OF[a.pers])],[1,pick(THX[b.pers])]],d0);
+ a.inv.food--;b.inv.food++;adj(b,a,15);adj(a,b,6);b.hunger=Math.min(100,b.hunger+15);
+ log(`${fn(a)} shares food with ${fn(b)}.`,'social');think(a,'shares food with '+b.name);think(b,a.name+' shared food with me');return d}
+function compliment(a,b,d0=0){
+ let L,d;
+ if(a.crush===b.id){const mutual=b.crush===a.id||b.mate===a.id;L=[[0,pick(['you look good, even covered in dirt.','i keep finding reasons to stay near you.','if we weren’t in here, i’d ask you something.'])],[1,mutual?pick(['i was hoping you’d say something.','stop. you’re making me blush.']):pick(['i’m flattered. i don’t feel the same way, though. i’m sorry.','that’s kind. but not like that.'])]];d=conv(a,b,L,d0);if(mutual){adj(b,a,8);adj(a,b,8)}else{adj(b,a,-1);a.mor=Math.max(0,a.mor-4)}return d}
+ L=[...opener(a,b),[0,pick(['you’ve kept your head this whole time.','i’m glad you’re still here.','you remind me of someone from home.',b.w!=='fists'?`you’re good with that ${b.w}.`:'you’re tougher than you look.'])],[1,pick(THX[b.pers])]];
+ d=conv(a,b,L,d0);adj(b,a,5);adj(a,b,3);return d}
+function argue(a,b,d0=0){
+ const d=conv(a,b,[[0,pick(['you’ve been watching me.','stay out of my way.','i don’t like how you look at me.','you think you’re better than me?'])],[1,pick(RA[b.pers])],[0,pick(['don’t push me.','this isn’t over.','watch yourself.'])]],d0);
+ adj(a,b,-7);adj(b,a,-7);a.wary.add(b.id);b.wary.add(a.id);think(a,'argues with '+b.name);think(b,'argues with '+a.name);
+ if(Math.random()<.5)log(`${fn(a)} and ${fn(b)} trade harsh words.`,'social');return d}
+function strategy(a,b,d0=0){
+ const al=T.filter(x=>x.alive).length,o=[];
+ o.push([[0,'we should find water before nightfall.'],[1,'agreed. i’ll scout. you keep the fire low.']]);
+ o.push([[0,'let’s take turns sleeping tonight.'],[1,pick(['i’ll take first watch.','i never sleep well anyway. i’ll take first.'])],[0,'wake me if anything moves.']]);
+ o.push([[0,'we need better weapons.'],[1,'then we search the bodies. someone dropped something good.']]);
+ o.push([[0,'if someone comes at us, which of us runs?'],[1,'neither. we stand.'],[0,'okay. okay. we stand.']]);
+ if(stormOn)o.push([[0,'the storm wall is closing in. we should move toward the middle soon.'],[1,'agreed. before it traps us.']]);
+ if(al<=6)o.push([[0,`only ${al} left. have you thought about what happens when it’s down to us?`],[1,pick(['every night. i don’t have an answer.','don’t. not yet.','if it comes to that... i don’t know.'])],[0,pick(['me neither. let’s not find out for as long as we can.','promise me you’ll tell me if you change your mind.'])]]);
+ if(a.hp<60||b.hp<60)o.push([[0,'you’re hurt. let me look at that.'],[1,'it’s fine.'],[0,'it’s not. sit down.']]);
+ const d=conv(a,b,pick(o),d0);adj(a,b,3);adj(b,a,3);const u=new Set([...a.known,...b.known]);a.known=u;b.known=new Set(u);think(a,'makes plans with '+b.name);return d}
+function socialPick(a,b,ally,d0=0){
+ const P=PERS[a.pers],r=trust(a,b),W=[];
+ if(ally)W.push([.2,()=>smalltalk(a,b,d0)]);
+ else W.push([.2+.3*a.cau,()=>askAbout(a,b)],[.3,()=>info(a,b)],[.22,()=>smalltalk(a,b,d0)],[a.allies.has(b.id)?0:.18,()=>propose(a,b)]);
+ W.push([r>5||ally?.12+a.soc*.3:0,()=>deepTalk(a,b,d0)],[Math.max(0,.1+(a.pers==='silly'?.3:a.pers==='friendly'?.15:a.pers==='cold'||a.pers==='stoic'?-.08:0)),()=>jokeAround(a,b,d0)],[ally?.15:0,()=>strategy(a,b,d0)],[a.inv.food>1&&b.inv.food===0&&b.hunger<70&&r>=0&&(P.cm>.4||ally)?.35:0,()=>offerFood(a,b,d0)],[r>10?.1+a.soc*.15:0,()=>compliment(a,b,d0)],[hasLore(a,b)?.2:0,()=>remember(a,b,d0)],[!ally&&r<0&&(a.aggr>.45||a.pers==='competitive'||a.pers==='cold')?.4:0,()=>argue(a,b,d0)]);
+ let tot=0;for(const w of W)tot+=Math.max(0,w[0]);let x=Math.random()*tot;
+ for(const w of W){x-=Math.max(0,w[0]);if(x<=0){return w[1]()||smalltalk(a,b,d0)}}
+ return smalltalk(a,b,d0)}
+function smalltalk(a,b,d0=0){
+ const al=T.filter(x=>x.alive).length,pool=[],lost=T.find(x=>!x.alive&&trust(a,x)>25);
+ if(a.d!==b.d)pool.push([[0,`district ${b.d}, right? ${DIST[b.d-1]}.`],[1,pick(['yeah. feels a long way from here.',`that\u2019s us. you\u2019re ${a.d}?`,'yeah. i miss it.'])],[0,`${DIST[a.d-1]} here. different worlds.`]]);
+ else pool.push([[0,`district ${a.d}. at least i\u2019m not alone.`],[1,'we look out for our own.'],[0,'that\u2019s the plan.']]);
+ if(a.co&&b.co){const x=a.co,y=b.co;
+  if(x===y){pool.push([[0,`you’re from ${x.n} too, aren’t you?`],[1,pick(['yes. it’s strange to meet someone from home here.',`${x.n}, born and raised.`])],[0,'i’d give anything to be back there right now.'],[1,'me too.']]);
+   pool.push([[0,`what part of ${x.n} are you from?`],[1,'a small town. you wouldn’t know it.'],[0,`i might. everyone in ${x.n} knows someone.`]])}
+  else{pool.push([[0,`where are you from? i’m from ${x.n}.`],[1,`${y.n}.`],[0,pick([`i’ve never met anyone from ${y.n}.`,'a long way from home, both of us.'])]]);
+   pool.push([[0,'what was your life like back home?'],[1,pick(['quiet, mostly. i miss it.','busy. there was always someone to look after.','ordinary. i never knew how much i liked ordinary.'])],[0,'that sounds nice. i miss mine too.']]);
+   pool.push([[0,`is ${y.n} anything like ${x.n}?`],[1,'not at all. i think you’d like it though.'],[0,'i’d like to see it someday.']])}}
+ if(night)pool.push([[0,'can\u2019t sleep out here.'],[1,pick(['me neither. every sound is a cannon.','keep one eye open.'])]]);
+ if(a.mor<50)pool.push([[0,'i don\u2019t know how many more nights i can do.'],[1,'one at a time. that\u2019s all i\u2019ve got.']]);
+ if(al<20)pool.push([[0,`${al} of us left.`],[1,pick(['don\u2019t count. it doesn\u2019t help.','i try not to think about it.'])]]);
+ if(lost)pool.push([[0,`i keep thinking about ${lost.name}.`],[1,pick(['i\u2019m sorry.','they deserved better.'])]]);
+ pool.push([[0,pick(['do you ever stop hearing the cannons?','does it get quieter at night for you too?'])],[1,pick(['never. i just learned to hear past them.','no. i hum to cover it up.','only when i’m too tired to listen.'])]]);
+ pool.push([[0,'what’s the first thing you’ll do if you get out of here?'],[1,pick(['sleep. for a week.','eat something warm.','hug someone. anyone.'])],[0,pick(['that’s a good answer.','i’d do the same.'])]]);
+ pool.push([[0,'have you noticed how quiet it gets right before something happens?'],[1,'every time. it makes my skin crawl.']]);
+ pool.push([[0,pick(['what’s the strangest thing you’ve seen out here?','seen anything strange lately?'])],[1,pick(['the sky. the faces of the dead. it never stops being strange.','a bird. just a bird. i almost cried.','nothing as strange as us, talking.'])]]);
+ if(b.w!=='fists')pool.push([[0,`that ${b.w} of yours. have you had to use it much?`],[1,b.kills>0?pick(['more than i wanted to.','enough.']):pick(['not yet. i hope i never do.','only to scare people off.'])]]);
+ if(b.hp<70)pool.push([[0,'you’re hurt. are you alright?'],[1,pick(['i’ll live. probably.','it looks worse than it is.','just a scratch.'])],[0,'be careful anyway.']]);
+ const d=conv(a,b,[...opener(a,b),...pick(pool)],d0);adj(a,b,4);adj(b,a,4);a.mor=Math.min(100,a.mor+3);b.mor=Math.min(100,b.mor+3);think(a,'talks with '+b.name);return d}
+function propose(a,b){
+ const ok=trust(b,a)>-30&&b.allies.size<3&&(b.soc*.6+trust(b,a)/150+(b.hp<50?.15:0)-b.aggr*.25)>Math.random()*.6+.05;
+ let d=conv(a,b,[[0,pick(['team up?','stay together?','watch each other\u2019s backs?'])],[0,pick(['there\u2019s strength in numbers.','i\u2019d rather not do this alone.','you handle yourself well. i\u2019ve noticed.'])]]);
+ if(ok){d=conv(a,b,[[1,pick(['deal.','alright.','together, then.'])],[1,pick(['i\u2019ll watch your back.','don\u2019t make me regret this.'])]],d);a.allies.add(b.id);b.allies.add(a.id);adj(a,b,25);adj(b,a,25);ponder(b,pick(['i hope i don\u2019t regret this.','safer together. for now.']),d+LD);log(`${fn(a)} and ${fn(b)} form an alliance.`,'social');for(const[x,y]of[[a,b],[b,a]])if(x.lie>.65&&Math.random()<.5){x.plot=y.id;think(x,'pretends to ally with '+y.name+', plans to betray them later');ponder(x,'they trust me. that\u2019s all i need.',d+LD)}}
+ else{d=conv(a,b,[[1,b.aggr>.6?'i work better alone.':trust(b,a)<0?'i don\u2019t trust you yet.':'not right now.'],[0,pick(['fine. good luck out there.','understood.'])]],d);adj(a,b,-5)}
+ return d}
+function talk(a,b){
+ a.talkCd[b.id]=b.talkCd[a.id]=t+30;
+ const x=Math.random(),nd=needOf(a);let e=0;
+ if(nd&&x<.6)e=askFor(a,b,nd);
+ else if(a.rev!=null&&T[a.rev].alive&&!a.seen[a.rev]&&x<.7)e=askWhere(a,b);
+ else e=socialPick(a,b,false);
+  if(Math.random()<.45)e=conv(a,b,[[0,pick(CL[a.pers])]],e);
+ const hold=Math.min(14,Math.max(3.6,e+.4));
+ a.busy={t:hold,l:'Talking with '+b.name,f:()=>{}};
+ if(!b.busy&&!b.wind)b.busy={t:hold,l:'Talking with '+a.name,f:()=>{}}}
+function gossip(a,b){
+ a.gCd=b.gCd=t+30;let msg=null;
+ {let d=tell(a,b,0);d=tell(b,a,d);if(Math.random()<.6)socialPick(a,b,true,d)}
+ const u=new Set([...a.known,...b.known]);a.known=u;b.known=new Set(u);
+ 
+}
+const fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+function think(a,txt){a.tl.unshift({t,txt:txt.toLowerCase()});if(a.tl.length>40)a.tl.pop()}
+const DIST=['luxury','masonry','technology','fishing','power','transport','lumber','textiles','grain','livestock','farming','coal'],LD=2.4;
+const ago=d=>d<30?'just now':d<90?'a minute ago':d<240?'a few minutes ago':'a while ago';
+function where(p){
+ if(dd(p,C)<130)return'near the cornucopia';
+ const k=terrAt(p.x,p.y);
+ if(k===TD)return'out on the open water';
+ if(k===TS)return'wading through the shallows';
+ let b=null,bd=110;for(const q of WATER){const d=dd(p,q);if(d<bd){bd=d;b=q}}
+ if(b)return b.rv?'by the river':'by the water';
+ return['on the sandy shore','out on the dry flats','in the open meadow','in the woods','deep in the jungle','in the marsh','up on the rocky ridge','high on the peaks'][k-2]}
+function conv(a,b,lines,d=0){for(const[w,tx]of lines){say(w?b:a,tx,d);d+=LD}return d}
+function fakeDet(s,c){const co=corpses.find(x=>x.id===c.vs[0]);return{t:t-rnd(15,200),x:co?co.x:s.x,y:co?co.y:s.y,w:T[c.k].w}}
+function accuse(s,r,k,v,c,det){
+ const loc=det&&det.x!=null?' '+where(det):'',when=det&&det.t!=null?ago(t-det.t):'',kn=k.name,vn=v.name,L=[];
+ if(c.hear!=null){const h=T[c.hear].name;
+  L.push(pick([`${h} told me ${kn} killed ${vn}.`,`i heard ${kn} killed ${vn}. ${h} said so.`]));
+  L.push(pick(['i can\u2019t say i saw it myself.','take it for what it\u2019s worth.',`${h} seemed sure.`]))}
+ else if(!c.lie){
+  L.push(pick([`i saw ${kn} kill ${vn}${loc}.`,`${kn} killed ${vn}${loc}. i watched it happen.`,`i was there when ${kn} got ${vn}${loc}.`]));
+  if(c.vs.length>1)L.push(`and ${T[c.vs[1]].name} too. that\u2019s ${c.vs.length} dead by ${ob(k)}.`);
+  const o=[];
+  if(when)o.push(`it was ${when}.`);
+  if(det&&det.w&&det.w!=='fists')o.push(`${kn} used ${/^[aeiou]/.test(det.w)?'an':'a'} ${det.w}. ${s.cau>.5?'i froze.':'it was quick.'}`);
+  else if(det&&det.w)o.push(`${kn} did it with bare hands.`);
+  if(s.cau>.6)o.push('i didn\u2019t dare move. i just watched.');
+  if(s.aggr>.7)o.push(`i\u2019d put ${ob(k)} down myself, given the chance.`);
+  if(s.soc>.6)o.push('i thought you should know.');
+  L.push(pick(o));
+  if(Math.random()<.5)L.push(`stay away from ${ob(k)}.`)}
+ else{
+  L.push(pick([`${kn} killed ${vn}. i saw the whole thing${loc}.`,`it was ${kn}. i found ${vn}\u2019s body with ${ob(k)} standing over it.`,`${kn} did it. ${vn} never had a chance.`]));
+  L.push(pick([`it happened ${when||'earlier'}. i swear it.`,'i\u2019d swear on my district.','why would i lie about this?',`you can\u2019t trust ${kn}. believe me.`]));
+  if(s.kills>0&&Math.random()<.5)L.push(`don\u2019t let ${kn} get close to you.`)}
+ return L.slice(0,3)}
+function speak(s,r,c,dl){
+ const det=c.lie?fakeDet(s,c):(s.kdet[c.vs[0]]||null);let d=dl;
+ for(const x of accuse(s,r,T[c.k],T[c.vs[0]],c,det)){say(s,x,d);d+=LD}return d}
+function tell(s,r,dl=0){
+ if(!s.alive||!r.alive)return dl;let c=null;
+ const lies=Math.random()<s.lie*(s.allies.has(r.id)?.3:1)*(s.kills>0?1.3:.8),dead=T.filter(x=>!x.alive);
+ if(lies&&dead.length){const f=T.filter(x=>x!==s&&x!==r&&x.alive).sort((p,q)=>trust(s,p)-trust(s,q))[0],v=pick(dead);
+  if(f&&v.id!==f.id){c={k:f.id,vs:[v.id],lie:1};think(s,`lies to ${r.name}: claims ${f.name} killed ${v.name}`+(s.kills>0?', deflecting suspicion':''))}}
+ else{
+  const hs=s.heard.filter(h=>h.ok&&h.src!==r.id&&h.k!==r.id&&h.k!==s.id&&T[h.k].alive);
+  if(hs.length&&Math.random()<.25){const h=pick(hs);c={k:h.k,vs:h.vs,lie:0,hear:h.src};think(s,`passes on what ${T[h.src].name} said about ${T[h.k].name}`)}
+  else{const ks=Object.keys(s.know);if(ks.length){const k=+pick(ks);c={k,vs:s.know[k],lie:0};think(s,`tells ${r.name} the truth about ${T[k].name}`)}}}
+ if(!c)return dl;
+ return receive(r,s,c,speak(s,r,c,dl))}
+function receive(r,s,c,dl=0){
+ const k=T[c.k],v=T[c.vs[0]];
+ if(Object.keys(r.know).some(q=>+q!==c.k&&c.vs.some(x=>r.know[q].includes(x)))){adj(r,s,-50);r.liars.add(s.id);{const re=Object.keys(r.know).find(q=>+q!==c.k&&c.vs.some(x=>r.know[q].includes(x)));ponder(r,re!=null?pick([`that can\u2019t be true. i saw ${T[re].name} do it.`,`${k.name}? no. i watched ${T[re].name} kill ${v.name}.`]):'that can\u2019t be true...',dl)}think(r,`${s.name} claims ${k.name} killed ${v.name}, but i saw otherwise: liar`);log(`${fn(r)} catches ${fn(s)} lying.`,'social');
+  say(r,pick(['that\u2019s not what i saw.','you\u2019re lying. i was there.','funny. that\u2019s not how i remember it.']),dl);say(r,pick(['don\u2019t try that on me again.','i won\u2019t forget this.']),dl+LD);return dl+2*LD}
+ const ok=Math.random()<clamp(.3+trust(r,s)/160-r.cau*.15,.05,.9)&&!r.liars.has(s.id);
+ if(!r.heard.some(h=>h.src===s.id&&h.k===c.k))r.heard.push({k:c.k,vs:c.vs,src:s.id,lie:c.lie,ok});
+ let L,TH='';
+ if(ok){TH=trust(r,v)>25?pick([`${v.name}... gone.`,`i should have been there for ${v.name}.`]):trust(r,k)>10?pick([`i trusted ${k.name}. was i wrong?`,`${k.name}? i never saw it coming.`]):pick([`so ${k.name} is dangerous.`,`i\u2019ll watch ${ob(k)} closely.`,'one more reason to stay sharp.']);adj(r,k,-25);r.wary.add(c.k);think(r,`${s.name} says ${k.name} killed ${v.name}; i believe it`);
+  if(c.lie)log(`${fn(s)} deceives ${fn(r)}, framing ${fn(k)}.`,'social');
+  if(trust(r,v)>25&&r.rev==null)r.rev=c.k;
+  L=trust(r,v)>25?[pick([`${v.name}? no\u2026`,`not ${v.name}. please.`]),pick([`${k.name} is going to pay for this.`,'i won\u2019t forget this.'])]:
+   c.hear!=null?[pick(['hm. i\u2019ll keep that in mind.','i can\u2019t say i\u2019m surprised.'])]:
+   [pick(['thanks for telling me.',`i\u2019ll keep my distance from ${ob(k)}.`,`i had a feeling about ${ob(k)}.`,'good to know. i\u2019ll be careful.'])]}
+ else{think(r,`${s.name} says ${k.name} killed ${v.name}; i doubt it`);TH=r.liars.has(s.id)?`another lie from ${s.name}.`:trust(r,k)>30?pick([`not ${k.name}. i know ${ob(k)}.`,`that can\u2019t be true. ${k.name} wouldn\u2019t.`]):pick([`${s.name} could be lying. no proof either way.`,'what if they\u2019re just trying to scare me?','i can\u2019t trust anyone out here.']);
+  L=r.liars.has(s.id)?['i don\u2019t believe a word you say.']:trust(r,k)>30?[`${k.name} wouldn\u2019t do that.`,`i know ${ob(k)}. that doesn\u2019t add up.`]:r.cau>.6?['i don\u2019t know who to believe anymore.']:[pick(['maybe. i\u2019ll believe it when i see it.','how do i know you\u2019re not lying?'])]}
+ let d=dl;for(const x of L){say(r,x,d);d+=LD}ponder(r,TH,d);return d}
+function findBody(a,c){
+ a.corp.add(c);a.mor-=6;a.cau=Math.min(1,a.cau+.04);think(a,'finds the body of '+c.name+'; no idea who did it');ponder(a,trust(a,T[c.id])>25?`not ${c.name}. not like this.`:pick([`${c.name}. who did this?`,'someone is hunting out here.','that could have been me.']),.6);
+ if(trust(a,T[c.id])>25){a.mor-=20;say(a,'No... '+c.name+'?');log(`${fn(a)} finds ${fn(c)}\u2019s body and wonders who did this.`,'social')}
+}
+let SW='';const S=(s,w)=>{SW=w;return s};
+function stance(a,b,d){
+ const r=trust(a,b),ratio=pwr(a)/(pwr(b)+1),enemy=r<-40||a.rev===b.id||a.bt===b.id;
+ if(b.down)return enemy||(a.aggr>.7&&r<20)?S('attack','finishes off a collapsed rival'):thief(a,b,r)?S('steal','robs a collapsed tribute'):S('ignore','collapsed tribute; not worth the risk');
+ if(enemy)return(ratio>.7||a.aggr>.75)&&a.mor>20?S('attack','vendetta: '+b.name+' is an enemy and looks beatable'):S('flee',b.name+' is an enemy but too strong or too scared to face');
+ if(a.mor<20||(a.hp<30&&ratio<1))return S('flee','too shaken or hurt to risk a fight');
+ if(ratio<.5&&a.cau>.45)return S('flee','looks '+(1/ratio).toFixed(1)+'x stronger and i am cautious');
+ if(t<30&&a.brave&&d<160&&r<30&&a.aggr>.4)return S('attack','bloodbath: attacks rivals on sight');
+ if(grv(b)>.3&&r<=20&&a.aggr>.35&&ratio>.8&&((a.id*7+b.id*13)%10)/10<PERS[a.pers].ex)return S('attack','sees '+b.name+' grieving and vulnerable');
+  if(r<=20&&a.aggr>.55&&ratio>1.15+a.cau*.3)return S('attack','sees an easy target and feels aggressive');
+ if(a.wary.has(b.id))return ratio<1.25&&d<200?S('flee','warned about '+b.name+'; not worth the risk'):S('ignore','warned about '+b.name+'; keeping distance');
+ if(grv(b)>.3&&r>-10&&!(a.talkCd[b.id]>t)&&a.mor>25&&((a.id*5+b.id*11)%10)/10<PERS[a.pers].cm)return S('comfort','sees '+b.name+' grieving; wants to help');
+  if(thief(a,b,r))return S('steal','needs '+stealWant(a,b)+' and '+b.name+' has some');
+ if(!(a.talkCd[b.id]>t)&&(a.soc>.3||a.hunger<50||a.bleed>0)&&r>-25&&a.allies.size<3&&b.allies.size<3&&ratio>.4)return S('talk','no bad blood; wants to ask questions or ask for supplies');
+ return S('ignore','not worth the trouble');
+}
+function stealWant(a,b){const n=needOf(a);
+ if(n==='weapon')return b.spare.some(w=>pv(w)>pv(a.w)+2)?'weapon':null;
+ if(n&&b.inv[n]>0)return n;
+ if(a.w==='bow'&&a.arrows<3&&b.arrows>3)return'arrows';
+ if(a.hunger<70&&b.inv.food>1)return'food';
+ return null}
+function thief(a,b,r){return !(a.stc&&a.stc[b.id]>t)&&r<=35&&!!stealWant(a,b)&&a.lie*.45+a.aggr*.3+((a.hunger<40||a.bleed>0||(a.w==='fists'&&t>20))?.3:0)+((a.id*7+b.id*3)%10)/40>.5}
+function lift(a,b,k){
+ if(k==='weapon'){const s=b.spare.filter(w=>pv(w)>pv(a.w)+2).sort((p,q)=>pv(q)-pv(p))[0];if(!s)return 0;b.spare.splice(b.spare.indexOf(s),1);equip(a,s);return 1}
+ if(k==='arrows'){const n=Math.min(3,b.arrows);b.arrows-=n;a.arrows+=n;return n>0}
+ if(!(b.inv[k]>0))return 0;b.inv[k]--;a.inv[k]=Math.min(5,a.inv[k]+1);return 1}
+function steal(a,b){
+ const k=stealWant(a,b);if(!k)return;(a.stc=a.stc||{})[b.id]=t+90;
+ const lab=k==='weapon'?'a spare weapon':k;
+ const p=clamp(.3*a.skill+.25*a.lie+(night?.15:0)+(b.busy?.2:0)+(b.stun>0?.2:0)+(b.down?.45:0)+(b.mor<30?.1:0)-b.cau*.25,.06,.92);
+ if(Math.random()<p&&lift(a,b,k)){
+  a.busy={t:1.2,l:'Lifting '+lab+' from '+b.name,f:()=>{}};
+  think(a,'steals '+lab+' from '+b.name+(b.down?' (collapsed, easy)':''));
+  ponder(a,b.down?'sorry. you can’t use it anyway.':pick(['they never felt a thing.','quiet. quiet.']),.4);
+  log(`${fn(a)} steals ${lab} from ${fn(b)}${b.down?', who is collapsed':' without being noticed'}.`,'social');
+  for(const w of T)if(w.alive&&w!==a&&w!==b&&dd(w,a)<SIGHT*.6&&Math.random()<.5){adj(w,a,trust(w,b)>25?-30:-8);ponder(w,`did ${a.name} just rob ${b.name}?`,1)}
+  if(!b.sus)b.sus={id:a.id,t:t+rnd(6,25)}}
+ else{adj(b,a,-70);adj(a,b,-8);b.wary.add(a.id);a.mor=Math.max(0,a.mor-5);b.busy=null;
+  say(b,pick(['hey! thief!','get your hands off my pack!','i saw that!']),0);say(a,pick(['wasn’t me.','easy. i was just looking.']),LD);
+  ponder(b,`${a.name} just tried to rob me.`,LD*2);ponder(a,'too slow. they saw me.',LD*1.5);
+  think(b,'catches '+a.name+' stealing');log(`${fn(b)} catches ${fn(a)} trying to steal ${lab}.`,'social')}}
+let skyT;
+function announce(){
+ const f=T.filter(x=>!x.alive&&!x.ann),al=T.filter(x=>x.alive).length,sk=$('#sky');f.forEach(x=>x.ann=1);
+ log(f.length?`The anthem plays and the Capitol shows the fallen: ${f.map(x=>`${fn(x)} (D${x.d})`).join(', ')}.`:'The anthem plays. Nobody fell today.','gm');
+ sk.innerHTML=`<h3>${f.length?'the fallen':'no one fell today'}</h3>`+f.map((x,i)=>`<span class="fc" style="animation-delay:${i*.35}s"><b style="background:${hue(x.d)}">${x.d}</b>${esc(fn(x))}</span>`).join('');
+ sk.classList.add('on');clearTimeout(skyT);skyT=setTimeout(()=>sk.classList.remove('on'),4500+f.length*350);
+ if(!f.length)return;
+ for(const w of T){if(!w.alive)continue;
+  const fr=f.filter(x=>trust(w,x)>25),mine=f.filter(x=>x.cause==='killed by '+w.name);for(const x of f)mourn(w,x,true);
+  if(fr.length){w.mor=Math.max(0,w.mor-6*fr.length);think(w,'sees '+fr.map(x=>x.name).join(', ')+' in the sky: grief');ponder(w,fr.length>1?`${fr.map(x=>x.name).join(' and ')}. both gone.`:pick([`${fr[0].name}’s face in the sky...`,`i saw ${fr[0].name} up there. no...`]),rnd(.5,3.5))}
+  else if(mine.length&&Math.random()<.7)ponder(w,pick([`${mine[0].name}’s face in the sky. that was me.`,'they put my kill up there. everyone knows what i am.']),rnd(.5,3.5));
+  else if(Math.random()<.35)ponder(w,pick([`${f.length} fell today. ${al} left.`,`${al} of us. the odds are shrinking.`,'every face up there could have been mine.']),rnd(.5,3.5))}}
+const SYM={f:'♀',m:'♂',n:'⚧'},SC={f:'#ff8fb8',m:'#7cc4ff',n:'#c9a2ff'},gSym=a=>`<span class="gs ${gen(a)}">${SYM[gen(a)]}</span>`;
+const OR=[['straight','straight'],['gay','gay / lesbian'],['bi','bi / pan'],['ace','ace']],gen=a=>a.pr[0]==='she'?'f':a.pr[0]==='he'?'m':'n';
+function rOri(){const x=Math.random();return x<.62?'straight':x<.78?'gay':x<.95?'bi':'ace'}
+function attr(a,b){const o=a.ori;if(o==='ace')return false;if(o==='bi')return true;const g=gen(a),h=gen(b);
+ if(o==='gay')return g===h;return g==='n'?h!=='n':g!==h&&h!=='n'}
+function confess(a,b){
+ a.cfCd=t+150;a.talkCd[b.id]=b.talkCd[a.id]=t+30;
+ let d=conv(a,b,[[0,pick(['can i tell you something?','there’s something i haven’t said.'])],[0,pick(['i think i’m falling for you.','you’re the only good thing in this place.','i don’t want to be just your friend.'])]]);
+ const yes=attr(b,a)&&trust(b,a)>30&&Math.random()<.35+.45*b.soc-.2*b.aggr;
+ think(a,'confesses feelings to '+b.name);
+ if(yes){d=conv(a,b,[[1,pick(['i feel the same.','i’ve been hoping you’d say that.','me too. i didn’t dare.'])],[1,pick(['stay with me?','then let’s do this together.'])],[0,'always.']],d);
+  a.mate=b.id;b.mate=a.id;a.crush=b.crush=null;a.allies.add(b.id);b.allies.add(a.id);adj(a,b,30);adj(b,a,30);a.mor=Math.min(100,a.mor+18);b.mor=Math.min(100,b.mor+18);
+  log(`${fn(a)} and ${fn(b)} become a couple.`,'social');ponder(a,'for the first time since the reaping, i feel hopeful.',d);ponder(b,'is this how it feels to not be afraid?',d+LD*.5)}
+ else{const why=!attr(b,a)?pick(['i like you. i do. just not like that.','you’re a good friend. i can’t be more.']):pick(['not now. i can’t think about that here.','i’m not ready.']);
+  d=conv(a,b,[[1,why],[0,pick(['i understand. thank you for being honest.','forget i said anything.'])]],d);
+  a.crush=null;a.mor=Math.max(0,a.mor-12);adj(a,b,-3);ponder(a,pick(['i shouldn’t have said anything.','it’s fine. it’s fine.']),d);log(`${fn(a)} confesses to ${fn(b)}, but it isn’t returned.`,'social')}
+ const hold=Math.min(14,Math.max(4,d+.4));a.busy={t:hold,l:'Confessing feelings to '+b.name,f:()=>{}};b.busy={t:hold,l:'Talking with '+a.name,f:()=>{}}}
+function romance(dt){
+ const L=T.filter(x=>x.alive);
+ for(const a of L){
+  if(a.mate!=null){const m=T[a.mate];
+   if(!m.alive){a.mate=null;continue}
+   if(!a.allies.has(m.id)||!m.allies.has(a.id)||trust(a,m)<10||trust(m,a)<10){a.mate=m.mate=null;a.mor=Math.max(0,a.mor-12);m.mor=Math.max(0,m.mor-12);log(`${fn(a)} and ${fn(m)} break up.`,'social');ponder(a,'it’s over.',.5);ponder(m,'i thought we had something.',1.5);continue}
+   if(dd(a,m)<60){a.aft=(a.aft||0)-dt;if(a.aft<=0){a.aft=rnd(40,90);a.mor=Math.min(100,a.mor+4);if(Math.random()<.6)ponder(a,pick([`i’m glad it’s ${m.name}.`,'as long as we’re together, i can do this.']));else say(a,pick(['stay close.','we’ll get through this.',`i’ve got you, ${m.name}.`]))}}
+   else if(dd(a,m)>350&&Math.random()<.01*dt)ponder(a,`where is ${m.name}? please be okay.`);
+   continue}
+  if(a.crush!=null){const c=T[a.crush];if(!c.alive||c.mate!=null){a.crush=null;if(c.alive)ponder(a,`${c.name} is taken. i should let it go.`,.5)}}
+  for(const b of L){if(b===a||b.mate!=null||!attr(a,b))continue;
+   if(dd(a,b)>90||a.hp<30||b.hp<30||a.mor<20||a.wind||b.wind||trust(a,b)<30||trust(b,a)<20)continue;
+   const v=a.bd[b.id]=(a.bd[b.id]||0)+dt;
+   if(a.crush==null&&v>40&&a.soc>.3&&Math.random()<dt*(.04+.06*a.soc)){a.crush=b.id;think(a,'is falling for '+b.name);ponder(a,pick([`${b.name}... why does my heart do that?`,`i keep looking at ${b.name}.`,'i shouldn’t feel this out here.']))}
+   else if(a.crush===b.id&&v>75&&dd(a,b)<60&&!a.busy&&!b.busy&&!(a.cfCd>t)&&Math.random()<dt*.06)confess(a,b)}}}
+function wantCraft(a){
+ const c=[];if(a.w==='bow'&&a.arrows<3)c.push('arrows');
+ for(const k of['axe','spear','knife','stick','bow'])if(pv(k)>pv(a.w)+2)c.push(k);
+ let best=null,bm=99;
+ for(const k of c){let m=0;for(const x in REC[k])m+=Math.max(0,REC[k][x]-a.inv[x]);if(m<bm){bm=m;best=k}}
+ if(!best)return null;if(bm===0)return{now:1,item:best};
+ const lack=Object.keys(REC[best]).filter(x=>REC[best][x]>a.inv[x]);let n=null,bd=1e9;
+ for(const o of a.known)if(o.n>0&&lack.includes(o.k)&&dd(o,C)<R-50){const d=dd(a,o);if(d<bd){bd=d;n=o}}
+ return n?{node:n}:null;
+}
+function equip(a,k){const i=a.spare.indexOf(k);if(i>=0)a.spare.splice(i,1);if(a.w!=='fists'&&a.spare.length<2)a.spare.push(a.w);a.w=k}
+function craft(a,k){for(const x in REC[k])a.inv[x]-=REC[k][x];if(k==='arrows')a.arrows+=4;else{equip(a,k);log(`${fn(a)} crafts a ${k}.`,'social')}}
+function loot(a,c){const got=[];for(const k in c.inv){if(c.inv[k]>0)got.push(c.inv[k]+' '+k);a.inv[k]+=c.inv[k];c.inv[k]=0}if(c.arrows>0)got.push(c.arrows+' arrows');a.arrows+=c.arrows;c.arrows=0;
+ for(const w of [c.w,...(c.spare||[])]){if(w==='fists')continue;got.push(w);if(pv(w)>pv(a.w))equip(a,w);else if(a.spare.length<2)a.spare.push(w)}
+ c.w='fists';c.spare=[];c.looted=true;
+ if(got.length){log(`${fn(a)} loots ${fn(c)}’s body: ${got.join(', ')}.`,'social');ponder(a,trust(a,T[c.id])>25?`i’m sorry, ${c.name}. i need this.`:pick(['you won’t need these.','nobody is watching.']),.3)}}
+function wound(b,a,loc,dmg,kind,wk){
+ const s=WP[wk];let bled=false;
+ if(kind==='blunt'){if(Math.random()<.08+dmg/200){b.bleed=Math.min(5,b.bleed+.4);b.open=Math.max(b.open,25);bled=true}}
+ else{const ch=Math.min(.95,(s.bl||.45)*(loc==='head'||loc==='torso'?1.15:1)+dmg/90);
+  if(Math.random()<ch){const add=(kind==='pierce'?1.3:1)*(.5+dmg/22)*rnd(.75,1.25)*(loc==='torso'||loc==='head'?1.15:1),was=b.bleed;
+   b.bleed=Math.min(5,b.bleed+add);b.open=Math.max(b.open,40+dmg*4);bled=true;
+   if(was<3&&b.bleed>=3){log(`${fn(b)} is bleeding heavily from ${fn(a)}\u2019s ${kind==='pierce'?'stab':'cut'}.`,'inj');think(b,'bleeding heavily; needs a bandage')}}}
+ if(loc==='leg'||loc==='arm'){const was=b[loc];
+  b[loc]=Math.min(1,b[loc]+clamp(dmg/40,.05,.6)*(kind==='blunt'?1.3:1)*rnd(.8,1.2));
+  if(kind==='blunt'&&dmg>10&&Math.random()<.2)b[loc]=Math.max(b[loc],.85);
+  if(was<.8&&b[loc]>=.8){log(`${fn(b)}\u2019s ${loc} is ${kind==='blunt'?'broken':'crippled'} by ${fn(a)}.`,'inj');think(b,'the '+loc+' is '+(kind==='blunt'?'broken':'crippled')+': '+(loc==='leg'?'can barely walk':'can barely use that arm'))}
+  else if(was<.45&&b[loc]>=.45)think(b,'serious '+loc+' injury: '+(loc==='leg'?'limping badly':'weaker attacks'))}
+ if(loc==='head'&&Math.random()<(kind==='blunt'?.7:.4)){const was=b.conc;b.conc=Math.max(b.conc,2+dmg/3.5);b.stun=Math.max(b.stun,.8);
+  if(was<=0&&dmg>12){log(`${fn(b)} is dazed by a blow to the head from ${fn(a)}.`,'inj');think(b,'concussed: vision swims, stumbling')}}
+ if(loc==='torso'&&kind==='blunt')b.st=Math.max(0,b.st-12);
+ return bled}
+function hit(a,b,s,wk){
+ wk=wk||'fists';const r0=Math.random(),loc=r0<.07?'head':r0<.55?'torso':r0<.77?'arm':'leg',kind=WT[wk]||'blunt';
+ const mult={head:1.7,torso:1,arm:.7,leg:.75}[loc],crit=Math.random()<.05,fat=(.7+.3*a.st/100)*(1-.35*a.arm)*(1-.15*a.pain/100);
+ const dmg=s.d*1.1*rnd(.75,1.25)*mult*(crit?1.5:1)*fat;
+ b.stun=Math.max(b.stun,loc==='head'?.6:.3);b.st=Math.max(0,b.st-8);
+ if(b.wind&&(dmg>9||loc==='head')&&Math.random()<.6){b.wind=null;b.cool=Math.max(b.cool,.5)}
+ const dx=b.x-a.x,dy=b.y-a.y,m=Math.hypot(dx,dy)||1,kb=Math.min(110,dmg*3.2)*(wk==='bow'?.3:1);b.vx+=dx/m*kb;b.vy+=dy/m*kb;
+ const bled=wound(b,a,loc,dmg,kind,wk);
+ if(bled){const n=2+Math.floor(dmg/6);for(let i=0;i<n;i++){const g=Math.random()*6.283,r=rnd(3,6+dmg*.8);stain(b.x+Math.cos(g)*r,b.y+Math.sin(g)*r,rnd(1.2,2.8)+dmg*.08,.65)}}
+ fx.push({x1:a.x,y1:a.y,x2:b.x,y2:b.y,t:.25,c:'255,90,70'});hurt(b,dmg,a)
+}
+function resolve(a){
+ const w=a.wind,b=w.tgt,s=WP[w.w];a.wind=null;if(!b.alive)return;const d=dd(a,b);
+ if(s.rng){a.arrows--;const V=520,tt=d/V,px=b.x+b.vx*tt,py=b.y+b.vy*tt,ang=Math.atan2(py-a.y,px-a.x)+rnd(-1,1)*(1.15-a.skill*s.acc)*.12*(1+d/300)*(1+a.pain/100*.8+(a.conc>0?.9:0)+a.arm*1.2);
+  proj.push({x:a.x,y:a.y,vx:Math.cos(ang)*V,vy:Math.sin(ang)*V,by:a,life:(s.r+120)/V});return}
+ const p=s.acc*a.skill*(.55+.45*a.st/100)*acf(a),def=b.down?0:(.1+.08*b.skill+(b.wind?0:.08))*(1-.5*b.leg)*(b.stun>0?.5:1);
+ if(d<=s.r*1.35&&Math.random()<p*(1-def)){
+  if(!b.down&&!b.wind&&b.stun<=0&&b.st>8&&Math.random()<(PRY[ew(b)]||0)*b.skill*(1-.5*b.arm)*(.3+b.st/100)){b.st-=6;a.st=Math.max(0,a.st-3);a.stun=Math.max(a.stun,.25);fx.push({x1:a.x,y1:a.y,x2:b.x,y2:b.y,t:.2,c:'255,220,120'});return}
+  hit(a,b,s,w.w)}
+ else fx.push({x1:a.x,y1:a.y,x2:b.x,y2:b.y,t:.2,c:'200,200,200'});
+}
+const nearItem=(a,f)=>{let b=null,bd=1e9;for(const i of items)if(!i.gone&&f(i)){const d=dd(a,i);if(d<bd){bd=d;b=i}}return b};
+function act(a,dt){
+ const _tr=terrAt(a.x,a.y),_ti=TI[_tr];
+ a.hunger-=.11*dt;a.thirst-=.17*_ti.th*dt;a.cool-=dt;a.stun-=dt;
+ if(a.hunger<=0)hurt(a,1.6*dt,null,'starvation');
+ if(a.thirst<=0)hurt(a,2.4*dt,null,'dehydration');
+ if(a.bleed>0){a.blood-=a.bleed*.55*dt;a.bleed=Math.max(0,a.bleed-(a.bleed<1?.12:.05)*dt);a.open=Math.max(a.open,20);
+  a.drip+=Math.hypot(a.vx,a.vy)*dt*.5+a.bleed*3*dt;if(a.drip>14){a.drip=0;stain(a.x+rnd(-3,3),a.y+rnd(-3,3),1.2+a.bleed*.5+Math.random()*1.2,.5)}
+  if(a.blood<=0)die(a,null,'blood loss')}else if(a.open>0)a.open-=dt;
+ if(a.inf>30)hurt(a,(a.inf-30)/70*.2*dt,null,'infection');
+ const dc=dd(a,C);if(dc>R)hurt(a,5*dt,null,'the storm wall');
+ for(const h of hazards)if(t-h.t0>h.warn&&dd(a,h)<h.r)hurt(a,20*dt,null,'the Gamemakers\u2019 firestorm');
+ if(!a.alive)return;
+ {const was=a.down;a.down=a.down?(a.blood<35||a.hp<14):(a.blood<22||a.hp<8);
+  if(a.down&&!was){a.wind=null;a.busy=null;log(`${fn(a)} collapses, too weak to stand.`,'inj');think(a,'collapses from blood loss and pain')}
+  else if(!a.down&&was)think(a,'struggles back to '+ps(a)+' feet')}
+ a.conc=Math.max(0,a.conc-dt);
+ a.pain=clamp(a.leg*35+a.arm*30+(100-a.hp)*.35+a.bleed*6+(a.conc>0?12:0)+a.inf*.2,0,100);
+ {const rs=a.resting?2.2:1;a.resting=false;
+  if(a.bleed<=0&&a.hunger>35&&a.thirst>35){
+   if(a.inf<30&&!a.down)a.hp=Math.min(100,a.hp+.12*rs*dt*(a.hunger>60?1:.6));
+   a.blood=Math.min(100,a.blood+(.16+(a.hunger>60&&a.thirst>60?.12:0))*rs*dt);
+   const hl=dt*rs;a.leg=Math.max(0,a.leg-(a.leg>=.8?.001:.003)*hl);a.arm=Math.max(0,a.arm-(a.arm>=.8?.001:.003)*hl)}
+  if(a.open<=0)a.inf=Math.max(0,a.inf-.08*dt);else a.inf=Math.min(100,a.inf+.25*dt*_ti.inf*(a.thirst<40?1.5:1))}
+ a.mor=Math.min(100,a.mor+.4*dt-(a.pain>50?(a.pain-50)/50*.9*dt:0));
+ if(a.w==='bow'&&a.arrows<=0){const s=a.spare.slice().sort((p,q)=>pv(q)-pv(p))[0];if(s)equip(a,s)}else if(a.arrows>0&&a.w!=='bow'&&a.spare.includes('bow'))equip(a,'bow');
+ if(_tr<=TS)a.thirst=Math.min(100,a.thirst+40*dt);
+ if(a.thirst<45)a.drink=true;if(a.thirst>92)a.drink=false;
+ for(const n of nodes)if(dd(a,n)<170)a.known.add(n);
+ for(const c of corpses)if(!a.corp.has(c)&&dd(a,c)<150)findBody(a,c);
+ for(const i of items)if(!i.gone&&dd(a,i)<16){if(i.k==='w'){if(pv(i.n)>pv(a.w)){equip(a,i.n);if(i.n==='bow')a.arrows+=6;i.gone=true}}else{a.inv.food++;i.gone=true}}
+ let foe=null,fs=null,best=1e9;
+ for(const b of T){if(b===a||!b.alive||a.allies.has(b.id))continue;const d=dd(a,b);if(d>SIGHT*_ti.ob*TI[terrAt(b.x,b.y)].vis)continue;const s=stance(a,b,d),p=d+(s==='attack'||s==='flee'?0:1000);if(p<best){best=p;foe=b;fs=s}}
+ const fd=foe?dd(a,foe):0;if(foe){a.seen[foe.id]={x:foe.x,y:foe.y};stance(a,foe,fd);a.sw=SW}
+ if(a.gCd<=t)for(const b of T)if(b!==a&&b.alive&&a.allies.has(b.id)&&dd(a,b)<80){gossip(a,b);break}
+ if(a.busy&&foe&&(fs==='attack'||fs==='flee'))a.busy=null;
+ let tx=null,ty=null,sp=1,th='',wtr=null;
+ hopeTick(a,dt);
+ const gb=!a.busy&&a.mor>25?T.find(x=>x.alive&&x!==a&&a.allies.has(x.id)&&grv(x)>.3&&dd(x,a)<260&&!(a.talkCd[x.id]>t)&&((a.id*5+x.id*11)%10)/10<PERS[a.pers].cm+.25):null;
+ a.sf=dc>R-(R>200?70:10)?true:R>200&&dc<R*.5?false:!!a.sf&&R>200;
+ const go=(x,y,s=1,w='')=>{tx=x;ty=y;sp=s;th=w};
+ const away=(p,len,s,w)=>{const dx=a.x-p.x,dy=a.y-p.y,m=Math.hypot(dx,dy)||1;go(a.x+dx/m*len,a.y+dy/m*len,s,w)};
+ const toNode=(n,w)=>{if(dd(a,n)>20)go(n.x,n.y,1,w);else a.busy={t:1.3,l:'Gathering '+n.k,f:()=>{if(n.n>0){n.n--;if(n.k==='berry')a.inv.food=Math.min(4,a.inv.food+1);else a.inv[n.k]=Math.min(5,a.inv[n.k]+1);}}}};
+ const hz=hazards.find(h=>dd(a,h)<h.r+40);
+ if(a.down){th='Collapsed, too weak to stand';if(a.bleed>0&&a.inv.bandage>0&&!a.busy)a.busy={t:2.5,l:'Bandaging a wound',f:()=>{a.inv.bandage--;dress(a)}}}
+ else if(hz)away(hz,220,1.2,'Escaping the firestorm');
+ else if(a.sf)go(C.x,C.y,1.15,'Running from the storm wall');
+ else if(foe&&(fs==='attack'||(fs==='flee'&&fd<30))){
+  const e=ew(a),s=WP[e];th='Fighting '+foe.name+(a.rev===foe.id?' (revenge)':'');
+  if(s.rng){if(fd<140)away(foe,140,1,th);else if(fd>s.r*.9)go(foe.x,foe.y,1,th)}
+  else if(fd>Math.max(s.r*.85,2*BR+2))go(foe.x,foe.y,1.15,th);
+  else go(a.x-(foe.y-a.y)/(fd||1)*a.str*50,a.y+(foe.x-a.x)/(fd||1)*a.str*50,.35,th);
+  if(a.cool<=0&&!a.wind&&a.st>4&&fd<=s.r&&(!s.rng||fd>30)){a.wind={t:s.w*slow(a),tgt:foe,w:e};a.cool=(s.cd+s.w)*slow(a);a.st-=s.st*(1+.4*a.leg)}
+ }
+ else if(foe&&fs==='flee'){const al=T.find(x=>x.alive&&a.allies.has(x.id)&&dd(a,x)<450&&dd(a,x)>60);if(al)go(al.x,al.y,1.2,'Fleeing toward '+al.name);else away(foe,240,1.2,'Fleeing from '+foe.name)}
+ else if(a.busy)tx=null;
+ else if(foe&&fs==='talk'){go(foe.x,foe.y,.9,'Approaching '+foe.name);if(fd<55)talk(a,foe)}
+ else if(foe&&fs==='comfort'){go(foe.x,foe.y,.9,'Going to comfort '+foe.name);if(fd<50)comfort(a,foe)}
+ else if(gb){go(gb.x,gb.y,.95,'Going to comfort '+gb.name);if(dd(a,gb)<50)comfort(a,gb)}
+ else if(foe&&fs==='steal'){go(foe.x,foe.y,.85,'Sneaking up on '+foe.name);if(fd<26)steal(a,foe)}
+ else if((a.bleed>0||(a.open>0&&a.hp<85))&&a.inv.bandage>0)a.busy={t:.8,l:'Bandaging a wound',f:()=>{a.inv.bandage--;dress(a)}};
+ else if(a.bleed>0&&a.inv.fiber>=2)a.busy={t:2,l:'Making a bandage',f:()=>{a.inv.fiber-=2;dress(a)}};
+ else if(a.hunger<55&&a.inv.food>0)a.busy={t:.8,l:'Eating',f:()=>{a.inv.food--;a.hunger=Math.min(100,a.hunger+38)}};
+ else if(a.drink&&(wtr=nearWater(a))){if(_tr===TS)th='Drinking';else go(wtr.x,wtr.y,1,'Heading to water')}
+ else{
+  const wi=nearItem(a,i=>i.k==='w'&&pv(i.n)>pv(a.w)+2&&dd(i,C)<R-40),wd=wi?dd(a,wi):1e9;
+  let fo=null;if(a.hunger<45){let bd=1e9;for(const i of items)if(!i.gone&&i.k==='f'&&dd(i,C)<R-40){const d=dd(a,i);if(d<bd){bd=d;fo=i}}for(const n of a.known)if(n.k==='berry'&&n.n>0&&dd(n,C)<R-40){const d=dd(a,n);if(d<bd){bd=d;fo=n}}}
+  const cp=corpses.filter(c=>a.corp.has(c)&&!c.looted&&dd(c,C)<R-40&&(c.inv.food+c.inv.wood+c.inv.stone+c.inv.fiber+c.inv.bandage>0||c.arrows>0||pv(c.w)>pv(a.w)+2||(c.spare||[]).some(w=>pv(w)>pv(a.w)+2))).sort((p,q)=>dd(a,p)-dd(a,q))[0];
+  const cr=wantCraft(a),rv=a.rev!=null&&T[a.rev].alive&&a.seen[a.rev];
+  if(t<14&&!a.brave)away(C,300,1,'Fleeing the Cornucopia');
+  else if(wi&&wd<(t<25?900:450))go(wi.x,wi.y,1.1,'Going for a '+wi.n);
+  else if(fo){if(fo.k==='f')go(fo.x,fo.y,1,'Looking for food');else toNode(fo,'Foraging berries')}
+  else if(inj(a)&&t>20&&!(rv&&a.aggr>.8)){th='Resting to recover from injuries';a.resting=true}
+  else if(a.bt!=null&&T[a.bt].alive){const q=T[a.bt];go(q.x,q.y,1.05,'Stalking '+q.name)}
+  else if(rv){go(rv.x,rv.y,1.05,'Hunting '+T[a.rev].name+' for revenge');if(dd(a,rv)<25)delete a.seen[a.rev]}
+  else if(cp&&dd(a,cp)<700){if(dd(a,cp)>18)go(cp.x,cp.y,1,'Going to loot '+cp.name);else a.busy={t:1.2,l:'Looting '+cp.name,f:()=>loot(a,cp)}}
+  else if(cr&&cr.now)a.busy={t:2.5,l:'Crafting '+cr.item,f:()=>craft(a,cr.item)};
+  else if(cr&&cr.node)toNode(cr.node,'Scavenging '+cr.node.k);
+  else if(a.st<25)th='Catching breath';
+  else{
+   const al=(a.mate!=null&&T[a.mate].alive?T[a.mate]:null)||T.filter(x=>x.alive&&a.allies.has(x.id)).sort((p,q)=>dd(a,p)-dd(a,q))[0];
+   if(al&&dd(a,al)>(al.id===a.mate?70:150))go(al.x,al.y,.9,'Following '+al.name);
+   else{a.wpT-=dt;if(!a.wp||a.wpT<=0||dd(a,a.wp)<25||dd(a.wp,C)>R-60){a.wp=rw();a.wpT=rnd(8,18)}go(a.wp.x,a.wp.y,.7,'Exploring')}
+  }
+ }
+ if(a.wind){a.wind.t-=dt;if(a.wind.t<=0)resolve(a);sp*=.3}
+ if(a.busy){th=a.busy.l;a.busy.t-=dt;tx=null;if(a.busy.t<=0){const b=a.busy;a.busy=null;b.f()}}
+ const sprint=sp>1.1&&a.st>8&&a.leg<.6&&a.blood>40;let wx=0,wy=0;
+ if(tx!=null){const spd=a.spd*(sprint?sp:Math.min(sp,1))*(.7+.3*a.st/100)*(a.stun>0?.4:1)*mob(a)*_ti.spd,dx=tx-a.x,dy=ty-a.y,m=Math.hypot(dx,dy);if(m>1){const f=Math.min(1,m/30);wx=dx/m*spd*f;wy=dy/m*spd*f}}
+ if(tx!=null){for(const b of T){if(b===a||!b.alive)continue;if(foe===b&&(fs==='attack'||fs==='talk'||fs==='steal'))continue;const ex=a.x-b.x,ey=a.y-b.y,d=Math.hypot(ex,ey);if(d>=AV||d<.01)continue;const k2=(1-d/AV)*a.spd*1.2;wx+=ex/d*k2;wy+=ey/d*k2}
+  const wm=Math.hypot(wx,wy),cap=a.spd*1.3;if(wm>cap){wx*=cap/wm;wy*=cap/wm}}
+ if(a.conc>0){wx+=Math.sin(t*4+a.id)*a.spd*.3;wy+=Math.cos(t*3.3+a.id*2)*a.spd*.3}
+ if(wx||wy){const m=Math.hypot(wx,wy),lk=Math.max(26,m*.4),bl=(x,y)=>{const k=terrAt(x,y);return k===TD||k===TPEAK};
+  if(!bl(a.x,a.y)&&bl(a.x+wx/m*lk,a.y+wy/m*lk))for(const r of[.6,-.6,1.2,-1.2,1.9,-1.9]){const s=r*a.str,c=Math.cos(s),n=Math.sin(s),nx=wx*c-wy*n,ny=wx*n+wy*c;if(!bl(a.x+nx/m*lk,a.y+ny/m*lk)){wx=nx;wy=ny;break}}}
+ const ka=1-Math.exp(-dt*6);a.dvx+=(wx-a.dvx)*ka;a.dvy+=(wy-a.dvy)*ka;
+ let ax=a.dvx-a.vx,ay=a.dvy-a.vy;const am=Math.hypot(ax,ay),mx=a.spd*4.5*dt;if(am>mx){ax*=mx/am;ay*=mx/am}
+ a.vx+=ax;a.vy+=ay;a.x=clamp(a.x+a.vx*dt,8,W-8);a.y=clamp(a.y+a.vy*dt,8,H-8);
+ 
+ a.st=clamp(a.st+((sprint&&tx!=null?-12:8*(a.hunger>20?1:.5)*(a.blood>60?1:.6)*(1-.3*a.leg)*(1-a.inf/200))-(tx!=null?_ti.st:0))*dt,0,100);
+ if(!(a.nth>0))a.nth=t+rnd(15,40);if(t>a.nth){a.nth=t+rnd(35,80);ambient(a)}
+ a.thought=th||'Resting';a.why=why(a,a.thought);
+ if(a.thought!==a.lastTh&&t-a.lastThT>1.5){a.lastTh=a.thought;a.lastThT=t;think(a,a.thought+(a.why?' \u00b7 '+a.why:''))}
+}
+function collide(){
+ const L=T.filter(a=>a.alive);
+ for(let it=0;it<3;it++){for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++){
+  const a=L[i],b=L[j],dx=b.x-a.x,dy=b.y-a.y,d2=dx*dx+dy*dy;if(d2>=4*BR*BR)continue;
+  let nx,ny,d=Math.sqrt(d2);if(d<.001){const g=(i*2.399+j)%6.283;nx=Math.cos(g);ny=Math.sin(g);d=0}else{nx=dx/d;ny=dy/d}
+  const o=(2*BR-d)/2;a.x-=nx*o;a.y-=ny*o;b.x+=nx*o;b.y+=ny*o;
+  const va=a.vx*nx+a.vy*ny;if(va>0){a.vx-=va*nx;a.vy-=va*ny}
+  const vb=b.vx*nx+b.vy*ny;if(vb<0){b.vx-=vb*nx;b.vy-=vb*ny}}
+  for(const a of L){a.x=clamp(a.x,8,W-8);a.y=clamp(a.y,8,H-8)}}}
+function step(dt){
+ if(over)return;
+ if(cd>0){cd-=dt;ov.textContent=cd>0?Math.ceil(cd):'';if(cd<=0){ov.textContent='';log('The gong sounds. Let the Games begin.','gm')}return}
+ t+=dt;
+ DL=daylight(t);SIGHT=270*(.55+.45*DL);{const nt=DL<.45;if(nt!==night){night=nt;log(nt?'Night falls. Visibility drops.':'Dawn breaks.','gm');if(nt)announce()}}
+ if(t>=240){if(!stormOn){stormOn=true;log('A storm wall starts closing on the arena.','gm')}R=Math.max(90-(T.filter(x=>x.alive).length<=3?Math.min(50,Math.max(0,(t-lastKill-300)/6)):0),1500-(t-240)*1.4)}
+ for(const n of nodes)if(n.n<=0&&(n.rg=(n.rg||0)+dt)>150){n.n=n.k==='berry'?2:3;n.rg=0}
+ if(t>=nextDrop){nextDrop+=90;const dp=landPtC(0,R*.6),x=dp.x,y=dp.y;
+  items.push({k:'w',n:pick(['sword','bow','spear','axe']),x,y,drop:1},{k:'f',x:x+14,y:y+10,drop:1},{k:'f',x:x-14,y:y+10,drop:1});log('A sponsor parachute lands in the arena.','gm')}
+ if(t>=nextHaz){nextHaz+=rnd(80,110);const hp=landPtC(0,R*.8);hazards.push({x:hp.x,y:hp.y,r:150,t0:t,warn:4,life:12});log('The Gamemakers ignite a firestorm.','gm')}
+ hazards=hazards.filter(h=>t-h.t0<h.life);
+ for(const a of T)if(a.alive&&!over)act(a,dt);
+ collide();
+ for(const a of T)if(a.alive&&a.plot!=null){const b=T[a.plot];if(!b.alive||!a.allies.has(b.id))a.plot=null;else if((dd(a,b)<60&&Math.random()<.4*dt)||(T.filter(x=>x.alive).length<=5&&Math.random()<.01*dt)){a.allies.delete(b.id);b.allies.delete(a.id);adj(b,a,-60);adj(a,b,-45);a.plot=null;log(`${fn(a)} betrays ${fn(b)}.`,'social');think(a,'betrays '+b.name+' as planned');say(a,'sorry.');ponder(b,'i should have seen this coming.',1.5);ponder(a,'it had to be done.',2.5)}}
+ endgame(dt);
+ if(T.filter(x=>x.alive).length<=6)for(const a of T)if(a.alive&&a.aggr>.6&&Math.random()<.006*dt)for(const id of a.allies){const b=T[id];a.allies.delete(id);b.allies.delete(a.id);adj(b,a,-60);adj(a,b,-45);log(`${fn(a)} betrays ${fn(b)}.`,'social');break}
+ romance(dt);
+ for(const b of T)if(b.alive&&b.sus&&t>b.sus.t){const th=T[b.sus.id];b.sus=null;if(th.alive&&Math.random()<.7){adj(b,th,-55);b.wary.add(th.id);think(b,'noticed something missing; suspects '+th.name);ponder(b,`something’s missing from my pack. ${th.name} was close.`);log(`${fn(b)} realises ${fn(th)} stole from ${ps(b)} pack.`,'social')}}
+ for(const p of proj){p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;for(const b of T){if(!b.alive||b===p.by)continue;if(Math.hypot(b.x-p.x,b.y-p.y)<10){p.life=0;if(Math.random()<.9)hit(p.by,b,WP.bow,'bow');break}}}
+ proj=proj.filter(p=>p.life>0);items=items.filter(i=>!i.gone);
+ fx.forEach(f=>f.t-=dt);fx=fx.filter(f=>f.t>0);
+}
+const hue=d=>`hsl(${(d-1)*30},78%,56%)`;
+function draw(){
+ const d=devicePixelRatio||1,z=cam.z;
+ if(follow&&sel&&sel.alive){const kc=1-Math.exp(-fdt*6);cam.x+=(sel.x-cam.x)*kc;cam.y+=(sel.y-cam.y)*kc}
+ ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#1b2418';ctx.fillRect(0,0,cv.width,cv.height);
+ ctx.setTransform(d*z,0,0,d*z,d*(vw/2-cam.x*z),d*(vh/2-cam.y*z));
+ ctx.drawImage(bg,0,0,W,H);
+ if(showBlood){for(const s of stains){const age=t-s.t,al=s.al*Math.max(0,1-age/500);if(al<.03)continue;ctx.globalAlpha=al;ctx.fillStyle=age<25?'#a3121c':'#5c0d12';ctx.beginPath();ctx.arc(s.x,s.y,Math.max(s.r,1.6/z),0,7);ctx.fill()}ctx.globalAlpha=1}
+ const k=Math.max(1,.6/z),rd=Math.max(BR,4.5/z);
+ for(const n of nodes){if(n.n<=0)continue;ctx.beginPath();
+  if(n.k==='wood'){ctx.fillStyle='#244a2c';ctx.arc(n.x,n.y,11*k,0,7)}
+  else if(n.k==='stone'){ctx.fillStyle='#9a9c95';ctx.arc(n.x,n.y,8*k,0,7)}
+  else if(n.k==='fiber'){ctx.fillStyle='#b9d37e';ctx.arc(n.x,n.y,6*k,0,7)}
+  else{ctx.fillStyle='#c8344a';ctx.arc(n.x,n.y,6*k,0,7)}
+  ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle='rgba(255,255,255,.5)';ctx.stroke()}
+ ctx.fillStyle='rgba(255,215,120,.25)';ctx.beginPath();ctx.arc(C.x,C.y,80,0,7);ctx.fill();
+ ctx.fillStyle='#e8b84a';ctx.strokeStyle='#5a3e08';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(C.x,C.y-24);ctx.lineTo(C.x-18,C.y+14);ctx.lineTo(C.x+18,C.y+14);ctx.closePath();ctx.fill();ctx.stroke();
+ for(const i of items){const s=Math.max(6,3.5/z);
+  if(i.drop){ctx.strokeStyle='rgba(255,230,140,.8)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(i.x,i.y,s*2+Math.sin(performance.now()/200)*3,0,7);ctx.stroke()}
+  if(i.k==='w'){ctx.fillStyle='#f4f4f4';ctx.strokeStyle='#222';ctx.lineWidth=1.5;ctx.fillRect(i.x-s,i.y-s,s*2,s*2);ctx.strokeRect(i.x-s,i.y-s,s*2,s*2)}
+  else{ctx.fillStyle='#f2994a';ctx.strokeStyle='#5a2b00';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(i.x,i.y,s,0,7);ctx.fill();ctx.stroke()}}
+ ctx.textAlign='center';ctx.textBaseline='middle';
+ for(const c of corpses){const a=T[c.id];ctx.globalAlpha=.85;ctx.fillStyle='#7b807a';ctx.strokeStyle='rgba(0,0,0,.55)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(c.x,c.y,rd,0,7);ctx.fill();ctx.stroke();
+  ctx.fillStyle='rgba(25,28,25,.85)';ctx.font=`600 ${rd*1.1}px 'Chakra Petch',system-ui`;ctx.fillText(a.d,c.x,c.y+rd*.05);
+  const s=rd*.75;ctx.globalAlpha=.4;ctx.strokeStyle='#111';ctx.lineWidth=Math.max(1.5,1.2/z);ctx.beginPath();ctx.moveTo(c.x-s,c.y-s);ctx.lineTo(c.x+s,c.y+s);ctx.moveTo(c.x+s,c.y-s);ctx.lineTo(c.x-s,c.y+s);ctx.stroke();ctx.globalAlpha=1;
+  if(a===sel){ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(c.x,c.y,rd*1.5,0,7);ctx.stroke()}}
+ if(DL<1){ctx.fillStyle=`rgba(6,10,38,${.66*(1-DL)})`;ctx.fillRect(0,0,W,H)}
+ for(const h of hazards){const w=t-h.t0<h.warn,p=.5+.5*Math.sin(performance.now()/90);ctx.fillStyle=w?`rgba(255,80,40,${.12+.1*p})`:`rgba(255,90,20,${.45+.2*p})`;ctx.strokeStyle='#ff5a28';ctx.lineWidth=3;ctx.beginPath();ctx.arc(h.x,h.y,h.r,0,7);ctx.fill();ctx.stroke()}
+ ctx.strokeStyle='rgba(255,255,255,.28)';ctx.lineWidth=2/z;
+ for(const a of T)if(a.alive)for(const id of a.allies)if(id>a.id&&T[id].alive&&dd(a,T[id])<400){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(T[id].x,T[id].y);ctx.stroke()}
+ for(const a of T)if(a.alive&&a.mate!=null&&a.mate>a.id&&T[a.mate].alive&&dd(a,T[a.mate])<400){const m=T[a.mate];ctx.strokeStyle='rgba(255,120,160,.7)';ctx.lineWidth=2.5/z;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(m.x,m.y);ctx.stroke();ctx.fillStyle='#ff6b9a';ctx.font=`${14/z}px 'Chakra Petch',system-ui`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('♥',(a.x+m.x)/2,(a.y+m.y)/2)}
+ for(const p of proj){ctx.strokeStyle='#fff';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-p.vx*.03,p.y-p.vy*.03);ctx.stroke()}
+ for(const f of fx){ctx.strokeStyle=`rgba(${f.c},${Math.min(1,f.t*5)})`;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(f.x1,f.y1);ctx.lineTo(f.x2,f.y2);ctx.stroke()}
+ if(DL<.9)for(const a of T)if(a.alive){const g=ctx.createRadialGradient(a.x,a.y,0,a.x,a.y,70);g.addColorStop(0,`rgba(255,235,170,${.35*(1-DL)})`);g.addColorStop(1,'rgba(255,235,170,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(a.x,a.y,70,0,7);ctx.fill()}
+ ctx.textAlign='center';ctx.textBaseline='middle';
+ for(const a of T){if(!a.alive)continue;
+  ctx.globalAlpha=a.down?.55:1;ctx.fillStyle=hue(a.d);ctx.strokeStyle='rgba(0,0,0,.7)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(a.x,a.y,rd,0,7);ctx.fill();ctx.stroke();ctx.globalAlpha=1;
+  ctx.fillStyle='#111';ctx.font=`600 ${rd*1.1}px 'Chakra Petch',system-ui`;ctx.fillText(a.d,a.x,a.y+rd*.05);
+  const bw=rd*2.2;ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(a.x-bw/2,a.y-rd*1.9,bw,rd*.4);ctx.fillStyle=`hsl(${a.hp*1.2},70%,50%)`;ctx.fillRect(a.x-bw/2,a.y-rd*1.9,bw*a.hp/100,rd*.4);
+  if(a.bleed>0){ctx.fillStyle='#d11';ctx.beginPath();ctx.arc(a.x+rd,a.y+rd,rd*.3,0,7);ctx.fill()}
+  ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(a.x-bw/2,a.y-rd*1.45,bw,rd*.2);ctx.fillStyle='#c0392b';ctx.fillRect(a.x-bw/2,a.y-rd*1.45,bw*clamp(a.blood,0,100)/100,rd*.2);
+  if(a.conc>0){ctx.fillStyle='#f2d33c';ctx.beginPath();ctx.arc(a.x-rd,a.y+rd,rd*.3,0,7);ctx.fill()}
+  if(a.leg>.45||a.arm>.45){ctx.fillStyle='#e9822a';ctx.beginPath();ctx.arc(a.x-rd*1.1,a.y-rd*.1,rd*.3,0,7);ctx.fill()}
+  if(a===sel){ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(a.x,a.y,rd*1.5,0,7);ctx.stroke()}}
+ const nf=10.5/z;ctx.font=`600 ${nf}px 'Chakra Petch',system-ui`;ctx.textAlign='center';ctx.textBaseline='middle';
+ for(const a of T){const sy=SYM[gen(a)],nw=ctx.measureText(a.name).width,sw=ctx.measureText(' '+sy).width,w=nw+sw+nf*.9,y=a.y+rd*2.2;ctx.globalAlpha=a.alive?1:.55;ctx.fillStyle='rgba(0,0,0,.6)';ctx.beginPath();ctx.roundRect(a.x-w/2,y-nf*.75,w,nf*1.5,nf*.45);ctx.fill();ctx.fillStyle=a===sel?'#ffd36b':a.alive?'#fff':'#c4c8c2';ctx.textAlign='left';ctx.fillText(a.name,a.x-w/2+nf*.45,y+nf*.05);ctx.fillStyle=a.alive?SC[gen(a)]:'#9a9e98';ctx.fillText(' '+sy,a.x-w/2+nf*.45+nw,y+nf*.05);ctx.textAlign='center';ctx.globalAlpha=1}
+ const fs=12/z,wrapT=(s,n=26)=>{const ln=[];let cu='';for(const wd of s.split(' ')){if(cu&&(cu+' '+wd).length>n){ln.push(cu);cu=wd}else cu=cu?cu+' '+wd:wd}ln.push(cu);return ln};let nb=0;
+ for(const a of T){if(!a.alive||nb>16)continue;const act=a.sq.filter(x=>t>=x.t0&&t<=x.t1).slice(-4);if(!act.length)continue;nb++;
+  let off=0;const base=a.y-rd*2.6;
+  for(let i=act.length-1;i>=0;i--){const q=act[i];ctx.font=`${q.th?'italic ':''}${fs}px 'Chakra Petch',system-ui`;
+   const ln=wrapT(q.txt),w=Math.max(...ln.map(s=>ctx.measureText(s).width))+fs*1.1,h=fs*(.5+1.25*ln.length),tg=off/fs;
+   q.o=q.o==null?tg-1.4:q.o+(tg-q.o)*(1-Math.exp(-fdt*16));q.a=Math.min(1,(q.a||0)+fdt*6);off+=h+fs*.4;
+   const bot=base-q.o*fs,top=bot-h,newest=i===act.length-1;ctx.globalAlpha=Math.min(q.a,clamp((q.t1-t)/2,0,1));
+   if(q.th){ctx.fillStyle='rgba(255,255,255,.16)';ctx.strokeStyle='rgba(255,255,255,.65)';ctx.lineWidth=1.2/z;ctx.setLineDash([4/z,3/z]);ctx.beginPath();ctx.roundRect(a.x-w/2,top,w,h,fs*.8);ctx.fill();ctx.stroke();ctx.setLineDash([]);
+    if(newest){ctx.fillStyle='rgba(255,255,255,.3)';ctx.beginPath();ctx.arc(a.x,bot+fs*.32,fs*.2,0,7);ctx.arc(a.x+fs*.12,bot+fs*.78,fs*.11,0,7);ctx.fill()}
+    ctx.shadowColor='rgba(0,0,0,.9)';ctx.shadowBlur=4;ctx.fillStyle='#fff'}
+   else{ctx.fillStyle='rgba(255,255,255,.95)';ctx.beginPath();ctx.roundRect(a.x-w/2,top,w,h,fs*.5);ctx.fill();
+    if(newest){ctx.beginPath();ctx.moveTo(a.x-fs*.35,bot-1/z);ctx.lineTo(a.x+fs*.35,bot-1/z);ctx.lineTo(a.x,bot+fs*.6);ctx.fill()}
+    ctx.fillStyle='#111'}
+   ln.forEach((s,j)=>ctx.fillText(s,a.x,top+fs*.25+fs*1.25*(j+.5)));ctx.shadowBlur=0;ctx.globalAlpha=1}}
+ if(false&&sel&&sel.alive){ctx.font=`600 ${12/z}px 'Chakra Petch',system-ui`;ctx.lineWidth=3/z;ctx.strokeStyle='#000';ctx.fillStyle='#fff';ctx.strokeText(sel.name,sel.x,sel.y+rd*2.4);ctx.fillText(sel.name,sel.x,sel.y+rd*2.4)}
+ ctx.beginPath();ctx.rect(-5000,-5000,10000,10000);ctx.arc(C.x,C.y,R,0,7);ctx.fillStyle='rgba(70,20,85,.5)';ctx.fill('evenodd');
+ if(stormOn){ctx.strokeStyle='rgba(225,130,255,.9)';ctx.lineWidth=5/z+2;ctx.beginPath();ctx.arc(C.x,C.y,R,0,7);ctx.stroke()}
+ ctx.strokeStyle='#000';ctx.lineWidth=4;ctx.strokeRect(0,0,W,H);
+}
+const WI={fists:'\u270a',stick:'\ud83e\udd62',knife:'\ud83d\udd2a',axe:'\ud83e\ude93',spear:'\ud83d\udd31',sword:'\ud83d\udde1\ufe0f',bow:'\ud83c\udff9'};
+function why(a,s){const q=s.toLowerCase(),h=Math.round(a.hunger),w=Math.round(a.thirst);
+ const m=[[/^confessing/,'wants to be more than friends'],[/^sneaking/,'needs supplies and thinks it can get away with it'],[/^(fighting|fleeing (from|toward)|approaching)/,a.sw],[/^escaping/,'standing in a firestorm zone'],[/^running from the storm/,'outside the safe zone'],[/bandage/,'bleeding'],[/^eating/,'hunger '+h],[/^(heading to water|drinking)/,'thirst '+w],[/^going for a/,'needs a better weapon'],[/^(looking for food|foraging)/,'hunger '+h],[/^going to comfort/,'someone nearby is grieving'],[/^(grieving|comforting|being comforted)/,'grief and care after a loss'],[/^stalking/,'tired of waiting; taking the initiative'],[/^hunting/,'avenging a friend'],[/loot/,'bodies carry supplies'],[/^(crafting|scavenging)/,'building a better kit'],[/^resting/,'injured: needs time to heal'],[/^giving up/,'has lost all hope'],[/^collapsed/,'lost too much blood or health'],[/^talking with/,'asking questions, sharing information and supplies'],[/^following/,'sticking with allies'],[/^fleeing the corn/,'too weak for the bloodbath'],[/^exploring/,'nothing urgent, searching for resources'],[/^catching/,'out of stamina']];
+ for(const[r,x]of m)if(r.test(q))return x||'';return''}
+function invHtml(a){
+ const I=a.inv,ic={wood:'\ud83e\udeb5',stone:'\ud83e\udea8',fiber:'\ud83c\udf3f',food:'\ud83c\udf53',bandage:'\ud83e\ude79'},it=[];
+ for(const k in ic)if(I[k]>0)it.push([ic[k],I[k],k]);
+ if(a.arrows>0)it.push(['\u2197',a.arrows,'arrows']);
+ for(const s of a.spare)it.push([WI[s],'',s+' (spare)']);
+ let h=`<div class="slot hand"><b>${WI[a.w]}</b><small>${a.w}</small></div>`;
+ for(let i=0;i<8;i++){const x=it[i];h+=x?`<div class="slot"><b>${x[0]}</b><i>${x[1]}</i><small>${x[2]}</small></div>`:'<div class="slot e"></div>'}
+ return`<p><b>Inventory:</b> hands + 8 slots</p><div class="inv">${h}</div>`}
+function extraHtml(a){
+ const hd=a.heard.slice(-6).reverse().map(h=>`<p>${lk(h.src)} said ${lk(h.k)} killed ${h.vs.map(v=>lk(v)).join(', ')} <span class="m">(${h.ok?'believed':'doubted'}${h.lie?', actually a lie':''})</span></p>`).join('');
+ const th=a.tl.slice(0,16).map(x=>`<p><span class="m">${fmt(x.t)}</span> ${x.txt}</p>`).join('');
+ return`${a.plot!=null?`<p style="color:var(--red)"><b>Secret plan:</b> betray ${lk(a.plot)}</p>`:''}<p><b>Told by others:</b></p>${hd||'<p class="m">nothing yet</p>'}<h2 style="margin-top:10px">Thought process</h2><div class="tl">${th||'<p class="m">...</p>'}</div>`}
+const fh=c=>c.map((f,i)=>`<rect y="${i*20/c.length}" width="30" height="${20/c.length}" fill="${f}"/>`).join(''),fv=c=>c.map((f,i)=>`<rect x="${i*30/c.length}" width="${30/c.length}" height="20" fill="${f}"/>`).join('');
+const FL={'united states':fh(['#b22234','#fff','#b22234','#fff','#b22234','#fff','#b22234'])+'<rect width="13" height="10.7" fill="#3c3b6e"/>'+[[3,3],[6.5,3],[10,3],[4.8,5.5],[8.2,5.5],[3,8],[6.5,8],[10,8]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r=".7" fill="#fff"/>`).join(''),
+'mexico':fv(['#006847','#fff','#ce1126'])+'<circle cx="15" cy="10" r="2.4" fill="#8a6a2e"/>',
+'brazil':'<rect width="30" height="20" fill="#009c3b"/><path d="M15 2L28 10L15 18L2 10Z" fill="#ffdf00"/><circle cx="15" cy="10" r="4.5" fill="#002776"/>',
+'united kingdom':'<rect width="30" height="20" fill="#012169"/><path d="M0 0L30 20M30 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0L30 20M30 0L0 20" stroke="#c8102e" stroke-width="1.6"/><path d="M15 0V20M0 10H30" stroke="#fff" stroke-width="6"/><path d="M15 0V20M0 10H30" stroke="#c8102e" stroke-width="3.4"/>',
+'france':fv(['#0055a4','#fff','#ef4135']),'germany':fh(['#000','#dd0000','#ffce00']),'italy':fv(['#009246','#fff','#ce2b37']),'russia':fh(['#fff','#0039a6','#d52b1e']),'nigeria':fv(['#008751','#fff','#008751']),
+'egypt':fh(['#ce1126','#fff','#000'])+'<circle cx="15" cy="10" r="1.8" fill="#c09300"/>',
+'south africa':'<rect width="30" height="10" fill="#de3831"/><rect y="10" width="30" height="10" fill="#002395"/><path d="M0 0L9 10L0 20Z" fill="#000"/><path d="M0 2L11 10L0 18M11 10H30" fill="none" stroke="#fff" stroke-width="6"/><path d="M0 2L11 10L0 18M11 10H30" fill="none" stroke="#007a4d" stroke-width="3.4"/>',
+'india':fh(['#ff9933','#fff','#138808'])+'<circle cx="15" cy="10" r="2.6" fill="none" stroke="#000080" stroke-width=".8"/>',
+'china':'<rect width="30" height="20" fill="#de2910"/><polygon points="6,2 7.2,5.6 11,5.6 8,7.8 9.1,11.4 6,9.2 2.9,11.4 4,7.8 1,5.6 4.8,5.6" fill="#ffde00"/>',
+'japan':'<rect width="30" height="20" fill="#fff"/><circle cx="15" cy="10" r="6" fill="#bc002d"/>',
+'south korea':'<rect width="30" height="20" fill="#fff"/><path d="M9 10a6 6 0 0 1 12 0z" fill="#cd2e3a"/><path d="M9 10a6 6 0 0 0 12 0z" fill="#0047a0"/>',
+'australia':'<rect width="30" height="20" fill="#012169"/><path d="M0 0L15 10M15 0L0 10" stroke="#fff" stroke-width="2"/><path d="M7.5 0V10M0 5H15" stroke="#fff" stroke-width="3.4"/><path d="M7.5 0V10M0 5H15" stroke="#c8102e" stroke-width="2"/>'+[[7.5,15],[22,5],[26,10],[22,16],[18,9]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="1.2" fill="#fff"/>`).join(''),
+'philippines':'<rect width="30" height="10" fill="#0038a8"/><rect y="10" width="30" height="10" fill="#ce1126"/><path d="M0 0L15 10L0 20Z" fill="#fff"/><circle cx="4" cy="10" r="1.8" fill="#fcd116"/>',
+'ireland':fv(['#169b62','#fff','#ff883e']),
+'sweden':'<rect width="30" height="20" fill="#006aa7"/><path d="M10 0V20M0 10H30" stroke="#fecc00" stroke-width="4"/>',
+'argentina':fh(['#74acdf','#fff','#74acdf'])+'<circle cx="15" cy="10" r="2" fill="#f6b40e"/>'};
+const flag=n=>FL[n]?`<span class="flagw" tabindex="0" role="img" aria-label="${n}" data-n="${n}"><svg viewBox="0 0 30 20" preserveAspectRatio="none" aria-hidden="true">${FL[n]}</svg></span>`:n;
+const lk=i=>`<a class="nl" role="button" data-id="${i}">${T[i].name}</a>`;
+function det(){
+ const a=sel,el=$('#det');if(!a){el.innerHTML='<h2>Tribute detail</h2><p class="m">Click a dot on the map or a name in the list to see stats, inventory, relationships and what they know.</p>';return}
+ const bar=(l,v,c,txt)=>`<div class="st"><span>${l}</span><span class="bar"><u style="width:${clamp(v,0,100)}%;background:${c}"></u></span><span>${txt??Math.round(v)}</span></div>`;
+ const nm=i=>lk(i),fr=T.filter(x=>x!==a&&trust(a,x)>30).map(x=>lk(x.id)),en=T.filter(x=>x!==a&&trust(a,x)<-40).map(x=>lk(x.id)+(x.alive?'':' (dead)'));
+ const kn=Object.keys(a.know).map(k=>`${nm(k)} killed ${a.know[k].map(nm).join(', ')}`),fb=[...a.corp].map(c=>lk(c.id)),al=[...a.allies].map(nm),iv=a.inv;
+ el.innerHTML=`<h2><span style="color:${hue(a.d)}">&#9679;</span> ${fn(a)}${gSym(a)} <small class="m" style="font-weight:400">(${esc(prLabel(a.pr))})</small> · District ${a.d}${a.co?' · '+flag(a.co.n):''}</h2>
+ <p class="m">${a.alive?a.thought+(a.why?' \u00b7 '+a.why:''):'Dead, '+a.cause}</p>
+ <div class="sts">${bar('Health',a.hp,'#4caf50')}${bar('Blood',a.blood,'#c0392b')}${bar('Stamina',a.st,'#e0b030')}${bar('Hunger',a.hunger,'#e07a30')}${bar('Thirst',a.thirst,'#3f8fd0')}${bar('Morale',a.mor,'#9a6ad0')}${bar('Pain',a.pain,'#c46aa6')}${bar('Hope',a.hope,'#5fb3a8')}</div>
+ <p><b>Weapon:</b> ${a.w}${a.w==='bow'?` (${a.arrows} arrows)`:''} · <b>Kills:</b> ${a.kills}${a.bleed>0?' · <span style="color:var(--red)">bleeding</span>':''}</p>
+ <p><b>Injuries:</b> ${injList(a).join(', ')||'none'}</p>
+ ${invHtml(a)}
+ <div class="pills">${[['aggression',a.aggr],['caution',a.cau],['social',a.soc],['deceit',a.lie],['skill',a.skill]].map(([n,v])=>`<span class="pill">${n} <b>${Math.round(v*100)}</b></span>`).join('')}</div>
+ <p><b>Personality:</b> ${a.pers}${grv(a)>.05?' · <span style="color:var(--storm)">grieving '+(T[a.grW]?T[a.grW].name:'')+'</span>':''}</p><p><b>Background:</b> ${esc(bkText(a))}</p><p><b>Orientation:</b> ${a.ori} · <b>Partner:</b> ${a.mate!=null?nm(a.mate):'none'}${a.crush!=null&&a.mate==null?' · crush on '+nm(a.crush):''}</p><p><b>Allies:</b> ${al.join(', ')||'none'}</p><p><b>Friends:</b> ${fr.join(', ')||'none'}</p><p><b>Enemies:</b> ${en.join(', ')||'none'}</p><p><b>Wary of:</b> ${[...a.wary].filter(i=>T[i].alive).map(nm).join(', ')||'none'}</p>
+ <p><b>Saw with own eyes:</b> ${kn.join('; ')||'nobody yet'}</p><p><b>Found bodies of:</b> ${fb.join(', ')||'none'}</p>${extraHtml(a)}`;
+}
+function ui(){
+ const al=T.filter(x=>x.alive).length;
+ $('#stats').innerHTML=cd>0?'<span class="chip">tributes on their plates</span>':`<span class="chip">day <b>${Math.floor(t/150)+1}</b></span><span class="chip">${DL>.55?'daytime':DL>.3?'dusk or dawn':'night'}</span><span class="chip"><b>${al}</b> of 24 alive</span>${stormOn?'<span class="chip warn">storm closing</span>':''}`;
+ const ls=$('#list').scrollTop,gs=$('#log').scrollTop;
+ $('#list').innerHTML=[...T].sort((a,b)=>b.alive-a.alive||b.kills-a.kills||a.id-b.id).map(a=>`<div class="row ${a.alive?'':'dead'} ${a===sel?'sel':''}" data-id="${a.id}"><i style="background:${hue(a.d)}"></i><span class="nm">${fn(a)}${gSym(a)}<small>D${a.d}${a.down?' · down':''}${a.alive&&a.mate!=null?' · ♥':''}</small></span><span class="bar"><u style="width:${a.hp}%;background:hsl(${a.hp*1.2},70%,50%)"></u></span><span class="k">${a.kills} kills</span></div>`).join('');
+ if(dirty){const lg=$('#log'),wide=document.body.classList.contains('wide'),atEnd=stickLog||lg.scrollHeight-gs-lg.clientHeight<40;lg.innerHTML=(wide?logs.slice().reverse():logs).map(l=>`<p class="${l.c}"><span class="ts">${fmt(l.t)}</span><span>${l.m}</span></p>`).join('');dirty=false;stickLog=false;lg.scrollTop=wide?(atEnd?lg.scrollHeight:gs):0}else $('#log').scrollTop=gs;
+ $('#list').scrollTop=ls;{const e=$('.tl'),s=e?e.scrollTop:0;det();const f=$('.tl');if(f)f.scrollTop=s}
+}
+function fit(){const d=devicePixelRatio||1;vw=cv.clientWidth;vh=cv.clientHeight;cv.width=vw*d;cv.height=vh*d;minZ=Math.min(vw/W,vh/H);cam.z=Math.max(cam.z,minZ*.9)}
+let last=performance.now(),acc=0;
+function loop(n){const dt=Math.min(.05,(n-last)/1000);last=n;fdt=dt;if(!paused)for(let i=0;i<speed;i++)step(dt);draw();acc+=dt;if(acc>.3){acc=0;ui()}requestAnimationFrame(loop)}
+function pick2(e){const b=cv.getBoundingClientRect(),x=(e.clientX-b.left-vw/2)/cam.z+cam.x,y=(e.clientY-b.top-vh/2)/cam.z+cam.y;let best=null,bd=Math.max(16,18/cam.z);for(const a of T){const d=Math.hypot(a.x-x,a.y-y)+(a.alive?0:8);if(d<bd){bd=d;best=a}}sel=best;if(best&&best.alive){follow=true;$('#fl').textContent='Follow: on'}else if(best){follow=false;$('#fl').textContent='Follow: off'}ui()}
+cv.onpointerdown=e=>{drag={x:e.clientX,y:e.clientY,m:0};cv.setPointerCapture(e.pointerId)};
+cv.onpointermove=e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.m+=Math.abs(dx)+Math.abs(dy);if(drag.m>6){cam.x-=dx/cam.z;cam.y-=dy/cam.z;follow=false;$('#fl').textContent='Follow: off'}drag.x=e.clientX;drag.y=e.clientY};
+cv.onpointerup=e=>{if(drag&&drag.m<=6)pick2(e);drag=null};
+cv.addEventListener('wheel',e=>{e.preventDefault();cam.z=clamp(cam.z*Math.exp(-e.deltaY*.0012),minZ*.9,3)},{passive:false});
+$('#pp').onclick=e=>{paused=!paused;e.target.textContent=paused?'Resume':'Pause'};
+$('#sp').onchange=e=>speed=+e.target.value;
+$('#nw').onclick=()=>{reset();ui()};
+$('#sd').onkeydown=e=>{if(e.key==='Enter'){reset();ui()}};
+$('#ft').onclick=()=>{cam={x:W/2,y:H/2,z:minZ};follow=false;$('#fl').textContent='Follow: off'};
+$('#fl').onclick=()=>{follow=!follow&&!!sel;$('#fl').textContent='Follow: '+(follow?'on':'off')};
+let stickLog=true;
+const wdB=$('#wd'),setWide=(on,save)=>{document.body.classList.toggle('wide',on);wdB.textContent='Layout: '+(on?'full screen':'boxed');if(save)try{localStorage.setItem('hgs-wide',on?'1':'0')}catch(e){}stickLog=true;dirty=true;requestAnimationFrame(()=>{fit();ui()})};
+wdB.onclick=()=>setWide(!document.body.classList.contains('wide'),true);
+let wd0=false;try{wd0=localStorage.getItem('hgs-wide')==='1'}catch(e){}
+if(wd0)setWide(true,false);
+const tip=$('#tip');let tipT;
+const showTip=f=>{const r=f.getBoundingClientRect();tip.textContent=f.dataset.n;tip.style.display='block';const w=tip.offsetWidth,c=r.left+r.width/2,l=clamp(c-w/2,4,innerWidth-w-4);tip.style.left=l+'px';tip.style.top=(r.bottom+9)+'px';tip.style.setProperty('--cx',(c-l)+'px')},hideTip=()=>{tip.style.display='none'};
+$('#det').addEventListener('mousemove',e=>{const f=e.target.closest('.flagw');f?showTip(f):hideTip()});
+$('#det').addEventListener('mouseleave',hideTip);
+$('.side').addEventListener('scroll',hideTip);window.addEventListener('scroll',hideTip);
+$('#det').addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){const f=e.target.closest('.flagw');if(f){showTip(f);clearTimeout(tipT);tipT=setTimeout(hideTip,2200)}}});
+$('#det').addEventListener('pointerdown',e=>{const l=e.target.closest('.nl');if(!l)return;e.preventDefault();sel=T[+l.dataset.id];if(sel.alive){follow=true;$('#fl').textContent='Follow: on'}else{follow=false;$('#fl').textContent='Follow: off'}$('.side').scrollTop=0;ui()});
+$('#list').onclick=e=>{const r=e.target.closest('.row');if(r){sel=T[+r.dataset.id];if(sel.alive){follow=true;$('#fl').textContent='Follow: on'}ui()}};
+const dg=$('#dg'),rowsEl=$('#rows');let wasP=false;
+$('#cu').onclick=()=>{wasP=paused;paused=true;$('#pp').textContent='Resume';dg.returnValue='';$('#dr').textContent='Forget saved';
+ rowsEl.innerHTML=T.map(a=>{const p=prLabel(a.pr),w=`tribute ${a.id%2+1}, district ${a.d}`;return`<div class="crow"><span class="hd">D${a.d}</span><input data-i="${a.id}" data-f="n" data-o="${esc(a.name)}" value="${esc(a.name)}" maxlength="14" autocomplete="off" aria-label="Name, ${w}"><input data-i="${a.id}" data-f="l" data-o="${esc(a.sur||'')}" value="${esc(a.sur||'')}" maxlength="14" autocomplete="off" aria-label="Last name, ${w}"><input data-i="${a.id}" data-f="p" data-o="${esc(p)}" value="${esc(p)}" list="prl" maxlength="24" autocomplete="off" aria-label="Pronouns, ${w}"><select data-i="${a.id}" data-o="${a.ori}" aria-label="Orientation, ${w}">${OR.map(o=>`<option value="${o[0]}"${o[0]===a.ori?' selected':''}>${o[1]}</option>`).join('')}</select></div>`}).join('');
+ dg.showModal()};
+$('#dc').onclick=()=>dg.close('cancel');
+$('#dr').onclick=e=>{custom={};saveCustom();e.target.textContent='Saved names cleared'};
+dg.addEventListener('close',()=>{
+ if(dg.returnValue==='ok'){
+  for(const el of rowsEl.querySelectorAll('select')){if(el.value===el.dataset.o)continue;const a=T[+el.dataset.i];a.ori=el.value;(custom[a.id]=custom[a.id]||{}).o=el.value}
+  for(const el of rowsEl.querySelectorAll('input')){if(el.value===el.dataset.o)continue;const a=T[+el.dataset.i],c=custom[a.id]=custom[a.id]||{};
+   if(el.dataset.f==='n'){const v=cleanName(el.value);if(v){a.name=v;c.n=v}}
+   else if(el.dataset.f==='l'){const v=cleanName(el.value);if(v){a.sur=v;c.l=v}}
+   else{a.pr=parsePr(el.value);c.p=prLabel(a.pr)}}
+  saveCustom()}
+ paused=wasP;$('#pp').textContent=paused?'Resume':'Pause';dirty=true;ui()});
+const dsB=$('#ds'),dsLbl=()=>{dsB.textContent='Despair: '+(despairOn?'on':'off')};dsLbl();dsB.onclick=()=>{despairOn=!despairOn;try{localStorage.setItem('hgs-despair',despairOn?'on':'off')}catch(e){}dsLbl()};
+const ctB=$('#ct'),ctLbl=()=>{ctB.textContent='Countries: '+(countriesOn?'on':'off')+(countriesOn!==gameCountries?' (next game)':'');ctB.title='Tributes come from different countries, with matching names. Applies to the next new game.'};
+ctB.onclick=()=>{countriesOn=!countriesOn;try{localStorage.setItem('hgs-countries',countriesOn?'on':'off')}catch(e){}ctLbl()};
+$('#bt').textContent='Blood: '+(showBlood?'on':'off');
+$('#bt').onclick=e=>{showBlood=!showBlood;e.target.textContent='Blood: '+(showBlood?'on':'off');try{localStorage.setItem('hgs-blood',showBlood?'on':'off')}catch(err){}};
+window.addEventListener('resize',fit);new ResizeObserver(()=>fit()).observe(cv);
+fit();reset();ui();requestAnimationFrame(loop);
+</script></body></html>
