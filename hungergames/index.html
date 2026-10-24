@@ -364,7 +364,7 @@ const hyp=(x,y)=>Math.sqrt(x*x+y*y),rnd=(a,b)=>a+Math.random()*(b-a),pick=a=>a[M
 const trust=(a,b)=>a.rel[b.id]||0,adj=(a,b,v)=>{a.rel[b.id]=clamp(trust(a,b)+v,-100,100)};
 let rip=[],sparks=[],lobs=[];let T,nodes,items,corpses,proj,fx,hazards,logs,t,cd,over,R,stormOn,nextDrop,nextHaz,sel,paused=false,speed=4,bg,dirty=true;
 let ME=null,PSAY=0,PACC=0,PEND=null;
-const MP={on:false,role:'',code:'',pid:'',slot:0,phase:'',rev:0,after:0,out:[],err:0,meta:null,loopId:0,base:'',full:false,kick:null,ev:[],seq:0,last:{},hold:false,holdT:0,gs:new Map(),resetOK:0,gq:0,synced:false,had:false,hpz:false,gid:null,pk:'',cfg0:null,ks:'',inAt:0,skyT:0,overSaid:0,resetOK:0};
+const MP={on:false,role:'',code:'',pid:'',slot:0,phase:'',rev:0,after:0,out:[],err:0,meta:null,loopId:0,base:'',full:false,kick:null,ev:[],seq:0,last:{},hold:false,holdT:0,gs:new Map(),resetOK:0,gq:0,synced:false,had:false,hpz:false,gid:null,pk:'',cfg0:null,ks:'',inAt:0,skyT:0,overSaid:0,resetOK:0,st:0,rt:0,lt:-1,gapPk:120,arr:0,evq:[],pjb:[],psp:0,rtt:100};
 let MPH=false,MPG=false;let cam={x:W/2,y:H/2,z:.4},follow=false,vw=800,vh=600,minZ=.3,drag=null;
 const BR=8,AV=34;let fdt=.016;
 const PR={she:['she','her','her','herself'],he:['he','him','his','himself'],they:['they','them','their','themself'],it:['it','it','its','itself']};
@@ -2777,6 +2777,7 @@ async function mpLoop(){
    if(!MP.on||MP.loopId!==me)return;
    MP.err=0;
    for(const m of r.msgs||[])if(m.n>MP.after){MP.after=m.n;mpGot(m.d,m.f)}
+   MP.rtt=MP.rtt*.8+(performance.now()-t0)*.2;
    mpMeta(r.meta);
   }catch(e){
    if(!MP.on||MP.loopId!==me)return;
@@ -2944,7 +2945,7 @@ function mpGuestGone(slot,why){
 }
 function mpBeginGuest(m){
  plOff();
- MPG=true;MPH=false;MP.gq=0;MP.synced=false;MP.had=false;MP.hpz=false;MP.gid=null;MP.pk='';MP.cfg0=CFG.strangers;
+ MPG=true;MPH=false;MP.gq=0;MP.synced=false;MP.had=false;MP.hpz=false;MP.gid=null;MP.pk='';MP.cfg0=CFG.strangers;MP.rt=0;MP.lt=-1;MP.gapPk=120;MP.arr=0;MP.evq=[];MP.pjb=[];
  $('#sd').value=m.seed||'';
  T=[];items=[];corpses=[];proj=[];fx=[];sparks=[];lobs=[];hazards=[];rip=[];logs=[];stains=[];nodes=[];
  t=0;cd=4;over=false;R=1500;stormOn=false;sel=null;paused=false;speed=1;DL=1;night=false;lastKill=0;
@@ -3062,14 +3063,20 @@ function mpPend(p){
 }
 function mpMerge(a,o){
  if(o.n!=null){a.name=o.n;a.sur=o.s;a.d=o.d;a.pr=o.pr;a.str=o.sr;a.spd=o.sp}
- const first=a.tx==null;a.tx=o.x;a.ty=o.y;if(first||o.rs){a.x=o.x;a.y=o.y}
+ const first=a.tx==null,kf=a.kf||(a.kf=[]),lk=kf[kf.length-1];
+ a.tx=o.x;a.ty=o.y;
+ if(first||o.rs||(lk&&(o.x-lk.x)*(o.x-lk.x)+(o.y-lk.y)*(o.y-lk.y)>48400)){kf.length=0;a.x=o.x;a.y=o.y}
+ kf.push({t:MP.st,x:o.x,y:o.y,vx:o.vx,vy:o.vy,at:performance.now()});if(kf.length>16)kf.shift();
  a.vx=o.vx;a.vy=o.vy;a.hp=o.hp;a.alive=!!o.al;
  if(o.lt)return;
  a.blood=o.bd;a.bleed=o.bl;a.conc=o.cn;a.leg=o.lg;a.arm=o.ar;a.down=!!o.dn;a.w=o.w;
  a.wi=o.wi?{k:o.wi.k,m:o.wi.m,d:o.wi.d,mx:o.wi.mx}:FIST;
  a.bombs=o.bm;a.hand=o.hd;a.mate=o.mt<0?null:o.mt;a.fl=o.fl;a.fd=o.fd;a.kills=o.ks;
  a.allies=new Set(o.ay||[]);
- a.at=o.at?{w:o.at.w,ang:o.at.ang,p:o.at.p,dur:o.at.dur,res:o.at.res||undefined,hand:o.at.hand}:null;
+ if(o.at){
+  const cu=a.at,same=cu&&cu.t0!=null&&cu.w===o.at.w&&cu.dur===o.at.dur&&Math.abs(cu.ang-o.at.ang)<.03,t0=same?cu.t0:MP.st-o.at.p*o.at.dur;
+  a.at={w:o.at.w,ang:o.at.ang,p:same?cu.p:Math.max(0,Math.min(.99,(MP.rt-t0)/o.at.dur)),dur:o.at.dur,res:o.at.res||undefined,hand:o.at.hand,t0};
+ }else if(!(a.at&&a.at.t0!=null&&MP.rt<a.at.t0+a.at.dur*.98))a.at=null;
  a.wind=o.wd?{t:o.wd.t,tot:o.wd.tot,w:o.wd.w,tgt:T[o.wd.g]||a}:null;
  const old=a.sq,nq=[];
  for(const q of o.sq||[]){
@@ -3088,16 +3095,21 @@ function mpApply(s){
  if(s.q<=MP.gq)return;
  const gap=MP.gq&&s.q!==MP.gq+1;MP.gq=s.q;
  if(gap)MP.out.push({k:'rs'});
- t=s.t;cd=s.cd;over=!!s.vo;R=s.R;stormOn=!!s.so;MP.hpz=!!s.pz;
+ {const now=performance.now();
+  if(MP.lt>=0&&s.t<MP.lt-.5){for(const a of T)if(a)a.kf=[];MP.pjb=[];MP.evq.length=0;MP.lt=-1}
+  if(MP.arr){const g=now-MP.arr;if(g>8)MP.gapPk=Math.max(g,MP.gapPk*.985)}MP.arr=now;
+  if(MP.lt<0)MP.rt=Math.max(0,s.t-.2);
+  MP.lt=Math.max(MP.lt,s.t);MP.st=s.t}
+ cd=s.cd;over=!!s.vo;R=s.R;stormOn=!!s.so;MP.hpz=!!s.pz;
  if(s.f){MP.gid=s.gid;if(s.cfg)CFG.strangers=!!s.cfg.st}
  for(const o of s.T){const a=T[o.i]||(T[o.i]=mpNew(o.i));mpMerge(a,o)}
  if(s.it)items=s.it.map(i=>({k:i.k,n:i.n,x:i.x,y:i.y,drop:i.dr?1:0,wi:i.wi?{k:i.wi.k,m:i.wi.m,d:i.wi.d,mx:i.wi.mx}:undefined}));
  if(s.nd)s.nd.forEach((n,i)=>{if(nodes[i])nodes[i].n=n});
  if(s.co)corpses=s.co.map(c=>({id:c.i,x:c.x,y:c.y,looted:!!c.l,name:c.n,sur:'',inv:{}}));
  if(s.hz)hazards=s.hz.map(h=>({x:h[0],y:h[1],r:h[2],t0:h[3],warn:h[4],life:h[5],bomb:h[6]?1:0}));
- proj=s.pj.map(p=>({x:p.x,y:p.y,vx:p.vx,vy:p.vy,wk:p.wk,sp:0}));
+ MP.pjb.push({t:s.t,l:s.pj});if(MP.pjb.length>10)MP.pjb.shift();
  if(s.ovh!=null)ov.innerHTML=s.ovh;
- if(s.ev)for(const e of s.ev)mpEv(e);
+ if(s.ev){const now=performance.now();for(const e of s.ev)MP.evq.push({t:s.t,e,at:now})}
  DL=daylight(t);SIGHT=270*(.55+.45*DL);night=DL<.45;
  if(!MP.synced&&MP.gid!=null&&T[MP.gid]&&T[MP.gid].alive){MP.synced=true;MP.had=true;plOn(T[MP.gid]);hintEl.textContent+=' · enter = chat'}
  else if(!MP.synced&&MP.gid!=null&&T[MP.gid]){MP.synced=true;document.body.classList.add('pm')}
@@ -3121,15 +3133,45 @@ function mpUiG(){
 }
 function mpTickG(dt){
  if(!T.length)return;
- if(!MP.hpz&&cd<=0&&!over)t+=dt;
- DL=daylight(t);SIGHT=270*(.55+.45*DL);night=DL<.45;
- const k=1-Math.exp(-dt*18);
- for(const a of T){
-  if(a.tx==null)continue;
-  const dx=a.tx-a.x,dy=a.ty-a.y;
-  if(dx*dx+dy*dy>40000){a.x=a.tx;a.y=a.ty}else{a.x+=dx*k;a.y+=dy*k}
+ if(MP.lt>=0){
+  /* The guest draws the world a little in the past (dly), so there are always two snapshots to blend between.
+     rt is that delayed clock in host time. It runs at normal speed, speeds up or slows down a little to hold the delay,
+     and the delay grows by itself when snapshots arrive in slower or burstier batches. */
+  const now=performance.now(),fz=MP.hpz||cd>0||over,dly=Math.min(.8,Math.max(.12,MP.gapPk/1000*1.15+.05)),tg=MP.lt-dly;
+  if(fz)MP.rt=MP.lt;
+  else{const df=tg-MP.rt;if(Math.abs(df)>1.5)MP.rt=tg;else MP.rt+=dt*Math.max(0,Math.min(2,1+df*2))}
+  MP.rt=Math.max(0,Math.min(MP.rt,MP.lt+.15));
+  const rt=MP.rt;t=rt;
+  /* effects and messages play when the delayed clock reaches the moment they happened */
+  while(MP.evq.length&&(fz||MP.evq[0].t<=rt||now-MP.evq[0].at>900))mpEv(MP.evq.shift().e);
+  const k=1-Math.exp(-dt*12);
+  for(const a of T){
+   const kf=a.kf;
+   if(kf&&kf.length){
+    while(kf.length>2&&kf[1].t<rt-.5)kf.shift();
+    const n=kf.length,l=kf[n-1];
+    if(a.id===MP.gid&&a.alive){
+     /* your own tribute: no delay, it leads with its velocity so your keys feel quick */
+     const e=Math.min(.25,(now-l.at)/1000),tx=l.x+l.vx*e,ty=l.y+l.vy*e,dx=tx-a.x,dy=ty-a.y;
+     if(dx*dx+dy*dy>14400){a.x=tx;a.y=ty}else{a.x+=dx*k;a.y+=dy*k}
+    }else{
+     let x,y;
+     if(rt<=kf[0].t){x=kf[0].x;y=kf[0].y}
+     else if(rt>=l.t){const e=a.alive&&!MP.hpz?Math.min(rt-l.t,.2):0;x=l.x+l.vx*e;y=l.y+l.vy*e}
+     else{let i=n-2;while(i>0&&kf[i].t>rt)i--;const A=kf[i],B=kf[i+1],f=(rt-A.t)/Math.max(.001,B.t-A.t);x=A.x+(B.x-A.x)*f;y=A.y+(B.y-A.y)*f}
+     a.x=x;a.y=y;
+    }
+   }
+   if(a.at&&a.at.t0!=null){const p=(rt-a.at.t0)/a.at.dur;if(p>=1)a.at=null;else a.at.p=Math.max(0,p)}
+  }
+  /* arrows: take the newest list from before the delayed clock and fly it forward */
+  let pb=null;for(let i=MP.pjb.length-1;i>=0;i--)if(MP.pjb[i].t<=rt){pb=MP.pjb[i];break}
+  if(!pb)pb=MP.pjb[0];
+  MP.psp+=dt*24;
+  if(pb){const e=Math.max(0,Math.min(.35,rt-pb.t));proj=pb.l.map(p=>({x:p.x+p.vx*e,y:p.y+p.vy*e,vx:p.vx,vy:p.vy,wk:p.wk,sp:MP.psp}))}
+  else proj=[];
  }
- for(const p of proj){p.x+=p.vx*dt;p.y+=p.vy*dt}
+ DL=daylight(t);SIGHT=270*(.55+.45*DL);night=DL<.45;
 }
 
 /* every frame: the guest reports its keys, the host streams snapshots */
@@ -3146,7 +3188,7 @@ function mpFrame(dt){
    if(ch)mpKick();
   }
  }else if(MPH){
-  const gap=MP.hold?450:paused?220:MP.gs.size>3?85:55;
+  const gap=Math.max(MP.hold?450:paused?220:MP.gs.size>3?85:55,Math.min(110,MP.rtt*.4));
   for(const gs of MP.gs.values()){
    const g=gs.g;
    if(now-gs.gIn>1500)g.rk={};
