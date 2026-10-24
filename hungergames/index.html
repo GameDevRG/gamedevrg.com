@@ -164,7 +164,7 @@ body.pm .side,body.pm details{display:none}body.pm main{grid-template-columns:mi
 <div class="grp"><button id="pp" class="pri" title="Pause / resume (space)">Pause</button><select id="sp" aria-label="Speed" title="Speed (+ / -)"><option value="1" selected>1x</option><option value="2">2x</option><option value="4">4x</option><option value="8">8x</option><option value="16">16x</option></select></div>
 <div class="grp"><button id="ft" title="Show the whole arena">Fit map</button><button id="fl" title="Follow the selected tribute (F)">Follow: off</button></div>
 <div class="grp"><input id="sd" placeholder="map seed (blank = random)" size="18" aria-label="Map seed, leave blank for a random arena"></div>
-<div class="grp"><button id="pl" class="pri" title="Control a tribute yourself">Play</button><button id="mpb" title="Play online with a friend: one arena, two tributes">Multiplayer</button><button id="nw" title="Start a new game (N)">New game</button><button id="mb" class="pri" aria-haspopup="dialog" aria-expanded="false" aria-controls="mn" title="Settings (M)">&#9776; Menu</button></div>
+<div class="grp"><button id="pl" class="pri" title="Control a tribute yourself">Play</button><button id="mpb" title="Play online with a friend: one arena, up to 8 tributes">Multiplayer</button><button id="nw" title="Start a new game (N)">New game</button><button id="mb" class="pri" aria-haspopup="dialog" aria-expanded="false" aria-controls="mn" title="Settings (M)">&#9776; Menu</button></div>
 <div hidden><button id="wd">Layout: boxed</button><button id="bt">Blood: on</button><button id="ct">Countries: off</button><button id="ds">Despair: on</button><button id="cu">Customize</button></div>
 </div>
 </header>
@@ -219,14 +219,14 @@ body.pm .side,body.pm details{display:none}body.pm main{grid-template-columns:mi
 <dialog id="hd" aria-labelledby="hdt"><div class="hh"><h2 id="hdt"></h2><p>Everything this tribute has said aloud, thought, and decided to do, in order.</p><div class="hf" id="hf"></div></div><div id="hl"></div><div class="hx"><button type="button" id="hcp">Copy as text</button><button type="button" id="hc" class="pri">Close</button></div></dialog>
 <div id="itip" role="tooltip"></div>
 <dialog id="mpd" aria-labelledby="mph"><div class="mpw"><h2 id="mph">Multiplayer</h2>
-<div id="mpv0"><p>Two players, one arena, two different tributes. One of you creates a lobby and shares the 5 letter code, the other joins with it. The host&rsquo;s browser runs the game.</p>
+<div id="mpv0"><p>Up to 8 players, one arena, a different tribute each. One of you creates a lobby and shares the 5 letter code, everybody else joins with it. The host&rsquo;s browser runs the game.</p>
 <button type="button" id="mpcr" class="pri">Create a lobby</button>
 <div class="mprow"><input id="mpjc" maxlength="5" placeholder="lobby code" autocomplete="off" aria-label="Lobby code"><button type="button" id="mpjn">Join</button></div>
 <label>server address <small>(blank = this website)</small><input id="mpsv" placeholder="https://example.com"></label></div>
 <div id="mpv1" hidden><p>Lobby <b id="mpcode"></b> <span id="mprole"></span> <button type="button" id="mpcp">copy code</button></p>
 <div class="mpcard"><h3>you</h3><div class="mprow"><input id="mpfn" maxlength="14" placeholder="first name (blank = random)" aria-label="First name"><input id="mpln" maxlength="14" placeholder="last name" aria-label="Last name"></div>
 <div class="mprow"><input id="mppr" list="prl" value="they/them" aria-label="Pronouns"><select id="mpdi" aria-label="District"><option value="0">district: random</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select></div></div>
-<div class="mpcard" id="mpot"></div>
+<div id="mpot" style="display:grid;gap:8px"></div>
 <div id="mpsdw"><input id="mpsd" placeholder="map seed (blank = random)" aria-label="Map seed"></div>
 <div class="mprow"><button type="button" id="mprd">Ready</button><button type="button" id="mpgo" class="pri">Start match</button></div>
 <button type="button" id="mplv">Leave lobby</button></div>
@@ -364,8 +364,8 @@ const hyp=(x,y)=>Math.sqrt(x*x+y*y),rnd=(a,b)=>a+Math.random()*(b-a),pick=a=>a[M
 const trust=(a,b)=>a.rel[b.id]||0,adj=(a,b,v)=>{a.rel[b.id]=clamp(trust(a,b)+v,-100,100)};
 let rip=[],sparks=[],lobs=[];let T,nodes,items,corpses,proj,fx,hazards,logs,t,cd,over,R,stormOn,nextDrop,nextHaz,sel,paused=false,speed=4,bg,dirty=true;
 let ME=null,PSAY=0,PACC=0,PEND=null;
-const MP={on:false,role:'',code:'',pid:'',slot:0,phase:'',rev:0,after:0,out:[],err:0,meta:null,loopId:0,base:'',full:false,kick:null,ev:[],seq:0,last:{},hold:false,holdT:0,gIn:0,rdy:false,snapAt:0,resetOK:0,gq:0,synced:false,had:false,hpz:false,gid:null,pk:'',cfg0:null,ks:'',inAt:0,skyT:0,overSaid:0,resetOK:0};
-let MPH=false,MPG=false,G=null,GV=null;let cam={x:W/2,y:H/2,z:.4},follow=false,vw=800,vh=600,minZ=.3,drag=null;
+const MP={on:false,role:'',code:'',pid:'',slot:0,phase:'',rev:0,after:0,out:[],err:0,meta:null,loopId:0,base:'',full:false,kick:null,ev:[],seq:0,last:{},hold:false,holdT:0,gs:new Map(),resetOK:0,gq:0,synced:false,had:false,hpz:false,gid:null,pk:'',cfg0:null,ks:'',inAt:0,skyT:0,overSaid:0,resetOK:0};
+let MPH=false,MPG=false;let cam={x:W/2,y:H/2,z:.4},follow=false,vw=800,vh=600,minZ=.3,drag=null;
 const BR=8,AV=34;let fdt=.016;
 const PR={she:['she','her','her','herself'],he:['he','him','his','himself'],they:['they','them','their','themself'],it:['it','it','its','itself']};
 function parsePr(s){const p=String(s||'').toLowerCase().replace(/[^\p{L}'\-\/,\s]/gu,'').split(/[\/,\s]+/).filter(Boolean).slice(0,5);if(!p.length)return PR.they.slice();if(PR[p[0]])return PR[p[0]].slice();const o=p[1]||p[0];return[p[0],o,p[2]||o,p[3]||o+'self']}
@@ -2676,7 +2676,7 @@ $('#cm').onclick=e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k||!ME||ME
 function plCraftDo(g,k){if(!PCR.includes(k)||!g.alive||g.down||g.busy||!REC[k]||!Object.keys(REC[k]).every(x=>g.inv[x]>=REC[k][x]))return;g.busy={t:2.5/Math.max(.6,g.sk.craft),l:'Crafting '+(WNM[k]||k),f:()=>craft(g,k)}}
 /* interacting */
 const TONES=[['be friendly',3,['hey. you okay?','hi there.']],['stay neutral',0,null],['be blunt',-3,['make it quick.','listen.']],['be threatening',-18,['don\u2019t try anything.','i\u2019m watching you.']]];
-function plAsk(a,k,c){c=c||ME;if(MPH&&c===G){if(c.pend)return c.pend.a===a;if(c.talkCd[a.id]>t||(k==='gossip'&&a.gCd>t))return true;c.pend={a,k,u:t+12};return true}
+function plAsk(a,k,c){c=c||ME;if(c.remote){if(c.pend)return c.pend.a===a;if(c.talkCd[a.id]>t||(k==='gossip'&&a.gCd>t))return true;c.pend={a,k,u:t+12};return true}
  if(PEND)return PEND.a===a;if(ME.talkCd[a.id]>t||(k==='gossip'&&a.gCd>t))return true;PEND={a,k,u:t+12};plNote();return true}
 function plNote(){const n=$('#nt');if(!PEND){n.hidden=true;return}n.innerHTML=`<span><b>${pnm(PEND.a)}</b> wants to ${PEND.k==='talk'?'talk':'swap news'}.</span><button data-r="1">accept (y)</button><button data-r="0">deny (n)</button>`;n.hidden=false}
 function plPend(){if(PEND&&(t>PEND.u||!PEND.a.alive||dd(PEND.a,ME)>140))plReply(0,1)}
@@ -2708,11 +2708,11 @@ $('#pgo').onclick=()=>{plOff();reset();const d=+$('#pdi').value,a=d?T.find(x=>x.
  const swap=(k,v)=>{if(!v)return;const o=T.find(x=>x!==a&&x[k]===v);if(o)o[k]=a[k];a[k]=v};swap('name',f);swap('sur',l);a.co=null;a.pr=parsePr($('#ppr').value);plOn(a);pdlg.close()};
 
 /* ---------- multiplayer ----------
-   Two people, one arena, two different tributes.
+   Up to 8 people, one arena, a different tribute each.
    - The HOST's browser runs the whole simulation (as always) and controls one tribute with the normal Play controls.
-   - The GUEST's browser runs no simulation. It builds the same map from the shared seed, receives snapshots of the
+   - Each GUEST's browser runs no simulation. It builds the same map from the shared seed, receives snapshots of the
      world about 15 times a second, and draws them with the normal renderer. Its keys and clicks go back to the host,
-     which moves the guest's tribute exactly like a locally controlled one.
+     which moves that guest's tribute exactly like a locally controlled one. The host sends every guest its own snapshots.
    - mp.js (the server) only keeps the lobby and passes these messages along. */
 const mpr1=v=>Math.round(v*10)/10,mpr2=v=>Math.round(v*100)/100;
 const mpEl=id=>document.getElementById(id);
@@ -2723,6 +2723,10 @@ const mpProfOut=()=>({f:mpProf.f,l:mpProf.l,pr:mpProf.pr||'they/them',d:+mpProf.
 const mpSleep=ms=>new Promise(r=>{const id=setTimeout(r,ms);MP.kick=()=>{clearTimeout(id);r()}});
 const mpKick=()=>{if(MP.kick)MP.kick()};
 const mpCmd=c=>{MP.out.push(Object.assign({k:'C'},c));mpKick()};
+const mpFullAll=()=>{for(const gs of MP.gs.values())gs.full=true};
+const mpInV=(v,x,y,m)=>!!v&&x>v[0]-m&&x<v[2]+m&&y>v[1]-m&&y<v[3]+m;
+/* host: queue an effect for every guest that can see it (no coordinates = everybody) */
+function mpEmit(ev,m,...p){for(const gs of MP.gs.values()){let ok=!p.length;for(let i=0;i<p.length&&!ok;i+=2)ok=mpInV(gs.GV,p[i],p[i+1],m);if(ok)gs.ev.push(ev)}}
 
 /* ---- small UI helpers ---- */
 let mpTT=0;
@@ -2766,17 +2770,17 @@ async function mpLoop(){
  while(MP.on&&MP.loopId===me){
   const t0=performance.now(),play=MP.phase==='play';
   try{
-   const send=MP.out.splice(0,40);
-   if(MP.out.length>30){MP.out.length=0;MP.full=true}
+   const send=MP.out.splice(0,120);
+   if(MP.out.length>150){MP.out.length=0;mpFullAll()}
    const r=await mpPost('/mp/sync',{code:MP.code,pid:MP.pid,send,after:MP.after,rev:MP.rev,wait:play?30:2500},play?6000:9000);
    if(!MP.on||MP.loopId!==me)return;
    MP.err=0;
-   for(const m of r.msgs||[])if(m.n>MP.after){MP.after=m.n;mpGot(m.d)}
+   for(const m of r.msgs||[])if(m.n>MP.after){MP.after=m.n;mpGot(m.d,m.f)}
    mpMeta(r.meta);
   }catch(e){
    if(!MP.on||MP.loopId!==me)return;
    if(e.closed){mpDrop('The lobby is closed.');return}
-   if(MPH)MP.full=true;
+   if(MPH)mpFullAll();
    if(++MP.err>=25){mpDrop('Lost the connection to the server.');return}
    await new Promise(r=>setTimeout(r,500));continue;
   }
@@ -2794,10 +2798,10 @@ function mpMeta(m){
   else if(old==='play')mpMatchEnd(MP.role==='host'?'The match ended. Back in the lobby.':'The host ended the match. Back in the lobby.');
  }
  if(MP.phase==='play'){
-  const o=m.players[1-MP.slot];
-  if(!o||o.ago>12000){
-   if(MP.role==='guest'){mpDrop('The host disconnected.');return}
-   mpPost('/mp/end',{code:MP.code,pid:MP.pid}).catch(()=>{});mpMatchEnd('The other player disconnected.');return;
+  if(MP.role==='guest'){const o=m.players[0];if(!o||o.ago>12000){mpDrop('The host disconnected.');return}}
+  else if(MPH){
+   for(const [slot] of [...MP.gs]){const p=m.players[slot];if(!p||p.ago>12000)mpGuestGone(slot,p?'lost the connection':'left')}
+   if(!MP.gs.size){mpPost('/mp/end',{code:MP.code,pid:MP.pid}).catch(()=>{});mpMatchEnd('Everybody else left the match.');return}
   }
  }
  mpRender();
@@ -2817,10 +2821,10 @@ function mpPushProf(){
  if(!MP.on||MP.phase!=='lobby')return;
  mpPost('/mp/profile',{code:MP.code,pid:MP.pid,profile:mpProfOut()}).catch(e=>mpMsg(e.message));
 }
-function mpCard(p,slot){
- if(!p)return `<h3>${slot?'guest':'host'}</h3><p style="margin:0">waiting for a second player. share the code <b>${MP.code}</b>.</p>`;
+function mpCard(p){
+ if(!p)return `<div class="mpcard"><h3>other players</h3><p style="margin:0">waiting for more players. share the code <b>${MP.code}</b>.</p></div>`;
  const q=p.profile;
- return `<h3>${slot?'guest':'host'} (other player)</h3><div style="font-size:16px;font-weight:700">${esc(q.f||'random')} ${esc(q.l||'')}</div><div class="mpm">${esc(q.pr)} · district ${q.d||'random'}</div><div class="mpbadge ${q.ready?'ok':''}">${q.ready?'ready':'not ready'}</div>`;
+ return `<div class="mpcard"><h3>${p.slot?'player '+(p.slot+1):'host'}</h3><div style="font-size:16px;font-weight:700">${esc(q.f||'random')} ${esc(q.l||'')}</div><div class="mpm">${esc(q.pr)} · district ${q.d||'random'}</div><div class="mpbadge ${q.ready?'ok':''}">${q.ready?'ready':'not ready'}</div></div>`;
 }
 function mpRender(){
  if(!mpd)return;
@@ -2828,21 +2832,21 @@ function mpRender(){
  const m=MP.meta,pl=m?m.players:[null,null];
  if(MP.phase==='play'){
   mpShow(2);
-  const o=pl[1-MP.slot];
-  mpEl('mpmi').textContent='Match in progress · lobby '+MP.code+(o?' · playing against '+(o.profile.f||'a random tribute')+' ('+(MP.role==='host'?'guest':'host')+')':'');
+  const o=pl.filter((p,i)=>p&&i!==MP.slot);
+  mpEl('mpmi').textContent='Match in progress · lobby '+MP.code+(o.length?' · playing with '+o.map(p=>p.profile.f||'a random tribute').join(', '):'');
   mpEl('mpend').hidden=MP.role!=='host';
   return;
  }
  mpShow(1);
  mpEl('mpcode').textContent=MP.code;
  mpEl('mprole').textContent=MP.role==='host'?'(host)':'(guest)';
- mpEl('mpot').innerHTML=mpCard(pl[1-MP.slot],MP.slot===0?1:0);
+ {const o=pl.filter((p,i)=>p&&i!==MP.slot);mpEl('mpot').innerHTML=o.length?o.map(mpCard).join(''):mpCard(null)}
  mpEl('mprd').textContent=mpProf.ready?'Not ready':'Ready';
  mpEl('mprd').classList.toggle('pri',!mpProf.ready);
- const host=MP.role==='host',a=pl[0],b=pl[1],can=host&&a&&b&&a.profile.ready&&b.profile.ready;
+ const host=MP.role==='host',here=pl.filter(Boolean),can=host&&here.length>=2&&here.every(p=>p.profile.ready);
  mpEl('mpgo').hidden=!host;mpEl('mpgo').disabled=!can;
  mpEl('mpsdw').hidden=!host;
- mpEl('mpgo').title=can?'':'both players need to be ready';
+ mpEl('mpgo').title=can?'':here.length<2?'waiting for another player':'everybody needs to be ready';
 }
 async function mpGo(){
  const seed=(mpEl('mpsd').value||'').trim()||('mp'+Math.random().toString(36).slice(2,8));
@@ -2881,7 +2885,7 @@ function mpChat(a,txt){
  if(!txt||!a||!a.alive)return;
  mpSayRaw(a,txt);
  mpFeedAdd('<b>'+esc(a.name)+'</b> '+esc(txt),'c');
- MP.ev.push(['C',a.id,txt]);
+ mpEmit(['C',a.id,txt]);
 }
 function mpSend(){
  const x=mpIn.value.replace(/[\u0000-\u001f<>]/g,'').trim().slice(0,140);mpIn.value='';
@@ -2898,34 +2902,44 @@ function mpBegin(m){
  if(MP.role==='host')mpBeginHost(m);else mpBeginGuest(m);
 }
 function mpAssign(P){
- /* each player gets a tribute from the district they asked for (random if 0); two players can share a district and be partners */
+ /* each player gets a tribute from the district they asked for (random if 0); players can share a district and be partners */
  const used=new Set(),res=[];
  for(const p of P){
   const pool=T.filter(x=>!used.has(x.id));let c=p.d?pool.filter(x=>x.d===p.d):[];if(!c.length)c=pool;
   const a=pick(c);used.add(a.id);res.push(a);
  }
  res.forEach((a,i)=>{
-  const p=P[i],o=res[1-i],q=P[1-i];
-  const sw=(k,v,ex)=>{if(!v)return;const x=T.find(y=>y!==a&&!(ex&&y===o)&&y[k]===v);if(x)x[k]=a[k];a[k]=v};
-  sw('name',cleanName(p.f),!!cleanName(q.f));sw('sur',cleanName(p.l),!!cleanName(q.l));
+  const p=P[i];
+  /* swap a chosen name with whoever has it now, but never take it from another player who chose their own */
+  const sw=(k,v,pk)=>{if(!v)return;const x=T.find(y=>{if(y===a||y[k]!==v)return false;const j=res.indexOf(y);return!(j>=0&&cleanName(P[j][pk]))});if(x)x[k]=a[k];a[k]=v};
+  sw('name',cleanName(p.f),'f');sw('sur',cleanName(p.l),'l');
   a.co=null;a.pr=parsePr(p.pr||'they/them');
  });
  return res;
 }
 function mpBeginHost(m){
- const P=[m.players[0].profile,m.players[1].profile];
- MPH=false;MPG=false;MP.hold=true;MP.seq=0;MP.full=true;MP.last={};MP.ev=[];MP.gIn=performance.now();MP.rdy=false;MP.snapAt=0;GV=null;
+ const L=m.players.filter(Boolean).sort((a,b)=>a.slot-b.slot),P=L.map(p=>p.profile);
+ MPH=false;MPG=false;MP.hold=true;MP.gs=new Map();
  $('#sd').value=m.seed||'';
  MP.resetOK=1;try{plOff();reset()}finally{MP.resetOK=0}
- const[a,b]=mpAssign(P);
+ const res=mpAssign(P);
  paused=false;speed=1;$('#sp').value='1';$('#pp').textContent='Pause';
- G=b;G.ctl=1;G.rk={};G.pd={x:1,y:0};G.pend=null;
+ L.forEach((p,i)=>{
+  if(!i)return;
+  const g=res[i];g.ctl=1;g.remote=1;g.rk={};g.pd={x:1,y:0};g.pend=null;
+  MP.gs.set(p.slot,{slot:p.slot,g,GV:null,full:true,last:{},seq:0,rdy:false,gIn:performance.now(),ev:[],snapAt:0});
+ });
  MPH=true;
- plOn(a);hintEl.textContent+=' · enter = chat';mpHud(true);
+ plOn(res[0]);hintEl.textContent+=' · enter = chat';mpHud(true);
  mpIn.placeholder='say something out loud… (enter)';
- ov.textContent='waiting for the other player…';
- clearTimeout(MP.holdT);MP.holdT=setTimeout(()=>{MP.hold=false},20000);
+ ov.textContent='waiting for the other players…';
+ clearTimeout(MP.holdT);MP.holdT=setTimeout(()=>{MP.hold=false;if(cd>0)ov.textContent=''},20000);
  ui();
+}
+function mpGuestGone(slot,why){
+ const gs=MP.gs.get(slot);if(!gs)return;
+ const g=gs.g;g.ctl=0;g.remote=0;g.rk=null;g.pend=null;MP.gs.delete(slot);
+ mpToast(g.name+' '+why+'; an AI takes over');mpFeedAdd('<b>'+esc(g.name)+'</b> '+why,'g');
 }
 function mpBeginGuest(m){
  plOff();
@@ -2943,7 +2957,7 @@ function mpBeginGuest(m){
 }
 function mpEndCommon(){
  MPG=false;MPH=false;MP.hold=false;clearTimeout(MP.holdT);
- if(G){G.ctl=0;G.rk=null;G.pend=null}G=null;GV=null;
+ for(const gs of MP.gs.values()){const g=gs.g;g.ctl=0;g.remote=0;g.rk=null;g.pend=null}MP.gs=new Map();
  plOff();PEND=null;plNote();
  mpHud(false);
 }
@@ -2962,23 +2976,24 @@ function mpDrop(msg){
 }
 
 /* ---- messages between the two browsers ---- */
-function mpGot(d){
+function mpGot(d,from){
  if(!d||typeof d!=='object')return;
  if(MPH){
-  if(d.k==='rdy'){MP.rdy=true;MP.hold=false;clearTimeout(MP.holdT);MP.full=true;if(cd>0)ov.textContent=''}
-  else if(d.k==='rs')MP.full=true;
-  else if(d.k==='I'&&G){
-   MP.gIn=performance.now();const rk={};
+  const gs=MP.gs.get(from);if(!gs)return;
+  if(d.k==='rdy'){gs.rdy=true;gs.full=true;if([...MP.gs.values()].every(x=>x.rdy)){MP.hold=false;clearTimeout(MP.holdT);if(cd>0)ov.textContent=''}}
+  else if(d.k==='rs')gs.full=true;
+  else if(d.k==='I'){
+   gs.gIn=performance.now();const rk={};
    String(d.ks||'').split(',').forEach(k=>{if(/^(w|a|s|d|j|shift|ArrowUp|ArrowDown|ArrowLeft|ArrowRight)$/.test(k))rk[k]=1});
-   G.rk=rk;
-   if(Array.isArray(d.v)&&d.v.length===4&&d.v.every(Number.isFinite))GV=d.v;
+   gs.g.rk=rk;
+   if(Array.isArray(d.v)&&d.v.length===4&&d.v.every(Number.isFinite))gs.GV=d.v;
   }
-  else if(d.k==='C'&&G)mpExec(d);
+  else if(d.k==='C')mpExec(gs,d);
  }else if(MPG&&d.k==='S')mpApply(d);
 }
 const PCR=['knife','axe','spear','bow','arrows','club','staff','sling','stick','rock','shiv','spike','hammer','whip'];
-function mpExec(d){
- const g=G;if(!g||!g.alive)return;
+function mpExec(gs,d){
+ const g=gs.g;if(!g||!g.alive)return;
  switch(d.c){
   case'atk':{const b=T[d.b|0];if(b)plAtk(b,0,g);break}
   case'e':if(!g.down)plE2(g);break;
@@ -3018,19 +3033,19 @@ function mpPackT(a,full,lite,g){
  }
  return o;
 }
-function mpSnap(){
- const full=MP.full;MP.full=false;
- const g=G,s={k:'S',q:++MP.seq,t:mpr2(t),cd:mpr2(cd),pz:paused?1:0,vo:over?1:0,R:Math.round(R),so:stormOn?1:0};
+function mpSnap(gs){
+ const full=gs.full;gs.full=false;
+ const g=gs.g,s={k:'S',q:++gs.seq,t:mpr2(t),cd:mpr2(cd),pz:paused?1:0,vo:over?1:0,R:Math.round(R),so:stormOn?1:0};
  if(full){s.f=1;s.gid=g.id;s.hid=ME?ME.id:-1;s.cfg={st:CFG.strangers?1:0}}
- s.T=T.map(a=>mpPackT(a,full,!full&&MP.seq%4!==0&&a!==g&&dd(a,g)>800,g));
+ s.T=T.map(a=>mpPackT(a,full,!full&&gs.seq%4!==0&&a!==g&&dd(a,g)>800,g));
  s.pj=proj.map(p=>({x:mpr1(p.x),y:mpr1(p.y),vx:Math.round(p.vx),vy:Math.round(p.vy),wk:p.wk||'bow'}));
- const sec=(key,val)=>{const j=JSON.stringify(val);if(full||MP.last[key]!==j){MP.last[key]=j;s[key]=val}};
+ const sec=(key,val)=>{const j=JSON.stringify(val);if(full||gs.last[key]!==j){gs.last[key]=j;s[key]=val}};
  sec('it',items.filter(i=>!i.gone).map(i=>({k:i.k,n:i.n,x:mpr1(i.x),y:mpr1(i.y),dr:i.drop?1:0,wi:i.wi?{k:i.wi.k,m:i.wi.m||null,d:mpr1(i.wi.d),mx:i.wi.mx}:0})));
  sec('nd',nodes.map(n=>n.n));
  sec('co',corpses.map(c=>({i:c.id,x:mpr1(c.x),y:mpr1(c.y),l:c.looted?1:0,n:c.name})));
  sec('hz',hazards.map(h=>[mpr1(h.x),mpr1(h.y),Math.round(h.r),mpr2(h.t0),mpr2(h.warn),mpr2(h.life),h.bomb?1:0]));
  sec('ovh',ov.innerHTML);
- if(MP.ev.length)s.ev=MP.ev.splice(0,160);
+ if(gs.ev.length)s.ev=gs.ev.splice(0,160);
  return s;
 }
 
@@ -3129,30 +3144,32 @@ function mpFrame(dt){
    MP.out.push({k:'I',ks,v:[Math.round(cam.x-vw/2/z),Math.round(cam.y-vh/2/z),Math.round(cam.x+vw/2/z),Math.round(cam.y+vh/2/z)]});
    if(ch)mpKick();
   }
- }else if(MPH&&G){
-  if(now-MP.gIn>1500)G.rk={};
-  if(!G.alive&&G.ctl){G.ctl=0;G.pend=null}
-  if(G.pend&&(t>G.pend.u||!G.pend.a.alive||dd(G.pend.a,G)>140)){const p=G.pend;G.pend=null;plReplyCore(G,p,0,1)}
+ }else if(MPH){
+  const gap=MP.hold?450:paused?220:MP.gs.size>3?85:55;
+  for(const gs of MP.gs.values()){
+   const g=gs.g;
+   if(now-gs.gIn>1500)g.rk={};
+   if(!g.alive&&g.ctl){g.ctl=0;g.pend=null}
+   if(g.pend&&(t>g.pend.u||!g.pend.a.alive||dd(g.pend.a,g)>140)){const p=g.pend;g.pend=null;plReplyCore(g,p,0,1)}
+   if(now-gs.snapAt>=gap){gs.snapAt=now;if(MP.hold)gs.full=true;MP.out.push({to:gs.slot,d:mpSnap(gs)})}
+  }
   if(over&&!MP.overSaid){MP.overSaid=1;mpToast('the match is over. open the lobby menu to go back to the lobby.')}
   if(!over)MP.overSaid=0;
-  const gap=MP.hold?450:paused?220:55;
-  if(now-MP.snapAt>=gap){MP.snapAt=now;if(MP.hold)MP.full=true;MP.out.push(mpSnap())}
  }
 }
 
 /* ---- visual effects the guest has to be told about (the host is the only one running the sim) ---- */
-const mpInG=(x,y,m)=>!!GV&&x>GV[0]-m&&x<GV[2]+m&&y>GV[1]-m&&y<GV[3]+m;
 let mpQ=0;
 {
  const _spark=spark,_ring=ring,_gash=gash,_strike=strike,_lob=lobFx,_stain=stain,_log=log,_ann=announce;
- spark=function(x,y,n,c,sp,life,o){if(MPH&&!mpQ&&mpInG(x,y,120))MP.ev.push(['s',mpr1(x),mpr1(y),n,c,sp,life,o?{ang:o.ang,spr:o.spr,r:o.r,d:o.d}:0]);return _spark.apply(this,arguments)};
- ring=function(x,y,Rr,c,life,d,w){if(MPH&&!mpQ&&mpInG(x,y,120))MP.ev.push(['r',mpr1(x),mpr1(y),Rr,c,life,d||0,w||2.5]);return _ring.apply(this,arguments)};
- gash=function(x,y,g,len,c,life,d){if(MPH&&mpInG(x,y,120))MP.ev.push(['g',mpr1(x),mpr1(y),mpr2(g),len,c,life,d||0]);return _gash.apply(this,arguments)};
- strike=function(a,wk,ang,res){if(MPH&&mpInG(a.x,a.y,200))MP.ev.push(['k',a.id,wk,mpr2(ang),res||0]);return _strike.apply(this,arguments)};
- lobFx=function(x1,y1,x2,y2){if(MPH&&(mpInG(x1,y1,200)||mpInG(x2,y2,200)))MP.ev.push(['o',mpr1(x1),mpr1(y1),mpr1(x2),mpr1(y2)]);mpQ++;try{return _lob.apply(this,arguments)}finally{mpQ--}};
- stain=function(x,y,r,al){if(MPH&&mpInG(x,y,60))MP.ev.push(['b',mpr1(x),mpr1(y),mpr1(r),al]);return _stain.apply(this,arguments)};
- log=function(m,c){if(MPH&&cd<=0&&(c==='death'||c==='gm')){const p=String(m).replace(/<[^>]*>/g,'');MP.ev.push(['L',p,c]);mpFeedAdd(esc(p),c==='death'?'d':'g')}return _log.apply(this,arguments)};
- announce=function(){const r=_ann.apply(this,arguments);if(MPH)MP.ev.push(['K',$('#sky').innerHTML]);return r};
+ spark=function(x,y,n,c,sp,life,o){if(MPH&&!mpQ)mpEmit(['s',mpr1(x),mpr1(y),n,c,sp,life,o?{ang:o.ang,spr:o.spr,r:o.r,d:o.d}:0],120,x,y);return _spark.apply(this,arguments)};
+ ring=function(x,y,Rr,c,life,d,w){if(MPH&&!mpQ)mpEmit(['r',mpr1(x),mpr1(y),Rr,c,life,d||0,w||2.5],120,x,y);return _ring.apply(this,arguments)};
+ gash=function(x,y,g,len,c,life,d){if(MPH)mpEmit(['g',mpr1(x),mpr1(y),mpr2(g),len,c,life,d||0],120,x,y);return _gash.apply(this,arguments)};
+ strike=function(a,wk,ang,res){if(MPH)mpEmit(['k',a.id,wk,mpr2(ang),res||0],200,a.x,a.y);return _strike.apply(this,arguments)};
+ lobFx=function(x1,y1,x2,y2){if(MPH)mpEmit(['o',mpr1(x1),mpr1(y1),mpr1(x2),mpr1(y2)],200,x1,y1,x2,y2);mpQ++;try{return _lob.apply(this,arguments)}finally{mpQ--}};
+ stain=function(x,y,r,al){if(MPH)mpEmit(['b',mpr1(x),mpr1(y),mpr1(r),al],60,x,y);return _stain.apply(this,arguments)};
+ log=function(m,c){if(MPH&&cd<=0&&(c==='death'||c==='gm')){const p=String(m).replace(/<[^>]*>/g,'');mpEmit(['L',p,c]);mpFeedAdd(esc(p),c==='death'?'d':'g')}return _log.apply(this,arguments)};
+ announce=function(){const r=_ann.apply(this,arguments);if(MPH)mpEmit(['K',$('#sky').innerHTML]);return r};
 }
 
 /* ---- keep the normal controls from breaking an online match ---- */
