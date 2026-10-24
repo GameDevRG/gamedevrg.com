@@ -2,8 +2,9 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>hunger games simulator</title>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
 <style>
+*,*::before,*::after{font-family:'Chakra Petch',system-ui,sans-serif!important;text-transform:lowercase!important}
 :root{--bg:#e4e7e1;--panel:#f4f5f0;--ink:#1b2622;--muted:#55635c;--line:#c5cbc2;--gold:#946200;--gold-soft:rgba(148,98,0,.14);--red:#b3261e;--blue:#1f6fa5;--storm:#8a2fa8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f171c;--panel:#17222a;--ink:#e6ebe7;--muted:#93a39b;--line:#2a3a44;--gold:#e0ab4a;--gold-soft:rgba(224,171,74,.14);--red:#ef6a5e;--blue:#6fb6e8;--storm:#d79af0;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0f171c;--panel:#17222a;--ink:#e6ebe7;--muted:#93a39b;--line:#2a3a44;--gold:#e0ab4a;--gold-soft:rgba(224,171,74,.14);--red:#ef6a5e;--blue:#6fb6e8;--storm:#d79af0;color-scheme:dark}
@@ -127,7 +128,7 @@ kbd{font:600 12px 'Chakra Petch',sans-serif;border:1px solid var(--line);backgro
 .nx{font-size:10px;border:1px solid var(--line);padding:0 5px;margin-left:7px;color:var(--muted);vertical-align:1px;letter-spacing:.04em}
 .sw{width:44px;height:24px;padding:0;position:relative;background:var(--bg);flex:none}.sw::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:var(--muted);transition:transform .15s,background .15s}
 .sw[aria-checked=true]{background:var(--gold-soft);border-color:var(--gold)}.sw[aria-checked=true]::after{transform:translateX(20px);background:var(--gold)}
-.rg{display:flex;align-items:center;gap:8px}.rv{min-width:48px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.rg{display:flex;align-items:center;gap:8px}.rv{min-width:48px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}.rv[role=button]{cursor:text;border-bottom:1px dashed var(--muted)}.rv[role=button]:hover,.rv[role=button]:focus-visible{color:var(--ink);border-bottom-color:var(--gold);outline:none}input.rn{width:64px;min-width:0;height:26px;padding:0 6px;text-align:right;font:inherit;font-variant-numeric:tabular-nums;color:var(--ink);background:var(--bg);border:1px solid var(--gold);border-radius:6px}
 input[type=range]{accent-color:var(--gold);width:150px;height:22px;padding:0;border:0;background:transparent}
 .seg{display:flex;border:1px solid var(--line)}.seg button{border:0;height:28px;padding:0 10px;background:transparent}.seg button+button{border-left:1px solid var(--line)}.seg button[aria-pressed=true]{background:var(--gold);color:var(--bg);font-weight:700}
 .pres{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.pres button{height:30px}
@@ -190,37 +191,74 @@ body.pm .side,body.pm details{display:none}body.pm main{grid-template-columns:mi
 .rcl{display:flex;gap:10px;font-size:11px;color:var(--muted);margin:4px 0 8px}.rcl i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:4px}
 .rctw{overflow-x:auto}.rctb{width:100%;border-collapse:collapse;font-size:12px}.rctb th,.rctb td{padding:3px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}.rctb th{color:var(--muted);font-weight:600}
 dialog h3.rcsec{margin:16px 0 6px;font-size:14px;color:var(--gold)}
+#sy button{text-align:left}#sy .dk{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;opacity:.6}#sy .dq{font-size:13px;color:#cfc6b0;font-style:italic;margin:2px 0 8px}
 /* touch controls */
 #tc{display:none}
-body.touch.pm{overflow:hidden}
-body.touch.pm #tc{display:block;position:absolute;inset:0}
+body.touch.pm{overflow:hidden;overscroll-behavior:none}
+body.touch.pm #tc{display:block;position:absolute;inset:0;--ts:1}
+body.touch.sz-s #tc{--ts:.82}body.touch.sz-l #tc{--ts:1.22}
 #pmh #tc{pointer-events:none}
-#tc *{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
-#js{position:absolute;left:calc(22px + env(safe-area-inset-left,0px));bottom:calc(22px + env(safe-area-inset-bottom,0px));width:128px;height:128px;border-radius:50%;background:rgba(15,20,24,.45);border:2px solid rgba(232,169,59,.6)}
-#js i{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:rgba(232,169,59,.75);border:2px solid #fff6;pointer-events:none}
-#tc button{position:absolute;border-radius:50%;border:2px solid rgba(232,169,59,.8);background:rgba(15,20,24,.6);color:#e8e1d0;font:700 15px system-ui;padding:0}
-#tc button.dn{background:rgba(232,169,59,.8);color:#111}
-#tA{right:calc(24px + env(safe-area-inset-right,0px));bottom:calc(30px + env(safe-area-inset-bottom,0px));width:84px;height:84px;font-size:30px!important}
-#tE{right:calc(122px + env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));width:58px;height:58px}
-#tT{right:calc(124px + env(safe-area-inset-right,0px));bottom:calc(92px + env(safe-area-inset-bottom,0px));width:50px;height:50px;font-size:11px!important}
-#tD{right:calc(190px + env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));width:50px;height:50px;font-size:11px!important}
-#tC{right:calc(34px + env(safe-area-inset-right,0px));bottom:calc(128px + env(safe-area-inset-bottom,0px));width:58px;height:58px;font-size:11px!important}
+#tc *{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+#jz{position:absolute;left:0;bottom:0;width:46%;height:72%}
+body.lefty #jz{left:auto;right:0}
+#js{position:absolute;left:calc(22px + env(safe-area-inset-left,0px));bottom:calc(22px + env(safe-area-inset-bottom,0px));width:calc(128px*var(--ts));height:calc(128px*var(--ts));border-radius:50%;background:rgba(15,20,24,.3);border:2px solid rgba(232,169,59,.4);pointer-events:none!important}
+#js.on{background:rgba(15,20,24,.5);border-color:rgba(232,169,59,.9)}
+body.lefty #js{left:auto;right:calc(22px + env(safe-area-inset-right,0px))}
+#js i{position:absolute;left:50%;top:50%;width:42%;height:42%;margin:-21% 0 0 -21%;border-radius:50%;background:rgba(232,169,59,.75);border:2px solid #fff6;pointer-events:none}
+#tc button{position:absolute;border-radius:50%;border:2px solid rgba(232,169,59,.8);background:rgba(15,20,24,.6);color:#e8e1d0;font:700 15px system-ui;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+#tc button small{font-size:9px;font-weight:600;opacity:.9;margin-top:2px;max-width:92%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tc button.dn,#tc button.tg{background:rgba(232,169,59,.85);color:#111}
+#tE.rdy{border-color:#ffd37a;box-shadow:0 0 0 3px rgba(232,169,59,.35),0 0 18px rgba(232,169,59,.75)}
+#tA{right:calc(24px*var(--ts) + env(safe-area-inset-right,0px));width:calc(84px*var(--ts));height:calc(84px*var(--ts));bottom:calc(30px*var(--ts) + env(safe-area-inset-bottom,0px));font-size:calc(30px*var(--ts))!important}
+body.lefty #tA{right:auto;left:calc(24px*var(--ts) + env(safe-area-inset-left,0px))}
+#tE{right:calc(122px*var(--ts) + env(safe-area-inset-right,0px));width:calc(58px*var(--ts));height:calc(58px*var(--ts));bottom:calc(24px*var(--ts) + env(safe-area-inset-bottom,0px));}
+body.lefty #tE{right:auto;left:calc(122px*var(--ts) + env(safe-area-inset-left,0px))}
+#tT{right:calc(124px*var(--ts) + env(safe-area-inset-right,0px));width:calc(50px*var(--ts));height:calc(50px*var(--ts));bottom:calc(92px*var(--ts) + env(safe-area-inset-bottom,0px));font-size:11px!important}
+body.lefty #tT{right:auto;left:calc(124px*var(--ts) + env(safe-area-inset-left,0px))}
+#tC{right:calc(34px*var(--ts) + env(safe-area-inset-right,0px));width:calc(58px*var(--ts));height:calc(58px*var(--ts));bottom:calc(128px*var(--ts) + env(safe-area-inset-bottom,0px));font-size:11px!important}
+body.lefty #tC{right:auto;left:calc(34px*var(--ts) + env(safe-area-inset-left,0px))}
+#tD{right:calc(190px*var(--ts) + env(safe-area-inset-right,0px));width:calc(50px*var(--ts));height:calc(50px*var(--ts));bottom:calc(24px*var(--ts) + env(safe-area-inset-bottom,0px));font-size:11px!important}
+body.lefty #tD{right:auto;left:calc(190px*var(--ts) + env(safe-area-inset-left,0px))}
+#tR{right:calc(190px*var(--ts) + env(safe-area-inset-right,0px));width:calc(50px*var(--ts));height:calc(50px*var(--ts));bottom:calc(82px*var(--ts) + env(safe-area-inset-bottom,0px));font-size:11px!important}
+body.lefty #tR{right:auto;left:calc(190px*var(--ts) + env(safe-area-inset-left,0px))}
 #tc #tt{position:absolute;right:calc(8px + env(safe-area-inset-right,0px));top:calc(8px + env(safe-area-inset-top,0px));display:flex;gap:6px}
 #tc #tt button{position:static;width:40px;height:40px;border-radius:10px;font-size:16px}
-#tc #rot{display:none;position:absolute;left:50%;top:calc(76px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:rgba(0,0,0,.65);color:#fff;padding:4px 12px;border-radius:999px;font-size:12px;white-space:nowrap;pointer-events:none}
+#tc #tz{position:absolute;right:calc(8px + env(safe-area-inset-right,0px));top:calc(56px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:6px;pointer-events:auto}#tc #tz button{position:static;width:40px;height:40px;border-radius:10px;font-size:22px;pointer-events:auto}
+#tc #rot{display:none;position:absolute;left:50%;top:calc(92px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:rgba(0,0,0,.65);color:#fff;padding:4px 12px;border-radius:999px;font-size:12px;white-space:nowrap;pointer-events:none}
 @media(orientation:portrait){#tc #rot{display:block}}
 body.touch.pm .arena{position:fixed;inset:0;z-index:30;border-radius:0;border:0;box-shadow:none}
 body.touch.pm canvas{height:100vh;height:100dvh}
 body.touch.pm .hint{display:none}
+@media(orientation:landscape){body.touch.pm .mi{display:none}}
 body.touch.pm #hb{bottom:auto;top:calc(6px + env(safe-area-inset-top,0px))}
 body.touch.pm #hb .hr{gap:3px}
-body.touch.pm #hb .sl{width:38px;height:44px}
+body.touch.pm #hb .sl{width:40px;height:46px}
+@media(max-width:600px){body.touch.pm #hb .sl{width:34px}}
 body.touch.pm #hb .cb{display:none}
 body.touch.pm #vt{bottom:auto;top:calc(6px + env(safe-area-inset-top,0px));left:calc(8px + env(safe-area-inset-left,0px));width:112px;padding:4px 6px}
-body.touch.pm #nt{top:calc(72px + env(safe-area-inset-top,0px))}
-body.touch.pm #sy{top:calc(56px + env(safe-area-inset-top,0px));right:8px}
-body.touch.pm #ix{right:256px;bottom:16px;width:220px}
-body.touch.pm #cm{bottom:auto;top:calc(84px + env(safe-area-inset-top,0px))}
+body.touch.pm #sy,body.touch.pm #ix{left:50%;right:auto;top:auto;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(620px,94vw);max-height:64vh;overflow:auto;display:grid;grid-template-columns:1fr 1fr;gap:6px;z-index:6}
+body.touch.pm #sy[hidden],body.touch.pm #ix[hidden]{display:none}
+body.touch.pm #sy h5,body.touch.pm #ix h5,body.touch.pm #sy .dq,body.touch.pm #sy select{grid-column:1/-1;margin:0}
+body.touch.pm #sy button,body.touch.pm #ix button{min-height:46px;font-size:14px;margin:0}
+body.touch.pm #nt{top:calc(86px + env(safe-area-inset-top,0px))}
+body.touch.pm #nt button{min-height:44px;min-width:92px;font-size:14px}
+body.touch.pm #cm{bottom:auto;top:calc(86px + env(safe-area-inset-top,0px));max-width:min(560px,94vw);max-height:66vh;overflow:auto}
+body.touch.pm #cm button{min-height:44px;font-size:14px;flex:1 0 30%}
+
+/* ui: bigger tap targets, collapsible panels, jump bar, settings search, help */
+@media(pointer:coarse){button,select{height:40px}input:not([type=range]):not([type=checkbox]){min-height:40px}.row{padding:8px 6px}.tabs button{height:46px}}
+.box{position:relative}
+body:not(.wide) .box::after{content:'\25BE';position:absolute;right:8px;top:8px;width:28px;height:28px;line-height:26px;text-align:center;border:1px solid var(--line);border-radius:7px;color:var(--muted);background:var(--bg);cursor:pointer;transition:transform .15s}
+body:not(.wide) .box:hover::after{color:var(--ink);border-color:var(--gold)}
+body:not(.wide) .box.col::after{transform:rotate(90deg)}
+body:not(.wide) .box:not(.col)>:first-child{padding-right:36px}
+body:not(.wide) .box.col>:not(:first-child){display:none}
+body:not(.wide) .box.col>:first-child{margin-bottom:0}
+#jmp{display:none}
+@media(max-width:900px){#jmp{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:25;gap:6px;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));background:var(--panel);border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(0,0,0,.18)}#jmp button{flex:1;min-width:0;padding:0 6px}body{padding-bottom:calc(56px + env(safe-area-inset-bottom,0px))}body.pm #jmp,body.wide #jmp{display:none}}
+.mns{padding:8px 14px;border-bottom:1px solid var(--line)}.mns input{width:100%;box-sizing:border-box}
+.sec[data-sec]{cursor:pointer;display:flex;align-items:center;gap:6px;user-select:none}.sec[data-sec]::before{content:'\25BE';display:inline-block;transition:transform .15s;color:var(--muted)}.sec[data-sec].c::before{transform:rotate(-90deg)}.sec[data-sec]:hover{filter:brightness(1.15)}
+#hlp{max-width:min(560px,94vw);max-height:86vh;overflow:auto}#hlp h3{margin:14px 0 4px;color:var(--gold);font-size:13px;letter-spacing:.08em}#hlp dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0}#hlp dt{white-space:nowrap}#hlp dd{margin:0;color:var(--muted)}#hlp .dact{margin-top:12px}
 </style></head><body>
 <div class="app">
 <header>
@@ -229,7 +267,7 @@ body.touch.pm #cm{bottom:auto;top:calc(84px + env(safe-area-inset-top,0px))}
 <div class="grp"><button id="pp" class="pri" title="Pause / resume (space)">Pause</button><select id="sp" aria-label="Speed" title="Speed (+ / -)"><option value="1" selected>1x</option><option value="2">2x</option><option value="4">4x</option><option value="8">8x</option><option value="16">16x</option></select></div>
 <div class="grp"><button id="ft" title="Show the whole arena">Fit map</button><button id="fl" title="Follow the selected tribute (F)">Follow: off</button></div>
 <div class="grp"><input id="sd" placeholder="map seed (blank = random)" size="18" aria-label="Map seed, leave blank for a random arena"></div>
-<div class="grp"><button id="pl" class="pri" title="Control a tribute yourself">Play</button><button id="mpb" title="Play online with a friend: one arena, up to 8 tributes">Multiplayer</button><button id="nw" title="Start a new game (N)">New game</button><button id="mb" class="pri" aria-haspopup="dialog" aria-expanded="false" aria-controls="mn" title="Settings (M)">&#9776; Menu</button></div>
+<div class="grp"><button id="pl" class="pri" title="Control a tribute yourself">Play</button><button id="mpb" title="Play online with a friend: one arena, up to 8 tributes">Multiplayer</button><button id="nw" title="Start a new game (N)">New game</button><button id="mb" class="pri" aria-haspopup="dialog" aria-expanded="false" aria-controls="mn" title="Settings (M)">&#9776; Menu</button><button id="hp" title="Controls and help (?)" aria-label="Controls and help" style="min-width:40px;padding:0 10px">?</button></div>
 <div hidden><button id="wd">Layout: boxed</button><button id="bt">Blood: on</button><button id="ct">Countries: off</button><button id="ds">Despair: on</button><button id="cu">Customize</button></div>
 </div>
 </header>
@@ -266,9 +304,17 @@ body.touch.pm #cm{bottom:auto;top:calc(84px + env(safe-area-inset-top,0px))}
 <li>Conversations have depth and variety. Every tribute has a hidden background (family, a fear, a wish, a hobby, a regret, a favourite memory) shown in their panel. Friends and allies open up about it, the other often opens up in return, and later they remember what was said and ask about it. Beyond asking for help and swapping rumours, tributes joke (it only lands if the listener is the type to laugh), share food unprompted, compliment each other, flirt, make plans with allies (including quiet talks about what happens when it comes down to just them), and pick fights with people they dislike. How each line is phrased depends on personality, and greetings and goodbyes change with how well they know each other.</li>
 <li>Weapons: besides fists, sticks, knives, axes, spears, swords and bows there are clubs and quarterstaffs (craftable), a sling that fires gathered stones, and cornucopia or sponsor finds: a machete, dagger, mace, trident, crossbow, throwing knives and firebombs. Blunt weapons break limbs and daze, daggers and machetes bleed, long weapons outreach, and ranged weapons run out of ammunition and fall back to a spare. Firebombs set a patch of ground ablaze for several seconds. All of it can be switched off in the menu.</li><li>Materials and durability: ordinary weapons come in wood, stone or steel. Steel hits harder and lasts about three times as long as brittle stone. Crafted weapons are stone or wood, and weapons found lying around start a little worn. Every swing, shot and parry wears a weapon down, a worn weapon hits and aims worse, and at zero it breaks on the spot. A tribute then reaches for a spare, crafts a replacement, or falls back on a rock, a shiv, a sharpened stick, a stone hammer or a fibre whip built from scraps. Tributes also swap weapons mid-fight: a bow at range, a blade up close, or a spare when the current one is almost gone. Everyone has strengths and weaknesses (blades, blunt weapons, polearms, ranged weapons, brawling, crafting, stealth, foraging, first aid, endurance) shown in their panel: skilled tributes hit and shoot better, craft sturdier gear, steal more smoothly, gather faster, patch wounds better or tire more slowly.</li>\n<li>Gamemakers drop gifts, ignite firestorms and close a storm wall. Last tribute standing wins.</li>
 </ul></details></div>
+<nav id="jmp" aria-label="Jump to a panel"><button type="button" data-j=".arena">map</button><button type="button" data-j="#det">tribute</button><button type="button" data-j="#lstb">tributes</button><button type="button" data-j="#logb">log</button></nav>
+<dialog id="hlp"><h2>Controls &amp; help</h2>
+<h3>WATCHING</h3><dl><dt>drag / one finger</dt><dd>pan the map</dd><dt>scroll / pinch</dt><dd>zoom</dd><dt>click a tribute</dt><dd>stats, inventory, plans</dd><dt>hover</dt><dd>details on anything</dd><dt>space</dt><dd>pause or resume</dd><dt>+ / &minus;</dt><dd>faster / slower</dd><dt>f</dt><dd>follow the selected tribute</dd><dt>n &middot; m &middot; l</dt><dd>new game &middot; menu &middot; layout</dd><dt>panel arrows</dt><dd>collapse or expand a side panel</dd></dl>
+<h3>PLAYING (KEYBOARD)</h3><dl><dt>w a s d / arrows</dt><dd>move</dd><dt>shift</dt><dd>run</dd><dt>+ / &minus;</dt><dd>zoom in / out (ctrl + wheel works too)</dd><dt>j</dt><dd>attack</dd><dt>e</dt><dd>talk, loot, pick up, gather</dd><dt>c &middot; t &middot; q</dt><dd>craft &middot; throw &middot; drop</dd><dt>1 &ndash; 9</dt><dd>use an inventory slot</dd><dt>y / n</dt><dd>answer a request</dd><dt>1 &ndash; 6</dt><dd>pick a dialogue choice</dd><dt>esc</dt><dd>close popups</dd></dl>
+<h3>PLAYING (TOUCH)</h3><dl><dt>left stick</dt><dd>move</dd><dt>sword</dt><dd>attack</dd><dt>E</dt><dd>interact (label shows what)</dd><dt>craft / throw / drop</dt><dd>use your pack</dd><dt>run</dt><dd>hold to sprint</dd><dt>pinch / + &minus;</dt><dd>zoom in or a little out</dd><dt>top right</dt><dd>fullscreen, pause, stop playing, help</dd></dl>
+<h3>MENU</h3><dl><dt>search box</dt><dd>finds any setting in every tab</dd><dt>section titles</dt><dd>tap to fold or unfold</dd></dl>
+<div class="dact"><form method="dialog"><button class="pri" style="background:var(--gold);color:var(--bg);font-weight:700">close</button></form></div></dialog>
 <aside id="mn" role="dialog" aria-labelledby="mnh" aria-hidden="true">
 <div class="mnh"><h2 id="mnh">Settings</h2><button type="button" id="mnx" aria-label="Close menu">&#10005;</button></div>
 <div class="tabs" id="mnt" role="tablist"></div>
+<div class="mns"><input id="mnq" type="search" placeholder="search all settings" aria-label="Search all settings" autocomplete="off"></div>
 <div class="mnb" id="mnb"></div>
 <div class="mnf" id="mnp" hidden><span>Some changes apply to the next game.</span><button type="button" class="pri">Start new game now</button></div>
 </aside>
@@ -299,6 +345,9 @@ body.touch.pm #cm{bottom:auto;top:calc(84px + env(safe-area-inset-top,0px))}
 <div id="mpv2" hidden><p id="mpmi"></p><button type="button" id="mpend">End the match (back to the lobby)</button><button type="button" id="mplv2">Leave lobby</button></div>
 <p id="mpmsg" role="status"></p><button type="button" id="mpcl">Close</button></div></dialog>
 <datalist id="prl"><option value="she/her"><option value="he/him"><option value="they/them"><option value="it/its"><option value="xe/xem/xyr"></datalist>
+<script>
+(()=>{const P=CanvasRenderingContext2D.prototype;for(const f of['fillText','strokeText']){const o=P[f];P[f]=function(t,...r){return o.call(this,String(t).toLowerCase(),...r)}}})();
+</script>
 <script>
 CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h){this.rect(x,y,w,h)};
 const $=s=>document.querySelector(s),cv=$('#cv'),ctx=cv.getContext('2d'),ov=$('#ov');
@@ -333,14 +382,14 @@ const DIFFS={normal:{dmg:1,hun:1,bld:1,storm:1,st0:1,drop:1,fire:1,res:1},
 const dif=()=>DIFFS[CFG.diff]||DIFFS.normal;
 const fn=a=>a.sur?a.name+' '+a.sur:a.name,ct=a=>a.co?' ('+a.co.n+')':'';
 const clone=o=>JSON.parse(JSON.stringify(o));
-const CFG_DEF={touch:'auto',diff:'normal',n:24,stormOn:true,stormStart:240,stormRate:1.4,drops:true,dropEvery:90,fire:true,fireEvery:95,hunger:1,aggr:1,lies:1,allyMax:3,romance:true,betray:true,steal:true,chat:1,lineSpd:1,comp:1,ruth:1,bub:'all',bubDur:1,bubSize:1,animZ:.4,typer:true,shk:true,strangers:true,names:true,lines:true,allyLines:false,planLines:true,theme:'auto',fs:14,anim:true,
+const CFG_DEF={tsz:'m',lefty:'off',haptic:'on',dlg:'on',touch:'auto',diff:'normal',n:24,stormOn:true,stormStart:240,stormRate:1.4,drops:true,dropEvery:90,fire:true,fireEvery:95,hunger:1,aggr:1,lies:1,allyMax:3,romance:true,betray:true,steal:true,chat:1,lineSpd:1,comp:1,ruth:1,bub:'all',bubDur:1,bubSize:1,animZ:.4,typer:true,shk:true,strangers:true,names:true,lines:true,allyLines:false,planLines:true,theme:'auto',fs:14,anim:true,
  sx:{cry:true,report:true,hunt:true,ask:true,gossip:true,plot:true,check:true,peace:true,plan:true,rumor:true,joke:true,deep:true,ally:true,share:true,compl:true,argue:true,mercy:true,sit:true,fight:true},
  mix:{kind:1,friendly:1,silly:1,neutral:1,cold:1,competitive:1,shy:1,stoic:1},
  logF:{death:true,gm:true,social:true,inj:true,other:true},
  wp:{melee:true,ranged:true,bombs:true,craft:true,tiers:true,dura:true,durMul:1,mk:true,swap:true}};
 function mergeCfg(t,s){if(!s||typeof s!=='object')return;for(const k in t){if(!(k in s))continue;if(t[k]&&typeof t[k]==='object')mergeCfg(t[k],s[k]);else if(typeof s[k]===typeof t[k])t[k]=s[k]}}
 let CFG=clone(CFG_DEF);try{mergeCfg(CFG,JSON.parse(localStorage.getItem('hgs-cfg')||'null'))}catch(e){}
-CFG.n=Math.round(Math.min(24,Math.max(4,CFG.n)));
+CFG.n=Math.round(Math.min(200,Math.max(4,CFG.n)));
 const saveCfg=()=>{try{localStorage.setItem('hgs-cfg',JSON.stringify(CFG))}catch(e){}};
 
 let countriesOn=false,gameCountries=false;try{countriesOn=localStorage.getItem('hgs-countries')==='on'}catch(e){}
@@ -439,9 +488,9 @@ const hyp=(x,y)=>Math.sqrt(x*x+y*y),rnd=(a,b)=>a+Math.random()*(b-a),pick=a=>a[M
 const trust=(a,b)=>a.rel[b.id]||0,adj=(a,b,v)=>{a.rel[b.id]=clamp(trust(a,b)+v,-100,100)};
 let nextSamp=0,SAMP=[],FB=null,RCV=null;
 let rip=[],sparks=[],lobs=[];let T,nodes,items,corpses,proj,fx,hazards,logs,t,cd,over,R,stormOn,nextDrop,nextHaz,sel,paused=false,speed=4,bg,dirty=true;
-let ME=null,PSAY=0,PACC=0,PEND=null;
+let ME=null,PSAY=0,PACC=0,PEND=null,DLG=null,DLGEMIT=0;
 const MP={on:false,role:'',code:'',pid:'',slot:0,phase:'',rev:0,after:0,out:[],err:0,meta:null,loopId:0,base:'',full:false,kick:null,ev:[],seq:0,last:{},hold:false,holdT:0,gs:new Map(),resetOK:0,gq:0,synced:false,had:false,hpz:false,gid:null,pk:'',cfg0:null,ks:'',inAt:0,skyT:0,overSaid:0,resetOK:0,st:0,rt:0,lt:-1,gapPk:120,arr:0,evq:[],pjb:[],psp:0,rtt:100};
-let MPH=false,MPG=false;let cam={x:W/2,y:H/2,z:.4},follow=false,vw=800,vh=600,minZ=.3,drag=null;
+let MPH=false,MPG=false;let cam={x:W/2,y:H/2,z:.4},follow=false,vw=800,vh=600,minZ=.3,drag=null;const PZ0=.6,PZ1=2.5,plZ=f=>{cam.z=Math.min(PZ1,Math.max(PZ0,cam.z*f))};
 const BR=8,AV=34;let fdt=.016;
 const PR={she:['she','her','her','herself'],he:['he','him','his','himself'],they:['they','them','their','themself'],it:['it','it','its','itself']};
 function parsePr(s){const p=String(s||'').toLowerCase().replace(/[^\p{L}'\-\/,\s]/gu,'').split(/[\/,\s]+/).filter(Boolean).slice(0,5);if(!p.length)return PR.they.slice();if(PR[p[0]])return PR[p[0]].slice();const o=p[1]||p[0];return[p[0],o,p[2]||o,p[3]||o+'self']}
@@ -478,7 +527,7 @@ const TD=0,TS=1,TSAND=2,TSCRUB=3,TMEAD=4,TFOR=5,TDEN=6,TMARSH=7,TROCK=8,TPEAK=9;
    th: thirst drain, inf: wound infection rate, st: stamina cost while moving */
 const TI=[
  {spd:.3,vis:1,ob:1,th:.8,inf:1.4,st:7},
- {spd:.65,vis:1,ob:1,th:.8,inf:1.3,st:1.5},
+ {spd:.65,vis:1,ob:1,th:.8,inf:1.3,st:13},
  {spd:.85,vis:1.05,ob:1.05,th:1.3,inf:.8,st:1},
  {spd:.95,vis:1,ob:1.05,th:1.2,inf:.9,st:0},
  {spd:1,vis:1,ob:1,th:1,inf:1,st:0},
@@ -775,7 +824,7 @@ function drawShk(q,ln,cx,top,fs,dw){
    ctx.fillText(c,x0+q._cx[j][k]+dx,y+dy)}
   gi+=s.length+1});
  ctx.textAlign='center'}
-function say(a,txt,delay=0,th=0){if(a.alive===false||(a.ctl&&!PSAY))return;delay+=DOFF;const raw=txt?String(txt).replace(/~/g,'').toLowerCase():txt;if(txt)txt=nameFix(a,txt,th);const nm=txt?String(txt).replace(/~/g,'').toLowerCase():txt;let sh=null;if(txt&&!th){txt=sitFilter(a,String(txt).toLowerCase());const pm=parseShk(txt);txt=pm.txt;sh=pm.r||autoShk(a,txt)}let he=null;if(txt){const h=a.hist||(a.hist=[]);he={t:t+delay,txt:txt.toLowerCase(),k:th?'thought':'said'};if(raw!==nm)he.raw=raw;h.push(he);if(h.length>4000)h.shift()}const q=a.sq=(a.sq||[]).filter(s=>s.t1>t);while(q.length>=40){const i=q.findIndex(x=>x.rd||x.th);q.splice(i>=0?i:0,1)}const t0=Math.max(t+delay,q.length?q[q.length-1].t0+1.1:0),lw=txt?txt.toLowerCase():'',ty=!!(CFG.typer&&!th&&lw);const dur=clamp(speed*Math.max(3.5,1.8+lw.length*.05)*CFG.bubDur,8,60);q.push({txt:lw,t0,s0:t0,t1:t0+dur,dur,th,sh,ty,go:false,held:false,pz:0,p:ty?0:lw.length,h:he,cas:th?null:CAS,cv:th?null:(CAS||CVP)})}
+function say(a,txt,delay=0,th=0){if(a.alive===false||(a.ctl&&!PSAY))return;if(DLG&&DLG.cap&&!DLGEMIT&&txt&&!th&&(a===DLG.a||a===DLG.b)){DLG.q.push([a,String(txt)]);return}delay+=DOFF;const raw=txt?String(txt).replace(/~/g,'').toLowerCase():txt;if(txt)txt=nameFix(a,txt,th);const nm=txt?String(txt).replace(/~/g,'').toLowerCase():txt;let sh=null;if(txt&&!th){txt=sitFilter(a,String(txt).toLowerCase());const pm=parseShk(txt);txt=pm.txt;sh=pm.r||autoShk(a,txt)}let he=null;if(txt){const h=a.hist||(a.hist=[]);he={t:t+delay,txt:txt.toLowerCase(),k:th?'thought':'said'};if(raw!==nm)he.raw=raw;h.push(he);if(h.length>4000)h.shift()}const q=a.sq=(a.sq||[]).filter(s=>s.t1>t);while(q.length>=40){const i=q.findIndex(x=>x.rd||x.th);q.splice(i>=0?i:0,1)}const t0=Math.max(t+delay,q.length?q[q.length-1].t0+1.1:0),lw=txt?txt.toLowerCase():'',ty=!!(CFG.typer&&!th&&lw);const dur=clamp(speed*Math.max(3.5,1.8+lw.length*.05)*CFG.bubDur,8,60);q.push({txt:lw,t0,s0:t0,t1:t0+dur,dur,th,sh,ty,go:false,held:false,pz:0,p:ty?0:lw.length,h:he,cas:th?null:CAS,cv:th?null:(CAS||CVP)})}
 /* typewriter: reveal speech a few letters at a time (real time, so it stays readable at any sim speed) */
 const PZ={',':.28,';':.4,':':.4,'.':.55,'!':.6,'?':.6,'…':.6},isPz=c=>c in PZ;
 /* work out how fast a line must type, and how much to shrink its pauses, so it fits its slot in the conversation instead of piling up behind it */
@@ -914,9 +963,9 @@ function reset(){
   else{const x=nm.shift();f=x[0];p=x[1]}
   used.add(f);let l=cleanName(cs.l);if(!l){for(let k=0;k<30;k++){l=pick(co?co.L:LAST);if(!usedL.has(l))break}}usedL.add(l);
   return{f,p,l,co}};
- for(let i=0;i<CFG.n;i++){const d=Math.floor(i/2)+1,ang=i/CFG.n*Math.PI*2,car=[1,2,4].includes(d),aggr=car?rnd(.55,.95):rnd(.1,.9);
+ for(let i=0;i<CFG.n;i++){const d=Math.floor(i/2)+1,ang=i/CFG.n*Math.PI*2,RR=Math.max(150,CFG.n*7.5),car=[1,2,4].includes(d),aggr=car?rnd(.55,.95):rnd(.1,.9);
   const cs=custom[i]||{},idn=rollId(cs);
-  T.push({id:i,name:idn.f,sur:idn.l,co:idn.co,pr:typeof cs.p==='string'&&cs.p.trim()?parsePr(cs.p):parsePr(idn.p),d,x:C.x+Math.cos(ang)*150,y:C.y+Math.sin(ang)*150,vx:0,vy:0,hp:100,st:100,hunger:100,thirst:100,mor:80,bleed:0,w:'fists',wi:FIST,sk:rollSk(d,car),swT:0,arrows:0,knv:0,bombs:0,inv:{wood:0,stone:0,fiber:0,food:0,bandage:0},alive:true,kills:0,career:car,aggr,cau:rnd(.1,.9),soc:rnd(.1,.9),skill:rnd(.85,1.15),brave:car||aggr>.6,spd:rnd(85,105),cool:0,stun:0,wind:null,busy:null,thought:'',say:null,drink:false,wp:null,wpT:0,rev:null,rel:{},allies:new Set(),know:{},known:new Set(),corp:new Set(),talkCd:{},seen:{},gCd:0,str:Math.random()<.5?1:-1,cause:'',lie:clamp(rnd(.05,.9)*CFG.lies,0,1),spare:[],heard:[],liars:new Set(),plot:null,tl:[],sw:'',why:'',lastTh:'',lastThT:-9,wary:new Set(),kdet:{},blood:100,leg:0,arm:0,conc:0,inf:0,open:0,pain:0,down:false,drip:0,resting:false,sq:[],dvx:0,dvy:0,ori:['straight','gay','bi','ace'].includes(cs.o)?cs.o:rOri(),mate:null,crush:null,bd:{},hope:rnd(70,95),dcd:0,bt:null,btT:0,pers:wpick(),mourned:new Set(),gr:0,grT:0,gD:1,grW:null,gK:null,bk:mkBk(),lore:{},told:{},mis:null,mwhy:'',hurtSeen:{},crushOf:{},helped:0})}
+  T.push({id:i,name:idn.f,sur:idn.l,co:idn.co,pr:typeof cs.p==='string'&&cs.p.trim()?parsePr(cs.p):parsePr(idn.p),d,x:C.x+Math.cos(ang)*RR,y:C.y+Math.sin(ang)*RR,vx:0,vy:0,hp:100,st:100,hunger:100,thirst:100,mor:80,bleed:0,w:'fists',wi:FIST,sk:rollSk(d,car),swT:0,arrows:0,knv:0,bombs:0,inv:{wood:0,stone:0,fiber:0,food:0,bandage:0},alive:true,kills:0,career:car,aggr,cau:rnd(.1,.9),soc:rnd(.1,.9),skill:rnd(.85,1.15),brave:car||aggr>.6,spd:rnd(85,105),cool:0,stun:0,wind:null,busy:null,thought:'',say:null,drink:false,wp:null,wpT:0,rev:null,rel:{},allies:new Set(),know:{},known:new Set(),corp:new Set(),talkCd:{},seen:{},gCd:0,str:Math.random()<.5?1:-1,cause:'',lie:clamp(rnd(.05,.9)*CFG.lies,0,1),spare:[],heard:[],liars:new Set(),plot:null,tl:[],sw:'',why:'',lastTh:'',lastThT:-9,wary:new Set(),kdet:{},blood:100,leg:0,arm:0,conc:0,inf:0,open:0,pain:0,down:false,drip:0,resting:false,sq:[],dvx:0,dvy:0,ori:['straight','gay','bi','ace'].includes(cs.o)?cs.o:rOri(),mate:null,crush:null,bd:{},hope:rnd(70,95),dcd:0,bt:null,btT:0,pers:wpick(),mourned:new Set(),gr:0,grT:0,gD:1,grW:null,gK:null,bk:mkBk(),lore:{},told:{},mis:null,mwhy:'',hurtSeen:{},crushOf:{},helped:0})}
  for(const a of T){const P=PERS[a.pers];a.soc=clamp(a.soc+P.soc,.05,1);a.aggr=clamp((a.aggr+P.ag)*CFG.aggr,.05,1)}
  for(const a of T){a.nk=new Set([a.id]);a.itr={};for(const b of T)if(b.d===a.d)a.nk.add(b.id)}
  for(const a of T){for(const b of T){if(a===b)continue;adj(a,b,rnd(-8,8));if(a.d===b.d)adj(a,b,25);if(a.career&&b.career){a.allies.add(b.id);adj(a,b,35)}}}
@@ -968,14 +1017,14 @@ function maybeBeg(v,k){
   log(`${fn(k)} shows ${fn(v)} no mercy.`,'social');v.begUntil=t+hold*.6}
  return true}
 function hurt(a,amt,by,why){
- if(!a.alive)return;amt*=dif().dmg;a.hp-=amt;a.dmgIn=(a.dmgIn||0)+amt;if(by&&by!==a)by.dmgOut=(by.dmgOut||0)+amt;a.mor=Math.max(0,a.mor-amt*.6);
+ if(!a.alive)return;amt*=dif().dmg;a.hp-=amt;a.dmgIn=(a.dmgIn||0)+amt;if(a===ME&&amt>0)buzz(amt>12?55:22);if(by&&by!==a)by.dmgOut=(by.dmgOut||0)+amt;a.mor=Math.max(0,a.mor-amt*.6);
  if(by){a.last=by;if(amt>=3){a.hurtAt=t;hush(a);hush(by)}if(a.mercy)delete a.mercy[by.id];adj(a,by,-35);for(const w of T)if(w.alive&&w!==a&&w!==by&&w.allies.has(a.id)&&dd(w,a)<SIGHT)adj(w,by,w.mate===a.id?-70:-25)}
  if(a.hp<=0)die(a,by,why);else if(by&&(a.hp<38||a.down)&&maybeBeg(a,by)){}else if(by&&cutIn(a,false)){if(CFG.sx.cry&&amt>=12&&a.hitT<=t){a.hitT=t+5;ripple(a.x,a.y,90+amt*2)}}else painHit(a,amt);
 }
 /* the dead say nothing more: lines they hadn't yet begun (queued replies, half-started sentences) are wiped; only what was already said stays on screen */
 function silence(a){const hh=a.hist||[];a.sq=(a.sq||[]).filter(q=>{if(q.cut||(q.ty?(q.go&&q.p>=1):t>=q.t0))return true;const i=hh.indexOf(q.h);if(i>=0)hh.splice(i,1);return false})}
 function die(a,by,why){
- cutIn(a,true);a.alive=false;silence(a);for(const w of T)if(w.sq&&w.sq.length)dropCasual(w);a.hp=0;lastKill=t;a.diedAt=t;(a.hist||(a.hist=[])).push([Math.round(t),0,Math.round(opn(a)*10)/10,a.kills]);if(!FB&&by)FB={by:by.id,v:a.id,t:t};a.cause=by?'killed by '+by.name:why;a.wind=null;a.busy=null;
+ cutIn(a,true);a.alive=false;silence(a);for(const w of T)if(w.sq&&w.sq.length)dropCasual(w);a.hp=0;lastKill=t;a.diedAt=t;if(a===ME)buzz([90,50,140]);(a.hist||(a.hist=[])).push([Math.round(t),0,Math.round(opn(a)*10)/10,a.kills]);if(!FB&&by)FB={by:by.id,v:a.id,t:t};a.cause=by?'killed by '+by.name:why;a.wind=null;a.busy=null;
  if(by||a.bleed>0||why==='blood loss')for(let i=0;i<7;i++){const g=Math.random()*6.283,r=Math.random()*9;stain(a.x+Math.cos(g)*r,a.y+Math.sin(g)*r,rnd(4,9),.8)}
  corpses.push({x:a.x,y:a.y,id:a.id,name:a.name,sur:a.sur,inv:a.inv,w:a.w,wi:a.wi,arrows:a.arrows,knv:a.knv||0,bombs:a.bombs||0,spare:a.spare.slice(),looted:false});
  for(const w of T)w.allies.delete(a.id);
@@ -1538,15 +1587,16 @@ function talk(a,b){
  DOFF=0;PAIR=null;CAS=null;const hold=Math.min(24,Math.max(3.6,e+off+.4));
  a.busy={t:hold,l:'Talking with '+b.name,f:()=>{}};
  if(!b.busy&&!b.wind)b.busy={t:hold,l:'Talking with '+a.name,f:()=>{}}}
+function tellX(s,r,d){if(DLG&&DLG.cap&&s===DLG.pl){DLG.q.push({news:1});return d}return tell(s,r,d)}
 function gossip(a,b){
  if(inFight(a)||inFight(b))return;if(b.ctl&&!PACC&&plAsk(a,'gossip',b))return;
  a.gCd=b.gCd=t+30/CFG.chat;let msg=null;PAIR=[a,b];CAS=[a.id,b.id];DOFF=introduce(a,b);
- {let d=tell(a,b,0);d=tell(b,a,d);if(Math.random()<.6)socialPick(a,b,true,d)}
+ {let d=tellX(a,b,0);d=tellX(b,a,d);if(Math.random()<.6)socialPick(a,b,true,d)}
  const u=new Set([...a.known,...b.known]);a.known=u;b.known=new Set(u);DOFF=0;PAIR=null;CAS=null;
 }
 const fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
 function think(a,txt){{const h=a.hist||(a.hist=[]);h.push({t,txt:txt.toLowerCase(),k:'plan'});if(h.length>4000)h.shift()}a.tl.unshift({t,txt:txt.toLowerCase()});if(a.tl.length>40)a.tl.pop()}
-let LD=2.4;const DIST=['luxury','masonry','technology','fishing','power','transport','lumber','textiles','grain','livestock','farming','coal'];
+let LD=2.4;const DIST0=['luxury','masonry','technology','fishing','power','transport','lumber','textiles','grain','livestock','farming','coal'],DIST=new Proxy(DIST0,{get:(t,k)=>typeof k==='string'&&/^\d+$/.test(k)?t[k%12]:t[k]});
 const ago=d=>d<30?'just now':d<90?'a minute ago':d<240?'a few minutes ago':'a while ago';
 function where(p){
  if(dd(p,C)<130)return'near the cornucopia';
@@ -1914,7 +1964,7 @@ function act(a,dt){
   if(solid(nx,ny)&&!solid(a.x,a.y)){if(!solid(nx,a.y)){ny=a.y;a.vy*=.2}else if(!solid(a.x,ny)){nx=a.x;a.vx*=.2}else{nx=a.x;ny=a.y;a.vx=a.vy=0;a.dvx=a.dvy=0}}
   a.x=nx;a.y=ny;if(!solid(nx,ny)){a.lx=nx;a.ly=ny}}
  
- a.st=clamp(a.st+((sprint&&tx!=null?-12:8*(a.hunger>20?1:.5)*(a.blood>60?1:.6)*(1-.3*a.leg)*(1-a.inf/200))-(tx!=null?_ti.st:0))*dt,0,100);
+ a.st=clamp(a.st+((sprint&&tx!=null?-12:8*(a.hunger>20?1:.5)*(a.blood>60?1:.6)*(1-.3*a.leg)*(1-a.inf/200))-(tx!=null?_ti.st/(_tr===TS?Math.max(.6,a.sk.endure):1):0))*dt,0,100);
  if(!(a.nth>0))a.nth=t+rnd(15,40);if(t>a.nth&&!a.ctl){a.nth=t+rnd(35,80);ambient(a)}
  a.thought=th||'Resting';if(a.thought!==a.whyTh||!(t<a.whyT)){a.whyTh=a.thought;a.whyT=t+1;a.why=why(a,a.thought)}
  if(a.thought!==a.lastTh&&t-a.lastThT>1.5){a.lastTh=a.thought;a.lastThT=t;think(a,a.thought+(a.why?' \u00b7 '+a.why:''))}
@@ -2008,11 +2058,11 @@ function step(dt){
  if(CFG.betray&&T.filter(x=>x.alive).length<=6)for(const a of T)if(a.alive&&a.aggr>.6&&Math.random()<.006*dt)for(const id of a.allies){const b=T[id];a.allies.delete(id);b.allies.delete(a.id);adj(b,a,-60);adj(a,b,-45);log(`${fn(a)} betrays ${fn(b)}.`,'social');break}
  romance(dt);
  for(const b of T)if(b.alive&&b.sus&&t>b.sus.t){const th=T[b.sus.id];b.sus=null;if(th.alive&&Math.random()<.7){adj(b,th,-55);b.wary.add(th.id);think(b,'noticed something missing; suspects '+th.name);ponder(b,`something’s missing from my pack. ${th.name} was close.`);log(`${fn(b)} realises ${fn(th)} stole from ${ps(b)} pack.`,'social')}}
- for(const p of proj){p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;for(const b of T){if(!b.alive||b===p.by)continue;if(hyp(b.x-p.x,b.y-p.y)<10){p.life=0;p.hit=1;if(p.thr)thrHit(p,b);else if(Math.random()<.7)hit(p.by,b,sMul(p.wk||'bow',p.mul),p.wk||'bow');break}}}
+ for(const p of proj){p.x+=p.vx*dt;p.y+=p.vy*dt;{const k=terrAt(p.x,p.y);p.life-=dt*(1+(k===TFOR?1.2:k===TDEN?2.2:0))}for(const b of T){if(!b.alive||b===p.by)continue;if(hyp(b.x-p.x,b.y-p.y)<10){p.life=0;p.hit=1;if(p.thr)thrHit(p,b);else if(Math.random()<.7)hit(p.by,b,sMul(p.wk||'bow',p.mul),p.wk||'bow');break}}}
  proj=proj.filter(p=>{if(p.life>0)return true;if(p.thr)thrEnd(p);else if(!p.hit)landFx(p);return false});items=items.filter(i=>!i.gone);
  fx.forEach(f=>f.t-=dt);fx=fx.filter(f=>f.t>0);
 }
-const hue=d=>`hsl(${(d-1)*30},78%,56%)`;
+const hue=d=>`hsl(${((d-1)*30+Math.floor((d-1)/12)*15)%360},78%,${56-Math.floor(((d-1)%36)/12)*6}%)`;
 /* ---------- weapon attack animations ---------- */
 const IDIR={bow:0,crossbow:0,sling:-Math.PI/2,knives:-Math.PI/2},MOT={spear:'thrust',trident:'thrust',dagger:'thrust',axe:'smash',mace:'smash',club:'smash'},SWA={knife:1.7,sword:2,machete:2.1,stick:1.8,staff:1.6,axe:2.4,mace:2.5,club:2.3},HP=Math.PI/2;
 /* animation gating: effects only exist when they can be seen (on screen, and not zoomed out so far that a tribute is a speck) */
@@ -2152,7 +2202,7 @@ function drawAtk0(c,a,rd,z){
   drawWp(c,a,rd,'dagger',x-Math.sin(th)*lat,y+Math.cos(th)*lat,th-dirOf('dagger'),rd*1.9,bl)}}
 function draw(){draw0();if(ME)plFog()}
 function draw0(){
- const d=Math.min(2,devicePixelRatio||1),z=cam.z;
+ const d=dprC(),z=cam.z;
  if(!paused)animTick();
  if(follow&&sel&&sel.alive){const kc=1-Math.exp(-fdt*6);cam.x+=(sel.x-cam.x)*kc;cam.y+=(sel.y-cam.y)*kc}
  viewUpdate();
@@ -2195,7 +2245,7 @@ function draw0(){
   if(a.fl>0){ctx.globalAlpha=Math.min(.8,a.fl/.2);ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(a.x,a.y,rd,0,7);ctx.fill();ctx.globalAlpha=1}
   const bw=rd*2.2;ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(a.x-bw/2,a.y-rd*1.9,bw,rd*.4);ctx.fillStyle=`hsl(${a.hp*1.2},70%,50%)`;ctx.fillRect(a.x-bw/2,a.y-rd*1.9,bw*a.hp/100,rd*.4);
   if(a.bleed>0){ctx.fillStyle='#d11';ctx.beginPath();ctx.arc(a.x+rd,a.y+rd,rd*.3,0,7);ctx.fill()}
-  ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(a.x-bw/2,a.y-rd*1.45,bw,rd*.2);ctx.fillStyle='#c0392b';ctx.fillRect(a.x-bw/2,a.y-rd*1.45,bw*clamp(a.blood,0,100)/100,rd*.2);
+  ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(a.x-bw/2,a.y-rd*1.45,bw,rd*.2);ctx.fillStyle='#3da5e0';ctx.fillRect(a.x-bw/2,a.y-rd*1.45,bw*clamp(a.st,0,100)/100,rd*.2);
   if(a.conc>0){ctx.fillStyle='#f2d33c';ctx.beginPath();ctx.arc(a.x-rd,a.y+rd,rd*.3,0,7);ctx.fill()}
   if(a.leg>.45||a.arm>.45){ctx.fillStyle='#e9822a';ctx.beginPath();ctx.arc(a.x-rd*1.1,a.y-rd*.1,rd*.3,0,7);ctx.fill()}
   if(a===sel){ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(a.x,a.y,rd*1.5,0,7);ctx.stroke()}
@@ -2368,7 +2418,7 @@ function ui(){if(ME)plHud();
  if(dirty){const lg=$('#log'),wide=document.body.classList.contains('wide'),atEnd=stickLog||lg.scrollHeight-gs-lg.clientHeight<40;lg.innerHTML=(wide?logs.slice().reverse():logs).filter(logOK).map(l=>`<p class="${l.c}"><span class="ts">${fmt(l.t)}</span><span>${l.m}</span></p>`).join('');dirty=false;stickLog=false;lg.scrollTop=wide?(atEnd?lg.scrollHeight:gs):0}else $('#log').scrollTop=gs;
  $('#list').scrollTop=ls;{const e=$('.tl'),s=e?e.scrollTop:0;det();const f=$('.tl');if(f)f.scrollTop=s}
 }
-function fit(){const d=Math.min(2,devicePixelRatio||1);vw=cv.clientWidth;vh=cv.clientHeight;cv.width=vw*d;cv.height=vh*d;minZ=Math.min(vw/W,vh/H);cam.z=Math.max(cam.z,ME?.85:minZ*.9)}
+function fit(){const d=dprC();vw=cv.clientWidth;vh=cv.clientHeight;cv.width=vw*d;cv.height=vh*d;minZ=Math.min(vw/W,vh/H);cam.z=ME?Math.min(PZ1,Math.max(PZ0,cam.z)):Math.max(cam.z,minZ*.9)}
 let last=performance.now(),acc=0,lastSg='',lastDraw=0;
 function loop(n){const dt=Math.min(.05,(n-last)/1000);last=n;fdt=dt;DOFF=0;PAIR=null;CAS=null;CVP=null;plFrame();viewUpdate();if(MPG)mpTickG(dt);else if(!paused&&!(MPH&&MP.hold)){for(let i=0;i<speed;i++)step(dt);typeTick(dt);syncNk()}
  mpFrame(dt);
@@ -2376,8 +2426,8 @@ function loop(n){const dt=Math.min(.05,(n-last)/1000);last=n;fdt=dt;DOFF=0;PAIR=
 function pick2(e){if(ME)return plClick(e);const b=cv.getBoundingClientRect(),x=(e.clientX-b.left-vw/2)/cam.z+cam.x,y=(e.clientY-b.top-vh/2)/cam.z+cam.y;let best=null,bd=Math.max(16,18/cam.z);for(const a of T){const d=hyp(a.x-x,a.y-y)+(a.alive?0:8);if(d<bd){bd=d;best=a}}sel=best;if(best&&best.alive){follow=true;$('#fl').textContent='Follow: on'}else if(best){follow=false;$('#fl').textContent='Follow: off'}ui()}
 cv.onpointerdown=e=>{drag={x:e.clientX,y:e.clientY,m:0};cv.setPointerCapture(e.pointerId)};
 cv.onpointermove=e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.m+=Math.abs(dx)+Math.abs(dy);if(drag.m>6&&!ME){cam.x-=dx/cam.z;cam.y-=dy/cam.z;follow=false;$('#fl').textContent='Follow: off'}drag.x=e.clientX;drag.y=e.clientY};
-cv.onpointerup=e=>{if(drag&&drag.m<=6)pick2(e);drag=null};
-cv.addEventListener('wheel',e=>{e.preventDefault();if(ME&&!e.ctrlKey){plScroll(e);return}cam.z=clamp(cam.z*Math.exp(-e.deltaY*.0012),ME?Math.max(minZ*.9,.85):minZ*.9,3)},{passive:false});
+cv.onpointerup=e=>{if(drag&&drag.m<=6&&!PINCH)pick2(e);drag=null};
+cv.addEventListener('wheel',e=>{e.preventDefault();if(ME&&!e.ctrlKey){plScroll(e);return}cam.z=clamp(cam.z*Math.exp(-e.deltaY*.0012),ME?PZ0:minZ*.9,ME?PZ1:3)},{passive:false});
 $('#pp').onclick=e=>{paused=!paused;e.target.textContent=paused?'Resume':'Pause'};
 $('#sp').onchange=e=>speed=+e.target.value;
 $('#nw').onclick=()=>{reset();ui()};
@@ -2559,14 +2609,14 @@ const LG={blood:[()=>showBlood,v=>{showBlood=v;$('#bt').textContent='Blood: '+(v
  countries:[()=>countriesOn,v=>{countriesOn=v;try{localStorage.setItem('hgs-countries',v?'on':'off')}catch(e){}ctLbl()}],
  wide:[()=>document.body.classList.contains('wide')?'full':'boxed',v=>setWide(v==='full',true)]};
 const PRE=[['Classic',{}],['Social drama',{chat:2,lineSpd:.85,comp:1.2,bubDur:1.3}],['Peaceful',{aggr:.55,ruth:.3,comp:1.6,stormStart:480,stormRate:.8,hunger:.7,steal:false,betray:false}],['Brutal',{aggr:1.6,ruth:1.6,comp:.5,hunger:1.4,drops:false,stormStart:150,stormRate:2.2}],['Quick match',{n:12,stormStart:90,stormRate:2.5,dropEvery:60,fireEvery:60}],['Lone wolves',{allyMax:1,romance:false,chat:.5,lies:1.3}]];
-const DISP=['touch','bub','bubDur','bubSize','animZ','typer','shk','strangers','names','lines','allyLines','planLines','theme','fs','logF','anim'];
+const DISP=['tsz','lefty','haptic','touch','bub','bubDur','bubSize','animZ','typer','shk','strangers','names','lines','allyLines','planLines','theme','fs','logF','anim'];
 const X=v=>v.toFixed(2).replace(/\.?0+$/,'')+'×',SEC=v=>fmt(v);
 const SXL=[['report','Report injured tributes','Tell others who is hurt; listeners go help, hunt, or ignore it.'],['hunt','Allow hunting the wounded','Off = a hurt tribute is only ever helped or ignored, never targeted.'],['ask','Ask about trust, opinions & crushes','“who do you trust?”, “what do you think of…?”, “who do you like?”'],['gossip','Gossip about crushes','Pass on who secretly likes whom.'],['plot','Plot against someone’s crush','Enemies may target the one a rival loves. Others can refuse.'],['cry','Pained cries','Badly hurt tributes call out. Anyone who hears may rush to help, or come hunting.'],['check','Check on and treat the hurt','Bandage, feed or sit with an injured tribute.'],['peace','Make peace after fights','Apologies and truces between people at odds.'],['plan','Ask about plans','Share where they are headed and who they are going to help.'],['rumor','Share kill rumours & lies','Witness accounts, second-hand rumours, framing.'],['joke','Jokes','Lands only if the listener is the type to laugh.'],['deep','Open up about backgrounds','Family, fears, wishes and regrets, remembered later.'],['ally','Propose alliances','Off = tributes never team up by talking.'],['share','Share food unprompted',''],['compl','Compliments & flirting',''],['argue','Pick fights with people they dislike',''],['sit','Speak about their situation','Pain, hunger, fear, grief and exhaustion change what they say and how they say it: stammers, gasps, broken sentences and shaky text.'],['mercy','Beg for mercy','Badly hurt or collapsed tributes plead for their lives. The attacker may spare them or refuse.'],['fight','Talk during fights','Combatants threaten, plead and shout back, and nearby allies cheer or cry out. Friendly chat never happens mid-fight.']];
 const SCH={
  game:[['sec','Presets'],['presets'],
   ['sec','Arena'],
   {k:'diff',t:'seg',l:'Difficulty',ng:1,o:[['normal','Normal'],['hard','Hard'],['brutal','Brutal'],['nightmare','Nightmare']],h:'Harder = harder to survive, for every tribute. Hits and bleeding hurt more, hunger and thirst drain faster, the storm starts earlier and closes faster, sponsor drops are rarer, firestorms more frequent, and fewer, smaller food and material patches. Hard: ×1.25 damage. Brutal: ×1.5. Nightmare: ×2, with food and materials very scarce.'},
-  {k:'n',t:'range',l:'Tributes',min:4,max:24,st:1,ng:1,h:'Pairs share a district. Fewer = faster game.'},
+  {k:'n',t:'range',l:'Tributes',min:4,max:100,hmax:200,st:1,ng:1,h:'Pairs share a district. Fewer = faster game. Click the number to type any value up to 200.'},
   {k:'stormOn',t:'sw',l:'Closing storm wall',h:'Shrinks the safe zone over time and forces fights.'},
   {k:'stormStart',t:'range',l:'Storm starts at',min:60,max:900,st:30,f:SEC},
   {k:'stormRate',t:'range',l:'Storm speed',min:.4,max:4,st:.1,f:v=>X(v/1.4)},
@@ -2597,6 +2647,7 @@ const SCH={
   {lg:'countries',t:'sw',l:'Countries & matching names',ng:1},
   ['btn','Edit names, pronouns & orientation…',()=>{closeMenu();$('#cu').click()}]],
  social:[['sec','Tone'],
+  {k:'dlg',t:'seg',l:'Reply choices',o:[['on','On'],['off','Off']],h:'When you are in a conversation as a tribute, you pick how to answer (go along, agree, disagree, ask back, deflect, leave) instead of your lines being written for you. Off = your lines are generated automatically.'},
   {k:'chat',t:'range',l:'Chattiness',min:.25,max:3,st:.25,f:X,h:'How often people stop to talk.'},
   {k:'lineSpd',t:'range',l:'Dialogue pace',min:.5,max:2,st:.1,f:X,h:'Higher = lines come faster.'},
   {k:'comp',t:'range',l:'Compassion',min:0,max:2,st:.1,f:X,h:'How readily they help the hurt.'},
@@ -2616,6 +2667,9 @@ const SCH={
   {k:'animZ',t:'range',l:'Animations stop below zoom',min:.2,max:1.2,st:.02,f:v=>v.toFixed(2)+'×',h:'Zoomed out past this, tributes are tiny specks and the animations are skipped to save work (hits show as simple lines). Fights off screen are never animated.'},
   ['sec','Interface'],
   {k:'touch',t:'seg',l:'Touch controls',o:[['auto','Auto'],['on','On'],['off','Off']],h:'Joystick, attack, interact and craft buttons, with a fullscreen landscape view, while you play a tribute. Auto = on for phones and tablets. Tap the map to aim an attack or throw.'},
+  {k:'tsz',t:'seg',l:'Control size',o:[['s','Small'],['m','Medium'],['l','Large']],h:'Size of the joystick and buttons in touch mode.'},
+  {k:'lefty',t:'seg',l:'Thumb side',o:[['off','Right-handed'],['on','Left-handed']],h:'Left-handed swaps the joystick and the buttons.'},
+  {k:'haptic',t:'seg',l:'Vibration',o:[['on','On'],['off','Off']],h:'A short buzz on button presses and a bigger one when you are hurt (phones that support it).'},
   {lg:'wide',t:'seg',l:'Layout',o:[['boxed','Boxed'],['full','Full screen']],h:'Full screen needs a wide window.'},
   {k:'theme',t:'seg',l:'Theme',o:[['auto','Auto'],['light','Light'],['dark','Dark']]},
   {k:'fs',t:'range',l:'Text size',min:11,max:19,st:1,f:v=>v+'px'},
@@ -2627,31 +2681,43 @@ const getV=it=>it.lg?LG[it.lg][0]():pget(CFG,it.k),setV=(it,v)=>{if(it.lg)LG[it.
 function itHtml(it){
  const v=getV(it),nx=it.ng?'<span class="nx">next game</span>':'';let c='';
  if(it.t==='sw')c=`<button type="button" class="sw" role="switch" aria-checked="${!!v}" data-i="${it.i}" aria-label="${it.l}"></button>`;
- else if(it.t==='range')c=`<span class="rg"><input type="range" min="${it.min}" max="${it.max}" step="${it.st}" value="${v}" data-i="${it.i}" aria-label="${it.l}"><span class="rv">${it.f?it.f(v):v}</span></span>`;
+ else if(it.t==='range')c=`<span class="rg"><input type="range" min="${it.min}" max="${it.max}" step="${it.st}" value="${v}" data-i="${it.i}" aria-label="${it.l}"><span class="rv" tabindex="0" role="button" title="Click to type a value">${it.f?it.f(v):v}</span></span>`;
  else c=`<span class="seg">${it.o.map(([a,b])=>`<button type="button" data-i="${it.i}" data-v="${a}" aria-pressed="${v===a}">${b}</button>`).join('')}</span>`;
  return`<div class="it"><span class="lb">${it.l}${nx}</span>${c}${it.h?`<small>${it.h}</small>`:''}</div>`}
-let mnTab='game',BT=[];
+let mnTab='game',BT=[],mnQ='';const mnCol=new Set(JSON.parse(localStorage.getItem('hgs-seccol')||'[]'));
 function mixHtml(){const tot=PL.reduce((s,k)=>s+CFG.mix[k],0)||1;
  return`<div class="mixn">${PL.map(k=>`<div class="it mx"><span class="lb">${k}<span class="nx">next game</span></span><span class="rg"><input type="range" min="0" max="5" step=".5" value="${CFG.mix[k]}" data-mix="${k}" aria-label="${k} weight"><span class="rv">${Math.round(CFG.mix[k]/tot*100)}%</span></span></div>`).join('')}</div>`}
 function render(){
- $('#mnt').innerHTML=[['game','Game'],['social','Social'],['view','Display'],['data','Data']].map(([k,l])=>`<button type="button" role="tab" data-t="${k}" aria-selected="${k===mnTab}">${l}</button>`).join('');
- BT=[];let h='';
+ const TN={game:'Game',social:'Social',view:'Display',data:'Data'},q=mnQ.trim().toLowerCase(),keep=render.keep;render.keep=0;const st0=$('#mnb').scrollTop;
+ $('#mnt').innerHTML=Object.keys(TN).map(k=>`<button type="button" role="tab" data-t="${k}" aria-selected="${!q&&k===mnTab}">${TN[k]}</button>`).join('');
+ BT=[];let h='',skip=false;
+ if(q){let any=0;for(const tk in TN){let sh='';for(const it of SCH[tk]){if(Array.isArray(it)){if(it[0]==='btn'&&String(it[1]).toLowerCase().includes(q)){BT.push(it[2]);sh+=`<button type="button" class="wb" data-b="${BT.length-1}">${it[1]}</button>`}continue}
+   if(((it.l||'')+' '+(it.h||'')).toLowerCase().includes(q))sh+=itHtml(it)}
+  if(sh){any=1;h+=`<h3 class="sec">${TN[tk]}</h3>${sh}`}}
+  if(!any)h='<p class="mu" style="margin:14px 0">no settings match &ldquo;'+esc(mnQ.trim())+'&rdquo;</p>';
+  $('#mnb').innerHTML=h;$('#mnb').scrollTop=0;return}
  for(const it of SCH[mnTab]){
-  if(!Array.isArray(it))h+=itHtml(it);
-  else if(it[0]==='sec')h+=`<h3 class="sec">${it[1]}</h3>`;
+  if(!Array.isArray(it)){if(!skip)h+=itHtml(it)}
+  else if(it[0]==='sec'){const key=mnTab+'/'+it[1];skip=mnCol.has(key);h+=`<h3 class="sec${skip?' c':''}" data-sec="${key}" role="button" tabindex="0" aria-expanded="${!skip}">${it[1]}</h3>`}
+  else if(skip)continue;
   else if(it[0]==='presets')h+=`<div class="pres">${PRE.map((p,i)=>`<button type="button" data-pre="${i}">${p[0]}</button>`).join('')}</div><small class="mu">Presets reset gameplay options; display options are kept.</small>`;
   else if(it[0]==='mix')h+=mixHtml();
   else if(it[0]==='btn'){BT.push(it[2]);h+=`<button type="button" class="wb" data-b="${BT.length-1}">${it[1]}</button>`}
   else if(it[0]==='keys')h+=`<dl class="keys">${[['Space','pause / resume'],['+ / −','faster / slower'],['N','new game'],['M','menu'],['F','follow selected'],['L','toggle layout'],['Esc','close menu']].map(([a,b])=>`<dt><kbd>${a}</kbd></dt><dd>${b}</dd>`).join('')}</dl>`;
   else if(it[0]==='data')h+=`<small class="mu">Your settings are saved in this browser. Copy them to reuse elsewhere.</small><textarea id="cx" rows="7" spellcheck="false"></textarea><div class="row2"><button type="button" id="cxc">Copy</button><button type="button" id="cxi">Import</button><button type="button" id="cxr">Reset all settings</button><button type="button" id="cxn">Forget saved names</button></div><small id="cxm" class="mu"></small>`}
- $('#mnb').innerHTML=h;if($('#cx'))$('#cx').value=JSON.stringify(CFG,null,1);$('#mnb').scrollTop=0}
+ $('#mnb').innerHTML=h;if($('#cx'))$('#cx').value=JSON.stringify(CFG,null,1);$('#mnb').scrollTop=keep?st0:0}
 function setPend(v){pend=v;$('#mnp').hidden=!v}
 function openMenu(){render();$('#mn').classList.add('open');$('#mn').setAttribute('aria-hidden','false');$('#mb').setAttribute('aria-expanded','true');setTimeout(()=>$('#mnx').focus(),50)}
 function closeMenu(){$('#mn').classList.remove('open');$('#mn').setAttribute('aria-hidden','true');$('#mb').setAttribute('aria-expanded','false');$('#mb').focus()}
 const isOpen=()=>$('#mn').classList.contains('open');
 $('#mb').onclick=()=>isOpen()?closeMenu():openMenu();$('#mnx').onclick=closeMenu;
 $('#mnp button').onclick=()=>{setPend(false);reset();ui()};
-$('#mnt').onclick=e=>{const b=e.target.closest('[data-t]');if(b){mnTab=b.dataset.t;render()}};
+$('#mnt').onclick=e=>{const b=e.target.closest('[data-t]');if(b){mnTab=b.dataset.t;mnQ='';$('#mnq').value='';render()}};
+$('#mnq').oninput=e=>{mnQ=e.target.value;render()};
+$('#mnq').onkeydown=e=>{if(e.key==='Escape'&&e.target.value){e.stopPropagation();e.target.value='';mnQ='';render()}};
+const togSec=h=>{const k=h.dataset.sec;mnCol.has(k)?mnCol.delete(k):mnCol.add(k);try{localStorage.setItem('hgs-seccol',JSON.stringify([...mnCol]))}catch(e){}render.keep=1;render()};
+$('#mnb').addEventListener('click',e=>{const h=e.target.closest('.sec[data-sec]');if(h)togSec(h)});
+$('#mnb').addEventListener('keydown',e=>{const h=e.target.closest&&e.target.closest('.sec[data-sec]');if(h&&(e.key==='Enter'||e.key===' ')){e.preventDefault();togSec(h)}});
 $('#mnb').addEventListener('click',e=>{
  const sw=e.target.closest('.sw');if(sw){const it=ITEMS[+sw.dataset.i],v=!getV(it);sw.setAttribute('aria-checked',v);setV(it,v);return}
  const sg=e.target.closest('.seg button');if(sg){const it=ITEMS[+sg.dataset.i];setV(it,sg.dataset.v);for(const b of sg.parentNode.children)b.setAttribute('aria-pressed',b===sg);return}
@@ -2659,13 +2725,36 @@ $('#mnb').addEventListener('click',e=>{
  const bt=e.target.closest('[data-b]');if(bt){BT[+bt.dataset.b]();return}
  const id=e.target.id;
  if(id==='cxc'){const x=$('#cx');x.select();try{navigator.clipboard.writeText(x.value)}catch(err){document.execCommand('copy')}$('#cxm').textContent='Copied.'}
- if(id==='cxi'){try{const o=JSON.parse($('#cx').value);mergeCfg(CFG,o);CFG.n=Math.round(Math.min(24,Math.max(4,CFG.n)));saveCfg();applyCfg();setPend(true);$('#cxm').textContent='Imported. Open the other tabs to see the values.'}catch(err){$('#cxm').textContent='That is not valid settings JSON.'}}
+ if(id==='cxi'){try{const o=JSON.parse($('#cx').value);mergeCfg(CFG,o);CFG.n=Math.round(Math.min(200,Math.max(4,CFG.n)));saveCfg();applyCfg();setPend(true);$('#cxm').textContent='Imported. Open the other tabs to see the values.'}catch(err){$('#cxm').textContent='That is not valid settings JSON.'}}
  if(id==='cxr'){CFG=clone(CFG_DEF);saveCfg();applyCfg();setPend(true);render();$('#cxm').textContent='All settings reset.'}
  if(id==='cxn'){custom={};saveCustom();$('#cxm').textContent='Saved names cleared.'}});
 $('#mnb').addEventListener('input',e=>{
  const r=e.target;if(r.type!=='range')return;
  if(r.dataset.mix){CFG.mix[r.dataset.mix]=+r.value;saveCfg();setPend(true);const tot=PL.reduce((s,k)=>s+CFG.mix[k],0)||1;for(const q of $('#mnb').querySelectorAll('[data-mix]'))q.nextElementSibling.textContent=Math.round(CFG.mix[q.dataset.mix]/tot*100)+'%';return}
  const it=ITEMS[+r.dataset.i],v=+r.value;r.nextElementSibling.textContent=it.f?it.f(v):v;setV(it,v)});
+
+/* click the number next to a slider to type a value */
+function editRv(sp){
+ const rg=sp.parentNode,r=rg.querySelector('input[type=range]');if(!r||r.dataset.mix||rg.querySelector('input.rn'))return;
+ const it=ITEMS[+r.dataset.i];if(!it)return;
+ const lo=+r.min,hi=it.hmax!=null?it.hmax:+r.max,st=+r.step||1,dec=(String(st).split('.')[1]||'').length;
+ const inp=document.createElement('input');inp.type='number';inp.className='rn';inp.min=lo;inp.max=hi;inp.step=st;inp.value=getV(it);inp.setAttribute('aria-label',it.l+' value');
+ sp.style.display='none';rg.appendChild(inp);inp.focus();inp.select();
+ let done=false;
+ const fin=ok=>{if(done)return;done=true;
+  if(ok&&inp.value.trim()!==''&&isFinite(+inp.value)){let v=Math.min(hi,Math.max(lo,+inp.value));v=Math.round(v/st)*st;v=+v.toFixed(dec);if(it.k==='n')v=Math.round(v);r.value=v;sp.textContent=it.f?it.f(v):v;setV(it,v)}
+  inp.remove();sp.style.display=''};
+ inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();fin(true)}else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();fin(false)}});
+ inp.addEventListener('blur',()=>fin(true))}
+$('#mnb').addEventListener('click',e=>{const sp=e.target.closest('.rv[role=button]');if(sp)editRv(sp)});
+$('#mnb').addEventListener('keydown',e=>{const sp=e.target.closest&&e.target.closest('.rv[role=button]');if(sp&&(e.key==='Enter'||e.key===' ')){e.preventDefault();editRv(sp)}});
+
+/* collapsible side panels, jump bar, help */
+{const CK='hgs-col';let cs=[];try{cs=JSON.parse(localStorage.getItem(CK)||'[]')}catch(e){}
+ for(const id of cs){const b=document.getElementById(id);if(b)b.classList.add('col')}
+ document.addEventListener('click',e=>{const b=e.target;if(!b.classList||!b.classList.contains('box')||document.body.classList.contains('wide'))return;const r=b.getBoundingClientRect();if(e.clientX>r.right-44&&e.clientY<r.top+44){b.classList.toggle('col');try{localStorage.setItem(CK,JSON.stringify([...document.querySelectorAll('.box.col')].map(x=>x.id).filter(Boolean)))}catch(err){}}});
+ $('#jmp').onclick=e=>{const j=e.target.closest('[data-j]');if(!j)return;const t=document.querySelector(j.dataset.j);if(!t)return;t.classList.remove('col');t.scrollIntoView({behavior:'smooth',block:'start'})};
+ $('#hp').onclick=()=>$('#hlp').showModal()}
 /* log filters + tribute list controls */
 $('#lf').innerHTML=[['death','Deaths'],['social','Social'],['inj','Injuries'],['gm','Gamemakers'],['other','Other']].map(([k,l])=>`<button type="button" data-f="${k}" aria-pressed="true">${l}</button>`).join('');
 $('#lf').onclick=e=>{const b=e.target.closest('[data-f]');if(!b)return;CFG.logF[b.dataset.f]=CFG.logF[b.dataset.f]===false;saveCfg();applyCfg();stickLog=true;ui()};
@@ -2677,7 +2766,9 @@ document.addEventListener('keydown',e=>{if(ME&&plKey(e))return;
  if(e.ctrlKey||e.metaKey||e.altKey)return;const tg=e.target,tn=tg.tagName;
  if(tn==='INPUT'||tn==='TEXTAREA'||tn==='SELECT'||tg.isContentEditable)return;
  const k=e.key.toLowerCase(),sp=$('#sp');
+ if(k==='?'){e.preventDefault();if(!$('#hlp').open)$('#hlp').showModal();return}
  if(k===' '&&tn!=='BUTTON'){e.preventDefault();$('#pp').click()}
+ else if(ME&&(k==='+'||k==='='))plZ(1.2);else if(ME&&(k==='-'||k==='_'))plZ(1/1.2);
  else if(k==='+'||k==='='){sp.selectedIndex=Math.min(sp.options.length-1,sp.selectedIndex+1);sp.onchange({target:sp})}
  else if(k==='-'){sp.selectedIndex=Math.max(0,sp.selectedIndex-1);sp.onchange({target:sp})}
  else if(k==='n'){reset();ui()}else if(k==='m')$('#mb').click();else if(k==='f')$('#fl').click();else if(k==='l'&&innerWidth>900)$('#wd').click()});
@@ -2688,20 +2779,20 @@ fit();reset();ui();requestAnimationFrame(loop);
 
 /* ---------- player mode ---------- */
 const K={},hintEl=$('.hint'),hint0=hintEl.textContent,pmh=document.createElement('div');pmh.id='pmh';pmh.hidden=true;
-pmh.innerHTML='<div class="pp" id="nt" hidden></div><div id="vt"></div><div id="tc"><div id="js"><i></i></div><button id="tA" aria-label="attack">\u2694</button><button id="tE" aria-label="interact">E</button><button id="tC" aria-label="craft">craft</button><button id="tT" aria-label="throw">throw</button><button id="tD" aria-label="drop">drop</button><div id="tt"><button id="tP" aria-label="pause">\u23f8</button><button id="tX" aria-label="stop playing">\u2715</button></div><div id="rot">rotate your device to landscape</div></div><div id="hb"></div><div class="pp" id="cm" hidden></div><div class="pp" id="ix" hidden></div><div class="pp" id="sy" hidden></div>';$('.arena').appendChild(pmh);
+pmh.innerHTML='<div class="pp" id="nt" hidden></div><div id="vt"></div><div id="tc"><div id="jz"></div><div id="js"><i></i></div><button id="tA" aria-label="attack">\u2694</button><button id="tE" aria-label="interact"><b>E</b><small id="tEs"></small></button><button id="tC" aria-label="craft">craft</button><button id="tT" aria-label="throw">throw</button><button id="tD" aria-label="drop">drop</button><button id="tR" aria-label="run">run</button><div id="tt"><button id="tH" aria-label="help">?</button><button id="tF" aria-label="fullscreen">\u26f6</button><button id="tP" aria-label="pause">\u23f8</button><button id="tX" aria-label="stop playing">\u2715</button></div><div id="tz"><button id="tZi" aria-label="zoom in">+</button><button id="tZo" aria-label="zoom out">&minus;</button></div><div id="rot">rotate your device to landscape</div></div><div id="hb"></div><div class="pp" id="cm" hidden></div><div class="pp" id="ix" hidden></div><div class="pp" id="sy" hidden></div>';$('.arena').appendChild(pmh);
 let IXB=null,PD={x:1,y:0};
 const pnm=b=>knows(ME,b)?fn(b):'the '+({f:'girl',m:'boy',n:'kid'})[gen(b)]+' from district '+b.d;
 const plSee=(b,g)=>{g=g||ME;return b.alive&&b!==g&&dd(g,b)<=SIGHT*TI[terrAt(g.x,g.y)].ob*TI[terrAt(b.x,b.y)].vis};
 const plNear=(r,g)=>{g=g||ME;let q=null,bd=r;for(const b of T)if(plSee(b,g)){const d=dd(g,b);if(d<bd){bd=d;q=b}}return q};
-function plOn(a){plOff();ME=a;a.hb=0;EXP=null;plBlur();a.ctl=1;sel=a;follow=true;document.body.classList.add('pm');plTouchSync();pmh.hidden=false;hintEl.textContent='WASD / arrows move · shift sprint · click or J attack · E interact, loot, gather · 1-9 or scroll wheel: hotbar · 6 holds a firebomb, click or J throws it · Q drop · T throw the held item · C craft · ctrl+scroll zoom · space pause';cam.x=a.x;cam.y=a.y;cam.z=Math.max(cam.z,1.1);fit();ui()}
-function plOff(){if(ME)ME.ctl=0;PEND=null;ME=null;IXB=null;document.body.classList.remove('pm');plTouchOff();pmh.hidden=true;$('#ix').hidden=$('#sy').hidden=$('#cm').hidden=true;hintEl.textContent=hint0}
-function plFrame(){if(!ME)return;plTouchSync();if(!ME.alive){const m=$('#sky');plOff();m.textContent='You have fallen. You are spectating now.';m.classList.add('on');setTimeout(()=>m.classList.remove('on'),5000);return}sel=ME;follow=true;if(!paused)plMark();{const n=performance.now();if(n-(plFrame.v||0)>100){plFrame.v=n;plVit()}}plPend();if(IXB&&(!IXB.alive||dd(ME,IXB)>130))plClose()}
-function plAct(a,dt,go,foe,fd){if(a.down)return;const KK=a.rk||K,ix=(KK.d||KK.ArrowRight?1:0)-(KK.a||KK.ArrowLeft?1:0),iy=(KK.s||KK.ArrowDown?1:0)-(KK.w||KK.ArrowUp?1:0);
- if(ix||iy){const m=Math.hypot(ix,iy),D={x:ix/m,y:iy/m};if(a.pd)a.pd=D;else PD=D;a.busy=null;go(a.x+D.x*80,a.y+D.y*80,KK.shift?1.25:1,'Moving')}else if(!a.wind)a.resting=true;if(a.atkQ){if(t>a.atkQ.u)a.atkQ=null;else plAtk(a.atkQ.b,1,a,a.atkQ.aim)}if(KK.j&&!(a.hb&&a.bombs>0))plAtk(null,1,a)}
+function plOn(a){plOff();ME=a;a.hb=0;EXP=null;plBlur();a.ctl=1;sel=a;follow=true;cam.z=Math.min(PZ1,Math.max(PZ0,cam.z));document.body.classList.add('pm');plTouchSync();pmh.hidden=false;hintEl.textContent='WASD / arrows move · shift sprint · click or J attack · E interact, loot, gather · 1-9 or scroll wheel: hotbar · 6 holds a firebomb, click or J throws it · Q drop · T throw the held item · C craft · ctrl+scroll zoom · space pause';cam.x=a.x;cam.y=a.y;cam.z=Math.max(cam.z,1.1);fit();ui()}
+function plOff(){dlgEnd(1);if(ME)ME.ctl=0;PEND=null;ME=null;IXB=null;document.body.classList.remove('pm');plTouchOff();pmh.hidden=true;$('#ix').hidden=$('#sy').hidden=$('#cm').hidden=true;hintEl.textContent=hint0}
+function plFrame(){if(!ME)return;plTouchSync();if(DLG)dlgTick();if(!ME.alive){const m=$('#sky');plOff();m.textContent='You have fallen. You are spectating now.';m.classList.add('on');setTimeout(()=>m.classList.remove('on'),5000);return}sel=ME;follow=true;if(!paused)plMark();{const n=performance.now();if(n-(plFrame.v||0)>100){plFrame.v=n;plVit()}}plPend();if(IXB&&(!IXB.alive||dd(ME,IXB)>130))plClose()}
+function plAct(a,dt,go,foe,fd){if(a.down)return;const KK=a.rk||K,an=!a.rk&&(KK.jx||KK.jy),ix=an?KK.jx:(KK.d||KK.ArrowRight?1:0)-(KK.a||KK.ArrowLeft?1:0),iy=an?KK.jy:(KK.s||KK.ArrowDown?1:0)-(KK.w||KK.ArrowUp?1:0);
+ if(ix||iy){const m=Math.hypot(ix,iy),D={x:ix/m,y:iy/m};if(a.pd)a.pd=D;else PD=D;a.busy=null;go(a.x+D.x*80,a.y+D.y*80,(KK.shift?1.25:1)*(an?.55+.45*Math.min(1,m):1),'Moving')}else if(!a.wind)a.resting=true;if(a.atkQ){if(t>a.atkQ.u)a.atkQ=null;else plAtk(a.atkQ.b,1,a,a.atkQ.aim)}if(KK.j&&!(a.hb&&a.bombs>0))plAtk(null,1,a)}
 function plKey(e){if(e.target.closest&&e.target.closest('input,select,textarea'))return false;const k=e.key.length===1?e.key.toLowerCase():e.key;
  if('wasd'.includes(k)&&k.length===1||k.startsWith('Arrow')){K[k]=1;e.preventDefault();return true}
  if(k==='Shift'){K.shift=1;return true}if(k==='Enter'&&!mpEl('mpc').hidden){e.preventDefault();mpFocusChat();return true}if(k==='e'){plE();return true}if(k==='j'){K.j=1;plAtk();return true}if(k==='y'&&PEND){plReply(1);return true}if(k==='n'&&PEND){plReply(0);return true}if(k==='Escape'){plClose();return true}
- if(/^[1-9]$/.test(k)){plSlot(+k);return true}if(!e.ctrlKey&&!e.metaKey&&!e.altKey){if(k==='c'){plCraft();return true}if(k==='q'){plDropKey();return true}if(k==='t'){plThrowKey();return true}}return false}
+ if(DLG&&DLG.state==='ask'&&/^[1-6]$/.test(k)){dlgChoose(+k-1);return true}if(/^[1-9]$/.test(k)){plSlot(+k);return true}if(!e.ctrlKey&&!e.metaKey&&!e.altKey){if(k==='c'){plCraft();return true}if(k==='q'){plDropKey();return true}if(k==='t'){plThrowKey();return true}}return false}
 document.addEventListener('keyup',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;delete K[k];if(k==='Shift')delete K.shift});
 addEventListener('blur',()=>{for(const k in K)delete K[k]});
 function plE(){if(!ME||!ME.alive||ME.down)return;const b=plNear(80);if(b)return plIx(b);if(MPG)return mpCmd({c:'e'});plE2(ME)}
@@ -2772,6 +2863,73 @@ function plAimNow(){return LM&&performance.now()-LM.t<4000&&!document.body.class
 function plThrowKey(){const a=ME;if(!a||!a.alive||a.down)return;const aim=plAimNow();
  if(MPG){mpCmd(aim?{c:'thr',x:mpr1(aim.x),y:mpr1(aim.y)}:{c:'thr',n:1});return}plThrowItem(a,null,aim)}
 function plDropKey(){if(!ME||!ME.alive||ME.down)return;if(MPG){mpCmd({c:'drop'});return}plDropItem(ME)}
+
+/* ---- conversation choices: the other tribute's lines play, and you pick how to answer ---- */
+const DL_AG=['yeah. i feel the same.','you\u2019re right.','exactly. that\u2019s how it is.','i was thinking the same thing.'];
+const DL_DIS=['i don\u2019t see it that way.','i don\u2019t think so.','not how i remember it.','i wouldn\u2019t say that.'];
+const DL_DEF=['i\u2019d rather not get into it.','can we talk about something else?','not sure. i\u2019m just tired.'];
+const DL_ASK=['what about you?','and you? how are you holding up?','you tell me first.'];
+const DL_WARM=['thanks. it helps, talking to someone.','i\u2019m glad it was you i ran into.','we\u2019ll get through this. somehow.'];
+const DL_COLD=['keep it short.','i\u2019m not here to make friends.','don\u2019t read into it.'];
+const DL_END=['i should go.','i need to keep moving.','take care of yourself.'];
+const DL_K={go:'answer',agree:'agree',disagree:'disagree',warm:'be warm',ask:'ask them back',deflect:'deflect',cold:'be blunt',end:'leave'};
+function dlgOpen(a,b,init,gos){if(CFG.dlg==='off'||MPG||!ME||DLG||(a!==ME&&b!==ME))return false;DLG={a,b,pl:ME,ot:a===ME?b:a,gossip:!!gos,kind:null,init:!!init,cap:true,q:[],L:[],i:0,dd:0,n:0,state:'cap',at:0,until:0,last:'',ai:false,O:[]};return true}
+function dlgGo(){const S=DLG;if(!S||!S.cap)return;S.cap=false;S.L=S.q;S.q=[];if(!S.L.length){DLG=null;return}
+ for(const q of[S.a,S.b])q.busy={t:9999,l:'Talking with '+(q===S.a?S.b:S.a).name,f:()=>{}};
+ S.state='play';dlgAdvance()}
+function dlgEmit(spk,tx){const S=DLG,o=CVP;PSAY=1;DLGEMIT=1;try{conv(S.a,S.b,[[spk===S.b?1:0,tx]],S.dd)}finally{DLGEMIT=0;PSAY=0;CVP=o}S.dd+=LD}
+function dlgAdvance(){const S=DLG;if(!S)return;
+ while(S.i<S.L.length){const it=S.L[S.i];
+  if(it.news){S.cur=S.i;S.kind='news';S.state='wait';S.at=t+S.dd+.6;return}
+  const[spk,tx]=it;
+  if(spk===S.pl){
+   if(S.init&&!S.ai&&!S.gossip){dlgEmit(spk,tx);S.i++;continue}
+   if(S.n>=3){if(S.gossip){S.i++;continue}dlgEnd(0,S.dd);return}
+   S.kind=null;S.cur=S.i;S.state='wait';S.at=t+S.dd+.6;return}
+  dlgEmit(spk,tx);S.last=tx;S.ai=true;S.i++}
+ dlgEnd(0,S.dd)}
+
+function newsOpts(pl,ot){const O=[],nm=i=>pnm(T[i]);
+ for(const k of Object.keys(pl.know)){const kn=T[+k];if(!kn||+k===ot.id||O.filter(o=>o.t==='truth').length>=2)continue;const vs=pl.know[k];O.push({t:'truth',c:{k:+k,vs,lie:0},l:`${nm(+k)} killed ${vs.map(nm).join(' and ')}. you saw it happen.`})}
+ for(const h of pl.heard.filter(h=>h.ok&&h.src!==ot.id&&h.k!==ot.id&&h.k!==pl.id&&T[h.k].alive).slice(0,2))O.push({t:'hearsay',c:{k:h.k,vs:h.vs,lie:0,hear:h.src},l:`${nm(h.src)} told you ${nm(h.k)} killed ${h.vs.map(nm).join(' and ')}.`});
+ const dead=T.filter(x=>!x.alive),f=T.filter(x=>x!==pl&&x!==ot&&x.alive).sort((p,q)=>trust(pl,p)-trust(pl,q))[0];
+ if(f&&dead.length){const vv=dead.filter(v=>v.id!==f.id);if(vv.length){const v=pick(vv);O.push({t:'lie',c:{k:f.id,vs:[v.id],lie:1},l:`${nm(f.id)} killed ${nm(v.id)}. (not true)`})}}
+ return O}
+const NW_K={truth:'what you saw',hearsay:'pass it on',lie:'make it up',quiet:'say nothing'};
+function dlgNews(){const S=DLG,O=newsOpts(S.pl,S.ot);
+ if(!O.length){S.O=[];dlgPickNews(-1);return}
+ O.push({t:'quiet',c:null,l:'keep it to yourself.'});S.O=O;S.state='ask';S.until=t+20;const sy=$('#sy');
+ sy.innerHTML=`<h5 style="font-size:16px;color:#e8e1d0">what news do you share with ${pnm(S.ot)}?</h5>`+O.map((o,i)=>`<button data-i="${i}"><span class="dk">${i+1} \u00b7 ${NW_K[o.t]}</span>${esc(o.l)}</button>`).join('');
+ sy._L=O.map((o,i)=>['',()=>dlgChoose(i)]);sy.hidden=false}
+function dlgPickNews(i){const S=DLG,o=S.O[i];$('#sy').hidden=true;S.state='play';S.dd=0;S.kind=null;const ot=S.ot,pl=S.pl;
+ if(o&&o.c){const q=CVP;CVP=[S.a.id,S.b.id];PSAY=1;let d=0;try{d=speak(pl,ot,o.c,0);d=receive(ot,pl,o.c,d)}finally{PSAY=0;CVP=q}S.dd=d}
+ else dlgEmit(pl,pick(['i haven\u2019t got anything worth sharing.','nothing new on my end.']));
+ S.i++;dlgAdvance()}
+function plNewsStart(b){if(DLG||!ME||!b.alive)return;if(b.gCd>t||ME.gCd>t){const m=$('#sky');m.textContent='They have nothing new to swap right now.';m.classList.add('on');setTimeout(()=>m.classList.remove('on'),2500);return}
+ PACC=PSAY=1;const op=dlgOpen(ME,b,true,true);try{gossip(ME,b)}finally{PACC=PSAY=0;if(op)dlgGo()}}
+function dlgShow(){const S=DLG,tx=S.L[S.cur][1],ex=pick(['warm','ask','deflect','cold']);
+ S.O=[['go',tx],['agree',pick(DL_AG)],['disagree',pick(DL_DIS)],[ex,pick({warm:DL_WARM,ask:DL_ASK,deflect:DL_DEF,cold:DL_COLD}[ex])],['end',pick(DL_END)]];
+ S.state='ask';S.until=t+16;const sy=$('#sy');
+ sy.innerHTML=`<h5 style="font-size:16px;color:#e8e1d0">reply to ${pnm(S.ot)}</h5>${S.last?`<div class="dq">\u201c${esc(S.last)}\u201d</div>`:''}`+S.O.map((o,i)=>`<button data-i="${i}"><span class="dk">${i+1} \u00b7 ${DL_K[o[0]]}</span>\u201c${esc(o[1])}\u201d</button>`).join('');
+ sy._L=S.O.map((o,i)=>['',()=>dlgChoose(i)]);sy.hidden=false}
+function dlgChoose(i){const S=DLG;if(!S||S.state!=='ask')return;const o=S.O[i];if(!o)return;if(S.kind==='news'){dlgPickNews(i);return}$('#sy').hidden=true;S.state='play';S.n++;S.dd=0;
+ const ot=S.ot,pl=S.pl,r=trust(ot,pl),k=o[0];dlgEmit(pl,o[1]);let rl=[],end=false;
+ if(k==='warm'){adj(ot,pl,4)}
+ else if(k==='ask'){adj(ot,pl,1);rl=[ot.hp<50?'i\u2019m hurting, but still standing.':ot.mor<35?'barely holding on, honestly.':pick(['managing. one day at a time.','still here. that\u2019s something.'])]}
+ else if(k==='disagree'){end=true;if(ot.aggr>.6||ot.pers==='cold'||r<-10){rl=[pick(['suit yourself.','watch your tone.','you don\u2019t know what you\u2019re talking about.'])];adj(ot,pl,-5);if(ot.aggr>.6&&Math.random()<.4)ot.wary.add(pl.id)}else{rl=[pick(['fair enough. we don\u2019t have to agree.','maybe you\u2019re right. i don\u2019t know.','hm. i\u2019ll think about it.'])];adj(ot,pl,-1)}}
+ else if(k==='deflect'){end=true;rl=[pick(['sure. no pressure.','okay. forget i asked.'])]}
+ else if(k==='cold'){end=true;rl=[r<0?'noted.':pick(['okay. understood.','fine.'])];adj(ot,pl,-3)}
+ else if(k==='end'){end=true;rl=[pick(['be careful out there.','take care.','stay alive.'])]}
+ else if(k==='agree'){adj(ot,pl,2)}
+ for(const l of rl)dlgEmit(ot,l);
+ if(end){dlgEnd(0,S.dd);return}
+ S.i++;dlgAdvance()}
+function dlgTimeout(){const S=DLG;$('#sy').hidden=true;S.state='play';S.dd=0;dlgEmit(S.ot,S.kind==='news'?pick(['nothing to share? alright.','okay. keep your secrets.']):pick(['...never mind.','hm. okay then.','you okay?']));adj(S.ot,S.pl,-1);dlgEnd(0,S.dd)}
+function dlgEnd(abort,hold){const S=DLG;if(!S)return;DLG=null;DLGEMIT=0;if(S.state==='ask'){const sy=$('#sy');if(sy)sy.hidden=true}
+ for(const q of[S.a,S.b])if(q.busy&&q.busy.t>100)q.busy.t=abort?.3:Math.max(1.2,hold||0)}
+function dlgTick(){const S=DLG;if(!S||S.cap)return;
+ if(!S.a.alive||!S.b.alive||S.pl!==ME||inFight(S.a)||inFight(S.b)||dd(S.a,S.b)>170){dlgEnd(1);return}
+ if(S.state==='wait'&&t>=S.at){if(S.kind==='news')dlgNews();else dlgShow()}else if(S.state==='ask'&&t>S.until)dlgTimeout()}
 function plWorld(e){const b=cv.getBoundingClientRect();return{x:(e.clientX-b.left-vw/2)/cam.z+cam.x,y:(e.clientY-b.top-vh/2)/cam.z+cam.y}}
 function plClick(e){const p=plWorld(e);let q=null,bd=Math.max(30,40/cam.z);for(const b of T)if(plSee(b)){const d=hyp(b.x-p.x,b.y-p.y);if(d<bd){bd=d;q=b}}plAtk(q,0,null,q?null:p)}
 function plHover(cx,cy){const p=plWorld({clientX:cx,clientY:cy}),rd=Math.max(BR,4.5/cam.z)*1.7;
@@ -2784,7 +2942,7 @@ function plHover(cx,cy){const p=plWorld({clientX:cx,clientY:cy}),rd=Math.max(BR,
 let EXP=null,BL=document.createElement('canvas');function plBlur(){const sm=document.createElement('canvas');sm.width=Math.ceil(W/12);sm.height=Math.ceil(H/12);const c=sm.getContext('2d');c.imageSmoothingQuality='high';c.drawImage(bg,0,0,sm.width,sm.height);BL.width=Math.ceil(W/4);BL.height=Math.ceil(H/4);const b=BL.getContext('2d');b.imageSmoothingEnabled=true;b.imageSmoothingQuality='high';try{b.filter='blur(4px)'}catch(e){}b.drawImage(sm,0,0,BL.width,BL.height);try{b.filter='none'}catch(e){}b.globalCompositeOperation='saturation';b.fillStyle='#808080';b.fillRect(0,0,BL.width,BL.height)}
 const EXS=12,L1=document.createElement('canvas'),L2=document.createElement('canvas'),plVr=()=>Math.max(60,SIGHT*TI[terrAt(ME.x,ME.y)].ob);
 function plMark(){if(!EXP){EXP=document.createElement('canvas');EXP.width=Math.ceil(W/EXS);EXP.height=Math.ceil(H/EXS)}const c=EXP.getContext('2d'),r=plVr()*1.25/EXS,x=ME.x/EXS,y=ME.y/EXS,g=c.createRadialGradient(x,y,r*.85,x,y,r);g.addColorStop(0,'#fff');g.addColorStop(1,'rgba(255,255,255,0)');c.fillStyle=g;c.fillRect(x-r,y-r,2*r,2*r)}
-function plPing(z){const H=plVr(),now=performance.now(),jt=Math.floor(now/1500);ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='bold 18px system-ui';
+function plPing(z){const H=plVr(),now=performance.now(),jt=Math.floor(now/1500);ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';ctx.font="bold 18px 'Chakra Petch',system-ui";
  for(const b of T){if(!b.alive||b===ME||plSee(b))continue;const D=dd(ME,b),sp=hyp(b.vx,b.vy);let k=null,Rg=0;
   if(inFight(b)||b.wind||b.at){k='f';Rg=H*2.8}else if(b.sq&&b.sq.some(q=>!q.cut&&t>=q.t0&&t<=q.t1)){k='t';Rg=H*2.1}else if(sp>40){k='s';Rg=H*(sp>b.spd*1.1?1.8:1.25)}
   if(!k||D>Rg)continue;const jx=Math.sin(b.id*12.9+jt*7.1)*28,jy=Math.cos(b.id*7.7+jt*3.3)*28,m=22;
@@ -2804,25 +2962,50 @@ function plFog(){if(!EXP)plMark();const z=cam.z,w=cv.width,h=cv.height,d=w/vw,sx
  const g=a.createRadialGradient(sx*d,sy*d,r*d*.7,sx*d,sy*d,r*d);g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(1,'rgba(0,0,0,0)');a.globalCompositeOperation='destination-out';a.fillStyle=g;a.fillRect(0,0,w,h);
  ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(L1,0,0);ctx.setTransform(d,0,0,d,0,0);plPing(z);ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(sx,sy,(BR+6)*z,0,7);ctx.stroke();ctx.restore()}
 
-/* touch controls: joystick drives the same keys as WASD/shift, buttons do attack / interact / craft */
-const touchOn=()=>CFG.touch==='on'||(CFG.touch!=='off'&&matchMedia('(pointer:coarse)').matches);
+/* touch controls: a floating joystick (analog speed + direction), buttons, pinch zoom, haptics */
+function touchOn(){return CFG.touch==='on'||(CFG.touch!=='off'&&matchMedia('(pointer:coarse)').matches)}
+function buzz(ms){if(CFG.haptic!=='off'&&navigator.vibrate)try{navigator.vibrate(ms)}catch(e){}}
+function dprC(){return Math.min(document.body.classList.contains('touch')?1.5:2,devicePixelRatio||1)}
 function tcEnter(){try{const d=document.documentElement;if(!document.fullscreenElement&&d.requestFullscreen)d.requestFullscreen({navigationUI:'hide'}).then(()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}}).catch(()=>{})}catch(e){}}
 function tcLeave(){try{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});if(screen.orientation&&screen.orientation.unlock)screen.orientation.unlock()}catch(e){}}
-const JS={id:null};
-function tcKeysOff(){for(const k of['w','a','s','d','shift','j'])delete K[k];JS.id=null;const i=$('#js i');if(i)i.style.transform=''}
-function plTouchSync(){const on=!!ME&&touchOn();if(document.body.classList.contains('touch')!==on){document.body.classList.toggle('touch',on);if(on)tcEnter();else{tcLeave();tcKeysOff()}fit()}}
-function plTouchOff(){if(document.body.classList.contains('touch')){document.body.classList.remove('touch');tcLeave()}tcKeysOff()}
-function jsSet(e){const b=$('#js').getBoundingClientRect(),r=b.width/2;let dx=e.clientX-(b.left+r),dy=e.clientY-(b.top+r);const m=Math.hypot(dx,dy)||1,k=Math.min(1,m/r);dx=dx/m*k;dy=dy/m*k;
- $('#js i').style.transform=`translate(${dx*r*.6}px,${dy*r*.6}px)`;
- const q=(c,v)=>{if(v)K[c]=1;else delete K[c]};q('d',dx>.3);q('a',dx<-.3);q('s',dy>.3);q('w',dy<-.3);q('shift',k>.92)}
-{const js=$('#js');
- js.onpointerdown=e=>{e.preventDefault();JS.id=e.pointerId;js.setPointerCapture(e.pointerId);jsSet(e)};
- js.onpointermove=e=>{if(e.pointerId===JS.id)jsSet(e)};
- const end=e=>{if(e.pointerId===JS.id)tcKeysOff()};js.onpointerup=end;js.onpointercancel=end;js.onlostpointercapture=end;
- const tb=(id,down,up)=>{const b=$(id);b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);b.classList.add('dn');down()};const u=()=>{b.classList.remove('dn');if(up)up()};b.onpointerup=u;b.onpointercancel=u;b.onlostpointercapture=u};
+const JS={id:null,cx:0,cy:0,r:64,k:0},RUN={on:0};
+function tcKeysOff(){for(const k of['w','a','s','d','shift','j','jx','jy'])delete K[k];if(RUN.on)K.shift=1;JS.id=null;JS.k=0;const j=$('#js');if(j){j.classList.remove('on');j.style.cssText='';const i=j.querySelector('i');if(i)i.style.transform=''}}
+function ctxAct(){const g=ME;if(!g||!g.alive||g.down)return '';if(DLG)return 'talking';if(plNear(80))return 'talk';
+ if(corpses.some(c=>!c.looted&&dd(g,c)<45))return 'loot';
+ if(items.some(i=>!i.gone&&(i.man||(i.k==='w'&&i.wi&&isBroken(i.wi)))&&dd(g,i)<36))return 'pick up';
+ for(const q of nodes)if(q.n>0&&dd(g,q)<40)return q.k==='berry'?'berries':q.k;return ''}
+let CTXT=0;
+function tcCtx(){const n=performance.now();if(n-CTXT<180)return;CTXT=n;const l=ctxAct(),b=$('#tE'),s=$('#tEs');b.classList.toggle('rdy',!!l&&l!=='talking');if(s.textContent!==l)s.textContent=l}
+function plTouchSync(){const on=!!ME&&touchOn(),bd=document.body.classList;
+ if(bd.contains('touch')!==on){bd.toggle('touch',on);if(on)tcEnter();else{tcLeave();tcKeysOff()}fit()}
+ if(on){bd.toggle('sz-s',CFG.tsz==='s');bd.toggle('sz-l',CFG.tsz==='l');bd.toggle('lefty',CFG.lefty==='on');tcCtx()}}
+function plTouchOff(){if(document.body.classList.contains('touch')){document.body.classList.remove('touch');tcLeave()}RUN.on=0;const r=$('#tR');if(r)r.classList.remove('tg');tcKeysOff()}
+function jsMove(e){let dx=e.clientX-JS.cx,dy=e.clientY-JS.cy;const m=Math.hypot(dx,dy)||1,k=Math.min(1,m/JS.r),nx=dx/m,ny=dy/m,u=Math.max(0,Math.min(1,(k-.16)/.74));
+ JS.k=k;$('#js i').style.transform=`translate(${nx*k*JS.r*.55}px,${ny*k*JS.r*.55}px)`;
+ const q=(c,v)=>{if(v)K[c]=1;else delete K[c]};
+ q('d',nx*k>.3);q('a',nx*k<-.3);q('s',ny*k>.3);q('w',ny*k<-.3);q('shift',RUN.on||k>.95);
+ if(u>.02){K.jx=nx*u;K.jy=ny*u}else{delete K.jx;delete K.jy}}
+{const jz=$('#jz'),js=$('#js');
+ jz.onpointerdown=e=>{e.preventDefault();if(JS.id!=null)return;JS.id=e.pointerId;jz.setPointerCapture(e.pointerId);
+  const zr=jz.getBoundingClientRect(),tr=$('#tc').getBoundingClientRect(),r=js.offsetWidth/2;
+  JS.r=r;JS.cx=Math.max(zr.left+r+6,Math.min(zr.right-r-6,e.clientX));JS.cy=Math.max(zr.top+r+6,Math.min(zr.bottom-r-6,e.clientY));
+  js.style.left=(JS.cx-r-tr.left)+'px';js.style.top=(JS.cy-r-tr.top)+'px';js.style.right='auto';js.style.bottom='auto';js.classList.add('on');buzz(6);jsMove(e)};
+ jz.onpointermove=e=>{if(e.pointerId===JS.id)jsMove(e)};
+ const end=e=>{if(e.pointerId===JS.id)tcKeysOff()};jz.onpointerup=end;jz.onpointercancel=end;jz.onlostpointercapture=end;
+ const tb=(id,down,up)=>{const b=$(id);b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);b.classList.add('dn');buzz(10);down()};const u=()=>{b.classList.remove('dn');if(up)up()};b.onpointerup=u;b.onpointercancel=u;b.onlostpointercapture=u};
  tb('#tA',()=>{K.j=1;plAtk()},()=>{delete K.j});tb('#tE',()=>plE());tb('#tC',()=>plCraft());tb('#tT',()=>plThrowKey());tb('#tD',()=>plDropKey());
+ $('#tR').onpointerdown=e=>{e.preventDefault();RUN.on^=1;$('#tR').classList.toggle('tg',!!RUN.on);buzz(10);if(RUN.on)K.shift=1;else if(!(JS.id!=null&&JS.k>.95))delete K.shift};
+ $('#tH').onclick=()=>$('#hlp').showModal();$('#tZi').onclick=()=>plZ(1.25);$('#tZo').onclick=()=>plZ(.8);
+ $('#tF').onclick=()=>{if(document.fullscreenElement)tcLeave();else tcEnter()};
  $('#tP').onclick=()=>$('#pp').click();
  $('#tX').onclick=()=>{if(!confirm('Stop playing?'))return;if(MP.on)mpLeave();else plOff()}}
+/* pinch to zoom on the map (two fingers); a pinch never counts as a tap */
+let PINCH=0,pd0=0,pz0=1;
+{const dist=e=>{const a=e.targetTouches[0],b=e.targetTouches[1];return Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)};
+ cv.addEventListener('touchstart',e=>{if(e.targetTouches.length>=2){PINCH=1;pd0=dist(e);pz0=cam.z}},{passive:true});
+ cv.addEventListener('touchmove',e=>{if(e.targetTouches.length>=2&&pd0>0){cam.z=clamp(pz0*dist(e)/pd0,ME?PZ0:minZ*.9,ME?PZ1:3);e.preventDefault()}},{passive:false});
+ cv.addEventListener('touchend',e=>{if(!e.targetTouches.length){PINCH=0;pd0=0}else if(e.targetTouches.length<2)pd0=0},{passive:true});
+ cv.addEventListener('touchcancel',()=>{PINCH=0;pd0=0},{passive:true})}
 /* hotbar + vitals */
 function plVit(){const a=ME;if(!a)return;const B=(n,v,c)=>`<div class="vb"><u>${n}</u><i><s style="width:${Math.max(0,Math.min(100,v))}%;background:${c}"></s></i></div>`;
  $('#vt').innerHTML=B('health',a.hp,'#4caf50')+B('blood',a.blood,'#c8344a')+B('stamina',a.st,'#4aa3df')+B('food',a.hunger,'#e8a93b')+B('water',a.thirst,'#5fd0e0')+B('swing',a.cool>0?100*(1-a.cool/(a.cm||1)):100,'#ddd')+`<div style="font-size:11px;margin-top:3px">${a.busy?a.busy.l:a.down?'collapsed':a.bleed>0?'bleeding':''}</div>`}
@@ -2869,29 +3052,30 @@ $('#cm').onclick=e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k||!ME||ME
 function plCraftDo(g,k){if(!PCR.includes(k)||!g.alive||g.down||g.busy||!REC[k]||!Object.keys(REC[k]).every(x=>g.inv[x]>=REC[k][x]))return;g.busy={t:2.5/Math.max(.6,g.sk.craft),l:'Crafting '+(WNM[k]||k),f:()=>craft(g,k)}}
 /* interacting */
 const TONES=[['be friendly',3,['hey. you okay?','hi there.']],['stay neutral',0,null],['be blunt',-3,['make it quick.','listen.']],['be threatening',-18,['don\u2019t try anything.','i\u2019m watching you.']]];
-function plAsk(a,k,c){c=c||ME;if(c.remote){if(c.pend)return c.pend.a===a;if(c.talkCd[a.id]>t||(k==='gossip'&&a.gCd>t))return true;c.pend={a,k,u:t+12};return true}
+function plAsk(a,k,c){c=c||ME;if(DLG&&c===ME){a.talkCd[c.id]=c.talkCd[a.id]=t+10;return true}if(c.remote){if(c.pend)return c.pend.a===a;if(c.talkCd[a.id]>t||(k==='gossip'&&a.gCd>t))return true;c.pend={a,k,u:t+12};return true}
  if(PEND)return PEND.a===a;if(ME.talkCd[a.id]>t||(k==='gossip'&&a.gCd>t))return true;PEND={a,k,u:t+12};plNote();return true}
 function plNote(){const n=$('#nt');if(!PEND){n.hidden=true;return}n.innerHTML=`<span><b>${pnm(PEND.a)}</b> wants to ${PEND.k==='talk'?'talk':'swap news'}.</span><button data-r="1">accept (y)</button><button data-r="0">deny (n)</button>`;n.hidden=false}
 function plPend(){if(PEND&&(t>PEND.u||!PEND.a.alive||dd(PEND.a,ME)>140))plReply(0,1)}
 function plReply(ok,quiet){const p=PEND;if(!p)return;PEND=null;plNote();if(MPG){mpCmd({c:'reply',ok:ok?1:0,q:quiet?1:0});return}plReplyCore(ME,p,ok,quiet)}
 function plReplyCore(g,p,ok,quiet){const a=p.a;if(!ok){a.talkCd[g.id]=g.talkCd[a.id]=t+(quiet?25:60);a.gCd=t+(quiet?25:60);return}
- PACC=PSAY=1;try{(p.k==='talk'?talk:gossip)(a,g)}finally{PACC=PSAY=0}}
+ PACC=PSAY=1;const op=dlgOpen(a,g,false,p.k!=='talk');try{(p.k==='talk'?talk:gossip)(a,g)}finally{PACC=PSAY=0;if(op)dlgGo()}}
 $('#nt').onclick=e=>{const r=e.target.dataset&&e.target.dataset.r;if(r!=null)plReply(+r)};
 function plClose(){IXB=null;$('#ix').hidden=$('#sy').hidden=$('#cm').hidden=true}
-function plIx(b){IXB=b;$('#sy').hidden=true;const al=ME.allies.has(b.id),ix=$('#ix');
- ix.innerHTML=`<h5>interacting with <b>${pnm(b)}</b></h5><button data-a="chat">chitchat</button><button data-a="ask">ask for something</button>${knows(b,ME)?'':'<button data-a="intro">introduce myself</button>'}<button data-a="ally" ${al?'disabled':''}>${al?'we\u2019re already allies.':'ally?'}</button><button data-a="x">back off</button>`;ix.hidden=false}
+function plIx(b){if(DLG)return;IXB=b;$('#sy').hidden=true;const al=ME.allies.has(b.id),ix=$('#ix');
+ ix.innerHTML=`<h5>interacting with <b>${pnm(b)}</b></h5><button data-a="chat">chitchat</button><button data-a="news">swap news</button><button data-a="ask">ask for something</button>${knows(b,ME)?'':'<button data-a="intro">introduce myself</button>'}<button data-a="ally" ${al?'disabled':''}>${al?'we\u2019re already allies.':'ally?'}</button><button data-a="x">back off</button>`;ix.hidden=false}
 function plOpts(L){const sy=$('#sy');sy.innerHTML='<h5 style="font-size:16px;color:#e8e1d0">what to say\u2026</h5>'+L.map((o,i)=>`<button data-i="${i}">${o[0]}</button>`).join('')+`<select id="tn">${TONES.map((t,i)=>`<option value="${i}">${t[0]}</option>`).join('')}</select>`;sy.hidden=false;sy._L=L}
 const SAYF={talk:smalltalk,deep:deepTalk,joke:jokeAround,who:askWho,heard:(a,c)=>askAbout(a,c),check:checkOn,compl:compliment,ally:(a,c)=>propose(a,c)||1,food:(a,c)=>askFor(a,c,'food')||1,bandage:(a,c)=>askFor(a,c,'bandage')||1,weapon:(a,c)=>askFor(a,c,'weapon')||1};
 function plSay(fk){const b=IXB;if(!b||!b.alive||!SAYF[fk])return;const tn=+($('#tn')||{value:0}).value||0;$('#sy').hidden=true;if(MPG){mpCmd({c:'say',b:b.id,f:fk,tn});return}plSayCore(ME,b,SAYF[fk],tn)}
-function plSayCore(g,b,f,tn){const T0=TONES[tn]||TONES[0];adj(b,g,T0[1]);if(T0[1]<-10)b.mor=Math.max(0,b.mor-8);b.talkCd[g.id]=g.talkCd[b.id]=t+20;
- PSAY=1;PAIR=[g,b];try{if(T0[2])say(g,pick(T0[2]),0);if(!f(g,b,T0[2]?LD:0)&&!T0[2])smalltalk(g,b,0)}finally{PAIR=null;PSAY=0}}
+function plSayCore(g,b,f,tn){if(DLG)return;const T0=TONES[tn]||TONES[0];adj(b,g,T0[1]);if(T0[1]<-10)b.mor=Math.max(0,b.mor-8);b.talkCd[g.id]=g.talkCd[b.id]=t+20;
+ const op=dlgOpen(g,b,true);PSAY=1;PAIR=[g,b];try{if(T0[2]){DLGEMIT=1;try{say(g,pick(T0[2]),0)}finally{DLGEMIT=0}}if(!f(g,b,T0[2]?LD:0)&&!T0[2])smalltalk(g,b,0)}finally{PAIR=null;PSAY=0;if(op)dlgGo()}}
 $('#ix').onclick=e=>{const k=e.target.dataset&&e.target.dataset.a,b=IXB;if(!k||!b)return;
  if(k==='x')plClose();
+ else if(k==='news'){plClose();plNewsStart(b)}
  else if(k==='intro'){if(MPG)mpCmd({c:'intro',b:b.id});else{PSAY=1;PAIR=[ME,b];try{introduce(ME,b)}finally{PAIR=null;PSAY=0}}plIx(b)}
  else if(k==='ally'){plSay('ally');plIx(b)}
  else if(k==='chat'){const P=[['talk about the games','talk'],['talk about home','deep'],['crack a joke','joke'],['ask who\u2019s dangerous','who'],['ask what they\u2019ve heard','heard'],['check on them','check'],['pay a compliment','compl']].sort(()=>Math.random()-.5).slice(0,3);plOpts(P.map(p=>[p[0],()=>plSay(p[1])]))}
  else if(k==='ask'){plOpts([['ask for food','food'],['ask for a bandage','bandage'],['ask for a spare weapon','weapon']].map(p=>[p[0],()=>plSay(p[1])]))}}
-$('#sy').onclick=e=>{const i=e.target.dataset&&e.target.dataset.i;if(i!=null)$('#sy')._L[+i][1]()};
+$('#sy').onclick=e=>{const b=e.target.closest&&e.target.closest('button[data-i]');if(b&&$('#sy')._L)$('#sy')._L[+b.dataset.i][1]()};
 /* start screens */
 const pdlg=$('#pdlg');$('#pl').onclick=()=>pdlg.showModal();$('#pcx').onclick=()=>pdlg.close();
 $('#pst').onclick=()=>{plOff();pdlg.close()};
