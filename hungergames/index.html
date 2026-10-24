@@ -2716,7 +2716,8 @@ $('#pgo').onclick=()=>{plOff();reset();const d=+$('#pdi').value,a=d?T.find(x=>x.
    - mp.js (the server) only keeps the lobby and passes these messages along. */
 const mpr1=v=>Math.round(v*10)/10,mpr2=v=>Math.round(v*100)/100;
 const mpEl=id=>document.getElementById(id);
-try{MP.base=localStorage.getItem('hgs-mpbase')||''}catch(e){MP.base=''}
+const MP_DEFAULT_SERVER='https://gamedevrg-com-backend.vercel.app';
+try{MP.base=localStorage.getItem('hgs-mpbase')||MP_DEFAULT_SERVER}catch(e){MP.base=MP_DEFAULT_SERVER}
 let mpProf={f:'',l:'',pr:'they/them',d:0,ready:false};
 try{Object.assign(mpProf,JSON.parse(localStorage.getItem('hgs-mpprof')||'{}'),{ready:false})}catch(e){}
 const mpProfOut=()=>({f:mpProf.f,l:mpProf.l,pr:mpProf.pr||'they/them',d:+mpProf.d||0,ready:!!mpProf.ready});
