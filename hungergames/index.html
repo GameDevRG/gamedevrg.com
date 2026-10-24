@@ -2771,6 +2771,7 @@ async function mpLoop(){
  while(MP.on&&MP.loopId===me){
   const t0=performance.now(),play=MP.phase==='play';
   try{
+   if(MPG&&MP.own)mpSelfSend();
    const send=MP.out.splice(0,120);
    if(MP.out.length>150){MP.out.length=0;mpFullAll()}
    const r=await mpPost('/mp/sync',{code:MP.code,pid:MP.pid,send,after:MP.after,rev:MP.rev,wait:play?30:2500},play?6000:9000);
@@ -2945,7 +2946,7 @@ function mpGuestGone(slot,why){
 }
 function mpBeginGuest(m){
  plOff();
- MPG=true;MPH=false;MP.gq=0;MP.synced=false;MP.had=false;MP.hpz=false;MP.gid=null;MP.pk='';MP.cfg0=CFG.strangers;MP.rt=0;MP.lt=-1;MP.gapPk=120;MP.arr=0;MP.evq=[];MP.pjb=[];
+ MPG=true;MPH=false;MP.gq=0;MP.synced=false;MP.had=false;MP.hpz=false;MP.gid=null;MP.pk='';MP.cfg0=CFG.strangers;MP.rt=0;MP.lt=-1;MP.gapPk=120;MP.arr=0;MP.evq=[];MP.pjb=[];MP.own=false;MP.sim=false;MP.crn=0;MP.pk2='';MP.pat=0;
  $('#sd').value=m.seed||'';
  T=[];items=[];corpses=[];proj=[];fx=[];sparks=[];lobs=[];hazards=[];rip=[];logs=[];stains=[];nodes=[];
  t=0;cd=4;over=false;R=1500;stormOn=false;sel=null;paused=false;speed=1;DL=1;night=false;lastKill=0;
@@ -2991,6 +2992,7 @@ function mpGot(d,from){
    if(Array.isArray(d.v)&&d.v.length===4&&d.v.every(Number.isFinite))gs.GV=d.v;
   }
   else if(d.k==='C')mpExec(gs,d);
+  else if(d.k==='P')mpPos(gs,d);
  }else if(MPG&&d.k==='S')mpApply(d);
 }
 const PCR=['knife','axe','spear','bow','arrows','club','staff','sling','stick','rock','shiv','spike','hammer','whip'];
@@ -3028,7 +3030,7 @@ function mpPackT(a,full,lite,g){
  o.sq=sq.slice(-5);
  if(g&&a!==g)o.kg=a.nk&&a.nk.has(g.id)?1:0;
  if(a===g){
-  o.me={hg:mpr1(a.hunger),th:mpr1(a.thirst),st:mpr1(a.st),cl:mpr2(Math.max(0,a.cool)),cm:mpr2(a.cm||1),bz:a.busy?String(a.busy.l||'working'):0,
+  o.me={mv:mpr2(mob(a)*(a.stun>0?.4:1)),hg:mpr1(a.hunger),th:mpr1(a.thirst),st:mpr1(a.st),cl:mpr2(Math.max(0,a.cool)),cm:mpr2(a.cm||1),bz:a.busy?String(a.busy.l||'working'):0,
    ar:a.arrows|0,kv:a.knv|0,iv:{wood:a.inv.wood,stone:a.inv.stone,fiber:a.inv.fiber,food:a.inv.food,bandage:a.inv.bandage},
    sp:a.spare.map(w=>({k:w.k,m:w.m||null,d:mpr1(w.d),mx:w.mx})),nk:[...a.nk],
    pd:a.pend&&a.pend.a?{a:a.pend.a.id,k:a.pend.k,u:mpr1(a.pend.u)}:0};
@@ -3039,6 +3041,7 @@ function mpSnap(gs){
  const full=gs.full;gs.full=false;
  const g=gs.g,s={k:'S',q:++gs.seq,t:mpr2(t),cd:mpr2(cd),pz:paused?1:0,vo:over?1:0,R:Math.round(R),so:stormOn?1:0};
  if(full){s.f=1;s.gid=g.id;s.hid=ME?ME.id:-1;s.cfg={st:CFG.strangers?1:0}}
+ if(gs.cr)s.cr=gs.cr;
  s.T=T.map(a=>mpPackT(a,full,!full&&gs.seq%4!==0&&a!==g&&dd(a,g)>800,g));
  s.pj=proj.map(p=>({x:mpr1(p.x),y:mpr1(p.y),vx:Math.round(p.vx),vy:Math.round(p.vy),wk:p.wk||'bow'}));
  const sec=(key,val)=>{const j=JSON.stringify(val);if(full||gs.last[key]!==j){gs.last[key]=j;s[key]=val}};
@@ -3065,7 +3068,7 @@ function mpMerge(a,o){
  if(o.n!=null){a.name=o.n;a.sur=o.s;a.d=o.d;a.pr=o.pr;a.str=o.sr;a.spd=o.sp}
  const first=a.tx==null,kf=a.kf||(a.kf=[]),lk=kf[kf.length-1];
  a.tx=o.x;a.ty=o.y;
- if(first||o.rs||(lk&&(o.x-lk.x)*(o.x-lk.x)+(o.y-lk.y)*(o.y-lk.y)>48400)){kf.length=0;a.x=o.x;a.y=o.y}
+ if(first||(!(MP.own&&a.id===MP.gid)&&(o.rs||(lk&&(o.x-lk.x)*(o.x-lk.x)+(o.y-lk.y)*(o.y-lk.y)>48400)))){kf.length=0;a.x=o.x;a.y=o.y}
  kf.push({t:MP.st,x:o.x,y:o.y,vx:o.vx,vy:o.vy,at:performance.now()});if(kf.length>16)kf.shift();
  a.vx=o.vx;a.vy=o.vy;a.hp=o.hp;a.alive=!!o.al;
  if(o.lt)return;
@@ -3087,7 +3090,7 @@ function mpMerge(a,o){
  a.sq=nq;
  if(o.kg!=null)a.nk=new Set(o.kg&&MP.gid!=null?[a.id,MP.gid]:[a.id]);
  if(o.me){
-  const m=o.me;a.hunger=m.hg;a.thirst=m.th;a.st=m.st;a.cool=m.cl;a.cm=m.cm;a.busy=m.bz?{l:m.bz}:null;a.arrows=m.ar;a.knv=m.kv;a.inv=m.iv;
+  const m=o.me;a.mv=m.mv;a.hunger=m.hg;a.thirst=m.th;a.st=m.st;a.cool=m.cl;a.cm=m.cm;a.busy=m.bz?{l:m.bz}:null;a.arrows=m.ar;a.knv=m.kv;a.inv=m.iv;
   a.spare=m.sp.map(w=>({k:w.k,m:w.m,d:w.d,mx:w.mx}));a.nk=new Set(m.nk);mpPend(m.pd||null);
  }
 }
@@ -3103,6 +3106,7 @@ function mpApply(s){
  cd=s.cd;over=!!s.vo;R=s.R;stormOn=!!s.so;MP.hpz=!!s.pz;
  if(s.f){MP.gid=s.gid;if(s.cfg)CFG.strangers=!!s.cfg.st}
  for(const o of s.T){const a=T[o.i]||(T[o.i]=mpNew(o.i));mpMerge(a,o)}
+ if(s.cr&&s.cr.n>(MP.crn|0)){MP.crn=s.cr.n;const a=T[MP.gid];if(a){a.x=s.cr.x;a.y=s.cr.y;a.mvx=a.mvy=a.mdx=a.mdy=0}}
  if(s.it)items=s.it.map(i=>({k:i.k,n:i.n,x:i.x,y:i.y,drop:i.dr?1:0,wi:i.wi?{k:i.wi.k,m:i.wi.m,d:i.wi.d,mx:i.wi.mx}:undefined}));
  if(s.nd)s.nd.forEach((n,i)=>{if(nodes[i])nodes[i].n=n});
  if(s.co)corpses=s.co.map(c=>({id:c.i,x:c.x,y:c.y,looted:!!c.l,name:c.n,sur:'',inv:{}}));
@@ -3141,7 +3145,7 @@ function mpTickG(dt){
   if(fz)MP.rt=MP.lt;
   else{const df=tg-MP.rt;if(Math.abs(df)>1.5)MP.rt=tg;else MP.rt+=dt*Math.max(0,Math.min(2,1+df*2))}
   MP.rt=Math.max(0,Math.min(MP.rt,MP.lt+.15));
-  const rt=MP.rt;t=rt;
+  const rt=MP.rt;t=rt;MP.sim=MP.synced&&!fz;
   /* effects and messages play when the delayed clock reaches the moment they happened */
   while(MP.evq.length&&(fz||MP.evq[0].t<=rt||now-MP.evq[0].at>900))mpEv(MP.evq.shift().e);
   const k=1-Math.exp(-dt*12);
@@ -3150,8 +3154,9 @@ function mpTickG(dt){
    if(kf&&kf.length){
     while(kf.length>2&&kf[1].t<rt-.5)kf.shift();
     const n=kf.length,l=kf[n-1];
-    if(a.id===MP.gid&&a.alive){
-     /* your own tribute: no delay, it leads with its velocity so your keys feel quick */
+    if(a.id===MP.gid&&a.alive&&MP.sim){mpMoveSelf(a,dt);MP.own=true}
+    else if(a.id===MP.gid&&a.alive){
+     /* your own tribute before the match starts or while it is paused: no delay, it leads with its velocity */
      const e=Math.min(.25,(now-l.at)/1000),tx=l.x+l.vx*e,ty=l.y+l.vy*e,dx=tx-a.x,dy=ty-a.y;
      if(dx*dx+dy*dy>14400){a.x=tx;a.y=ty}else{a.x+=dx*k;a.y+=dy*k}
     }else{
@@ -3174,6 +3179,75 @@ function mpTickG(dt){
  DL=daylight(t);SIGHT=270*(.55+.45*DL);night=DL<.45;
 }
 
+/* ---- your own tribute: the position is decided on your side ----
+   The guest moves its own tribute with the same rules the host uses (keys, speed, terrain, stamina, injuries, acceleration,
+   deep water and peaks, bodies), so it answers your keys at once whatever the connection is like. It reports where it is
+   with every sync. The host checks the report (inside the map, not in deep water, not faster than the tribute can go),
+   uses it, and pulls the guest back with a correction if a report is refused. */
+function mpMoveSelf(a,dt){
+ if(a.down){a.mvx=a.mvy=a.mdx=a.mdy=0;a.vx=a.vy=0;return}
+ const ix=(K.d||K.ArrowRight?1:0)-(K.a||K.ArrowLeft?1:0),iy=(K.s||K.ArrowDown?1:0)-(K.w||K.ArrowUp?1:0),spd0=a.spd||95;
+ let wx=0,wy=0;
+ if(ix||iy){
+  const m=Math.hypot(ix,iy);let sp=K.shift?1.25:1;if(a.wind)sp*=.3;
+  const sprint=sp>1.1&&a.st>8&&a.leg<.6&&a.blood>40,spd=spd0*(sprint?sp:Math.min(sp,1))*(.7+.3*a.st/100)*(a.mv||1)*TI[terrAt(a.x,a.y)].spd;
+  wx=ix/m*spd;wy=iy/m*spd;
+  if(ME===a)PD={x:ix/m,y:iy/m};
+ }
+ if(a.conc>0){wx+=Math.sin(t*4+a.id)*spd0*.3;wy+=Math.cos(t*3.3+a.id*2)*spd0*.3}
+ const ka=1-Math.exp(-dt*6);
+ a.mdx=(a.mdx||0)+(wx-(a.mdx||0))*ka;a.mdy=(a.mdy||0)+(wy-(a.mdy||0))*ka;
+ let ax=a.mdx-(a.mvx||0),ay=a.mdy-(a.mvy||0);const am=Math.hypot(ax,ay),mx=spd0*4.5*dt;if(am>mx){ax*=mx/am;ay*=mx/am}
+ a.mvx=(a.mvx||0)+ax;a.mvy=(a.mvy||0)+ay;
+ let nx=clamp(a.x+a.mvx*dt,8,W-8),ny=clamp(a.y+a.mvy*dt,8,H-8);
+ if(solid(nx,ny)&&!solid(a.x,a.y)){if(!solid(nx,a.y)){ny=a.y;a.mvy*=.2}else if(!solid(a.x,ny)){nx=a.x;a.mvx*=.2}else{nx=a.x;ny=a.y;a.mvx=a.mvy=a.mdx=a.mdy=0}}
+ for(const b of T){
+  if(b===a||!b.alive)continue;
+  const dx=nx-b.x,dy=ny-b.y,d2=dx*dx+dy*dy;if(d2>=4*BR*BR)continue;
+  const d=Math.sqrt(d2),ux=d<.001?1:dx/d,uy=d<.001?0:dy/d,o=2*BR-d;
+  nx+=ux*o*.6;ny+=uy*o*.6;
+  const v=a.mvx*ux+a.mvy*uy;if(v<0){a.mvx-=v*ux;a.mvy-=v*uy}
+ }
+ nx=clamp(nx,8,W-8);ny=clamp(ny,8,H-8);
+ if(solid(nx,ny)){nx=a.x;ny=a.y}
+ a.x=nx;a.y=ny;a.vx=a.mvx;a.vy=a.mvy;
+}
+/* guest: queue the newest position (an older one that was not sent yet is replaced) */
+function mpSelfSend(){
+ const a=T[MP.gid];if(!a||!a.alive)return;
+ const now=performance.now(),x=mpr1(a.x),y=mpr1(a.y),vx=mpr1(a.mvx||0),vy=mpr1(a.mvy||0),key=x+','+y+','+vx+','+vy;
+ if(key===MP.pk2&&now-MP.pat<800)return;
+ MP.pk2=key;MP.pat=now;
+ for(let i=MP.out.length-1;i>=0;i--)if(MP.out[i].k==='P')MP.out.splice(i,1);
+ MP.out.push({k:'P',x,y,vx,vy,ct:Math.round(now),ca:MP.crn|0});
+}
+/* host: check a reported position and keep it */
+function mpPos(gs,d){
+ const g=gs.g;if(!g||!g.alive||g.down||cd>0||over)return;
+ const x=+d.x,y=+d.y,vx=+d.vx,vy=+d.vy,ct=+d.ct;
+ if(!(Number.isFinite(x)&&Number.isFinite(y)&&Number.isFinite(vx)&&Number.isFinite(vy)&&Number.isFinite(ct)))return;
+ if(gs.cr&&(+d.ca||0)>=gs.cr.n)gs.cr=null;
+ if(gs.cr)return; /* this report was made before the guest got the correction */
+ const now=performance.now(),c=gs.cp;
+ if(c&&ct<=c.ct)return; /* old or repeated */
+ const ref=c||{x:g.x,y:g.y,ct:ct-100,at:now-100};
+ const el=Math.min(Math.max(.02,Math.min(2,(ct-ref.ct)/1000)),(now-ref.at)/1000+.5);
+ let nx=clamp(x,8,W-8),ny=clamp(y,8,H-8),ok=true;
+ const dx=nx-ref.x,dy=ny-ref.y,dist=Math.hypot(dx,dy),lim=(g.spd||95)*1.4*el+36;
+ if(dist>lim){ok=false;nx=ref.x+dx*lim/dist;ny=ref.y+dy*lim/dist}
+ if(solid(nx,ny)){nx=ref.x;ny=ref.y;ok=false}
+ gs.cp={x:nx,y:ny,vx:ok?clamp(vx,-300,300):0,vy:ok?clamp(vy,-300,300):0,ct,at:now};
+ if(!ok)gs.cr={x:nx,y:ny,n:(gs.crn=(gs.crn|0)+1)};
+}
+/* host: put the guest's tribute where the guest says it is, gliding between reports so it does not jump on the host's screen */
+function mpHostPos(gs,dt){
+ const g=gs.g,c=gs.cp,now=performance.now();
+ if(!c||!g||!g.alive||g.down||now-c.at>1500)return;
+ const e=Math.min(.3,(now-c.at)/1000),tx=c.x+c.vx*e,ty=c.y+c.vy*e,dx=tx-g.x,dy=ty-g.y;
+ if(dx*dx+dy*dy>22500){g.x=tx;g.y=ty}else{const k=1-Math.exp(-dt*14);g.x+=dx*k;g.y+=dy*k}
+ g.vx=c.vx;g.vy=c.vy;g.lx=g.x;g.ly=g.y;
+}
+
 /* every frame: the guest reports its keys, the host streams snapshots */
 function mpFrame(dt){
  if(!MP.on)return;
@@ -3191,6 +3265,7 @@ function mpFrame(dt){
   const gap=Math.max(MP.hold?450:paused?220:MP.gs.size>3?85:55,Math.min(110,MP.rtt*.4));
   for(const gs of MP.gs.values()){
    const g=gs.g;
+   mpHostPos(gs,dt);
    if(now-gs.gIn>1500)g.rk={};
    if(!g.alive&&g.ctl){g.ctl=0;g.pend=null}
    if(g.pend&&(t>g.pend.u||!g.pend.a.alive||dd(g.pend.a,g)>140)){const p=g.pend;g.pend=null;plReplyCore(g,p,0,1)}
