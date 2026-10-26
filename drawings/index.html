@@ -1789,6 +1789,150 @@
     :root[data-theme="glass"] :is(#top, #tb, #tp, #lp, #lpp, #tbx, #rail) { background-color: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .75); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), inset 0 -1px 0 rgba(120, 150, 190, .18), 0 8px 24px rgba(40, 70, 110, .16) }
     :root[data-theme="glass"] :is(.pop, #cdlg .card, #dlg .card, #fdlg .card) { border: 1px solid rgba(255, 255, 255, .8); box-shadow: var(--sh), inset 0 1px 0 rgba(255, 255, 255, .95), inset 0 0 0 1px rgba(255, 255, 255, .25) }
 
+
+    /* ================= themes borrowed from fractalengine: gamedevrg.com, neo brutalism, slate, blueprint =================
+       each sets the shared colour variables plus a few extras: --ed edge line, --fd field fill, --aci ink on the accent colour, --mono mono font.
+       neo brutalism, slate and blueprint come as a light and a dark side; gamedevrg.com is dark only. */
+    :root[data-theme="gdrg"] { --sh: 0 10px 40px -14px rgba(0, 0, 0, .9); --bg: #000; --bar: #000a1a; --cv: #020a18; --tx: #e4ebf5; --mut: #93a1b5; --bd: #1b2d50; --hv: #0d2147; --ac: #3b82f6; --pop: #00122e; --on: #10306a; --onx: #d6e6ff; --ed: #3a5ca8; --fd: #000; --aci: #fff; --uif: 'Chakra Petch', system-ui, sans-serif; --mono: 'DM Mono', ui-monospace, Menlo, Consolas, monospace; color-scheme: dark }
+    :root[data-theme="brutal"] { --sh: 6px 6px 0 #111; --bg: #fffbe8; --bar: #fff; --cv: #f1e7c0; --tx: #111; --mut: #4a4a4a; --bd: #111; --hv: #ffd23f; --ac: #ff4d2e; --pop: #fffbe8; --on: #ff4d2e; --onx: #fff; --ed: #111; --fd: #fff; --aci: #fff; --k: #111; --y: #ffd23f; --yi: #111; --top: #ffd23f; --uif: 'Space Grotesk', 'Chakra Petch', system-ui, sans-serif; --mono: 'Space Mono', ui-monospace, Menlo, Consolas, monospace; color-scheme: light }
+    :root[data-theme="brutal-night"] { --sh: 6px 6px 0 #000; --bg: #26231e; --bar: #38342d; --cv: #1b1915; --tx: #f4efe0; --mut: #b3ab98; --bd: #4a4538; --hv: #ffd23f; --ac: #ff6a4d; --pop: #26231e; --on: #ff6a4d; --onx: #140a06; --ed: #000; --fd: #38342d; --aci: #140a06; --k: #000; --y: #ffd23f; --yi: #111; --top: #1b1915; --uif: 'Space Grotesk', 'Chakra Petch', system-ui, sans-serif; --mono: 'Space Mono', ui-monospace, Menlo, Consolas, monospace; color-scheme: dark }
+    :root[data-theme="slate"] { --sh: 0 4px 14px rgba(46, 52, 64, .22); --bg: #e3e8f0; --bar: #eceff4; --cv: #d8dee9; --tx: #2e3440; --mut: #5b6679; --bd: #d8dee9; --hv: #dbe1ea; --ac: #5e81ac; --pop: #eceff4; --on: #cbd8ea; --onx: #2b4a73; --ed: #b4bfd2; --fd: #fff; --aci: #fff; color-scheme: light }
+    :root[data-theme="slate-dark"] { --sh: 0 4px 14px rgba(0, 0, 0, .55); --bg: #272c36; --bar: #2e3440; --cv: #222731; --tx: #eceff4; --mut: #9ba7bb; --bd: #3b4252; --hv: #3b4252; --ac: #88c0d0; --pop: #2e3440; --on: #445764; --onx: #d9eef4; --ed: #4c566a; --fd: #252a34; --aci: #1f2430; color-scheme: dark }
+    :root[data-theme="blueprint"] { --sh: 0 4px 14px rgba(18, 49, 95, .22); --bg: #e6f0fd; --bar: #f3f8ff; --cv: #dbe8f9; --tx: #12315f; --mut: #4f6f9c; --bd: #cfe0f6; --hv: #dbe9fb; --ac: #1f5fbf; --pop: #f3f8ff; --on: #cfe1fa; --onx: #0f4c9a; --ed: #6f95cf; --fd: #fff; --aci: #fff; --grid: rgba(31, 95, 191, .11); --uif: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; --mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; color-scheme: light }
+    :root[data-theme="blueprint-dark"] { --sh: 0 4px 14px rgba(0, 10, 30, .6); --bg: #0a2244; --bar: #0d2b52; --cv: #0b2547; --tx: #e6f1ff; --mut: #94b6e2; --bd: #1f4a80; --hv: #153f75; --ac: #7fe3ff; --pop: #0d2b52; --on: #1b4f8f; --onx: #bfe6ff; --ed: #5d8fd0; --fd: #0a2244; --aci: #05203f; --grid: rgba(127, 227, 255, .09); --uif: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; --mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; color-scheme: dark }
+
+    /* shared: accent-coloured logo, checkmarks and selected rows */
+    :root:is([data-theme="gdrg"],[data-theme="brutal"],[data-theme="brutal-night"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) .logo { background: var(--ac) }
+    :root:is([data-theme="gdrg"],[data-theme="brutal"],[data-theme="brutal-night"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) .logo svg { stroke: var(--aci) }
+    :root:is([data-theme="gdrg"],[data-theme="brutal"],[data-theme="brutal-night"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) input[type=checkbox]:checked::after { border-color: var(--aci) }
+    :root:is([data-theme="gdrg"],[data-theme="brutal"],[data-theme="brutal-night"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) .lr.on { color: var(--onx) }
+    :root:is([data-theme="gdrg"],[data-theme="brutal"],[data-theme="brutal-night"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) .lr.on .ln small { color: inherit; opacity: .8 }
+    :root:is([data-theme="gdrg"],[data-theme="brutal"],[data-theme="brutal-night"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) :is(#cdlg select, #cdlg input[type=number], #dlg textarea, #tp textarea, #tp input[type=number], #lpp select, .ln input, #fs, .ins input) { background: var(--fd); border-color: var(--ed); color: var(--tx) }
+    :root:is([data-theme="gdrg"],[data-theme="brutal"],[data-theme="brutal-night"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) :is(#cdlg select, #cdlg input[type=number], #dlg textarea, #tp textarea, #tp input[type=number], #lpp select, .ln input, #fs, .ins input):focus { border-color: var(--ac); outline: none }
+    :root:is([data-theme="gdrg"],[data-theme="brutal"],[data-theme="brutal-night"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) :is(#cdlg .pri, #dlg .pri, #hint button:first-of-type, #fdlg .ft button.pri) { background: var(--ac); color: var(--aci); border-color: var(--ac) }
+    :root:is([data-theme="gdrg"],[data-theme="brutal"],[data-theme="brutal-night"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) :is(#cdlg .pri, #dlg .pri, #hint button:first-of-type, #fdlg .ft button.pri):hover { background: var(--ac); filter: brightness(1.12) }
+
+    /* square corners and mono details (gamedevrg.com, neo brutalism, blueprint) */
+    :root:is([data-theme="gdrg"],[data-theme="brutal"],[data-theme="brutal-night"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) *, :root:is([data-theme="gdrg"],[data-theme="brutal"],[data-theme="brutal-night"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) *::before, :root:is([data-theme="gdrg"],[data-theme="brutal"],[data-theme="brutal-night"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) *::after { border-radius: 0 !important }
+    :root:is([data-theme="gdrg"],[data-theme="brutal"],[data-theme="brutal-night"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) :is(.b, .pop .it, .share, .mb) svg { stroke-linecap: butt; stroke-linejoin: miter }
+    :root:is([data-theme="gdrg"],[data-theme="brutal"],[data-theme="brutal-night"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) :is(#zm, .pop .it i, #dlg textarea, .ln small, #fs, #tp input[type=number]) { font-family: var(--mono) }
+    :root:is([data-theme="gdrg"],[data-theme="brutal"],[data-theme="brutal-night"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) input[type=range]::-webkit-slider-runnable-track { border-radius: 0 }
+    :root:is([data-theme="gdrg"],[data-theme="brutal"],[data-theme="brutal-night"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) input[type=range]::-moz-range-track { border-radius: 0 }
+
+    /* thin-edge themes: one flat colour, one 1px edge */
+    :root:is([data-theme="gdrg"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) :is(.pop, #cdlg .card, #dlg .card, #fdlg .card, #tp, #tbx, #rail, #isl, #hint, #zm, .toast, #tb) { border: 1px solid var(--ed) }
+    :root:is([data-theme="gdrg"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) :is(#tb, #rail, #isl, #zm, #hint, .toast) { box-shadow: none }
+    :root:is([data-theme="gdrg"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) #lp { border: 0; border-left: 1px solid var(--ed); box-shadow: none }
+    :root:is([data-theme="gdrg"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) #lpp { border-top-color: var(--ed) }
+    :root:is([data-theme="gdrg"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) #top { background: var(--bg); border-bottom: 1px solid var(--ed); padding-bottom: 6px }
+    :root:is([data-theme="gdrg"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) .share { background: var(--ac); color: var(--aci) }
+    :root:is([data-theme="gdrg"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) .shd { border-left-color: color-mix(in srgb, currentColor 35%, transparent) }
+    :root:is([data-theme="gdrg"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) :is(#cdlg button, #dlg button, #hint button) { border: 1px solid var(--ed) }
+
+    /* gamedevrg.com + blueprint: square, outlined accent buttons, ringed active tools, square slider handles */
+    :root:is([data-theme="gdrg"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) .share { background: transparent; color: var(--ac); border-color: var(--ac) }
+    :root:is([data-theme="gdrg"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) .share:hover { background: var(--ac); color: var(--aci) }
+    :root:is([data-theme="gdrg"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) :is(#cdlg button, #dlg button, #hint button) { background: transparent; color: var(--ac); border-color: var(--ac) }
+    :root:is([data-theme="gdrg"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) :is(#cdlg button, #dlg button, #hint button):hover { background: var(--ac); color: var(--aci) }
+    :root:is([data-theme="gdrg"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) :is(#cdlg .pri, #dlg .pri, #hint button:first-of-type) { background: var(--ac); color: var(--aci) }
+    :root:is([data-theme="gdrg"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) .b.on, :root:is([data-theme="gdrg"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) .lr.on { box-shadow: inset 0 0 0 1px var(--ac) }
+    :root:is([data-theme="gdrg"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) :is(.tabs span.on, #fdlg .ft button.pri) { color: var(--tx) }
+    :root:is([data-theme="gdrg"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) #fdlg .ft button.pri { color: var(--aci) }
+    :root:is([data-theme="gdrg"]) :is(.pop, #cdlg .card, #dlg .card, #fdlg .card, #tp, #tbx, #isl, #rail) { background-image: linear-gradient(145deg, #00122e, #000) }
+    :root:is([data-theme="gdrg"]) :is(#top, #tb) { background-color: #000 }
+    :root:is([data-theme="gdrg"]) #tb { background: #000a1a }
+    :root:is([data-theme="gdrg"]) :is(.cv1, .sl, #gb) { outline: 1px solid var(--ed) }
+    :root:is([data-theme="gdrg"]) .share { font-weight: 600 }
+    :root:is([data-theme="gdrg"]) :is(#cdlg h3, #dlg h3, #fdlg h3, .lph b, #tp .hd) { color: var(--ac); font-weight: 600 }
+    :root:is([data-theme="gdrg"]) input[type=range]::-webkit-slider-thumb { width: 10px; height: 10px; margin-top: -3px; background: #fff; border: 0; box-shadow: none }
+    :root:is([data-theme="gdrg"]) input[type=range]::-moz-range-thumb { width: 10px; height: 10px; background: #fff; border: 0; box-shadow: none }
+    :root:is([data-theme="blueprint"],[data-theme="blueprint-dark"]) input[type=range]::-webkit-slider-thumb { width: 12px; height: 12px; margin-top: -4px; background: var(--fd); border: 2px solid var(--ac); box-shadow: none }
+    :root:is([data-theme="blueprint"],[data-theme="blueprint-dark"]) input[type=range]::-moz-range-thumb { width: 12px; height: 12px; background: var(--fd); border: 2px solid var(--ac); box-shadow: none }
+    /* blueprint: drafting-paper grid on the canvas, header and layers panel */
+    :root:is([data-theme="blueprint"],[data-theme="blueprint-dark"]) :is(#wrap, #top, #lp, #tb) { background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 24px 24px }
+    :root:is([data-theme="blueprint"],[data-theme="blueprint-dark"]) #wrap { background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 24px 24px }
+    :root:is([data-theme="blueprint"],[data-theme="blueprint-dark"]) :is(#cdlg h3, #dlg h3, #fdlg h3, .lph b) { text-transform: lowercase; letter-spacing: .02em }
+
+    /* slate: cool nordic greys, a little calmer than the defaults */
+    :root:is([data-theme="slate"],[data-theme="slate-dark"]) #tb { border-radius: 14px }
+    :root:is([data-theme="slate"],[data-theme="slate-dark"]) .pop { border-radius: 8px }
+
+    /* neo brutalism: thick outlines, hard offset shadows, yellow and vermilion */
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) { --bd2: var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) #top { background: var(--top); border-bottom: 3px solid var(--k); padding-bottom: 8px }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) #title { font-weight: 700 }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .logo { background: var(--y); border: 2px solid var(--k); box-shadow: 2px 2px 0 var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .logo svg { stroke: var(--yi) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) #tb { margin: 8px 20px 12px; border: 2px solid var(--k); box-shadow: 4px 4px 0 var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .v { width: 2px; background: var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) :is(.pop, #cdlg .card, #dlg .card, #fdlg .card, #tp, #tbx, #isl, #hint, #zm, .toast) { border: 2px solid var(--k); box-shadow: 5px 5px 0 var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) #rail { border: 2px solid var(--k); box-shadow: 4px 4px 0 var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) #lp { border: 0; border-left: 3px solid var(--k); box-shadow: none }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) #lpp, :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .lph, :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .tabs { border-color: var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .pop .sep { background: var(--k); height: 2px }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) :is(#cdlg select, #cdlg input[type=number], #dlg textarea, #tp textarea, #tp input[type=number], #lpp select, .ln input, #fs, .ins input) { border: 2px solid var(--k); box-shadow: 2px 2px 0 var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) :is(#cdlg select, #cdlg input[type=number], #dlg textarea, #tp textarea, #tp input[type=number], #lpp select, .ln input, #fs, .ins input):focus { box-shadow: 4px 4px 0 var(--ac) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) :is(#cdlg button, #dlg button, #hint button, #fdlg .ft button, .trb, #lpp .lpm), :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .share { background: var(--fd); color: var(--tx); border: 2px solid var(--k); font-weight: 700; box-shadow: 3px 3px 0 var(--k); transition: transform .08s, box-shadow .08s, background-color .08s }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .share { background: var(--y); color: var(--yi) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) :is(#cdlg button, #dlg button, #hint button, #fdlg .ft button, .trb, #lpp .lpm):hover, :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .share:hover { background: var(--y); color: var(--yi); transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) :is(#cdlg button, #dlg button, #hint button, #fdlg .ft button, .trb, #lpp .lpm):active, :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .share:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) :is(#cdlg .pri, #dlg .pri, #hint button:first-of-type, #fdlg .ft button.pri) { background: var(--ac); color: var(--aci); border-color: var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) :is(#cdlg .pri, #dlg .pri, #hint button:first-of-type, #fdlg .ft button.pri):hover { background: var(--ac); color: var(--aci); filter: none }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .shd { border-left: 2px solid var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) :is(.b:not(.on):hover, .mb:hover, .mb.on, .pop .it:hover, .lr:not(.on):hover, #fdlg .r:hover, select:hover) { background: var(--y); color: var(--yi) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .pop .it:hover i { color: var(--yi) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .b.on { background: var(--on); color: var(--onx); box-shadow: inset 0 0 0 2px var(--k), 2px 2px 0 var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .lr { border-width: 2px }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .lr.on { border-color: var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) :is(#cdlg h3, #dlg h3, #fdlg h3, .lph b, #tp .hd) { text-transform: uppercase; letter-spacing: .05em; font-weight: 700 }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .tabs span { font-weight: 700 }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .tabs span.on { border-color: var(--k); color: var(--tx) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) :is(.gs, .sq, .il) { border: 2px solid var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .il.on { border-color: var(--ac); box-shadow: 3px 3px 0 var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) input[type=checkbox] { border: 2px solid var(--k); background: var(--fd) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) input[type=checkbox]:checked { background: var(--ac); border-color: var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) input[type=range]::-webkit-slider-runnable-track { height: 8px; box-sizing: border-box; border: 2px solid var(--k); background: var(--fd) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) input[type=range]::-moz-range-track { height: 8px; box-sizing: border-box; border: 2px solid var(--k); background: var(--fd) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) input[type=range]::-webkit-slider-thumb { width: 14px; height: 14px; margin-top: -5px; background: var(--y); border: 2px solid var(--k); box-shadow: 2px 2px 0 var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) input[type=range]::-moz-range-thumb { width: 14px; height: 14px; background: var(--y); border: 2px solid var(--k); box-shadow: 2px 2px 0 var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) ::placeholder { color: var(--mut); opacity: 1 }
+
+
+    /* ---- google drive sync: save button beside the title, sign-in bar, open list ---- */
+    #dsave { gap: 6px; padding: 0 9px; position: relative; flex: none }
+    #dsave svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round }
+    #dstat { font-size: 12px; color: inherit; opacity: .78; white-space: nowrap }
+    #dsave[data-s="ok"] svg { color: #34a853 }
+    #dsave[data-s="dirty"] #dstat { opacity: 1 }
+    #dsave[data-s="dirty"]::after { content: ''; position: absolute; top: 3px; left: 21px; width: 8px; height: 8px; border-radius: 50%; background: #f4b400; box-shadow: 0 0 0 2px var(--bg) }
+    #dsave[data-s="err"] { color: #e5484d }
+    #dsave[data-s="err"] #dstat { opacity: 1 }
+    #dsave[data-s="busy"] svg { animation: dvp 1s ease-in-out infinite }
+    @keyframes dvp { 50% { opacity: .3 } }
+    @media (prefers-reduced-motion: reduce) { #dsave[data-s="busy"] svg { animation: none } }
+    @media (max-width: 760px) { #dstat { display: none } #dsave { padding: 0 5px } }
+    #dbar { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); z-index: 26; display: flex; align-items: center; gap: 10px; max-width: min(560px, 94%); padding: 8px 8px 8px 18px; background: var(--pop); color: var(--tx); border-radius: 24px; box-shadow: var(--sh); font-size: 13px }
+    #dbar button { border: 0; border-radius: 16px; padding: 7px 14px; cursor: pointer; font: 500 13px var(--uif), Roboto, Arial; background: var(--ac); color: var(--aci, #fff) }
+    #dbar .dbx { background: none; color: var(--mut); padding: 7px 9px }
+    .dvl { max-height: min(50vh, 360px); overflow: auto; border: 1px solid var(--bd); border-radius: 6px; color: var(--mut); padding: 2px 0; min-height: 44px }
+    .dvl:not(:has(.dvr)) { padding: 12px }
+    .dvr { display: flex; justify-content: space-between; gap: 16px; align-items: center; padding: 10px 12px; cursor: pointer; color: var(--tx); border-bottom: 1px solid var(--bd) }
+    .dvr:last-child { border-bottom: 0 }
+    .dvr:hover { background: var(--hv) }
+    .dvr.cur { background: var(--on); color: var(--onx) }
+    .dvr i { font-style: normal; font-size: 12px; color: var(--mut); white-space: nowrap }
+    .dvr.cur i { color: inherit; opacity: .8 }
+    :root:is([data-theme="gdrg"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) #dbar { border: 1px solid var(--ed) }
+    :root:is([data-theme="gdrg"],[data-theme="slate"],[data-theme="slate-dark"],[data-theme="blueprint"],[data-theme="blueprint-dark"]) .dvl { border-color: var(--ed) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) #dbar { border: 2px solid var(--k); box-shadow: 5px 5px 0 var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) #dbar button { border: 2px solid var(--k); font-weight: 700; box-shadow: 2px 2px 0 var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) #dbar .dbx { background: none; box-shadow: none; border-color: transparent }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .dvl { border: 2px solid var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .dvr { border-bottom: 2px solid var(--k) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .dvr:hover { background: var(--y); color: var(--yi) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .dvr:hover i { color: var(--yi) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) #dsave[data-s="dirty"]::after { box-shadow: 0 0 0 2px var(--k) }
+
     /* quieter modifier-key hint (bottom-left): small, muted, translucent, and only fades in if the key is held a moment */
     #mh { left: 12px; bottom: 10px; max-width: min(300px, 36%); padding: 3px 9px; border-radius: 8px; font-size: 11px; line-height: 1.4; color: var(--mut); background: color-mix(in srgb, var(--pop) 55%, transparent); box-shadow: none; opacity: 0; animation: mhin .3s ease .6s forwards }
     @keyframes mhin { to { opacity: .75 } }
@@ -1803,7 +1947,7 @@
         <rect x="12" y="13" width="7" height="7" rx="1" />
       </svg></div>
     <div class="ttl">
-      <div class="trow"><input id="title" value="gamedevrg drawings" aria-label="rename"></div>
+      <div class="trow"><input id="title" value="gamedevrg drawings" aria-label="rename"><button class="b" id="dsave" type="button" data-s="off" title="save to Google Drive (ctrl+S)"><svg viewBox="0 0 24 24"></svg><span id="dstat">save</span></button></div>
       <div id="menus"></div>
     </div>
     <div class="sp"></div>
@@ -1942,6 +2086,10 @@
       </div>
     </div>
     <script>
+      /* ===== Google Drive sync: put your OAuth "Web application" client ID here (Google Cloud Console > APIs & Services > Credentials).
+         add your site (e.g. https://gamedevrg.com) to its "Authorized JavaScript origins" and enable the Google Drive API. ===== */
+      var DRIVE_CLIENT_ID = 'YOUR_CLIENT_ID.apps.googleusercontent.com';
+
       const $ = s => document.querySelector(s), svg = $('#cv');
       /* perf: shape DOM cache, frame-batched rendering, debounced save */
       let fgen = 0, zH = 1, zAnim = 0, rqOn = 0, rqV = 1, lsT = 0; const RC = new Map, SVGNS = 'http://www.w3.org/2000/svg', _tmpG = document.createElementNS(SVGNS, 'g');
@@ -1971,7 +2119,7 @@
         }
         while (lc) { const nx = lc.nextSibling; host.removeChild(lc); lc = nx }
       }
-      function doSave() { clearTimeout(lsT); lsT = 0; try { localStorage.setItem('gd', ser()); localStorage.setItem('gdl', JSON.stringify({ LY, curL })) } catch (e) { } }
+      function doSave() { clearTimeout(lsT); lsT = 0; let s = null; try { s = ser(); localStorage.setItem('gd', s); localStorage.setItem('gdl', JSON.stringify({ LY, curL })) } catch (e) { } if (s !== null && typeof dvNote == 'function') dvNote(s) }
       const saveLS = () => { if (!lsT) lsT = setTimeout(doSave, 500) };
       addEventListener('pagehide', () => { if (lsT) doSave() }); document.addEventListener('visibilitychange', () => { if (document.hidden && lsT) doSave() });
       function rq(v) { rqV = rqV && !!v; if (rqOn) return; rqOn = 1; requestAnimationFrame(() => { if (rqOn) render(rqV) }) }
@@ -2667,17 +2815,27 @@
         })
       }
 
-      /* themes: light, dark, midnight, paper, sherbert, frosted glass (or follow the system) */
-      const THEMES = [['auto', 'match system'], ['light', 'light'], ['dark', 'dark'], ['midnight', 'midnight'], ['paper', 'paper'], ['sherbert', 'sherbert'], ['glass', 'frosted glass']], curTheme = () => document.documentElement.dataset.theme || 'auto';
-      function setTheme(k) { const r = document.documentElement; if (k == 'auto') delete r.dataset.theme; else r.dataset.theme = k; try { localStorage.setItem('gdtheme', k) } catch (e) { } }
+      /* themes: light, dark, midnight, paper, sherbert, frosted glass, gamedevrg.com, neo brutalism, slate, blueprint (or follow the system) */
+      let uiFont = 'Chakra Petch';
+      const THEMES = [['auto', 'match system'], ['light', 'light'], ['dark', 'dark'], ['midnight', 'midnight'], ['paper', 'paper'], ['sherbert', 'sherbert'], ['glass', 'frosted glass'], ['gdrg', 'gamedevrg.com'], ['brutal', 'neo brutalism'], ['brutal-night', 'neo brutalism night'], ['slate', 'slate'], ['slate-dark', 'slate dark'], ['blueprint', 'blueprint'], ['blueprint-dark', 'blueprint dark']], curTheme = () => document.documentElement.dataset.theme || 'auto';
+      const THEME_GROUPS = [['neo brutalism', ['brutal', 'brutal-night'], ['day', 'night']], ['slate', ['slate', 'slate-dark'], ['light', 'dark']], ['blueprint', ['blueprint', 'blueprint-dark'], ['light', 'dark']]];
+      const DARK_THEMES = ['dark', 'midnight', 'sherbert', 'gdrg', 'brutal-night', 'slate-dark', 'blueprint-dark'], THEME_PAIR = { brutal: 'brutal-night', 'brutal-night': 'brutal', slate: 'slate-dark', 'slate-dark': 'slate', blueprint: 'blueprint-dark', 'blueprint-dark': 'blueprint' };
+      /* each themed look has its own ui font, unless you picked one yourself under "ui font…" */
+      const THEME_FONT = { gdrg: ['Chakra Petch', null], brutal: ['Space Grotesk', 'family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700'], blueprint: ['IBM Plex Mono', 'family=IBM+Plex+Mono:wght@400;500;600'] };
+      THEME_FONT['brutal-night'] = THEME_FONT.brutal; THEME_FONT['blueprint-dark'] = THEME_FONT.blueprint; THEME_FONT.gdrg[1] = 'family=Chakra+Petch:wght@400;500;600;700&family=DM+Mono:wght@400;500';
+      const themeFont = () => (THEME_FONT[curTheme()] || ['Chakra Petch'])[0], userFont = () => { try { return localStorage.getItem('gduif') } catch (e) { return null } };
+      function loadThemeFont(k) { const f = (THEME_FONT[k] || [])[1]; if (!f || document.getElementById('tf-' + k)) return; const l = document.createElement('link'); l.id = 'tf-' + k; l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?' + f + '&display=swap'; l.onload = () => { try { fitTB(1) } catch (e) { } }; document.head.appendChild(l) }
+      function setTheme(k) { const r = document.documentElement; if (k == 'auto') delete r.dataset.theme; else r.dataset.theme = k; try { localStorage.setItem('gdtheme', k) } catch (e) { } loadThemeFont(k); if (!userFont()) uiFont = themeFont(); try { fitTB(1); drawRuler() } catch (e) { } }
       try { const t = localStorage.getItem('gdtheme'); if (t && THEMES.some(x => x[0] == t)) setTheme(t) } catch (e) { }
-      let uiFont = 'Chakra Petch'; const tmb = () => [...$('#menus').children].find(x => x.textContent == 'themes');
+      function resetUIFont() { document.documentElement.style.removeProperty('--uif'); try { localStorage.removeItem('gduif') } catch (e) { } uiFont = themeFont(); fitTB(1); $('#title').dispatchEvent(new Event('input')) }
+      const themeItems = () => THEMES.slice(0, 8).map(([k, l]) => [l, () => setTheme(k), curTheme() == k ? '✓' : '']).concat(THEME_GROUPS.map(([l, keys, names]) => [l + (keys.includes(curTheme()) ? ' ✓' : ''), keys.map((k, i) => [names[i], () => setTheme(k), curTheme() == k ? '✓' : ''])]));
+      const tmb = () => [...$('#menus').children].find(x => x.textContent == 'themes');
       function setUIFont(n, nosave) { uiFont = n; if (GF.includes(n)) loadG(n); document.documentElement.style.setProperty('--uif', ffq(n)); if (!nosave) try { localStorage.setItem('gduif', n) } catch (e) { } fitTB(1); $('#title').dispatchEvent(new Event('input')) }
       function setDefFont(n, nosave) { D.ff = n; if (!nosave) try { localStorage.setItem('gddff', n) } catch (e) { } render() }
       const M = {
-        file: [['new drawing', () => { snap(); S = []; sel = null; render() }], ['version history', () => { }]],
+        get file() { return [['new drawing', dvNew], 0, ['save to Google Drive', () => dvSave(), 'ctrl+S'], ['save a copy to Drive', () => dvSave({ copy: 1 })], ['open from Google Drive…', dvList], ['auto-save to Drive', dvToggleAuto, dv.auto ? '✓' : ''], ['sign out of Drive', dvSignOut], 0, ['version history', () => { }]] },
         edit: [['undo', undo, 'ctrl+Z'], ['redo', redo, 'ctrl+Y'], 0, ['copy', () => { const s = get(); if (s) clip = JSON.stringify({ ...s, gid: undefined }) }, 'ctrl+C'], ['paste', paste, 'ctrl+V'], ['duplicate', dup, 'ctrl+D'], ['copy as SVG', copySVG], ['delete', del, 'del'], 0, ['select all', selAll, 'ctrl+A']],
-        view: [['zoom in', () => zoomTo(Math.min(64, z * 1.25))], ['zoom out', () => zoomTo(Math.max(.1, z / 1.25))], ['fit', fit], ['toggle dark mode', () => setTheme(['dark', 'midnight', 'sherbert'].includes(curTheme()) || curTheme() == 'auto' && matchMedia('(prefers-color-scheme:dark)').matches ? 'light' : 'dark')]],
+        view: [['zoom in', () => zoomTo(Math.min(64, z * 1.25))], ['zoom out', () => zoomTo(Math.max(.1, z / 1.25))], ['fit', fit], ['toggle dark mode', () => THEME_PAIR[curTheme()] ? setTheme(THEME_PAIR[curTheme()]) : setTheme(DARK_THEMES.includes(curTheme()) || curTheme() == 'auto' && matchMedia('(prefers-color-scheme:dark)').matches ? 'light' : 'dark')]],
         insert: [['image', [['upload from computer…', () => $('#file').click(), '', 'upl'], ['SVG file…', () => $('#svgf').click(), '', 'img'], ['from SVG code…', svgDlg, '', 'code']], '', 'img'],
         ['text box', () => { addShape('text'); const s = get(); s.w = 160; s.h = 30; s.x = 400; s.y = 255; render(); startEdit(s) }, '', 'text'],
         ['shape', shapeFly, '', 'shape'],
@@ -2693,7 +2851,7 @@
         ['fill color', [['solid / gradient…', () => $('#fill').closest('label').click()], ['transparent', () => setP('fill', '')]]], ['change connector', [['line', () => chgConn('line')], ['elbow connector', () => chgConn('elbow')], ['curved connector', () => chgConn('curvec')]]], 0,
         ['format options', [['background blur…', () => $('#blur').click()], ['color blending…', blendMenu], ['table: add row below', () => tOp('ar')], ['table: add column right', () => tOp('ac')], ['table: delete row', () => tOp('dr')], ['table: delete column', () => tOp('dc')]]], ['clear formatting', () => $('#clr').click(), 'ctrl+\\']],
         arrange: [['group', grp, 'ctrl+G'], ['ungroup', ungrp, 'ctrl+shift+G'], 0, ['align horizontally', [['left', () => alignObjs('l')], ['center', () => alignObjs('c')], ['right', () => alignObjs('r')]]], ['align vertically', [['top', () => alignObjs('t')], ['middle', () => alignObjs('m')], ['bottom', () => alignObjs('b')]]], ['distribute', [['horizontally', () => alignObjs('dh')], ['vertically', () => alignObjs('dv')]]], 0, ['mask image…', () => maskMenu($('#hint'))], ['crop image', startCrop], ['edit points', () => { const s = get(); if (s && s.t == 'path') enterEdit(s) }], 0, ['bring to front', () => order(1), 'ctrl+shift+↑'], ['bring forward', () => step(1), 'ctrl+↑'], ['send backward', () => step(-1), 'ctrl+↓'], ['send to back', () => order(0), 'ctrl+shift+↓'], 0, ['rotate 90°', () => { const s = get(); if (s && !isL(s)) { snap(); s.r = (s.r + 90) % 360; render() } }], ['reset rotation', () => { const s = get(); if (s) { snap(); s.r = 0; render() } }]],
-        Tools: [['clear all', () => { snap(); S = []; sel = null; render() }]], get themes() { return THEMES.map(([k, l]) => [l, () => setTheme(k), curTheme() == k ? '✓' : '']).concat([0, ['ui font…', () => fontPanel(tmb(), setUIFont, uiFont), uiFont], ['default font…', () => fontPanel(tmb(), setDefFont, D.ff), D.ff], ['reset fonts', () => { setUIFont('Chakra Petch'); setDefFont('Chakra Petch') }]]) }, help: [['alt while dragging skips snapping. shift locks to one axis. alt+drag on empty canvas pans.', () => { }]]
+        Tools: [['clear all', () => { snap(); S = []; sel = null; render() }]], get themes() { return themeItems().concat([0, ['ui font…', () => fontPanel(tmb(), setUIFont, uiFont), uiFont], ['default font…', () => fontPanel(tmb(), setDefFont, D.ff), D.ff], ['reset fonts', () => { resetUIFont(); setDefFont('Chakra Petch') }]]) }, help: [['alt while dragging skips snapping. shift locks to one axis. alt+drag on empty canvas pans.', () => { }]]
       };
 
       /* ===== layers: real layers with visibility, lock, opacity and filters ===== */
@@ -3242,6 +3400,201 @@
       tbReady = 1; fitTB(1);
       try { const u = localStorage.getItem('gduif'), d = localStorage.getItem('gddff'); if (u) setUIFont(u, 1); if (d) setDefFont(d, 1) } catch (e) { }
       lpToggle(0);
+
+      /* ================= Google Drive sync (.gdw files, drive.file scope) =================
+         - create on the first save, then update that same file id on every later save (no duplicates)
+         - the file id lives in the page url (?file=<id>) so a reload reopens the same drawing
+         - saves happen when you press save (button / ctrl+S), or after you stop drawing for DV_IDLE ms (never faster than DV_GAP ms apart)
+         - the access token lasts an hour; it is renewed silently before it runs out */
+      var DV_SCOPE = 'https://www.googleapis.com/auth/drive.file', DV_MIME = 'application/json', DV_F = 'id,name,modifiedTime';
+      var DV_IDLE = 12000, DV_GAP = 30000;
+      var dv = { tok: null, exp: 0, cl: null, tp: null, gis: null, cb: null, eb: null, rt: 0, at: 0, tt: 0, id: null, pending: null, saved: null, savedTitle: '', cur: null, busy: null, loading: 0, again: 0, err: null, stale: 0, last: 0, fails: 0, hold: 0, auto: 1, signed: 0 };
+      try { dv.auto = localStorage.getItem('gddauto') !== '0'; dv.signed = localStorage.getItem('gddsign') == '1' } catch (e) { }
+
+      function dvCfg() { return /^[0-9]+-[\w-]+\.apps\.googleusercontent\.com$/.test(DRIVE_CLIENT_ID) }
+      function dvTitle() { return ($('#title').value || '').trim() || 'untitled drawing' }
+      function dvName() { return expName() + '.gdw' }
+      function dvEsc(t) { return String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])) }
+      function dvDirty(s) { return !!s && dv.saved !== null && (s !== dv.saved || dvTitle() !== dv.savedTitle) }
+      /* ser() is {"S":…,"LY":…,"curL":…}; the .gdw file is that plus a header, so the drawing is only stringified once */
+      function dvBody(s) { return '{"gdw":1,"app":"gamedevrg drawings","name":' + JSON.stringify(dvTitle()) + ',' + s.slice(1) }
+      function dvAuthErr(e) { return /popup|denied|interaction|login_required|consent|immediate|cancel|signin/i.test((e && e.message) || '') }
+      function dvMsg(e) {
+        const m = (e && e.message) || '', st = e && e.status;
+        if (m == 'config') return 'Google Drive isn’t set up yet';
+        if (dvAuthErr(e)) return 'Google sign-in didn’t finish. click save to try again';
+        if (st == 404) return 'that file wasn’t found on Drive';
+        if (st == 403) return e.detail ? 'Drive says: ' + e.detail : 'Drive refused the request (permission or rate limit)';
+        if (st == 429 || st >= 500) return 'Drive is busy right now, will try again shortly';
+        if (e instanceof TypeError || m == 'offline') return 'couldn’t reach Google Drive. check your connection';
+        return 'couldn’t sync with Google Drive' + (e && e.detail ? ': ' + e.detail : '');
+      }
+      function dvNeedCfg() {
+        dlg('Google Drive isn’t set up yet', 'To turn on Drive sync, add your OAuth client ID:\n\n1. console.cloud.google.com: create a project and enable the "Google Drive API".\n2. APIs & Services > Credentials > Create credentials > OAuth client ID > "Web application".\n3. Add your site (for example https://gamedevrg.com) under "Authorized JavaScript origins".\n4. On the consent screen add the scope .../auth/drive.file (it only reaches files this app creates).\n5. Paste the client ID into DRIVE_CLIENT_ID at the top of this page\'s script.', 0, 0)
+      }
+
+      /* ---- sign-in and the one-hour access token ---- */
+      function dvGis() {
+        return dv.gis || (dv.gis = new Promise((ok, no) => {
+          if (window.google && google.accounts && google.accounts.oauth2) return ok();
+          const s = document.createElement('script'); s.src = 'https://accounts.google.com/gsi/client'; s.async = 1; s.onload = () => ok();
+          s.onerror = () => { dv.gis = null; s.remove(); no(new Error('offline')) }; document.head.appendChild(s)
+        }))
+      }
+      function dvToken(interactive) {
+        if (dv.tok && Date.now() < dv.exp - 60000) return Promise.resolve(dv.tok);
+        if (!dvCfg()) return Promise.reject(new Error('config'));
+        if (dv.tp) return dv.tp;
+        return dv.tp = dvGis().then(() => new Promise((ok, no) => {
+          if (!dv.cl) dv.cl = google.accounts.oauth2.initTokenClient({ client_id: DRIVE_CLIENT_ID, scope: DV_SCOPE, callback: r => dv.cb(r), error_callback: e => dv.eb(e) });
+          dv.cb = r => {
+            if (!r || r.error || !r.access_token) return no(new Error((r && r.error) || 'denied'));
+            dv.tok = r.access_token; dv.exp = Date.now() + (+r.expires_in || 3600) * 1000; dv.signed = 1; dv.stale = 0;
+            try { localStorage.setItem('gddsign', '1') } catch (e) { } dvRefreshArm(); ok(dv.tok)
+          };
+          dv.eb = e => no(new Error((e && e.type) || 'popup'));
+          dv.cl.requestAccessToken({ prompt: interactive ? '' : 'none' })   /* 'none' = renew quietly, never show a window */
+        })).finally(() => { dv.tp = null });
+      }
+      /* renew the pass quietly 5 minutes before it dies, so an hour-long drawing session never meets an expired token */
+      function dvRefreshArm() { clearTimeout(dv.rt); dv.rt = setTimeout(() => { dvToken(false).catch(() => { dv.stale = 1; dvStatus() }) }, Math.max(30000, dv.exp - Date.now() - 300000)) }
+      async function dvApi(url, opt, interactive) {
+        opt = opt || {}; const go = t => fetch(url, { ...opt, headers: { ...(opt.headers || {}), Authorization: 'Bearer ' + t } });
+        let r = await go(await dvToken(interactive));
+        if (r.status == 401) { dv.tok = null; r = await go(await dvToken(interactive)) }
+        if (!r.ok) { const e = new Error('drive ' + r.status); e.status = r.status; try { e.detail = (await r.json()).error.message } catch (_) { } throw e }
+        return r
+      }
+      function dvMulti(meta, content) { const b = 'gdw' + Math.random().toString(36).slice(2) + Date.now().toString(36); return { type: 'multipart/related; boundary=' + b, body: `--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${b}\r\nContent-Type: ${DV_MIME}; charset=UTF-8\r\n\r\n${content}\r\n--${b}--` } }
+      function dvUrl(id) { try { const u = new URL(location.href); if (id) u.searchParams.set('file', id); else u.searchParams.delete('file'); history.replaceState(null, '', u) } catch (e) { } }
+
+      /* ---- save: create the first time, update that file id after ---- */
+      async function dvSave(o) {
+        o = o || {}; const auto = !!o.auto, copy = !!o.copy;
+        if (!dvCfg()) return auto ? 0 : dvNeedCfg();
+        if (dv.pending) { if (!auto) dvOpen(dv.pending); return }
+        if (dv.busy) { dv.again = auto ? Math.max(dv.again, 1) : 2; return dv.busy }
+        const s = ser(), title = dvTitle();
+        if (!copy && dv.id && s === dv.saved && title === dv.savedTitle) { if (!auto) toast('already saved to Google Drive'); return }
+        dv.busy = (async () => {
+          dvStatus();
+          try {
+            const meta = { name: dvName(), mimeType: DV_MIME }, content = dvBody(s);
+            const send = id => { const m = dvMulti(meta, content); return dvApi('https://www.googleapis.com/upload/drive/v3/files' + (id ? '/' + encodeURIComponent(id) : '') + '?uploadType=multipart&fields=' + DV_F, { method: id ? 'PATCH' : 'POST', headers: { 'Content-Type': m.type }, body: m.body }, !auto) };
+            let res; const id = copy ? null : dv.id;
+            try { res = await send(id) } catch (e) { if (id && e.status == 404) { toast('that file is gone from Drive, saving a new one'); res = await send(null) } else throw e }
+            const f = await res.json();
+            dv.id = f.id; dv.saved = s; dv.savedTitle = title; dv.last = Date.now(); dv.err = null; dv.fails = 0; dv.hold = 0; dv.stale = 0; dvUrl(f.id);
+            if (!auto) toast(copy ? 'saved a copy to Google Drive. you are now editing the copy' : 'saved to Google Drive')
+          } catch (e) {
+            dv.err = e; if (dvAuthErr(e)) dv.stale = 1;
+            if (auto) { dv.fails++; dv.hold = Date.now() + Math.min(300000, 30000 * 2 ** (dv.fails - 1)) } else toast(dvMsg(e))
+          } finally {
+            dv.busy = null; dvStatus(); const a = dv.again; dv.again = 0;
+            if (a == 2 && dvDirty(ser())) dvSave(); else if (dvDirty(dv.cur) && !dv.stale) dvArm()
+          }
+        })();
+        return dv.busy
+      }
+
+      /* ---- change tracking and the auto-save buffer ---- */
+      function dvNote(s) {
+        if (!dv) return;
+        if (dv.saved === null) { dv.saved = s; dv.savedTitle = dvTitle() }   /* the first look after a load / new drawing is the baseline */
+        dv.cur = s; dvStatus(); if (dvDirty(s)) dvArm(); else { clearTimeout(dv.at); dv.at = 0 }
+      }
+      function dvArm() {
+        clearTimeout(dv.at); dv.at = 0;
+        if (!dv.auto || !dv.id || !dvCfg() || dv.stale || dv.pending) return;
+        const now = Date.now(), wait = Math.max(DV_IDLE, dv.last + DV_GAP - now, dv.hold - now);
+        dv.at = setTimeout(() => { dv.at = 0; if (drag || editing || dv.busy) return dvArm(); if (dvDirty(ser())) dvSave({ auto: 1 }) }, wait)
+      }
+
+      /* ---- the save button next to the project name ---- */
+      const DV_ICO = { off: '<path d="M7 19a4.5 4.5 0 0 1-.7-8.95A6 6 0 0 1 17.7 8.6 4.7 4.7 0 0 1 17 19H7z"/><path d="M12 16v-5M9.8 12.8L12 10.6l2.2 2.2"/>', ok: '<path d="M7 19a4.5 4.5 0 0 1-.7-8.95A6 6 0 0 1 17.7 8.6 4.7 4.7 0 0 1 17 19H7z"/><path d="M9.2 13.4l2 2 3.8-3.8"/>', err: '<path d="M7 19a4.5 4.5 0 0 1-.7-8.95A6 6 0 0 1 17.7 8.6 4.7 4.7 0 0 1 17 19H7z"/><path d="M12 10.5v3.2M12 16v.1"/>' };
+      function dvStatus() {
+        const b = $('#dsave'); if (!b || !dv) return; const lnk = !!dv.id, dirty = dvDirty(dv.cur);
+        let s = 'off', t = 'save', tip = 'save to Google Drive (ctrl+S)';
+        if (dv.busy) { s = 'busy'; t = 'saving…'; tip = 'saving to Google Drive…' }
+        else if (dv.loading) { s = 'busy'; t = 'opening…'; tip = 'opening from Google Drive…' }
+        else if (dv.pending) { s = 'err'; t = 'sign in'; tip = 'sign in to Google to open this drawing' }
+        else if (dv.err || (dv.stale && lnk)) { s = 'err'; t = dv.stale || dvAuthErr(dv.err) ? 'sign in' : 'retry'; tip = (dv.err ? dvMsg(dv.err) : 'Google Drive needs you to sign in again') + '. click to continue' }
+        else if (dirty) { s = 'dirty'; t = 'unsaved'; tip = (lnk ? 'unsaved changes' : 'not saved yet') + '. click to save to Google Drive (ctrl+S)' }
+        else if (lnk) { s = 'ok'; t = 'saved'; tip = 'saved to Google Drive' + (dv.auto ? ' (auto-saves when you pause)' : '') }
+        b.dataset.s = s; $('#dstat').textContent = t; b.title = tip; b.setAttribute('aria-label', tip);
+        const k = s == 'ok' ? 'ok' : s == 'err' ? 'err' : 'off'; if (b._k !== k) { b._k = k; b.querySelector('svg').innerHTML = DV_ICO[k] }
+      }
+      function dvClick() {
+        if (dv.pending) return dvOpen(dv.pending);
+        if (dv.stale && !dvDirty(dv.cur)) return dvToken(true).then(() => { dv.stale = 0; dv.err = null; dvStatus() }, e => toast(dvMsg(e)));
+        dvSave()
+      }
+      $('#dsave').onclick = dvClick;
+      $('#title').addEventListener('input', () => { clearTimeout(dv.tt); dv.tt = setTimeout(() => dvNote(ser()), 400) });
+      addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() == 's') { e.preventDefault(); dvClick() } });
+      /* closing or reloading with unsaved work (or a save still in flight) asks first */
+      addEventListener('beforeunload', e => { if (dv.busy || dvDirty(ser())) { e.preventDefault(); e.returnValue = '' } });
+
+      /* ---- open, new, sign out ---- */
+      function dvApply(txt, m) {
+        let o; try { o = JSON.parse(txt) } catch (e) { throw new Error('not a drawing') }
+        if (!o || !Array.isArray(o.S) || !Array.isArray(o.LY) || !o.LY.length || o.curL == null) throw new Error('not a drawing');
+        unser(txt); hist = []; fut = []; sel = null; ms = [];
+        nid = 1 + S.reduce((a, s) => Math.max(a, +s.id || 0), 0); lyN = 1 + LY.reduce((a, l) => Math.max(a, +l.id || 0), 0);
+        dv.id = m.id; dv.pending = null; dv.saved = null; dv.cur = null; dv.err = null; dv.stale = 0; dv.last = Date.now();
+        const t = $('#title'); t.value = String(o.name || m.name || 'untitled drawing').replace(/\.gdw$/i, ''); t.dispatchEvent(new Event('input'));
+        dvUrl(m.id); render(); fit()
+      }
+      async function dvOpen(id, o) {
+        o = o || {}; if (!dvCfg()) return dvNeedCfg();
+        if (!o.boot && dvDirty(dv.cur) && !confirm('you have unsaved changes. open another drawing anyway?')) return;
+        dv.loading = 1; dvStatus(); const base = 'https://www.googleapis.com/drive/v3/files/' + encodeURIComponent(id);
+        try {
+          const m = await (await dvApi(base + '?fields=id,name,trashed', {}, !o.boot)).json(); if (m.trashed) { const e = new Error('trashed'); e.status = 404; throw e }
+          dvApply(await (await dvApi(base + '?alt=media', {}, !o.boot)).text(), m); dvAskClose(); toast('opened ' + String(m.name).replace(/\.gdw$/i, ''))
+        } catch (e) {
+          if (o.boot && dvAuthErr(e)) { dv.pending = id; dvAsk('sign in to Google to open this drawing', 'sign in', () => dvOpen(id)) }
+          else if (e.status == 404 || e.status == 403 || e.message == 'not a drawing') { dv.pending = null; dvUrl(null); toast('couldn’t open that file. it may have been deleted, or it wasn’t created by this app') }
+          else { if (o.boot) dv.pending = id; toast(dvMsg(e)) }
+        } finally { dv.loading = 0; dvStatus() }
+      }
+      function dvNew() {
+        if (!dv.id && !dv.pending) { snap(); S = []; sel = null; render(); return }
+        if (dvDirty(dv.cur) && !confirm('discard unsaved changes and start a new drawing?')) return;
+        clearTimeout(dv.at); dv.id = null; dv.pending = null; dv.saved = null; dv.cur = null; dv.err = null; dv.stale = 0; dvUrl(null); dvAskClose();
+        S = []; LY = [{ id: 1, name: 'layer 1', vis: 1, op: 1, lock: 0, fx: '', fa: 0 }]; curL = 1; lyN = 2; hist = []; fut = []; sel = null; ms = [];
+        const t = $('#title'); t.value = 'untitled drawing'; t.dispatchEvent(new Event('input')); render()
+      }
+      async function dvList() {
+        if (!dvCfg()) return dvNeedCfg();
+        const d = $('#dlg'); d.innerHTML = '<div class="card"><h3>open from Google Drive</h3><div class="dvl" id="dvl">loading…</div><div class="row"><button data-a="x">close</button></div></div>'; d.style.display = 'grid';
+        d.onclick = e => { if (e.target == d || e.target.dataset.a == 'x') d.style.display = 'none'; const r = e.target.closest('[data-id]'); if (r) { d.style.display = 'none'; dvOpen(r.dataset.id) } };
+        try {
+          const q = encodeURIComponent("trashed=false and mimeType='" + DV_MIME + "'");
+          const j = await (await dvApi('https://www.googleapis.com/drive/v3/files?q=' + q + '&orderBy=modifiedTime%20desc&pageSize=100&fields=files(id,name,modifiedTime)', {}, true)).json();
+          const fl = (j.files || []).filter(f => /\.gdw$/i.test(f.name)), L = $('#dvl'); if (!L) return;
+          L.innerHTML = fl.length ? fl.map(f => `<div class="dvr${f.id == dv.id ? ' cur' : ''}" data-id="${dvEsc(f.id)}"><span>${dvEsc(f.name.replace(/\.gdw$/i, ''))}</span><i>${dvEsc(new Date(f.modifiedTime).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }))}</i></div>`).join('') : 'no drawings on Drive yet. save one first and it will show up here.'
+        } catch (e) { const L = $('#dvl'); if (L) L.textContent = dvMsg(e) }
+      }
+      function dvSignOut() {
+        const t = dv.tok; dv.tok = null; dv.exp = 0; dv.signed = 0; dv.stale = dv.id ? 1 : 0; clearTimeout(dv.rt); clearTimeout(dv.at);
+        try { localStorage.removeItem('gddsign') } catch (e) { } if (t && window.google && google.accounts) try { google.accounts.oauth2.revoke(t, () => { }) } catch (e) { }
+        toast('signed out of Google Drive'); dvStatus()
+      }
+      function dvToggleAuto() { dv.auto = !dv.auto; try { localStorage.setItem('gddauto', dv.auto ? '1' : '0') } catch (e) { } if (dv.auto) dvArm(); else { clearTimeout(dv.at); dv.at = 0 } toast(dv.auto ? 'auto-save is on: saves a moment after you stop drawing' : 'auto-save is off: press save to sync'); dvStatus() }
+      function dvAskClose() { const b = $('#dbar'); if (b) b.remove() }
+      function dvAsk(msg, label, fn) {
+        dvAskClose(); const b = document.createElement('div'); b.id = 'dbar'; b.innerHTML = `<span>${dvEsc(msg)}</span><button class="dbb">${dvEsc(label)}</button><button class="dbx" title="dismiss">✕</button>`;
+        b.querySelector('.dbb').onclick = () => { dvAskClose(); fn() }; b.querySelector('.dbx').onclick = dvAskClose; $('#wrap').appendChild(b)
+      }
+      /* reopen the file named in the url: ?file=<drive file id> */
+      function dvBoot() {
+        const id = new URLSearchParams(location.search).get('file'); if (!id) return;
+        if (!dvCfg()) { dv.pending = id; dvStatus(); return toast('this link points at a Google Drive drawing, but Drive sync isn’t set up yet') }
+        dv.pending = id; dvStatus();
+        if (dv.signed) dvOpen(id, { boot: 1 }); else dvAsk('sign in to Google to open this drawing', 'sign in', () => dvOpen(id))
+      }
+      dvStatus(); if (dvCfg()) (window.requestIdleCallback || setTimeout)(() => dvGis().catch(() => { })); dvBoot();
     </script>
 </body>
 
