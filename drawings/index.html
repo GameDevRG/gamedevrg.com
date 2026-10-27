@@ -299,7 +299,7 @@
       font-size: 13px
     }
 
-    .pop .it:hover {
+    .pop .it:is(:hover, .fo) {
       background: var(--hv)
     }
 
@@ -1891,8 +1891,8 @@
     :root:is([data-theme="brutal"],[data-theme="brutal-night"]) :is(#cdlg .pri, #dlg .pri, #hint button:first-of-type, #fdlg .ft button.pri) { background: var(--ac); color: var(--aci); border-color: var(--k) }
     :root:is([data-theme="brutal"],[data-theme="brutal-night"]) :is(#cdlg .pri, #dlg .pri, #hint button:first-of-type, #fdlg .ft button.pri):hover { background: var(--ac); color: var(--aci); filter: none }
     :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .shd { border-left: 2px solid var(--k) }
-    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) :is(.b:not(.on):hover, .mb:hover, .mb.on, .pop .it:hover, .lr:not(.on):hover, #fdlg .r:hover, select:hover) { background: var(--y); color: var(--yi) }
-    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .pop .it:hover i { color: var(--yi) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) :is(.b:not(.on):hover, .mb:hover, .mb.on, .pop .it:is(:hover, .fo), .lr:not(.on):hover, #fdlg .r:hover, select:hover) { background: var(--y); color: var(--yi) }
+    :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .pop .it:is(:hover, .fo) i { color: var(--yi) }
     :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .b.on { background: var(--on); color: var(--onx); box-shadow: inset 0 0 0 2px var(--k), 2px 2px 0 var(--k) }
     :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .lr { border-width: 2px }
     :root:is([data-theme="brutal"],[data-theme="brutal-night"]) .lr.on { border-color: var(--k) }
@@ -1948,6 +1948,8 @@
 
     /* tall menus (alignment, themes) scroll instead of running off short screens */
     .pop { max-height: calc(100vh - 72px); overflow-y: auto }
+    body.spc svg, body.spc svg * { cursor: grab !important }
+    body.panning, body.panning svg, body.panning svg * { cursor: grabbing !important }
     /* ---- font guides / guides / glyph dialogs ---- */
     .fg { display: grid; grid-template-columns: 1fr 120px; gap: 8px 14px; align-items: center; max-height: min(52vh, 420px); overflow: auto; padding: 2px 4px }
     .fg label { color: var(--mut); font-size: 13px }
@@ -1978,7 +1980,7 @@
     .lr.gc { margin-left: 18px }
     .lr.gh { font-weight: 500 }
     #lpl .ln small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
-    .lr.sl .lt { border: 1px dashed #7c3aed }
+    .lr.lsil .lt { border: 1px dashed #7c3aed }
     .lr.dt { outline: 2px dashed var(--ac); outline-offset: -2px; background: var(--hv) }
     .lr .lt { touch-action: none }
     #lpl .lr { user-select: none }
@@ -2151,8 +2153,8 @@
       /* solid single-colour copy of a shape (used inside masks) */
       function solidCopy(s, col) {
         if (isL(s)) return draw({ ...s, stroke: col, sw: Math.max(s.sw, 1), cut: 0, blur: 0, bm: '' }, 1).replace(/ data-id="\d+"/, '').replace(/ marker-end="[^"]*"/, '');
-        if (s.t == 'img' || s.t == 'wordart') { const [cx, cy] = ctr(s); return `<g transform="translate(${cx} ${cy}) rotate(${s.r || 0})">${maskEl(s.t == 'img' && s.mask || { t: 'rect' }, s.w, s.h, `fill="${col}"`)}</g>` }
-        return draw({ ...s, fill: col, grad: 0, stroke: s.sw > 0 ? col : 'none', text: '', blur: 0, dash: '', cut: 0, bm: '' }, 1).replace(/ data-id="\d+"/, '')
+        if (s.t == 'img') { const [cx, cy] = ctr(s); return `<g transform="translate(${cx} ${cy}) rotate(${s.r || 0})">${maskEl(s.mask || { t: 'rect' }, s.w, s.h, `fill="${col}"`)}</g>` }
+        return draw({ ...s, fill: col, grad: 0, sgrad: 0, ptx: '', stroke: s.sw > 0 ? col : 'none', text: '', blur: 0, dash: '', cut: 0, bm: '' }, 1).replace(/ data-id="\d+"/, '')
       }
       /* cutouts: negative-space shapes erase everything else on their own layer */
       function cutMask(L, w, cuts) {
@@ -2318,6 +2320,11 @@
         const an = AL == 'left' ? 'start' : AL == 'right' ? 'end' : 'middle';
         return (s.hl ? L.map((o, i) => { const W = o.t.length * s.fs * .52, X = AL == 'left' ? ax : AL == 'right' ? ax - W : ax - W / 2; return `<rect x="${X}" y="${(i + .5) * lh - H / 2 + PI[i] * GP + vo - lh / 2}" width="${W}" height="${lh}" fill="${s.hl}"/>` }).join('') : '') + `<text text-anchor="${an}" fill="${s.color}" font-size="${s.fs}" font-family="${ffq(s.ff || 'Arial')},sans-serif" font-weight="${s.bold ? 700 : 400}" font-style="${s.ital ? 'italic' : 'normal'}" text-decoration="${s.und ? 'underline' : 'none'}" style="white-space:pre">` + L.map((o, i) => `<tspan x="${ax}" y="${(i + .5) * lh - H / 2 + PI[i] * GP + vo + s.fs * FB}"${JU && !o.last && /\S\s+\S/.test(o.t) ? ` textLength="${Math.max(1, s.w - ML - MR)}" lengthAdjust="spacing"` : ''}>${(o.last ? o.t : o.t.replace(/\s+$/, '')).replace(/&/g, '&amp;').replace(/</g, '&lt;') || ' '}</tspan>`).join('') + '</text>'
       }
+      /* text that follows a line / curve / path: s.ptx (+ pto distance, ptf flip side, ptl hide the line) */
+      function ptEl(s, d) {
+        if (!s.ptx) return ''; const al = s.align == 'left' ? ['0%', 'start'] : s.align == 'right' ? ['100%', 'end'] : ['50%', 'middle'];
+        return `<defs><path id="tp${s.id}" d="${d}"/></defs><text fill="${s.color}" font-size="${s.fs}" font-family="${ffq(s.ff || 'Arial')},sans-serif" font-weight="${s.bold ? 700 : 400}" font-style="${s.ital ? 'italic' : 'normal'}" text-decoration="${s.und ? 'underline' : 'none'}" text-anchor="${al[1]}" style="white-space:pre" pointer-events="none"><textPath href="#tp${s.id}" startOffset="${al[0]}"><tspan dy="${-(s.pto || 0)}">${wesc(String(s.ptx))}</tspan></textPath></text>`
+      }
       function bl(s) { return s.bm ? ` style="mix-blend-mode:${s.bm}"` : '' }
       let penPoly = 0; const _cx = document.createElement('canvas').getContext('2d'), wesc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
       function waM(s) {
@@ -2341,12 +2348,20 @@
         },
           out = e => { if (!o.contains(e.target)) fin(1) }; ta.onkeydown = e => { e.stopPropagation(); if (e.key == 'Enter' && !e.shiftKey) { e.preventDefault(); fin(1) } else if (e.key == 'Escape') fin(0) }; ta.onkeyup = e => e.stopPropagation(); setTimeout(() => addEventListener('pointerdown', out, true), 0)
       }
+      function ptDlg(s) {
+        s = s || get(); if (!s || !(isL(s) || s.t == 'path')) return toast('select a line or curve first'); if ($('#wad')) return;
+        const o = document.createElement('div'); o.id = 'wad'; o.style.cssText = 'position:fixed;left:50%;top:90px;transform:translateX(-50%);width:min(500px,92vw);background:var(--pop);border-radius:8px;box-shadow:var(--sh);padding:22px 36px;z-index:45';
+        o.innerHTML = '<input type="text" spellcheck="false" placeholder="text along the line" style="width:100%;box-sizing:border-box;font:20px Arial;border:2px solid var(--tx);border-radius:6px;padding:8px 12px;background:var(--bg);color:var(--tx);outline:0;user-select:text"><div style="display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin-top:12px;color:var(--mut);font-size:14px"><label>distance above line <input type="number" id="pto" style="width:64px"></label><label><input type="checkbox" id="ptf"> flip side</label><label><input type="checkbox" id="ptl"> hide line</label></div><div style="margin-top:10px;color:var(--mut);font-size:14px">enter saves, esc cancels, empty text removes it. font, size and color come from the toolbar.</div>';
+        document.body.appendChild(o); const ta = o.querySelector('input[type=text]'), q = x => o.querySelector(x); ta.value = s.ptx || ''; q('#pto').value = s.pto || 0; q('#ptf').checked = !!s.ptf; q('#ptl').checked = !!s.ptl; ta.focus(); ta.select(); let done = 0;
+        const fin = ok => { if (done) return; done = 1; removeEventListener('pointerdown', out, true); const t = ta.value, po = +q('#pto').value || 0, pf = q('#ptf').checked, pl = q('#ptl').checked; o.remove(); if (!ok) return; snap(); if (t.trim()) { s.ptx = t; s.pto = po; if (pf) s.ptf = 1; else delete s.ptf; if (pl) s.ptl = 1; else delete s.ptl } else { delete s.ptx; delete s.pto; delete s.ptf; delete s.ptl } render() },
+          out = e => { if (!o.contains(e.target)) fin(1) }; o.onkeydown = e => { e.stopPropagation(); if (e.key == 'Enter') { e.preventDefault(); fin(1) } else if (e.key == 'Escape') fin(0) }; o.onkeyup = e => e.stopPropagation(); setTimeout(() => addEventListener('pointerdown', out, true), 0)
+      }
       if (document.fonts) document.fonts.ready.then(() => { fgen++; try { render() } catch (e) { } });
       function dc(s) { return (s.lj ? ` stroke-linejoin="${s.lj}"${s.lj == 'miter' ? ' stroke-miterlimit="10"' : ''}` : '') + (s.lc ? ` stroke-linecap="${s.lc}"` : '') }
       const BM = 'normal multiply screen overlay darken lighten color-dodge color-burn hard-light soft-light difference exclusion hue saturation color luminosity'.split(' ');
       function blendMenu() { const g = ms.length > 1 ? msS() : [get()].filter(Boolean); if (!g.length) return toast('select an object first'); pe($('#menus'), items(BM.map(k => [k, k[0].toUpperCase() + k.slice(1).replace('-', ' ') + ((g[0].bm || 'normal') == k ? '  ✓' : '')])), k => { snap(); g.forEach(q => { q.bm = k == 'normal' ? '' : k }); render() }) }
       function bd(s, i) {
-        const v = +s.blur; if (!(v > 0) || isL(s)) return ''; const g = draw({ ...s, t: s.t == 'img' ? 'rect' : s.t, fill: '#ffffff', grad: 0, stroke: 'none', sw: 0, dash: '', text: '', blur: 0 }, 1).replace(/ data-id="\d+"/, ''), id = s.id,
+        const v = +s.blur; if (!(v > 0) || isL(s)) return ''; const g = draw({ ...s, t: s.t == 'img' ? 'rect' : s.t, fill: '#ffffff', grad: 0, sgrad: 0, ptx: '', stroke: 'none', sw: 0, dash: '', text: '', blur: 0 }, 1).replace(/ data-id="\d+"/, ''), id = s.id,
           U = `<defs><g id="bc${id}"><rect width="960" height="540" fill="url(#ck)"/>${bkdrop(i)}</g></defs><mask id="bm${id}" maskUnits="userSpaceOnUse" x="-3000" y="-3000" width="7000" height="7000">${g}</mask>`; let L = '';
         if (!s.bg) L = `<use href="#bc${id}" style="filter:blur(${v}px)"/>`;
         else {
@@ -2356,11 +2371,12 @@
         return U + `<g mask="url(#bm${id})" pointer-events="none">${L}</g>`
       }
       function draw(s, nh) {
-        const gd = s.grad && !isL(s) ? gdef(s) : '', a = `fill="${gd ? `url(#gr${s.id})` : s.fill || 'none'}" stroke="${s.sw > 0 ? s.stroke : 'none'}" stroke-width="${s.sw}" stroke-dasharray="${s.dash}"${dc(s)}`;
+        const gd = s.grad && !isL(s) ? gdef(s) : '', gs = s.sgrad && !isL(s) ? gdef(s, 'sgrad', 'gs' + s.id) : '', a = `fill="${gd ? `url(#gr${s.id})` : s.fill || 'none'}" stroke="${s.sw > 0 && !(s.ptl && s.ptx) ? (gs ? `url(#gs${s.id})` : s.stroke) : 'none'}" stroke-width="${s.sw}" stroke-dasharray="${s.dash}"${dc(s)}`;
         if (isL(s)) {
           const X = s.x, Y = s.y, X2 = X + s.w, Y2 = Y + s.h, M = (X + X2) / 2, d = s.t == 'elbow' ? `M${X} ${Y}L${M} ${Y}L${M} ${Y2}L${X2} ${Y2}` : s.t == 'curvec' ? `M${X} ${Y}C${M} ${Y} ${M} ${Y2} ${X2} ${Y2}` : `M${X} ${Y}L${X2} ${Y2}`;
           if (!nh && silOf(s)) return `<g data-id="${s.id}"${bl(s)}><path d="${d}" fill="none" stroke="transparent" stroke-width="${Math.max(12 / zH, s.sw)}"/><path d="${d}" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="6 4" vector-effect="non-scaling-stroke" data-gh="1"/></g>`;
-          return `<g data-id="${s.id}"${bl(s)}><path d="${d}" fill="none" stroke="transparent" stroke-width="${Math.max(12 / zH, s.sw)}"/><path d="${d}" fill="none" stroke="${s.stroke}" stroke-width="${Math.max(s.sw, 1)}" stroke-dasharray="${s.dash}"${dc(s)} ${s.t == 'arrow' ? 'marker-end="url(#ah)"' : ''}/></g>`
+          const lg = s.sgrad ? gdef(s, 'sgrad', 'gs' + s.id, [X, Y, X2, Y2]) : '', rv = s.t == 'elbow' ? `M${X2} ${Y2}L${M} ${Y2}L${M} ${Y}L${X} ${Y}` : s.t == 'curvec' ? `M${X2} ${Y2}C${M} ${Y2} ${M} ${Y} ${X} ${Y}` : `M${X2} ${Y2}L${X} ${Y}`;
+          return `<g data-id="${s.id}"${bl(s)}>${lg}<path d="${d}" fill="none" stroke="transparent" stroke-width="${Math.max(12 / zH, s.sw)}"/><path d="${d}" fill="none" stroke="${s.ptl && s.ptx ? 'none' : lg ? `url(#gs${s.id})` : s.stroke}" stroke-width="${Math.max(s.sw, 1)}" stroke-dasharray="${s.dash}"${dc(s)} ${s.t == 'arrow' ? 'marker-end="url(#ah)"' : ''}/>${ptEl(s, s.ptf ? rv : d)}</g>`
         }
         const [cx, cy] = ctr(s), w = s.w, h = s.h; let g = '';
         if (s.t == 'table') g = tblEl(s, a); else if (s.t == 'rect' || s.t == 'text') g = `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" ${a}/>`;
@@ -2373,6 +2389,7 @@
         else if (CORN[s.t]) g = `<path d="${cp(s, w, h)}" ${a} stroke-linejoin="round"/>`;
         else if (G[s.t] && !OLD.includes(s.t)) g = `<path d="${sc(G[s.t], w, h)}" ${a} stroke-linejoin="round"/>`;
         else g = `<polygon points="${pts(s).map(p => p.join(',')).join(' ')}" ${a} stroke-linejoin="round"/>`;
+        const px2 = s.t == 'path' && s.ptx && s.pts ? (() => { const P = P2({ pts: s.pts, x: -w / 2, y: -h / 2, w, h }); return ptEl(s, pd(s.ptf ? P.slice().reverse().map(p => ({ ...p, i: p.o, o: p.i })) : P, s.closed)) })() : '';
         const fl = !!gd || (!!s.fill && !/^(none|transparent)$/i.test(s.fill) && !/^#[0-9a-f]{6}00$/i.test(s.fill)),
           sd = fl || !(s.t == 'path' && !s.closed),
           hit = nh || s.t == 'img' || s.t == 'wordart' || !g.includes(a) ? '' : g.split(a).join(`fill="${sd ? 'transparent' : 'none'}" stroke="transparent" stroke-width="${Math.max(s.sw > 0 ? s.sw : 0, (sd ? 6 : 12) / zH)}" stroke-linejoin="round" data-hit="1"`);
@@ -2383,7 +2400,7 @@
             gh = g.includes(a) ? g.split(a).join(ga + gp) : maskEl(s.t == 'img' && s.mask || { t: 'rect' }, w, h, ga + gp), h2 = sl ? hit.split('fill="transparent"').join('fill="none"') : hit;
           return `<g data-id="${s.id}"${bl(s)} transform="translate(${cx} ${cy}) rotate(${s.r})">${h2}${gh}</g>`
         }
-        return `<g data-id="${s.id}"${bl(s)} transform="translate(${cx} ${cy}) rotate(${s.r})">${gd}${hit}${g}${txt(s)}</g>`
+        return `<g data-id="${s.id}"${bl(s)} transform="translate(${cx} ${cy}) rotate(${s.r})">${gd}${gs}${hit}${g}${txt(s)}${px2}</g>`
       }
       let guides = [], pen = null, editP = null, ei = null, cropId = null, eHov = null, eAll = 0, rd = null;
       function maskEl(m, w, h, at) {
@@ -2396,9 +2413,15 @@
         if (!cov) return im + '/>'; const m = s.mask || { t: 'rect' };
         return `<clipPath id="cp${s.id}">${maskEl(m, w, h, '')}</clipPath>` + im + ` clip-path="url(#cp${s.id})"/>` + (s.sw > 0 ? maskEl(m, w, h, `fill="none" stroke="${s.stroke}" stroke-width="${s.sw}" stroke-dasharray="${s.dash}"`) : '')
       }
+      /* natural aspect ratio of a picture (cached by source), so cropping knows how far the picture can slide */
+      const IAR = new Map();
+      function iar(s) { if (s.ar) return s.ar; const k = s.src; if (IAR.has(k)) return IAR.get(k); IAR.set(k, 0); const im = new Image(); im.onload = () => { IAR.set(k, im.width / (im.height || 1)); try { fgen++; render() } catch (e) { } }; im.src = k; return 0 }
+      function imCov(s) { const iz = s.iz || 1, W = s.w * iz, H = s.h * iz, a = iar(s); let cw = W, ch = H; if (a) { if (W / H >= a) ch = W / a; else cw = H * a } return [cw, ch] }
+      function cropLim(s) { const [cw, ch] = imCov(s); return [Math.max(0, (cw - s.w) / 2), Math.max(0, (ch - s.h) / 2)] }
+      function inImg(c, p) { const [cx, cy] = ctr(c), q = R(p.x - cx, p.y - cy, -rad(c.r)), [cw, ch] = imCov(c); return Math.abs(q[0] - (c.ix || 0)) <= cw / 2 && Math.abs(q[1] - (c.iy || 0)) <= ch / 2 }
       function startCrop() { const s = get(); if (s && s.t == 'img') { snap(); s.crop = 1; cropId = s.id; render() } }
       function maskMenu(el) {
-        const s = get(); if (!s || s.t != 'img') return; const ps = S.filter(x => x.t == 'path' && x.closed).slice(0, 6);
+        const s = get(); if (!s || s.t != 'img') return; const ps = S.filter(x => x.t == 'path' && x.closed).slice(0, 12);
         const it = [['rect', 'rectangle'], ['round', 'rounded rectangle'], ['ell', 'ellipse'], ['tri', 'triangle'], ['dia', 'diamond'], ['star', 'star'], ['arr', 'arrow'], ...ps.map((p, i) => ['p' + p.id, 'custom shape ' + (i + 1)]), ['none', 'remove mask']];
         pe(el, it.map(([k, l]) => `<div class="it" data-i="${k}">${l}</div>`).join(''), k => { snap(); if (k == 'none') delete s.mask; else if (/^p\d+$/.test(k)) { const p = S.find(x => x.id == +k.slice(1)); s.mask = { pts: JSON.parse(JSON.stringify(p.pts)), closed: 1 } } else s.mask = { t: k }; render() })
       }
@@ -2623,8 +2646,8 @@
       const rgOv = (L, k) => L.map(q => `<g pointer-events="none" stroke="#ff0000" stroke-width="${2 * k}" fill="none"><line x1="${q.ex}" y1="${q.cy}" x2="${q.cx}" y2="${q.cy}"/><line x1="${q.cx}" y1="${q.ey}" x2="${q.cx}" y2="${q.cy}"/><circle cx="${q.cx}" cy="${q.cy}" r="${7 * k}"/></g>`).join('');
       function overlay() {
         const k = 1 / z; let o = '';
-        if (drag && drag.k == 'move' && drag.moved) { const q = drag.o, s = drag.s; o += `<g pointer-events="none" opacity=".75">${draw({ ...s, t: s.t == 'img' ? 'rect' : s.t, x: drag.nx, y: drag.ny, fill: '', grad: 0, stroke: '#8a8a8a', sw: 1, dash: '', text: '', blur: 0 }, 1)}</g>` }
-        if (drag && drag.k == 'gmove' && drag.moved) { o += `<g pointer-events="none" opacity=".75">${drag.o.map(([q, x, y]) => draw({ ...q, t: q.t == 'img' ? 'rect' : q.t, x: x + drag.dx, y: y + drag.dy, fill: '', grad: 0, stroke: '#8a8a8a', sw: 1, dash: '', text: '', blur: 0 }, 1)).join('')}</g>` }
+        if (drag && drag.k == 'move' && drag.moved) { const q = drag.o, s = drag.s; o += `<g pointer-events="none" opacity=".75">${draw({ ...s, t: s.t == 'img' ? 'rect' : s.t, x: drag.nx, y: drag.ny, fill: '', grad: 0, sgrad: 0, ptx: '', stroke: '#8a8a8a', sw: 1, dash: '', text: '', blur: 0 }, 1)}</g>` }
+        if (drag && drag.k == 'gmove' && drag.moved) { o += `<g pointer-events="none" opacity=".75">${drag.o.map(([q, x, y]) => draw({ ...q, t: q.t == 'img' ? 'rect' : q.t, x: x + drag.dx, y: y + drag.dy, fill: '', grad: 0, sgrad: 0, ptx: '', stroke: '#8a8a8a', sw: 1, dash: '', text: '', blur: 0 }, 1)).join('')}</g>` }
         o += drag && drag.rg && drag.rg.length ? rgOv(drag.rg, k) : '';
         o += guides.map(g => g[0] == 'sx' || g[0] == 'sy' ? spOv(g, k) : g[0] == 'v' ? `<line x1="${g[1]}" y1="-4000" x2="${g[1]}" y2="4000" stroke="#ea4335" stroke-width="${k}" pointer-events="none"/>` : `<line x1="-4000" y1="${g[1]}" x2="4000" y2="${g[1]}" stroke="#ea4335" stroke-width="${k}" pointer-events="none"/>`).join('');
         if (cropId) { const c = S.find(x => x.id == cropId); if (c) { const [cx, cy] = ctr(c), iz = c.iz || 1; o += `<g pointer-events="none" transform="translate(${cx} ${cy}) rotate(${c.r})"><image href="${c.src}" opacity=".35" x="${-c.w * iz / 2 + (c.ix || 0)}" y="${-c.h * iz / 2 + (c.iy || 0)}" width="${c.w * iz}" height="${c.h * iz}" preserveAspectRatio="xMidYMid slice"/><rect x="${-c.w / 2}" y="${-c.h / 2}" width="${c.w}" height="${c.h}" fill="none" stroke="#3b82f6" stroke-width="${2 * k}"/></g>` } }
@@ -2671,10 +2694,10 @@
       }
       function syncTB() {
         const s = get() || D, tk = (s === D ? JSON.stringify(D) : sigOf(s)) + '|' + sel + '|' + ms.join() + '|' + tool + '|' + (editing || '') + '|' + (editP || '') + '|' + (pen ? 1 : 0) + '|' + fgen; if (syncTB._k === tk) return; syncTB._k = tk; $('#fill').value = hex(s.fill) || '#ffffff'; $('#sw-fill').style.background = s.cut ? 'repeating-conic-gradient(#aaa 0 25%,#fff 0 50%) 0 0/8px 8px' : s.grad ? gcss(s.grad) : (s.fill || 'transparent');
-        $('#stroke').value = s.stroke; $('#sw-stroke').style.background = s.stroke; $('#color').value = s.color; $('#sw-color').style.background = s.color;
+        $('#stroke').value = s.stroke; $('#sw-stroke').style.background = s.sgrad ? gcss(s.sgrad) : s.stroke; $('#color').value = s.color; $('#sw-color').style.background = s.color;
         $('#ffn').textContent = s.ff || 'Arial'; $('#blur').classList.toggle('on', !!s.blur); tpSync(); $('#underl').classList.toggle('on', !!s.und); $('#sw').value = s.sw; $('#dash').value = s.dash; $('#fs').value = s.fs; $('#align').value = s.align; $('#bold').classList.toggle('on', !!s.bold); $('#ital').classList.toggle('on', !!s.ital);
         {
-          const g = ms.length > 1 ? msS() : [get()].filter(Boolean), tx = q => !isL(q) && q.t != 'img' && q.t != 'path' && q.t != 'wordart';
+          const g = ms.length > 1 ? msS() : [get()].filter(Boolean), tx = q => (!isL(q) && q.t != 'img' && q.t != 'path' && q.t != 'wordart') || !!q.ptx;
           $('#sty').style.display = g.length || tool != 'select' ? '' : 'none';
           $('#fill').closest('label').style.display = g.length && g.every(q => isL(q) || q.t == 'img') ? 'none' : '';
           $('#fmt').style.display = editing || tool == 'text' || g.some(tx) ? '' : 'none';
@@ -2686,28 +2709,38 @@
       function snap() { hist.push(ser()); if (hist.length > 100) hist.shift(); fut = [] }
       function undo() { if (!hist.length) return; fut.push(ser()); unser(hist.pop()); render() }
       function redo() { if (!fut.length) return; hist.push(ser()); unser(fut.pop()); render() }
-      function setP(k, v) { if (k == 'fill') { (ms.length > 1 ? msS() : [get() || D]).forEach(q => q.grad = 0); D.grad = 0 } const s = get(), g = ms.length > 1 ? msS() : 0; if (g) { snap(); g.forEach(q => { q[k] = v }) } else if (s) { snap(); s[k] = v } else D[k] = v; D[k] = v; if (k == 'fill' || k == 'grad') (g || [s]).forEach(q => { if (q) delete q.cut }); render(); if (editing) { const q = S.find(x => x.id == editing); if (q) edStyle(q) } }
+      function setP(k, v) { if (k == 'fill') (ms.length > 1 ? msS() : [get() || D]).forEach(q => q.grad = 0); if (k == 'stroke') (ms.length > 1 ? msS() : [get() || D]).forEach(q => q.sgrad = 0); const s = get(), g = ms.length > 1 ? msS() : 0; if (g) { snap(); g.forEach(q => { q[k] = v }) } else if (s) { snap(); s[k] = v } else D[k] = v; if (k == 'fill' || k == 'grad') (g || [s]).forEach(q => { if (q) delete q.cut }); render(); if (editing) { const q = S.find(x => x.id == editing); if (q) edStyle(q) } }
       function pt(e) { const r = svg.getBoundingClientRect(); return { x: (e.clientX - r.left - ox) / z, y: (e.clientY - r.top - oy) / z } }
-      function mk(t, p) { const s = { id: nid++, t, x: p.x, y: p.y, w: 1, h: 1, r: 0, text: '', lyr: openL(), ...D }; if (t == 'text') { s.fill = ''; s.sw = 0; s.align = 'left'; s.stroke = '#000000' } if (isL(t)) { s.fill = ''; s.stroke = D.stroke == '#3367d6' ? '#000000' : D.stroke; s.sw = Math.max(D.sw, 1) } return s }
+      /* a new object copies the look of the selected one (never its text); with nothing selected it uses the defaults */
+      const STYK = ['fill', 'grad', 'stroke', 'sgrad', 'sw', 'dash', 'lj', 'lc', 'color', 'ff', 'fs', 'bold', 'ital', 'und', 'hl', 'align', 'valign', 'ls', 'list', 'blur', 'bm'];
+      function styBase() {
+        const q = ms.length > 1 ? msS()[0] : get(); if (!q) return D; const o = { ...D }, nf = isL(q) || q.t == 'text' || q.t == 'img' || q.t == 'wordart', ns = q.t == 'text' || q.t == 'img';
+        for (const k of STYK) { if (!(k in q)) continue; if (nf && (k == 'fill' || k == 'grad')) continue; if (ns && ['stroke', 'sgrad', 'sw', 'dash', 'lj', 'lc'].includes(k)) continue; o[k] = q[k] && typeof q[k] == 'object' ? JSON.parse(JSON.stringify(q[k])) : q[k] }
+        if (!nf && !q.grad) o.grad = 0; if (!ns && !q.sgrad) o.sgrad = 0; return o
+      }
+      function mk(t, p, inh) { const B = inh ? styBase() : D, s = { id: nid++, t, x: p.x, y: p.y, w: 1, h: 1, r: 0, text: '', lyr: openL(), ...B }; if (t == 'text') { s.fill = ''; s.grad = 0; s.sw = 0; s.align = 'left'; s.stroke = '#000000' } if (isL(t)) { s.fill = ''; s.stroke = B.stroke == '#3367d6' ? '#000000' : B.stroke; s.sw = Math.max(B.sw, 1) } return s }
+      let spaceDown = 0; const spOff = () => { spaceDown = 0; document.body.classList.remove('spc') };
+      addEventListener('keydown', e => { if (e.code == 'Space' && !e.ctrlKey && !e.metaKey && !e.altKey && !editing && !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName || '') && !e.target.isContentEditable && !$('#cdlg') && !$('#wad')) { e.preventDefault(); if (!spaceDown) { spaceDown = 1; document.body.classList.add('spc') } } }, true);
+      addEventListener('keyup', e => { if (e.code == 'Space') spOff() }, true); addEventListener('blur', spOff);
       svg.addEventListener('mousedown', e => { if (editing && /^m[lrtb]$/.test(e.target.dataset?.h || '')) e.preventDefault() });
       svg.addEventListener('pointerdown', e => {
         const h0 = e.target.dataset?.h, mh = /^m[lrtb]$/.test(h0 || ''); if (editing && !mh) endEdit(); if (editing && mh) e.preventDefault(); const p = pt(e), h = e.target.dataset.h, id = e.target.closest('[data-id]')?.dataset.id; svg.setPointerCapture(e.pointerId);
-        if (e.button == 1 || (e.altKey && !id && !h && tool == 'select')) { drag = { k: 'pan', sx: e.clientX, sy: e.clientY, ox, oy }; return }
+        if (e.button == 1 || (spaceDown && e.button == 0)) { document.body.classList.add('panning'); drag = { k: 'pan', sx: e.clientX, sy: e.clientY, ox, oy }; return }
         if (tool == 'measure' && e.button == 0) { measDown(e); return }
         const before = ser();
-        if (cropId) { const c = S.find(x => x.id == cropId); if (c && +id == cropId) { drag = { k: 'crop', s: c, p0: p, ix: c.ix || 0, iy: c.iy || 0, before }; return } cropId = null; render() }
+        if (cropId) { const c = S.find(x => x.id == cropId); if (c && (+id == cropId || inImg(c, p))) { drag = { k: 'crop', s: c, p0: p, ix: c.ix || 0, iy: c.iy || 0, before }; return } cropId = null; render() }
         if (tool == 'pen') { const L = pen && pen.pts.length ? pen.pts[pen.pts.length - 1].a : null, q = snapPt(p.x, p.y, penT(), L, e); penDown({ x: q[0], y: q[1] }); return }
-        if (tool == 'scribble') { snap(); const q = { a: [p.x, p.y], i: null, o: null, sm: 0 }, P = [q, { ...q, a: [p.x + .01, p.y] }], s = mk('path', { x: 0, y: 0 }); setP2(s, P); s.closed = false; s.fill = ''; s.sw = Math.max(s.sw, 1); s.lj = 'round'; s.lc = 'round'; S.push(s); sel = s.id; drag = { k: 'scr', s, P }; render(); return }
+        if (tool == 'scribble') { snap(); const q = { a: [p.x, p.y], i: null, o: null, sm: 0 }, P = [q, { ...q, a: [p.x + .01, p.y] }], s = mk('path', { x: 0, y: 0 }, 1); setP2(s, P); s.closed = false; s.fill = ''; s.grad = 0; s.sw = Math.max(s.sw, 1); s.lj = 'round'; s.lc = 'round'; S.push(s); sel = s.id; drag = { k: 'scr', s, P }; render(); return }
         if (editP) { if (!editDown(e, p, h, id)) editP = null; else return }
         if (h && h.startsWith('g:')) { const B = msS().map(bb); drag = { k: 'gh', h: h.slice(2).split(',').map(Number), box: [Math.min(...B.map(r => r[0])), Math.min(...B.map(r => r[1])), Math.max(...B.map(r => r[2])), Math.max(...B.map(r => r[3]))], o: msS().map(q => [q, q.x, q.y, q.w, q.h]), before }; return }
         if (h) { const q = get(); drag = { k: 'h', h, before, s: q, ar: q ? q.w / (q.h || 1) : 1, r0: q && hasAdj(q) ? Math.min(q.w, q.h) * (q.adj ?? adjDef(q)) : 0 }; return }
-        if (tool != 'select') { const t = tool == 'shape' ? shapeT : tool, s = mk(t, p); S.push(s); sel = s.id; drag = { k: 'new', s, p0: p, before }; render(); return }
+        if (tool != 'select') { const t = tool == 'shape' ? shapeT : tool, s = mk(t, p, 1); S.push(s); sel = s.id; drag = { k: 'new', s, p0: p, before }; render(); return }
         if (e.shiftKey && tool == 'select') { /* shift-click adds/removes objects; shift-drag on empty canvas adds a marquee to the selection */
           const cur = ms.length > 1 ? ms.slice() : sel != null ? [sel] : [], n = id ? +id : null, o = n != null && S.find(x => x.id == n);
           if (o && selOK(o)) { const gm = grpOf(o), was = gm.every(i => cur.includes(i)), nx = was ? cur : [...new Set([...cur, ...gm])]; if (nx.length > 1) { ms = nx; sel = null; drag = { k: 'gmove', p0: p, o: msS().map(q => [q, q.x, q.y]), before, tg: was ? gm : null } } else { ms = []; sel = nx[0]; drag = { k: 'move', s: o, p0: p, o: { x: o.x, y: o.y }, before, was: false } } render(); return }
           if (n == null) { drag = { k: 'box', p0: p, p1: p, before, base: cur }; render(); return }
         }
-        if (id && ms.length > 1 && ms.includes(+id)) { drag = { k: 'gmove', p0: p, o: msS().map(q => [q, q.x, q.y]), before }; return }
+        if (id && ms.length > 1 && ms.includes(+id)) { drag = { k: 'gmove', p0: p, o: msS().map(q => [q, q.x, q.y]), before, one: +id }; return }
         { const o = id && S.find(x => x.id == +id), gm = o && o.gid != null && selOK(o) ? grpOf(o) : 0; if (gm && gm.length > 1) { ms = gm; sel = null; drag = { k: 'gmove', p0: p, o: msS().map(q => [q, q.x, q.y]), before }; render(); return } }
         ms = []; if (id) { const was = sel == +id; sel = +id; const s = get(); drag = { k: 'move', s, p0: p, o: { x: s.x, y: s.y }, before, was }; render() } else { sel = null; drag = { k: 'box', p0: p, p1: p, before }; render() }
       });
@@ -2742,7 +2775,7 @@
           d.moved = 1; d.dx = dx; d.dy = dy
         }
         else if (d.k == 'pan') { ox = d.ox + e.clientX - d.sx; oy = d.oy + e.clientY - d.sy }
-        else if (d.k == 'crop') { const q = R(p.x - d.p0.x, p.y - d.p0.y, -rad(s.r)), lx = s.w * ((s.iz || 1) - 1) / 2, ly = s.h * ((s.iz || 1) - 1) / 2; s.ix = Math.max(-lx, Math.min(lx, d.ix + q[0])); s.iy = Math.max(-ly, Math.min(ly, d.iy + q[1])) }
+        else if (d.k == 'crop') { const q = R(p.x - d.p0.x, p.y - d.p0.y, -rad(s.r)), [lx, ly] = cropLim(s); s.ix = Math.max(-lx, Math.min(lx, d.ix + q[0])); s.iy = Math.max(-ly, Math.min(ly, d.iy + q[1])) }
         else if (d.k == 'pen') { const n = d.n; if (Math.hypot(p.x - d.p0.x, p.y - d.p0.y) > 3 / z) { const q = snapHandle(p.x, p.y, n.a, e); n.o = q; n.i = [2 * n.a[0] - q[0], 2 * n.a[1] - q[1]]; n.sm = 1; rd = 'handle ' + Math.round(Math.hypot(q[0] - n.a[0], q[1] - n.a[1])) + ' px · ' + Math.round(Math.atan2(q[1] - n.a[1], q[0] - n.a[0]) * 180 / Math.PI) + '°'; d.rp = q } else { n.o = n.i = null; n.sm = 0; guides = []; rd = null } }
         else if (d.k == 'edit') {
           const P = d.P, n = P[d.i]; if (Math.hypot(p.x - d.p0.x, p.y - d.p0.y) > 2 / z) d.moved = 1; if (!d.moved) return; const dx = p.x - d.p0.x, dy = p.y - d.p0.y;
@@ -2777,30 +2810,32 @@
               }
             }
             const w = Math.max(r - l, 4), hh = Math.max(b - t, 4), lc = R((l + r) / 2, (t + b) / 2, rad(s.r));
+            if (s.t == 'img' && s.w && s.h && (s.ix || s.iy)) { s.ix = (s.ix || 0) * w / s.w; s.iy = (s.iy || 0) * hh / s.h }
             s.w = w; s.h = hh; s.x = cx + lc[0] - w / 2; s.y = cy + lc[1] - hh / 2; if (e.altKey && hasAdj(s) && d.r0) s.adj = Math.min(.5, d.r0 / Math.min(w, hh))
           }
         }
         rq(d.k == 'pan')
       });
       svg.addEventListener('pointerup', e => {
-        if (!drag) return; const d = drag, s = d.s; drag = null; guides = []; rd = null;
+        if (!drag) return; document.body.classList.remove('panning'); const d = drag, s = d.s; drag = null; guides = []; rd = null;
         if (d.k == 'meas') { measUp(d); return }
         if (d.k == 'scr') { tool = 'select'; render(); return }
         if (d.k == 'gmove' && d.tg && !d.moved) { ms = ms.filter(x => !d.tg.includes(x)); if (ms.length == 1) { sel = ms[0]; ms = [] } render(); return }
+        if (d.k == 'gmove' && d.one != null && !d.moved && e.button == 0) { const o = S.find(q => q.id == d.one), gm = o ? grpOf(o) : []; if (o && gm.length < ms.length) { if (gm.length > 1) { ms = gm; sel = null } else { ms = []; sel = o.id } } render(); return }
         if (d.k == 'box') { const a = d.p0, b = d.p1 || a; if (Math.abs(a.x - b.x) + Math.abs(a.y - b.y) > 3 / z) { const x0 = Math.min(a.x, b.x), x1 = Math.max(a.x, b.x), y0 = Math.min(a.y, b.y), y1 = Math.max(a.y, b.y), h = S.filter(q => { if (!selOK(q)) return false; const r = bb(q); return r[0] >= x0 && r[2] <= x1 && r[1] >= y0 && r[3] <= y1 }).map(q => q.id), u0 = [...new Set([...(d.base || []), ...h])], gs = new Set(S.filter(q => q.gid != null && u0.includes(q.id)).map(q => q.gid)), u = [...new Set([...u0, ...S.filter(q => gs.has(q.gid) && selOK(q)).map(q => q.id)])]; if (u.length == 1) sel = u[0]; else if (u.length > 1) { ms = u; sel = null } } render(); return }
         if (d.k == 'move' && !d.moved && d.was && e.button == 0 && !e.shiftKey && !e.ctrlKey && !e.metaKey && canText(s)) { render(); startEdit(s); return }
         if (d.k == 'move' && d.moved && d.nx != null) { s.x = d.nx; s.y = d.ny }
         if (d.k == 'gmove' && d.moved && d.dx != null) d.o.forEach(([q, x, y]) => { q.x = x + d.dx; q.y = y + d.dy });
         if (d.k == 'edit' && d.kd == 'a' && !d.moved && !d.noToggle) { const P = P2(d.s); toggleAnchor(P, d.i, d.s.closed); setP2(d.s, P) }
         if (d.k == 'new') {
-          const tiny = isL(s) ? Math.hypot(s.w, s.h) < 5 : s.w < 5 && s.h < 5;
-          if (tiny) { if (isL(s)) { s.w = 120; s.h = 0 } else { s.w = s.t == 'text' ? 160 : 140; s.h = s.t == 'text' ? 30 : 90; s.x -= 0 } }
+          const tn = 4 / z, tiny = isL(s) ? Math.hypot(s.w, s.h) < tn : Math.max(s.w, s.h) < tn + 1;
+          if (tiny) { if (isL(s)) { s.w = 120; s.h = 0 } else { s.w = s.t == 'text' ? 160 : 100; s.h = s.t == 'text' ? 30 : 100 } }
           hist.push(d.before); fut = []; tool = 'select'; render(); if (s.t == 'text') startEdit(s); return
         }
         if (d.before && d.before !== ser()) { hist.push(d.before); fut = [] } render()
       });
       let lastDn = { id: null, t: 0 }; svg.addEventListener('pointerdown', e => { lastDn = { id: e.target.closest('[data-id]')?.dataset.id ?? null, t: Date.now() } }, true);
-      svg.addEventListener('dblclick', e => { let id = e.target.closest('[data-id]')?.dataset.id; if (id == null && lastDn.id != null && Date.now() - lastDn.t < 800) id = lastDn.id; if (pen) { pen.pts.pop(); penDone(false); return } if (id) { sel = +id; const s = get(); if (s.t == 'path') enterEdit(s); else if (s.t == 'img') startCrop(); else if (s.t == 'wordart') wordDlg(s); else if (!isL(s)) startEdit(s) } });
+      svg.addEventListener('dblclick', e => { let id = e.target.closest('[data-id]')?.dataset.id; if (id == null && lastDn.id != null && Date.now() - lastDn.t < 800) id = lastDn.id; if (pen) { pen.pts.pop(); penDone(false); return } if (id) { sel = +id; const s = get(); if (s.t == 'path') enterEdit(s); else if (s.t == 'img') startCrop(); else if (s.t == 'wordart') wordDlg(s); else if (!isL(s)) startEdit(s); else ptDlg(s) } });
       const T = { z: 1, x: 0, y: 0, a: null, run: 0 };
       function tick() {
         let m = 0; const dz = T.z - z, dx = T.x - ox, dy = T.y - oy;
@@ -2810,7 +2845,7 @@
       }
       const kick = () => { if (!T.run) { T.run = 1; requestAnimationFrame(tick) } };
       svg.addEventListener('wheel', e => {
-        e.preventDefault(); if (cropId) { const c = S.find(x => x.id == cropId); if (c) { const dY = e.deltaY * (e.deltaMode == 1 ? 16 : 1); c.iz = Math.max(1, Math.min(8, (c.iz || 1) * Math.exp(-dY * .002))); const lx = c.w * (c.iz - 1) / 2, ly = c.h * (c.iz - 1) / 2; c.ix = Math.max(-lx, Math.min(lx, c.ix || 0)); c.iy = Math.max(-ly, Math.min(ly, c.iy || 0)); render(); return } } if (!T.run) { T.z = z; T.x = ox; T.y = oy; T.a = null }
+        e.preventDefault(); if (cropId) { const c = S.find(x => x.id == cropId); if (c) { const dY = e.deltaY * (e.deltaMode == 1 ? 16 : 1); c.iz = Math.max(1, Math.min(8, (c.iz || 1) * Math.exp(-dY * .002))); const [lx, ly] = cropLim(c); c.ix = Math.max(-lx, Math.min(lx, c.ix || 0)); c.iy = Math.max(-ly, Math.min(ly, c.iy || 0)); render(); return } } if (!T.run) { T.z = z; T.x = ox; T.y = oy; T.a = null }
         const dm = e.deltaMode == 1 ? 16 : e.deltaMode == 2 ? 400 : 1; let dX = e.deltaX * dm, dY = e.deltaY * dm; if (e.shiftKey && !e.ctrlKey && !e.metaKey && !dX) { dX = dY; dY = 0 }
         if (e.ctrlKey || e.metaKey) { const r = svg.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top; const nz = Math.min(64, Math.max(.1, T.z * Math.exp(-dY * .0012))), wx = (mx - T.x) / T.z, wy = (my - T.y) / T.z; T.x = mx - wx * nz; T.y = my - wy * nz; T.z = nz }
         else { T.x -= dX; T.y -= dY }
@@ -2834,8 +2869,8 @@
       $('#ed').addEventListener('keydown', e => { e.stopPropagation(); if (e.key == 'Escape') endEdit(); const s = S.find(x => x.id == editing); if (e.key == 'Tab' && s && s.t == 'table') { e.preventDefault(); const n = (tcell + (e.shiftKey ? -1 : 1) + s.cells.length) % s.cells.length; endEdit(); startEdit(s, n) } });
       function setTool(t, pp) { svg.style.cursor = t == 'measure' ? 'crosshair' : ''; if (pen) penDone(false); penPoly = pp ? 1 : 0; tool = t; editP = null; if (t == 'pen') sel = null; if (editing) endEdit(); render() }
       for (const t of ['select', 'text', 'pen', 'measure']) $('#t-' + t).onclick = () => setTool(t);
-      let popCp = null; function pop(x, y, html, fn) { closePop(); const d = document.createElement('div'); d.className = 'pop'; d.id = 'pp'; d.innerHTML = html; d.style.left = Math.min(x, innerWidth - 230) + 'px'; d.style.top = y + 'px'; document.body.appendChild(d); d.onclick = e => { const i = e.target.closest('[data-i]'); if (i) { closePop(); fn(i.dataset.i) } }; popCp = cp; setTimeout(() => { if (popCp === cp) addEventListener('pointerdown', cp, { once: true }) }, 0); function cp(e) { if (!d.contains(e.target)) closePop(); else addEventListener('pointerdown', cp, { once: true }) } }
-      const closePop = () => { if (popCp) { removeEventListener('pointerdown', popCp); popCp = null } $('#pp')?.remove(); document.querySelectorAll('.mb.on').forEach(m => m.classList.remove('on')) };
+      let popCp = null; function pop(x, y, html, fn) { closePop(); const d = document.createElement('div'); d.className = 'pop'; d.id = 'pp'; d.innerHTML = html; d.style.left = Math.min(x, innerWidth - 230) + 'px'; d.style.top = y + 'px'; document.body.appendChild(d); d.onclick = e => { const i = e.target.closest('[data-i]'); if (i) { closePop(); fn(i.dataset.i) } }; popCp = cp; setTimeout(() => { if (popCp === cp) addEventListener('pointerdown', cp, { once: true }) }, 0); function cp(e) { if (!d.contains(e.target) && !e.target.closest('.fly')) closePop(); else addEventListener('pointerdown', cp, { once: true }) } }
+      const closePop = () => { if (popCp) { removeEventListener('pointerdown', popCp); popCp = null } $('#pp')?.remove(); document.querySelectorAll('.fly').forEach(x => x.remove()); document.querySelectorAll('.mb.on').forEach(m => m.classList.remove('on')) };
       $('#t-shape').onclick = e => { const r = e.currentTarget.getBoundingClientRect(); pop(r.left, r.bottom + 4, shapeMenu(), k => { shapeT = k; setTool('shape') }) };
       /* grouping: members share a gid; clicking any member selects the whole group, which then moves/scales like a multi-selection */
       const grpOf = o => o.gid == null ? [o.id] : S.filter(q => q.gid == o.gid && selOK(q)).map(q => q.id);
@@ -2846,7 +2881,7 @@
       function order(f) { const s = get(); if (!s) return; snap(); S = S.filter(x => x != s); f ? S.push(s) : S.unshift(s); render() }
       function fit() { const r = svg.getBoundingClientRect(); z = Math.min((r.width - 80) / 960, (r.height - 80) / 540); ox = (r.width - 960 * z) / 2; oy = (r.height - 540 * z) / 2; T.z = z; T.x = ox; T.y = oy; T.a = null; render() }
       function zoomTo(n) { if (!T.run) { T.z = z; T.x = ox; T.y = oy } const r = svg.getBoundingClientRect(), cx = r.width / 2, cy = r.height / 2, wx = (cx - T.x) / T.z, wy = (cy - T.y) / T.z; T.x = cx - wx * n; T.y = cy - wy * n; T.z = n; kick() }
-      function addShape(k) { snap(); const s = mk(k, { x: 410, y: 225 }); s.w = 140; s.h = 90; if (isL(s)) { s.w = 120; s.h = 0 } S.push(s); sel = s.id; render() }
+      function addShape(k) { snap(); const s = mk(k, { x: 410, y: 225 }, 1); s.w = 140; s.h = 90; if (isL(s)) { s.w = 120; s.h = 0 } S.push(s); sel = s.id; render() }
 
       Object.assign(I, {
         table: '<rect x="4" y="5" width="16" height="14" rx="1.5"/><path d="M4 10h16M10 10v9"/>', chart: '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 17v-5M12 17V8M16 17v-3"/>',
@@ -2868,7 +2903,7 @@
         NA = {
           'text': noTxt, 'align & indent': noTxt, 'line & paragraph spacing…': noTxt, 'bullets & numbering': noTxt, 'borders & lines': noSel, 'fill color': () => !tgs().some(q => !isL(q) && q.t != 'img'), 'change connector': () => !tgs().some(isL), 'format options': noSel, 'clear formatting': noSel,
           'table: add row below': noTbl, 'table: add column right': noTbl, 'table: delete row': noTbl, 'table: delete column': noTbl,
-          'mask image…': noImg, 'crop image': noImg, 'edit points': () => { const q = get(); return !(q && q.t == 'path') }, 'bring to front': () => !get(), 'bring forward': () => !get(), 'send backward': () => !get(), 'send to back': () => !get(), 'rotate 90°': noGeo, 'reset rotation': noGeo,
+          'text on line…': () => { const q = get(); return !(q && (isL(q) || q.t == 'path')) }, 'mask image…': noImg, 'crop image': noImg, 'edit points': () => { const q = get(); return !(q && q.t == 'path') }, 'bring to front': () => !get(), 'bring forward': () => !get(), 'send backward': () => !get(), 'send to back': () => !get(), 'rotate 90°': noGeo, 'reset rotation': noGeo,
           'undo': () => !hist.length, 'redo': () => !fut.length, 'copy': () => !get(), 'duplicate': noSel, 'delete': noSel, 'select all': () => !S.length, 'clear all': () => !S.length, 'group': () => ms.length < 2, 'ungroup': () => !tgs().some(q => q.gid != null)
         };
       function mhtml(list, attr, big) {
@@ -2880,12 +2915,14 @@
         }).join('')
       }
       function openSub(host, el, i) { if (Array.isArray(i[1])) fly(host, el, i[1]); else i[1].fly(host, el) }
-      function flyBox(host, el, cls) { host.querySelectorAll(':scope>.fly').forEach(x => x.remove()); const d = document.createElement('div'); d.className = 'pop fly' + (host.classList.contains('big') ? ' big' : '') + (cls ? ' ' + cls : ''); d.style.cssText = `position:absolute;left:100%;top:${el.offsetTop - 6}px`; return d }
-      function flyPlace(host, d) { host.appendChild(d); const r = d.getBoundingClientRect(); if (r.right > innerWidth - 8) { d.style.left = 'auto'; d.style.right = '100%' } const o = r.bottom - (innerHeight - 8); if (o > 0) d.style.top = (parseFloat(d.style.top) - Math.min(o, Math.max(0, r.top - 8))) + 'px' }
+      function killFlies(host) { document.querySelectorAll('.fly').forEach(x => { if (x._host === host) { killFlies(x); x.remove() } }); host.querySelectorAll(':scope>.it.fo').forEach(x => x.classList.remove('fo')) }
+      /* flyouts live on <body> (fixed) so the scrolling parent menu can't clip them */
+      function flyBox(host, el, cls) { killFlies(host); const d = document.createElement('div'); d.className = 'pop fly' + (host.classList.contains('big') ? ' big' : '') + (cls ? ' ' + cls : ''); d._host = host; d._el = el; el.classList.add('fo'); d.style.cssText = 'position:fixed;left:0;top:0'; return d }
+      function flyPlace(host, d) { document.body.appendChild(d); const hr = host.getBoundingClientRect(), er = d._el.getBoundingClientRect(), w = d.offsetWidth, h = d.offsetHeight; let l = hr.right - 2, t = er.top - 6; if (l + w > innerWidth - 8) l = Math.max(8, hr.left - w + 2); if (t + h > innerHeight - 8) t = Math.max(8, innerHeight - 8 - h); d.style.left = l + 'px'; d.style.top = t + 'px' }
       function fly(host, el, list) {
         const big = host.classList.contains('big'), d = flyBox(host, el); d.innerHTML = mhtml(list, 'data-n', big);
         d.querySelectorAll('.it').forEach(it => {
-          const n = +(it.dataset.n ?? it.dataset.sub), i = list[n], sub = it.dataset.sub != null; it.onmouseenter = () => { d.querySelectorAll(':scope>.fly').forEach(x => x.remove()); if (i && sub) openSub(d, it, i) };
+          const n = +(it.dataset.n ?? it.dataset.sub), i = list[n], sub = it.dataset.sub != null; it.onmouseenter = () => { killFlies(d); if (i && sub) openSub(d, it, i) };
           if (i) it.onclick = e => { e.stopPropagation(); if (sub) openSub(d, it, i); else { closePop(); i[1]() } }
         }); flyPlace(host, d)
       }
@@ -2990,6 +3027,7 @@
         ['chart', [['bar', () => insChart('bar'), '', 'bar'], ['column', () => insChart('column'), '', 'chart'], ['line', () => insChart('line'), '', 'lchart'], ['pie', () => insChart('pie'), '', 'pie'], 0, ['from sheets', () => toast('google sheets isn’t connected in this app'), '', SHEETSIC]], '', 'chart'],
         ['diagram', [['grid', () => insDiagram('grid')], ['hierarchy', () => insDiagram('hierarchy')], ['timeline', () => insDiagram('timeline')], ['process', () => insDiagram('process')], ['relationship', () => insDiagram('relationship')], ['cycle', () => insDiagram('cycle')], ['view all', () => toast('more diagram templates are coming soon')]], '', 'diag'],
         ['word art', () => wordDlg(), '', 'wa'],
+        ['text on line…', () => ptDlg(), '', 'text'],
         ['line', [['line', () => setTool('line'), '', 'ln'], ['arrow', () => setTool('arrow'), '', 'arw'], ['elbow connector', () => setTool('elbow'), '', 'elb'], ['curved connector', () => setTool('curvec'), '', 'crv'], ['curve', () => setTool('pen'), '', 'cur'], ['polyline', () => setTool('pen', 1), '', 'poly'], ['scribble', () => setTool('scribble'), '', 'scr']], '', 'line'],
           0, ['special characters', () => { }, '', 'omega', 'dis'], 0,
         ['link', () => { }, 'ctrl+K', 'link', 'dis'], ['comment', () => toast('comments aren’t supported yet'), 'ctrl+alt+M', 'cadd']],
@@ -3006,7 +3044,7 @@
             ['move selection to', [['baseline (bottom)', () => placeSel('base')], ['x-height (top)', () => placeSel('xh')], ['cap height (top)', () => placeSel('cap')], ['ascender (top)', () => placeSel('asc')], ['descender (bottom)', () => placeSel('desc')], ['center in glyph frame', () => placeSel('cx')], ['left sidebearing', () => placeSel('lsb')], ['right sidebearing', () => placeSel('rsb')]]], ['guides from selection', guidesFromSel], ['reset snapping', resetSnap]]
         },
         font: [['font guides…', fontDlg], ['new glyph layer…', newGlyph], ['glyph preview…', previewDlg], 0, ['add extreme points', () => pathOp(opExtrema, 'added points at the horizontal and vertical extremes')], ['round points to font units', () => pathOp(opRound, FM.on ? 'points rounded to whole font units' : 'points rounded to whole pixels')], ['straighten handles (H / V)', () => pathOp(opStraight, 'near-horizontal and near-vertical handles straightened')], ['reverse direction', () => pathOp(opReverse, 'path direction reversed')], ['convert shape to path', toPath], 0, ['copy glyph path (font units)', copyGlyphD], ['export font (.svg)…', exportFont]],
-        Tools: [['clear all', () => { snap(); S = []; sel = null; render() }]], get themes() { return themeItems().concat([0, ['ui font…', () => fontPanel(tmb(), setUIFont, uiFont), uiFont], ['default font…', () => fontPanel(tmb(), setDefFont, D.ff), D.ff], ['reset fonts', () => { resetUIFont(); setDefFont('Chakra Petch') }]]) }, help: [['alt while dragging skips snapping. shift locks to one axis. alt+drag on empty canvas pans.', () => { }]]
+        Tools: [['clear all', () => { snap(); S = []; sel = null; render() }]], get themes() { return themeItems().concat([0, ['ui font…', () => fontPanel(tmb(), setUIFont, uiFont), uiFont], ['default font…', () => fontPanel(tmb(), setDefFont, D.ff), D.ff], ['reset fonts', () => { resetUIFont(); setDefFont('Chakra Petch') }]]) }, help: [['alt while dragging skips snapping. shift locks to one axis. hold space and drag to pan.', () => { }]]
       };
 
       /* ===== layers: real layers with visibility, lock, opacity and filters ===== */
@@ -3142,7 +3180,7 @@ ${L.lg ? `<label><span>type</span><select id="lpt"><option value="">normal</opti
       }
       function lrow(L) {
         const h = L.lg && grpHead(L.lg) === L, cl = h && LGC.has(L.lg), n = h ? LY.filter(q => q.lg == L.lg).length : 0;
-        return `<div class="lr${L.id == curL ? ' on' : ''}${L.vis ? '' : ' off'}${L.lg ? (h ? ' gh' : ' gc') : ''}${L.role ? ' sl' : ''}" data-id="${L.id}">${h ? `<button class="b" data-a="c" title="${cl ? 'expand' : 'collapse'} group">${lic(cl ? 'chr' : 'chd')}</button>` : ''}<button class="b" data-a="v" title="${L.vis ? 'hide' : 'show'} layer">${lic(L.vis ? 'eye' : 'eyex')}</button><svg class="lt" viewBox="0 0 960 540"><use href="#LC${L.id}"/></svg><div class="ln"><b title="double-click to rename">${esc(L.name)}</b><small>${Math.round(L.op * 100)}%${L.fx ? ' · ' + FX[L.fx][0] : ''}${L.role ? ' · silhouette' : ''}${h ? ' · group of ' + n : ''}</small></div><button class="b" data-a="k" title="${L.lock ? 'unlock' : 'lock'} layer">${lic(L.lock ? 'lock' : 'unlock')}</button></div>`
+        return `<div class="lr${L.id == curL ? ' on' : ''}${L.vis ? '' : ' off'}${L.lg ? (h ? ' gh' : ' gc') : ''}${L.role ? ' lsil' : ''}" data-id="${L.id}">${h ? `<button class="b" data-a="c" title="${cl ? 'expand' : 'collapse'} group">${lic(cl ? 'chr' : 'chd')}</button>` : ''}<button class="b" data-a="v" title="${L.vis ? 'hide' : 'show'} layer">${lic(L.vis ? 'eye' : 'eyex')}</button><svg class="lt" viewBox="0 0 960 540"><use href="#LC${L.id}"/></svg><div class="ln"><b title="double-click to rename">${esc(L.name)}</b><small>${Math.round(L.op * 100)}%${L.fx ? ' · ' + FX[L.fx][0] : ''}${L.role ? ' · silhouette' : ''}${h ? ' · group of ' + n : ''}</small></div><button class="b" data-a="k" title="${L.lock ? 'unlock' : 'lock'} layer">${lic(L.lock ? 'lock' : 'unlock')}</button></div>`
       }
       function lpRender() {
         isRender(); const P = $('#lp'); if (!document.body.classList.contains('lpo')) return; const k = JSON.stringify(LY) + '|' + curL + '|' + [...LGC].join();
@@ -3200,7 +3238,7 @@ ${L.lg ? `<label><span>type</span><select id="lpt"><option value="">normal</opti
       function openMenu(m) {
         const k = m.textContent, r = m.getBoundingClientRect(), big = k == 'insert';
         pop(r.left, r.bottom, mhtml(M[k], 'data-i', big), n => M[k][n][1]()); m.classList.add('on'); const P = $('#pp'); if (big) P.classList.add('big');
-        P.querySelectorAll(':scope>.it').forEach(el => el.onmouseenter = () => { P.querySelectorAll(':scope>.fly').forEach(x => x.remove()); if (el.dataset.sub) openSub(P, el, M[k][+el.dataset.sub]) });
+        P.querySelectorAll(':scope>.it').forEach(el => el.onmouseenter = () => { killFlies(P); if (el.dataset.sub) openSub(P, el, M[k][+el.dataset.sub]) });
         P.querySelectorAll('[data-sub]').forEach(el => el.onclick = () => openSub(P, el, M[k][+el.dataset.sub]))
       }
       $('#menus').onclick = e => { const m = e.target.closest('.mb'); if (m) openMenu(m) };
@@ -3522,10 +3560,14 @@ ${L.lg ? `<label><span>type</span><select id="lpt"><option value="">normal</opti
         mixc = (c, t, k) => { const a = h2r(c), b = h2r(t); return r2h(...[0, 1, 2].map(i => a[i] + (b[i] - a[i]) * k)) },
         gst = q => [...q.stops].sort((a, b) => a[0] - b[0]),
         gcss = q => (q.type == 'radial' ? 'radial-gradient(circle,' : `linear-gradient(${q.angle + 90}deg,`) + gst(q).map(([p, c]) => c + ' ' + p * 100 + '%').join() + ')',
-        gdef = s => {
-          const q = s.grad, st = gst(q).map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join(''), rt = q.rot ? '' : ` gradientTransform="rotate(${-s.r} .5 .5)"`;
-          if (q.type == 'radial') return `<defs><radialGradient id="gr${s.id}"${rt}>${st}</radialGradient></defs>`;
-          const t = q.angle * Math.PI / 180, c = Math.cos(t) / 2, n = Math.sin(t) / 2; return `<defs><linearGradient id="gr${s.id}" x1="${.5 - c}" y1="${.5 - n}" x2="${.5 + c}" y2="${.5 + n}"${rt}>${st}</linearGradient></defs>`
+        gdef = (s, k = 'grad', id = 'gr' + s.id, ln) => {
+          const q = s[k], st = gst(q).map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join(''), f = v => +v.toFixed(3);
+          if (ln) { const [x1, y1, x2, y2] = ln; return q.type == 'radial' ? `<defs><radialGradient id="${id}" gradientUnits="userSpaceOnUse" cx="${(x1 + x2) / 2}" cy="${(y1 + y2) / 2}" r="${Math.max(Math.hypot(x2 - x1, y2 - y1) / 2, .5)}">${st}</radialGradient></defs>` : `<defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${x1}" y1="${y1}" x2="${x1 == x2 && y1 == y2 ? x2 + 1 : x2}" y2="${y2}">${st}</linearGradient></defs>` }
+          /* drawn in the shape's own (centred) space, so resizing never stretches the gradient or changes its angle */
+          const w = s.w || 1, h = s.h || 1;
+          if (q.type == 'radial') return `<defs><radialGradient id="${id}" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="${f(Math.max(w, h) / 2)}">${st}</radialGradient></defs>`;
+          const t = (q.angle - (q.rot ? 0 : s.r || 0)) * Math.PI / 180, c = Math.cos(t), n = Math.sin(t), L = (Math.abs(w * c) + Math.abs(h * n)) / 2;
+          return `<defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${f(-c * L)}" y1="${f(-n * L)}" x2="${f(c * L)}" y2="${f(n * L)}">${st}</linearGradient></defs>`
         },
         GP = [['000000', '434343', '666666', '999999', 'b7b7b7', 'd9d9d9', 'efefef'], ['ea9999', 'f9cb9c', 'ffe599', 'b6d7a8', 'a4c2f4', '9fc5e8', 'b4a7d6'], ['990000', 'b45f06', 'bf9000', '38761d', '1155cc', '0b5394', '351c75']].flatMap(r => [0, 1].map(k => r.map(c => { c = '#' + c; return k ? { type: 'radial', angle: 0, rot: 1, stops: [[0, mixc(c, '#ffffff', .4)], [1, mixc(c, '#000000', .15)]] } : { type: 'linear', angle: 90, rot: 1, stops: [[0, mixc(c, '#ffffff', .3)], [1, mixc(c, '#000000', .2)]] } }))).flat(),
         EYE = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4a2.8 2.8 0 00-4 0l-3 3-1-1-2 2 1 1-7 7v3h3l7-7 1 1 2-2-1-1 3-3a2.8 2.8 0 000-4z"/></svg>',
@@ -3572,14 +3614,14 @@ ${L.lg ? `<label><span>type</span><select id="lpt"><option value="">normal</opti
         const sq = c => `<div class="sq${c == cur ? ' cur' : ''}" data-i="${c}" style="background:${c}"></div>`,
           body = tab == 'c' ? cutBody() : tab == 'g' ? `<div class="cph">custom</div><div class="cr"><div class="sq pl" id="cadd" title="custom gradient">+</div></div><div class="sep"></div><div class="gg">${GP.map((g, i) => `<div class="gs" data-i="g${i}" style="background:${gcss(g)}"></div>`).join('')}</div>`
             : `<div class="cph">custom</div><div class="cr">${CC.map(sq).join('')}<div class="sq pl" id="cadd" title="custom color">+</div><div class="sq pl" data-i="eye" title="pick color from screen">${EYE}</div></div><div class="sep"></div><div class="cg">${PAL.map(sq).join('')}</div>${clear ? '<div class="trb" data-i="none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3s6 6.5 6 11a6 6 0 01-12 0c0-4.500 6-11 6-11zM4 4l16 16"/></svg>transparent</div>' : ''}`;
-        pop(r.left, r.bottom + 4, (ag ? `<div class="tabs"><span data-t="s" class="${tab == 's' ? 'on' : ''}">solid</span><span data-t="g" class="${tab == 'g' ? 'on' : ''}">gradient</span><span data-t="c" class="${tab == 'c' ? 'on' : ''}">cutout</span></div>` : '') + `<div style="padding:8px 14px 10px">${body}</div>`,
+        pop(r.left, r.bottom + 4, (ag ? `<div class="tabs"><span data-t="s" class="${tab == 's' ? 'on' : ''}">solid</span><span data-t="g" class="${tab == 'g' ? 'on' : ''}">gradient</span>${ag.nocut ? '' : `<span data-t="c" class="${tab == 'c' ? 'on' : ''}">cutout</span>`}</div>` : '') + `<div style="padding:8px 14px 10px">${body}</div>`,
           v => { if (v == 'none') clear(); else if (v == 'eye') { if (!window.EyeDropper) return toast('this browser can’t pick colors from the screen'); new EyeDropper().open().then(x => { addCC(x.sRGBHex); apply(x.sRGBHex) }, () => { }) } else if (v[0] == 'g') ag(GP[+v.slice(1)]); else apply(v) });
         const P = $('#pp'); P.style.width = '282px'; P.querySelectorAll('[data-t]').forEach(t => t.onclick = () => colorPop(lab, cur, apply, clear, ag, t.dataset.t));
         if (tab == 'c') wireCut(() => colorPop(lab, cur, apply, clear, ag, 'c'));
         if (tab != 'c') $('#cadd').onclick = () => { closePop(); tab == 'g' ? gradDlg(null, ag) : colorDlg(cur, c => { addCC(c); apply(c) }) }
       }
-      function wireColor(id, clear, gr) { const inp = $('#' + id), lab = inp.closest('label'); lab.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); colorPop(lab, inp.value, v => { inp.value = v.slice(0, 7); inp.dispatchEvent(new Event('input')); if (v.length > 7) setP(PM[id], v) }, clear, gr ? g => setP('grad', g) : 0, wireColor.tab || undefined); wireColor.tab = 0 }, true) }
-      wireColor('fill', () => setP('fill', ''), 1); wireColor('stroke', () => setP('sw', 0)); wireColor('color'); wireColor('hl', () => setP('hl', '')); wireColor('tpc'); wireColor('tph', () => setP('hl', ''));
+      function wireColor(id, clear, gr) { const inp = $('#' + id), lab = inp.closest('label'); lab.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); colorPop(lab, inp.value, v => { inp.value = v.slice(0, 7); inp.dispatchEvent(new Event('input')); if (v.length > 7) setP(PM[id], v) }, clear, gr ? Object.assign(gr === 1 ? g => setP('grad', g) : g => { setP(gr, JSON.parse(JSON.stringify(g))); const q = get(); if (q && !q.sw) { q.sw = 1; render() } }, gr === 1 ? {} : { nocut: 1 }) : 0, wireColor.tab || undefined); wireColor.tab = 0 }, true) }
+      wireColor('fill', () => setP('fill', ''), 1); wireColor('stroke', () => setP('sw', 0), 'sgrad'); wireColor('color'); wireColor('hl', () => setP('hl', '')); wireColor('tpc'); wireColor('tph', () => setP('hl', ''));
 
 
       /* click-drag marquee: multi-select */
@@ -3630,7 +3672,6 @@ ${L.lg ? `<label><span>type</span><select id="lpt"><option value="">normal</opti
               else if (h != 'p1' && h != 'p2') { if (sh) L.push('shift: scaling proportionally'); if (ct) L.push('ctrl: scaling from the center'); if (al) L.push(s && hasAdj(s) && d.r0 ? 'alt: snapping is off, keeping the corner radius' : 'alt: snapping to other objects is off') }
             }
           } else if (!editing && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '')) {
-            if (al) L.push('alt + drag on empty canvas: pan');
             if (sh) L.push('shift + drag a handle: scale proportionally\nshift + scroll: pan sideways\nshift + arrow keys: nudge 10 px');
             if (ct) L.push('ctrl + drag a handle: scale from the center\nctrl + scroll: zoom')
           }
