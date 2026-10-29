@@ -4328,6 +4328,13 @@
       #cdlg .card .grab { width: calc(100% + 32px); margin: 0 -16px 6px }
     }
   
+    /* sheets that can be dragged up to open taller */
+    @media (max-width: 900px), (max-height: 520px) {
+      /* these live inside #wrap (the area under the top bar), so a % height can never reach the top bar */
+      #lp, #fp, #vd { max-height: calc(100% - 6px) !important }
+      #lp.xpd, #fp.xpd, #vd.xpd { height: calc(100% - 6px) !important }
+    }
+
     /* ===== volume diagram editor: sidebar on desktop, bottom sheet on phones ===== */
     #vd { position: absolute; right: 0; top: 0; bottom: 0; width: 320px; display: flex; flex-direction: column; background: var(--bg); color: var(--tx); border-left: 1px solid var(--bd); z-index: 8; transform: translateX(100%); visibility: hidden; transition: transform .25s ease, visibility 0s .25s }
     body.vdo #vd { transform: none; visibility: visible; transition: transform .25s ease, visibility 0s }
@@ -18484,8 +18491,8 @@ function insChar(ch, eid) {
          The bar follows your finger, and so does every item in it: each menu, button and the header
          pieces glide from their spot in one layout to their spot in the next (a "FLIP"-style layout
          animation driven by one progress value p, 0 = where it started, 1 = the next level).
-         Let go past halfway, or flick, and a critically damped spring carries p home: it keeps the
-         finger's speed but never overshoots or bounces. Touch / pen only: a mouse can't drag the bar. */
+         Let go past halfway, or flick, and a slightly underdamped spring carries p home: it keeps the
+         finger's speed and overshoots just a little before settling. Touch / pen only: a mouse can't drag the bar. */
       (function () {
         const MQ = matchMedia("(max-width:900px),(max-height:520px)"), body = document.body;
         const top = $("#top"), tb = $("#tb"), menus = $("#menus"), pull = document.createElement("button"), wrap = document.createElement("div");
@@ -18552,11 +18559,11 @@ function insChar(ch, eid) {
           setTimeout(() => dispatchEvent(new Event("resize")), 30); /* the canvas just changed height */
         };
 
-        /* glide p toward `target` with a critically damped spring: it carries the finger's speed in,
-           eases out smoothly and never overshoots, so there is no bounce */
-        const spring = (x, v, target, onFrame, done) => {
-          const w = 0.017, k = w * w, c = 2 * w; /* stiffness and damping, per millisecond (zeta = 1) */
-          v = Math.max(-0.012, Math.min(0.012, v));
+        /* spring p toward `target`, carrying the finger's speed in. zeta < 1 gives a small, soft overshoot
+           and settle; the harder the flick, the livelier it is */
+        const spring = (x, v, target, zeta, onFrame, done) => {
+          const w = 0.019, k = w * w, c = 2 * zeta * w; /* stiffness and damping, per millisecond */
+          v = Math.max(-0.015, Math.min(0.015, v));
           let last = performance.now();
           const step = (now) => {
             const dt = Math.min(now - last, 32);
@@ -18565,7 +18572,7 @@ function insChar(ch, eid) {
               const h = Math.min(4, dt - t);
               v += (-k * (x - target) - c * v) * h;
               x += v * h;
-              if (x > 1) { x = 1; v = 0; } else if (x < 0) { x = 0; v = 0; } /* never past either end */
+              if (x > 1.15) { x = 1.15; v = 0; } else if (x < -0.15) { x = -0.15; v = 0; } /* safety limit */
             }
             onFrame(x);
             if (Math.abs(x - target) < 0.002 && Math.abs(v) < 0.00005) { onFrame(target); done(); }
@@ -18579,7 +18586,7 @@ function insChar(ch, eid) {
           if (wrap.classList.contains("dragging")) return;
           const to = rest == 1 ? 2 : 1, T = begin(rest, to);
           setP(T, 0);
-          spring(0, 0, 1, (p) => setP(T, p), () => commit(to, T));
+          spring(0, 0, 1, 0.75, (p) => setP(T, p), () => commit(to, T));
         };
 
         let g = null, swallowUntil = 0, raf = 0;
@@ -18623,7 +18630,7 @@ function insChar(ch, eid) {
           const v = performance.now() - d.lt > 80 ? 0 : d.v; /* a pause before lifting means no flick */
           const span = Math.abs(d.T.span) < 12 ? d.dir * 40 : d.T.span, toward = v * d.dir;
           const go = toward > 0.5 ? 1 : toward < -0.5 ? 0 : d.p > 0.5; /* flick wins, else halfway */
-          spring(d.p, v / span, go ? 1 : 0, (p) => setP(d.T, p), () => commit(go ? d.to : d.L, d.T));
+          spring(d.p, v / span, go ? 1 : 0, Math.abs(v) > 0.4 ? 0.55 : 0.7, (p) => setP(d.T, p), () => commit(go ? d.to : d.L, d.T));
         };
         addEventListener("pointerup", release);
         addEventListener("pointercancel", release);
@@ -18632,7 +18639,7 @@ function insChar(ch, eid) {
         }, true);
       })();
 
-      /* ===== bottom sheets: drag or swipe down to dismiss; colour menu + colour dialog open as sheets ===== */
+      /* ===== bottom sheets: drag or swipe down to dismiss, flick with momentum; colour menu + colour dialog open as sheets ===== */
       (function () {
         const MQ = matchMedia("(max-width:900px),(max-height:520px)");
         const grab = () => {
@@ -18686,45 +18693,105 @@ function insChar(ch, eid) {
             }
         }).observe(document.body, { childList: true });
 
-        /* drag handling */
-        let d = null;
+        /* drag handling: the sheet follows the finger, then carries its speed on a soft spring (small overshoot).
+           layers, format options and the volume diagram can also be dragged UP to open taller; drag them
+           back down to shrink, and down again to close. */
+        const EXPAND = "#lp, #fp, #vd", PAD = 24;
+        let d = null, raf = 0, busy = false;
+        const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
+        /* s = how many px of the sheet are showing (below `base` the sheet slides down, above it grows taller) */
+        const paint = (g, s) => {
+          if (g.xp) g.sheet.style.setProperty("height", Math.max(s, g.base) + "px", "important");
+          g.sheet.style.transform = `translateY(${Math.max(0, g.base - s)}px)`;
+        };
+        const glide = (x, v, target, zeta, lo, hi, onFrame, done) => {
+          const w = 0.019, k = w * w, c = 2 * zeta * w; /* px and px per ms; zeta < 1 = a soft overshoot */
+          v = clamp(v, -3, 3);
+          let last = performance.now();
+          const step = (now) => {
+            const dt = Math.min(now - last, 32);
+            last = now;
+            for (let t = 0; t < dt; t += 4) {
+              const h = Math.min(4, dt - t);
+              v += (-k * (x - target) - c * v) * h;
+              x += v * h;
+              if (x > hi) { x = hi; v = 0; } else if (x < lo) { x = lo; v = 0; }
+            }
+            onFrame(x);
+            if (Math.abs(x - target) < 0.5 && Math.abs(v) < 0.01) { onFrame(target); done(); }
+            else requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        };
+        /* an expanded sheet goes back to normal height once it has closed */
+        new MutationObserver(() => {
+          for (const [cls, id] of [["lpo", "#lp"], ["fpo", "#fp"], ["vdo", "#vd"]])
+            if (!document.body.classList.contains(cls)) setTimeout(() => !document.body.classList.contains(cls) && $(id).classList.remove("xpd"), 350);
+        }).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+
         addEventListener(
           "pointerdown",
           (e) => {
-            if (!MQ.matches || e.button) return;
+            if (!MQ.matches || e.button || busy) return;
             const h = e.target.closest(".grab, .lph, #fp .fph, #tp .hd, #vd .vdh");
             if (!h || e.target.closest("button, input, select, textarea")) return;
             const sheet = h.closest("#lp, #fp, #tp, #vd, .pop.sheet, #cdlg .card");
-            if (sheet) d = { sheet, y0: e.clientY, t0: performance.now(), dy: 0, id: e.pointerId };
+            if (!sheet) return;
+            const xp = sheet.matches(EXPAND), was = sheet.classList.contains("xpd");
+            let base, full;
+            if (xp) { /* measure both heights */
+              sheet.classList.remove("xpd");
+              base = sheet.offsetHeight;
+              sheet.classList.add("xpd");
+              full = sheet.offsetHeight;
+              if (!was) sheet.classList.remove("xpd");
+            } else base = full = sheet.offsetHeight;
+            const s0 = was ? full : base;
+            d = { sheet, xp, was, base, full, s0, s: s0, y0: e.clientY, id: e.pointerId, v: 0, ly: e.clientY, lt: performance.now(), moved: 0 };
           },
           true,
         );
         addEventListener("pointermove", (e) => {
           if (!d || e.pointerId != d.id) return;
-          d.dy = Math.max(0, e.clientY - d.y0);
-          if (d.dy > 4) {
+          const now = performance.now(), dt = now - d.lt;
+          if (dt > 0) d.v = 0.6 * d.v + 0.4 * ((e.clientY - d.ly) / dt); /* finger speed, px per ms, down is positive */
+          d.lt = now;
+          d.ly = e.clientY;
+          const dy = e.clientY - d.y0;
+          if (!d.moved) {
+            if (Math.abs(dy) < 4) return;
+            d.moved = 1;
             d.sheet.style.transition = "none";
-            d.sheet.style.transform = `translateY(${d.dy}px)`;
+            d.sheet.style.willChange = "transform";
+            d.sheet.classList.remove("xpd"); /* from here the height is set by hand */
           }
+          d.s = clamp(d.s0 - dy, 0, d.full);
+          if (!raf)
+            raf = requestAnimationFrame(() => {
+              raf = 0;
+              if (d && d.moved) paint(d, d.s);
+            });
         });
         const release = (e) => {
           if (!d || e.pointerId != d.id) return;
-          const { sheet, dy, t0 } = d;
+          const g = d;
           d = null;
-          const fast = dy / (performance.now() - t0) > 0.6;
-          sheet.style.transition = "transform .2s ease";
-          if (dy > 90 || (fast && dy > 24)) {
-            sheet.style.transform = "translateY(105%)";
-            const close = closer(sheet);
-            setTimeout(() => {
-              sheet.style.transition = "";
-              sheet.style.transform = "";
-              if (close) close();
-            }, 200);
-          } else {
-            sheet.style.transform = "";
-            setTimeout(() => (sheet.style.transition = ""), 220);
-          }
+          cancelAnimationFrame(raf);
+          raf = 0;
+          if (!g.moved) return;
+          const v = performance.now() - g.lt > 80 ? 0 : g.v; /* a pause before lifting means no flick */
+          const proj = g.s - v * 160; /* where the finger's speed would carry it */
+          const thr = Math.min(90, g.base * 0.4), range = g.full - g.base;
+          const tgt = proj < g.base - thr ? -PAD : range > 0 && proj > g.base + range * (g.was ? 0.65 : 0.35) ? g.full : g.base;
+          busy = true;
+          glide(g.s, -v, tgt, Math.abs(v) > 0.5 ? 0.55 : 0.7, -PAD, g.full, (s) => paint(g, s), () => {
+            const sh = g.sheet, close = tgt < 0 ? closer(sh) : null;
+            if (tgt == g.full && g.xp) sh.classList.add("xpd");
+            if (close) close();
+            sh.style.transition = sh.style.transform = sh.style.willChange = "";
+            sh.style.removeProperty("height");
+            busy = false;
+          });
         };
         addEventListener("pointerup", release);
         addEventListener("pointercancel", release);
