@@ -355,6 +355,12 @@
       margin: 5px 0;
     }
 
+    /* hairline dividers like Google Drawings: half a pixel thick, the same on any screen scale */
+    :root:not([data-theme^="brutal"]) .pop .sep {
+      transform: scaleY(0.5);
+      transform-origin: 50% 0;
+    }
+
     .sg {
       display: grid;
       grid-template-columns: repeat(12, 32px);
@@ -1255,6 +1261,36 @@
 
     .pop.big .sep {
       margin: 6px 0;
+    }
+
+    .shpk {
+      max-height: 70vh;
+      overflow: auto;
+      padding: 2px 0;
+    }
+
+    .shpk .shg {
+      display: grid;
+      grid-template-columns: repeat(var(--c, 12), var(--cell, 24px));
+      padding: 6px 12px;
+    }
+
+    .shpk .shg .b {
+      width: var(--cell, 24px);
+      height: var(--cell, 24px);
+      min-width: 0;
+      padding: 0;
+    }
+
+    .shpk .shg .b svg {
+      width: min(22px, calc(var(--cell, 24px) - 6px));
+      height: min(22px, calc(var(--cell, 24px) - 6px));
+    }
+
+    .shpk .shs {
+      height: 1px;
+      background: var(--bd);
+      margin: 2px 0;
     }
 
     .pop.tbp {
@@ -4349,7 +4385,7 @@
     #vd .vdp { border: 1px solid var(--bd); border-radius: 10px; padding: 6px; background: conic-gradient(#e6e6e6 25%, #fff 0 50%, #e6e6e6 0 75%, #fff 0) 0 0 / 16px 16px }
     #vd .vdp svg { display: block; width: 100%; height: auto; max-height: 220px }
     #vd .vdk { display: flex; flex-wrap: wrap; gap: 6px }
-    #vd .vdk button { border: 1px solid var(--bd); background: none; color: var(--tx); border-radius: 16px; padding: 7px 12px; cursor: pointer; font: 500 13px var(--uif), Roboto, Arial }
+    #vd .vdk button { border: 1px solid var(--bd); background: none; color: var(--tx); border-radius: 16px; padding: 6px 10px; cursor: pointer; font: 500 13px var(--uif), Roboto, Arial }
     #vd .vdk button.on { background: var(--ac); border-color: var(--ac); color: var(--aci, #fff) }
     #vd .vdg { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px }
     #vd label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--mut); min-width: 0 }
@@ -4403,11 +4439,13 @@
     /* icon bar: where it scrolls sideways, the edges fade out softly with a slight blur */
     @media (max-width: 900px), (max-height: 520px) {
       /* the fade copies the bar's own background (so it matches in every theme) and follows its rounded ends */
-      #tb::before, #tb::after { content: ""; flex: none; position: sticky; width: 32px; align-self: stretch; margin-top: -3px; margin-bottom: -3px; z-index: 3; pointer-events: none; opacity: 0; transition: opacity .2s; background: inherit; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px) }
+      #tb::before, #tb::after { content: ""; flex: none; position: sticky; width: 32px; align-self: stretch; margin-top: -3px; margin-bottom: -3px; z-index: 3; pointer-events: none; background: inherit; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px) }
       /* sticky offsets stop at the padding, which left a 6px strip at each end where icons showed through: reach into it, and a little past it so no half-pixel sliver is left */
       #tb::before { left: -9px; width: 41px; margin-right: -43px; border-radius: 24px 0 0 24px; -webkit-mask-image: linear-gradient(to right, #000 40%, transparent); mask-image: linear-gradient(to right, #000 40%, transparent) }
       #tb::after { right: -9px; width: 41px; margin-left: -43px; border-radius: 0 24px 24px 0; -webkit-mask-image: linear-gradient(to left, #000 40%, transparent); mask-image: linear-gradient(to left, #000 40%, transparent) }
-      #tb.fl::before, #tb.fr::after { opacity: 1 }
+      /* strength follows how far you've scrolled from each end, so the fades grow in and shrink out smoothly */
+      #tb::before { opacity: var(--fl, 0) }
+      #tb::after { opacity: var(--fr, 0) }
       body.topx #tb::before, body.topx #tb::after { display: none }
     }
 
@@ -5168,20 +5206,65 @@ const OLD = ["tri", "dia", "star", "arr"],
   };
 const ic = (k) =>
     `<svg width="22" height="22" viewBox="-11 -11 22 22" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"><path d="${sc(G[k], 18, 18)}"/></svg>`,
-  shapeMenu = () =>
-    '<div style="max-height:70vh;overflow:auto;width:390px">' +
-    Object.entries(GR)
-      .map(
-        ([n, l]) =>
-          `<div class="cph" style="padding:4px 8px">${n}</div><div class="sg">` +
-          l
-            .split(" ")
-            .map((k) => `<button class="b" title="${k}" data-i="${k}">${ic(k)}</button>`)
-            .join("") +
-          "</div>",
-      )
-      .join("") +
-    "</div>";
+  /* the picker is four categories that cascade, like Google Drawings; flowchart shapes live under Shapes */
+  /* like Google Drawings, Shapes is three groups divided by lines: corner-cut rectangles, basic shapes, flowchart */
+  GRC = {
+    Shapes: [
+      GR.Shapes.split(" ").slice(0, 9).join(" "),
+      GR.Shapes.split(" ").slice(9).join(" "),
+      GR.Flowchart,
+    ],
+    Arrows: [GR.Arrows],
+    Callouts: [GR.Callouts],
+    Equation: [GR.Equation],
+  },
+  GRI = { Shapes: "rect", Arrows: "aR", Callouts: "wrect", Equation: "plus" },
+  shapeGrid = (n) => {
+    /* compact grid, up to 12 across (fewer on a narrow screen), with a line between groups */
+    const coarse = matchMedia("(pointer:coarse)").matches,
+      cell = coarse ? 34 : 24,
+      cols = Math.max(5, Math.min(12, Math.floor((innerWidth - 40) / cell)));
+    return (
+      `<div class="shpk" style="--c:${cols};--cell:${cell}px">` +
+      GRC[n]
+        .map(
+          (g) =>
+            '<div class="shg">' +
+            g
+              .split(" ")
+              .map((k) => `<button class="b" title="${k}" data-i="${k}">${ic(k)}</button>`)
+              .join("") +
+            "</div>",
+        )
+        .join('<div class="shs"></div>') +
+      "</div>"
+    );
+  },
+  shapeCat = (n) => ({
+    fly: (host, el) => {
+      const d = flyBox(host, el);
+      d.style.minWidth = "0";
+      d.innerHTML = shapeGrid(n);
+      d.onclick = (e) => {
+        e.stopPropagation();
+        const b = e.target.closest("[data-i]");
+        if (b) {
+          closePop();
+          shapeT = b.dataset.i;
+          setTool("shape");
+        }
+      };
+      flyPlace(host, d);
+      /* on a narrow screen the flyout would land on top of the row just tapped (and the tap would pick a shape): put it below the menu instead */
+      const hr = host.getBoundingClientRect(),
+        dr = d.getBoundingClientRect();
+      if (dr.left < hr.right - 4 && dr.right > hr.left + 4) {
+        d.style.top = Math.max(8, Math.min(hr.bottom + 6, innerHeight - 8 - dr.height)) + "px";
+        d.style.left = Math.max(8, Math.min(hr.left, innerWidth - dr.width - 8)) + "px";
+      }
+    },
+  }),
+  shapeCats = () => Object.keys(GRC).map((n) => [n, shapeCat(n), "", ic(GRI[n])]);
 
 const I = {
   more: '<circle cx="12" cy="5" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.6" fill="currentColor" stroke="none"/>',
@@ -8145,6 +8228,26 @@ addEventListener("blur", spOff);
 svg.addEventListener("mousedown", (e) => {
   if (editing && /^m[lrtb]$/.test(e.target.dataset?.h || "")) e.preventDefault();
 });
+/* a drag must always end: the browser can cancel a touch (system gesture, long-press menu, app switch)
+   and then pointerup never arrives, which left the drag / pan "held" forever */
+let dragPid = -1;
+const dragAbort = () => {
+  document.body.classList.remove("panning");
+  if (!drag) return;
+  const d = drag;
+  drag = null;
+  guides = [];
+  rd = null;
+  if (d.k == "scr") tool = "select";
+  else if (d.before && d.before !== ser()) unser(d.before);
+  render();
+};
+svg.addEventListener("pointercancel", (e) => {
+  if (!drag || e.pointerId === dragPid) dragAbort();
+});
+svg.addEventListener("lostpointercapture", (e) => {
+  if (drag && e.pointerId === dragPid) dragAbort();
+});
 svg.addEventListener("pointerdown", (e) => {
   const h0 = e.target.dataset?.h,
     mh = /^m[lrtb]$/.test(h0 || "");
@@ -8153,7 +8256,11 @@ svg.addEventListener("pointerdown", (e) => {
   const p = pt(e),
     h = e.target.dataset.h,
     id = e.target.closest("[data-id]")?.dataset.id;
-  svg.setPointerCapture(e.pointerId);
+  if (drag && e.pointerType == "touch") dragAbort(); /* a stale drag from a touch that never ended */
+  dragPid = e.pointerId;
+  try {
+    svg.setPointerCapture(e.pointerId);
+  } catch (_) {}
   if (e.button == 1 || (spaceDown && e.button == 0)) {
     document.body.classList.add("panning");
     drag = { k: "pan", sx: e.clientX, sy: e.clientY, ox, oy };
@@ -8830,8 +8937,8 @@ svg.addEventListener("pointermove", (e) => {
   rq(d.k == "pan");
 });
 svg.addEventListener("pointerup", (e) => {
-  if (!drag) return;
   document.body.classList.remove("panning");
+  if (!drag) return;
   const d = drag,
     s = d.s;
   drag = null;
@@ -9988,10 +10095,18 @@ const closePop = () => {
   document.querySelectorAll(".mb.on").forEach((m) => m.classList.remove("on"));
 };
 $("#t-shape").onclick = (e) => {
-  const r = e.currentTarget.getBoundingClientRect();
-  pop(r.left, r.bottom + 4, shapeMenu(), (k) => {
-    shapeT = k;
-    setTool("shape");
+  const r = e.currentTarget.getBoundingClientRect(),
+    L = shapeCats();
+  pop(r.left, r.bottom + 4, mhtml(L, "data-i", true), () => {});
+  const P = $("#pp");
+  P.classList.add("big");
+  P.querySelectorAll("[data-sub]").forEach((el) => {
+    const i = L[+el.dataset.sub];
+    el.onmouseenter = () => {
+      killFlies(P);
+      openSub(P, el, i);
+    };
+    el.onclick = () => openSub(P, el, i);
   });
 };
 /* grouping: members share a gid; clicking any member selects the whole group, which then moves/scales like a multi-selection */
@@ -10252,21 +10367,7 @@ function fly(host, el, list) {
 }
 /* custom flyouts: shape picker + table size grid */
 const shapeFly = {
-  fly: (host, el) => {
-    const d = flyBox(host, el);
-    d.style.minWidth = "0";
-    d.innerHTML = shapeMenu();
-    d.onclick = (e) => {
-      e.stopPropagation();
-      const b = e.target.closest("[data-i]");
-      if (b) {
-        closePop();
-        shapeT = b.dataset.i;
-        setTool("shape");
-      }
-    };
-    flyPlace(host, d);
-  },
+  fly: (host, el) => fly(host, el, shapeCats()),
 };
 const tableFly = {
   fly: (host, el) => {
@@ -14408,7 +14509,7 @@ const h2r = (h) => {
       };
       m(e);
       el.onpointermove = m;
-      el.onpointerup = () => {
+      el.onpointerup = el.onpointercancel = el.onlostpointercapture = () => {
         el.onpointermove = null;
       };
     });
@@ -14543,7 +14644,7 @@ function gradDlg(init, cb) {
       q.stops[si][0] = Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width));
       rn();
     };
-    gb.onpointerup = () => {
+    gb.onpointerup = gb.onpointercancel = gb.onlostpointercapture = () => {
       gb.onpointermove = null;
     };
     rn();
@@ -18188,6 +18289,11 @@ function insChar(ch, eid) {
     (e) => {
       if (e.pointerType != "touch") return;
       clearTimeout(lp);
+      if (e.isPrimary) {
+        /* first finger down means no other finger is down: drop any stale entries (this is what froze the canvas) */
+        P.clear();
+        g = null;
+      }
       P.set(e.pointerId, { x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY });
       if (P.size >= 2) {
         abortDrag();
@@ -18273,6 +18379,33 @@ function insChar(ch, eid) {
   svg.addEventListener("pointerup", end, true);
   svg.addEventListener("pointercancel", end, true);
 
+  /* a finger that lifts (or is cancelled) outside the canvas never reached svg, so it stayed in P forever */
+  const gone = (e) => {
+    if (e.pointerType != "touch" || svg.contains(e.target) || !P.has(e.pointerId)) return;
+    clearTimeout(lp);
+    P.delete(e.pointerId);
+    if (g && (P.size < 2 || g.n == 1)) g = null;
+  };
+  addEventListener("pointerup", gone, true);
+  addEventListener("pointercancel", gone, true);
+  const resetTouch = () => {
+    clearTimeout(lp);
+    P.clear();
+    g = null;
+  };
+  const noTouches = (e) => {
+    if (!e.touches || !e.touches.length) resetTouch();
+  };
+  addEventListener("touchend", noTouches, { capture: true, passive: true });
+  addEventListener("touchcancel", noTouches, { capture: true, passive: true });
+  addEventListener("blur", resetTouch);
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      resetTouch();
+      abortDrag();
+    }
+  });
+
   /* floating buttons: pan mode + fit */
   const f = document.createElement("div");
   f.id = "mfab";
@@ -18317,19 +18450,27 @@ function insChar(ch, eid) {
 
 
       /* ===== volume diagram editor =====
-         Draws a labelled 3D solid (box, cube, cylinder, cone, sphere, pyramid, prism) as SVG, with the
-         volume worked out underneath. "insert" puts it on the page as an image; the image remembers its
-         settings (shape.vd), so double-clicking / double-tapping it, or Insert > edit volume diagram,
-         reopens the editor and changes apply live. */
+         Draws a labelled 3D solid as SVG with dimension lines, plus the volume and/or surface area worked out
+         underneath. 14 solids. "insert" puts it on the page as an image; the image remembers its settings
+         (shape.vd), so double-clicking / double-tapping it, or Insert > edit volume diagram, reopens the
+         editor and changes apply live. */
       (function () {
+        const PI = Math.PI, sq = Math.sqrt;
         const KINDS = {
-          box: { name: "box", fields: [["length", "l", 5], ["width", "w", 3], ["height", "h", 2]], sym: "l × w × h", num: (v) => `${num(v.l)} × ${num(v.w)} × ${num(v.h)}`, vol: (v) => v.l * v.w * v.h },
-          cube: { name: "cube", fields: [["side", "s", 3]], sym: "s³", num: (v) => `${num(v.s)}³`, vol: (v) => v.s ** 3 },
-          cylinder: { name: "cylinder", fields: [["radius", "r", 2], ["height", "h", 5]], sym: "π r² h", num: (v) => `π × ${num(v.r)}² × ${num(v.h)}`, vol: (v) => Math.PI * v.r ** 2 * v.h },
-          cone: { name: "cone", fields: [["radius", "r", 2], ["height", "h", 5]], sym: "⅓ π r² h", num: (v) => `⅓ × π × ${num(v.r)}² × ${num(v.h)}`, vol: (v) => (Math.PI * v.r ** 2 * v.h) / 3 },
-          sphere: { name: "sphere", fields: [["radius", "r", 3]], sym: "4/3 π r³", num: (v) => `4/3 × π × ${num(v.r)}³`, vol: (v) => (4 / 3) * Math.PI * v.r ** 3 },
-          pyramid: { name: "pyramid", fields: [["base side", "b", 4], ["height", "h", 5]], sym: "⅓ b² h", num: (v) => `⅓ × ${num(v.b)}² × ${num(v.h)}`, vol: (v) => (v.b ** 2 * v.h) / 3 },
-          prism: { name: "tri. prism", fields: [["base", "b", 4], ["tri. height", "t", 3], ["length", "l", 6]], sym: "½ b t l", num: (v) => `½ × ${num(v.b)} × ${num(v.t)} × ${num(v.l)}`, vol: (v) => 0.5 * v.b * v.t * v.l },
+          box: { name: "box", fields: [["length", "l", 5], ["width", "w", 3], ["height", "h", 2]], sym: "l × w × h", num: (v) => `${num(v.l)} × ${num(v.w)} × ${num(v.h)}`, vol: (v) => v.l * v.w * v.h, ssym: "2(lw + lh + wh)", sa: (v) => 2 * (v.l * v.w + v.l * v.h + v.w * v.h) },
+          cube: { name: "cube", fields: [["side", "s", 3]], sym: "s³", num: (v) => `${num(v.s)}³`, vol: (v) => v.s ** 3, ssym: "6s²", sa: (v) => 6 * v.s ** 2 },
+          cylinder: { name: "cylinder", fields: [["radius", "r", 2], ["height", "h", 5]], sym: "π r² h", num: (v) => `π × ${num(v.r)}² × ${num(v.h)}`, vol: (v) => PI * v.r ** 2 * v.h, ssym: "2πr(r + h)", sa: (v) => 2 * PI * v.r * (v.r + v.h) },
+          cone: { name: "cone", fields: [["radius", "r", 2], ["height", "h", 5]], sym: "⅓ π r² h", num: (v) => `⅓ × π × ${num(v.r)}² × ${num(v.h)}`, vol: (v) => (PI * v.r ** 2 * v.h) / 3, ssym: "πr(r + √(r² + h²))", sa: (v) => PI * v.r * (v.r + sq(v.r ** 2 + v.h ** 2)) },
+          sphere: { name: "sphere", fields: [["radius", "r", 3]], sym: "4/3 π r³", num: (v) => `4/3 × π × ${num(v.r)}³`, vol: (v) => (4 / 3) * PI * v.r ** 3, ssym: "4πr²", sa: (v) => 4 * PI * v.r ** 2 },
+          hemisphere: { name: "hemisphere", fields: [["radius", "r", 3]], sym: "⅔ π r³", num: (v) => `⅔ × π × ${num(v.r)}³`, vol: (v) => (2 / 3) * PI * v.r ** 3, ssym: "3πr²", sa: (v) => 3 * PI * v.r ** 2 },
+          pyramid: { name: "sq. pyramid", fields: [["base side", "b", 4], ["height", "h", 5]], sym: "⅓ b² h", num: (v) => `⅓ × ${num(v.b)}² × ${num(v.h)}`, vol: (v) => (v.b ** 2 * v.h) / 3, ssym: "b² + 2b√(h² + b²/4)", sa: (v) => v.b ** 2 + 2 * v.b * sq(v.h ** 2 + v.b ** 2 / 4) },
+          rpyramid: { name: "rect. pyramid", fields: [["length", "l", 5], ["width", "w", 3], ["height", "h", 4]], sym: "⅓ l w h", num: (v) => `⅓ × ${num(v.l)} × ${num(v.w)} × ${num(v.h)}`, vol: (v) => (v.l * v.w * v.h) / 3, ssym: "lw + l√(h² + w²/4) + w√(h² + l²/4)", sa: (v) => v.l * v.w + v.l * sq(v.h ** 2 + v.w ** 2 / 4) + v.w * sq(v.h ** 2 + v.l ** 2 / 4) },
+          prism: { name: "tri. prism", fields: [["base", "b", 4], ["tri. height", "t", 3], ["length", "l", 6]], sym: "½ b t l", num: (v) => `½ × ${num(v.b)} × ${num(v.t)} × ${num(v.l)}`, vol: (v) => 0.5 * v.b * v.t * v.l, ssym: "bt + l(b + 2√(t² + b²/4))", sa: (v) => v.b * v.t + v.l * (v.b + 2 * sq(v.t ** 2 + v.b ** 2 / 4)) },
+          hexprism: { name: "hex. prism", fields: [["side", "a", 2], ["height", "h", 5]], sym: "(3√3/2) a² h", num: (v) => `3√3/2 × ${num(v.a)}² × ${num(v.h)}`, vol: (v) => ((3 * sq(3)) / 2) * v.a ** 2 * v.h, ssym: "3√3 a² + 6ah", sa: (v) => 3 * sq(3) * v.a ** 2 + 6 * v.a * v.h },
+          cfrustum: { name: "cone frustum", fields: [["bottom radius", "R", 3], ["top radius", "r", 1.5], ["height", "h", 4]], sym: "⅓ π h (R² + Rr + r²)", num: (v) => `⅓ × π × ${num(v.h)} × (${num(v.R)}² + ${num(v.R)}×${num(v.r)} + ${num(v.r)}²)`, vol: (v) => (PI * v.h * (v.R ** 2 + v.R * v.r + v.r ** 2)) / 3, ssym: "π(R² + r² + (R + r)s)", sa: (v) => PI * (v.R ** 2 + v.r ** 2 + (v.R + v.r) * sq((v.R - v.r) ** 2 + v.h ** 2)) },
+          pfrustum: { name: "pyramid frustum", fields: [["base side", "b", 4], ["top side", "t", 2], ["height", "h", 4]], sym: "⅓ h (b² + bt + t²)", num: (v) => `⅓ × ${num(v.h)} × (${num(v.b)}² + ${num(v.b)}×${num(v.t)} + ${num(v.t)}²)`, vol: (v) => (v.h * (v.b ** 2 + v.b * v.t + v.t ** 2)) / 3, ssym: "b² + t² + 2(b + t)s", sa: (v) => v.b ** 2 + v.t ** 2 + 2 * (v.b + v.t) * sq(v.h ** 2 + ((v.b - v.t) / 2) ** 2) },
+          pipe: { name: "hollow cylinder", fields: [["outer radius", "R", 3], ["inner radius", "r", 2], ["height", "h", 5]], fix: (v) => { if (v.r >= v.R) v.r = v.R * 0.6; }, sym: "π h (R² − r²)", num: (v) => `π × ${num(v.h)} × (${num(v.R)}² − ${num(v.r)}²)`, vol: (v) => PI * v.h * (v.R ** 2 - v.r ** 2), ssym: "2π(R + r)(h + R − r)", sa: (v) => 2 * PI * (v.R + v.r) * (v.h + v.R - v.r) },
+          capsule: { name: "capsule", fields: [["radius", "r", 2], ["cylinder length", "h", 4]], sym: "π r² h + 4/3 π r³", num: (v) => `π × ${num(v.r)}² × ${num(v.h)} + 4/3 × π × ${num(v.r)}³`, vol: (v) => PI * v.r ** 2 * v.h + (4 / 3) * PI * v.r ** 3, ssym: "2πr(h + 2r)", sa: (v) => 2 * PI * v.r * (v.h + 2 * v.r) },
         };
         const UNITS = ["mm", "cm", "m", "km", "in", "ft", "yd", "units"];
         const num = (x) => String(+(+x).toFixed(2));
@@ -18339,76 +18480,136 @@ function insChar(ch, eid) {
         const shade = (hex, a) => {
           let c = hex.replace("#", "");
           if (c.length == 3) c = c.replace(/./g, "$&$&");
-          const n = parseInt(c, 16), f = (x) => Math.round(a > 0 ? x + (255 - x) * a : x * (1 + a));
+          const n = parseInt(c, 16), f = (x) => Math.max(0, Math.min(255, Math.round(a > 0 ? x + (255 - x) * a : x * (1 + a))));
           return "#" + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((x) => f(x).toString(16).padStart(2, "0")).join("");
         };
-        const DEF = () => ({ kind: "box", vals: {}, unit: "cm", fill: "#cfe2f3", stroke: "#1f2937", lw: 2, dims: 1, hidden: 1, formula: 1, title: "" });
+        const DEF = () => ({ kind: "box", vals: {}, unit: "cm", fill: "#cfe2f3", stroke: "#1f2937", lw: 2, dims: 1, hidden: 1, formula: 1, show: "v", title: "" });
+        const CX = 0.42, CY = 0.3; /* oblique (cabinet) projection: depth runs up and to the right */
+        const LG = [0.3, 0.8, -0.5].map((x, _, a) => x / Math.hypot(...a));
 
         /* ---- the drawing ---- */
         function vdSVG(p) {
-          const K = KINDS[p.kind], v = {};
+          const K = KINDS[p.kind] || KINDS.box, v = {};
           for (const [, key, def] of K.fields) v[key] = +p.vals[key] > 0 ? +p.vals[key] : def;
-          const ink = p.stroke, lw = p.lw, u = p.unit, W = 440, FH = 250, top = p.title ? 40 : 10;
-          const lt = shade(p.fill, 0.4), dk = shade(p.fill, -0.2), at = (a) => `${r1(a[0])},${r1(a[1])}`;
-          const poly = (pts, fill) => `<polygon points="${pts.map(at).join(" ")}" fill="${fill}" stroke="${ink}" stroke-width="${lw}" stroke-linejoin="round"/>`;
-          const line = (a, b, dash) => `<line x1="${r1(a[0])}" y1="${r1(a[1])}" x2="${r1(b[0])}" y2="${r1(b[1])}" stroke="${ink}" stroke-width="${lw}" stroke-linecap="round"${dash ? ' stroke-dasharray="6 5" opacity=".75"' : ""}/>`;
-          const hid = (a, b) => (p.hidden ? line(a, b, 1) : "");
-          const hidPath = (d) => (p.hidden ? `<path d="${d}" fill="none" stroke="${ink}" stroke-width="${lw}" stroke-dasharray="6 5" opacity=".75"/>` : "");
-          const text = (x, y, t, anchor = "middle", size = 15, bold = 0) => `<text x="${r1(x)}" y="${r1(y)}" text-anchor="${anchor}" font-size="${size}" font-weight="${bold ? 700 : 400}" font-family="Arial, Helvetica, sans-serif" fill="${ink}">${esc(t)}</text>`;
-          const dim = (sym, key, x, y, anchor) => (p.dims ? text(x, y, `${sym} = ${num(v[key])} ${u}`, anchor) : "");
+          if (K.fix) K.fix(v);
+          const ink = p.stroke, lw = p.lw, u = p.unit, W = 440, FH = 250, top = p.title ? 40 : 10, AW = 240, AH = 170;
+          const lt = shade(p.fill, 0.4), dk = shade(p.fill, -0.2), f1 = r1, at = (a) => `${f1(a[0])},${f1(a[1])}`;
+          const stroke = `stroke="${ink}" stroke-width="${lw}" stroke-linejoin="round" stroke-linecap="round"`;
+          const line = (a, b, dash, w) => `<line x1="${f1(a[0])}" y1="${f1(a[1])}" x2="${f1(b[0])}" y2="${f1(b[1])}" stroke="${ink}" stroke-width="${w || lw}" stroke-linecap="round"${dash ? ' stroke-dasharray="6 5" opacity=".7"' : ""}/>`;
+          const hidPath = (d) => (p.hidden ? `<path d="${d}" fill="none" stroke="${ink}" stroke-width="${lw}" stroke-dasharray="6 5" opacity=".7"/>` : "");
+          const text = (x, y, t, anchor = "middle", size = 15, bold = 0) => `<text x="${f1(x)}" y="${f1(y)}" text-anchor="${anchor}" font-size="${size}" font-weight="${bold ? 700 : 400}" font-family="Arial, Helvetica, sans-serif" fill="${ink}">${esc(t)}</text>`;
+          const lab = (sym, key) => `${sym} = ${num(v[key])} ${u}`;
+          const dm = (x, y, t, anchor) => (p.dims ? text(x, y, t, anchor, 14) : "");
           const px = (x, k) => Math.max(x * k, 14); /* never let a side collapse to nothing */
-          let fig;
+          const fit = (X, Y) => Math.min(AW / X, AH / Y);
+          const dot = (a) => `<circle cx="${f1(a[0])}" cy="${f1(a[1])}" r="2.5" fill="${ink}"/>`;
+          /* dimension line: parallel to a→b, pushed out to one side, with extension lines, arrows and a label */
+          const dl = (a, b, t, side = 1, off = 18) => {
+            if (!p.dims) return "";
+            const dx = b[0] - a[0], dy = b[1] - a[1], n = Math.hypot(dx, dy) || 1, ux = (-dy / n) * side, uy = (dx / n) * side;
+            const A = [a[0] + ux * off, a[1] + uy * off], B = [b[0] + ux * off, b[1] + uy * off], gw = Math.max(1, lw * 0.6);
+            const ext = (P, Q) => `<line x1="${f1(P[0])}" y1="${f1(P[1])}" x2="${f1(Q[0])}" y2="${f1(Q[1])}" stroke="${ink}" stroke-width="1" opacity=".45"/>`;
+            const m = [(A[0] + B[0]) / 2 + ux * 11, (A[1] + B[1]) / 2 + uy * 11], side_ = Math.abs(ux) > 0.5;
+            return ext(a, [A[0] + ux * 5, A[1] + uy * 5]) + ext(b, [B[0] + ux * 5, B[1] + uy * 5]) +
+              `<line x1="${f1(A[0])}" y1="${f1(A[1])}" x2="${f1(B[0])}" y2="${f1(B[1])}" stroke="${ink}" stroke-width="${gw}" marker-start="url(#ar)" marker-end="url(#ar)"/>` +
+              text(m[0], m[1] + (side_ ? 5 : uy > 0 ? 10 : -1), t, side_ ? (ux > 0 ? "start" : "end") : "middle", 14);
+          };
+          /* height / radius drawn inside the solid */
+          const hl = (a, b, t) => line(a, b, 1, Math.max(1, lw * 0.7)) + dot(a) + dm(Math.max(a[0], b[0]) + 8, (a[1] + b[1]) / 2 + 5, t, "start");
 
-          if (p.kind == "box" || p.kind == "cube") {
-            const cube = p.kind == "cube", l = cube ? v.s : v.l, w = cube ? v.s : v.w, h = cube ? v.s : v.h;
-            const k = Math.min(210 / (l + 0.4 * w), 170 / (h + 0.28 * w)), L = px(l, k), H = px(h, k), Wd = px(w, k), dx = 0.4 * Wd, dy = 0.28 * Wd;
-            const A = [0, dy], B = [L, dy], C = [L, dy + H], D = [0, dy + H], A2 = [dx, 0], B2 = [L + dx, 0], C2 = [L + dx, H], D2 = [dx, H];
-            fig = { bw: L + dx, bh: H + dy,
-              g: poly([A, B, B2, A2], lt) + poly([B, C, C2, B2], dk) + poly([A, B, C, D], p.fill) + hid(D, D2) + hid(D2, C2) + hid(D2, A2) +
-                (cube ? dim("s", "s", L / 2, dy + H + 20) : dim("l", "l", L / 2, dy + H + 20) + dim("h", "h", -10, dy + H / 2 + 5, "end") + dim("w", "w", L + dx / 2 + 10, H + dy / 2 + 16, "start")) };
-          } else if (p.kind == "cylinder") {
-            const k = Math.min(200 / (2 * v.r), 170 / (v.h + 0.6 * v.r)), rx = Math.max(v.r * k, 10), ry = rx * 0.3, H = px(v.h, k), X = 2 * rx;
-            fig = { bw: X, bh: H + 2 * ry,
-              g: `<path d="M0,${r1(ry)} L0,${r1(ry + H)} A${r1(rx)},${r1(ry)} 0 0 0 ${r1(X)},${r1(ry + H)} L${r1(X)},${r1(ry)} Z" fill="${p.fill}" stroke="${ink}" stroke-width="${lw}" stroke-linejoin="round"/>` +
-                hidPath(`M0,${r1(ry + H)} A${r1(rx)},${r1(ry)} 0 0 1 ${r1(X)},${r1(ry + H)}`) +
-                `<ellipse cx="${r1(rx)}" cy="${r1(ry)}" rx="${r1(rx)}" ry="${r1(ry)}" fill="${lt}" stroke="${ink}" stroke-width="${lw}"/>` +
-                line([rx, ry], [X, ry]) + dim("r", "r", X + 10, ry + 5, "start") + dim("h", "h", -10, ry + H / 2 + 5, "end") };
-          } else if (p.kind == "cone") {
-            const k = Math.min(200 / (2 * v.r), 170 / (v.h + 0.3 * v.r)), rx = Math.max(v.r * k, 10), ry = rx * 0.3, H = px(v.h, k), X = 2 * rx;
-            fig = { bw: X, bh: H + ry,
-              g: `<path d="M0,${r1(H)} L${r1(rx)},0 L${r1(X)},${r1(H)} A${r1(rx)},${r1(ry)} 0 0 1 0,${r1(H)} Z" fill="${p.fill}" stroke="${ink}" stroke-width="${lw}" stroke-linejoin="round"/>` +
-                hidPath(`M0,${r1(H)} A${r1(rx)},${r1(ry)} 0 0 1 ${r1(X)},${r1(H)}`) +
-                line([rx, 0], [rx, H], 1) + line([rx, H], [X, H], 1) + dim("h", "h", rx + 8, H / 2 + 5, "start") + dim("r", "r", rx + rx / 2, H + ry + 18) };
-          } else if (p.kind == "sphere") {
-            const R = Math.max((v.r * Math.min(200 / (2 * v.r), 170 / (2 * v.r))), 20), X = 2 * R, ry = R * 0.3;
-            fig = { bw: X, bh: X,
-              g: `<defs><radialGradient id="sg" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="${lt}"/><stop offset=".6" stop-color="${p.fill}"/><stop offset="1" stop-color="${dk}"/></radialGradient></defs>` +
-                `<circle cx="${r1(R)}" cy="${r1(R)}" r="${r1(R)}" fill="url(#sg)" stroke="${ink}" stroke-width="${lw}"/>` +
-                hidPath(`M0,${r1(R)} A${r1(R)},${r1(ry)} 0 0 1 ${r1(X)},${r1(R)}`) +
-                `<path d="M0,${r1(R)} A${r1(R)},${r1(ry)} 0 0 0 ${r1(X)},${r1(R)}" fill="none" stroke="${ink}" stroke-width="${lw}"/>` +
-                line([R, R], [X, R]) + `<circle cx="${r1(R)}" cy="${r1(R)}" r="3" fill="${ink}"/>` + dim("r", "r", R + R / 2, R - 8) };
-          } else if (p.kind == "pyramid") {
-            const k = Math.min(210 / (1.4 * v.b), 175 / (v.h + 0.28 * v.b)), B = px(v.b, k), H = px(v.h, k), dx = 0.4 * B, dy = 0.28 * B;
-            const FL = [0, H + dy], FR = [B, H + dy], BR = [B + dx, H], BL = [dx, H], AP = [(B + dx) / 2, 0], MID = [(B + dx) / 2, H + dy / 2];
-            fig = { bw: B + dx, bh: H + dy,
-              g: poly([FL, FR, AP], p.fill) + poly([FR, BR, AP], dk) + hid(FL, BL) + hid(BL, BR) + hid(BL, AP) + line(AP, MID, 1) +
-                dim("h", "h", MID[0] + 8, H / 2 + 5, "start") + dim("b", "b", B / 2, H + dy + 20) };
-          } else {
-            const k = Math.min(210 / (v.b + 0.4 * v.l), 170 / (v.t + 0.28 * v.l)), B = px(v.b, k), T = px(v.t, k), Ld = px(v.l, k), dx = 0.4 * Ld, dy = 0.28 * Ld;
-            const FL = [0, T + dy], FR = [B, T + dy], AP = [B / 2, dy], BL = [dx, T], BR = [B + dx, T], AP2 = [B / 2 + dx, 0], FOOT = [B / 2, T + dy];
-            fig = { bw: B + dx, bh: T + dy,
-              g: poly([AP, FR, BR, AP2], dk) + poly([FL, FR, AP], p.fill) + hid(BL, BR) + hid(FL, BL) + hid(BL, AP2) + line(AP, FOOT, 1) +
-                dim("t", "t", B / 2 + 8, dy + T / 2 + 5, "start") + dim("b", "b", B / 2, T + dy + 20) + dim("l", "l", B + dx / 2 + 10, T + dy / 2 + 16, "start") };
+          /* flat-shaded polyhedron: visible faces are lit by their normal, hidden edges dashed */
+          const mkpr = (Hh, Dd) => (q) => [q[0] + CX * q[2], Hh + CY * Dd - q[1] - CY * q[2]];
+          const sb = (a, b) => a.map((x, i) => x - b[i]), dt = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+          const cr = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+          const poly3 = (V, F, pr) => {
+            const cen = [0, 1, 2].map((j) => V.reduce((s, q) => s + q[j], 0) / V.length), E = new Map();
+            const info = F.map((f) => {
+              let n = cr(sb(V[f[1]], V[f[0]]), sb(V[f[2]], V[f[0]]));
+              const fc = [0, 1, 2].map((j) => f.reduce((s, i) => s + V[i][j], 0) / f.length);
+              if (dt(n, sb(fc, cen)) < 0) n = n.map((x) => -x);
+              const m = Math.hypot(...n) || 1; n = n.map((x) => x / m);
+              const vis = dt(n, [CX, CY, -1]) > 1e-6;
+              f.forEach((a, i) => { const b = f[(i + 1) % f.length], key = a < b ? a + "_" + b : b + "_" + a, e = E.get(key) || { a, b, v: 0 }; e.v |= vis; E.set(key, e); });
+              return { f, n, vis };
+            });
+            let out = "";
+            info.forEach((o) => { if (o.vis) out += `<polygon points="${o.f.map((i) => at(pr(V[i]))).join(" ")}" fill="${shade(p.fill, (dt(o.n, LG) - 0.5) * 0.9)}" ${stroke}/>`; });
+            if (p.hidden) E.forEach((e) => { if (!e.v) out += line(pr(V[e.a]), pr(V[e.b]), 1); });
+            return out;
+          };
+          const prismY = (P, Hh) => { const n = P.length, id = [...Array(n).keys()]; return { V: [...P.map(([x, z]) => [x, 0, z]), ...P.map(([x, z]) => [x, Hh, z])], F: [id, id.map((i) => i + n), ...id.map((i) => [i, (i + 1) % n, ((i + 1) % n) + n, i + n])] }; };
+          const sqr = (x0, z0, s) => [[x0, z0], [x0 + s, z0], [x0 + s, z0 + s], [x0, z0 + s]];
+
+          let fig;
+          const kd = p.kind;
+          if (kd == "box" || kd == "cube") {
+            const cu = kd == "cube", l = cu ? v.s : v.l, w = cu ? v.s : v.w, h = cu ? v.s : v.h;
+            const k = fit(l + CX * w, h + CY * w), L = px(l, k), Hh = px(h, k), D = px(w, k), pr = mkpr(Hh, D);
+            const V = [[0, 0, 0], [L, 0, 0], [0, Hh, 0], [L, Hh, 0], [0, 0, D], [L, 0, D], [0, Hh, D], [L, Hh, D]];
+            const F = [[0, 1, 3, 2], [4, 5, 7, 6], [0, 2, 6, 4], [1, 3, 7, 5], [0, 1, 5, 4], [2, 3, 7, 6]];
+            fig = { bw: L + CX * D, bh: Hh + CY * D, g: poly3(V, F, pr) + (cu ? dl(pr(V[0]), pr(V[1]), lab("s", "s")) : dl(pr(V[0]), pr(V[1]), lab("l", "l")) + dl(pr(V[1]), pr(V[5]), lab("w", "w")) + dl(pr(V[0]), pr(V[2]), lab("h", "h"), -1)) };
+          } else if (kd == "pyramid" || kd == "rpyramid") {
+            const l = kd == "pyramid" ? v.b : v.l, w = kd == "pyramid" ? v.b : v.w, h = v.h;
+            const k = fit(l + CX * w, h + CY * w), L = px(l, k), D = px(w, k), Hh = px(h, k), pr = mkpr(Hh, D);
+            const V = [[0, 0, 0], [L, 0, 0], [L, 0, D], [0, 0, D], [L / 2, Hh, D / 2]], F = [[0, 1, 2, 3], [0, 1, 4], [1, 2, 4], [2, 3, 4], [3, 0, 4]];
+            fig = { bw: L + CX * D, bh: Hh + CY * D, g: poly3(V, F, pr) + hl(pr([L / 2, 0, D / 2]), pr(V[4]), lab("h", "h")) +
+              (kd == "pyramid" ? dl(pr(V[0]), pr(V[1]), lab("b", "b")) : dl(pr(V[0]), pr(V[1]), lab("l", "l")) + dl(pr(V[1]), pr(V[2]), lab("w", "w"))) };
+          } else if (kd == "pfrustum") {
+            const B = v.b, T = v.t, h = v.h, k = fit(B + CX * B, h + CY * B), L = px(B, k), t = Math.max(T * k, 8), Hh = px(h, k), o = (L - t) / 2, pr = mkpr(Hh, L);
+            const V = [[0, 0, 0], [L, 0, 0], [L, 0, L], [0, 0, L], [o, Hh, o], [o + t, Hh, o], [o + t, Hh, o + t], [o, Hh, o + t]];
+            const F = [[0, 1, 2, 3], [4, 5, 6, 7], [0, 1, 5, 4], [1, 2, 6, 5], [2, 3, 7, 6], [3, 0, 4, 7]];
+            fig = { bw: Math.max(L + CX * L, o + t + CX * (o + t)), bh: Hh + CY * L, g: poly3(V, F, pr) + dl(pr(V[0]), pr(V[1]), lab("b", "b")) + dl(pr(V[4]), pr(V[5]), lab("t", "t"), -1, 14) + hl(pr([L / 2, 0, L / 2]), pr([L / 2, Hh, L / 2]), lab("h", "h")) };
+          } else if (kd == "prism") {
+            const k = fit(v.b + CX * v.l, v.t + CY * v.l), B = px(v.b, k), T = px(v.t, k), Ld = px(v.l, k), pr = mkpr(T, Ld);
+            const V = [[0, 0, 0], [B, 0, 0], [B / 2, T, 0], [0, 0, Ld], [B, 0, Ld], [B / 2, T, Ld]], F = [[0, 1, 2], [3, 4, 5], [0, 1, 4, 3], [1, 2, 5, 4], [2, 0, 3, 5]];
+            fig = { bw: B + CX * Ld, bh: T + CY * Ld, g: poly3(V, F, pr) + hl(pr([B / 2, 0, 0]), pr(V[2]), lab("t", "t")) + dl(pr(V[0]), pr(V[1]), lab("b", "b")) + dl(pr(V[1]), pr(V[4]), lab("l", "l")) };
+          } else if (kd == "hexprism") {
+            const k = fit(2 * v.a + CX * sq(3) * v.a, v.h + CY * sq(3) * v.a), a = Math.max(v.a * k, 8), Hh = px(v.h, k), zc = (sq(3) / 2) * a, D = sq(3) * a, pr = mkpr(Hh, D);
+            const P = [0, 1, 2, 3, 4, 5].map((i) => [a + a * Math.cos((i * PI) / 3), zc + a * Math.sin((i * PI) / 3)]), { V, F } = prismY(P, Hh);
+            fig = { bw: 2 * a + CX * D, bh: Hh + CY * D, g: poly3(V, F, pr) + dl(pr(V[4]), pr(V[5]), lab("a", "a")) + dl(pr([0, 0, zc]), pr([0, Hh, zc]), lab("h", "h"), -1) };
+          } else if (kd == "cylinder" || kd == "pipe") {
+            const pipe = kd == "pipe", Rr = pipe ? v.R : v.r, k = fit(2 * Rr, v.h + 0.6 * Rr), rx = Math.max(Rr * k, 10), ry = rx * 0.3, Hh = px(v.h, k), X = 2 * rx, ri = pipe ? Math.max(v.r * k, 5) : 0;
+            let g = `<path d="M0,${f1(ry)} L0,${f1(ry + Hh)} A${f1(rx)},${f1(ry)} 0 0 0 ${f1(X)},${f1(ry + Hh)} L${f1(X)},${f1(ry)} Z" fill="${p.fill}" ${stroke}/>` +
+              hidPath(`M0,${f1(ry + Hh)} A${f1(rx)},${f1(ry)} 0 0 1 ${f1(X)},${f1(ry + Hh)}`) +
+              `<ellipse cx="${f1(rx)}" cy="${f1(ry)}" rx="${f1(rx)}" ry="${f1(ry)}" fill="${lt}" ${stroke}/>`;
+            if (pipe) g += `<ellipse cx="${f1(rx)}" cy="${f1(ry)}" rx="${f1(ri)}" ry="${f1(ri * 0.3)}" fill="${shade(p.fill, -0.4)}" ${stroke}/>` + line([rx, ry], [rx - ri, ry], 0, Math.max(1, lw * 0.7)) + dm(rx - ri - 8, ry + 5, lab("r", "r"), "end");
+            g += line([rx, ry], [X, ry], 0, Math.max(1, lw * 0.7)) + dot([rx, ry]) + dm(X + 10, ry + 5, lab(pipe ? "R" : "r", pipe ? "R" : "r"), "start");
+            fig = { bw: X, bh: Hh + 2 * ry, g: g + dl([pipe ? X : 0, ry + Hh], [pipe ? X : 0, ry], lab("h", "h"), pipe ? 1 : -1) };
+            if (pipe) fig.g = fig.g.replace(/(<text[^>]*>)(R = )/, "$1$2"); /* labels kept as-is */
+          } else if (kd == "cone") {
+            const k = fit(2 * v.r, v.h + 0.3 * v.r), rx = Math.max(v.r * k, 10), ry = rx * 0.3, Hh = px(v.h, k), X = 2 * rx;
+            fig = { bw: X, bh: Hh + ry, g: `<path d="M0,${f1(Hh)} L${f1(rx)},0 L${f1(X)},${f1(Hh)} A${f1(rx)},${f1(ry)} 0 0 1 0,${f1(Hh)} Z" fill="${p.fill}" ${stroke}/>` +
+              hidPath(`M0,${f1(Hh)} A${f1(rx)},${f1(ry)} 0 0 1 ${f1(X)},${f1(Hh)}`) + hl([rx, Hh], [rx, 0], lab("h", "h")) + line([rx, Hh], [X, Hh], 0, Math.max(1, lw * 0.7)) + dm(rx + rx / 2, Hh + ry + 18, lab("r", "r"), "middle") };
+          } else if (kd == "cfrustum") {
+            const k = fit(2 * Math.max(v.R, v.r), v.h + 0.3 * (v.R + v.r)), rx = Math.max(v.R * k, 12), rt = Math.max(v.r * k, 6), ry = rx * 0.3, rty = rt * 0.3, Hh = px(v.h, k), X = 2 * rx, c = rx, yb = rty + Hh;
+            fig = { bw: X, bh: yb + ry, g: `<path d="M0,${f1(yb)} L${f1(c - rt)},${f1(rty)} A${f1(rt)},${f1(rty)} 0 0 1 ${f1(c + rt)},${f1(rty)} L${f1(X)},${f1(yb)} A${f1(rx)},${f1(ry)} 0 0 1 0,${f1(yb)} Z" fill="${p.fill}" ${stroke}/>` +
+              hidPath(`M0,${f1(yb)} A${f1(rx)},${f1(ry)} 0 0 1 ${f1(X)},${f1(yb)}`) + `<ellipse cx="${f1(c)}" cy="${f1(rty)}" rx="${f1(rt)}" ry="${f1(rty)}" fill="${lt}" ${stroke}/>` +
+              hl([c, yb], [c, rty], lab("h", "h")) + line([c, yb], [X, yb], 0, Math.max(1, lw * 0.7)) + line([c, rty], [c + rt, rty], 0, Math.max(1, lw * 0.7)) + dm(X + 10, yb + 5, lab("R", "R"), "start") + dm(c + rt + 10, rty + 5, lab("r", "r"), "start") };
+          } else if (kd == "sphere" || kd == "hemisphere") {
+            const hs = kd == "hemisphere", R = Math.max(Math.min(AW, hs ? AH / 0.65 : AH) / 2, 20), X = 2 * R, ry = R * 0.3;
+            const grad = `<defs><radialGradient id="sg" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="${lt}"/><stop offset=".6" stop-color="${p.fill}"/><stop offset="1" stop-color="${dk}"/></radialGradient></defs>`;
+            if (hs) fig = { bw: X, bh: R + ry, g: grad + `<path d="M0,${f1(R)} A${f1(R)},${f1(R)} 0 0 1 ${f1(X)},${f1(R)} A${f1(R)},${f1(ry)} 0 0 1 0,${f1(R)} Z" fill="url(#sg)" ${stroke}/>` + hidPath(`M0,${f1(R)} A${f1(R)},${f1(ry)} 0 0 1 ${f1(X)},${f1(R)}`) + line([R, R], [X, R], 0, Math.max(1, lw * 0.7)) + dot([R, R]) + dm(R + R / 2, R + ry + 18, lab("r", "r"), "middle") };
+            else fig = { bw: X, bh: X, g: grad + `<circle cx="${f1(R)}" cy="${f1(R)}" r="${f1(R)}" fill="url(#sg)" ${stroke}/>` + hidPath(`M0,${f1(R)} A${f1(R)},${f1(ry)} 0 0 1 ${f1(X)},${f1(R)}`) +
+              `<path d="M0,${f1(R)} A${f1(R)},${f1(ry)} 0 0 0 ${f1(X)},${f1(R)}" fill="none" ${stroke}/>` + line([R, R], [X, R], 0, Math.max(1, lw * 0.7)) + dot([R, R]) + dm(R + R / 2, R - 8, lab("r", "r"), "middle") };
+          } else { /* capsule */
+            const k = fit(2 * v.r, v.h + 2 * v.r), R = Math.max(v.r * k, 10), ry = R * 0.3, Hh = px(v.h, k), X = 2 * R;
+            fig = { bw: X, bh: Hh + 2 * R, g: `<path d="M0,${f1(R)} A${f1(R)},${f1(R)} 0 0 1 ${f1(X)},${f1(R)} L${f1(X)},${f1(R + Hh)} A${f1(R)},${f1(R)} 0 0 1 0,${f1(R + Hh)} Z" fill="${p.fill}" ${stroke}/>` +
+              `<path d="M0,${f1(R)} A${f1(R)},${f1(ry)} 0 0 0 ${f1(X)},${f1(R)} M0,${f1(R + Hh)} A${f1(R)},${f1(ry)} 0 0 0 ${f1(X)},${f1(R + Hh)}" fill="none" ${stroke}/>` +
+              hidPath(`M0,${f1(R)} A${f1(R)},${f1(ry)} 0 0 1 ${f1(X)},${f1(R)}`) + hidPath(`M0,${f1(R + Hh)} A${f1(R)},${f1(ry)} 0 0 1 ${f1(X)},${f1(R + Hh)}`) +
+              line([R, R], [X, R], 0, Math.max(1, lw * 0.7)) + dot([R, R]) + dm(X + 10, R + 5, lab("r", "r"), "start") + dl([0, R + Hh], [0, R], lab("h", "h"), -1) };
           }
 
-          const vol = K.vol(v), H = top + FH + (p.formula ? 62 : 8);
+          /* working underneath */
+          const vol = K.vol(v), sa = K.sa(v), show = p.show || "v", rows = [];
+          const eq = (x, s) => (Number.isInteger(+x.toFixed(2)) ? "=" : "≈") + " " + num(x) + " " + u + s;
+          if (show != "s") rows.push([`V = ${K.sym}`, 0], [`V = ${K.num(v)} ${eq(vol, "³")}`, 1]);
+          if (show != "v") rows.push([`A = ${K.ssym}`, 0], [`A ${Number.isInteger(+sa.toFixed(2)) ? "=" : "≈"} ${num(sa)} ${u}²`, 1]);
+          const H = top + FH + (p.formula ? rows.length * 24 + 14 : 8);
           const place = `translate(${r1((W - fig.bw) / 2)} ${r1(top + (FH - fig.bh) / 2)})`;
           const title = p.title ? text(W / 2, 28, p.title, "middle", 20, 1) : "";
-          const caption = p.formula
-            ? text(W / 2, top + FH + 22, `V = ${K.sym}`, "middle", 16) +
-              text(W / 2, top + FH + 46, `V = ${K.num(v)} ${Number.isInteger(+vol.toFixed(2)) ? "=" : "≈"} ${num(vol)} ${u}³`, "middle", 17, 1)
-            : "";
-          return { w: W, h: H, svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${title}<g transform="${place}">${fig.g}</g>${caption}</svg>` };
+          const caption = p.formula ? rows.map(([t, b], i) => text(W / 2, top + FH + 22 + i * 24, t, "middle", b ? 17 : 16, b)).join("") : "";
+          const defs = `<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1.5 L10,5 L0,8.5 z" fill="${ink}"/></marker></defs>`;
+          return { w: W, h: H, svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${defs}${title}<g transform="${place}">${fig.g}</g>${caption}</svg>` };
         }
 
         /* ---- the panel ---- */
@@ -18422,13 +18623,14 @@ function insChar(ch, eid) {
             <div class="vdg" id="vdf"></div>
             <div class="vdg">
               <label>unit<select id="vdu">${UNITS.map((x) => `<option>${x}</option>`).join("")}</select></label>
+              <label>show<select id="vdsh"><option value="v">volume</option><option value="s">surface area</option><option value="vs">both</option></select></label>
               <label>line width<input id="vdw" type="number" min="0.5" max="8" step="0.5"></label>
               <label>fill<input id="vdfi" type="color"></label>
               <label>lines<input id="vdsk" type="color"></label>
             </div>
-            <label class="vdc"><input type="checkbox" id="vdcd"> dimension labels</label>
+            <label class="vdc"><input type="checkbox" id="vdcd"> dimension lines and labels</label>
             <label class="vdc"><input type="checkbox" id="vdch"> hidden edges (dashed)</label>
-            <label class="vdc"><input type="checkbox" id="vdcf"> formula and volume</label>
+            <label class="vdc"><input type="checkbox" id="vdcf"> formula and result</label>
             <label>title<input id="vdt" type="text" placeholder="optional"></label>
             <button type="button" class="vdins" id="vdins"></button>
           </div>`;
@@ -18443,12 +18645,12 @@ function insChar(ch, eid) {
         }
         function writeUI() {
           fieldsUI();
-          q("#vdu").value = P.unit; q("#vdw").value = P.lw; q("#vdfi").value = P.fill; q("#vdsk").value = P.stroke; q("#vdt").value = P.title;
+          q("#vdu").value = P.unit; q("#vdsh").value = P.show || "v"; q("#vdw").value = P.lw; q("#vdfi").value = P.fill; q("#vdsk").value = P.stroke; q("#vdt").value = P.title;
           q("#vdcd").checked = !!P.dims; q("#vdch").checked = !!P.hidden; q("#vdcf").checked = !!P.formula;
         }
         function readUI() {
           panel.querySelectorAll("[data-f]").forEach((i) => (P.vals[i.dataset.f] = i.value));
-          P.unit = q("#vdu").value; P.lw = +q("#vdw").value || 2; P.fill = q("#vdfi").value; P.stroke = q("#vdsk").value; P.title = q("#vdt").value;
+          P.unit = q("#vdu").value; P.show = q("#vdsh").value; P.lw = +q("#vdw").value || 2; P.fill = q("#vdfi").value; P.stroke = q("#vdsk").value; P.title = q("#vdt").value;
           P.dims = q("#vdcd").checked ? 1 : 0; P.hidden = q("#vdch").checked ? 1 : 0; P.formula = q("#vdcf").checked ? 1 : 0;
         }
         const toURL = (svgText) => "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgText);
@@ -18475,9 +18677,9 @@ function insChar(ch, eid) {
           render(); refresh();
         }
         function open(shape) {
-          lpToggle(0); fpToggle(0);
+          lpToggle(0); fpToggle(0); panel.classList.remove("eqm");
           tid = shape && shape.vd ? shape.id : null; snapped = false;
-          P = tid != null ? clone(shape.vd) : DEF();
+          P = tid != null ? Object.assign(DEF(), clone(shape.vd)) : DEF();
           writeUI(); document.body.classList.add("vdo"); refresh();
           setTimeout(render, 300);
         }
@@ -18510,15 +18712,360 @@ function insChar(ch, eid) {
       })();
 
 
+      /* ===== equation editor (WYSIWYG) =====
+         The equation is edited directly where it is drawn: a blinking caret moves through the typeset maths
+         (arrow keys, taps), "/" makes a fraction, "^" a power, "_" a subscript, "(" a bracket pair, "sqrt" a root,
+         "pi" / "theta" … become symbols, and the keypad inserts the same structures. The equation is stored as a
+         tree (shape.eq.tree) so double-clicking / double-tapping an inserted equation, or Insert > edit equation,
+         reopens it and changes apply live. Shares the side panel / bottom sheet with the volume diagram. */
+      (function () {
+        const FONT = "'Cambria Math','STIX Two Math','Latin Modern Math','Times New Roman',serif";
+        const cx2 = document.createElement("canvas").getContext("2d");
+        const mw = (t, s, it) => { cx2.font = `${it ? "italic " : ""}${s}px ${FONT}`; return cx2.measureText(t).width; };
+        const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+        const r = (x) => Math.round(x * 10) / 10, clone = (o) => JSON.parse(JSON.stringify(o));
+        const REL = "=<>≤≥≠≈→∈≡∼∝⇒⊂", BIN = new Set([...REL, ..."+−×÷·±∓∪∩"]);
+        const FNRE = /^(arcsin|arccos|arctan|sinh|cosh|tanh|sin|cos|tan|cot|sec|csc|exp|log|ln|min|max|det)/;
+        const GM = { pi: "π", theta: "θ", alpha: "α", beta: "β", gamma: "γ", delta: "δ", lambda: "λ", mu: "μ", sigma: "σ", omega: "ω", phi: "φ", infinity: "∞" };
+        const ROWK = { frac: ["n", "d"], sqrt: ["i", "b"], sc: ["sup", "sub"], big: ["sub", "sup"], lr: ["b"], acc: ["b"] };
+        const kids = (n) => (ROWK[n.t] || []).filter((k) => n[k]).map((k) => n[k]);
+
+        /* ---- legacy: equations saved by the earlier LaTeX-box version (shape.eq.src) are converted on open ---- */
+        const LG = {}, G1 = "alpha α beta β gamma γ delta δ epsilon ε zeta ζ eta η theta θ iota ι kappa κ lambda λ mu μ nu ν xi ξ pi π rho ρ sigma σ tau τ upsilon υ phi φ varphi φ chi χ psi ψ omega ω Gamma Γ Delta Δ Theta Θ Lambda Λ Xi Ξ Pi Π Sigma Σ Phi Φ Psi Ψ Omega Ω".split(" ");
+        for (let i = 0; i < G1.length; i += 2) LG[G1[i]] = G1[i + 1];
+        const LS = { cdot: "·", times: "×", div: "÷", pm: "±", mp: "∓", le: "≤", leq: "≤", ge: "≥", geq: "≥", ne: "≠", neq: "≠", approx: "≈", infty: "∞", to: "→", rightarrow: "→", partial: "∂", nabla: "∇", in: "∈", cup: "∪", cap: "∩", degree: "°", equiv: "≡" };
+        function latexToRow(src) {
+          src = src.replace(/<=/g, "\\le ").replace(/>=/g, "\\ge ").replace(/\*/g, "\\cdot ").replace(/sqrt\(([^()]*)\)/g, "\\sqrt{$1}");
+          let i = 0; const n = src.length;
+          const ws = () => { while (i < n && /\s/.test(src[i])) i++; };
+          const arg = () => { ws(); if (src[i] == "{") { i++; const b = seq("}"); if (src[i] == "}") i++; return b; } const a = atom(); return a ? a : []; };
+          const raw = () => { ws(); if (src[i] != "{") return ""; const e = src.indexOf("}", i); const s = src.slice(i + 1, e < 0 ? n : e); i = e < 0 ? n : e + 1; return s; };
+          const chars = (t) => [...t].map((v) => ({ t: "c", v }));
+          const delim = () => { ws(); let c = src[i++] || "."; if (c == "\\") { c = src[i++] || "."; } return c; };
+          function atom() {
+            const c = src[i++];
+            if (c == "\\") {
+              const m = /^[a-zA-Z]+/.exec(src.slice(i));
+              if (!m) { const ch = src[i++]; return ch && !/[,;! \\]/.test(ch) ? [{ t: "c", v: ch }] : []; }
+              const nm = m[0]; i += nm.length;
+              if (/^d?frac$/.test(nm)) return [{ t: "frac", n: arg(), d: arg() }];
+              if (nm == "sqrt") { let ix = null; ws(); if (src[i] == "[") { const e = src.indexOf("]", i); ix = chars(src.slice(i + 1, e < 0 ? n : e)); i = e < 0 ? n : e + 1; } return [{ t: "sqrt", i: ix, b: arg() }]; }
+              if (/^(text|mathrm|operatorname)$/.test(nm)) return chars(raw());
+              if (nm == "left") { const l = delim(), b = seq("r"); let rr = "."; if (src.startsWith("\\right", i)) { i += 6; rr = delim(); } return [{ t: "lr", l, r: rr, b }]; }
+              if (/^(sum|prod|int|lim)$/.test(nm)) return [{ t: "big", v: nm, sup: nm == "lim" ? null : [], sub: [] }];
+              if (/^(vec|bar|hat|overline|tilde|dot)$/.test(nm)) return [{ t: "acc", k: nm, b: arg() }];
+              if (LG[nm]) return [{ t: "c", v: LG[nm] }];
+              if (LS[nm]) return [{ t: "c", v: LS[nm] }];
+              return chars(nm);
+            }
+            if (c == "{") { const b = seq("}"); if (src[i] == "}") i++; return b; }
+            return [{ t: "c", v: c == "-" ? "−" : c }];
+          }
+          function seq(stop) {
+            const out = [];
+            while (i < n) {
+              const c = src[i];
+              if (c == "}") { if (stop == "}") return out; i++; continue; }
+              if (/\s/.test(c)) { i++; continue; }
+              if (stop == "r" && src.startsWith("\\right", i)) return out;
+              if (c == "^" || c == "_") {
+                i++; const g = arg(), k = c == "^" ? "sup" : "sub", last = out[out.length - 1];
+                if (last && (last.t == "sc" || last.t == "big")) last[k] = g; else out.push({ t: "sc", sup: null, sub: null, [k]: g });
+                continue;
+              }
+              out.push(...atom());
+            }
+            return out;
+          }
+          return seq("");
+        }
+
+        /* ---- layout: every box has width w, ascent a, descent d and g(x, baselineY) → svg ---- */
+        let COL = "#000", EDIT = false, CARET = null, RECTS = null, INFO = new Map();
+        const T = (t, s, it) => ({ w: mw(t, s, it), a: 0.72 * s, d: 0.2 * s, g: (x, y) => `<text x="${r(x)}" y="${r(y)}" font-size="${r(s)}"${it ? ' font-style="italic"' : ""}>${esc(t)}</text>` });
+        const SP = (w) => ({ w, a: 0, d: 0, g: () => "" });
+        const ln = (x1, y1, x2, y2, s) => `<line x1="${r(x1)}" y1="${r(y1)}" x2="${r(x2)}" y2="${r(y2)}" stroke="${COL}" stroke-width="${r(0.055 * s)}" stroke-linecap="round"/>`;
+        const pl = (pts, s) => `<polyline points="${pts.map((q) => r(q[0]) + "," + r(q[1])).join(" ")}" fill="none" stroke="${COL}" stroke-width="${r(0.055 * s)}" stroke-linejoin="round" stroke-linecap="round"/>`;
+        const cat = (bs) => { let w = 0, a = 0, d = 0; bs.forEach((b) => { w += b.w; a = Math.max(a, b.a); d = Math.max(d, b.d); }); return { w, a, d, g: (x, y) => { let o = ""; bs.forEach((b) => { o += b.g(x, y); x += b.w; }); return o; } }; };
+        const sub = (s) => Math.max(0.7 * s, 8);
+        const isL = (n) => n.t == "c" && /^[a-z]$/i.test(n.v);
+
+        function delimBox(ch, B, s) {
+          if (ch == ".") return SP(0);
+          const k = Math.max(1, ((B.a + B.d) / s) * 0.98);
+          if (k < 1.15) return T(ch, s);
+          return { w: mw(ch, s) + 0.06 * s, a: B.a, d: B.d, g: (x, y) => `<text transform="translate(${r(x)} ${r(y - B.a + 0.75 * s * k)}) scale(1 ${r(k)})" font-size="${r(s)}">${esc(ch)}</text>` };
+        }
+        function box(n, s) {
+          switch (n.t) {
+            case "frac": {
+              const N = rowBox(n.n, 0.92 * s), D = rowBox(n.d, 0.92 * s), ax = 0.3 * s, gp = 0.14 * s, w = Math.max(N.w, D.w) + 0.3 * s;
+              return { w, a: ax + gp + N.d + N.a, d: Math.max(D.a + D.d + gp - ax, 0.1 * s), g: (x, y) => N.g(x + (w - N.w) / 2, y - ax - gp - N.d) + D.g(x + (w - D.w) / 2, y - ax + gp + D.a) + ln(x + 0.05 * s, y - ax, x + w - 0.05 * s, y - ax, s) };
+            }
+            case "sqrt": {
+              const B = rowBox(n.b, s), top = B.a + 0.2 * s, sw = 0.6 * s, I = n.i ? rowBox(n.i, 0.55 * s) : null, ex = I ? Math.max(0, I.w - 0.2 * s) : 0;
+              return { w: ex + sw + B.w + 0.1 * s, a: top + 0.06 * s, d: B.d, g: (x, y) => { const X = x + ex;
+                return pl([[X, y - 0.3 * s], [X + 0.15 * s, y - 0.36 * s], [X + 0.32 * s, y + B.d], [X + 0.58 * s, y - top], [X + sw + B.w + 0.08 * s, y - top]], s) + B.g(X + sw, y) + (I ? I.g(x, y - top * 0.45) : ""); } };
+            }
+            case "big": {
+              const u = sub(s), U = n.sup && rowBox(n.sup, u), D = n.sub && rowBox(n.sub, u), lim = n.v == "lim", glyph = { sum: "∑", prod: "∏", int: "∫" }[n.v], sz = n.v == "int" ? 1.5 * s : 1.35 * s;
+              const S0 = lim ? T("lim", s) : { w: mw(glyph, sz), a: 0.8 * s, d: 0.3 * s, g: (x, y) => `<text x="${r(x)}" y="${r(y + 0.24 * s)}" font-size="${r(sz)}">${glyph}</text>` };
+              if (n.v == "int") { const up = 0.5 * s, dn = 0.4 * s, sw = Math.max(U ? U.w : 0, D ? D.w : 0); return { w: S0.w + sw + 0.1 * s, a: Math.max(S0.a, U ? up + U.a : 0), d: Math.max(S0.d, D ? dn + D.d : 0), g: (x, y) => S0.g(x, y) + (U ? U.g(x + S0.w * 0.8 + 0.12 * s, y - up) : "") + (D ? D.g(x + S0.w * 0.45, y + dn) : "") }; }
+              const w = Math.max(S0.w, U ? U.w : 0, D ? D.w : 0) + 0.1 * s, gp = 0.1 * s;
+              return { w, a: S0.a + (U ? gp + U.a + U.d : 0), d: S0.d + (D ? gp + D.a + D.d : 0), g: (x, y) => S0.g(x + (w - S0.w) / 2, y) + (U ? U.g(x + (w - U.w) / 2, y - S0.a - gp - U.d) : "") + (D ? D.g(x + (w - D.w) / 2, y + S0.d + gp + D.a) : "") };
+            }
+            case "lr": { const B = rowBox(n.b, s); return cat([delimBox(n.l, B, s), B, delimBox(n.r, B, s)]); }
+            case "acc": {
+              const B = rowBox(n.b, s), y0 = B.a + 0.12 * s;
+              return { w: B.w, a: B.a + 0.24 * s, d: B.d, g: (x, y) => B.g(x, y) + (n.k == "hat" ? pl([[x + B.w / 2 - 0.15 * s, y - y0], [x + B.w / 2, y - y0 - 0.14 * s], [x + B.w / 2 + 0.15 * s, y - y0]], s) : n.k == "dot" ? `<circle cx="${r(x + B.w / 2)}" cy="${r(y - y0)}" r="${r(0.05 * s)}" fill="${COL}"/>` :
+                ln(x, y - y0, x + B.w, y - y0, s) + (n.k == "vec" ? pl([[x + B.w - 0.1 * s, y - y0 - 0.08 * s], [x + B.w, y - y0], [x + B.w - 0.1 * s, y - y0 + 0.08 * s]], s) : "")) };
+            }
+          }
+          return SP(0);
+        }
+        function rowBox(row, s) {
+          const items = [], upr = new Set(), tail = new Set(), ph = EDIT && !row.length;
+          for (let k = 0; k < row.length;) { /* mark sin / cos / ln … so they are drawn upright */
+            if (!isL(row[k])) { k++; continue; }
+            let j = k; while (j < row.length && isL(row[j])) j++;
+            for (let p = k; p < j;) { const m = FNRE.exec(row.slice(p, j).map((c) => c.v).join("")); if (m) { for (let q = p; q < p + m[0].length; q++) upr.add(q); tail.add(p + m[0].length - 1); p += m[0].length; } else p++; }
+            k = j;
+          }
+          let un = 1;
+          for (let k = 0; k < row.length; k++) {
+            const n = row[k]; let b;
+            if (n.t == "c") {
+              const v = n.v;
+              if (BIN.has(v)) { const g = (REL.includes(v) ? 0.28 : 0.22) * s; b = un && !REL.includes(v) ? T(v, s) : cat([SP(g), T(v, s), SP(g)]); un = 1; }
+              else if (v == ",") { b = cat([T(",", s), SP(0.16 * s)]); un = 1; }
+              else { b = T(v, s, /[A-Za-z\u03b1-\u03c9]/.test(v) && !upr.has(k)); if (tail.has(k)) b = cat([b, SP(0.1 * s)]); un = v == "(" ? 1 : 0; }
+              items.push({ b, k0: k, m: [[k, 0]] }); continue;
+            }
+            if (n.t == "sc") { /* scripts attach to the item before them */
+              const base = items.length ? items.pop() : { b: SP(0), k0: k, m: [] }, B = base.b, u = sub(s), U = n.sup && rowBox(n.sup, u), D = n.sub && rowBox(n.sub, u);
+              const up = Math.max(0.4 * s, B.a - 0.3 * s), dn = Math.max(0.2 * s, B.d + 0.1 * s), sw = Math.max(U ? U.w : 0, D ? D.w : 0), x0 = B.w + 0.02 * s;
+              items.push({ k0: base.k0, m: [...base.m, [k, B.w]], b: { w: x0 + sw + 0.04 * s, a: Math.max(B.a, U ? up + U.a : 0), d: Math.max(B.d, D ? dn + D.d : 0), g: (x, y) => B.g(x, y) + (U ? U.g(x + x0, y - up) : "") + (D ? D.g(x + x0, y + dn) : "") } });
+              un = 0; continue;
+            }
+            items.push({ b: box(n, s), k0: k, m: [[k, 0]] }); un = 0;
+          }
+          let w = 0, a = 0, d = 0; items.forEach((it) => { w += it.b.w; a = Math.max(a, it.b.a); d = Math.max(d, it.b.d); });
+          if (ph) { w = 0.55 * s; a = 0.72 * s; d = 0.2 * s; } else if (EDIT) { a = Math.max(a, 0.72 * s); d = Math.max(d, 0.2 * s); } else if (!items.length) w = 0.06 * s;
+          return { w, a, d, g: (x, y) => {
+            let o = "", xs = []; const x0 = x;
+            if (ph) { o += `<rect x="${r(x + 0.04 * s)}" y="${r(y - 0.72 * s)}" width="${r(0.46 * s)}" height="${r(0.92 * s)}" rx="2" fill="none" stroke="#7aa7ff" stroke-width="1" stroke-dasharray="3 2"/>`; xs[0] = x + 0.06 * s; }
+            else { items.forEach((it) => { it.m.forEach(([ix, off]) => { xs[ix] = x + off; }); o += it.b.g(x, y); x += it.b.w; }); xs[row.length] = x; }
+            if (RECTS) RECTS.push({ row, xs, x0, x1: ph ? x0 + 0.55 * s : x, y0: y - a, y1: y + d });
+            if (CARET && CARET.row === row) { const cxp = xs[CARET.i] ?? x0; o += `<line class="eqcaret" x1="${r(cxp)}" y1="${r(y - a)}" x2="${r(cxp)}" y2="${r(y + d)}" stroke="#2563eb" stroke-width="1.6"/>`; }
+            return o;
+          } };
+        }
+        function link(row, node, pr) { INFO.set(row, { node, pr }); row.forEach((n) => { for (const k of ROWK[n.t] || []) if (n[k]) link(n[k], n, row); }); }
+        function draw(tree, s, color, edit, caret) {
+          COL = color || "#111"; EDIT = edit; CARET = caret; RECTS = edit ? [] : null; link(tree, null, null);
+          const b = rowBox(tree, s), pad = Math.round(s * 0.4), W = Math.max(b.w, s * 0.5) + 2 * pad + (edit ? s : 0), H = Math.max(b.a + b.d, s) + 2 * pad;
+          return { w: W, h: H, rects: RECTS, svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${r(W)} ${r(H)}" width="${r(W)}" height="${r(H)}"><g font-family="${FONT}" fill="${COL}">${b.g(pad, pad + b.a)}</g></svg>` };
+        }
+
+        /* ---- editing model: a caret {row, i} into the tree ---- */
+        let P = { tree: [], size: 28, color: "#111111" }, C = { row: P.tree, i: 0 }, tid = null, snapped = false, LAST = null;
+        const ins = (n) => { C.row.splice(C.i, 0, n); C.i++; };
+        const mk = (n, key) => { ins(n); C = { row: n[key], i: 0 }; };
+        const isOp = (n) => n.t == "sc" || n.t == "lr" || n.t == "sqrt" || (n.t == "c" && /[0-9A-Za-z.\u0370-\u03ff]/.test(n.v));
+        function script(k) {
+          const prev = C.row[C.i - 1];
+          if (prev && (prev.t == "sc" || prev.t == "big")) { if (!prev[k]) prev[k] = []; C = { row: prev[k], i: prev[k].length }; return; }
+          const n = { t: "sc", sup: null, sub: null }; n[k] = []; mk(n, k);
+        }
+        function frac() {
+          const row = C.row; let j = C.i; while (j > 0 && isOp(row[j - 1])) j--;
+          const num = row.splice(j, C.i - j), n = { t: "frac", n: num, d: [] }; row.splice(j, 0, n); C = { row: num.length ? n.d : n.n, i: 0 };
+        }
+        function auto() { /* "pi" → π, "sqrt" → a root … */
+          const row = C.row; let j = C.i, s = "";
+          while (j > 0 && isL(row[j - 1])) { j--; s = row[j].v + s; }
+          if (s.endsWith("sqrt")) { row.splice(C.i - 4, 4); C.i -= 4; mk({ t: "sqrt", i: null, b: [] }, "b"); return; }
+          for (const k in GM) if (s.endsWith(k)) { row.splice(C.i - k.length, k.length, { t: "c", v: GM[k] }); C.i -= k.length - 1; return; }
+        }
+        function type(ch) {
+          if (ch == " ") return;
+          if (ch == "^") return script("sup"); if (ch == "_") return script("sub"); if (ch == "/") return frac();
+          if (ch == "(" || ch == "[") return mk({ t: "lr", l: ch, r: ch == "(" ? ")" : "]", b: [] }, "b");
+          if (ch == ")" || ch == "]") { const inf = INFO.get(C.row); if (inf && inf.node && inf.node.t == "lr" && C.i == C.row.length && inf.node.r == ch) { C = { row: inf.pr, i: inf.pr.indexOf(inf.node) + 1 }; return; } }
+          if (ch == "*") ch = "·"; if (ch == "-") ch = "−";
+          const p = C.row[C.i - 1];
+          if (ch == "=" && p && p.t == "c" && "<>!".includes(p.v)) { p.v = { "<": "≤", ">": "≥", "!": "≠" }[p.v]; return; }
+          if (ch == ">" && p && p.t == "c" && p.v == "−") { p.v = "→"; return; }
+          ins({ t: "c", v: ch }); if (/[a-z]/i.test(ch)) auto();
+        }
+        function right() {
+          const { row, i } = C;
+          if (i < row.length) { const ks = kids(row[i]); if (ks.length) C = { row: ks[0], i: 0 }; else C.i++; return; }
+          const inf = INFO.get(row); if (!inf || !inf.node) return;
+          const ks = kids(inf.node), k = ks.indexOf(row);
+          C = k < ks.length - 1 ? { row: ks[k + 1], i: 0 } : { row: inf.pr, i: inf.pr.indexOf(inf.node) + 1 };
+        }
+        function left() {
+          const { row, i } = C;
+          if (i > 0) { const ks = kids(row[i - 1]); if (ks.length) { const l = ks[ks.length - 1]; C = { row: l, i: l.length }; } else C.i--; return; }
+          const inf = INFO.get(row); if (!inf || !inf.node) return;
+          const ks = kids(inf.node), k = ks.indexOf(row);
+          C = k > 0 ? { row: ks[k - 1], i: ks[k - 1].length } : { row: inf.pr, i: inf.pr.indexOf(inf.node) };
+        }
+        function vert(dir) { /* up / down between numerator–denominator, power–subscript, limits */
+          let row = C.row;
+          while (row) {
+            const inf = INFO.get(row); if (!inf || !inf.node) return;
+            const nd = inf.node, pr = { frac: ["n", "d"], sc: ["sup", "sub"], big: ["sup", "sub"] }[nd.t];
+            if (pr) { const from = dir < 0 ? nd[pr[1]] : nd[pr[0]], to = dir < 0 ? nd[pr[0]] : nd[pr[1]]; if (row === from && to) { C = { row: to, i: Math.min(C.i, to.length) }; return; } }
+            row = inf.pr;
+          }
+        }
+        function back() {
+          const { row, i } = C;
+          if (i > 0) {
+            const p = row[i - 1];
+            if (p.t == "c" || kids(p).every((k) => !k.length)) { row.splice(i - 1, 1); C.i--; return; }
+            const l = kids(p).pop(); C = { row: l, i: l.length }; return;
+          }
+          const inf = INFO.get(row); if (!inf || !inf.node) return;
+          if (kids(inf.node).every((k) => !k.length)) { const ix = inf.pr.indexOf(inf.node); inf.pr.splice(ix, 1); C = { row: inf.pr, i: ix }; } else left();
+        }
+        const ACT = {
+          "<": left, ">": right, B: back, u: () => vert(-1), d: () => vert(1), h: () => { C.i = 0; }, e: () => { C.i = C.row.length; },
+          D: () => { if (C.i < C.row.length && C.row[C.i].t == "c") C.row.splice(C.i, 1); },
+          f: frac, "^": () => script("sup"), _: () => script("sub"),
+          r: () => mk({ t: "sqrt", i: null, b: [] }, "b"), n: () => mk({ t: "sqrt", i: [], b: [] }, "i"),
+          "(": () => mk({ t: "lr", l: "(", r: ")", b: [] }, "b"), "[": () => mk({ t: "lr", l: "[", r: "]", b: [] }, "b"), "|": () => mk({ t: "lr", l: "|", r: "|", b: [] }, "b"),
+          S: () => mk({ t: "big", v: "sum", sup: [], sub: [] }, "sub"), P: () => mk({ t: "big", v: "prod", sup: [], sub: [] }, "sub"),
+          I: () => mk({ t: "big", v: "int", sup: [], sub: [] }, "sub"), L: () => mk({ t: "big", v: "lim", sup: null, sub: [] }, "sub"),
+          V: () => mk({ t: "acc", k: "vec", b: [] }, "b"),
+        };
+
+        /* ---- the panel (shares #vd; the volume diagram's own parts hide while this mode is on) ---- */
+        const st = document.createElement("style");
+        st.textContent = `#vd.eqm > :not(.eqx){display:none!important} #vd:not(.eqm) > .eqx{display:none!important}
+          @keyframes eqb{50%{opacity:0}} .eqcaret{animation:eqb 1s steps(1) infinite}
+          #vd .eqv{background:#fff;position:relative;min-height:110px;overflow:auto;cursor:text;display:flex;align-items:center;justify-content:center;-webkit-user-select:none;user-select:none}
+          #vd .eqv textarea{position:absolute;left:0;top:0;width:1px;height:1px;opacity:0;border:0;padding:0;font-size:16px}
+          #vd .eqk{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+          #vd .eqk button{height:38px;border:1px solid var(--bd);background:none;color:var(--tx);border-radius:8px;cursor:pointer;font:500 15px ${FONT}}
+          #vd .eqk button:active{background:var(--hv)} #vd .eqhint{font-size:12px;color:var(--mut);line-height:1.4}`;
+        document.head.appendChild(st);
+        const panel = $("#vd");
+        const KEYS = [["◀", "a", "<"], ["▶", "a", ">"], ["⌫", "a", "B"], ["a⁄b", "a", "f"], ["√", "a", "r"], ["ⁿ√", "a", "n"],
+          ["xⁿ", "a", "^"], ["xₙ", "a", "_"], ["( )", "a", "("], ["[ ]", "a", "["], ["|x|", "a", "|"], ["v⃗", "a", "V"],
+          ["∑", "a", "S"], ["∏", "a", "P"], ["∫", "a", "I"], ["lim", "a", "L"], ["π", "c", "π"], ["θ", "c", "θ"],
+          ["α", "c", "α"], ["β", "c", "β"], ["λ", "c", "λ"], ["μ", "c", "μ"], ["σ", "c", "σ"], ["φ", "c", "φ"],
+          ["ω", "c", "ω"], ["Δ", "c", "Δ"], ["Σ", "c", "Σ"], ["Ω", "c", "Ω"], ["±", "c", "±"], ["×", "c", "×"],
+          ["÷", "c", "÷"], ["·", "c", "·"], ["≤", "c", "≤"], ["≥", "c", "≥"], ["≠", "c", "≠"], ["≈", "c", "≈"],
+          ["∞", "c", "∞"], ["→", "c", "→"], ["∂", "c", "∂"], ["∇", "c", "∇"], ["°", "c", "°"], ["sin", "c", "sin"],
+          ["cos", "c", "cos"], ["tan", "c", "tan"], ["ln", "c", "ln"], ["log", "c", "log"]];
+        panel.insertAdjacentHTML("beforeend", `
+          <div class="vdh eqx"><b>equation</b><span id="eqst" style="flex:1;font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></span><button class="b" id="eqx" title="close">✕</button></div>
+          <div class="vdb eqx">
+            <div class="vdp eqv" id="eqpv"><div id="eqsv"></div><textarea id="eqta" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></textarea></div>
+            <div class="eqhint">Tap the equation and type. <b>/</b> fraction · <b>^</b> power · <b>_</b> subscript · <b>(</b> brackets · <b>sqrt</b> root · <b>pi</b>, <b>theta</b> … symbols. Arrow keys move, ⌫ deletes.</div>
+            <div class="eqk" id="eqk">${KEYS.map(([l], i) => `<button type="button" data-i="${i}">${esc(l)}</button>`).join("")}</div>
+            <div class="vdg"><label>size<input id="eqsz" type="number" min="8" max="200" step="2"></label><label>colour<input id="eqco" type="color"></label></div>
+            <button type="button" class="vdins" id="eqins"></button>
+          </div>`);
+        const q = (sel) => panel.querySelector(sel), ta = q("#eqta"), SENT = "\u200b";
+        const target = () => (tid == null ? null : S.find((x) => x.id == tid && x.eq) || null);
+        const toURL = (t) => "data:image/svg+xml;charset=utf-8," + encodeURIComponent(t);
+        function refresh() {
+          LAST = draw(P.tree, 30, P.color, true, C);
+          q("#eqsv").innerHTML = LAST.svg;
+          const o = draw(P.tree, P.size, P.color, false, null), t = target();
+          if (t) { if (!snapped) { snap(); snapped = true; } t.src = toURL(o.svg); t.ar = o.w / o.h; t.h = t.w / t.ar; t.eq = clone(P); render(); }
+          q("#eqst").textContent = t ? "editing the selected equation" : "new equation";
+          q("#eqins").textContent = t ? "insert another copy" : "insert as image";
+          const cr = panel.querySelector(".eqcaret"); if (cr && cr.scrollIntoView) cr.scrollIntoView({ block: "nearest", inline: "nearest" });
+        }
+        const act = (fn) => { link(P.tree, null, null); fn(); refresh(); };
+        function hit(px, py) {
+          if (!LAST || !LAST.rects.length) return;
+          let best = null;
+          for (const R of LAST.rects) if (py >= R.y0 - 4 && py <= R.y1 + 4 && px >= R.x0 - 6 && px <= R.x1 + 6) { const h = R.y1 - R.y0; if (!best || h < best.h) best = { R, h }; }
+          if (!best) { let bd = 1e9; for (const R of LAST.rects) { const dy = Math.max(R.y0 - py, 0, py - R.y1), dx = Math.max(R.x0 - px, 0, px - R.x1), d = dx * dx + dy * dy; if (d < bd) { bd = d; best = { R }; } } }
+          const R = best.R; let bi = 0, bd = 1e9;
+          R.xs.forEach((x, i) => { if (x === undefined) return; const d = Math.abs(x - px); if (d < bd) { bd = d; bi = i; } });
+          C = { row: R.row, i: bi };
+        }
+        q("#eqpv").addEventListener("pointerdown", (e) => {
+          e.preventDefault();
+          const sv = q("#eqsv svg");
+          if (sv && LAST) { const b = sv.getBoundingClientRect(); act(() => hit((e.clientX - b.left) * (LAST.w / b.width), (e.clientY - b.top) * (LAST.h / b.height))); }
+          ta.focus();
+        });
+        ta.addEventListener("keydown", (e) => {
+          if (e.ctrlKey || e.metaKey || e.altKey) return;
+          const m = { ArrowLeft: "<", ArrowRight: ">", ArrowUp: "u", ArrowDown: "d", Backspace: "B", Delete: "D", Home: "h", End: "e" }[e.key];
+          if (m) { e.preventDefault(); act(ACT[m]); }
+          else if (e.key == "Enter") e.preventDefault();
+          else if (e.key && e.key.length == 1) { e.preventDefault(); act(() => type(e.key)); }
+        });
+        ta.addEventListener("input", () => { /* phone keyboards: characters (and backspace) arrive here */
+          const v = ta.value;
+          act(() => { if (!v.length) back(); else for (const ch of v.replace(/\u200b/g, "")) type(ch); });
+          ta.value = SENT;
+        });
+        ta.addEventListener("focus", () => { ta.value = SENT; });
+        q("#eqk").addEventListener("pointerdown", (e) => e.preventDefault()); /* keep focus (and the phone keyboard) */
+        q("#eqk").addEventListener("click", (e) => {
+          const bt = e.target.closest("[data-i]"); if (!bt) return;
+          const [, kind, val] = KEYS[+bt.dataset.i];
+          act(() => { if (kind == "a") ACT[val](); else for (const ch of val) ins({ t: "c", v: ch }); });
+        });
+        const readUI = () => { P.size = +q("#eqsz").value || 28; P.color = q("#eqco").value; };
+        q("#eqsz").addEventListener("input", () => { readUI(); refresh(); });
+        q("#eqco").addEventListener("input", () => { readUI(); refresh(); });
+        function insert() {
+          const o = draw(P.tree, P.size, P.color, false, null), k = Math.min(1, 400 / o.w, 300 / o.h), w = o.w * k, h = o.h * k, b = svg.getBoundingClientRect();
+          const cx = (b.width / 2 - ox) / z, cy = (b.height / 2 - oy) / z;
+          snap();
+          const sh = { id: nid++, t: "img", x: cx - w / 2, y: cy - h / 2, w, h, r: 0, lyr: openL(), ...D, text: "", src: toURL(o.svg), ar: o.w / o.h, fill: "", sw: 0, eq: clone(P) };
+          S.push(sh); sel = sh.id; ms = []; tool = "select";
+          tid = sh.id; snapped = false; render(); refresh();
+        }
+        function open(shape) {
+          window.vdClose && window.vdClose(); lpToggle(0); fpToggle(0);
+          if (shape && shape.eq) { tid = shape.id; P = { size: shape.eq.size || 28, color: shape.eq.color || "#111111", tree: shape.eq.tree ? clone(shape.eq.tree) : latexToRow(shape.eq.src || "") }; }
+          else { tid = null; P = { size: P.size, color: P.color, tree: [] }; }
+          snapped = false; C = { row: P.tree, i: P.tree.length };
+          q("#eqsz").value = P.size; q("#eqco").value = P.color;
+          panel.classList.add("eqm"); document.body.classList.add("vdo"); refresh();
+          setTimeout(() => { render(); ta.focus(); }, 300);
+        }
+        window.eqOpen = open;
+        q("#eqins").onclick = insert;
+        q("#eqx").onclick = () => { tid = null; window.vdClose && window.vdClose(); };
+        M.insert.push(
+          ["equation…", () => open(), "", "shape"],
+          ["edit equation", () => { const o = get(); o && o.eq ? open(o) : toast("select an equation first"); }, "", "shape"],
+        );
+        let lastTap = { id: 0, t: 0 };
+        svg.addEventListener("pointerdown", (e) => {
+          const id = e.target.closest("[data-id]")?.dataset.id, o = id && S.find((x) => x.id == +id);
+          if (!o || !o.eq) return;
+          const now = Date.now();
+          if (lastTap.id == o.id && now - lastTap.t < 380) { lastTap = { id: 0, t: 0 }; open(o); } else lastTap = { id: o.id, t: now };
+        }, true);
+      })();
+
+
       /* icon bar: mark which edges have more to scroll to, so the edge fades only show where they should */
       (function () {
         const tb = $("#tb");
         let q = 0;
+        const last = ["", ""];
         const upd = () => {
           q = 0;
           const m = tb.scrollWidth - tb.clientWidth;
-          tb.classList.toggle("fl", tb.scrollLeft > 2);
-          tb.classList.toggle("fr", tb.scrollLeft < m - 2);
+          const k = (x) => Math.max(0, Math.min(1, x / 40)); /* fully in after 40px of scrolling away from an end */
+          const l = k(tb.scrollLeft).toFixed(3), r = k(m - tb.scrollLeft).toFixed(3);
+          if (l != last[0]) tb.style.setProperty("--fl", (last[0] = l)); /* only write on change: no observer loop */
+          if (r != last[1]) tb.style.setProperty("--fr", (last[1] = r));
         };
         const soon = () => q || (q = requestAnimationFrame(upd));
         tb.addEventListener("scroll", soon, { passive: true });
