@@ -5141,7 +5141,12 @@ const G = {
   rbk: mx(lb),
   lbc: lbr,
   rbc: mx(lbr),
+  /* the shrimp, built from geometric parts: a crescent body, two circle eyes, two curved antennae, three legs.
+     shrimpB = the filled body, shrimpL = eyes + antennae + legs (antennae and legs are drawn out and back so they have no area) */
+  shrimpB: "M82.97 32.32C51.61 76.49,41.00 81.37,0.00 87.78C43.07 118.44,74.18 88.24,82.97 32.32Z",
+  shrimpL: "M82.68 31.12C82.68 26.73,79.63 23.17,75.87 23.17C72.11 23.17,69.06 26.73,69.06 31.12C69.06 35.50,72.11 39.06,75.87 39.06C79.63 39.06,82.68 35.50,82.68 31.12ZM96.67 32.81C96.67 28.42,93.62 24.87,89.86 24.87C86.09 24.87,83.04 28.42,83.04 32.81C83.04 37.20,86.09 40.75,89.86 40.75C93.62 40.75,96.67 37.20,96.67 32.81ZM73.24 0.00C80.75 8.40,82.61 20.39,82.97 32.32C82.61 20.39,80.75 8.40,73.24 0.00ZM100.00 5.14C90.88 9.09,85.27 21.87,82.97 32.32C85.27 21.87,90.88 9.09,100.00 5.14ZM5.37 60.80L26.25 82.77L5.37 60.80ZM33.87 38.38L47.84 71.63L33.87 38.38ZM59.91 23.34L63.21 58.33L59.91 23.34Z",
 };
+G.shrimp = G.shrimpB + G.shrimpL;
 [
   [4, 0.2],
   [5, 0.4],
@@ -5195,17 +5200,17 @@ const CORN = {
 const OLD = ["tri", "dia", "star", "arr"],
   GR = {
     Shapes:
-      "rect round sn1 sn2 sn2d rd1 rd2 rd2d snrd ell tri rtri para trap dia pent hex hept oct dec dodec pie arc tear chord frame hfr lsh diag cross plaq can cube bevel donut nosym barc fold smile heart bolt sun moon cloud",
+      "rect round sn1 sn2 sn2d rd1 rd2 rd2d snrd ell tri rtri para trap dia pent hex hept oct dec dodec pie arc tear chord frame hfr lsh diag cross plaq can cube bevel donut nosym barc fold smile heart bolt sun moon cloud shrimp",
     Flowchart:
       "rect round dia para fpre fint fdoc fmdoc fterm fprep fmi fmo ell foff fcard ftape fsum forr fcol fsort tri fmer fstor fdel fseq can fdas fdisp",
     Arrows:
       "aR aL aU aD aLR aUD aQ aLRU aB aUT aLU aBU aCR aCL aCU aCD aS aN aP aCh aKR aKD aKL aKU aKLR aKQ",
     Callouts:
       "ex1 ex2 s4 s5 s6 s7 s8 s10 s12 s16 s24 s32 rb1 rb2 rb3 rb4 vsc hsc wave dwave wrect wround wells ccloud",
-    Equation: "plus minus mult div eq neq brp bcp lbk rbk lbc rbc",
+    Equation: "plus minus mult div eq neq brp bcp lbk rbk lbc rbc shrimp",
   };
 const ic = (k) =>
-    `<svg width="22" height="22" viewBox="-11 -11 22 22" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"><path d="${sc(G[k], 18, 18)}"/></svg>`,
+    `<svg width="22" height="22" viewBox="-11 -11 22 22" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"><path d="${sc(G[k], 18, k == "shrimp" ? 15.5 : 18)}"/></svg>`,
   /* the picker is four categories that cascade, like Google Drawings; flowchart shapes live under Shapes */
   /* like Google Drawings, Shapes is three groups divided by lines: corner-cut rectangles, basic shapes, flowchart */
   GRC = {
@@ -9042,7 +9047,7 @@ svg.addEventListener("pointerup", (e) => {
         s.w = 120;
         s.h = 0;
       } else {
-        s.w = s.t == "text" ? 160 : 100;
+        s.w = s.t == "text" ? 160 : s.t == "shrimp" ? 117 : 100;
         s.h = s.t == "text" ? 30 : 100;
       }
     }
@@ -18726,7 +18731,7 @@ function insChar(ch, eid) {
         const r = (x) => Math.round(x * 10) / 10, clone = (o) => JSON.parse(JSON.stringify(o));
         const REL = "=<>≤≥≠≈→∈≡∼∝⇒⊂", BIN = new Set([...REL, ..."+−×÷·±∓∪∩"]);
         const FNRE = /^(arcsin|arccos|arctan|sinh|cosh|tanh|sin|cos|tan|cot|sec|csc|exp|log|ln|min|max|det)/;
-        const GM = { pi: "π", theta: "θ", alpha: "α", beta: "β", gamma: "γ", delta: "δ", lambda: "λ", mu: "μ", sigma: "σ", omega: "ω", phi: "φ", infinity: "∞" };
+        const GM = { pi: "π", theta: "θ", alpha: "α", beta: "β", gamma: "γ", delta: "δ", lambda: "λ", mu: "μ", sigma: "σ", omega: "ω", phi: "φ", infinity: "∞", shrimp: "\uE000" };
         const ROWK = { frac: ["n", "d"], sqrt: ["i", "b"], sc: ["sup", "sub"], big: ["sub", "sup"], lr: ["b"], acc: ["b"] };
         const kids = (n) => (ROWK[n.t] || []).filter((k) => n[k]).map((k) => n[k]);
 
@@ -18784,6 +18789,14 @@ function insChar(ch, eid) {
         let COL = "#000", EDIT = false, CARET = null, RECTS = null, INFO = new Map();
         const T = (t, s, it) => ({ w: mw(t, s, it), a: 0.72 * s, d: 0.2 * s, g: (x, y) => `<text x="${r(x)}" y="${r(y)}" font-size="${r(s)}"${it ? ' font-style="italic"' : ""}>${esc(t)}</text>` });
         const SP = (w) => ({ w, a: 0, d: 0, g: () => "" });
+        /* the shrimp symbol: the drawn shape from the shape picker, sized like a capital letter */
+        const SHR = "\uE000";
+        /* the 0-100 shape paths scaled into real units, so strokes keep an even width */
+        const shrP = (d, W, H, X, Y) => d.replace(/(-?[\d.]+) (-?[\d.]+)/g, (m, u, v) => +(X + u * W / 100).toFixed(2) + " " + +(Y + v * H / 100).toFixed(2));
+        const shrB = (s) => { const h = 0.95 * s, w = 1.1656 * h, pad = 0.08 * s;
+          return { w: w + 2 * pad, a: 0.76 * s, d: 0.19 * s, g: (x, y) => { const X = x + pad, Y = y - 0.76 * s;
+            return `<path d="${shrP(G.shrimpB, w, h, X, Y)}" fill="${COL}"/><path d="${shrP(G.shrimpL, w, h, X, Y)}" fill="none" stroke="${COL}" stroke-width="${r(0.055 * s)}" stroke-linejoin="round" stroke-linecap="round"/>`; } }; };
+        const SHRI = `<svg viewBox="-2 -2 104 104" width="24" height="20.5" preserveAspectRatio="none" style="vertical-align:middle"><path d="${G.shrimpB}" fill="currentColor"/><path d="${G.shrimpL}" fill="none" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>`;
         const ln = (x1, y1, x2, y2, s) => `<line x1="${r(x1)}" y1="${r(y1)}" x2="${r(x2)}" y2="${r(y2)}" stroke="${COL}" stroke-width="${r(0.055 * s)}" stroke-linecap="round"/>`;
         const pl = (pts, s) => `<polyline points="${pts.map((q) => r(q[0]) + "," + r(q[1])).join(" ")}" fill="none" stroke="${COL}" stroke-width="${r(0.055 * s)}" stroke-linejoin="round" stroke-linecap="round"/>`;
         const cat = (bs) => { let w = 0, a = 0, d = 0; bs.forEach((b) => { w += b.w; a = Math.max(a, b.a); d = Math.max(d, b.d); }); return { w, a, d, g: (x, y) => { let o = ""; bs.forEach((b) => { o += b.g(x, y); x += b.w; }); return o; } }; };
@@ -18838,7 +18851,7 @@ function insChar(ch, eid) {
               const v = n.v;
               if (BIN.has(v)) { const g = (REL.includes(v) ? 0.28 : 0.22) * s; b = un && !REL.includes(v) ? T(v, s) : cat([SP(g), T(v, s), SP(g)]); un = 1; }
               else if (v == ",") { b = cat([T(",", s), SP(0.16 * s)]); un = 1; }
-              else { b = T(v, s, /[A-Za-z\u03b1-\u03c9]/.test(v) && !upr.has(k)); if (tail.has(k)) b = cat([b, SP(0.1 * s)]); un = v == "(" ? 1 : 0; }
+              else { b = v == SHR ? shrB(s) : T(v, s, /[A-Za-z\u03b1-\u03c9]/.test(v) && !upr.has(k)); if (tail.has(k)) b = cat([b, SP(0.1 * s)]); un = v == "(" ? 1 : 0; }
               items.push({ b, k0: k, m: [[k, 0]] }); continue;
             }
             if (n.t == "sc") { /* scripts attach to the item before them */
@@ -18871,7 +18884,7 @@ function insChar(ch, eid) {
         let P = { tree: [], size: 28, color: "#111111" }, C = { row: P.tree, i: 0 }, tid = null, snapped = false, LAST = null;
         const ins = (n) => { C.row.splice(C.i, 0, n); C.i++; };
         const mk = (n, key) => { ins(n); C = { row: n[key], i: 0 }; };
-        const isOp = (n) => n.t == "sc" || n.t == "lr" || n.t == "sqrt" || (n.t == "c" && /[0-9A-Za-z.\u0370-\u03ff]/.test(n.v));
+        const isOp = (n) => n.t == "sc" || n.t == "lr" || n.t == "sqrt" || (n.t == "c" && /[0-9A-Za-z.\u0370-\u03ff\ue000]/.test(n.v));
         function script(k) {
           const prev = C.row[C.i - 1];
           if (prev && (prev.t == "sc" || prev.t == "big")) { if (!prev[k]) prev[k] = []; C = { row: prev[k], i: prev[k].length }; return; }
@@ -18960,13 +18973,13 @@ function insChar(ch, eid) {
           ["ω", "c", "ω"], ["Δ", "c", "Δ"], ["Σ", "c", "Σ"], ["Ω", "c", "Ω"], ["±", "c", "±"], ["×", "c", "×"],
           ["÷", "c", "÷"], ["·", "c", "·"], ["≤", "c", "≤"], ["≥", "c", "≥"], ["≠", "c", "≠"], ["≈", "c", "≈"],
           ["∞", "c", "∞"], ["→", "c", "→"], ["∂", "c", "∂"], ["∇", "c", "∇"], ["°", "c", "°"], ["sin", "c", "sin"],
-          ["cos", "c", "cos"], ["tan", "c", "tan"], ["ln", "c", "ln"], ["log", "c", "log"]];
+          ["cos", "c", "cos"], ["tan", "c", "tan"], ["ln", "c", "ln"], ["log", "c", "log"], [SHR, "c", SHR]];
         panel.insertAdjacentHTML("beforeend", `
           <div class="vdh eqx"><b>equation</b><span id="eqst" style="flex:1;font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></span><button class="b" id="eqx" title="close">✕</button></div>
           <div class="vdb eqx">
             <div class="vdp eqv" id="eqpv"><div id="eqsv"></div><textarea id="eqta" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></textarea></div>
-            <div class="eqhint">Tap the equation and type. <b>/</b> fraction · <b>^</b> power · <b>_</b> subscript · <b>(</b> brackets · <b>sqrt</b> root · <b>pi</b>, <b>theta</b> … symbols. Arrow keys move, ⌫ deletes.</div>
-            <div class="eqk" id="eqk">${KEYS.map(([l], i) => `<button type="button" data-i="${i}">${esc(l)}</button>`).join("")}</div>
+            <div class="eqhint">Tap the equation and type. <b>/</b> fraction · <b>^</b> power · <b>_</b> subscript · <b>(</b> brackets · <b>sqrt</b> root · <b>pi</b>, <b>theta</b>, <b>shrimp</b> … symbols. Arrow keys move, ⌫ deletes.</div>
+            <div class="eqk" id="eqk">${KEYS.map(([l], i) => `<button type="button" data-i="${i}"${l == SHR ? ' title="shrimp"' : ""}>${l == SHR ? SHRI : esc(l)}</button>`).join("")}</div>
             <div class="vdg"><label>size<input id="eqsz" type="number" min="8" max="200" step="2"></label><label>colour<input id="eqco" type="color"></label></div>
             <button type="button" class="vdins" id="eqins"></button>
           </div>`);
