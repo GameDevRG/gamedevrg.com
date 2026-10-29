@@ -4370,6 +4370,8 @@
     @media (max-width: 900px), (max-height: 520px) {
       /* bottom row: [pan] [fit] [layer buttons] ........ [zoom %] */
       #rail, body.vdo #rail, body.lpo #rail, body.fpo #rail { left: 112px !important; right: auto !important; top: auto !important; bottom: 8px; width: auto; max-width: calc(100% - 196px); height: 44px; flex-direction: row; align-items: center; gap: 2px; padding: 0 6px; border-radius: 22px; overflow-x: auto; scrollbar-width: none }
+      /* same fill as the round pan / fit buttons next to it (white in the light themes) */
+      #rail, body.vdo #rail, body.lpo #rail, body.fpo #rail { background: var(--pop) !important; box-shadow: var(--sh) }
       #rail .sp { display: none }
       /* pen/crop hint: full-width card above everything, text on top, buttons underneath */
       #hint { left: 8px; right: 8px; transform: none; width: auto; max-width: none; bottom: 60px; flex-wrap: wrap; gap: 8px; padding: 10px 12px; border-radius: 18px }
@@ -4389,10 +4391,26 @@
       body.topc #top { display: none }
       body.topx #top { align-items: flex-start }
       body.topx #menus { flex-wrap: wrap; row-gap: 2px; white-space: normal; overflow: visible }
+      /* fully open: the menus get their own full-width row, so they use the space under the logo and the buttons */
+      body.topx #top { flex-wrap: wrap; row-gap: 2px }
+      body.topx .ttl { display: contents }
+      body.topx .trow { flex: 1; min-width: 0 }
+      body.topx #menus { order: 1; flex: 0 0 100%; max-width: 100% }
       body.topx #tb { flex-wrap: wrap; row-gap: 2px; height: auto; max-height: 52dvh; padding: 6px; border-radius: 20px; overflow-x: hidden; overflow-y: auto; touch-action: pan-y }
       body.topx #tb > .sp { display: none }
     }
   
+    /* icon bar: where it scrolls sideways, the edges fade out softly with a slight blur */
+    @media (max-width: 900px), (max-height: 520px) {
+      /* the fade copies the bar's own background (so it matches in every theme) and follows its rounded ends */
+      #tb::before, #tb::after { content: ""; flex: none; position: sticky; width: 32px; align-self: stretch; margin-top: -3px; margin-bottom: -3px; z-index: 3; pointer-events: none; opacity: 0; transition: opacity .2s; background: inherit; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px) }
+      /* sticky offsets stop at the padding, which left a 6px strip at each end where icons showed through: reach into it, and a little past it so no half-pixel sliver is left */
+      #tb::before { left: -9px; width: 41px; margin-right: -43px; border-radius: 24px 0 0 24px; -webkit-mask-image: linear-gradient(to right, #000 40%, transparent); mask-image: linear-gradient(to right, #000 40%, transparent) }
+      #tb::after { right: -9px; width: 41px; margin-left: -43px; border-radius: 0 24px 24px 0; -webkit-mask-image: linear-gradient(to left, #000 40%, transparent); mask-image: linear-gradient(to left, #000 40%, transparent) }
+      #tb.fl::before, #tb.fr::after { opacity: 1 }
+      body.topx #tb::before, body.topx #tb::after { display: none }
+    }
+
     /* top bar wrapper: header + icon row + handle move as one piece while pulling */
     #topwrap { display: flow-root; flex: none }
     #topwrap.dragging > * { flex: none }
@@ -5606,8 +5624,12 @@ function waEl(s, a) {
     h = s.h,
     sx = w / m.W,
     sy = h / m.H,
-    sk = Math.sqrt(sx * sy) || 1;
-  return `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" fill="transparent"/><g transform="translate(${-w / 2} ${-h / 2}) scale(${sx} ${sy}) translate(0 ${-m.top})" ${a
+    sk = Math.sqrt(sx * sy) || 1,
+    /* the outline is a screen-space stroke (non-scaling), so its width follows the live zoom through the --z
+       variable: it tracks every frame of a zoom animation instead of staying stale until the zoom stops */
+    dv = String(s.dash || "").trim(),
+    wsty = `stroke-width:calc(var(--z,1)*${+s.sw || 0}px)${dv ? ";stroke-dasharray:" + dv.split(/[ ,]+/).map((n) => `calc(var(--z,1)*${+n || 0}px)`).join(" ") : ""}`;
+  return `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" fill="transparent"/><g transform="translate(${-w / 2} ${-h / 2}) scale(${sx} ${sy}) translate(0 ${-m.top})" style="${wsty}" ${a
     .replace(/stroke-width="[^"]*"/, `stroke-width="${s.sw * z}" data-esw="${s.sw / sk}"`)
     .replace(
       /stroke-dasharray="([^"]*)"/,
@@ -7009,7 +7031,8 @@ function copySVG() {
       .replace(/<[a-z]+ [^>]*data-hit="1"[^>]*\/>/g, "")
       .replace(/ vector-effect="non-scaling-stroke"/g, "")
       .replace(/stroke-width="[^"]*" data-esw="([^"]*)"/g, 'stroke-width="$1"')
-      .replace(/stroke-dasharray="[^"]*" data-eda="([^"]*)"/g, 'stroke-dasharray="$1"'),
+      .replace(/stroke-dasharray="[^"]*" data-eda="([^"]*)"/g, 'stroke-dasharray="$1"')
+      .replace(/ style="stroke-width:calc[^"]*"/g, ""),
     defs = inner.includes("url(#ah)")
       ? '<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>'
       : "";
@@ -7747,6 +7770,7 @@ function render(vo) {
     lpRender();
   }
   $("#ov").innerHTML = overlay();
+  svg.style.setProperty("--z", z); /* word art outlines read this every frame */
   $("#vp").setAttribute("transform", `translate(${ox} ${oy}) scale(${z})`);
   $("#pg").setAttribute("style", "filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))");
   $("#pgf").setAttribute("fill", PG.bg || "none");
@@ -18486,6 +18510,24 @@ function insChar(ch, eid) {
       })();
 
 
+      /* icon bar: mark which edges have more to scroll to, so the edge fades only show where they should */
+      (function () {
+        const tb = $("#tb");
+        let q = 0;
+        const upd = () => {
+          q = 0;
+          const m = tb.scrollWidth - tb.clientWidth;
+          tb.classList.toggle("fl", tb.scrollLeft > 2);
+          tb.classList.toggle("fr", tb.scrollLeft < m - 2);
+        };
+        const soon = () => q || (q = requestAnimationFrame(upd));
+        tb.addEventListener("scroll", soon, { passive: true });
+        addEventListener("resize", soon);
+        new ResizeObserver(soon).observe(tb);
+        new MutationObserver(soon).observe(tb, { childList: true, subtree: true, attributes: true, attributeFilter: ["style", "hidden"] });
+        upd();
+      })();
+
       /* ===== pull / push the top bar =====
          Three resting levels:  0 just the icon row   1 normal   2 everything (wrapped menus + all tools)
          The bar follows your finger, and so does every item in it: each menu, button and the header
@@ -18519,7 +18561,7 @@ function insChar(ch, eid) {
           for (const el of items()) {
             if (!el.getClientRects().length) continue; /* hidden at this level */
             const r = el.getBoundingClientRect(), c = top.contains(el) ? rt : rb;
-            pos.set(el, { x: r.left - c.left, y: r.top - c.top });
+            pos.set(el, { x: r.left - c.left, y: r.top - c.top, cw: c.width });
           }
           return { n, pos, hTop: top.offsetHeight, hTb: tb.offsetHeight };
         };
@@ -18533,24 +18575,60 @@ function insChar(ch, eid) {
           apply(D.n);
           top.style.overflow = tb.style.overflow = "hidden";
           wrap.classList.add("dragging");
-          const list = [];
+          const list = [], exp = to > from, hdr0 = from == 0 || to == 0;
+          let n = 0;
           for (const [el, d] of D.pos) {
             el.style.willChange = "transform";
-            /* the header doesn't exist at level 0: it slides in from just above */
-            const a = A.pos.get(el) || { x: d.x, y: d.y - D.hTop }, b = B.pos.get(el) || { x: d.x, y: d.y - D.hTop };
-            list.push({ el, ax: a.x - d.x, ay: a.y - d.y, bx: b.x - d.x, by: b.y - d.y });
+            const ra = A.pos.get(el), rb = B.pos.get(el), o = exp ? ra : rb; /* o = where it sits in the less open layout */
+            /* the header pieces (logo, title, export...) never get the masked treatment: they just glide as one
+               piece, and the whole header slides in from just above when the bar opens from its smallest level */
+            if (top.contains(el) && (hdr0 || el.parentElement == top || el.matches(".logo, .trow, .share"))) {
+              const a = ra || { x: d.x, y: d.y - D.hTop }, b = rb || { x: d.x, y: d.y - D.hTop };
+              list.push({ el, k: 4, ax: a.x - d.x, ay: a.y - d.y, bx: b.x - d.x, by: b.y - d.y });
+              continue;
+            }
+            const a = ra, b = rb, h = Math.max(20, el.offsetHeight + 6);
+            /* k: 1 = appears (masked slide up from below), 2 = disappears (slides down out of its mask),
+               3 = moves to another row: slides out at the old spot, then a fresh copy slides up at the new spot,
+               4 = slides sideways to its new spot (also the header pieces), 0 = stays put */
+            if (!o || o.x + 8 > o.cw) list.push({ el, k: exp ? 1 : 2, i: n++, h });
+            else if (Math.abs(a.y - b.y) > 2) list.push({ el, k: 3, i: n++, h, ax: a.x - d.x, ay: a.y - d.y, bx: b.x - d.x, by: b.y - d.y }); /* changes row */
+            else if (Math.abs(a.x - b.x) > 2) list.push({ el, k: 4, ax: a.x - d.x, ay: a.y - d.y, bx: b.x - d.x, by: b.y - d.y }); /* same row, just shifted sideways: slide the existing one */
+            else list.push({ el, k: 0 });
           }
-          return { from, to, A, B, list, span: B.hTop + B.hTb - (A.hTop + A.hTb) };
+          for (const it of list) it.n = n;
+          return { from, to, exp, A, B, list, span: B.hTop + B.hTb - (A.hTop + A.hTb) };
         };
         const setP = (T, p) => {
           const { A, B } = T;
           top.style.height = Math.max(0, A.hTop + (B.hTop - A.hTop) * p) + "px";
           tb.style.height = Math.max(0, A.hTb + (B.hTb - A.hTb) * p) + "px";
-          for (const { el, ax, ay, bx, by } of T.list)
-            el.style.transform = `translate(${(ax + (bx - ax) * p).toFixed(1)}px, ${(ay + (by - ay) * p).toFixed(1)}px)`;
+          const S = 0.18, ST = 0.34, cl = (x) => Math.max(0, Math.min(1, x)); /* exits finish by S; enters stagger across the next ST */
+          const put = (el, tr, cp) => { /* only touch the DOM when something changed */
+            if (el._tr !== tr) el.style.transform = el._tr = tr;
+            if (el._cp !== cp) el.style.clipPath = el._cp = cp;
+          };
+          for (const it of T.list) {
+            if (!it.k) continue;
+            const el = it.el;
+            if (it.k == 4) { /* header piece: one smooth glide */
+              put(el, `translate(${(it.ax + (it.bx - it.ax) * p).toFixed(1)}px, ${(it.ay + (it.by - it.ay) * p).toFixed(1)}px)`, "");
+              continue;
+            }
+            const f = it.n > 1 ? it.i / (it.n - 1) : 0;
+            const qo = cl((p - 0.1 * f) / (S - 0.1)), qi = cl((p - S - ST * f) / (1 - S - ST));
+            const out = qo * qo * it.h, inn = Math.pow(1 - qi, 2.4) * it.h; /* out eases in, in eases out */
+            let X = 0, Y = 0, ty;
+            if (it.k == 1) ty = inn;
+            else if (it.k == 2) ty = out;
+            else if (p < S) { X = it.ax; Y = it.ay; ty = out; }
+            else { X = it.bx; Y = it.by; ty = inn; }
+            const hid = ty >= it.h - 0.1;
+            put(el, X || Y || ty > 0.3 ? `translate(${X.toFixed(1)}px, ${(Y + ty).toFixed(1)}px)` : "", ty > 0.3 ? (hid ? "inset(0 0 100% 0)" : `inset(0 0 ${ty.toFixed(1)}px 0)`) : "");
+          }
         };
         const commit = (n, T) => {
-          if (T) for (const { el } of T.list) el.style.transform = el.style.willChange = "";
+          if (T) for (const { el } of T.list) { el.style.transform = el.style.willChange = el.style.clipPath = ""; el._tr = el._cp = null; }
           top.style.height = top.style.overflow = "";
           tb.style.height = tb.style.overflow = "";
           rest = n;
@@ -18562,7 +18640,7 @@ function insChar(ch, eid) {
         /* spring p toward `target`, carrying the finger's speed in. zeta < 1 gives a small, soft overshoot
            and settle; the harder the flick, the livelier it is */
         const spring = (x, v, target, zeta, onFrame, done) => {
-          const w = 0.019, k = w * w, c = 2 * zeta * w; /* stiffness and damping, per millisecond */
+          const w = 0.0095, k = w * w, c = 2 * zeta * w; /* stiffness and damping, per millisecond: a little slower so the reveal reads */
           v = Math.max(-0.015, Math.min(0.015, v));
           let last = performance.now();
           const step = (now) => {
@@ -18780,8 +18858,9 @@ function insChar(ch, eid) {
           raf = 0;
           if (!g.moved) return;
           const v = performance.now() - g.lt > 80 ? 0 : g.v; /* a pause before lifting means no flick */
-          const proj = g.s - v * 160; /* where the finger's speed would carry it */
-          const thr = Math.min(90, g.base * 0.4), range = g.full - g.base;
+          const proj = g.s - v * (g.was ? 90 : 160); /* where the finger's speed would carry it (less momentum from a tall sheet) */
+          /* closing from the tall size takes a much longer pull than from normal height: it usually just drops back to normal */
+          const thr = g.was ? Math.min(240, g.base * 0.8) : Math.min(90, g.base * 0.4), range = g.full - g.base;
           const tgt = proj < g.base - thr ? -PAD : range > 0 && proj > g.base + range * (g.was ? 0.65 : 0.35) ? g.full : g.base;
           busy = true;
           glide(g.s, -v, tgt, Math.abs(v) > 0.5 ? 0.55 : 0.7, -PAD, g.full, (s) => paint(g, s), () => {
