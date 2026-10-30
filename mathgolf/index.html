@@ -4082,6 +4082,60 @@ main > header h1, main > header #psub { display: none !important }
     body:not(.inmenu):has(> main:not([hidden])) { padding-bottom: 210px !important; align-items: flex-start }
 }
 </style>
+
+<style id="user-tweaks-css">
+/* ===== phone play screen tweaks ===== */
+@media (max-width:520px) {
+    /* bigger icon buttons in the title row */
+    main > header { min-height: 44px; padding: 0 100px }
+    main > .how { top: 4px; left: 10px; gap: 6px }
+    main > .how button { flex: 0 0 42px; width: 42px; min-height: 42px; height: 42px }
+    main > .how button::before { inset: 8px }
+    main > header #calcfab, main > header #notefab { top: 4px; width: 42px; height: 42px }
+    main > header #calcfab { right: 2px }
+    main > header #notefab { right: 52px }
+    main > header #calcfab svg, main > header #notefab svg { width: 22px; height: 22px }
+    /* controls stack under the operations; the number line drops to the bottom of the board */
+    main > .board { justify-content: flex-start; gap: 8px }
+    main > .board > #nlwrap { margin-top: auto; margin-bottom: 0 }
+    main #ops { margin-top: 4px }
+    /* mode dropdown matches the difficulty dropdown */
+    #modeinfo select#miM { flex: 0 1 auto }
+    #modeinfo select#miM.mhc { color: var(--imag) }
+}
+#modeinfo select#miM { font: inherit; font-weight: 700; padding: 2px 8px; border: 2px solid var(--line); border-radius: 0; background: var(--card); color: var(--ink); cursor: pointer }
+#modeinfo select#miM.mhc { color: var(--imag) }
+
+/* tab bar: the highlight fills the whole tab, from the top border to the bottom edge of the screen */
+@media (max-width:600px) {
+    :root { --dockpad: 20px; --grabh: 20px }
+    #dock { padding-bottom: 0 !important }
+    .dtabs { overflow: visible }
+    .dtab { padding-bottom: calc(8px + var(--dockpad) + env(safe-area-inset-bottom, 0px)) }
+    .dtab.cur::before {
+        display: block; content: ""; position: absolute; left: 0; right: 0; top: calc(-1 * var(--grabh)); height: var(--grabh);
+        background: color-mix(in srgb, var(--ac) 18%, transparent); pointer-events: none
+    }
+}
+@media (max-width:520px) and (max-height:620px) {
+    :root { --dockpad: 13px; --grabh: 12px }
+    .dtab { padding-bottom: calc(5px + var(--dockpad) + env(safe-area-inset-bottom, 0px)) }
+}
+/* number line: always pinned along the bottom of the screen, just above the tab bar, never inside the board */
+@media (max-width:600px) {
+    body > #nlwrap { bottom: calc(var(--dockh, 80px) + env(safe-area-inset-bottom, 0px)); padding-bottom: 0 }
+}
+@media (max-width:520px) {
+    body:not(.inmenu):has(> main:not([hidden])) { padding-bottom: 150px !important }
+    main > .board { flex: 0 0 auto }
+}
+@media (max-width:520px) and (max-height:700px) {
+    body:not(.inmenu):has(> main:not([hidden])) { padding-bottom: 134px !important }
+}
+@media (max-width:520px) and (max-height:620px) {
+    body:not(.inmenu):has(> main:not([hidden])) { padding-bottom: 126px !important }
+}
+</style>
 </head>
 
 <body class="inmenu">
@@ -4328,7 +4382,7 @@ main > header h1, main > header #psub { display: none !important }
                 </select></div>
             <div id="modeinfo">
                 <div><i>difficulty:</i> <span id="miD"></span></div>
-                <div><i>mode:</i> <span id="miM"></span></div>
+                <div><i>mode:</i> <select id="miM" aria-label="Mode"><option value="normal">normal</option><option value="hc">hardcore</option></select></div>
             </div>
             <div id="msg" role="status"></div>
             <div class="lbl" id="score"></div>
@@ -5799,6 +5853,7 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
         function placePlane(on) {
             const nw = $('nlwrap'), mn = document.querySelector('main');
             let mode = '';
+            { const was = nw.parentNode; nlPlane = !!on; placeNl(); if (was !== nw.parentNode) { view = null; pend = false; setTimeout(() => { if (L) drawLine(); }, 0); } }
             if (on && !mqPhone.matches && mn && !mn.hidden && mn.offsetWidth) {
                 /* measured from layout, not getBoundingClientRect: while the board slides in, its rect is shifted by the animation */
                 const vw = document.documentElement.clientWidth, ml = (vw - mn.offsetWidth) / 2, r = { left: ml, right: ml + mn.offsetWidth }, right = vw - r.right - 24, left = r.left - 24, sp = Math.max(right, left);
@@ -6045,7 +6100,7 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
             {
                 const dv = $('diff').value, mi = $('miD'), mm = $('miM');
                 mi.textContent = { 2: 'd_easy', 4: 'd_medium', 6: 'd_hard' }[dv] ? tr({ 2: 'd_easy', 4: 'd_medium', 6: 'd_hard' }[dv]) : ''; mi.className = 'dv' + dv;
-                mm.textContent = settings.hc ? tr('hardcore') : tr('normal'); mm.className = settings.hc ? 'mhc' : 'mnorm';
+                mm.options[0].textContent = tr('normal'); mm.options[1].textContent = tr('hardcore'); mm.value = settings.hc ? 'hc' : 'normal'; mm.className = settings.hc ? 'mhc' : 'mnorm';
             }
             $('cur').classList.toggle('winp', same(cur, L.goal));
             const used = hist.length, won = same(cur, L.goal), stuck = !won && inPit(cur), over = dailyMode ? 0 : used - L.limit; /* daily levels have no par */
@@ -6246,6 +6301,7 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
         $('swSand').onclick = () => { settings.sandpits = !settings.sandpits; saveSettings(); applySettings(); };
         $('swRoots').onclick = () => { if (settings.num === 'frac') return; settings.roots = !settings.roots; saveSettings(); applySettings(); };
         $('swHc').onclick = () => { settings.hc = !settings.hc; saveSettings(); applySettings(); };
+        $('miM').onchange = () => { settings.hc = $('miM').value === 'hc'; saveSettings(); applySettings(); if (L) render(); };
         $('swAnim').onclick = () => { settings.anim = !settings.anim; saveSettings(); applySettings(); };
         applySettings();
         function siteSearch() { const q = $('tsearch').value.trim(); if (!q) return;/* TODO: point this at the site's search page */ }
@@ -6290,11 +6346,13 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
         /* phones: number line sits in the board under the numbers; larger screens: pinned along the bottom */
         const mqPhone = matchMedia('(max-width:520px)');
         function nlHp() { return innerHeight < 620 ? 100 : innerHeight < 700 ? 108 : 126; }   /* phone number line height: short enough that the whole level fits one screen */
+        var nlPlane = false;
         function placeNl() {
             { const d = $('diff'), mi = $('modeinfo'); if (d && mi) { d._home = d._home || d.parentNode; if (mqPhone.matches) { if (d.parentNode !== mi) mi.insertBefore(d, mi.firstChild); d._home.hidden = true; } else { if (d.parentNode !== d._home) d._home.appendChild(d); d._home.hidden = false; } } }   /* phones: the difficulty picker joins the status line */
             { const hd = document.querySelector('main > header'), bd = document.querySelector('main > .board'), cf = $('calcfab'), nf = $('notefab'); if (hd && bd && cf && nf) { if (mqPhone.matches) { if (cf.parentNode !== hd) hd.append(nf, cf); } else if (cf.parentNode !== bd) bd.prepend(cf, nf); } }   /* phones: calculator and notepad buttons sit in the title row */
             const nw = $('nlwrap'), pips = $('pips');
-            if (mqPhone.matches) { if (nw.parentNode !== pips.parentNode) pips.parentNode.insertBefore(nw, pips); }
+            /* the number line is always pinned outside the board; only the complex plane on phones sits inside it */
+            if (mqPhone.matches && nlPlane) { if (nw.parentNode !== pips.parentNode || nw.nextSibling) pips.parentNode.appendChild(nw); }
             else if (nw.parentNode !== document.body) document.body.insertBefore(nw, $('fx').nextSibling);
         }
         placeNl();
