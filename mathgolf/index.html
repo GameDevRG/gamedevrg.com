@@ -4117,6 +4117,28 @@ main > header h1, main > header #psub { display: none !important }
         background: color-mix(in srgb, var(--ac) 18%, transparent); pointer-events: none
     }
 }
+/* home tab (white) sits in the middle of the tab bar, so there are seven columns */
+.dtab.white { --ac: var(--ink) }
+#tHome { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter'%3E%3Cpath d='M3 11 12 3l9 8M5 10v10h14V10M10 20v-6h4v6'/%3E%3C/svg%3E") }
+@media (max-width:600px) { .dtabs { grid-template-columns: repeat(7, 1fr) } }
+
+/* account row at the bottom of the expanded tab bar */
+.dacct { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px 12px; border-top: 1px solid var(--line) }
+.dacct .dwho { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .85rem; color: var(--soft) }
+.dacct .dwho b { color: var(--ink); font-weight: 800; text-transform: none }
+.dacct .dmanage { flex: none; display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 14px; background: var(--blue); color: #fff; font-weight: 700; font-size: .9rem; text-decoration: none; text-transform: lowercase; border: 0 }
+.dacct .dmanage:active { filter: brightness(.9) }
+.dacct .dmanage:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px }
+
+/* collapsed tab bar: it slides down until only the grab handle shows, and the page grows to fill the space */
+@property --dockh { syntax: '<length>'; inherits: true; initial-value: 80px }
+@media (max-width:600px) {
+    #dock { transition: transform .3s cubic-bezier(.22, 1, .36, 1) }
+    :root:not(.noanim) { transition: --dockh .3s cubic-bezier(.22, 1, .36, 1) }
+    :root.dockoff { --dockh: calc(var(--grabh) + 2px) }
+    :root.dockoff #dock { transform: translateY(calc(100% - var(--grabh) - 2px - env(safe-area-inset-bottom, 0px))) }
+    :root.dockoff .dgrab { height: calc(var(--grabh) + 8px); margin-top: -8px; position: relative }
+}
 @media (max-width:520px) and (max-height:620px) {
     :root { --dockpad: 13px; --grabh: 12px }
     .dtab { padding-bottom: calc(5px + var(--dockpad) + env(safe-area-inset-bottom, 0px)) }
@@ -4214,12 +4236,17 @@ main > header h1, main > header #psub { display: none !important }
                     <button type="button" class="drow white" id="rCode" data-go="moptC"><span class="ic" aria-hidden="true"></span><span class="dtx"><b>play from code</b><span>paste a level code or link someone shared</span></span></button>
                     <button type="button" class="drow white" id="rStats" data-go="moptS"><span class="ic" aria-hidden="true"></span><span class="dtx"><b>your stats</b><span>daily streaks and more</span></span></button>
                 </div>
+                <div class="dacct" id="dacct">
+                    <span class="dwho" id="dwho"></span>
+                    <a class="dmanage" id="dmanage" href="../account/">manage my account</a>
+                </div>
             </div>
         </div>
         <div class="dtabs" id="dtabs">
             <button type="button" class="dtab red" id="tMain" data-go="mopt2"><span class="ic" aria-hidden="true"></span><span data-i="tab_main">main</span></button>
             <button type="button" class="dtab peach" id="tRand" data-go="mopt1"><span class="ic" aria-hidden="true"></span><span data-i="tab_rand">random</span></button>
             <button type="button" class="dtab gold" id="tDaily" data-go="moptD"><span class="ic" aria-hidden="true"></span><span data-i="tab_daily">daily</span></button>
+            <button type="button" class="dtab white" id="tHome"><span class="ic" aria-hidden="true"></span><span data-i="tab_home">home</span></button>
             <button type="button" class="dtab green" id="tVs" data-go="moptV"><span class="ic" aria-hidden="true"></span><span data-i="tab_vs">versus</span></button>
             <button type="button" class="dtab" id="tEdit" data-go="moptE"><span class="ic" aria-hidden="true"></span><span data-i="tab_edit">editor</span></button>
             <button type="button" class="dtab purple" id="tOnl" data-go="moptO"><span class="ic" aria-hidden="true"></span><span data-i="tab_online">online</span><i class="badge" id="tbadge" hidden></i></button>
@@ -5516,6 +5543,7 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
         Object.assign(I18N.es, { wel1: "bienvenido de nuevo,", wel2: "qué bueno verte,", wel3: "listo para una ronda,", wel4: "hola otra vez,", wel5: "volviste por más,", wel6: "hora del primer golpe,", w_guest: "invitado", w_streak: "racha diaria", w_month: "avance del mes", credits: "créditos", cr_made: "hecho por gamedevrg", cr_x: "cerrar", cr_contrib: "colaboradores", cr_thanks: "agradecimientos especiales", tab_main: "principal", tab_rand: "aleatorio", tab_daily: "diario", tab_vs: "versus", tab_edit: "editor", tab_online: "en línea", dock_more: "más formas de jugar" });
         Object.assign(I18N.ja, { wel1: "おかえりなさい、", wel2: "会えてうれしいよ、", wel3: "ラウンドの準備はいい？", wel4: "やあ、また会ったね、", wel5: "また来てくれたね、", wel6: "ティーオフの時間だよ、", w_guest: "ゲスト", w_streak: "毎日の連続記録", w_month: "今月の達成度", credits: "クレジット", cr_made: "gamedevrg 制作", cr_x: "閉じる", cr_contrib: "コントリビューター", cr_thanks: "スペシャルサンクス", tab_main: "メイン", tab_rand: "ランダム", tab_daily: "デイリー", tab_vs: "対戦", tab_edit: "エディタ", tab_online: "オンライン", dock_more: "ほかの遊び方" });
         Object.assign(I18N.zh, { wel1: "欢迎回来，", wel2: "很高兴见到你，", wel3: "准备好来一局了吗，", wel4: "你好呀，", wel5: "又来啦，", wel6: "开球时间到，", w_guest: "访客", w_streak: "每日连续", w_month: "本月完成度", credits: "制作名单", cr_made: "由 gamedevrg 制作", cr_x: "关闭", cr_contrib: "贡献者", cr_thanks: "特别感谢", tab_main: "主线", tab_rand: "随机", tab_daily: "每日", tab_vs: "对战", tab_edit: "编辑器", tab_online: "在线", dock_more: "更多玩法" });
+        Object.assign(I18N.en, { tab_home: "home" }); Object.assign(I18N.es, { tab_home: "inicio" }); Object.assign(I18N.ja, { tab_home: "ホーム" }); Object.assign(I18N.zh, { tab_home: "首页" });
         let lang = 'en';
         try { const s = localStorage.getItem('lang'); if (LANGS.includes(s)) lang = s } catch (e) { }
         function tr(k, v) {
@@ -5854,7 +5882,7 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
             const nw = $('nlwrap'), mn = document.querySelector('main');
             let mode = '';
             { const was = nw.parentNode; nlPlane = !!on; placeNl(); if (was !== nw.parentNode) { view = null; pend = false; setTimeout(() => { if (L) drawLine(); }, 0); } }
-            if (on && !mqPhone.matches && mn && !mn.hidden && mn.offsetWidth) {
+            if (on && !mqDock.matches && mn && !mn.hidden && mn.offsetWidth) {
                 /* measured from layout, not getBoundingClientRect: while the board slides in, its rect is shifted by the animation */
                 const vw = document.documentElement.clientWidth, ml = (vw - mn.offsetWidth) / 2, r = { left: ml, right: ml + mn.offsetWidth }, right = vw - r.right - 24, left = r.left - 24, sp = Math.max(right, left);
                 if (sp >= 200) { const w = Math.min(sp, 480); nw.style.left = Math.round(right >= left ? r.right + 12 + (right - w) / 2 : 12 + (left - w) / 2) + 'px'; nw.style.width = Math.round(w) + 'px'; mode = 'side'; }
@@ -6344,7 +6372,7 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
         $('skipanim').onclick = skipReplay;
         $('diff').onchange = newLevel;
         /* phones: number line sits in the board under the numbers; larger screens: pinned along the bottom */
-        const mqPhone = matchMedia('(max-width:520px)');
+        const mqPhone = matchMedia('(max-width:520px)'), mqDock = matchMedia('(max-width:600px)');   /* mqDock: the tab bar is showing, so there is no free window space for the complex plane */
         function nlHp() { return innerHeight < 620 ? 100 : innerHeight < 700 ? 108 : 126; }   /* phone number line height: short enough that the whole level fits one screen */
         var nlPlane = false;
         function placeNl() {
@@ -6352,12 +6380,12 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
             { const hd = document.querySelector('main > header'), bd = document.querySelector('main > .board'), cf = $('calcfab'), nf = $('notefab'); if (hd && bd && cf && nf) { if (mqPhone.matches) { if (cf.parentNode !== hd) hd.append(nf, cf); } else if (cf.parentNode !== bd) bd.prepend(cf, nf); } }   /* phones: calculator and notepad buttons sit in the title row */
             const nw = $('nlwrap'), pips = $('pips');
             /* the number line is always pinned outside the board; only the complex plane on phones sits inside it */
-            if (mqPhone.matches && nlPlane) { if (nw.parentNode !== pips.parentNode || nw.nextSibling) pips.parentNode.appendChild(nw); }
+            if (mqDock.matches && nlPlane) { if (nw.parentNode !== pips.parentNode || nw.nextSibling) pips.parentNode.appendChild(nw); }
             else if (nw.parentNode !== document.body) document.body.insertBefore(nw, $('fx').nextSibling);
         }
         placeNl();
         const onMq = () => { placeNl(); view = null; pend = false; if (L) drawLine(); };
-        if (mqPhone.addEventListener) mqPhone.addEventListener('change', onMq); else mqPhone.addListener(onMq);
+        if (mqPhone.addEventListener) { mqPhone.addEventListener('change', onMq); mqDock.addEventListener('change', () => { placeNl(); if (L) { view = null; pend = false; drawLine(); } }); } else { mqPhone.addListener(onMq); mqDock.addListener(onMq); }
         /* touch screens: :active is unreliable (iOS needs a touch listener), so mirror it with a class set on pointerdown */
         document.addEventListener('touchstart', () => { }, { passive: true });
         let pressedEl = null;
@@ -7782,7 +7810,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
         let dockOpen = false, dockFull = 0, dockTabs = 0, dockT = 0;
         /* mark the tab for the page you're on */
         function dockCur(v) {
-            const id = { main: 'tMain', mainpack: 'tMain', packs: 'tRand', random: 'tRand', daily: 'tDaily' }[v];
+            const id = { main: 'tMain', mainpack: 'tMain', packs: 'tRand', random: 'tRand', daily: 'tDaily', menu: 'tHome' }[v];
             document.querySelectorAll('#dtabs .dtab').forEach(b => { b.classList.toggle('cur', b.id === id); if (b.id === id) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
         }
         function dockMeasure() {
@@ -7801,6 +7829,13 @@ function calcClose() { if (calcOpen) calcSet(false); }
             /* the tab bar slides away as the sheet takes its place */
             t.style.transition = dur ? 'height ' + dur + 'ms cubic-bezier(.22,1,.36,1), opacity ' + dur + 'ms ease' : 'none';
             t.style.height = Math.round(dockTabs * (1 - p)) + 'px'; t.style.opacity = 1 - p;
+        }
+        /* swipe down on the bar to tuck it away (only the grab handle stays); swipe up or tap the handle to bring it back */
+        let dockOff = false;
+        function dockCollapse(off) {
+            dockOff = !!off; document.documentElement.classList.toggle('dockoff', dockOff);
+            if (dockOff) { if (dockOpen) dockSet(false, 0); $('dtabs').inert = true; } else $('dtabs').inert = dockOpen;
+            $('dgrab').setAttribute('aria-label', dockOff ? 'show the tab bar' : 'more ways to play');
         }
         function dockSet(on, dur) {
             const d = $('dock'); if (!d) return; if (dur === undefined) dur = 380;
@@ -7858,7 +7893,8 @@ function calcClose() { if (calcOpen) calcSet(false); }
         (function homeInit() {
             const dock = $('dock'); if (!dock) return;
             let drag = null, swiped = false;
-            $('dgrab').onclick = () => dockSet(!dockOpen);
+            $('tHome').onclick = () => { dockSet(false); if (curView !== 'menu') showView('menu'); };
+            $('dgrab').onclick = () => { if (dockOff) dockCollapse(false); else dockSet(!dockOpen); };
             $('dockback').onclick = () => dockSet(false);
             addEventListener('keydown', e => { if (e.key === 'Escape' && dockOpen) dockSet(false); });
             /* drag the bar up or down: the sheet tracks the finger, and the release velocity decides where it goes */
@@ -7870,6 +7906,8 @@ function calcClose() { if (calcOpen) calcSet(false); }
                 if (!drag) return; const dy = drag.y0 - e.clientY;
                 if (!drag.moved) {
                     if (Math.abs(dy) < 8) return;
+                    if (dockOff) { drag = null; swiped = true; dockCollapse(false); return; }   /* swipe up from the handle: bring the bar back */
+                    if (dy < 0 && !dockOpen) { drag = null; swiped = true; dockCollapse(true); return; }   /* swipe down on the closed bar: tuck it away */
                     drag.moved = true; swiped = true; clearTimeout(dockT); dockMeasure(); dock.classList.add('vis'); $('dockback').classList.add('on');
                 }
                 dockApply(Math.max(0, Math.min(dockFull, drag.h0 + dy)), 0);
@@ -7940,6 +7978,26 @@ function calcClose() { if (calcOpen) calcSet(false); }
         else { a.className = 'tbtn'; a.textContent = LG; a.removeAttribute('title'); }
     }
     show(); addEventListener('focus', show); addEventListener('storage', show); addEventListener('pageshow', show);
+})();
+</script>
+
+<script id="dock-acct-js">
+(function () {
+    var who = document.getElementById('dwho'), btn = document.getElementById('dmanage'), dock = document.getElementById('dock'); if (!who || !btn) return;
+    var L = 'en'; try { var s = localStorage.getItem('lang'); if (s === 'es' || s === 'ja' || s === 'zh') L = s; } catch (e) { }
+    var T = {
+        en: { pre: 'logged in as ', post: '', manage: 'manage my account', out: 'not logged in', login: 'log in' },
+        es: { pre: 'sesión iniciada como ', post: '', manage: 'administrar mi cuenta', out: 'sin iniciar sesión', login: 'iniciar sesión' },
+        ja: { pre: '', post: ' としてログイン中', manage: 'アカウント管理', out: '未ログイン', login: 'ログイン' },
+        zh: { pre: '已登录：', post: '', manage: '管理我的账户', out: '未登录', login: '登录' }
+    }[L];
+    function show() {
+        var n = ''; try { n = (localStorage.getItem('username') || '').trim(); } catch (e) { }
+        if (n) { var b = document.createElement('b'); b.textContent = n; who.replaceChildren(T.pre, b, T.post); who.title = n; btn.textContent = T.manage; }
+        else { who.textContent = T.out; who.removeAttribute('title'); btn.textContent = T.login; }
+    }
+    show(); addEventListener('focus', show); addEventListener('storage', show); addEventListener('pageshow', show);
+    if (dock) dock.addEventListener('pointerdown', show, true);   /* fresh name each time the bar is opened */
 })();
 </script>
 
