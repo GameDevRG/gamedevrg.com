@@ -2140,6 +2140,8 @@
             transform-origin: 50% 50%
         }
 
+        #menu a.menulogo { display: block; text-decoration: none; pointer-events: auto; width: fit-content; margin-left: auto; margin-right: auto }
+
         #menu .menulogo small {
             font-size: .62em;
             font-weight: 500;
@@ -3192,6 +3194,12 @@
         #creditsdlg a {
             color: var(--blue)
         }
+        #creditsdlg a.crlogo { display: inline-block; margin: 2px 0 4px; color: var(--ink); text-decoration: none; font-family: 'Chakra Petch', system-ui, sans-serif; font-weight: 700; font-size: 1.5rem; letter-spacing: -.01em; line-height: 1 }
+        #creditsdlg a.crlogo small { font-size: .62em; font-weight: 500; color: var(--soft); letter-spacing: 0 }
+
+        #creditsdlg { max-height: calc(100dvh - 32px); overflow-y: auto }
+        #creditsdlg .crh { margin: 16px 0 4px; font-weight: 700; font-size: .85rem; color: var(--ink) }
+        #creditsdlg .crn { text-transform: none; line-height: 1.5 }
 
         #creditsdlg .cdbtns {
             display: flex;
@@ -3227,7 +3235,7 @@
             }
 
             /* room for the tab bar under the page */
-            body:has(#menu:not([hidden])) {
+            body.inmenu {
                 padding-bottom: calc(var(--dockh) + env(safe-area-inset-bottom, 0px))
             }
 
@@ -3263,10 +3271,9 @@
                 min-height: 32px
             }
 
-            /* the old button list and bottom logo give way to the card, the tab bar and the banner */
+            /* the old button list gives way to the card, the tab bar and the banner (the logo stays, under the credits link) */
             #menu>.mopts,
-            #menu>.tools,
-            #menu>.menulogo {
+            #menu>.tools {
                 display: none
             }
 
@@ -3446,6 +3453,10 @@
                 display: none
             }
 
+            .mfoot .mfoot2 {
+                margin-top: 12px
+            }
+
             #menu.short .mfoot {
                 margin-top: 8px
             }
@@ -3477,7 +3488,7 @@
             }
 
             /* ----- tab bar ----- */
-            #menu:not([hidden])~#dockback {
+            #dockback {
                 display: block;
                 position: fixed;
                 inset: 0;
@@ -3487,11 +3498,11 @@
                 pointer-events: none
             }
 
-            #menu:not([hidden])~#dockback.on {
+            #dockback.on {
                 pointer-events: auto
             }
 
-            #menu:not([hidden])~#dock {
+            #dock {
                 display: block;
                 position: fixed;
                 left: 0;
@@ -3692,6 +3703,29 @@
                 background: var(--cell)
             }
 
+            .dtab.cur {
+                color: var(--ink)
+            }
+
+            .dtab.cur::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 22%;
+                right: 22%;
+                height: 3px;
+                background: var(--ac)
+            }
+
+            .dtab .ic,
+            .dtab span:not(.ic) {
+                transition: transform .25s cubic-bezier(.2, .8, .2, 1)
+            }
+
+            .dtab.cur .ic {
+                transform: translateY(-1px) scale(1.08)
+            }
+
             .dtab:focus-visible {
                 outline: 3px solid var(--ink);
                 outline-offset: -3px
@@ -3706,6 +3740,42 @@
                 border-radius: 50%;
                 background: var(--imag);
                 border: 2px solid var(--card)
+            }
+
+            /* settings, scores and their sub-pages are full pages on phones, not floating windows */
+            #settings,
+            #scores,
+            #adv,
+            #lb {
+                background: var(--bg);
+                padding-top: calc(60px + env(safe-area-inset-top, 0px));
+                padding-bottom: 12px
+            }
+
+            #settings,
+            #scores,
+            #adv,
+            #lb {
+                bottom: calc(var(--dockh) + env(safe-area-inset-bottom, 0px))
+            }
+
+            #settings .sp,
+            #scores .sp,
+            #adv .sp,
+            #lb .sp {
+                max-width: none;
+                margin: 0 auto auto;
+                padding: 8px 18px 16px
+            }
+
+            #settings .board,
+            #scores .board,
+            #adv .board,
+            #lb .board {
+                background: none;
+                border: 0;
+                box-shadow: none;
+                padding: 0
             }
 
             /* ----- first-load choreography: the card and bars arrive with the original buttons ----- */
@@ -3729,13 +3799,289 @@
                     animation: dropIn .45s cubic-bezier(.2, .8, .2, 1) 60ms backwards
                 }
 
-                :root:not(.noui):not(.noanim) #menu:not([hidden])~#dock {
+                :root:not(.noui):not(.noanim) body.inmenu #dock {
                     animation: dockUp .45s cubic-bezier(.2, .8, .2, 1) 200ms backwards
                 }
             }
         }
     </style>
     <script>try { var q = JSON.parse(localStorage.getItem('hs1') || '{}'); if (q.theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); if (q.hc) document.documentElement.classList.add('hc') } catch (e) { }</script>
+
+<style id="gtop-css">
+/* site top bar: one look on every page */
+#topbar { position: fixed; top: 0; left: 0; right: 0; height: calc(38px + env(safe-area-inset-top, 0px)); padding: env(safe-area-inset-top, 0px) 12px 0; background: #000; display: flex; align-items: center; gap: 6px; font-family: 'Chakra Petch', system-ui, sans-serif; text-align: left; text-transform: lowercase; white-space: nowrap; box-sizing: border-box }
+#topbar .logo { flex: 0 0 auto; margin-right: 10px; color: #fff; font-weight: 700; font-size: 17px; letter-spacing: -.01em; text-decoration: none; line-height: 1 }
+#topbar .logo small { font-size: .62em; font-weight: 500; color: #cfcfcf; letter-spacing: 0 }
+#topbar .tbtn { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: auto; height: 26px; padding: 0 20px; border: 0; border-radius: 0; background: #3b82f6; color: #fff; font-family: inherit; font-weight: 500; font-size: 15px; line-height: 1; text-decoration: none; text-transform: lowercase; cursor: pointer }
+#topbar .tbtn:hover { background: #5a95f7 }
+#topbar input { flex: 0 1 312px; width: auto; min-width: 0; height: 26px; padding: 0 8px; border: 2px solid #3b82f6; border-radius: 0; background: #262626; color: #fff; font-family: inherit; font-size: 13px; font-weight: 400; text-transform: none; text-overflow: ellipsis; outline: 0 }
+#topbar input::placeholder { color: #8a8a8a; font-style: italic; font-weight: 400; opacity: 1; text-overflow: ellipsis }
+#topbar input:focus { border-color: #8ab8ff }
+#topbar #tacct { margin-left: auto }
+#topbar .twho { flex: 0 1 auto; min-width: 0; max-width: 220px; overflow: hidden; text-overflow: ellipsis; margin-left: auto; color: #cfcfcf; font-size: 13px; font-weight: 500; text-decoration: none }
+#topbar .twho b { color: #fff; font-weight: 700; text-transform: none }
+#topbar .twho:hover { text-decoration: underline }
+#topbar .logo:focus-visible, #topbar .tbtn:focus-visible, #topbar .twho:focus-visible { outline: 2px solid #fff; outline-offset: 2px }
+:lang(ja) #topbar { font-family: 'Chakra Petch', 'Noto Sans JP', system-ui, sans-serif }
+@media (max-width: 520px) {
+    #topbar { padding-left: 8px; padding-right: 8px; gap: 4px }
+    #topbar .logo { margin-right: 2px; font-size: 13px }
+    #topbar .logo small { display: none }
+    #topbar .tbtn { padding: 0 8px; font-size: 13px }
+    #topbar input { font-size: 12px; padding: 0 6px }
+    #topbar .twho { max-width: 96px; font-size: 12px }
+}
+@media (max-width: 600px) {
+    #topbar input#tsearch { display: none }
+}
+#gsearchdlg { width: calc(100% - 32px); max-width: 420px; margin: calc(56px + env(safe-area-inset-top, 0px)) auto auto; padding: 16px; border: 2px solid var(--ink, #fff); background: var(--card, #192040); color: var(--ink, #e9edfa); font-family: inherit; text-transform: lowercase; box-shadow: 5px 5px 0 var(--ink, #fff) }
+#gsearchdlg::backdrop { background: rgba(5, 8, 20, .6) }
+#gsearchdlg h3 { margin: 0 0 10px; font-size: 1.2rem }
+#gsearchdlg .gsrow { display: flex; gap: 8px }
+#gsearchdlg input { flex: 1 1 auto; min-width: 0; height: 44px; padding: 0 10px; border: 2px solid var(--blue, #3b82f6); border-radius: 0; background: var(--cell, #262626); color: var(--ink, #fff); font: inherit; font-size: 16px; text-transform: none; outline: 0 }
+#gsearchdlg input:focus { border-color: var(--imag, #8ab8ff) }
+#gsearchdlg button { height: 44px; padding: 0 16px; border: 2px solid var(--ink, #fff); border-radius: 0; background: var(--ink, #fff); color: var(--bg, #000); font: inherit; font-weight: 700; text-transform: lowercase; cursor: pointer }
+#gsearchdlg .gsclose { display: block; height: 36px; margin: 12px 0 0 auto; background: none; color: var(--soft, #8f9bc0); border-color: var(--line, #2d3861) }
+@media (max-width: 360px) {
+    #topbar .logo { font-size: 12px }
+    #topbar .tbtn { padding: 0 6px; font-size: 12px }
+}
+</style>
+<style id="compact-phone-css">
+/* ===== phone play screen: everything fits one screen, no scrolling ===== */
+@media (max-width:520px) {
+    body:not(.inmenu) {
+        min-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+        padding-bottom: 0
+    }
+    body:not(.inmenu) > main {
+        align-self: stretch;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-width: 0;
+        padding: 6px 10px 8px
+    }
+    body:not(.inmenu) > main[hidden] { display: none }
+    main > header {
+        margin: 0 0 6px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: center;
+        column-gap: 10px
+    }
+    main > header h1 { font-size: 1.3rem }
+    main > header .sub { margin: 0; font-size: .75rem }
+    main > .board {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 4px;
+        padding: 10px 10px 8px;
+        box-shadow: 3px 3px 0 var(--ink)
+    }
+    .hc main > .board { box-shadow: 3px 3px 0 var(--imag) }
+    main .board .row { gap: 10px }
+    main .board .lbl { font-size: .74rem }
+    main .board .full { margin-top: 2px; font-size: .7rem }
+    main #pips { margin: 2px 0 0; gap: 6px }
+    main .pip { width: 12px; height: 12px }
+    main #trail { min-height: 0; margin: 0; font-size: 1rem; line-height: 1.4 }
+    main #ops { gap: 8px; max-width: none; width: 100% }
+    main #ops button {
+        flex: 0 0 calc(33.333% - 6px);
+        padding: 8px 2px;
+        font-size: 1.25rem;
+        box-shadow: 0 3px 0 var(--blue)
+    }
+    .hc main #ops button { box-shadow: 0 3px 0 var(--imag) }
+    main #ops:has(button:nth-child(7)) button { flex-basis: calc(25% - 6px) }
+    main #ops button small { font-size: .58rem; line-height: 1.1; margin-top: 1px }
+    main .tools { margin-top: 0; gap: 6px }
+    main .tools button, main .tools select {
+        flex: 1 1 0;
+        min-width: 0;
+        min-height: 38px;
+        padding: 3px 4px;
+        font-size: .82rem;
+        line-height: 1.1
+    }
+    main #modeinfo {
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        gap: 0 14px;
+        font-size: .76rem;
+        line-height: 1.2
+    }
+    main #msg:empty { display: none }
+    main .board:has(#msg:not(:empty)) #ops { display: none }
+    main #msg:not(:empty) {
+        margin: 0 auto;
+        min-height: 40px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        column-gap: 10px;
+        font-size: .9rem;
+        line-height: 1.2
+    }
+    main #msg br { display: none }
+    main #msg button { margin: 0; min-height: 36px; padding: 4px 16px; font-size: .9rem }
+    main > header { position: relative; min-height: 30px }
+    main > header #calcfab, main > header #notefab { top: 0; bottom: auto; width: 30px; height: 30px; box-shadow: 2px 2px 0 var(--ink) }
+    main > header #calcfab { right: 2px }
+    main > header #notefab { right: 40px }
+    main > header #calcfab svg, main > header #notefab svg { width: 17px; height: 17px }
+    main #modeinfo select {
+        flex: 0 1 auto;
+        min-height: 34px;
+        padding: 2px 8px;
+        font: 700 .85rem inherit;
+        font-family: inherit;
+        border: 2px solid var(--line);
+        background: var(--card);
+        color: var(--ink)
+    }
+    main #modeinfo > select:not([hidden]) + div { display: none }
+    main #modeinfo { align-items: center }
+    main #score { font-size: .72rem }
+    main #score:empty { display: none }
+    main > .how {
+        flex-wrap: nowrap;
+        gap: 6px;
+        margin-top: 8px;
+        font-size: .72rem
+    }
+    main > .how button {
+        flex: 1 1 0;
+        min-width: 0;
+        min-height: 38px;
+        padding: 3px 4px;
+        font-size: .72rem;
+        line-height: 1.1
+    }
+}
+/* shorter phones: squeeze a little more */
+@media (max-width:520px) and (min-height:760px) {
+    main #score { min-height: 1.1em; display: block }
+}
+@media (max-width:520px) and (max-height:600px) {
+    main > header { margin-bottom: 4px }
+    main > header h1 { font-size: .95rem }
+    main #ops button { padding: 6px 2px }
+    main > .board { padding-top: 8px; gap: 2px }
+    main .board .lbl { font-size: .7rem }
+}
+@media (max-width:520px) and (max-height:720px) {
+    main > header h1 { font-size: 1.1rem }
+    main #psub { display: none }
+    main #ops button small { display: none }
+    main #msg { min-height: 36px }
+}
+</style>
+
+<style id="always-dock-css">
+/* the tab bar stays on screen while you play; the old bottom row of buttons becomes icons in the title row */
+@media (max-width:600px) {
+    body:not(.inmenu) { padding-bottom: calc(var(--dockh, 80px) + env(safe-area-inset-bottom, 0px)) }
+}
+@media (max-width:520px) {
+    body:not(.inmenu) { padding-bottom: calc(var(--dockh, 80px) + env(safe-area-inset-bottom, 0px)) }
+    body:not(.inmenu) > main { position: relative }
+    main > header { padding: 0 80px }
+    main > header h1 { display: none }
+    main > .how {
+        position: absolute; top: 6px; left: 10px; margin: 0; gap: 4px; flex-wrap: nowrap; justify-content: flex-start
+    }
+    main > .how button {
+        flex: 0 0 30px; width: 30px; min-height: 30px; height: 30px; padding: 0; font-size: 0; position: relative
+    }
+    main > .how button::before {
+        content: ""; position: absolute; inset: 5px; background: currentColor;
+        -webkit-mask: var(--ic) center / contain no-repeat; mask: var(--ic) center / contain no-repeat
+    }
+    main > .how #tomenu { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter'%3E%3Cpath d='M3 11 12 3l9 8M5 10v10h14V10M10 20v-6h4v6'/%3E%3C/svg%3E") }
+    main > .how #lbplay { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter'%3E%3Cpath d='M8 4h8v5a4 4 0 0 1-8 0zM8 6H4v1a3 3 0 0 0 4 3M16 6h4v1a3 3 0 0 1-4 3M12 13v4M8 20h8'/%3E%3C/svg%3E") }
+    main > .how #sc { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter'%3E%3Cpath d='M5 20V12M12 20V5M19 20v-5'/%3E%3C/svg%3E") }
+    main > .how #what { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M9.3 9.4a2.7 2.7 0 1 1 3.9 2.4c-.8.4-1.2.9-1.2 1.8M12 17v.6'/%3E%3C/svg%3E") }
+    main > .how #opts { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Ccircle cx='12' cy='12' r='6.4'/%3E%3Cpath d='M12 2.5v3.1M12 18.4v3.1M2.5 12h3.1M18.4 12h3.1M5.3 5.3l2.2 2.2M16.5 16.5l2.2 2.2M18.7 5.3l-2.2 2.2M7.5 16.5l-2.2 2.2'/%3E%3C/svg%3E") }
+}
+@media (max-width:520px) and (max-height:620px) {
+    :root { --dockh: 62px }
+    .dgrab { height: 12px }
+    .dgrab i { margin-top: 5px }
+    .dtab { min-height: 44px; padding: 4px 2px 5px; gap: 2px }
+    main #ops button { padding: 5px 2px }
+    main .tools button { min-height: 34px }
+    main #modeinfo select { min-height: 30px }
+    main > .board { gap: 1px; padding-bottom: 6px }
+}
+@media (max-width:520px) and (min-width:400px) {
+    main > header h1 { display: block; font-size: 1rem }
+}
+</style>
+<style id="play-tweaks-css">
+/* play screen: no title or tagline, board sits higher; difficulty picker and the difficulty/mode text share the bottom row with the notepad and calculator buttons */
+main > header h1, main > header #psub { display: none !important }
+@media (min-width:521px) {
+    main { padding-top: 10px }
+    main > header:not(:has(#dlvl:not([hidden]))) { margin: 0 }
+    .board { padding-bottom: 56px }
+    .board > #modeinfo { position: absolute; left: 18px; bottom: 8px; margin: 0; height: 38px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; text-align: left; font-size: .85rem; line-height: 1.25 }
+    .board > .tools:has(#diff) { position: absolute; right: 100px; bottom: 8px; margin: 0; z-index: 2 }
+    .board > .tools:has(#diff) select { height: 38px; padding: 0 10px; box-sizing: border-box }
+}
+/* tablet-width play screen (tab bar showing): board sits at the top, number line sits just above the tab bar instead of behind it */
+@media (min-width:521px) and (max-width:600px) {
+    body:not(.inmenu):has(> main:not([hidden])) { align-items: flex-start; padding-bottom: 210px !important }
+    body > #nlwrap { bottom: calc(var(--dockh, 80px) + env(safe-area-inset-bottom, 0px)); padding-bottom: 0 }
+}
+/* tab bar: the current tab gets a tinted highlight instead of a bar on top */
+.dtab.cur::before { display: none }
+.dtab.cur { background: color-mix(in srgb, var(--ac) 18%, transparent); }
+/* wide screens: the monthly completion bar sits under the title and the credits link under the buttons (the greeting and streak stay phone-only) */
+@media (min-width:601px) {
+    #menu .wcard { display: block; width: 100%; max-width: 486px; margin: 22px auto 0; padding: 14px 18px 16px; background: var(--card); border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); text-align: center }
+    .hc #menu .wcard { box-shadow: 4px 4px 0 var(--imag) }
+    #menu .wcard .wmsg, #menu .wcard .wname, #menu .wcard .wrow { display: none }
+    #menu .wcard .whead { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: .8rem; color: var(--soft) }
+    #menu .wcard .whead span:first-child { font-size: .9rem; font-weight: 700; color: var(--ink); text-align: left }
+    #menu .wcard .wbar { height: 12px; margin-top: 8px; border: 2px solid var(--ink); background: var(--cell); overflow: hidden }
+    #menu .wcard .wbar i { display: block; height: 100%; width: 0; background: var(--ok); transition: width .7s cubic-bezier(.2, .8, .2, 1) }
+    :root.noanim #menu .wcard .wbar i { transition: none }
+    #menu .wcard .wpct { margin-top: 6px; font-weight: 800; font-size: .95rem }
+    #menu .mopts { margin-top: 22px }
+    #menu .mfoot { display: block; margin-top: 4px }
+    #menu .mfoot .tools { display: none }
+    #menu .mfoot .credits { display: block; margin: 8px auto 0; padding: 8px 14px; min-height: 36px; background: none; border: 0; color: var(--soft); font: inherit; font-size: .95rem; text-decoration: underline; text-underline-offset: 3px; cursor: pointer }
+    #menu .mfoot .credits:focus-visible { outline: 3px solid var(--imag); outline-offset: 2px }
+}
+/* tab bar: as much space under the labels as above the icons (the bar is that much taller, so --dockh grows with it) */
+@media (max-width:600px) {
+    :root { --dockh: 100px }
+    #dock { padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)) }
+}
+@media (max-width:520px) and (max-height:620px) {
+    :root { --dockh: 76px }
+    #dock { padding-bottom: calc(13px + env(safe-area-inset-bottom, 0px)) }
+}
+/* narrow screens (tab bar showing): the page scrolls inside the body, so the scrollbar stops at the top of the tab bar instead of running behind it */
+@media (max-width:600px) {
+    html { overflow: hidden; height: 100dvh }
+    body, body:not(.inmenu), body.inmenu {
+        margin-top: 38px; padding-top: 0 !important; padding-bottom: 0 !important; min-height: 0 !important;
+        height: calc(100dvh - 38px - var(--dockh, 80px) - env(safe-area-inset-bottom, 0px));
+        overflow-y: auto; align-items: safe center
+    }
+}
+@media (min-width:521px) and (max-width:600px) {
+    body:not(.inmenu):has(> main:not([hidden])) { padding-bottom: 210px !important; align-items: flex-start }
+}
+</style>
 </head>
 
 <body class="inmenu">
@@ -3745,6 +4091,7 @@
         <input id="tsearch" type="search" placeholder="you can type things here. (this is the search bar)"
             aria-label="search" autocomplete="off">
         <button class="tbtn" id="tgo" type="button">search</button>
+        <a class="tbtn" id="tacct" href="../account/">log in</a>
     </nav>
     <section id="menu" class="pg">
         <header>
@@ -3758,6 +4105,8 @@
         <div class="mtop" id="mtop">
             <button type="button" class="micon" data-go="mhow" aria-label="how to play"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M9.3 9.4a2.7 2.7 0 1 1 3.9 2.4c-.8.4-1.2.9-1.2 1.8M12 17v.6" /></svg></button>
             <button type="button" class="micon" data-go="mset" aria-label="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" /><circle cx="12" cy="12" r="6.4" /><path d="M12 2.5v3.1M12 18.4v3.1M2.5 12h3.1M18.4 12h3.1M5.3 5.3l2.2 2.2M16.5 16.5l2.2 2.2M18.7 5.3l-2.2 2.2M7.5 16.5l-2.2 2.2" /></svg></button>
+            <button type="button" class="micon" data-go="moptC" aria-label="play from code"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7 3.5 12l5 5M15.5 7l5 5-5 5" /></svg></button>
+            <button type="button" class="micon" data-go="moptS" aria-label="your stats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V12M12 20V5M19 20v-5" /></svg></button>
         </div>
         <section class="wcard" id="wcard" aria-label="your progress">
             <p class="wmsg" id="wmsg">welcome back,</p>
@@ -3791,9 +4140,10 @@
         <div class="tools"><button id="mhow">how to play</button><button id="mset">settings</button></div>
         <div class="mfoot">
             <div class="tools"><button type="button" data-go="mhow" data-i="howto_b">how to play</button><button type="button" data-go="mset" data-i="settings">settings</button></div>
+            <div class="tools mfoot2"><button type="button" data-go="moptC" data-i="cm_t">play from code</button><button type="button" data-go="moptS" data-i="m_stats_b">your stats</button></div>
             <button type="button" class="credits" id="mcred" data-i="credits">credits</button>
         </div>
-        <div class="menulogo" id="menulogo" aria-hidden="true">gamedevrg<small>.com</small></div>
+        <a class="menulogo" id="menulogo" href="/gamedevrg.com/" aria-label="gamedevrg.com">gamedevrg<small>.com</small></a>
     </section>
     <div id="dockback"></div>
     <nav id="dock" aria-label="play">
@@ -4137,9 +4487,12 @@
     </dialog>
     <dialog id="creditsdlg">
         <h3 data-i="credits">credits</h3>
-        <p class="crl" data-i="cr_made">made by gamedevrg</p>
-        <p class="crl"><a href="/gamedevrg.com/">gamedevrg.com</a></p>
-        <div class="cdbtns"><button type="button" id="crx" data-i="cr_x">close</button></div>
+        <p class="crl"><a class="crlogo" href="/gamedevrg.com/">gamedevrg<small>.com</small></a></p>
+        <p class="crh" data-i="cr_contrib">contributors</p>
+        <p class="crl crn">GameDevRG<br>SugarDames<br>AtariLynx<br>tenfoldjs</p>
+        <p class="crh" data-i="cr_thanks">special thanks</p>
+        <p class="crl crn">Thomas Duarte<br>胡彁</p>
+        <div class="cdbtns"><button type="button" id="crx" data-i="cr_x" autofocus>close</button></div>
     </dialog>
     <dialog id="howdlg">
         <h3>how to play</h3>
@@ -5105,10 +5458,10 @@ Object.assign(I18N.en, {"onl_t": "online levels", "onl_s": "play levels other pl
 Object.assign(I18N.es, {"onl_t": "niveles en línea", "onl_s": "juega niveles publicados por otros jugadores o busca por autor"});
 Object.assign(I18N.ja, {"onl_t": "オンラインレベル", "onl_s": "他のプレイヤーが公開したレベルを遊ぼう。作者で検索もできます"});
 Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布的关卡，或按作者搜索"});
-        Object.assign(I18N.en, { wel1: "welcome back,", wel2: "good to see you,", wel3: "ready for a round,", wel4: "hello again,", wel5: "back for more,", wel6: "tee time,", w_guest: "guest", w_streak: "daily streak", w_month: "monthly completion", credits: "credits", cr_made: "made by gamedevrg", cr_x: "close", tab_main: "main", tab_rand: "random", tab_daily: "daily", tab_vs: "versus", tab_edit: "editor", tab_online: "online", dock_more: "more ways to play" });
-        Object.assign(I18N.es, { wel1: "bienvenido de nuevo,", wel2: "qué bueno verte,", wel3: "listo para una ronda,", wel4: "hola otra vez,", wel5: "volviste por más,", wel6: "hora del primer golpe,", w_guest: "invitado", w_streak: "racha diaria", w_month: "avance del mes", credits: "créditos", cr_made: "hecho por gamedevrg", cr_x: "cerrar", tab_main: "principal", tab_rand: "aleatorio", tab_daily: "diario", tab_vs: "versus", tab_edit: "editor", tab_online: "en línea", dock_more: "más formas de jugar" });
-        Object.assign(I18N.ja, { wel1: "おかえりなさい、", wel2: "会えてうれしいよ、", wel3: "ラウンドの準備はいい？", wel4: "やあ、また会ったね、", wel5: "また来てくれたね、", wel6: "ティーオフの時間だよ、", w_guest: "ゲスト", w_streak: "毎日の連続記録", w_month: "今月の達成度", credits: "クレジット", cr_made: "gamedevrg 制作", cr_x: "閉じる", tab_main: "メイン", tab_rand: "ランダム", tab_daily: "デイリー", tab_vs: "対戦", tab_edit: "エディタ", tab_online: "オンライン", dock_more: "ほかの遊び方" });
-        Object.assign(I18N.zh, { wel1: "欢迎回来，", wel2: "很高兴见到你，", wel3: "准备好来一局了吗，", wel4: "你好呀，", wel5: "又来啦，", wel6: "开球时间到，", w_guest: "访客", w_streak: "每日连续", w_month: "本月完成度", credits: "制作名单", cr_made: "由 gamedevrg 制作", cr_x: "关闭", tab_main: "主线", tab_rand: "随机", tab_daily: "每日", tab_vs: "对战", tab_edit: "编辑器", tab_online: "在线", dock_more: "更多玩法" });
+        Object.assign(I18N.en, { wel1: "welcome back,", wel2: "good to see you,", wel3: "ready for a round,", wel4: "hello again,", wel5: "back for more,", wel6: "tee time,", w_guest: "guest", w_streak: "daily streak", w_month: "monthly completion", credits: "credits", cr_made: "made by gamedevrg", cr_x: "close", cr_contrib: "contributors", cr_thanks: "special thanks", tab_main: "main", tab_rand: "random", tab_daily: "daily", tab_vs: "versus", tab_edit: "editor", tab_online: "online", dock_more: "more ways to play" });
+        Object.assign(I18N.es, { wel1: "bienvenido de nuevo,", wel2: "qué bueno verte,", wel3: "listo para una ronda,", wel4: "hola otra vez,", wel5: "volviste por más,", wel6: "hora del primer golpe,", w_guest: "invitado", w_streak: "racha diaria", w_month: "avance del mes", credits: "créditos", cr_made: "hecho por gamedevrg", cr_x: "cerrar", cr_contrib: "colaboradores", cr_thanks: "agradecimientos especiales", tab_main: "principal", tab_rand: "aleatorio", tab_daily: "diario", tab_vs: "versus", tab_edit: "editor", tab_online: "en línea", dock_more: "más formas de jugar" });
+        Object.assign(I18N.ja, { wel1: "おかえりなさい、", wel2: "会えてうれしいよ、", wel3: "ラウンドの準備はいい？", wel4: "やあ、また会ったね、", wel5: "また来てくれたね、", wel6: "ティーオフの時間だよ、", w_guest: "ゲスト", w_streak: "毎日の連続記録", w_month: "今月の達成度", credits: "クレジット", cr_made: "gamedevrg 制作", cr_x: "閉じる", cr_contrib: "コントリビューター", cr_thanks: "スペシャルサンクス", tab_main: "メイン", tab_rand: "ランダム", tab_daily: "デイリー", tab_vs: "対戦", tab_edit: "エディタ", tab_online: "オンライン", dock_more: "ほかの遊び方" });
+        Object.assign(I18N.zh, { wel1: "欢迎回来，", wel2: "很高兴见到你，", wel3: "准备好来一局了吗，", wel4: "你好呀，", wel5: "又来啦，", wel6: "开球时间到，", w_guest: "访客", w_streak: "每日连续", w_month: "本月完成度", credits: "制作名单", cr_made: "由 gamedevrg 制作", cr_x: "关闭", cr_contrib: "贡献者", cr_thanks: "特别感谢", tab_main: "主线", tab_rand: "随机", tab_daily: "每日", tab_vs: "对战", tab_edit: "编辑器", tab_online: "在线", dock_more: "更多玩法" });
         let lang = 'en';
         try { const s = localStorage.getItem('lang'); if (LANGS.includes(s)) lang = s } catch (e) { }
         function tr(k, v) {
@@ -5224,7 +5577,7 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
         const pitParse = t => { const r = String(t).split('~'), lo = parseNum(r[0]); if (!lo) return null; if (r.length > 1) { const hi = parseNum(r[1]); if (!hi) return null; lo.hi = hi; } return lo; };
         const inPit = x => !!L && inPits(L.pits, x);
         function draw(vw, bl, vals, g, won) {
-            const W = $('nl').clientWidth || 640, H = W < 520 ? 160 : 200, pad = W < 520 ? 28 : 44, Y = H - 58, R = 7, sp = vw.hi - vw.lo, x = v => pad + (v - vw.lo) / sp * (W - 2 * pad);
+            const W = $('nl').clientWidth || 640, H = W < 520 ? nlHp() : 200, pad = W < 520 ? 28 : 44, Y = H - (W < 520 ? 52 : 58), R = 7, sp = vw.hi - vw.lo, x = v => pad + (v - vw.lo) / sp * (W - 2 * pad);
             const hgt = (a, b) => Math.max(4, Math.min(Y - 30, 100, Math.abs(x(b) - x(a)) * .25));
             const SAND = '#d4a64f', pitsIn = (L.pits || []).map(p => { const a = x(val(p)), b = p.hi ? x(val(p.hi)) : a; return { p, a, b, lo: Math.min(a, b), hi: Math.max(a, b) }; }).filter(q => q.hi >= 10 && q.lo <= W - 10);
             let h = '';   /* sand pits are drawn like a sketch: the line goes dashed between two open circles (one circle for a single number) */
@@ -5470,7 +5823,7 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
             if (bl && planeLast) { const u = bl.u, q = planeLast; r0 = q.r0 + (r0 - q.r0) * u; r1 = q.r1 + (r1 - q.r1) * u; i0 = q.i0 + (i0 - q.i0) * u; i1 = q.i1 + (i1 - q.i1) * u; } /* the grid glides to its new size while the ball hops */
             const pad = 30, nwc = $('nlwrap').classList, free = nwc.contains('side') || nwc.contains('corner');
             /* beside the board or in the corner the box floats, so its height may follow the numbers; inside the board (phones) it keeps the number line's fixed height, so the buttons below never move */
-            const H = !free ? (W < 520 ? 160 : 200) : Math.round(Math.max(150, Math.min(nwc.contains('side') ? Math.max(280, Math.round(innerHeight * .7)) : Math.round(W * .8), (i1 - i0) / (r1 - r0) * (W - 2 * pad) + 2 * pad)));
+            const H = !free ? (W < 520 ? nlHp() + 26 : 200) : Math.round(Math.max(150, Math.min(nwc.contains('side') ? Math.max(280, Math.round(innerHeight * .7)) : Math.round(W * .8), (i1 - i0) / (r1 - r0) * (W - 2 * pad) + 2 * pad)));
             const sc = Math.min((W - 2 * pad) / (r1 - r0), (H - 2 * pad) / (i1 - i0)), mr = (r0 + r1) / 2, mi = (i0 + i1) / 2;
             const X = re => W / 2 + (re - mr) * sc, Y = im => H / 2 - (im - mi) * sc, P = q => X(q.re) + ' ' + Y(q.im);
             let h = `<rect x="1" y="1" width="${W - 2}" height="${H - 2}" fill="var(--bg)" stroke="var(--line)" stroke-width="2"/>`; /* solid panel, so the page's grid background doesn't show through */
@@ -5638,7 +5991,7 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
             if (!L) return;
             const bd = $('cur').closest('.board'), row = bd && bd.querySelector('.row'); if (!row) return; /* the level board (the daily and stats pages have boards of their own) */
             const fit = () => {
-                let ns = 3.2; bd.style.setProperty('--ns', ns + 'rem');
+                let ns = matchMedia('(max-width:520px)').matches ? 2.6 : 3.2; bd.style.setProperty('--ns', ns + 'rem');
                 for (let i = 0; i < 8; i++) {
                     const need = row.scrollWidth, have = row.clientWidth;
                     if (!have || need <= have + 0.5 || ns <= 0.5) break;
@@ -5647,7 +6000,7 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
                 return ns;
             };
             row.classList.remove('stack'); const side = fit();
-            if (side < 1.6) { row.classList.add('stack'); const stacked = fit(); if (stacked < side * 1.2) { row.classList.remove('stack'); fit(); } }
+            if (side < (matchMedia('(max-width:520px)').matches ? 1.1 : 1.6)) { row.classList.add('stack'); const stacked = fit(); if (stacked < side * 1.2) { row.classList.remove('stack'); fit(); } }
         }
         const whyNot = s => tr((cur && cur.b > 1 && /^[+−]\d/.test(s)) ? 'why_root_add' : (cur && cur.b > 1 && s === '√x') ? 'why_root_already' : s[0] === '÷' ? (settings.num === 'frac' ? 'why_big' : 'why_div') : s === 'x⁻¹' ? 'why_undef' : s === '√x' ? (settings.num === 'frac' || ROOTS ? 'why_neg' : 'why_sqrt') : s.startsWith('mod') ? 'why_whole' : 'why_big');
         /* ---- the trail, drawn as a real math expression: parentheses where order matters, stacked fractions, powers, roots, bars ---- */
@@ -5746,7 +6099,11 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
             document.querySelectorAll('[data-anim]').forEach(b => b.setAttribute('aria-checked', settings.anims[b.dataset.anim] !== false)); $('rowAdv').hidden = !settings.anim;
         }
         let decAtOpen = false, ssTimer = 0;
-        const SW_DUR = 600, SW_EZ = 'cubic-bezier(.4,0,.2,1)';
+        let SW_DUR = 600, SW_SET = 600, SW_LEAN = 4.6; const SW_EZ = 'cubic-bezier(.4,0,.2,1)';
+        /* phones: shorter slide, a gentler lean and a quick settle, so the page keeps up with a thumb */
+        const mqMotion = matchMedia('(max-width:600px)');
+        const motionSync = () => { if (mqMotion.matches) { SW_DUR = 380; SW_SET = 220; SW_LEAN = 1.6; } else { SW_DUR = 600; SW_SET = 600; SW_LEAN = 4.6; } };
+        motionSync(); if (mqMotion.addEventListener) mqMotion.addEventListener('change', motionSync); else mqMotion.addListener(motionSync);
         function swayAnim(el, kf, dur, ez, fill) { el.getAnimations().forEach(a => a.cancel()); return el.animate(kf, { duration: dur || SW_DUR, easing: ez || SW_EZ, fill: fill || 'none' }); }
         const dropAnims = (...els) => els.forEach(e => e && e.getAnimations().forEach(a => a.cancel()));
         function bez(u) {
@@ -5757,10 +6114,10 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
         /* panel leans into the move, then a soft damped spring carries it back to upright.
            one continuous simulation, sampled every frame, so there are no joins or jumps */
         function swayKF(dir, x0, x1, settle) {
-            const Tm = SW_DUR, T = Tm + (settle ? 600 : 0);
-            const A = 4.6, W = 13, Z = .5;            /* peak lean (deg), spring speed, damping */
+            const Tm = SW_DUR, T = Tm + (settle ? SW_SET : 0);
+            const A = SW_LEAN, W = mqMotion.matches ? 18 : 13, Z = mqMotion.matches ? .75 : .5;            /* peak lean (deg), spring speed, damping */
             const dt = 1 / 240, step = 4, kf = [];
-            const tf = (x, r) => 'translateX(' + x.toFixed(3) + 'vw) rotate(' + r.toFixed(3) + 'deg)';
+            const tf = (x, r) => 'translate3d(' + x.toFixed(3) + 'vw,0,0) rotate(' + r.toFixed(3) + 'deg)';
             const vel = u => { const d = .001, a = Math.max(0, u - d), b = Math.min(1, u + d); return (bez(b) - bez(a)) / (b - a); };
             let vmax = 0; for (let k = 0; k <= 100; k++) vmax = Math.max(vmax, vel(k / 100));
             let th = 0, om = 0;
@@ -5795,7 +6152,7 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
                 mn.classList.add(away); if (nw) nw.classList.add(away);
                 if (an) {
                     swayAnim(st, [{ transform: 'translateX(' + (-100 * d) + '%)' }, { transform: 'none' }]);
-                    swayAnim(sp, swayKF(d, 0, 0, true), 1200, 'linear');
+                    swayAnim(sp, swayKF(d, 0, 0, true), SW_DUR + SW_SET, 'linear');
                     swayAnim(mn, swayKF(d, 0, 100 * d, false), SW_DUR, 'linear', 'forwards');
                 }
                 ssTimer = setTimeout(() => { mn.hidden = true; if (nw) nw.hidden = true; dropAnims(mn, nw); }, an ? SW_DUR + 80 : 0);
@@ -5807,7 +6164,7 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
                 if (an) {
                     swayAnim(st, [{ transform: 'none' }, { transform: 'translateX(' + (-100 * d) + '%)' }], 0, 0, 'forwards');
                     swayAnim(sp, swayKF(-d, 0, 0, false), SW_DUR, 'linear');
-                    swayAnim(mn, swayKF(-d, 100 * d, 0, true), 1200, 'linear');
+                    swayAnim(mn, swayKF(-d, 100 * d, 0, true), SW_DUR + SW_SET, 'linear');
                 }
                 ssTimer = setTimeout(() => { st.hidden = true; dropAnims(st); }, an ? SW_DUR + 80 : 0);
             }
@@ -5932,7 +6289,10 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
         $('diff').onchange = newLevel;
         /* phones: number line sits in the board under the numbers; larger screens: pinned along the bottom */
         const mqPhone = matchMedia('(max-width:520px)');
+        function nlHp() { return innerHeight < 620 ? 100 : innerHeight < 700 ? 108 : 126; }   /* phone number line height: short enough that the whole level fits one screen */
         function placeNl() {
+            { const d = $('diff'), mi = $('modeinfo'); if (d && mi) { d._home = d._home || d.parentNode; if (mqPhone.matches) { if (d.parentNode !== mi) mi.insertBefore(d, mi.firstChild); d._home.hidden = true; } else { if (d.parentNode !== d._home) d._home.appendChild(d); d._home.hidden = false; } } }   /* phones: the difficulty picker joins the status line */
+            { const hd = document.querySelector('main > header'), bd = document.querySelector('main > .board'), cf = $('calcfab'), nf = $('notefab'); if (hd && bd && cf && nf) { if (mqPhone.matches) { if (cf.parentNode !== hd) hd.append(nf, cf); } else if (cf.parentNode !== bd) bd.prepend(cf, nf); } }   /* phones: calculator and notepad buttons sit in the title row */
             const nw = $('nlwrap'), pips = $('pips');
             if (mqPhone.matches) { if (nw.parentNode !== pips.parentNode) pips.parentNode.insertBefore(nw, pips); }
             else if (nw.parentNode !== document.body) document.body.insertBefore(nw, $('fx').nextSibling);
@@ -5969,32 +6329,32 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
                 outs.forEach(e => {
                     if (e === nw) return;
                     const r = e.getBoundingClientRect(), st = e.style;
-                    st.position = 'fixed'; st.left = r.left + 'px'; st.top = r.top + 'px'; st.width = r.width + 'px'; st.margin = '0';
+                    st.willChange = 'transform'; st.position = 'fixed'; st.left = r.left + 'px'; st.top = r.top + 'px'; st.width = r.width + 'px'; st.margin = '0';
                 });
             }
             $('menu').hidden = v !== 'menu'; $('mainlevels').hidden = v !== 'main'; $('dailypg').hidden = v !== 'daily'; $('statspg').hidden = v !== 'stats'; $('packspg').hidden = v !== 'packs'; $('mainpackpg').hidden = v !== 'mainpack';
             mn.hidden = v !== 'random'; nw.hidden = v !== 'random';
             outs.forEach(e => { e.hidden = false; });
             document.body.classList.toggle('inmenu', v !== 'random');
-            scrollTo(0, 0);
+            scrollTo(0, 0); document.body.scrollTop = 0;
             if (an) {
                 const d = v === 'menu' ? (prev === 'stats' ? -1 : 1) : (v === 'stats' ? 1 : (v === 'main' && prev === 'mainpack') ? 1 : -1), ins = viewEls(v); /* stats sits to the left of the menu, every other page to the right */
                 const outAnims = movers(outs).map(e => swayAnim(e, swayKF(d, 0, 100 * d, false), SW_DUR, 'linear', 'forwards')); /* forwards: stays off-screen until it is hidden, so it never snaps back for a frame */
-                movers(ins).forEach(e => { e.style.animation = 'none'; swayAnim(e, swayKF(d, -100 * d, 0, true), 1200, 'linear'); });
+                movers(ins).forEach(e => { e.style.animation = 'none'; e.style.willChange = 'transform'; swayAnim(e, swayKF(d, -100 * d, 0, true), SW_DUR + SW_SET, 'linear'); });
                 bgBase = v === 'menu' ? 0 : (v === 'stats' ? 1 : v === 'mainpack' ? -2 : -1) * Math.round(innerWidth * .3); parallax(bgBase);
                 let cleaned = false;
                 const cleanOuts = () => {
                     if (cleaned) return; cleaned = true; outs.forEach(e => {
                         e.getAnimations().forEach(a => a.cancel()); e.hidden = true;
-                        const st = e.style; st.position = st.left = st.top = st.width = st.margin = '';
+                        const st = e.style; st.position = st.left = st.top = st.width = st.margin = st.willChange = '';
                     });
                 };
                 Promise.allSettled(outAnims.map(a => a.finished)).then(cleanOuts); /* hide the old page the moment its slide ends, in the same frame */
                 transEnd = () => { clearTimeout(outTimer); clearTimeout(inTimer); cleanOuts(); ins.forEach(e => e.getAnimations().forEach(a => a.cancel())); transEnd = null; };
                 outTimer = setTimeout(cleanOuts, SW_DUR + 500); /* only a fallback */
-                inTimer = setTimeout(() => { transEnd = null; }, 1230);
+                inTimer = setTimeout(() => { ins.forEach(e => { e.style.willChange = ''; }); transEnd = null; }, SW_DUR + SW_SET + 30);
             } else if (prev !== v) { bgBase = v === 'menu' ? 0 : (v === 'stats' ? 1 : v === 'mainpack' ? -2 : -1) * Math.round(innerWidth * .3); }
-            curView = v; calcSync(); if (v === 'menu') { dockSet(false); homeRefresh(); }
+            curView = v; calcSync(); dockCur(v); if (v === 'menu') { dockSet(false); homeRefresh(); } else if ($('dock').classList.contains('open')) dockSet(false);
             if (v === 'random') { view = null; pend = false; if (L && L === STANDIN && !dailyMode) newLevel(); else if (L) { updateNs(); render(); } }
         }
         /* ---------- daily levels (needs the server: server.js + daily.js) ---------- */
@@ -7362,6 +7722,11 @@ function calcClose() { if (calcOpen) calcSet(false); }
         /* the extra-options sheet: its height follows the finger while dragging, then settles open or closed
            depending on how fast the flick was (or, for a slow drag, on how far it got) */
         let dockOpen = false, dockFull = 0, dockTabs = 0, dockT = 0;
+        /* mark the tab for the page you're on */
+        function dockCur(v) {
+            const id = { main: 'tMain', mainpack: 'tMain', packs: 'tRand', random: 'tRand', daily: 'tDaily' }[v];
+            document.querySelectorAll('#dtabs .dtab').forEach(b => { b.classList.toggle('cur', b.id === id); if (b.id === id) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+        }
         function dockMeasure() {
             const m = $('dmore'), prev = m.style.height;
             m.style.transition = 'none'; m.style.height = 'auto'; dockFull = m.offsetHeight;
@@ -7398,7 +7763,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
             m.classList.remove('short');
             if (m.hidden || !matchMedia('(max-width:600px)').matches) return;
             m.classList.add('measure');
-            const cs = getComputedStyle(document.body), avail = innerHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom), need = m.offsetHeight;
+            const cs = getComputedStyle(document.body), avail = (matchMedia('(max-width:600px)').matches ? document.body.clientHeight : innerHeight) - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom), need = m.offsetHeight;
             m.classList.remove('measure');
             m.classList.toggle('short', need > avail + 1);
         }
@@ -7496,10 +7861,56 @@ function calcClose() { if (calcOpen) calcSet(false); }
         (() => {
             const r = document.documentElement, b = document.body, F = .5; let q = 0;
             if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-            const u = () => { q = 0; b.style.backgroundPositionY = (r.classList.contains('noanim') ? 0 : window.scrollY * (1 - F)) + 'px'; };
+            const nar = matchMedia('(max-width:600px)');   /* narrow screens: the body scrolls (not the window), and the grid no longer scrolls with it */
+            const u = () => { q = 0; b.style.backgroundPositionY = (r.classList.contains('noanim') ? 0 : nar.matches ? -b.scrollTop * F : window.scrollY * (1 - F)) + 'px'; };
             addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(u); }, { passive: true });
+            b.addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(u); }, { passive: true });
         })();
+        /* links from the bar on the other pages: #main, #random, #code, #stats */
+        try { sessionStorage.removeItem('gdvNav'); } catch (e) { }
+        setTimeout(() => { const t = { main: 'mopt2', random: 'mopt1', code: 'moptC', stats: 'moptS' }[location.hash.slice(1)]; if (t && $(t)) { history.replaceState(null, '', location.pathname + location.search); $(t).click(); } }, 60);
     </script>
+
+<script id="gtop-js">
+(function () {
+    var a = document.getElementById('tacct'); if (!a) return;
+    var L = 'en'; try { var s = localStorage.getItem('lang'); if (s === 'es' || s === 'ja' || s === 'zh') L = s; } catch (e) { }
+    var S = { en: ['signed in as ', ''], es: ['sesión iniciada como ', ''], ja: ['', 'としてログイン中'], zh: ['已登录：', ''] }[L], LG = { en: 'log in', es: 'iniciar sesión', ja: 'ログイン', zh: '登录' }[L];
+    function show() {
+        var n = ''; try { n = (localStorage.getItem('username') || '').trim(); } catch (e) { }
+        if (n) { var b = document.createElement('b'); b.textContent = n; a.className = 'twho'; a.replaceChildren(S[0], b, S[1]); a.title = n; }
+        else { a.className = 'tbtn'; a.textContent = LG; a.removeAttribute('title'); }
+    }
+    show(); addEventListener('focus', show); addEventListener('storage', show); addEventListener('pageshow', show);
+})();
+</script>
+
+<script id="gtop-search">
+(function () {
+    var go = document.getElementById('tgo'), src = document.getElementById('tsearch'); if (!go || !src) return;
+    var L = 'en'; try { var s = localStorage.getItem('lang'); if (s === 'es' || s === 'ja' || s === 'zh') L = s; } catch (e) { }
+    var T = { en: ['search', 'type here', 'close'], es: ['buscar', 'escribe aquí', 'cerrar'], ja: ['検索', 'ここに入力', '閉じる'], zh: ['搜索', '在此输入', '关闭'] }[L];
+    var mq = matchMedia('(max-width:600px)');
+    var d = document.createElement('dialog'); d.id = 'gsearchdlg'; d.setAttribute('aria-label', T[0]);
+    d.innerHTML = '<h3></h3><form class="gsform"><div class="gsrow"><input type="search" autocomplete="off"><button type="submit"></button></div><button type="button" class="gsclose"></button></form>';
+    d.querySelector('h3').textContent = T[0]; d.querySelector('button[type=submit]').textContent = T[0]; d.querySelector('.gsclose').textContent = T[2];
+    var inp = d.querySelector('input'); inp.placeholder = T[1]; inp.setAttribute('aria-label', T[0]);
+    document.body.appendChild(d);
+    go.addEventListener('click', function (e) {
+        if (!mq.matches) return;
+        e.preventDefault(); e.stopImmediatePropagation();
+        inp.value = src.value; if (!d.open) d.showModal(); inp.focus(); inp.select();
+    }, true);
+    d.querySelector('form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        src.value = inp.value; src.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); d.close();
+    });
+    d.querySelector('.gsclose').addEventListener('click', function () { d.close(); });
+    d.addEventListener('click', function (e) { if (e.target === d) d.close(); });
+    var chg = function () { if (!mq.matches && d.open) d.close(); };
+    if (mq.addEventListener) mq.addEventListener('change', chg); else mq.addListener(chg);
+})();
+</script>
 </body>
 
 </html>
