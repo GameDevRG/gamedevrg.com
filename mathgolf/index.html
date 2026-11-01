@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>hole in √-1</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Chakra+Petch:ital,wght@0,400;0,500;0,700;1,400&family=Dela+Gothic+One&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Chakra+Petch:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Sans+JP:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+TC:wght@700;900&display=swap"
         rel="stylesheet">
     <style>
         @property --bg {
@@ -2562,15 +2562,15 @@
         :lang(ja) .mopt b,
         :lang(ja) .dgroup h3,
         :lang(ja) .calhead h3 {
-            font-family: 'Bricolage Grotesque', 'Dela Gothic One', system-ui, sans-serif;
-            font-weight: 400;
+            font-family: 'Bricolage Grotesque', 'IBM Plex Sans JP', system-ui, sans-serif;
+            font-weight: 700;
             font-synthesis: none
         }
 
         :lang(ja) h1 *,
         :lang(ja) .mopt b *,
         :lang(ja) .calhead h3 b {
-            font-weight: 400
+            font-weight: 700
         }
 
         /* connection error popup */
@@ -4062,11 +4062,11 @@ main > header h1, main > header #psub { display: none !important }
 }
 /* tab bar: as much space under the labels as above the icons (the bar is that much taller, so --dockh grows with it) */
 @media (max-width:600px) {
-    :root { --dockh: 100px }
+    :root { --dockh: 96px }
     #dock { padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)) }
 }
 @media (max-width:520px) and (max-height:620px) {
-    :root { --dockh: 76px }
+    :root { --dockh: 72px }
     #dock { padding-bottom: calc(13px + env(safe-area-inset-bottom, 0px)) }
 }
 /* narrow screens (tab bar showing): the page scrolls inside the body, so the scrollbar stops at the top of the tab bar instead of running behind it */
@@ -4117,6 +4117,13 @@ main > header h1, main > header #psub { display: none !important }
         background: color-mix(in srgb, var(--ac) 18%, transparent); pointer-events: none
     }
 }
+/* title: as bold as it gets (IBM Plex Sans JP stops at 700, so Japanese gets a thin stroke on top) */
+h1 { font-weight: 800 }
+h1 *:not(svg):not(path) { font-weight: inherit }
+:lang(zh) h1 { display: flex; flex-direction: row-reverse; justify-content: center; align-items: baseline; gap: .1em }   /* the √-1 takes the place of 一: it comes first, then 桿進 */
+:lang(zh) h1, :lang(zh) h1 * { font-family: 'Bricolage Grotesque', 'Noto Sans TC', system-ui, sans-serif; font-weight: 900; -webkit-text-stroke: .02em currentColor; paint-order: stroke fill }
+:lang(ja) h1, :lang(ja) h1 .vin { font-weight: 700; -webkit-text-stroke: .03em currentColor; paint-order: stroke fill }
+
 /* home tab (white) sits in the middle of the tab bar, so there are seven columns */
 .dtab.white { --ac: var(--ink) }
 #tHome { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter'%3E%3Cpath d='M3 11 12 3l9 8M5 10v10h14V10M10 20v-6h4v6'/%3E%3C/svg%3E") }
@@ -4128,7 +4135,10 @@ main > header h1, main > header #psub { display: none !important }
 .dacct .dwho b { color: var(--ink); font-weight: 800; text-transform: none }
 .dacct .dmanage { flex: none; display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 14px; background: var(--blue); color: #fff; font-weight: 700; font-size: .9rem; text-decoration: none; text-transform: lowercase; border: 0 }
 .dacct .dmanage:active { filter: brightness(.9) }
-.dacct .dmanage:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px }
+.dacct .dmanage:focus-visible { outline: 0; filter: brightness(1.15) }
+.dtab:focus-visible, .drow:focus-visible, .dgrab:focus-visible { outline: 0 }
+.dtab:focus-visible, .drow:focus-visible { background: color-mix(in srgb, var(--ac, var(--ink)) 18%, transparent) }
+.dgrab:focus-visible i { background: var(--soft) }
 
 /* collapsed tab bar: it slides down until only the grab handle shows, and the page grows to fill the space */
 @property --dockh { syntax: '<length>'; inherits: true; initial-value: 80px }
@@ -4158,6 +4168,36 @@ main > header h1, main > header #psub { display: none !important }
     body:not(.inmenu):has(> main:not([hidden])) { padding-bottom: 126px !important }
 }
 </style>
+
+<style id="logo-com-css">
+/* keep the .com in the logo on phones; only drop it on very narrow screens where it would crowd the buttons */
+@media (max-width: 520px) { #topbar .logo small { display: inline } }
+@media (max-width: 329px) { #topbar .logo small { display: none } }
+</style>
+
+<style id="scroll-css">
+/* the page scrolls inside the body at every width, so the scrollbar starts under the top bar (and stops above the tab bar) instead of running beside them */
+html { overflow: hidden; height: 100dvh }
+body, body:not(.inmenu), body.inmenu {
+    margin-top: calc(38px + env(safe-area-inset-top, 0px)); padding-top: 0 !important; min-height: 0 !important;
+    height: calc(100dvh - 38px - env(safe-area-inset-top, 0px)); overflow-y: auto; align-items: safe center   /* centred, but never pushed up out of reach when the page is taller than the screen */
+}
+@media (max-width:600px) {
+    body, body:not(.inmenu), body.inmenu { padding-bottom: 0 !important; height: calc(100dvh - 38px - env(safe-area-inset-top, 0px) - var(--dockh, 80px) - env(safe-area-inset-bottom, 0px)) }
+}
+</style>
+
+<script id="scroll-shim">
+/* the page scrolls inside the body (so the scrollbar sits below the top bar): make window.scrollTo scroll it too */
+(function () {
+    var orig = window.scrollTo.bind(window);
+    window.scrollTo = function (a, b) {
+        orig.apply(window, arguments);
+        var o = (a && typeof a === 'object') ? a : { left: a, top: b };
+        try { document.body.scrollTo({ top: o.top || 0, left: o.left || 0, behavior: o.behavior || 'auto' }); } catch (e) { document.body.scrollTop = o.top || 0; }
+    };
+})();
+</script>
 </head>
 
 <body class="inmenu">
@@ -4176,7 +4216,7 @@ main > header h1, main > header #psub { display: none !important }
                         <path d="M0.5 12 L3 10 L6 19 L11.5 0 H12.5" fill="none" stroke="currentColor" stroke-width="3"
                             stroke-linejoin="miter" vector-effect="non-scaling-stroke" />
                     </svg><span class="vin">-1</span></span></h1>
-            <p class="sub">v4.8.3 - a math game inspired by golf.</p>
+            <p class="sub">v4.8.3 - <span data-i="tagline">a math game inspired by golf.</span></p>
         </header>
         <div class="mtop" id="mtop">
             <button type="button" class="micon" data-go="mhow" aria-label="how to play"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M9.3 9.4a2.7 2.7 0 1 1 3.9 2.4c-.8.4-1.2.9-1.2 1.8M12 17v.6" /></svg></button>
@@ -5123,7 +5163,7 @@ main > header h1, main > header #psub { display: none !important }
                 "calc_eq": "式",
                 "calc_nan": "数ではありません",
                 "calc_sw": "クリックで {a} と {b} を切り替え",
-                "holein": "ホールイン",
+                "holein": "ほーるいん",
                 "homepage": "ホーム",
                 "search": "検索",
                 "ph1": "ここに何か入力できます。（これは検索バーです）",
@@ -5297,196 +5337,196 @@ main > header h1, main > header #psub { display: none !important }
                 "lb_err": "ランキングを読み込めませんでした"
             },
             "zh": {
-                "calc": "计算器",
-                "calc_title": "计算器",
-                "calc_import": "当前",
-                "calc_goal": "目标",
-                "calc_start": "起点",
-                "calc_imp_lbl": "导入表达式",
-                "calc_show_lbl": "结果显示为",
-                "calc_m_dec": "小数",
-                "calc_m_frac": "分数",
-                "note_title": "记事本",
-                "note_ph": "在此书写，或从计算器拖入算式",
-                "calc_none": "还没有算式",
-                "calc_close": "关闭计算器",
-                "calc_rm": "删除此行",
-                "calc_type": "在此输入…",
+                "calc": "計算器",
+                "calc_title": "計算器",
+                "calc_import": "當前",
+                "calc_goal": "目標",
+                "calc_start": "起點",
+                "calc_imp_lbl": "導入表達式",
+                "calc_show_lbl": "結果顯示為",
+                "calc_m_dec": "小數",
+                "calc_m_frac": "分數",
+                "note_title": "記事本",
+                "note_ph": "在此書寫，或從計算器拖入算式",
+                "calc_none": "還沒有算式",
+                "calc_close": "關閉計算器",
+                "calc_rm": "刪除此行",
+                "calc_type": "在此輸入…",
                 "calc_eq": "算式",
-                "calc_nan": "不是数字",
-                "calc_sw": "点击在 {a} 和 {b} 之间切换",
-                "holein": "一杆进",
-                "homepage": "首页",
+                "calc_nan": "不是數字",
+                "calc_sw": "點擊在 {a} 和 {b} 之間切換",
+                "holein": "桿進",
+                "homepage": "首頁",
                 "search": "搜索",
-                "ph1": "你可以在这里打字。（这是搜索栏）",
-                "ph2": "这是搜索栏。",
-                "aria_site": "站点",
-                "menu_sub": "选一种玩法吧",
-                "m_random_b": "随机关卡",
-                "m_random_d": "按你选的难度，源源不断的全新关卡",
-                "m_daily_b": "每日关卡",
-                "m_daily_d": "每天一个新挑战，还有往日关卡的日历",
-                "m_stats_b": "你的统计",
-                "m_stats_d": "连续天数等等",
-                "m_main_b": "主线关卡",
-                "m_main_d": "每个难度都有手工打造的关卡",
-                "pickday": "选一天来玩吧",
-                "pickday_guest": "选一天来玩吧。游客也能玩：登录后才能上排行榜",
-                "username": "用户名",
-                "password": "密码",
-                "login": "登录",
-                "register": "注册",
-                "solved_title": "已解出此关的玩家数",
-                "aria_solved": "解出今日关卡的玩家数",
-                "newdaily": "距下一个每日关卡",
-                "hour": "时",
+                "ph1": "你可以在這裡打字。（這是搜索欄）",
+                "ph2": "這是搜索欄。",
+                "aria_site": "站點",
+                "menu_sub": "選一種玩法吧",
+                "m_random_b": "隨機關卡",
+                "m_random_d": "按你選的難度，源源不斷的全新關卡",
+                "m_daily_b": "每日關卡",
+                "m_daily_d": "每天一個新挑戰，還有往日關卡的日曆",
+                "m_stats_b": "你的統計",
+                "m_stats_d": "連續天數等等",
+                "m_main_b": "主線關卡",
+                "m_main_d": "每個難度都有手工打造的關卡",
+                "pickday": "選一天來玩吧",
+                "pickday_guest": "選一天來玩吧。游客也能玩：登錄後才能上排行榜",
+                "username": "用戶名",
+                "password": "密碼",
+                "login": "登錄",
+                "register": "注冊",
+                "solved_title": "已解出此關的玩家數",
+                "aria_solved": "解出今日關卡的玩家數",
+                "newdaily": "距下一個每日關卡",
+                "hour": "時",
                 "minute": "分",
                 "second": "秒",
                 "dboard": "每日排行榜",
                 "mboard": "每月排行榜",
-                "back_menu": "回到菜单",
-                "aria_prev": "上个月",
-                "aria_next": "下个月",
+                "back_menu": "回到菜單",
+                "aria_prev": "上個月",
+                "aria_next": "下個月",
                 "st_solved": "已解出",
-                "st_cur": "当前连续",
-                "st_long": "最长连续",
-                "st_dev": "本设备上的随机关卡",
-                "playing_as": "当前玩家：{u}",
-                "not_logged": "未登录：显示保存在本设备上的成绩",
-                "acct_err": "没能加载你的账号统计",
-                "st_avg": "每关平均步数",
-                "st_total": "总步数",
-                "st_fewest": "最少步数",
+                "st_cur": "當前連續",
+                "st_long": "最長連續",
+                "st_dev": "本設備上的隨機關卡",
+                "playing_as": "當前玩家：{u}",
+                "not_logged": "未登錄：顯示保存在本設備上的成績",
+                "acct_err": "沒能加載你的帳號統計",
+                "st_avg": "每關平均步數",
+                "st_total": "總步數",
+                "st_fewest": "最少步數",
                 "st_first": "首次解出",
                 "st_recent": "最近一次",
-                "st_lv": "已解关卡",
-                "st_atpar": "打出标准杆",
-                "st_avgover": "平均超出标准杆步数",
+                "st_lv": "已解關卡",
+                "st_atpar": "打出標準桿",
+                "st_avgover": "平均超出標準桿步數",
                 "st_hc": "硬核模式解出",
-                "main_sub": "手工打造的关卡，按难度分组",
-                "soon": "关卡即将上线",
-                "d_easy": "简单",
+                "main_sub": "手工打造的關卡，按難度分組",
+                "soon": "關卡即將上線",
+                "d_easy": "簡單",
                 "d_medium": "中等",
-                "d_hard": "困难",
-                "d_challenge": "挑战",
+                "d_hard": "困難",
+                "d_challenge": "挑戰",
                 "hardcore": "硬核",
                 "normal": "普通",
-                "youhave": "你现在是",
-                "goal": "目标",
-                "psub_par": "用标准杆步数或更少的步数到达目标",
-                "psub_daily": "用尽量少的步数到达目标",
-                "undo": "撤销",
-                "undo_hc": "撤销（还剩{n}次）",
-                "restart": "重新开始本关",
-                "giveup": "放弃",
-                "skipanim": "跳过动画",
-                "aria_diff": "难度",
-                "diff_lbl": "难度：",
+                "youhave": "你現在是",
+                "goal": "目標",
+                "psub_par": "用標準桿步數或更少的步數到達目標",
+                "psub_daily": "用盡量少的步數到達目標",
+                "undo": "撤銷",
+                "undo_hc": "撤銷（還剩{n}次）",
+                "restart": "重新開始本關",
+                "giveup": "放棄",
+                "skipanim": "跳過動畫",
+                "aria_diff": "難度",
+                "diff_lbl": "難度：",
                 "mode_lbl": "模式：",
-                "mainmenu": "主菜单",
+                "mainmenu": "主菜單",
                 "leaderboard": "排行榜",
-                "scores": "成绩",
-                "what": "这是什么？",
-                "settings": "设置",
+                "scores": "成績",
+                "what": "這是什麼？",
+                "settings": "設置",
                 "gotcha": "明白了",
-                "dlg_p": "每一关都是现场生成的，只给你需要的运算。标准杆是一个保证能通关的步数（挑战难度里往往还有更短的路线，所以你可以打破标准杆），超过了也能继续玩，只是每多一步就算超出标准杆一步。很多关卡不止一条路线。硬核模式（在设置里）下，每关只有 3 次撤销，不能重新开始，也不能超出标准杆。默认关卡只用整数，除法只有在结果是整数时才能用，所以灰掉的 ÷ 按钮就表示你的数除不尽。挑战难度会加入 |x|（绝对值）、√x、x³、取负和取模等额外运算，解法也五花八门。在设置里可以切换成小数（比如 +0.5，x⁻¹ 会把 4 变成 0.25）或分数（除法可以留下分数，x⁻¹ 会把 4 变成 1/4）。小数模式下还可以让目标也是小数。",
-                "scores_hint": "点一下成绩，就能再玩一次那一关",
-                "scores_none": "还没有成绩。解出一关，它就会出现在这里。",
-                "clear_scores": "清除成绩",
-                "tap_confirm": "再点一次确认",
+                "dlg_p": "每一關都是現場生成的，只給你需要的運算。標準桿是一個保證能通關的步數（挑戰難度裡往往還有更短的路線，所以你可以打破標準桿），超過了也能繼續玩，只是每多一步就算超出標準桿一步。很多關卡不止一條路線。硬核模式（在設置裡）下，每關只有 3 次撤銷，不能重新開始，也不能超出標準桿。默認關卡只用整數，除法只有在結果是整數時才能用，所以灰掉的 ÷ 按鈕就表示你的數除不盡。挑戰難度會加入 |x|（絕對值）、√x、x³、取負和取模等額外運算，解法也五花八門。在設置裡可以切換成小數（比如 +0.5，x⁻¹ 會把 4 變成 0.25）或分數（除法可以留下分數，x⁻¹ 會把 4 變成 1/4）。小數模式下還可以讓目標也是小數。",
+                "scores_hint": "點一下成績，就能再玩一次那一關",
+                "scores_none": "還沒有成績。解出一關，它就會出現在這裡。",
+                "clear_scores": "清除成績",
+                "tap_confirm": "再點一次確認",
                 "back": "返回",
-                "flip_b": "翻页牌",
-                "flip_d": "把你的数字和目标显示成翻页时钟的样子",
-                "anim_b": "动画",
-                "anim_d": "翻牌、球的飞行、数轴缩放和彩纸",
-                "adv_b": "高级动画",
-                "adv_d": "单独开关每一种动画",
-                "open": "打开",
-                "num_b": "数字类型",
-                "num_d": "使用整数、小数或分数。会开始新的一关",
-                "aria_numtype": "数字类型",
-                "n_whole": "整数",
-                "n_dec": "小数",
-                "n_frac": "分数",
-                "gdec_b": "小数目标",
-                "gdec_d": "仅小数模式：目标可以是像 3.5 这样的小数，不只是整数。会开始新的一关",
-                "gfrac_b": "分数目标",
-                "gfrac_d": "仅分数模式：目标可以是像 7/4 这样的分数，不只是整数。会开始新的一关",
-                "share_b": "复制链接",
-                "share_ok": "已复制",
-                "roots_b": "非平方数的平方根",
-                "roots_d": "允许对非平方数使用√，得到 √2 或 3√5 这样的根号。分数模式下始终允许。会开始新关卡",
+                "flip_b": "翻頁牌",
+                "flip_d": "把你的數字和目標顯示成翻頁時鐘的樣子",
+                "anim_b": "動畫",
+                "anim_d": "翻牌、球的飛行、數軸縮放和彩紙",
+                "adv_b": "高級動畫",
+                "adv_d": "單獨開關每一種動畫",
+                "open": "打開",
+                "num_b": "數字類型",
+                "num_d": "使用整數、小數或分數。會開始新的一關",
+                "aria_numtype": "數字類型",
+                "n_whole": "整數",
+                "n_dec": "小數",
+                "n_frac": "分數",
+                "gdec_b": "小數目標",
+                "gdec_d": "僅小數模式：目標可以是像 3.5 這樣的小數，不只是整數。會開始新的一關",
+                "gfrac_b": "分數目標",
+                "gfrac_d": "僅分數模式：目標可以是像 7/4 這樣的分數，不只是整數。會開始新的一關",
+                "share_b": "複製鏈接",
+                "share_ok": "已複製",
+                "roots_b": "非平方數的平方根",
+                "roots_d": "允許對非平方數使用√，得到 √2 或 3√5 這樣的根號。分數模式下始終允許。會開始新關卡",
                 "hc_b": "硬核模式",
-                "hc_d": "每关只能撤销 3 次，不能重新开始，也不能超出标准杆",
-                "theme_b": "浅色模式",
-                "theme_d": "从默认的深色外观切换成浅色",
-                "language": "语言",
-                "language_d": "选一种游戏说的语言",
+                "hc_d": "每關只能撤銷 3 次，不能重新開始，也不能超出標準桿",
+                "theme_b": "淺色模式",
+                "theme_d": "從默認的深色外觀切換成淺色",
+                "language": "語言",
+                "language_d": "選一種游戲說的語言",
                 "a_flip_b": "翻牌",
-                "a_flip_d": "数字像翻板显示屏一样翻动",
-                "a_ball_b": "球的飞行",
-                "a_ball_d": "球沿着数轴划出弧线，虚线轨迹紧随其后",
-                "a_zoom_b": "数轴缩放",
-                "a_zoom_d": "数轴会平滑地滑到新的刻度",
-                "a_conf_b": "彩纸",
-                "a_conf_d": "解出一关时，从洞里喷出一阵彩纸",
-                "a_slide_b": "面板滑动和摇摆",
-                "a_slide_d": "设置和成绩面板滑入时会倾斜摇摆，背景也跟着移动",
-                "a_theme_b": "主题渐变",
-                "a_theme_d": "颜色在深色和浅色之间渐变",
-                "a_ui_b": "按钮和菜单动效",
-                "a_ui_d": "按钮按下、悬停变化和页面淡入",
-                "aria_nl": "显示你的球、你的击球点和球洞的数轴",
-                "tee": "发球点",
-                "negate": "取负",
-                "why_div": "除不尽",
-                "why_undef": "无定义",
-                "why_sqrt": "不是平方数",
-                "why_whole": "仅限整数",
+                "a_flip_d": "數字像翻板顯示屏一樣翻動",
+                "a_ball_b": "球的飛行",
+                "a_ball_d": "球沿著數軸劃出弧線，虛線軌跡緊隨其後",
+                "a_zoom_b": "數軸縮放",
+                "a_zoom_d": "數軸會平滑地滑到新的刻度",
+                "a_conf_b": "彩紙",
+                "a_conf_d": "解出一關時，從洞裡噴出一陣彩紙",
+                "a_slide_b": "面板滑動和搖擺",
+                "a_slide_d": "設置和成績面板滑入時會傾斜搖擺，背景也跟著移動",
+                "a_theme_b": "主題漸變",
+                "a_theme_d": "顏色在深色和淺色之間漸變",
+                "a_ui_b": "按鈕和菜單動效",
+                "a_ui_d": "按鈕按下、懸停變化和頁面淡入",
+                "aria_nl": "顯示你的球、你的擊球點和球洞的數軸",
+                "tee": "發球點",
+                "negate": "取負",
+                "why_div": "除不盡",
+                "why_undef": "無定義",
+                "why_sqrt": "不是平方數",
+                "why_whole": "僅限整數",
                 "why_big": "太大",
-                "why_root_add": "不能加到根号上",
-                "why_root_already": "已经是根号",
-                "why_neg": "负数",
-                "dlvl": "每日关卡 {d}",
+                "why_root_add": "不能加到根號上",
+                "why_root_already": "已經是根號",
+                "why_neg": "負數",
+                "dlvl": "每日關卡 {d}",
                 "hc_no": "硬核模式下不可用",
-                "lose1": "步数用完了。撤销一步继续试，或者放弃吧。",
-                "lose2": "步数和撤销次数都用完了。放弃就能看到答案。",
+                "lose1": "步數用完了。撤銷一步繼續試，或者放棄吧。",
+                "lose2": "步數和撤銷次數都用完了。放棄就能看到答案。",
                 "win_daily": "{m}解出。",
-                "back_cal": "回到日历",
-                "give_under": "这是一个低于标准杆的解法（{m}）。",
-                "give_par": "这是标准杆解法（{m}）。",
-                "next_level": "下一关",
+                "back_cal": "回到日曆",
+                "give_under": "這是一個低於標準桿的解法（{m}）。",
+                "give_par": "這是標準桿解法（{m}）。",
+                "next_level": "下一關",
                 "win": "{n} 步解出：{sc}。",
-                "sc_under": "低于标准杆 {n} 步",
-                "sc_par": "标准杆",
-                "sc_over": "超出标准杆 {n} 步",
-                "par_left": "标准杆 {p} · {m}",
-                "score_even": "已解出 {h} 关 · 总共平标准杆",
-                "score_over": "已解出 {h} 关 · 总共超出标准杆 {x} 步",
-                "sum_even": "已解出 {n} 关 · {a} 关打出标准杆 · 总共平标准杆",
-                "sum_over": "已解出 {n} 关 · {a} 关打出标准杆 · 总共超出标准杆 {x} 步",
-                "res_line": "{m} / 标准杆 {p}",
-                "play_again": "再玩这一关",
-                "guest_note": "正在以游客身份游玩：成绩保存在本设备上。到日历页面登录，就能把成绩加入排行榜。",
+                "sc_under": "低於標準桿 {n} 步",
+                "sc_par": "標準桿",
+                "sc_over": "超出標準桿 {n} 步",
+                "par_left": "標準桿 {p} · {m}",
+                "score_even": "已解出 {h} 關 · 總共平標準桿",
+                "score_over": "已解出 {h} 關 · 總共超出標準桿 {x} 步",
+                "sum_even": "已解出 {n} 關 · {a} 關打出標準桿 · 總共平標準桿",
+                "sum_over": "已解出 {n} 關 · {a} 關打出標準桿 · 總共超出標準桿 {x} 步",
+                "res_line": "{m} / 標準桿 {p}",
+                "play_again": "再玩這一關",
+                "guest_note": "正在以游客身份游玩：成績保存在本設備上。到日曆頁面登錄，就能把成績加入排行榜。",
                 "saving": "保存中…",
-                "saved": "已保存。这一天你的最好成绩：{m}。重新开始，试试更少的步数吧。",
-                "saved_late": "那一天已经结束了，所以不会出现在当天的排行榜上。",
-                "enter_creds": "请输入用户名和密码",
-                "daily_err": "没能加载每日关卡（{e}）。请检查服务器是否在运行，以及脚本里的 API 地址是否正确。",
-                "net_msg": "无法连接到服务器。请检查网络连接，或稍后再试。",
+                "saved": "已保存。這一天你的最好成績：{m}。重新開始，試試更少的步數吧。",
+                "saved_late": "那一天已經結束了，所以不會出現在當天的排行榜上。",
+                "enter_creds": "請輸入用戶名和密碼",
+                "daily_err": "沒能加載每日關卡（{e}）。請檢查服務器是否在運行，以及腳本裡的 API 地址是否正確。",
+                "net_msg": "無法連接到服務器。請檢查網絡連接，或稍後再試。",
                 "net_ok": "好的",
-                "cm_t": "用代码游玩",
-                "cm_s": "粘贴别人分享的关卡代码或链接",
-                "ed_t": "关卡编辑器",
-                "ed_s": "制作你自己的关卡并分享",
-                "cd_hint": "粘贴关卡代码或链接",
-                "cd_go": "开始",
+                "cm_t": "用代碼游玩",
+                "cm_s": "粘貼別人分享的關卡代碼或鏈接",
+                "ed_t": "關卡編輯器",
+                "ed_s": "製作你自己的關卡並分享",
+                "cd_hint": "粘貼關卡代碼或鏈接",
+                "cd_go": "開始",
                 "cd_cancel": "取消",
-                "ssub": "{date}，每日第 {n} 关",
-                "stats_err": "没能加载统计",
-                "loading": "加载中…",
-                "lb_none": "还没有成绩",
-                "lb_err": "没能加载排行榜"
+                "ssub": "{date}，每日第 {n} 關",
+                "stats_err": "沒能加載統計",
+                "loading": "加載中…",
+                "lb_none": "還沒有成績",
+                "lb_err": "沒能加載排行榜"
             }
         };
         /* strings that depend on a number or a count */
@@ -5502,23 +5542,23 @@ main > header h1, main > header #psub { display: none !important }
         Object.assign(I18N.en, { lang_en: 'english', lang_es: 'spanish', lang_ja: 'japanese', lang_zh: 'chinese' });
         Object.assign(I18N.es, { lang_en: 'inglés', lang_es: 'español', lang_ja: 'japonés', lang_zh: 'chino' });
         Object.assign(I18N.ja, { lang_en: '英語', lang_es: 'スペイン語', lang_ja: '日本語', lang_zh: '中国語' });
-        Object.assign(I18N.zh, { lang_en: '英语', lang_es: '西班牙语', lang_ja: '日语', lang_zh: '中文' });
+        Object.assign(I18N.zh, { lang_en: '英語', lang_es: '西班牙語', lang_ja: '日語', lang_zh: '中文' });
         Object.assign(I18N.en, {"sand_b": "sand pits", "sand_d": "some levels have numbers, or a whole stretch of numbers, that you can land on but not move from, so you can only undo. on the complex plane they are shaded polygons. the higher the difficulty, the more routes they block. starts a new level"});
         Object.assign(I18N.es, {"sand_b": "trampas de arena", "sand_d": "algunos niveles tienen números, o un tramo entero de números, en los que puedes caer pero de los que no puedes salir, así que solo puedes deshacer. en el plano complejo son polígonos sombreados. cuanto mayor la dificultad, más rutas bloquean. empieza un nivel nuevo"});
         Object.assign(I18N.ja, {"sand_b": "バンカー", "sand_d": "着地はできるけれど、そこから動けない数（または数の範囲）があるレベルが出ます。元に戻すことしかできません。複素平面では色のついた多角形になります。難易度が高いほど、多くのルートをふさぎます。新しいレベルが始まります"});
-        Object.assign(I18N.zh, {"sand_b": "沙坑", "sand_d": "有些关卡带有可以落入但无法继续移动的数（或一段数的范围），只能撤销。在复平面上是带阴影的多边形。难度越高，封住的路线越多。会开始新关卡"});
+        Object.assign(I18N.zh, {"sand_b": "沙坑", "sand_d": "有些關卡帶有可以落入但無法繼續移動的數（或一段數的範圍），只能撤銷。在複平面上是帶陰影的多邊形。難度越高，封住的路線越多。會開始新關卡"});
         Object.assign(I18N.en, { sand_stuck: "stuck in the sand! you can only undo.", sand_note: "sand pits:" });
         Object.assign(I18N.es, { sand_stuck: "¡atascado en la arena! solo puedes deshacer.", sand_note: "trampas de arena:" });
         Object.assign(I18N.ja, { sand_stuck: "砂にはまった！元に戻すことしかできません。", sand_note: "バンカー:" });
-        Object.assign(I18N.zh, { sand_stuck: "陷进沙坑了！只能撤销。", sand_note: "沙坑：" });
+        Object.assign(I18N.zh, { sand_stuck: "陷進沙坑了！只能撤銷。", sand_note: "沙坑：" });
         Object.assign(I18N.en, { howto_b: "how to play", howto_p1: "you start with a number and need to turn it into the goal.", howto_p2: "every move applies one of the operations shown to your number. tap an operation to use it.", howto_p3: "par is a number of moves that is guaranteed to work. aim to finish in par or fewer, since every move past par counts as one over.", howto_p4: "stuck? undo your last move or restart the level.", howto_p5: "by default, division only works when the result is a whole number, so a greyed-out ÷ means your number doesn't divide evenly." });
         Object.assign(I18N.es, { howto_b: "cómo jugar", howto_p1: "empiezas con un número y tienes que convertirlo en la meta.", howto_p2: "cada movimiento aplica una de las operaciones mostradas a tu número. toca una operación para usarla.", howto_p3: "el par es un número de movimientos que seguro funciona. intenta terminar en par o menos, porque cada movimiento después del par cuenta como uno de más.", howto_p4: "¿atascado? deshaz tu último movimiento o reinicia el nivel.", howto_p5: "por defecto, la división solo funciona cuando el resultado es un número entero, así que un ÷ en gris significa que tu número no se divide exacto." });
         Object.assign(I18N.ja, { howto_b: "遊び方", howto_p1: "最初の数を、ゴールの数に変えるのが目的です。", howto_p2: "1手ごとに、表示されている演算のどれかが今の数に適用されます。使いたい演算をタップしてください。", howto_p3: "パーは「これだけあれば必ずゴールできる」手数です。パー以内でのクリアを目指しましょう。パーを超えた手数は、1手ごとにオーバーとして数えられます。", howto_p4: "行き詰まったら、1手戻すか、レベルをやり直せます。", howto_p5: "初期設定では、割り算は結果が整数になるときだけ使えます。÷がグレーになっているときは、今の数が割り切れないということです。" });
-        Object.assign(I18N.zh, { howto_b: "玩法", howto_p1: "你从一个数开始，目标是把它变成目标数。", howto_p2: "每走一步，就会把所显示的一种运算用在当前的数上。点按运算即可使用。", howto_p3: "标准杆是保证能通关的步数。争取在标准杆以内完成，超出标准杆的每一步都算多一步。", howto_p4: "卡住了？可以撤销上一步，或者重新开始这一关。", howto_p5: "默认情况下，除法只有在结果为整数时才能使用，所以灰色的 ÷ 表示当前的数除不尽。" });
+        Object.assign(I18N.zh, { howto_b: "玩法", howto_p1: "你從一個數開始，目標是把它變成目標數。", howto_p2: "每走一步，就會把所顯示的一種運算用在當前的數上。點按運算即可使用。", howto_p3: "標準桿是保證能通關的步數。爭取在標準桿以內完成，超出標準桿的每一步都算多一步。", howto_p4: "卡住了？可以撤銷上一步，或者重新開始這一關。", howto_p5: "默認情況下，除法只有在結果為整數時才能使用，所以灰色的 ÷ 表示當前的數除不盡。" });
         Object.assign(I18N.en, { m_vs_b: "versus mode", m_vs_d: "make or join a room and play against friends" });
         Object.assign(I18N.es, { m_vs_b: "modo versus", m_vs_d: "crea o únete a una sala y juega contra tus amigos" });
         Object.assign(I18N.ja, { m_vs_b: "対戦モード", m_vs_d: "ルームを作る・参加して、友だちと対戦" });
-        Object.assign(I18N.zh, { m_vs_b: "对战模式", m_vs_d: "创建或加入房间，和朋友对战" });
+        Object.assign(I18N.zh, { m_vs_b: "對戰模式", m_vs_d: "創建或加入房間，和朋友對戰" });
         Object.assign(I18N.en, {"packs_t": "select game packs", "packs_sub": "each random level comes from one of the packs you have turned on", "pk_base_b": "base game", "pk_base_d": "familiar operations, base game", "pk_vars_b": "variables", "pk_vars_d": "operations that use variables", "pk_cx_b": "complex numbers", "pk_cx_d": "numbers with an imaginary part", "pk_trig_b": "trigonometric functions", "pk_trig_d": "sine, cosine, tangent and friends", "pk_soon": "coming soon", "pk_play": "play"});
         Object.assign(I18N.en, {"cplane": "complex plane"});
         Object.assign(I18N.en, {"mp_sub": "pick a game pack to see its levels", "mp_back": "back to packs"});
@@ -5531,19 +5571,20 @@ main > header h1, main > header #psub { display: none !important }
         Object.assign(I18N.ja, {"cplane": "複素平面"});
         Object.assign(I18N.ja, {"mp_sub": "ゲームパックを選んでレベルを見よう", "mp_back": "パック選択に戻る"});
         Object.assign(I18N.ja, {"pk_calc_b": "微積分", "pk_calc_d": "導関数など"});
-        Object.assign(I18N.zh, {"packs_t": "选择游戏包", "packs_sub": "每个随机关卡都来自你开启的其中一个游戏包", "pk_base_b": "基础游戏", "pk_base_d": "熟悉的运算，基础游戏", "pk_vars_b": "变量", "pk_vars_d": "使用变量的运算", "pk_cx_b": "复数", "pk_cx_d": "带虚部的数", "pk_trig_b": "三角函数", "pk_trig_d": "正弦、余弦、正切等", "pk_soon": "即将上线", "pk_play": "开始"});
-        Object.assign(I18N.zh, {"cplane": "复平面"});
-        Object.assign(I18N.zh, {"mp_sub": "选择一个游戏包查看关卡", "mp_back": "返回游戏包"});
-        Object.assign(I18N.zh, {"pk_calc_b": "微积分", "pk_calc_d": "导数等"});
+        Object.assign(I18N.zh, {"packs_t": "選擇游戲包", "packs_sub": "每個隨機關卡都來自你開啟的其中一個游戲包", "pk_base_b": "基礎游戲", "pk_base_d": "熟悉的運算，基礎游戲", "pk_vars_b": "變量", "pk_vars_d": "使用變量的運算", "pk_cx_b": "複數", "pk_cx_d": "帶虛部的數", "pk_trig_b": "三角函數", "pk_trig_d": "正弦、餘弦、正切等", "pk_soon": "即將上線", "pk_play": "開始"});
+        Object.assign(I18N.zh, {"cplane": "複平面"});
+        Object.assign(I18N.zh, {"mp_sub": "選擇一個游戲包查看關卡", "mp_back": "返回游戲包"});
+        Object.assign(I18N.zh, {"pk_calc_b": "微積分", "pk_calc_d": "導數等"});
 Object.assign(I18N.en, {"onl_t": "online levels", "onl_s": "play levels other players published, or search by author"});
 Object.assign(I18N.es, {"onl_t": "niveles en línea", "onl_s": "juega niveles publicados por otros jugadores o busca por autor"});
 Object.assign(I18N.ja, {"onl_t": "オンラインレベル", "onl_s": "他のプレイヤーが公開したレベルを遊ぼう。作者で検索もできます"});
-Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布的关卡，或按作者搜索"});
+Object.assign(I18N.zh, {"onl_t": "在線關卡", "onl_s": "玩其他玩家發布的關卡，或按作者搜索"});
         Object.assign(I18N.en, { wel1: "welcome back,", wel2: "good to see you,", wel3: "ready for a round,", wel4: "hello again,", wel5: "back for more,", wel6: "tee time,", w_guest: "guest", w_streak: "daily streak", w_month: "monthly completion", credits: "credits", cr_made: "made by gamedevrg", cr_x: "close", cr_contrib: "contributors", cr_thanks: "special thanks", tab_main: "main", tab_rand: "random", tab_daily: "daily", tab_vs: "versus", tab_edit: "editor", tab_online: "online", dock_more: "more ways to play" });
         Object.assign(I18N.es, { wel1: "bienvenido de nuevo,", wel2: "qué bueno verte,", wel3: "listo para una ronda,", wel4: "hola otra vez,", wel5: "volviste por más,", wel6: "hora del primer golpe,", w_guest: "invitado", w_streak: "racha diaria", w_month: "avance del mes", credits: "créditos", cr_made: "hecho por gamedevrg", cr_x: "cerrar", cr_contrib: "colaboradores", cr_thanks: "agradecimientos especiales", tab_main: "principal", tab_rand: "aleatorio", tab_daily: "diario", tab_vs: "versus", tab_edit: "editor", tab_online: "en línea", dock_more: "más formas de jugar" });
         Object.assign(I18N.ja, { wel1: "おかえりなさい、", wel2: "会えてうれしいよ、", wel3: "ラウンドの準備はいい？", wel4: "やあ、また会ったね、", wel5: "また来てくれたね、", wel6: "ティーオフの時間だよ、", w_guest: "ゲスト", w_streak: "毎日の連続記録", w_month: "今月の達成度", credits: "クレジット", cr_made: "gamedevrg 制作", cr_x: "閉じる", cr_contrib: "コントリビューター", cr_thanks: "スペシャルサンクス", tab_main: "メイン", tab_rand: "ランダム", tab_daily: "デイリー", tab_vs: "対戦", tab_edit: "エディタ", tab_online: "オンライン", dock_more: "ほかの遊び方" });
-        Object.assign(I18N.zh, { wel1: "欢迎回来，", wel2: "很高兴见到你，", wel3: "准备好来一局了吗，", wel4: "你好呀，", wel5: "又来啦，", wel6: "开球时间到，", w_guest: "访客", w_streak: "每日连续", w_month: "本月完成度", credits: "制作名单", cr_made: "由 gamedevrg 制作", cr_x: "关闭", cr_contrib: "贡献者", cr_thanks: "特别感谢", tab_main: "主线", tab_rand: "随机", tab_daily: "每日", tab_vs: "对战", tab_edit: "编辑器", tab_online: "在线", dock_more: "更多玩法" });
-        Object.assign(I18N.en, { tab_home: "home" }); Object.assign(I18N.es, { tab_home: "inicio" }); Object.assign(I18N.ja, { tab_home: "ホーム" }); Object.assign(I18N.zh, { tab_home: "首页" });
+        Object.assign(I18N.zh, { wel1: "歡迎回來，", wel2: "很高興見到你，", wel3: "準備好來一局了嗎，", wel4: "你好呀，", wel5: "又來啦，", wel6: "開球時間到，", w_guest: "訪客", w_streak: "每日連續", w_month: "本月完成度", credits: "製作名單", cr_made: "由 gamedevrg 製作", cr_x: "關閉", cr_contrib: "貢獻者", cr_thanks: "特別感謝", tab_main: "主線", tab_rand: "隨機", tab_daily: "每日", tab_vs: "對戰", tab_edit: "編輯", tab_online: "在線", dock_more: "更多玩法" });
+        Object.assign(I18N.en, { tagline: "a math game inspired by golf." }); Object.assign(I18N.es, { tagline: "un juego de matemáticas inspirado en el golf." }); Object.assign(I18N.ja, { tagline: "ゴルフにヒントを得た数学ゲーム。" }); Object.assign(I18N.zh, { tagline: "一款受高爾夫啟發的數學遊戲。" });
+        Object.assign(I18N.en, { tab_home: "home" }); Object.assign(I18N.es, { tab_home: "inicio" }); Object.assign(I18N.ja, { tab_home: "ホーム" }); Object.assign(I18N.zh, { tab_home: "首頁" });
         let lang = 'en';
         try { const s = localStorage.getItem('lang'); if (LANGS.includes(s)) lang = s } catch (e) { }
         function tr(k, v) {
@@ -5554,7 +5595,7 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
         const cjk = () => lang === 'ja' || lang === 'zh';
         const SP = () => cjk() ? '' : ' ';
         const teeW = () => (tr('tee').length + 1) * (cjk() ? 2 : 1);
-        const LOCALE = { en: undefined, es: 'es', ja: 'ja', zh: 'zh-CN' };
+        const LOCALE = { en: undefined, es: 'es', ja: 'ja', zh: 'zh-TW' };
         const MNS = {
             en: ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'],
             es: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
@@ -5568,7 +5609,7 @@ Object.assign(I18N.zh, {"onl_t": "在线关卡", "onl_s": "玩其他玩家发布
         /* static text: on first run every element whose text (or placeholder / aria-label) is exactly an English entry gets tagged, so the page needs no markup changes */
         const tagged = [], i18nNorm = s => String(s).replace(/\s+/g, ' ').trim();
         function applyStatic() {
-            document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
+            document.documentElement.lang = lang === 'zh' ? 'zh-TW' : lang;
             tagged.forEach(([el, k, a]) => { const v = tr(k); if (a) el.setAttribute(a, v); else el.textContent = v; });
             document.querySelectorAll('#langSeg button').forEach(b => b.setAttribute('aria-checked', b.dataset.l === lang));
             document.querySelectorAll('.sw').forEach(b => { const r = b.closest('.srow'), bb = r && r.querySelector('b'); if (bb) b.setAttribute('aria-label', bb.textContent); });
@@ -7958,7 +7999,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
             const r = document.documentElement, b = document.body, F = .5; let q = 0;
             if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
             const nar = matchMedia('(max-width:600px)');   /* narrow screens: the body scrolls (not the window), and the grid no longer scrolls with it */
-            const u = () => { q = 0; b.style.backgroundPositionY = (r.classList.contains('noanim') ? 0 : nar.matches ? -b.scrollTop * F : window.scrollY * (1 - F)) + 'px'; };
+            const u = () => { q = 0; b.style.backgroundPositionY = (r.classList.contains('noanim') ? 0 : window.scrollY * (1 - F) - b.scrollTop * F) + 'px'; };
             addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(u); }, { passive: true });
             b.addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(u); }, { passive: true });
         })();
@@ -7971,7 +8012,8 @@ function calcClose() { if (calcOpen) calcSet(false); }
 (function () {
     var a = document.getElementById('tacct'); if (!a) return;
     var L = 'en'; try { var s = localStorage.getItem('lang'); if (s === 'es' || s === 'ja' || s === 'zh') L = s; } catch (e) { }
-    var S = { en: ['signed in as ', ''], es: ['sesión iniciada como ', ''], ja: ['', 'としてログイン中'], zh: ['已登录：', ''] }[L], LG = { en: 'log in', es: 'iniciar sesión', ja: 'ログイン', zh: '登录' }[L];
+    var S = { en: ['signed in as ', ''], es: ['sesión iniciada como ', ''], ja: ['', 'としてログイン中'], zh: ['已登錄：', ''] }[L], LG = { en: 'log in', es: 'iniciar sesión', ja: 'ログイン', zh: '登錄' }[L];
+    { var go = document.getElementById('tgo'); if (go) go.textContent = { en: 'search', es: 'buscar', ja: '検索', zh: '搜尋' }[L]; }   /* top bar search button follows the language */
     function show() {
         var n = ''; try { n = (localStorage.getItem('username') || '').trim(); } catch (e) { }
         if (n) { var b = document.createElement('b'); b.textContent = n; a.className = 'twho'; a.replaceChildren(S[0], b, S[1]); a.title = n; }
@@ -7989,7 +8031,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
         en: { pre: 'logged in as ', post: '', manage: 'manage my account', out: 'not logged in', login: 'log in' },
         es: { pre: 'sesión iniciada como ', post: '', manage: 'administrar mi cuenta', out: 'sin iniciar sesión', login: 'iniciar sesión' },
         ja: { pre: '', post: ' としてログイン中', manage: 'アカウント管理', out: '未ログイン', login: 'ログイン' },
-        zh: { pre: '已登录：', post: '', manage: '管理我的账户', out: '未登录', login: '登录' }
+        zh: { pre: '已登錄：', post: '', manage: '管理我的帳戶', out: '未登錄', login: '登錄' }
     }[L];
     function show() {
         var n = ''; try { n = (localStorage.getItem('username') || '').trim(); } catch (e) { }
@@ -8005,7 +8047,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
 (function () {
     var go = document.getElementById('tgo'), src = document.getElementById('tsearch'); if (!go || !src) return;
     var L = 'en'; try { var s = localStorage.getItem('lang'); if (s === 'es' || s === 'ja' || s === 'zh') L = s; } catch (e) { }
-    var T = { en: ['search', 'type here', 'close'], es: ['buscar', 'escribe aquí', 'cerrar'], ja: ['検索', 'ここに入力', '閉じる'], zh: ['搜索', '在此输入', '关闭'] }[L];
+    var T = { en: ['search', 'type here', 'close'], es: ['buscar', 'escribe aquí', 'cerrar'], ja: ['検索', 'ここに入力', '閉じる'], zh: ['搜尋', '在此輸入', '關閉'] }[L];
     var mq = matchMedia('(max-width:600px)');
     var d = document.createElement('dialog'); d.id = 'gsearchdlg'; d.setAttribute('aria-label', T[0]);
     d.innerHTML = '<h3></h3><form class="gsform"><div class="gsrow"><input type="search" autocomplete="off"><button type="submit"></button></div><button type="button" class="gsclose"></button></form>';
