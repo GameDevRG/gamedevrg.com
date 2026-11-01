@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>daily challenge · hole in √-1</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Chakra+Petch:ital,wght@0,400;0,500;0,700;1,400&family=Dela+Gothic+One&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Chakra+Petch:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Sans+JP:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+TC:wght@700;900&display=swap"
         rel="stylesheet">
     <style>
         @property --bg {
@@ -2300,15 +2300,15 @@
         :lang(ja) .mopt b,
         :lang(ja) .dgroup h3,
         :lang(ja) .calhead h3 {
-            font-family: 'Bricolage Grotesque', 'Dela Gothic One', system-ui, sans-serif;
-            font-weight: 400;
+            font-family: 'Bricolage Grotesque', 'IBM Plex Sans JP', system-ui, sans-serif;
+            font-weight: 700;
             font-synthesis: none
         }
 
         :lang(ja) h1 *,
         :lang(ja) .mopt b *,
         :lang(ja) .calhead h3 b {
-            font-weight: 400
+            font-weight: 700
         }
 
         /* connection error popup */
@@ -2731,6 +2731,426 @@
         }
     </style>
     <script>try { var q = JSON.parse(localStorage.getItem('hs1') || '{}'); if (q.theme === 'light') document.documentElement.setAttribute('data-theme', 'light'); if (q.hc) document.documentElement.classList.add('hc') } catch (e) { }</script>
+
+<style id="gdock-css">
+#gdock, #gdockback { display: none }
+@media (max-width: 600px) {
+    :root { --gdockh: 80px }
+    body { padding-bottom: calc(var(--gdockh) + env(safe-area-inset-bottom, 0px)) }
+    #gdockback { display: block; position: fixed; inset: 0; z-index: 5; background: rgba(5, 8, 20, .55); opacity: 0; pointer-events: none; transition: opacity .3s }
+    #gdockback.on { opacity: 1; pointer-events: auto }
+    #gdock { display: block; position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--card); border-top: 2px solid var(--ink); padding-bottom: env(safe-area-inset-bottom, 0px); -webkit-user-select: none; user-select: none; font-family: inherit }
+    .gdgrab { display: block; width: 100%; height: 20px; padding: 0; background: none; border: 0; cursor: pointer }
+    .gdgrab i { display: block; width: 40px; height: 4px; margin: 8px auto 0; background: var(--line) }
+    .gdmore { display: grid; grid-template-rows: 0fr; visibility: hidden; transition: grid-template-rows .35s cubic-bezier(.2, .8, .2, 1), visibility 0s .35s }
+    #gdock.open .gdmore { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows .35s cubic-bezier(.2, .8, .2, 1), visibility 0s }
+    .gdmore > div { overflow: hidden; min-height: 0 }
+    .gdrow { display: flex; align-items: center; gap: 14px; padding: 12px 18px; border-top: 1px solid var(--line); color: var(--ink); font-weight: 800; font-size: 1.05rem; text-decoration: none }
+    .gdrow:active { background: var(--cell, var(--bg)) }
+    .gdrow .ic, .gdtab .ic { flex: none; background: var(--ac, var(--ink)); -webkit-mask: var(--ic) center / contain no-repeat; mask: var(--ic) center / contain no-repeat }
+    .gdrow .ic { width: 26px; height: 26px }
+    .gdtabs { display: grid; grid-template-columns: repeat(6, 1fr) }
+    .gdtab { --ac: var(--blue); position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-width: 0; min-height: 56px; padding: 6px 2px 8px; color: var(--soft); font-weight: 600; font-size: .7rem; line-height: 1.1; text-decoration: none; -webkit-tap-highlight-color: transparent }
+    .gdtab .ic { width: 24px; height: 24px; transition: transform .25s cubic-bezier(.2, .8, .2, 1) }
+    .gdtab span:not(.ic) { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+    .gdtab:active { background: var(--cell, var(--bg)) }
+    .gdtab.cur { color: var(--ink) }
+    .gdtab.cur::before { content: ''; position: absolute; top: 0; left: 22%; right: 22%; height: 3px; background: var(--ac) }
+    .gdtab.cur .ic { transform: translateY(-1px) scale(1.08) }
+    .gdtab:focus-visible, .gdrow:focus-visible, .gdgrab:focus-visible, .gdmanage:focus-visible { outline: 0 }
+    .gdtab:focus-visible, .gdrow:focus-visible { background: color-mix(in srgb, var(--ac, var(--ink)) 18%, transparent) }
+    .gdgrab:focus-visible i { background: var(--soft) }
+    .gdmanage:focus-visible { filter: brightness(1.15) }
+    .gt-main { --ac: var(--imag); --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M5 21V4%22/%3E%3Cpath d=%22M5 4h13l-3 4.5 3 4.5H5%22/%3E%3C/svg%3E") }
+    .gt-rand { --ac: var(--peach, #ffb08a); --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Crect x=%223.5%22 y=%223.5%22 width=%2217%22 height=%2217%22/%3E%3Crect x=%226.8%22 y=%226.8%22 width=%222.4%22 height=%222.4%22 fill=%22%23000%22 stroke=%22none%22/%3E%3Crect x=%2214.8%22 y=%226.8%22 width=%222.4%22 height=%222.4%22 fill=%22%23000%22 stroke=%22none%22/%3E%3Crect x=%2210.8%22 y=%2210.8%22 width=%222.4%22 height=%222.4%22 fill=%22%23000%22 stroke=%22none%22/%3E%3Crect x=%226.8%22 y=%2214.8%22 width=%222.4%22 height=%222.4%22 fill=%22%23000%22 stroke=%22none%22/%3E%3Crect x=%2214.8%22 y=%2214.8%22 width=%222.4%22 height=%222.4%22 fill=%22%23000%22 stroke=%22none%22/%3E%3C/svg%3E") }
+    .gt-daily { --ac: var(--gold); --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Crect x=%223.5%22 y=%225%22 width=%2217%22 height=%2215.5%22/%3E%3Cpath d=%22M3.5 10h17M8 3v4M16 3v4%22/%3E%3C/svg%3E") }
+    .gt-vs { --ac: var(--ok); --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M3.5 3.5L21 21M20.5 3.5L3 21%22/%3E%3Cpath d=%22M14.5 19.5l5-5M4.5 14.5l5 5%22/%3E%3C/svg%3E") }
+    .gt-edit { --ac: var(--ink); --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M4 20l1-4.5L16.5 4h3l.5.5v3L8.5 19z%22/%3E%3Cpath d=%22M14.5 6l3.5 3.5%22/%3E%3C/svg%3E") }
+    .gt-onl { --ac: var(--purple); --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%228.5%22/%3E%3Cpath d=%22M3.5 12h17M12 3.5c-3.2 3.2-3.2 13.8 0 17M12 3.5c3.2 3.2 3.2 13.8 0 17%22/%3E%3C/svg%3E") }
+    .gt-code { --ac: var(--ink); --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Crect x=%224.5%22 y=%225%22 width=%2215%22 height=%2216%22/%3E%3Crect x=%228.5%22 y=%222.5%22 width=%227%22 height=%225%22 fill=%22%23000%22/%3E%3Cpath d=%22M8.5 12h7M8.5 16h7%22/%3E%3C/svg%3E") }
+    .gt-stats { --ac: var(--ink); --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M6 20v-6M12 20V5M18 20V10%22/%3E%3C/svg%3E") }
+}
+@media (prefers-reduced-motion: no-preference) {
+    @media (max-width: 600px) { :root:not(.noui):not(.noanim) #gdock { animation: gdockUp .45s cubic-bezier(.2, .8, .2, 1) 120ms backwards } }
+}
+@keyframes gdockUp { from { transform: translateY(100%) } to { transform: none } }
+
+@media (max-width: 600px) {
+    #settings, #scores, #adv, #lb { background: var(--bg); padding-top: calc(60px + env(safe-area-inset-top, 0px)); padding-bottom: 12px; bottom: calc(var(--gdockh) + env(safe-area-inset-bottom, 0px)) }
+    #settings .sp, #scores .sp, #adv .sp, #lb .sp { max-width: none; margin: 0 auto auto; padding: 8px 18px 16px }
+    #settings .board, #scores .board, #adv .board, #lb .board { background: none; border: 0; box-shadow: none; padding: 0 }
+    #nlwrap { bottom: calc(var(--gdockh) + env(safe-area-inset-bottom, 0px)); padding-bottom: 0 }
+    #nlwrap.corner { bottom: calc(16px + var(--gdockh) + env(safe-area-inset-bottom, 0px)) }
+    #nlwrap.side { bottom: calc(var(--gdockh) + env(safe-area-inset-bottom, 0px)) }
+}
+
+
+/* ---- tab bar v2: home tab, account row, swipe-down to collapse, full-height highlight ---- */
+@property --gdockh { syntax: '<length>'; inherits: true; initial-value: 80px }
+@media (max-width: 600px) {
+    :root { --gdgrab: 20px; --gdockh: 96px }   /* same bar height as the main page (exactly the bar's height, so nothing shows between the page and the bar) */
+    :root:not(.noanim) { transition: --gdockh .3s cubic-bezier(.22, 1, .36, 1) }
+    #gdock { padding-bottom: 0; touch-action: none; transition: transform .3s cubic-bezier(.22, 1, .36, 1) }
+    .gdtabs { grid-template-columns: repeat(7, 1fr) }
+    .gdtab { padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)) }
+    .gdtab.cur { background: color-mix(in srgb, var(--ac) 18%, transparent) }
+    .gdtab.cur::before { left: 0; right: 0; top: calc(-1 * var(--gdgrab)); height: var(--gdgrab); background: color-mix(in srgb, var(--ac) 18%, transparent); pointer-events: none }
+    #gdock.open .gdtab.cur::before { display: none }
+    .gt-home { --ac: var(--ink); --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M3 11 12 3l9 8M5 10v10h14V10M10 20v-6h4v6%22/%3E%3C/svg%3E") }
+    .gdacct { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px 12px; border-top: 1px solid var(--line) }
+    .gdwho { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .85rem; color: var(--soft) }
+    .gdwho b { color: var(--ink); font-weight: 800; text-transform: none }
+    .gdmanage { flex: none; display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 14px; background: var(--blue); color: #fff; font-weight: 700; font-size: .9rem; text-decoration: none; text-transform: lowercase }
+    .gdmanage:active { filter: brightness(.9) }
+    :root.gdoff { --gdockh: calc(var(--gdgrab) + 2px) }
+    :root.gdoff #gdock { transform: translateY(calc(100% - var(--gdgrab) - 2px - env(safe-area-inset-bottom, 0px))) }
+    :root.gdoff .gdgrab { height: calc(var(--gdgrab) + 8px); margin-top: -8px; position: relative }
+}
+</style>
+
+<style id="gtop-css">
+/* site top bar: one look on every page */
+#topbar { position: fixed; top: 0; left: 0; right: 0; height: calc(38px + env(safe-area-inset-top, 0px)); padding: env(safe-area-inset-top, 0px) 12px 0; background: #000; display: flex; align-items: center; gap: 6px; font-family: 'Chakra Petch', system-ui, sans-serif; text-align: left; text-transform: lowercase; white-space: nowrap; box-sizing: border-box }
+#topbar .logo { flex: 0 0 auto; margin-right: 10px; color: #fff; font-weight: 700; font-size: 17px; letter-spacing: -.01em; text-decoration: none; line-height: 1 }
+#topbar .logo small { font-size: .62em; font-weight: 500; color: #cfcfcf; letter-spacing: 0 }
+#topbar .tbtn { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: auto; height: 26px; padding: 0 20px; border: 0; border-radius: 0; background: #3b82f6; color: #fff; font-family: inherit; font-weight: 500; font-size: 15px; line-height: 1; text-decoration: none; text-transform: lowercase; cursor: pointer }
+#topbar .tbtn:hover { background: #5a95f7 }
+#topbar input { flex: 0 1 312px; width: auto; min-width: 0; height: 26px; padding: 0 8px; border: 2px solid #3b82f6; border-radius: 0; background: #262626; color: #fff; font-family: inherit; font-size: 13px; font-weight: 400; text-transform: none; text-overflow: ellipsis; outline: 0 }
+#topbar input::placeholder { color: #8a8a8a; font-style: italic; font-weight: 400; opacity: 1; text-overflow: ellipsis }
+#topbar input:focus { border-color: #8ab8ff }
+#topbar #tacct { margin-left: auto }
+#topbar .twho { flex: 0 1 auto; min-width: 0; max-width: 220px; overflow: hidden; text-overflow: ellipsis; margin-left: auto; color: #cfcfcf; font-size: 13px; font-weight: 500; text-decoration: none }
+#topbar .twho b { color: #fff; font-weight: 700; text-transform: none }
+#topbar .twho:hover { text-decoration: underline }
+#topbar .logo:focus-visible, #topbar .tbtn:focus-visible, #topbar .twho:focus-visible { outline: 2px solid #fff; outline-offset: 2px }
+:lang(ja) #topbar { font-family: 'Chakra Petch', 'Noto Sans JP', system-ui, sans-serif }
+@media (max-width: 520px) {
+    #topbar { padding-left: 8px; padding-right: 8px; gap: 4px }
+    #topbar .logo { margin-right: 2px; font-size: 13px }
+    #topbar .logo small { display: none }
+    #topbar .tbtn { padding: 0 8px; font-size: 13px }
+    #topbar input { font-size: 12px; padding: 0 6px }
+    #topbar .twho { max-width: 96px; font-size: 12px }
+}
+@media (max-width: 600px) {
+    #topbar input#tsearch { display: none }
+}
+#gsearchdlg { width: calc(100% - 32px); max-width: 420px; margin: calc(56px + env(safe-area-inset-top, 0px)) auto auto; padding: 16px; border: 2px solid var(--ink, #fff); background: var(--card, #192040); color: var(--ink, #e9edfa); font-family: inherit; text-transform: lowercase; box-shadow: 5px 5px 0 var(--ink, #fff) }
+#gsearchdlg::backdrop { background: rgba(5, 8, 20, .6) }
+#gsearchdlg h3 { margin: 0 0 10px; font-size: 1.2rem }
+#gsearchdlg .gsrow { display: flex; gap: 8px }
+#gsearchdlg input { flex: 1 1 auto; min-width: 0; height: 44px; padding: 0 10px; border: 2px solid var(--blue, #3b82f6); border-radius: 0; background: var(--cell, #262626); color: var(--ink, #fff); font: inherit; font-size: 16px; text-transform: none; outline: 0 }
+#gsearchdlg input:focus { border-color: var(--imag, #8ab8ff) }
+#gsearchdlg button { height: 44px; padding: 0 16px; border: 2px solid var(--ink, #fff); border-radius: 0; background: var(--ink, #fff); color: var(--bg, #000); font: inherit; font-weight: 700; text-transform: lowercase; cursor: pointer }
+#gsearchdlg .gsclose { display: block; height: 36px; margin: 12px 0 0 auto; background: none; color: var(--soft, #8f9bc0); border-color: var(--line, #2d3861) }
+@media (max-width: 360px) {
+    #topbar .logo { font-size: 12px }
+    #topbar .tbtn { padding: 0 6px; font-size: 12px }
+}
+</style>
+
+<style id="play-ui-css">
+
+/* ===== phone play screen: everything fits one screen, no scrolling ===== */
+@media (max-width:520px) {
+    body:not(.inmenu) {
+        min-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+        padding-bottom: 0
+    }
+    body:not(.inmenu) > main {
+        align-self: stretch;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-width: 0;
+        padding: 6px 10px 8px
+    }
+    body:not(.inmenu) > main[hidden] { display: none }
+    main > header {
+        margin: 0 0 6px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: center;
+        column-gap: 10px
+    }
+    main > header h1 { font-size: 1.3rem }
+    main > header .sub { margin: 0; font-size: .75rem }
+    main > .board {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 4px;
+        padding: 10px 10px 8px;
+        box-shadow: 3px 3px 0 var(--ink)
+    }
+    .hc main > .board { box-shadow: 3px 3px 0 var(--imag) }
+    main .board .row { gap: 10px }
+    main .board .lbl { font-size: .74rem }
+    main .board .full { margin-top: 2px; font-size: .7rem }
+    main #pips { margin: 2px 0 0; gap: 6px }
+    main .pip { width: 12px; height: 12px }
+    main #trail { min-height: 0; margin: 0; font-size: 1rem; line-height: 1.4 }
+    main #ops { gap: 8px; max-width: none; width: 100% }
+    main #ops button {
+        flex: 0 0 calc(33.333% - 6px);
+        padding: 8px 2px;
+        font-size: 1.25rem;
+        box-shadow: 0 3px 0 var(--blue)
+    }
+    .hc main #ops button { box-shadow: 0 3px 0 var(--imag) }
+    main #ops:has(button:nth-child(7)) button { flex-basis: calc(25% - 6px) }
+    main #ops button small { font-size: .58rem; line-height: 1.1; margin-top: 1px }
+    main .tools { margin-top: 0; gap: 6px }
+    main .tools button, main .tools select {
+        flex: 1 1 0;
+        min-width: 0;
+        min-height: 38px;
+        padding: 3px 4px;
+        font-size: .82rem;
+        line-height: 1.1
+    }
+    main #modeinfo {
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        gap: 0 14px;
+        font-size: .76rem;
+        line-height: 1.2
+    }
+    main #msg:empty { display: none }
+    main .board:has(#msg:not(:empty)) #ops { display: none }
+    main #msg:not(:empty) {
+        margin: 0 auto;
+        min-height: 40px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        column-gap: 10px;
+        font-size: .9rem;
+        line-height: 1.2
+    }
+    main #msg br { display: none }
+    main #msg button { margin: 0; min-height: 36px; padding: 4px 16px; font-size: .9rem }
+    main > header { position: relative; min-height: 30px }
+    main > header #calcfab, main > header #notefab { top: 0; bottom: auto; width: 30px; height: 30px; box-shadow: 2px 2px 0 var(--ink) }
+    main > header #calcfab { right: 2px }
+    main > header #notefab { right: 40px }
+    main > header #calcfab svg, main > header #notefab svg { width: 17px; height: 17px }
+    main #modeinfo select {
+        flex: 0 1 auto;
+        min-height: 34px;
+        padding: 2px 8px;
+        font: 700 .85rem inherit;
+        font-family: inherit;
+        border: 2px solid var(--line);
+        background: var(--card);
+        color: var(--ink)
+    }
+    main #modeinfo > select:not([hidden]) + div { display: none }
+    main #modeinfo { align-items: center }
+    main #score { font-size: .72rem }
+    main #score:empty { display: none }
+    main > .how {
+        flex-wrap: nowrap;
+        gap: 6px;
+        margin-top: 8px;
+        font-size: .72rem
+    }
+    main > .how button {
+        flex: 1 1 0;
+        min-width: 0;
+        min-height: 38px;
+        padding: 3px 4px;
+        font-size: .72rem;
+        line-height: 1.1
+    }
+}
+/* shorter phones: squeeze a little more */
+@media (max-width:520px) and (min-height:760px) {
+    main #score { min-height: 1.1em; display: block }
+}
+@media (max-width:520px) and (max-height:600px) {
+    main > header { margin-bottom: 4px }
+    main > header h1 { font-size: .95rem }
+    main #ops button { padding: 6px 2px }
+    main > .board { padding-top: 8px; gap: 2px }
+    main .board .lbl { font-size: .7rem }
+}
+@media (max-width:520px) and (max-height:720px) {
+    main > header h1 { font-size: 1.1rem }
+    main #psub { display: none }
+    main #ops button small { display: none }
+    main #msg { min-height: 36px }
+}
+
+/* the tab bar stays on screen while you play; the old bottom row of buttons becomes icons in the title row */
+@media (max-width:520px) {
+    body:not(.inmenu) > main { position: relative }
+    main > header { padding: 0 80px }
+    main > header h1 { display: none }
+    main > .how {
+        position: absolute; top: 6px; left: 10px; margin: 0; gap: 4px; flex-wrap: nowrap; justify-content: flex-start
+    }
+    main > .how button {
+        flex: 0 0 30px; width: 30px; min-height: 30px; height: 30px; padding: 0; font-size: 0; position: relative
+    }
+    main > .how button::before {
+        content: ""; position: absolute; inset: 5px; background: currentColor;
+        -webkit-mask: var(--ic) center / contain no-repeat; mask: var(--ic) center / contain no-repeat
+    }
+    main > .how #tomenu { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter'%3E%3Cpath d='M3 11 12 3l9 8M5 10v10h14V10M10 20v-6h4v6'/%3E%3C/svg%3E") }
+    main > .how #lbplay { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter'%3E%3Cpath d='M8 4h8v5a4 4 0 0 1-8 0zM8 6H4v1a3 3 0 0 0 4 3M16 6h4v1a3 3 0 0 1-4 3M12 13v4M8 20h8'/%3E%3C/svg%3E") }
+    main > .how #sc { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter'%3E%3Cpath d='M5 20V12M12 20V5M19 20v-5'/%3E%3C/svg%3E") }
+    main > .how #what { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M9.3 9.4a2.7 2.7 0 1 1 3.9 2.4c-.8.4-1.2.9-1.2 1.8M12 17v.6'/%3E%3C/svg%3E") }
+    main > .how #opts { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Ccircle cx='12' cy='12' r='6.4'/%3E%3Cpath d='M12 2.5v3.1M12 18.4v3.1M2.5 12h3.1M18.4 12h3.1M5.3 5.3l2.2 2.2M16.5 16.5l2.2 2.2M18.7 5.3l-2.2 2.2M7.5 16.5l-2.2 2.2'/%3E%3C/svg%3E") }
+}
+@media (max-width:520px) and (max-height:620px) {
+    main #ops button { padding: 5px 2px }
+    main .tools button { min-height: 34px }
+    main #modeinfo select { min-height: 30px }
+    main > .board { gap: 1px; padding-bottom: 6px }
+}
+@media (max-width:520px) and (min-width:400px) {
+    main > header h1 { display: block; font-size: 1rem }
+}
+/* play screen: no title or tagline, board sits higher; difficulty picker and the difficulty/mode text share the bottom row with the notepad and calculator buttons */
+main > header h1, main > header #psub { display: none !important }
+@media (min-width:521px) {
+    main { padding-top: 10px }
+    main > header:not(:has(#dlvl:not([hidden]))) { margin: 0 }
+    .board { padding-bottom: 56px }
+    .board > #modeinfo { position: absolute; left: 18px; bottom: 8px; margin: 0; height: 38px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; text-align: left; font-size: .85rem; line-height: 1.25 }
+    .board > .tools:has(#diff) { position: absolute; right: 100px; bottom: 8px; margin: 0; z-index: 2 }
+    .board > .tools:has(#diff) select { height: 38px; padding: 0 10px; box-sizing: border-box }
+}
+/* tablet-width play screen (tab bar showing): board sits at the top, number line sits just above the tab bar instead of behind it */
+@media (min-width:521px) and (max-width:600px) {
+    body:not(.inmenu):has(> main:not([hidden])) { align-items: flex-start; padding-bottom: 210px !important }
+    body > #nlwrap { bottom: calc(var(--gdockh, 80px) + env(safe-area-inset-bottom, 0px)); padding-bottom: 0 }
+}
+
+/* ===== phone play screen tweaks (same as the main page) ===== */
+@media (max-width:520px) {
+    main > header { min-height: 44px; padding: 0 100px }
+    main > .how { top: 4px; left: 10px; gap: 6px }
+    main > .how button { flex: 0 0 42px; width: 42px; min-height: 42px; height: 42px }
+    main > .how button::before { inset: 8px }
+    main > header #calcfab, main > header #notefab { top: 4px; width: 42px; height: 42px }
+    main > header #calcfab { right: 2px }
+    main > header #notefab { right: 52px }
+    main > header #calcfab svg, main > header #notefab svg { width: 22px; height: 22px }
+    main > .board { justify-content: flex-start; gap: 8px; flex: 0 0 auto }
+    main #ops { margin-top: 4px }
+    #modeinfo select#miM { flex: 0 1 auto }
+    body:not(.inmenu):has(> main:not([hidden])) { padding-bottom: 150px !important }
+}
+@media (max-width:520px) and (max-height:700px) { body:not(.inmenu):has(> main:not([hidden])) { padding-bottom: 134px !important } }
+@media (max-width:520px) and (max-height:620px) { body:not(.inmenu):has(> main:not([hidden])) { padding-bottom: 126px !important } }
+#modeinfo select#miM { font: inherit; font-weight: 700; padding: 2px 8px; border: 2px solid var(--line); border-radius: 0; background: var(--card); color: var(--ink); cursor: pointer }
+#modeinfo select#miM.mhc { color: var(--imag) }
+@media (max-width:520px) {
+    main > .how #tomain { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter'%3E%3Cpath d='M3 11 12 3l9 8M5 10v10h14V10M10 20v-6h4v6'/%3E%3C/svg%3E") }
+    main > .how #tomenu { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter'%3E%3Crect x='3.5' y='5' width='17' height='15.5'/%3E%3Cpath d='M3.5 10h17M8 3v4M16 3v4'/%3E%3C/svg%3E") }
+}
+</style>
+
+<style id="wmon-css">
+/* monthly completion card above the daily calendar */
+#monthbox { padding: 14px 0 0; margin-bottom: 0 }
+.whead { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: .8rem; color: var(--soft) }
+.whead span:first-child { font-size: .9rem; font-weight: 700; color: var(--ink); text-align: left }
+.wbar { height: 12px; margin-top: 8px; border: 2px solid var(--ink); background: var(--cell); overflow: hidden }
+.wbar i { display: block; height: 100%; width: 0; background: var(--ok); transition: width .7s cubic-bezier(.2, .8, .2, 1) }
+:root.noanim .wbar i { transition: none }
+.wpct { margin-top: 6px; font-weight: 800; font-size: .95rem; text-align: center }
+</style>
+
+<style id="cd-solved-css">
+/* a day you just solved: the cell fades from unsolved to solved, pops, and sends out a ring */
+.cd.today.done { background: var(--blue); border-color: var(--ink); color: var(--bg); box-shadow: inset 0 0 0 2px var(--ink) }
+.cd.just { z-index: 1; transition: background-color .45s ease, border-color .45s ease, color .45s ease; animation: cdSolved .55s cubic-bezier(.3, 1.6, .5, 1), cdRing .8s ease-out }
+.cd.just .mv { animation: cdMv .4s .25s backwards }
+@keyframes cdSolved { 0% { transform: scale(1) } 40% { transform: scale(1.24) } 100% { transform: scale(1) } }
+@keyframes cdRing { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--blue) 75%, transparent) } 100% { box-shadow: 0 0 0 16px transparent } }
+@keyframes cdMv { from { opacity: 0; transform: translateY(5px) scale(.6) } }
+:root.noanim .cd.just { animation: none }
+</style>
+
+<style id="today-css">
+/* game screen: players-who-solved-this flip tiles */
+#dsolved { display: flex; flex-direction: column; align-items: center; gap: 5px; margin: 2px 0 }
+#dsolved[hidden] { display: none }
+#dsolved .num { font-size: 1.6rem }
+#dsolved .tile, #dsolved .plain { color: var(--blue) }
+@media (max-width:520px) {
+    /* the day's date sits under the icon row instead of behind it */
+    main > header:has(#dlvl:not([hidden])) { min-height: 0 }
+    main > header #dlvl:not([hidden]) { margin-top: 52px }
+}
+/* daily screen: one hero card for today's level, play button first */
+.board.today { margin-top: 14px; padding: 16px 14px 18px; text-align: center }
+.today .tdplay { display: block; width: 100%; min-height: 52px; margin: 14px 0 4px; font: inherit; font-size: 1.1rem; font-weight: 800; text-transform: lowercase; background: var(--bg); border: 2px solid var(--blue); color: var(--blue); cursor: pointer; box-shadow: 0 4px 0 var(--blue); transition: transform .08s, box-shadow .08s }
+.today .tdplay:active { transform: translateY(4px); box-shadow: 0 0 0 var(--blue) }
+.today .tdplay:focus-visible { outline: 0; background: color-mix(in srgb, var(--blue) 18%, var(--bg)) }
+.tdsec { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line) }
+.tdsec .tdh { font-size: .8rem; color: var(--soft) }
+.tdsec .num { font-size: 2.2rem; margin: 10px 0 12px }
+.tdsec .tile, .tdsec .plain { color: var(--blue) }
+.tdsec.clockbox .tile, .tdsec.clockbox .plain { color: var(--ink) }
+.tdsec.clockbox .num { font-size: 1.7rem; margin: 0 }
+.tdsec.clockbox .clock { margin-top: 10px }
+.tdlink { min-height: 44px; padding: 8px 16px; font: inherit; font-size: 1rem; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; text-transform: lowercase }
+.tdlink:focus-visible { outline: 0; background: color-mix(in srgb, var(--blue) 18%, transparent) }
+#dailypg > .tools { margin-top: 16px }
+#monthbox { margin-top: 18px }
+.board.cal { margin-top: 14px }
+/* streaks as two chips */
+.streakbar { gap: 10px; margin: 14px 0 }
+.streakbar span { display: flex; align-items: baseline; gap: 6px; padding: 6px 14px; border: 2px solid var(--line); background: var(--card); font-size: .85rem }
+.streakbar b { margin-left: 0; font-size: 1.3rem }
+</style>
+
+<style id="title-css">
+/* title: as bold as it gets (IBM Plex Sans JP stops at 700, so Japanese gets a thin stroke on top); Chinese puts the √-1 where 一 used to be */
+h1 { font-weight: 800 }
+h1 *:not(svg):not(path) { font-weight: inherit }
+:lang(zh) h1:has(.rad) { display: flex; flex-direction: row-reverse; justify-content: center; align-items: baseline; gap: .1em }
+:lang(zh) h1, :lang(zh) h1 * { font-family: 'Bricolage Grotesque', 'Noto Sans TC', system-ui, sans-serif; font-weight: 900; -webkit-text-stroke: .02em currentColor; paint-order: stroke fill }
+:lang(ja) h1, :lang(ja) h1 .vin { font-weight: 700; -webkit-text-stroke: .03em currentColor; paint-order: stroke fill }
+</style>
+
+<style id="logo-com-css">
+/* keep the .com in the logo on phones; only drop it on very narrow screens where it would crowd the buttons */
+@media (max-width: 520px) { #topbar .logo small { display: inline } }
+@media (max-width: 329px) { #topbar .logo small { display: none } }
+</style>
+
+<style id="scroll-css">
+/* the page scrolls inside the body at every width, so the scrollbar starts under the top bar (and stops above the tab bar) instead of running beside them */
+html { overflow: hidden; height: 100dvh }
+body, body:not(.inmenu), body.inmenu {
+    margin-top: calc(38px + env(safe-area-inset-top, 0px)); padding-top: 0 !important; min-height: 0 !important;
+    height: calc(100dvh - 38px - env(safe-area-inset-top, 0px)); overflow-y: auto; align-items: safe center   /* centred, but never pushed up out of reach when the page is taller than the screen */
+}
+@media (max-width:600px) {
+    body, body:not(.inmenu), body.inmenu { padding-bottom: 0 !important; height: calc(100dvh - 38px - env(safe-area-inset-top, 0px) - var(--gdockh, 80px) - env(safe-area-inset-bottom, 0px)) }
+}
+</style>
+
+<script id="scroll-shim">
+/* the page scrolls inside the body (so the scrollbar sits below the top bar): make window.scrollTo scroll it too */
+(function () {
+    var orig = window.scrollTo.bind(window);
+    window.scrollTo = function (a, b) {
+        orig.apply(window, arguments);
+        var o = (a && typeof a === 'object') ? a : { left: a, top: b };
+        try { document.body.scrollTo({ top: o.top || 0, left: o.left || 0, behavior: o.behavior || 'auto' }); } catch (e) { document.body.scrollTop = o.top || 0; }
+    };
+})();
+</script>
 </head>
 
 <body>
@@ -2740,6 +3160,7 @@
         <input id="tsearch" type="search" placeholder="you can type things here. (this is the search bar)"
             aria-label="search" autocomplete="off">
         <button class="tbtn" id="tgo" type="button">search</button>
+        <a class="tbtn" id="tacct" href="../../account/">log in</a>
     </nav>
     <section id="menu" class="pg" hidden>
         <header>
@@ -2781,32 +3202,31 @@
                 <span><i class="k-miss"></i>not solved yet</span>
                 <span><i class="k-today"></i>today</span>
             </div>
+            <div class="tdsec wmon" id="monthbox">
+            <div class="whead"><span data-i="w_month">monthly completion</span><span id="wmonth"></span></div>
+            <div class="wbar" id="wbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="wfill"></i></div>
+            <div class="wpct" id="wpct">–</div>
         </div>
-        <div class="board solved" id="solvedbox">
-            <h3 class="sttl">number of players who solved this</h3>
+        </div>
+        <div class="board today" id="todaybox">
+            <h3 class="sttl" data-i="today_lvl">today's level</h3>
             <div class="lbl" id="ssub">&nbsp;</div>
-            <div class="num" id="sn" aria-label="players who solved today's level"></div>
-            <div class="tools"><button id="sboard">daily leaderboard</button></div>
-        </div>
-        <div class="board solved clockbox">
-            <h3 class="sttl">new daily in</h3>
-            <div class="clock">
-                <div class="cg">
-                    <div class="num" id="ch"></div>
-                    <div class="lbl">hour</div>
-                </div><span class="colon">:</span>
-                <div class="cg">
-                    <div class="num" id="cm"></div>
-                    <div class="lbl">minute</div>
-                </div><span class="colon">:</span>
-                <div class="cg">
-                    <div class="num" id="cs"></div>
-                    <div class="lbl">second</div>
+            <button id="dback" class="tdplay">play today's level</button>
+            <div class="tdsec">
+                <div class="lbl tdh">number of players who solved this</div>
+                <div class="num" id="sn" aria-label="players who solved today's level"></div>
+                <button id="sboard" class="tdlink">daily leaderboard</button>
+            </div>
+            <div class="tdsec clockbox">
+                <div class="lbl tdh">new daily in</div>
+                <div class="clock">
+                    <div class="cg"><div class="num" id="ch"></div><div class="lbl">hour</div></div><span class="colon">:</span>
+                    <div class="cg"><div class="num" id="cm"></div><div class="lbl">minute</div></div><span class="colon">:</span>
+                    <div class="cg"><div class="num" id="cs"></div><div class="lbl">second</div></div>
                 </div>
             </div>
         </div>
-        <div class="tools"><button id="cmonth">monthly leaderboard</button><button id="dback">play today's
-                level</button><button id="dmenu">main menu</button></div>
+        <div class="tools"><button id="cmonth">monthly leaderboard</button><button id="dmenu">main menu</button></div>
     </section>
     <section id="statspg" class="pg" hidden>
         <header>
@@ -2895,7 +3315,7 @@
             <div id="pips" aria-live="polite"></div>
             <div class="lbl" id="left"></div>
             <div class="lbl" id="pitnote" hidden style="color:#d4a64f"></div>
-            <div class="lbl" id="dsolved" hidden></div>
+            <div id="dsolved" hidden><div class="lbl" id="dslbl" data-i="solved_title">number of players who solved this</div><div class="num" id="dsn" role="img"></div></div>
             <div id="trail"></div>
             <div id="ops"></div>
             <div class="tools"><button id="undo">undo</button><button id="reset">restart level</button><button
@@ -2910,7 +3330,7 @@
                 </select></div>
             <div id="modeinfo">
                 <div><i>difficulty:</i> <span id="miD"></span></div>
-                <div><i>mode:</i> <span id="miM"></span></div>
+                <div><i>mode:</i> <select id="miM" aria-label="Mode"><option value="normal">normal</option><option value="hc">hardcore</option></select></div>
             </div>
             <div id="msg" role="status"></div>
             <div class="lbl" id="score"></div>
@@ -3576,7 +3996,7 @@
                 "calc_eq": "式",
                 "calc_nan": "数ではありません",
                 "calc_sw": "クリックで {a} と {b} を切り替え",
-                "holein": "ホールイン",
+                "holein": "ほーるいん",
                 "homepage": "ホーム",
                 "search": "検索",
                 "ph1": "ここに何か入力できます。（これは検索バーです）",
@@ -3743,189 +4163,189 @@
                 "lb_err": "ランキングを読み込めませんでした"
             },
             "zh": {
-                "calc": "计算器",
-                "calc_title": "计算器",
-                "calc_import": "当前",
-                "calc_goal": "目标",
-                "calc_start": "起点",
-                "calc_imp_lbl": "导入表达式",
-                "calc_show_lbl": "结果显示为",
-                "calc_m_dec": "小数",
-                "calc_m_frac": "分数",
-                "note_title": "记事本",
-                "note_ph": "在此书写，或从计算器拖入算式",
-                "calc_none": "还没有算式",
-                "calc_close": "关闭计算器",
-                "calc_rm": "删除此行",
-                "calc_type": "在此输入…",
+                "calc": "計算器",
+                "calc_title": "計算器",
+                "calc_import": "當前",
+                "calc_goal": "目標",
+                "calc_start": "起點",
+                "calc_imp_lbl": "導入表達式",
+                "calc_show_lbl": "結果顯示為",
+                "calc_m_dec": "小數",
+                "calc_m_frac": "分數",
+                "note_title": "記事本",
+                "note_ph": "在此書寫，或從計算器拖入算式",
+                "calc_none": "還沒有算式",
+                "calc_close": "關閉計算器",
+                "calc_rm": "刪除此行",
+                "calc_type": "在此輸入…",
                 "calc_eq": "算式",
-                "calc_nan": "不是数字",
-                "calc_sw": "点击在 {a} 和 {b} 之间切换",
-                "holein": "一杆进",
-                "homepage": "首页",
+                "calc_nan": "不是數字",
+                "calc_sw": "點擊在 {a} 和 {b} 之間切換",
+                "holein": "桿進",
+                "homepage": "首頁",
                 "search": "搜索",
-                "ph1": "你可以在这里打字。（这是搜索栏）",
-                "ph2": "这是搜索栏。",
-                "aria_site": "站点",
-                "menu_sub": "选一种玩法吧",
-                "m_random_b": "随机关卡",
-                "m_random_d": "按你选的难度，源源不断的全新关卡",
-                "m_daily_b": "每日关卡",
-                "m_daily_d": "每天一个新挑战，还有往日关卡的日历",
-                "m_stats_b": "你的统计",
-                "m_stats_d": "连续天数等等",
-                "m_main_b": "主线关卡",
-                "m_main_d": "每个难度都有手工打造的关卡",
-                "pickday": "选一天来玩吧",
-                "pickday_guest": "选一天来玩吧。游客也能玩：登录后才能上排行榜",
-                "username": "用户名",
-                "password": "密码",
-                "login": "登录",
-                "register": "注册",
-                "solved_title": "已解出此关的玩家数",
-                "aria_solved": "解出今日关卡的玩家数",
-                "newdaily": "距下一个每日关卡",
-                "hour": "时",
+                "ph1": "你可以在這裡打字。（這是搜索欄）",
+                "ph2": "這是搜索欄。",
+                "aria_site": "站點",
+                "menu_sub": "選一種玩法吧",
+                "m_random_b": "隨機關卡",
+                "m_random_d": "按你選的難度，源源不斷的全新關卡",
+                "m_daily_b": "每日關卡",
+                "m_daily_d": "每天一個新挑戰，還有往日關卡的日曆",
+                "m_stats_b": "你的統計",
+                "m_stats_d": "連續天數等等",
+                "m_main_b": "主線關卡",
+                "m_main_d": "每個難度都有手工打造的關卡",
+                "pickday": "選一天來玩吧",
+                "pickday_guest": "選一天來玩吧。遊客也能玩：登錄後才能上排行榜",
+                "username": "用戶名",
+                "password": "密碼",
+                "login": "登錄",
+                "register": "注冊",
+                "solved_title": "已解出此關的玩家數",
+                "aria_solved": "解出今日關卡的玩家數",
+                "newdaily": "距下一個每日關卡",
+                "hour": "時",
                 "minute": "分",
                 "second": "秒",
                 "dboard": "每日排行榜",
                 "mboard": "每月排行榜",
-                "back_menu": "回到菜单",
-                "aria_prev": "上个月",
-                "aria_next": "下个月",
+                "back_menu": "回到菜單",
+                "aria_prev": "上個月",
+                "aria_next": "下個月",
                 "st_solved": "已解出",
-                "st_cur": "当前连续",
-                "st_long": "最长连续",
-                "st_dev": "本设备上的随机关卡",
-                "playing_as": "当前玩家：{u}",
-                "not_logged": "未登录：显示保存在本设备上的成绩",
-                "acct_err": "没能加载你的账号统计",
-                "st_avg": "每关平均步数",
-                "st_total": "总步数",
-                "st_fewest": "最少步数",
+                "st_cur": "當前連續",
+                "st_long": "最長連續",
+                "st_dev": "本設備上的隨機關卡",
+                "playing_as": "當前玩家：{u}",
+                "not_logged": "未登錄：顯示保存在本設備上的成績",
+                "acct_err": "沒能加載你的帳號統計",
+                "st_avg": "每關平均步數",
+                "st_total": "總步數",
+                "st_fewest": "最少步數",
                 "st_first": "首次解出",
                 "st_recent": "最近一次",
-                "st_lv": "已解关卡",
-                "st_atpar": "打出标准杆",
-                "st_avgover": "平均超出标准杆步数",
+                "st_lv": "已解關卡",
+                "st_atpar": "打出標準桿",
+                "st_avgover": "平均超出標準桿步數",
                 "st_hc": "硬核模式解出",
-                "main_sub": "手工打造的关卡，按难度分组",
-                "soon": "关卡即将上线",
-                "d_easy": "简单",
+                "main_sub": "手工打造的關卡，按難度分組",
+                "soon": "關卡即將上線",
+                "d_easy": "簡單",
                 "d_medium": "中等",
-                "d_hard": "困难",
-                "d_challenge": "挑战",
+                "d_hard": "困難",
+                "d_challenge": "挑戰",
                 "hardcore": "硬核",
                 "normal": "普通",
-                "youhave": "你现在是",
-                "goal": "目标",
-                "psub_par": "用标准杆步数或更少的步数到达目标",
-                "psub_daily": "用尽量少的步数到达目标",
-                "undo": "撤销",
-                "undo_hc": "撤销（还剩{n}次）",
-                "restart": "重新开始本关",
-                "giveup": "放弃",
-                "skipanim": "跳过动画",
-                "aria_diff": "难度",
-                "diff_lbl": "难度：",
+                "youhave": "你現在是",
+                "goal": "目標",
+                "psub_par": "用標準桿步數或更少的步數到達目標",
+                "psub_daily": "用盡量少的步數到達目標",
+                "undo": "撤銷",
+                "undo_hc": "撤銷（還剩{n}次）",
+                "restart": "重新開始本關",
+                "giveup": "放棄",
+                "skipanim": "跳過動畫",
+                "aria_diff": "難度",
+                "diff_lbl": "難度：",
                 "mode_lbl": "模式：",
-                "mainmenu": "主菜单",
+                "mainmenu": "主菜單",
                 "leaderboard": "排行榜",
-                "scores": "成绩",
-                "what": "这是什么？",
-                "settings": "设置",
+                "scores": "成績",
+                "what": "這是什麼？",
+                "settings": "設置",
                 "gotcha": "明白了",
-                "dlg_p": "每一关都是现场生成的，只给你需要的运算。标准杆是一个保证能通关的步数（挑战难度里往往还有更短的路线，所以你可以打破标准杆），超过了也能继续玩，只是每多一步就算超出标准杆一步。很多关卡不止一条路线。硬核模式（在设置里）下，每关只有 3 次撤销，不能重新开始，也不能超出标准杆。默认关卡只用整数，除法只有在结果是整数时才能用，所以灰掉的 ÷ 按钮就表示你的数除不尽。挑战难度会加入 |x|（绝对值）、√x、x³、取负和取模等额外运算，解法也五花八门。在设置里可以切换成小数（比如 +0.5，x⁻¹ 会把 4 变成 0.25）或分数（除法可以留下分数，x⁻¹ 会把 4 变成 1/4）。小数模式下还可以让目标也是小数。",
-                "scores_hint": "点一下成绩，就能再玩一次那一关",
-                "scores_none": "还没有成绩。解出一关，它就会出现在这里。",
-                "clear_scores": "清除成绩",
-                "tap_confirm": "再点一次确认",
+                "dlg_p": "每一關都是現場生成的，只給你需要的運算。標準桿是一個保證能通關的步數（挑戰難度裡往往還有更短的路線，所以你可以打破標準桿），超過了也能繼續玩，只是每多一步就算超出標準桿一步。很多關卡不止一條路線。硬核模式（在設置裡）下，每關只有 3 次撤銷，不能重新開始，也不能超出標準桿。默認關卡只用整數，除法只有在結果是整數時才能用，所以灰掉的 ÷ 按鈕就表示你的數除不盡。挑戰難度會加入 |x|（絕對值）、√x、x³、取負和取模等額外運算，解法也五花八門。在設置裡可以切換成小數（比如 +0.5，x⁻¹ 會把 4 變成 0.25）或分數（除法可以留下分數，x⁻¹ 會把 4 變成 1/4）。小數模式下還可以讓目標也是小數。",
+                "scores_hint": "點一下成績，就能再玩一次那一關",
+                "scores_none": "還沒有成績。解出一關，它就會出現在這裡。",
+                "clear_scores": "清除成績",
+                "tap_confirm": "再點一次確認",
                 "back": "返回",
-                "flip_b": "翻页牌",
-                "flip_d": "把你的数字和目标显示成翻页时钟的样子",
-                "anim_b": "动画",
-                "anim_d": "翻牌、球的飞行、数轴缩放和彩纸",
-                "adv_b": "高级动画",
-                "adv_d": "单独开关每一种动画",
-                "open": "打开",
-                "num_b": "数字类型",
-                "num_d": "使用整数、小数或分数。会开始新的一关",
-                "aria_numtype": "数字类型",
-                "n_whole": "整数",
-                "n_dec": "小数",
-                "n_frac": "分数",
-                "gdec_b": "小数目标",
-                "gdec_d": "仅小数模式：目标可以是像 3.5 这样的小数，不只是整数。会开始新的一关",
-                "gfrac_b": "分数目标",
-                "gfrac_d": "仅分数模式：目标可以是像 7/4 这样的分数，不只是整数。会开始新的一关",
-                "share_b": "复制链接",
-                "share_ok": "已复制",
-                "roots_b": "非平方数的平方根",
-                "roots_d": "允许对非平方数使用√，得到 √2 或 3√5 这样的根号。分数模式下始终允许。会开始新关卡",
+                "flip_b": "翻頁牌",
+                "flip_d": "把你的數字和目標顯示成翻頁時鐘的樣子",
+                "anim_b": "動畫",
+                "anim_d": "翻牌、球的飛行、數軸縮放和彩紙",
+                "adv_b": "高級動畫",
+                "adv_d": "單獨開關每一種動畫",
+                "open": "打開",
+                "num_b": "數字類型",
+                "num_d": "使用整數、小數或分數。會開始新的一關",
+                "aria_numtype": "數字類型",
+                "n_whole": "整數",
+                "n_dec": "小數",
+                "n_frac": "分數",
+                "gdec_b": "小數目標",
+                "gdec_d": "僅小數模式：目標可以是像 3.5 這樣的小數，不只是整數。會開始新的一關",
+                "gfrac_b": "分數目標",
+                "gfrac_d": "僅分數模式：目標可以是像 7/4 這樣的分數，不只是整數。會開始新的一關",
+                "share_b": "複製鏈接",
+                "share_ok": "已複製",
+                "roots_b": "非平方數的平方根",
+                "roots_d": "允許對非平方數使用√，得到 √2 或 3√5 這樣的根號。分數模式下始終允許。會開始新關卡",
                 "hc_b": "硬核模式",
-                "hc_d": "每关只能撤销 3 次，不能重新开始，也不能超出标准杆",
-                "theme_b": "浅色模式",
-                "theme_d": "从默认的深色外观切换成浅色",
-                "language": "语言",
-                "language_d": "选一种游戏说的语言",
+                "hc_d": "每關只能撤銷 3 次，不能重新開始，也不能超出標準桿",
+                "theme_b": "淺色模式",
+                "theme_d": "從默認的深色外觀切換成淺色",
+                "language": "語言",
+                "language_d": "選一種遊戲說的語言",
                 "a_flip_b": "翻牌",
-                "a_flip_d": "数字像翻板显示屏一样翻动",
-                "a_ball_b": "球的飞行",
-                "a_ball_d": "球沿着数轴划出弧线，虚线轨迹紧随其后",
-                "a_zoom_b": "数轴缩放",
-                "a_zoom_d": "数轴会平滑地滑到新的刻度",
-                "a_conf_b": "彩纸",
-                "a_conf_d": "解出一关时，从洞里喷出一阵彩纸",
-                "a_slide_b": "面板滑动和摇摆",
-                "a_slide_d": "设置和成绩面板滑入时会倾斜摇摆，背景也跟着移动",
-                "a_theme_b": "主题渐变",
-                "a_theme_d": "颜色在深色和浅色之间渐变",
-                "a_ui_b": "按钮和菜单动效",
-                "a_ui_d": "按钮按下、悬停变化和页面淡入",
-                "aria_nl": "显示你的球、你的击球点和球洞的数轴",
-                "tee": "发球点",
-                "negate": "取负",
-                "why_div": "除不尽",
-                "why_undef": "无定义",
-                "why_sqrt": "不是平方数",
-                "why_whole": "仅限整数",
+                "a_flip_d": "數字像翻板顯示屏一樣翻動",
+                "a_ball_b": "球的飛行",
+                "a_ball_d": "球沿著數軸劃出弧線，虛線軌跡緊隨其後",
+                "a_zoom_b": "數軸縮放",
+                "a_zoom_d": "數軸會平滑地滑到新的刻度",
+                "a_conf_b": "彩紙",
+                "a_conf_d": "解出一關時，從洞裡噴出一陣彩紙",
+                "a_slide_b": "面板滑動和搖擺",
+                "a_slide_d": "設置和成績面板滑入時會傾斜搖擺，背景也跟著移動",
+                "a_theme_b": "主題漸變",
+                "a_theme_d": "顏色在深色和淺色之間漸變",
+                "a_ui_b": "按鈕和菜單動效",
+                "a_ui_d": "按鈕按下、懸停變化和頁面淡入",
+                "aria_nl": "顯示你的球、你的擊球點和球洞的數軸",
+                "tee": "發球點",
+                "negate": "取負",
+                "why_div": "除不盡",
+                "why_undef": "無定義",
+                "why_sqrt": "不是平方數",
+                "why_whole": "僅限整數",
                 "why_big": "太大",
-                "why_root_add": "不能加到根号上",
-                "why_root_already": "已经是根号",
-                "why_neg": "负数",
-                "dlvl": "每日关卡 {d}",
+                "why_root_add": "不能加到根號上",
+                "why_root_already": "已經是根號",
+                "why_neg": "負數",
+                "dlvl": "每日關卡 {d}",
                 "hc_no": "硬核模式下不可用",
-                "lose1": "步数用完了。撤销一步继续试，或者放弃吧。",
-                "lose2": "步数和撤销次数都用完了。放弃就能看到答案。",
+                "lose1": "步數用完了。撤銷一步繼續試，或者放棄吧。",
+                "lose2": "步數和撤銷次數都用完了。放棄就能看到答案。",
                 "win_daily": "{m}解出。",
-                "back_cal": "回到日历",
-                "give_under": "这是一个低于标准杆的解法（{m}）。",
-                "give_par": "这是标准杆解法（{m}）。",
-                "next_level": "下一关",
+                "back_cal": "回到日曆",
+                "give_under": "這是一個低於標準桿的解法（{m}）。",
+                "give_par": "這是標準桿解法（{m}）。",
+                "next_level": "下一關",
                 "win": "{n} 步解出：{sc}。",
-                "sc_under": "低于标准杆 {n} 步",
-                "sc_par": "标准杆",
-                "sc_over": "超出标准杆 {n} 步",
-                "par_left": "标准杆 {p} · {m}",
-                "score_even": "已解出 {h} 关 · 总共平标准杆",
-                "score_over": "已解出 {h} 关 · 总共超出标准杆 {x} 步",
-                "sum_even": "已解出 {n} 关 · {a} 关打出标准杆 · 总共平标准杆",
-                "sum_over": "已解出 {n} 关 · {a} 关打出标准杆 · 总共超出标准杆 {x} 步",
-                "res_line": "{m} / 标准杆 {p}",
-                "play_again": "再玩这一关",
-                "guest_note": "正在以游客身份游玩：成绩保存在本设备上。到日历页面登录，就能把成绩加入排行榜。",
+                "sc_under": "低於標準桿 {n} 步",
+                "sc_par": "標準桿",
+                "sc_over": "超出標準桿 {n} 步",
+                "par_left": "標準桿 {p} · {m}",
+                "score_even": "已解出 {h} 關 · 總共平標準桿",
+                "score_over": "已解出 {h} 關 · 總共超出標準桿 {x} 步",
+                "sum_even": "已解出 {n} 關 · {a} 關打出標準桿 · 總共平標準桿",
+                "sum_over": "已解出 {n} 關 · {a} 關打出標準桿 · 總共超出標準桿 {x} 步",
+                "res_line": "{m} / 標準桿 {p}",
+                "play_again": "再玩這一關",
+                "guest_note": "正在以遊客身份遊玩：成績保存在本設備上。到日曆頁面登錄，就能把成績加入排行榜。",
                 "saving": "保存中…",
-                "saved": "已保存。这一天你的最好成绩：{m}。重新开始，试试更少的步数吧。",
-                "saved_late": "那一天已经结束了，所以不会出现在当天的排行榜上。",
-                "enter_creds": "请输入用户名和密码",
-                "daily_err": "没能加载每日关卡（{e}）。请检查服务器是否在运行，以及脚本里的 API 地址是否正确。",
-                "net_msg": "无法连接到服务器。请检查网络连接，或稍后再试。",
+                "saved": "已保存。這一天你的最好成績：{m}。重新開始，試試更少的步數吧。",
+                "saved_late": "那一天已經結束了，所以不會出現在當天的排行榜上。",
+                "enter_creds": "請輸入用戶名和密碼",
+                "daily_err": "沒能加載每日關卡（{e}）。請檢查服務器是否在運行，以及腳本裡的 API 地址是否正確。",
+                "net_msg": "無法連接到服務器。請檢查網絡連接，或稍後再試。",
                 "net_ok": "好的",
-                "ssub": "{date}，每日第 {n} 关",
-                "stats_err": "没能加载统计",
-                "loading": "加载中…",
-                "lb_none": "还没有成绩",
-                "lb_err": "没能加载排行榜"
+                "ssub": "{date}，每日第 {n} 關",
+                "stats_err": "沒能加載統計",
+                "loading": "加載中…",
+                "lb_none": "還沒有成績",
+                "lb_err": "沒能加載排行榜"
             }
         };
         /* strings that depend on a number or a count */
@@ -3941,11 +4361,13 @@
         Object.assign(I18N.en, { lang_en: 'english', lang_es: 'spanish', lang_ja: 'japanese', lang_zh: 'chinese' });
         Object.assign(I18N.es, { lang_en: 'inglés', lang_es: 'español', lang_ja: 'japonés', lang_zh: 'chino' });
         Object.assign(I18N.ja, { lang_en: '英語', lang_es: 'スペイン語', lang_ja: '日本語', lang_zh: '中国語' });
-        Object.assign(I18N.zh, { lang_en: '英语', lang_es: '西班牙语', lang_ja: '日语', lang_zh: '中文' });
+        Object.assign(I18N.zh, { lang_en: '英語', lang_es: '西班牙語', lang_ja: '日語', lang_zh: '中文' });
         Object.assign(I18N.en, { sand_stuck: "stuck in the sand! you can only undo.", sand_note: "sand pits:" });
         Object.assign(I18N.es, { sand_stuck: "¡atascado en la arena! solo puedes deshacer.", sand_note: "trampas de arena:" });
         Object.assign(I18N.ja, { sand_stuck: "砂にはまった！元に戻すことしかできません。", sand_note: "バンカー:" });
-        Object.assign(I18N.zh, { sand_stuck: "陷进沙坑了！只能撤销。", sand_note: "沙坑：" });
+        Object.assign(I18N.en, { today_lvl: "today's level" }); Object.assign(I18N.es, { today_lvl: "nivel de hoy" }); Object.assign(I18N.ja, { today_lvl: "今日のレベル" }); Object.assign(I18N.zh, { today_lvl: "今日關卡" });
+        Object.assign(I18N.en, { w_month: "monthly completion" }); Object.assign(I18N.es, { w_month: "avance del mes" }); Object.assign(I18N.ja, { w_month: "今月の達成度" }); Object.assign(I18N.zh, { w_month: "本月完成度" });
+        Object.assign(I18N.zh, { sand_stuck: "陷進沙坑了！只能撤銷。", sand_note: "沙坑：" });
         let lang = 'en';
         try { const s = localStorage.getItem('lang'); if (LANGS.includes(s)) lang = s } catch (e) { }
         function tr(k, v) {
@@ -3956,7 +4378,7 @@
         const cjk = () => lang === 'ja' || lang === 'zh';
         const SP = () => cjk() ? '' : ' ';
         const teeW = () => (tr('tee').length + 1) * (cjk() ? 2 : 1);
-        const LOCALE = { en: undefined, es: 'es', ja: 'ja', zh: 'zh-CN' };
+        const LOCALE = { en: undefined, es: 'es', ja: 'ja', zh: 'zh-TW' };
         const MNS = {
             en: ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'],
             es: ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
@@ -3970,7 +4392,7 @@
         /* static text: on first run every element whose text (or placeholder / aria-label) is exactly an English entry gets tagged, so the page needs no markup changes */
         const tagged = [], i18nNorm = s => String(s).replace(/\s+/g, ' ').trim();
         function applyStatic() {
-            document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
+            document.documentElement.lang = lang === 'zh' ? 'zh-TW' : lang;
             tagged.forEach(([el, k, a]) => { const v = tr(k); if (a) el.setAttribute(a, v); else el.textContent = v; });
             document.querySelectorAll('#langSeg button').forEach(b => b.setAttribute('aria-checked', b.dataset.l === lang));
             document.querySelectorAll('.sw').forEach(b => { const r = b.closest('.srow'), bb = r && r.querySelector('b'); if (bb) b.setAttribute('aria-label', bb.textContent); });
@@ -4053,7 +4475,7 @@
         function tf(v) { return String(+v.toFixed(3)) }
         const inPit = x => !!L && !!L.pits && L.pits.some(p => same(p, x));   /* sand pit: you can land on it, but then you can only undo */
         function draw(vw, bl, vals, g, won) {
-            const W = $('nl').clientWidth || 640, H = W < 520 ? 160 : 200, pad = W < 520 ? 28 : 44, Y = H - 58, R = 7, sp = vw.hi - vw.lo, x = v => pad + (v - vw.lo) / sp * (W - 2 * pad);
+            const W = $('nl').clientWidth || 640, H = W < 520 ? nlHp() : 200, pad = W < 520 ? 28 : 44, Y = H - (W < 520 ? 52 : 58), R = 7, sp = vw.hi - vw.lo, x = v => pad + (v - vw.lo) / sp * (W - 2 * pad);
             const hgt = (a, b) => Math.max(4, Math.min(Y - 30, 100, Math.abs(x(b) - x(a)) * .25));
             const SAND = '#d4a64f', pitsIn = (L.pits || []).map(p => { const a = x(val(p)), b = p.hi ? x(val(p.hi)) : a; return { p, a, b, lo: Math.min(a, b), hi: Math.max(a, b) }; }).filter(q => q.hi >= 10 && q.lo <= W - 10);
             let h = '';   /* sand pits are drawn like a sketch: the line goes dashed between two open circles (one circle for a single number) */
@@ -4263,7 +4685,7 @@
             {
                 const dv = $('diff').value, mi = $('miD'), mm = $('miM');
                 mi.textContent = { 2: 'd_easy', 4: 'd_medium', 6: 'd_hard' }[dv] ? tr({ 2: 'd_easy', 4: 'd_medium', 6: 'd_hard' }[dv]) : ''; mi.className = 'dv' + dv;
-                mm.textContent = settings.hc ? tr('hardcore') : tr('normal'); mm.className = settings.hc ? 'mhc' : 'mnorm';
+                mm.options[0].textContent = tr('normal'); mm.options[1].textContent = tr('hardcore'); mm.value = settings.hc ? 'hc' : 'normal'; mm.disabled = !!dailyMode; mm.className = settings.hc ? 'mhc' : 'mnorm';
             }
             $('cur').classList.toggle('winp', same(cur, L.goal));
             const used = hist.length, won = same(cur, L.goal), stuck = !won && inPit(cur), over = dailyMode ? 0 : used - L.limit; /* daily levels have no par */
@@ -4317,7 +4739,11 @@
             document.querySelectorAll('[data-anim]').forEach(b => b.setAttribute('aria-checked', settings.anims[b.dataset.anim] !== false)); $('rowAdv').hidden = !settings.anim;
         }
         let decAtOpen = false, ssTimer = 0;
-        const SW_DUR = 600, SW_EZ = 'cubic-bezier(.4,0,.2,1)';
+        let SW_DUR = 600, SW_SET = 600, SW_LEAN = 4.6; const SW_EZ = 'cubic-bezier(.4,0,.2,1)';
+        /* phones: shorter slide, a gentler lean and a quick settle */
+        const mqMotion = matchMedia('(max-width:600px)');
+        const motionSync = () => { if (mqMotion.matches) { SW_DUR = 380; SW_SET = 220; SW_LEAN = 1.6; } else { SW_DUR = 600; SW_SET = 600; SW_LEAN = 4.6; } };
+        motionSync(); if (mqMotion.addEventListener) mqMotion.addEventListener('change', motionSync); else mqMotion.addListener(motionSync);
         function swayAnim(el, kf, dur, ez, fill) { el.getAnimations().forEach(a => a.cancel()); return el.animate(kf, { duration: dur || SW_DUR, easing: ez || SW_EZ, fill: fill || 'none' }); }
         const dropAnims = (...els) => els.forEach(e => e && e.getAnimations().forEach(a => a.cancel()));
         function bez(u) {
@@ -4328,10 +4754,10 @@
         /* panel leans into the move, then a soft damped spring carries it back to upright.
            one continuous simulation, sampled every frame, so there are no joins or jumps */
         function swayKF(dir, x0, x1, settle) {
-            const Tm = SW_DUR, T = Tm + (settle ? 600 : 0);
-            const A = 4.6, W = 13, Z = .5;            /* peak lean (deg), spring speed, damping */
+            const Tm = SW_DUR, T = Tm + (settle ? SW_SET : 0);
+            const A = SW_LEAN, W = mqMotion.matches ? 18 : 13, Z = mqMotion.matches ? .75 : .5;            /* peak lean (deg), spring speed, damping */
             const dt = 1 / 240, step = 4, kf = [];
-            const tf = (x, r) => 'translateX(' + x.toFixed(3) + 'vw) rotate(' + r.toFixed(3) + 'deg)';
+            const tf = (x, r) => 'translate3d(' + x.toFixed(3) + 'vw,0,0) rotate(' + r.toFixed(3) + 'deg)';
             const vel = u => { const d = .001, a = Math.max(0, u - d), b = Math.min(1, u + d); return (bez(b) - bez(a)) / (b - a); };
             let vmax = 0; for (let k = 0; k <= 100; k++) vmax = Math.max(vmax, vel(k / 100));
             let th = 0, om = 0;
@@ -4366,7 +4792,7 @@
                 mn.classList.add(away); if (nw) nw.classList.add(away);
                 if (an) {
                     swayAnim(st, [{ transform: 'translateX(' + (-100 * d) + '%)' }, { transform: 'none' }]);
-                    swayAnim(sp, swayKF(d, 0, 0, true), 1200, 'linear');
+                    swayAnim(sp, swayKF(d, 0, 0, true), SW_DUR + SW_SET, 'linear');
                     swayAnim(mn, swayKF(d, 0, 100 * d, false), SW_DUR, 'linear', 'forwards');
                 }
                 ssTimer = setTimeout(() => { mn.hidden = true; if (nw) nw.hidden = true; dropAnims(mn, nw); }, an ? SW_DUR + 80 : 0);
@@ -4378,7 +4804,7 @@
                 if (an) {
                     swayAnim(st, [{ transform: 'none' }, { transform: 'translateX(' + (-100 * d) + '%)' }], 0, 0, 'forwards');
                     swayAnim(sp, swayKF(-d, 0, 0, false), SW_DUR, 'linear');
-                    swayAnim(mn, swayKF(-d, 100 * d, 0, true), 1200, 'linear');
+                    swayAnim(mn, swayKF(-d, 100 * d, 0, true), SW_DUR + SW_SET, 'linear');
                 }
                 ssTimer = setTimeout(() => { st.hidden = true; dropAnims(st); }, an ? SW_DUR + 80 : 0);
             }
@@ -4454,6 +4880,7 @@
         $('swGfrac').onclick = () => { if (settings.num !== 'frac') return; settings.gfrac = !settings.gfrac; saveSettings(); applySettings(); };
         $('swRoots').onclick = () => { if (settings.num === 'frac') return; settings.roots = !settings.roots; saveSettings(); applySettings(); };
         $('swHc').onclick = () => { settings.hc = !settings.hc; saveSettings(); applySettings(); };
+        $('miM').onchange = () => { settings.hc = $('miM').value === 'hc'; saveSettings(); applySettings(); if (L) render(); };
         $('swAnim').onclick = () => { settings.anim = !settings.anim; saveSettings(); applySettings(); };
         applySettings();
         function siteSearch() { const q = $('tsearch').value.trim(); if (!q) return;/* TODO: point this at the site's search page */ }
@@ -4494,12 +4921,14 @@
         };
         $('skipanim').onclick = skipReplay;
         $('diff').onchange = newLevel;
-        /* phones: number line sits in the board under the numbers; larger screens: pinned along the bottom */
+        /* the number line is always pinned outside the board, along the bottom of the screen */
         const mqPhone = matchMedia('(max-width:520px)');
+        function nlHp() { return innerHeight < 620 ? 100 : innerHeight < 700 ? 108 : 126; }   /* phone number line height: short enough that the whole level fits one screen */
         function placeNl() {
-            const nw = $('nlwrap'), pips = $('pips');
-            if (mqPhone.matches) { if (nw.parentNode !== pips.parentNode) pips.parentNode.insertBefore(nw, pips); }
-            else if (nw.parentNode !== document.body) document.body.insertBefore(nw, $('fx').nextSibling);
+            { const d = $('diff'), mi = $('modeinfo'); if (d && mi) { d._home = d._home || d.parentNode; if (mqPhone.matches) { if (d.parentNode !== mi) mi.insertBefore(d, mi.firstChild); d._home.hidden = true; } else { if (d.parentNode !== d._home) d._home.appendChild(d); d._home.hidden = false; } } }   /* phones: the difficulty picker joins the status line */
+            { const hd = document.querySelector('main > header'), bd = document.querySelector('main > .board'), cf = $('calcfab'), nf = $('notefab'); if (hd && bd && cf && nf) { if (mqPhone.matches) { if (cf.parentNode !== hd) hd.append(nf, cf); } else if (cf.parentNode !== bd) bd.prepend(cf, nf); } }   /* phones: calculator and notepad buttons sit in the title row */
+            const nw = $('nlwrap');
+            if (nw.parentNode !== document.body) document.body.insertBefore(nw, $('fx').nextSibling);
         }
         placeNl();
         const onMq = () => { placeNl(); view = null; pend = false; if (L) drawLine(); };
@@ -4544,7 +4973,7 @@
             if (an) {
                 const d = v === 'menu' ? (prev === 'stats' ? -1 : 1) : (v === 'stats' ? 1 : -1), ins = viewEls(v); /* stats sits to the left of the menu, every other page to the right */
                 const outAnims = movers(outs).map(e => swayAnim(e, swayKF(d, 0, 100 * d, false), SW_DUR, 'linear', 'forwards')); /* forwards: stays off-screen until it is hidden, so it never snaps back for a frame */
-                movers(ins).forEach(e => { e.style.animation = 'none'; swayAnim(e, swayKF(d, -100 * d, 0, true), 1200, 'linear'); });
+                movers(ins).forEach(e => { e.style.animation = 'none'; swayAnim(e, swayKF(d, -100 * d, 0, true), SW_DUR + SW_SET, 'linear'); });
                 bgBase = v === 'menu' ? 0 : (v === 'stats' ? 1 : -1) * Math.round(innerWidth * .3); parallax(bgBase);
                 let cleaned = false;
                 const cleanOuts = () => {
@@ -4640,10 +5069,19 @@
         async function renderCal() {
             const ym = calY + '-' + pad(calM + 1); let days = {};
             $('ctitle').innerHTML = cjk() ? calY + '年 <b></b>' : '<b></b> ' + calY; $('ctitle').querySelector('b').textContent = mnm(calM);
-            if (user && todayStr) { try { days = (await api('/daily/month/' + ym + '?username=' + encodeURIComponent(user))).days; } catch (e) { } }
+            if (user && todayStr) { try { days = (await api('/daily/month/' + ym + '?username=' + encodeURIComponent(user))).days; } catch (e) { days = null; } }
             else if (!user) { const g = gLoad(); for (const d in g) if (d.startsWith(ym)) days[d] = { moves: g[d].m.length, late: !!g[d].late }; }
+            const loaded = days !== null; if (!loaded) days = {};
+            const calState = (window.__calState = window.__calState || {}); let justN = 0;
             const g = $('cgrid'); g.innerHTML = ''; g.classList.toggle('pop', animOn('ui'));
             const first = new Date(Date.UTC(calY, calM, 1)).getUTCDay(), n = new Date(Date.UTC(calY, calM + 1, 0)).getUTCDate();
+            {   /* monthly completion: days solved this month out of the days in the month */
+                const done = Object.keys(days).filter(d => d.startsWith(ym) && d <= todayStr).length, pct = Math.round(100 * done / n);
+                $('wmonth').textContent = !calY ? '' : cjk() ? calY + '年' + mnm(calM) : mnm(calM) + ' ' + calY;
+                $('wfill').style.width = (loaded ? pct : 0) + '%'; $('wpct').textContent = loaded ? pct + '%' : '–';
+                $('wbar').setAttribute('aria-valuenow', loaded ? pct : 0);
+                if (loaded) $('wbar').setAttribute('aria-valuetext', pct + '% (' + done + '/' + n + ')'); else $('wbar').removeAttribute('aria-valuetext');
+            }
             const tDay = todayStr.slice(0, 7) === ym ? +todayStr.slice(8) : 0;
             WD().forEach((w, i) => { const c = document.createElement('div'); c.className = 'cw'; c.textContent = w; if (tDay && (first + tDay - 1) % 7 === i) c.classList.add('today'); g.appendChild(c); });
             for (let i = 0; i < first; i++) g.appendChild(document.createElement('div'));
@@ -4652,24 +5090,34 @@
                 b.className = 'cd'; b.textContent = d; b.style.setProperty('--d', Math.min(d + first, 26));
                 const ok = todayStr && date <= todayStr && date >= DSTART;
                 if (ok) { b.classList.add('play'); b.onclick = () => playDaily(date); } else b.disabled = true;
-                if (date === todayStr) b.classList.add('today'); else if (res) b.classList.add(res.late ? 'late' : 'done'); else if (ok) b.classList.add('miss');
-                if (res) {
-                    const p = document.createElement('span'); p.className = 'mv'; p.textContent = res.moves; p.title = tr('moves', { n: res.moves });
-                    b.appendChild(p);
-                }
+                /* today's cell turns blue once it's solved too, and keeps a ring so you can still tell which day is today */
+                const isToday = date === todayStr, st = res ? (res.late ? 'late' : 'done') : isToday ? 'today' : ok ? 'miss' : '', was = calState[date];
+                const showDone = () => {
+                    if (isToday) b.classList.add('today'); b.classList.remove('miss'); if (res) b.classList.add(st);
+                    if (res) { const p = document.createElement('span'); p.className = 'mv'; p.textContent = res.moves; p.title = tr('moves', { n: res.moves }); b.appendChild(p); }
+                };
+                if (res && (was === 'miss' || was === 'today') && animOn('ui')) {
+                    /* you just solved this day: start as the unsolved cell, then fade to the solved colour with a pop and a ring */
+                    if (isToday) b.classList.add('today'); else b.classList.add('miss');
+                    const delay = 450 + 140 * justN++;
+                    setTimeout(() => { b.classList.add('just'); showDone(); b.classList.remove('today', 'miss'); if (isToday) b.classList.add('today'); try { if (navigator.vibrate) navigator.vibrate(25); } catch (e) { } setTimeout(() => b.classList.remove('just'), 900); }, delay);
+                } else if (res || isToday) { if (isToday) b.classList.add('today'); showDone(); }
+                else if (ok) b.classList.add('miss');
+                calState[date] = st;
                 g.appendChild(b);
             }
         }
         async function loadDailySolved() {
-            const el = $('dsolved');
+            /* how many players solved this daily level, as flip tiles; after you win, the count flips up to include you */
+            const el = $('dsolved'), box = $('dsn');
             if (!dailyMode) { el.hidden = true; return; }
-            const date = dailyDate;
-            el.hidden = false; el.textContent = '';
+            const date = dailyDate, same = box.dataset.date === date;
+            el.hidden = false;
+            if (!same) { box.dataset.date = date; setFlip(box, '000', '…'); }
             try {
-                const j = await api('/daily/stats/' + date);
-                if (dailyMode && dailyDate === date)
-                    el.textContent = j.solved === 1 ? '1 player has solved this level' : j.solved + ' players have solved this level';
-            } catch (e) { el.hidden = true; }
+                const j = await api('/daily/stats/' + date), txt = String(Math.min(j.solved, 99999)).padStart(3, '0');
+                setTimeout(() => { if (dailyMode && dailyDate === date) setFlip(box, txt, tr('solved_title') + ': ' + j.solved); }, same ? 0 : 250);
+            } catch (e) { el.hidden = true; box.dataset.date = ''; }
         }
         async function playDaily(date) {
             try {
@@ -5927,10 +6375,162 @@ function calcClose() { if (calcOpen) calcSet(false); }
         (() => {
             const r = document.documentElement, b = document.body, F = .5; let q = 0;
             if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-            const u = () => { q = 0; b.style.backgroundPositionY = (r.classList.contains('noanim') ? 0 : window.scrollY * (1 - F)) + 'px'; };
+            const u = () => { q = 0; b.style.backgroundPositionY = (r.classList.contains('noanim') ? 0 : window.scrollY * (1 - F) - b.scrollTop * F) + 'px'; };
             addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(u); }, { passive: true });
+            b.addEventListener('scroll', () => { if (!q) q = requestAnimationFrame(u); }, { passive: true });
         })();
     </script>
+
+<script id="gdock-js">
+(function () {
+    var L = 'en'; try { var s = localStorage.getItem('lang'); if (s === 'es' || s === 'ja' || s === 'zh') L = s; } catch (e) { }
+    var T = {
+        en: { main: 'main', rand: 'random', daily: 'daily', vs: 'versus', edit: 'editor', onl: 'online', code: 'play from code', stats: 'your stats', more: 'more ways to play', nav: 'play', home: 'home', pre: 'logged in as ', post: '', manage: 'manage my account', out: 'not logged in', login: 'log in', show: 'show the tab bar' },
+        es: { main: 'principal', rand: 'aleatorio', daily: 'diario', vs: 'versus', edit: 'editor', onl: 'en línea', code: 'jugar con código', stats: 'tus estadísticas', more: 'más formas de jugar', nav: 'jugar', home: 'inicio', pre: 'sesión iniciada como ', post: '', manage: 'administrar mi cuenta', out: 'sin iniciar sesión', login: 'iniciar sesión', show: 'mostrar la barra de pestañas' },
+        ja: { main: 'メイン', rand: 'ランダム', daily: 'デイリー', vs: '対戦', edit: 'エディタ', onl: 'オンライン', code: 'コードで遊ぶ', stats: 'あなたの記録', more: 'ほかの遊び方', nav: 'プレイ', home: 'ホーム', pre: '', post: ' としてログイン中', manage: 'アカウント管理', out: '未ログイン', login: 'ログイン', show: 'タブバーを表示' },
+        zh: { main: '主線', rand: '隨機', daily: '每日', vs: '對戰', edit: '編輯', onl: '在線', code: '用代碼遊玩', stats: '你的統計', more: '更多玩法', nav: '遊玩', home: '首頁', pre: '已登錄：', post: '', manage: '管理我的帳戶', out: '未登錄', login: '登錄', show: '顯示分頁列' }
+    }[L];
+    var ROOT = '../';
+    var TABS = [['main', ROOT + '#main'], ['rand', ROOT + '#random'], ['daily', ROOT + 'daily/'], ['home', ROOT], ['vs', ROOT + 'vs/'], ['edit', ROOT + 'editor/'], ['onl', ROOT + 'online/']];
+    var EXTRA = [['code', ROOT + '#code'], ['stats', ROOT + '#stats']];
+    var path = location.pathname, qs = location.search, cur = '';
+    if (/\/daily\/?$/.test(path) || /\/daily\/index\.html$/.test(path)) cur = 'daily';
+    else if (/\/vs\//.test(path)) cur = 'vs';
+    else if (/\/editor\//.test(path)) cur = 'edit';
+    else if (/\/online\//.test(path)) cur = 'onl';
+    else if (/\/custom\//.test(path)) cur = /[?&]from=editor/.test(qs) ? 'edit' : /[?&]from=online/.test(qs) ? 'onl' : '';
+    var idx = function (k) { for (var i = 0; i < TABS.length; i++) if (TABS[i][0] === k) return i; return -1; };
+    var curI = idx(cur); if (curI < 0) curI = 0;
+
+    var back = document.createElement('div'); back.id = 'gdockback';
+    var dock = document.createElement('nav'); dock.id = 'gdock'; dock.setAttribute('aria-label', T.nav);
+    var h = '<button type="button" class="gdgrab" aria-expanded="false" aria-label="' + T.more + '"><i></i></button><div class="gdmore"><div>';
+    EXTRA.forEach(function (x) { h += '<a class="gdrow gt-' + x[0] + '" href="' + x[1] + '" data-x="' + x[0] + '"><span class="ic" aria-hidden="true"></span><span>' + T[x[0]] + '</span></a>'; });
+    h += '<div class="gdacct"><span class="gdwho"></span><a class="gdmanage" data-x="acct" href="' + ROOT + '../account/"></a></div>';
+    h += '</div></div><div class="gdtabs">';
+    TABS.forEach(function (x) { h += '<a class="gdtab gt-' + x[0] + (x[0] === cur ? ' cur' : '') + '" href="' + x[1] + '"' + (x[0] === cur ? ' aria-current="page"' : '') + '><span class="ic" aria-hidden="true"></span><span>' + T[x[0]] + '</span></a>'; });
+    h += '</div>';
+    dock.innerHTML = h;
+    document.body.appendChild(back); document.body.appendChild(dock);
+
+    var grab = dock.querySelector('.gdgrab');
+    function setOpen(on) { dock.classList.toggle('open', on); back.classList.toggle('on', on); grab.setAttribute('aria-expanded', on); }
+    var off = false, drag = null, swiped = false, who = dock.querySelector('.gdwho'), manage = dock.querySelector('.gdmanage');
+    /* swipe down on the bar to tuck it away (only the handle stays); swipe up or tap the handle to bring it back */
+    function setOff(on) {
+        off = !!on; document.documentElement.classList.toggle('gdoff', off);
+        if (off) setOpen(false);
+        dock.querySelector('.gdtabs').inert = off;
+        grab.setAttribute('aria-label', off ? T.show : T.more);
+    }
+    function showWho() {
+        var n = ''; try { n = (localStorage.getItem('username') || '').trim(); } catch (e) { }
+        if (n) { var b = document.createElement('b'); b.textContent = n; who.replaceChildren(T.pre, b, T.post); who.title = n; manage.textContent = T.manage; }
+        else { who.textContent = T.out; who.removeAttribute('title'); manage.textContent = T.login; }
+    }
+    showWho(); addEventListener('focus', showWho); addEventListener('storage', showWho);
+    grab.addEventListener('click', function () { if (off) setOff(false); else setOpen(!dock.classList.contains('open')); });
+    dock.addEventListener('pointerdown', function (e) { showWho(); if (e.button) return; drag = { x: e.clientX, y: e.clientY, done: false }; swiped = false; });
+    dock.addEventListener('pointermove', function (e) {
+        if (!drag || drag.done) return;
+        var dy = e.clientY - drag.y, dx = e.clientX - drag.x; if (Math.abs(dy) < 10 || Math.abs(dy) < Math.abs(dx)) return;
+        drag.done = true; swiped = true;
+        if (off) { if (dy < 0) setOff(false); }
+        else if (dock.classList.contains('open')) { if (dy > 0) setOpen(false); }
+        else if (dy > 0) setOff(true); else setOpen(true);
+    });
+    addEventListener('pointerup', function () { drag = null; }); addEventListener('pointercancel', function () { drag = null; });
+    dock.addEventListener('click', function (e) { if (swiped) { e.preventDefault(); e.stopImmediatePropagation(); swiped = false; } }, true);
+    back.addEventListener('click', function () { setOpen(false); });
+    addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+
+    /* page-to-page motion on phones: the page slides and fades out the way you're heading, the next one eases in */
+    function motionOK() {
+        if (!matchMedia('(max-width:600px)').matches || matchMedia('(prefers-reduced-motion:reduce)').matches) return false;
+        try { var q = JSON.parse(localStorage.getItem('hs1') || '{}'); if (q.anim === false || (q.anims && q.anims.slide === false)) return false; } catch (e) { }
+        return !!document.body.animate;
+    }
+    function movers() {
+        return Array.prototype.filter.call(document.body.children, function (e) {
+            if (/^(SCRIPT|STYLE|DIALOG)$/.test(e.tagName) || e.id === 'topbar' || e.id === 'gdock' || e.id === 'gdockback' || e.hidden) return false;
+            var cs = getComputedStyle(e); return cs.display !== 'none' && cs.position !== 'fixed';
+        });
+    }
+    var leaving = false;
+    function go(url, to) {
+        if (leaving) return; setOpen(false);
+        if (!motionOK()) { location.href = url; return; }
+        leaving = true; var dir = to >= curI ? 1 : -1, done = false;
+        try { sessionStorage.setItem('gdvNav', dir + ':' + Date.now()); } catch (e) { }
+        var fin = function () { if (!done) { done = true; location.href = url; } };
+        var els = movers(); if (!els.length) { fin(); return; }
+        var anims = els.map(function (e) { e.style.willChange = 'transform, opacity'; return e.animate([{ transform: 'none', opacity: 1 }, { transform: 'translate3d(' + (-dir * 36) + 'px,0,0)', opacity: 0 }], { duration: 200, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' }); });
+        Promise.all(anims.map(function (a) { return a.finished; })).then(fin, fin); setTimeout(fin, 500);
+    }
+    dock.addEventListener('click', function (e) {
+        var a = e.target.closest && e.target.closest('a[href]'); if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+        e.preventDefault();
+        var k = a.getAttribute('data-x'), i = -1; if (!k) { for (var j = 0; j < TABS.length; j++) if (TABS[j][1] === a.getAttribute('href')) i = j; } else i = 0;
+        if (a.classList.contains('cur')) { setOpen(false); scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        go(a.href, i);
+    });
+    /* arriving from another page of the site */
+    try {
+        var f = sessionStorage.getItem('gdvNav'); sessionStorage.removeItem('gdvNav');
+        if (f) { var p = f.split(':'), dir = +p[0] || 1; if (Date.now() - (+p[1] || 0) < 4000 && motionOK()) movers().forEach(function (e) { e.animate([{ transform: 'translate3d(' + (dir * 36) + 'px,0,0)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 340, easing: 'cubic-bezier(.2,.8,.2,1)' }); }); }
+    } catch (e) { }
+    addEventListener('pageshow', function (e) { if (e.persisted) { leaving = false; setOpen(false); movers().forEach(function (x) { x.getAnimations().forEach(function (a) { a.cancel(); }); x.style.willChange = ''; }); } });
+})();
+</script>
+
+<script id="gtop-js">
+(function () {
+    var a = document.getElementById('tacct'); if (!a) return;
+    var L = 'en'; try { var s = localStorage.getItem('lang'); if (s === 'es' || s === 'ja' || s === 'zh') L = s; } catch (e) { }
+    var S = { en: ['signed in as ', ''], es: ['sesión iniciada como ', ''], ja: ['', 'としてログイン中'], zh: ['已登錄：', ''] }[L], LG = { en: 'log in', es: 'iniciar sesión', ja: 'ログイン', zh: '登錄' }[L];
+    function show() {
+        var n = ''; try { n = (localStorage.getItem('username') || '').trim(); } catch (e) { }
+        if (n) { var b = document.createElement('b'); b.textContent = n; a.className = 'twho'; a.replaceChildren(S[0], b, S[1]); a.title = n; }
+        else { a.className = 'tbtn'; a.textContent = LG; a.removeAttribute('title'); }
+    }
+    show(); addEventListener('focus', show); addEventListener('storage', show); addEventListener('pageshow', show);
+})();
+</script>
+
+<script id="gtop-search">
+(function () {
+    var go = document.getElementById('tgo'), src = document.getElementById('tsearch'); if (!go || !src) return;
+    var L = 'en'; try { var s = localStorage.getItem('lang'); if (s === 'es' || s === 'ja' || s === 'zh') L = s; } catch (e) { }
+    var T = { en: ['search', 'type here', 'close'], es: ['buscar', 'escribe aquí', 'cerrar'], ja: ['検索', 'ここに入力', '閉じる'], zh: ['搜尋', '在此輸入', '關閉'] }[L];
+    var mq = matchMedia('(max-width:600px)');
+    var d = document.createElement('dialog'); d.id = 'gsearchdlg'; d.setAttribute('aria-label', T[0]);
+    d.innerHTML = '<h3></h3><form class="gsform"><div class="gsrow"><input type="search" autocomplete="off"><button type="submit"></button></div><button type="button" class="gsclose"></button></form>';
+    d.querySelector('h3').textContent = T[0]; d.querySelector('button[type=submit]').textContent = T[0]; d.querySelector('.gsclose').textContent = T[2];
+    var inp = d.querySelector('input'); inp.placeholder = T[1]; inp.setAttribute('aria-label', T[0]);
+    document.body.appendChild(d);
+    go.addEventListener('click', function (e) {
+        if (!mq.matches) return;
+        e.preventDefault(); e.stopImmediatePropagation();
+        inp.value = src.value; if (!d.open) d.showModal(); inp.focus(); inp.select();
+    }, true);
+    d.querySelector('form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        src.value = inp.value; src.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); d.close();
+    });
+    d.querySelector('.gsclose').addEventListener('click', function () { d.close(); });
+    d.addEventListener('click', function (e) { if (e.target === d) d.close(); });
+    var chg = function () { if (!mq.matches && d.open) d.close(); };
+    if (mq.addEventListener) mq.addEventListener('change', chg); else mq.addListener(chg);
+})();
+</script>
+
+<script id="tgo-js">
+(function () {
+    var go = document.getElementById('tgo'); if (!go) return;
+    var L = 'en'; try { var s = localStorage.getItem('lang'); if (s === 'es' || s === 'ja' || s === 'zh') L = s; } catch (e) { }
+    go.textContent = { en: 'search', es: 'buscar', ja: '検索', zh: '搜尋' }[L];   /* top bar search button follows the language */
+})();
+</script>
 </body>
 
 </html>
