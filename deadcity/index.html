@@ -537,7 +537,7 @@ function hurt(d,why){let bc=0;if(P.car){P.car.hp-=d*.7;d*=.25;bc=P.car.hp<=0}P.h
 function scr(h){const e=$('#scr');e.innerHTML=h?`<div>${h}</div>`:'';e.style.display=h?'grid':'none'}
 function intro(){scr(`<h1>dead city</h1><p>you wake up in your own house. the radio says a rescue helicopter reaches the rooftops in <b>${WIN} days</b>. go through the gold-marked doors and search the fridges, cupboards, lockers and boxes inside the buildings &mdash; you start with nothing, so open them, take what you need, and stash what you want to keep &mdash; houses, shops, offices, hospitals, warehouses and more, each with its own layout; tall ones have several floors, keep fed and hydrated, and stay quiet &mdash; noise draws the dead, and they come in numbers after dark.</p><p>you are not alone: other survivors are out there, each with a name, a past and a temper. share supplies, earn their trust and team up &mdash; or put down the raiders who come for yours. press <b>e</b> beside someone to talk.</p><p><b>wasd</b> move &middot; <b>shift</b> sprint &middot; <b>mouse</b> aim &amp; attack &middot; <b>e</b> open container / stairs / talk / loot / drive &middot; <b>q</b> stairs down &middot; <b>i</b> pack: break junk down, craft &middot; <b>1-6</b> use / equip hotbar slot &middot; <b>0</b> fists &middot; <b>m</b> city map &middot; <b>b</b> blood &middot; <b>p</b> pause</p>${optsHTML()}<input id="sd" placeholder="city seed (blank = random)" autocomplete="off"><button class="pri" id="go">start</button>`)}
 /* ---------- home + outbreak ---------- */
-const HM_N=120,INFM={over:0,slow:1.05*CS,fast:2.4*CS}; // infection front speed in px per second (0 = the city is already overrun)
+const HM_N=420,INFM={over:0,slow:1.05*CS,fast:2.4*CS}; // infection front speed in px per second (0 = the city is already overrun)
 function optsHTML(){const o=(v,t)=>`<option value="${v}"${v===INFMODE?' selected':''}>${t}</option>`;
  return `<label>outbreak<select id="im">${o('slow','spreading &mdash; slow')}${o('fast','spreading &mdash; fast')}${o('over','already overrun')}</select></label><small>spreading: the city starts quiet, the infection breaks out at the hospitals and creeps outward, so the dead keep multiplying. overrun: zombies everywhere from the start.</small>`}
 // a spot on the ground floor of a house: bedroom first, then living room, then anywhere
@@ -594,22 +594,22 @@ function end(w){paused=true;S.over=1;const st=`<p>day <b>${S.day}</b> &middot; k
 
 /* ---------- player actions ---------- */
 /* ---------- inventory ---------- */
-const CAP=18,HOT=6,BATMAX=35;let INVO=0,SEL=-1,invS='',CTO=null;
+const CAP=18,HOT=6,BATMAX=35;let INVO=0,SEL=-1,invS='',CTO=null,HELD=null;
 const IT={
- food:{n:'canned food',e:'🥫',st:4,u:'eat',ds:'eat it: +35 hunger'},
- water:{n:'bottled water',e:'💧',st:4,u:'drink',ds:'drink it: +40 thirst'},
- band:{n:'bandage',e:'🩹',st:5,u:'apply',ds:'stops bleeding, +25 health'},
- ammo:{n:'pistol ammo',e:'🔸',st:30,ds:'loose rounds for a pistol'},
+ food:{n:'canned food',e:'🥫',st:16,u:'eat',ds:'eat it: +35 hunger'},
+ water:{n:'bottled water',e:'💧',st:16,u:'drink',ds:'drink it: +40 thirst'},
+ band:{n:'bandage',e:'🩹',st:16,u:'apply',ds:'stops bleeding, +25 health'},
+ ammo:{n:'pistol ammo',e:'🔸',st:64,ds:'loose rounds for a pistol'},
  bat:{n:'baseball bat',e:'🏏',st:1,w:1,d:BATMAX,ds:'melee weapon. wears out with every hit'},
  gun:{n:'pistol',e:'🔫',st:1,w:2,ds:'ranged weapon. loud. uses ammo'},
- paper:{n:'paper',e:'📄',st:20,ds:'material'},cloth:{n:'cloth',e:'🧵',st:20,ds:'material'},wood:{n:'wood',e:'🪵',st:20,ds:'material'},
- scrap:{n:'scrap metal',e:'🔩',st:20,ds:'material'},plastic:{n:'plastic',e:'🧴',st:20,ds:'material'},tape:{n:'duct tape',e:'📼',st:20,ds:'material'},parts:{n:'electronics',e:'🔌',st:20,ds:'material'},
- notebook:{n:'notebook',e:'📓',st:2,br:{paper:[2,3]}},magazine:{n:'old magazine',e:'📰',st:2,br:{paper:[2,2]}},book:{n:'paperback',e:'📕',st:2,br:{paper:[3,4]}},
- tshirt:{n:'t-shirt',e:'👕',st:2,br:{cloth:[2,2]}},scarf:{n:'scarf',e:'🧣',st:2,br:{cloth:[2,3]}},socks:{n:'socks',e:'🧦',st:2,br:{cloth:[1,2]}},
- chair:{n:'broken chair',e:'🪑',st:1,br:{wood:[3,4]}},frame:{n:'picture frame',e:'🖼️',st:2,br:{wood:[1,2],plastic:[0,1]}},
+ paper:{n:'paper',e:'📄',st:64,ds:'material'},cloth:{n:'cloth',e:'🧵',st:64,ds:'material'},wood:{n:'wood',e:'🪵',st:64,ds:'material'},
+ scrap:{n:'scrap metal',e:'🔩',st:64,ds:'material'},plastic:{n:'plastic',e:'🧴',st:64,ds:'material'},tape:{n:'duct tape',e:'📼',st:64,ds:'material'},parts:{n:'electronics',e:'🔌',st:64,ds:'material'},
+ notebook:{n:'notebook',e:'📓',st:16,br:{paper:[2,3]}},magazine:{n:'old magazine',e:'📰',st:16,br:{paper:[2,2]}},book:{n:'paperback',e:'📕',st:16,br:{paper:[3,4]}},
+ tshirt:{n:'t-shirt',e:'👕',st:16,br:{cloth:[2,2]}},scarf:{n:'scarf',e:'🧣',st:16,br:{cloth:[2,3]}},socks:{n:'socks',e:'🧦',st:16,br:{cloth:[1,2]}},
+ chair:{n:'broken chair',e:'🪑',st:1,br:{wood:[3,4]}},frame:{n:'picture frame',e:'🖼️',st:16,br:{wood:[1,2],plastic:[0,1]}},
  pan:{n:'frying pan',e:'🍳',st:1,br:{scrap:[2,3]}},pipe:{n:'pipe',e:'🔧',st:1,br:{scrap:[2,3]}},toolbox:{n:'toolbox',e:'🧰',st:1,br:{scrap:[2,3],tape:[1,1]}},
- phone:{n:'dead phone',e:'📱',st:2,br:{parts:[1,2],plastic:[1,1]}},radio:{n:'broken radio',e:'📻',st:1,br:{parts:[2,3],scrap:[0,1],plastic:[1,1]}},
- lamp:{n:'desk lamp',e:'💡',st:1,br:{parts:[1,2],scrap:[1,2]}},keyboard:{n:'keyboard',e:'⌨️',st:1,br:{plastic:[2,3],parts:[1,1]}},bottle:{n:'empty bottle',e:'🍾',st:2,br:{plastic:[1,2]}}
+ phone:{n:'dead phone',e:'📱',st:16,br:{parts:[1,2],plastic:[1,1]}},radio:{n:'broken radio',e:'📻',st:1,br:{parts:[2,3],scrap:[0,1],plastic:[1,1]}},
+ lamp:{n:'desk lamp',e:'💡',st:1,br:{parts:[1,2],scrap:[1,2]}},keyboard:{n:'keyboard',e:'⌨️',st:1,br:{plastic:[2,3],parts:[1,1]}},bottle:{n:'empty bottle',e:'🍾',st:16,br:{plastic:[1,2]}}
 };
 for(const k in IT){const D=IT[k];if(D.br)D.ds='junk. take it apart for materials'}
 const JK=Object.keys(IT).filter(k=>IT[k].br),MT=['paper','cloth','wood','scrap','plastic','tape','parts'],rjk=()=>JK[Math.random()*JK.length|0];
@@ -633,23 +633,25 @@ function put(arr,id,n,d){const D=IT[id];if(D.st>1)for(const s of arr)if(n>0&&s&&
  while(n>0){const i=arr.indexOf(null);if(i<0)break;const a=Math.min(n,D.st),it={id,n:a},dd=d??D.d;if(dd!=null)it.d=dd;arr[i]=it;n-=a}return n} // returns what did not fit
 const give=(id,n,d)=>put(P.items,id,n,d);
 function take(id,n){let r=n;for(let i=CAP-1;i>=0&&r>0;i--){const s=P.items[i];if(s&&s.id===id){const a=Math.min(r,s.n);s.n-=a;r-=a;if(!s.n){P.items[i]=null;if(P.eq===i)P.eq=-1}}}return n-r}
+function decH(){if(HELD&&--HELD.n<=0)HELD=null}
 function dec(i){const s=P.items[i];if(!s)return;if(--s.n<=0){P.items[i]=null;if(P.eq===i)P.eq=-1}}
 function initInv(){
+ HELD=null;
  Object.defineProperties(P,{
   inv:{value:new Proxy({},{get:(_,k)=>IT[k]?cnt(k):0,set:(_,k,v)=>{if(!IT[k])return true;const c=cnt(k);if(v>c){const l=give(k,v-c);if(l)toast('pack full - lost '+l+' '+IT[k].n)}else if(v<c)take(k,c-v);return true}})},
   slot:{get(){const s=this.items[this.eq];return s?IT[s.id].w||0:0},set(v){if(!v)this.eq=-1}},
   bat:{get(){return cnt('bat')?1:0}},gun:{get(){return cnt('gun')?1:0}}});
  // you start with nothing at all: everything has to be found in containers
 }
-function useSlot(i){const s=P.items[i];if(!s)return toast('empty slot');const D=IT[s.id];
- if(D.w){if(P.eq===i){P.eq=-1;return toast('bare fists')}P.eq=i;return toast(D.n+(s.id==='gun'?' ('+cnt('ammo')+' ammo)':''))}
- if(s.id==='band'){if(!P.bleed&&P.hp>=100)return toast('you are not hurt');dec(i);P.bleed=0;P.hp=Math.min(100,P.hp+25);return toast('bandaged up')}
- if(s.id==='food'){if(P.hu>85)return toast('not hungry');dec(i);P.hu=Math.min(100,P.hu+35);return toast('ate some food')}
- if(s.id==='water'){if(P.th>85)return toast('not thirsty');dec(i);P.th=Math.min(100,P.th+40);return toast('drank some water')}
+function useSlot(i,h){const s=h?HELD:P.items[i];if(!s)return toast('empty slot');const D=IT[s.id],dc=h?decH:dec;
+ if(D.w){if(h)return toast('put it in a slot first');if(P.eq===i){P.eq=-1;return toast('bare fists')}P.eq=i;return toast(D.n+(s.id==='gun'?' ('+cnt('ammo')+' ammo)':''))}
+ if(s.id==='band'){if(!P.bleed&&P.hp>=100)return toast('you are not hurt');dc(i);P.bleed=0;P.hp=Math.min(100,P.hp+25);return toast('bandaged up')}
+ if(s.id==='food'){if(P.hu>85)return toast('not hungry');dc(i);P.hu=Math.min(100,P.hu+35);return toast('ate some food')}
+ if(s.id==='water'){if(P.th>85)return toast('not thirsty');dc(i);P.th=Math.min(100,P.th+40);return toast('drank some water')}
  toast(D.n+(D.br?' - open your pack (i) to take it apart':''))}
 function pick(i){if(i<HOT)useSlot(i)}
-function dismantle(i){const s=P.items[i];if(!s)return;const D=IT[s.id];if(!D.br)return toast('that cannot be taken apart');
- dec(i);noise(P.x,P.y,70);const g=[];let lost=0;
+function dismantle(i,h){const s=h?HELD:P.items[i];if(!s)return;const D=IT[s.id];if(!D.br)return toast('that cannot be taken apart');
+ (h?decH():dec(i));noise(P.x,P.y,70);const g=[];let lost=0;
  for(const m in D.br){const[a,b]=D.br[m],n=a+Math.floor(Math.random()*(b-a+1));if(!n)continue;const l=give(m,n);lost+=l;if(n-l)g.push('+'+(n-l)+' '+IT[m].n)}
  toast('took apart '+D.n+': '+(g.join(', ')||'nothing usable')+(lost?' ('+lost+' lost - pack full)':''))}
 function craft(r){for(const m in r.i)if(cnt(m)<r.i[m])return toast('missing materials');
@@ -683,8 +685,39 @@ function ctStore(i){const L=CTO,t=P.items[i];if(!t)return;const r=put(L.items,t.
  L.pl=1;toast('stored '+IT[t.id].n+' in the '+cdef(L)[0]);if(r)t.n=r;else{P.items[i]=null;if(P.eq===i)P.eq=-1}}
 
 /* ---------- drag & drop between slots (pack <-> pack, pack <-> container) ---------- */
-let DR=null,DG=null;
-function endDrag(){DR=null;if(DG){DG.remove();DG=null}document.querySelectorAll('#inv .ov').forEach(x=>x.classList.remove('ov'))}
+let PR=null,DG=null,MX=0,MY=0,LPK=null,EQO=null;
+function clearOv(){document.querySelectorAll('#inv .ov').forEach(x=>x.classList.remove('ov'))}
+function endDrag(){PR=null;clearOv()}
+function showHeld(){if(!HELD||!INVO){if(DG){DG.remove();DG=null}return}
+ if(!DG){DG=document.createElement('div');DG.id='dg';document.body.appendChild(DG)}
+ DG.innerHTML=IT[HELD.id].e+(HELD.n>1?`<em>${HELD.n}</em>`:'');DG.style.left=MX+'px';DG.style.top=MY+'px'}
+function opStart(){EQO=P.eq>=0?P.items[P.eq]:EQO}
+function opEnd(){const i=EQO?P.items.indexOf(EQO):-1;P.eq=i;if(i<0&&EQO!==HELD)EQO=null}
+const mkS=(s,n)=>{const o={id:s.id,n};if(s.d!=null)o.d=s.d;return o};
+// minecraft-style click: left = pick up / place all / merge / swap, right = pick up half / place one
+function clickSlot(arr,i,btn){const s=arr[i];opStart();
+ if(!HELD){if(!s)return;const D=IT[s.id];
+  if(btn===2&&s.n>1){const t=Math.ceil(s.n/2);HELD=mkS(s,t);s.n-=t}else{HELD=s;arr[i]=null}
+  LPK={t:performance.now(),id:HELD.id};SEL=-1}
+ else{const D=IT[HELD.id];
+  if(!s){const a=btn===2?1:HELD.n;arr[i]=mkS(HELD,a);HELD.n-=a}
+  else if(s.id===HELD.id&&D.st>1){const m=Math.min(btn===2?1:HELD.n,D.st-s.n);if(m>0){s.n+=m;HELD.n-=m}}
+  else{arr[i]=HELD;HELD=s}
+  if(HELD&&HELD.n<=0)HELD=null;
+  SEL=arr===P.items&&arr[i]?i:-1;if(CTO&&arr===CTO.items)CTO.pl=1}
+ opEnd();if(CTO)ctSync(CTO)}
+function gather(){if(!HELD)return;const D=IT[HELD.id];if(D.st<=1)return;opStart();
+ const arrs=[P.items];if(CTO)arrs.push(CTO.items);
+ for(const full of[0,1])for(const a of arrs)for(let k=0;k<a.length&&HELD.n<D.st;k++){const s=a[k];if(!s||s.id!==HELD.id||s.d!=null||(s.n>=D.st)!==!!full)continue;
+  const m=Math.min(s.n,D.st-HELD.n);HELD.n+=m;s.n-=m;if(!s.n)a[k]=null}
+ opEnd();if(CTO)ctSync(CTO)}
+function spread(p){const D=IT[HELD.id],L=p.list.length;let per=p.btn===2?1:Math.max(1,Math.floor(HELD.n/L));opStart();
+ for(const e of p.list){if(!HELD)break;const s=e.arr[e.i];if(s&&(s.id!==HELD.id||D.st<=1))continue;
+  const a=Math.min(per,HELD.n,s?D.st-s.n:D.st);if(a<=0)continue;
+  if(s)s.n+=a;else e.arr[e.i]=mkS(HELD,a);HELD.n-=a;if(HELD.n<=0)HELD=null;if(CTO&&e.arr===CTO.items)CTO.pl=1}
+ SEL=-1;opEnd();if(CTO)ctSync(CTO)}
+function dropHeld(){if(!HELD)return;let r=put(P.items,HELD.id,HELD.n,HELD.d);if(r&&CTO)r=put(CTO.items,HELD.id,r,HELD.d);
+ if(r)toast('no room - dropped '+r+' '+IT[HELD.id].n);HELD=null;EQO=null;showHeld()}
 function moveStack(sa,si,da,dj,cnt){const s=sa[si];if(!s)return false;const d=da[dj],D=IT[s.id],eq=P.items[P.eq]||null;cnt=Math.min(cnt||s.n,s.n);let swap=0;
  if(!d){if(cnt===s.n){da[dj]=s;sa[si]=null}else{const o={id:s.id,n:cnt};if(s.d!=null)o.d=s.d;da[dj]=o;s.n-=cnt}}
  else if(d.id===s.id&&D.st>1){const m=Math.min(cnt,D.st-d.n);if(!m)return false;d.n+=m;s.n-=m;if(!s.n)sa[si]=null}
@@ -702,40 +735,42 @@ function quickMove(arr,i){const t=arr[i];if(!t)return;
  if(j<0)return toast(i<HOT?'the rest of your pack is full':'your hotbar is full');
  moveStack(P.items,i,P.items,j)}
 const slotAt=(x,y)=>{const el=document.elementFromPoint(x,y),t=el&&el.closest&&el.closest('#inv [data-s],#inv [data-k]');if(!t)return null;return t.dataset.k!=null?{arr:CTO&&CTO.items,i:+t.dataset.k,el:t}:{arr:P.items,i:+t.dataset.s,el:t}};
-addEventListener('pointermove',e=>{if(!DR)return;
- if(!DR.moved&&Math.hypot(e.clientX-DR.x0,e.clientY-DR.y0)>6){DR.moved=1;const t=DR.arr[DR.i];if(!t){return endDrag()}
-  DG=document.createElement('div');DG.id='dg';DG.innerHTML=IT[t.id].e+(t.n>1?`<em>${DR.half?Math.ceil(t.n/2):t.n}</em>`:'');document.body.appendChild(DG);invS='';invR()}
- if(DG){DG.style.left=e.clientX+'px';DG.style.top=e.clientY+'px';document.querySelectorAll('#inv .ov').forEach(x=>x.classList.remove('ov'));const h=slotAt(e.clientX,e.clientY);if(h&&h.arr&&!(h.arr===DR.arr&&h.i===DR.i))h.el.classList.add('ov')}});
-addEventListener('pointerup',e=>{if(!DR||!P)return;const d=DR;endDrag();if(!INVO)return;
+addEventListener('pointermove',e=>{MX=e.clientX;MY=e.clientY;if(DG){DG.style.left=MX+'px';DG.style.top=MY+'px'}
+ if(!PR)return;if(!PR.moved&&Math.hypot(e.clientX-PR.x0,e.clientY-PR.y0)>6)PR.moved=1;if(!PR.moved)return;
+ const h=slotAt(e.clientX,e.clientY);clearOv();
+ if(PR.picked){if(h&&h.arr&&!(h.arr===PR.arr&&h.i===PR.i))h.el.classList.add('ov');return}
+ if(h&&h.arr&&HELD&&!PR.list.some(x=>x.arr===h.arr&&x.i===h.i)){const s=h.arr[h.i];if(!s||(s.id===HELD.id&&IT[s.id].st>1))PR.list.push({arr:h.arr,i:h.i,el:h.el})}
+ for(const x of PR.list)if(x.el&&PR.list.length>1)x.el.classList.add('ov')});
+addEventListener('pointerup',e=>{if(!PR||!P)return;const d=PR;endDrag();if(!INVO)return;
  const tg=slotAt(e.clientX,e.clientY);
- if(d.moved){if(tg&&tg.arr&&!(tg.arr===d.arr&&tg.i===tg.i&&tg.i===d.i)){const s=d.arr[d.i];if(s)moveStack(d.arr,d.i,tg.arr,tg.i,d.half?Math.ceil(s.n/2):s.n)}SEL=-1;invS='';return invR()}
- if(e.button===2)return;
- if(e.shiftKey){quickMove(d.arr,d.i);SEL=-1;return invR()}
- if(d.arr!==P.items){if(SEL>=0&&P.items[SEL])ctStore(SEL);else ctTake(d.i);if(!P.items[SEL])SEL=-1;return invR()}
- const j=d.i;
- if(SEL>=0&&SEL!==j){moveStack(P.items,SEL,P.items,j);SEL=-1}
- else SEL=SEL===j?-1:(P.items[j]?j:-1);
+ if(d.picked){if(d.moved&&HELD&&tg&&tg.arr&&!(tg.arr===d.arr&&tg.i===d.i))clickSlot(tg.arr,tg.i,0);return invR()}
+ if(!HELD)return invR();
+ if(d.list.length>1)spread(d);else clickSlot(d.arr,d.i,d.btn);
  invR()});
-addEventListener('pointercancel',()=>{if(DR){endDrag();invS='';invR()}});
+addEventListener('pointercancel',()=>{if(PR){endDrag();invS='';invR()}});
 $('#inv').addEventListener('contextmenu',e=>e.preventDefault());
-function toggleInv(){INVO=!INVO;if(!INVO){CTO=null;endDrag()}SEL=-1;const e=$('#inv');e.style.display=INVO?'grid':'none';invS='';if(INVO)invR()}
-function invR(){if(!INVO||!P)return;const e=$('#inv'),used=P.items.filter(Boolean).length,s=P.items[SEL],D=s&&IT[s.id];
- const slots=P.items.map((t,i)=>`<div class="is${i<HOT?' hb':''}${SEL===i?' sel':''}${P.eq===i?' eq':''}${DR&&DR.moved&&DR.arr===P.items&&DR.i===i?' dg':''}" data-s="${i}"${t?` title="${IT[t.id].n}"`:''}>${i<HOT?`<b>${i+1}</b>`:''}${t?IT[t.id].e:''}${t&&t.d!=null?`<u><i style="width:${Math.min(100,t.d/BATMAX*100)}%;background:hsl(${Math.min(1,t.d/BATMAX)*120},100%,45%)"></i></u>`:''}${t&&(t.n>1||t.id==='gun')?`<em>${t.id==='gun'?cnt('ammo'):t.n}</em>`:''}</div>`).join('');
- const det=s?`<div><b>${D.e} ${D.n}</b>${s.n>1?' &times;'+s.n:''}${s.d!=null?' &middot; durability '+s.d+'/'+BATMAX:''}</div><div>${D.ds||''}</div>${D.br?`<div>breaks into: ${Object.entries(D.br).map(([m,[a,b]])=>IT[m].n+' '+(a===b?a:a+'-'+b)).join(', ')}</div>`:''}<div class="bt">${D.w?`<button data-a="use">${P.eq===SEL?'unequip':'equip'}</button>`:D.u?`<button data-a="use">${D.u}</button>`:''}${D.br?'<button data-a="brk">take apart</button>':''}${CTO?'<button data-a="sto">store</button>':''}<button data-a="d1">discard 1</button>${s.n>1?'<button data-a="dall">discard all</button>':''}</div>`
-  :`<div>drag items between slots (right-drag moves half a stack, shift-click moves a whole stack to the other section). click an item to select it for use, taking apart or discarding. the first row is your hotbar (keys 1-6): weapons equip, food and bandages get used. junk can be taken apart into materials.</div>`;
- let ctH='';if(CTO){const cd=cdef(CTO),cs=CTO.items.map((t,k)=>`<div class="is${DR&&DR.moved&&CTO&&DR.arr===CTO.items&&DR.i===k?' dg':''}" data-k="${k}"${t?` title="${IT[t.id].n}"`:''}>${t?IT[t.id].e:''}${t&&t.d!=null?`<u><i style="width:${Math.min(100,t.d/BATMAX*100)}%;background:hsl(${Math.min(1,t.d/BATMAX)*120},100%,45%)"></i></u>`:''}${t&&t.n>1?`<em>${t.n}</em>`:''}</div>`).join('');
-  ctH=`<div><div class="ih"><h3>${cd[1]} ${cd[0]} <small>${CTO.items.filter(Boolean).length}/${cd[2]} &middot; drag items in or out${SEL>=0?', or click here to store your selected item':''}</small></h3><button data-t="1">take all</button></div><div class="ig ct">${cs}</div></div>`}
+function toggleInv(){INVO=!INVO;if(!INVO){dropHeld();CTO=null;endDrag()}SEL=-1;const e=$('#inv');e.style.display=INVO?'grid':'none';invS='';if(INVO)invR()}
+function invR(){if(!INVO||!P){showHeld();return}const e=$('#inv'),used=P.items.filter(Boolean).length,s=HELD||P.items[SEL],D=s&&IT[s.id];
+ const slots=P.items.map((t,i)=>`<div class="is${i<HOT?' hb':''}${SEL===i?' sel':''}${P.eq===i?' eq':''}" data-s="${i}"${t?` title="${IT[t.id].n}"`:''}>${i<HOT?`<b>${i+1}</b>`:''}${t?IT[t.id].e:''}${t&&t.d!=null?`<u><i style="width:${Math.min(100,t.d/BATMAX*100)}%;background:hsl(${Math.min(1,t.d/BATMAX)*120},100%,45%)"></i></u>`:''}${t&&(t.n>1||t.id==='gun')?`<em>${t.id==='gun'?cnt('ammo'):t.n}</em>`:''}</div>`).join('');
+ const det=s?`<div><b>${HELD?'holding: ':''}${D.e} ${D.n}</b>${s.n>1?' &times;'+s.n:''}${s.d!=null?' &middot; durability '+s.d+'/'+BATMAX:''}</div><div>${D.ds||''}</div>${D.br?`<div>breaks into: ${Object.entries(D.br).map(([m,[a,b]])=>IT[m].n+' '+(a===b?a:a+'-'+b)).join(', ')}</div>`:''}<div class="bt">${D.w?(HELD?'':`<button data-a="use">${P.eq===SEL?'unequip':'equip'}</button>`):D.u?`<button data-a="use">${D.u}</button>`:''}${D.br?'<button data-a="brk">take apart</button>':''}${CTO&&!HELD?'<button data-a="sto">store</button>':''}<button data-a="d1">discard 1</button>${s.n>1?'<button data-a="dall">discard all</button>':''}</div>`
+  :`<div><b>left-click</b> picks up a whole stack, <b>right-click</b> picks up half. with a stack in hand: left-click drops it all (or merges / swaps), right-click drops one. <b>drag</b> across slots to spread a stack out (right-drag = one each). <b>double-click</b> gathers matching stacks. <b>shift-click</b> sends a stack to the other section. the first row is your hotbar (keys 1-6). items you just placed can be used, equipped or taken apart here.</div>`;
+ let ctH='';if(CTO){const cd=cdef(CTO),cs=CTO.items.map((t,k)=>`<div class="is" data-k="${k}"${t?` title="${IT[t.id].n}"`:''}>${t?IT[t.id].e:''}${t&&t.d!=null?`<u><i style="width:${Math.min(100,t.d/BATMAX*100)}%;background:hsl(${Math.min(1,t.d/BATMAX)*120},100%,45%)"></i></u>`:''}${t&&t.n>1?`<em>${t.n}</em>`:''}</div>`).join('');
+  ctH=`<div><div class="ih"><h3>${cd[1]} ${cd[0]} <small>${CTO.items.filter(Boolean).length}/${cd[2]} &middot; click to pick up &middot; click to place</small></h3><button data-t="1">take all</button></div><div class="ig ct">${cs}</div></div>`}
  const cr=RC.map((r,i)=>{const ok=Object.keys(r.i).every(m=>cnt(m)>=r.i[m]);return`<button class="${ok?'':'off'}" data-c="${i}">${r.n} &middot; ${Object.entries(r.i).map(([m,n])=>n+' '+IT[m].n+' ('+cnt(m)+')').join(' + ')}</button>`}).join('');
- e.innerHTML=`<div class="ih"><h2>pack <small>${used}/${CAP} slots</small></h2><button data-x="1">close (i)</button></div>${ctH}<div class="ig">${slots}</div><div class="id">${det}</div><div><h3>craft</h3><div class="cr">${cr}</div></div>`}
+ e.innerHTML=`<div class="ih"><h2>pack <small>${used}/${CAP} slots</small></h2><button data-x="1">close (i)</button></div>${ctH}<div class="ig">${slots}</div><div class="id">${det}</div><div><h3>craft</h3><div class="cr">${cr}</div></div>`;showHeld()}
 $('#inv').addEventListener('pointerdown',e=>{if(!P)return;const t=e.target.closest('[data-s],[data-a],[data-c],[data-x],[data-k],[data-t]');if(!t)return;
  if(t.dataset.s!=null||t.dataset.k!=null){if(e.button>2)return;const k=t.dataset.k!=null;if(k&&!CTO)return;const arr=k?CTO.items:P.items,i=+(k?t.dataset.k:t.dataset.s);
-  if(!arr[i]&&(k||SEL<0))return; // empty slot: nothing to pick up (but still a drop target / click target)
-  DR={arr,i,x0:e.clientX,y0:e.clientY,moved:0,half:e.button===2&&arr[i]&&arr[i].n>1};e.preventDefault();return}
+  e.preventDefault();MX=e.clientX;MY=e.clientY;
+  if(!HELD){if(!arr[i])return;
+   if(e.shiftKey&&e.button===0){quickMove(arr,i);SEL=-1;return invR()}
+   clickSlot(arr,i,e.button);PR={arr,i,x0:e.clientX,y0:e.clientY,moved:0,picked:1,btn:e.button,list:[]};return invR()}
+  if(e.button===0&&LPK&&LPK.id===HELD.id&&performance.now()-LPK.t<350){LPK=null;gather();return invR()}
+  PR={arr,i,x0:e.clientX,y0:e.clientY,moved:0,picked:0,btn:e.button,list:[{arr,i,el:t}]};return}
  if(t.dataset.x)return toggleInv();
  if(t.dataset.t){if(CTO)ctAll();return invR()}
  if(t.dataset.c){craft(RC[+t.dataset.c]);return invR()}
- if(t.dataset.a){const a=t.dataset.a;if(a==='use')useSlot(SEL);else if(a==='sto'&&CTO)ctStore(SEL);else if(a==='brk')dismantle(SEL);else if(a==='d1'){toast('discarded '+IT[P.items[SEL].id].n);dec(SEL)}else if(a==='dall'){toast('discarded '+IT[P.items[SEL].id].n);if(P.eq===SEL)P.eq=-1;P.items[SEL]=null}
-  if(!P.items[SEL])SEL=-1;return invR()}});
+ if(t.dataset.a){const a=t.dataset.a;const H=!!HELD,cur=H?HELD:P.items[SEL];if(!cur)return invR();if(a==='use')useSlot(SEL,H);else if(a==='sto'&&CTO&&!H)ctStore(SEL);else if(a==='brk')dismantle(SEL,H);else if(a==='d1'){toast('discarded '+IT[cur.id].n);H?decH():dec(SEL)}else if(a==='dall'){toast('discarded '+IT[cur.id].n);if(H)HELD=null;else{if(P.eq===SEL)P.eq=-1;P.items[SEL]=null}}
+  if(!HELD&&!P.items[SEL])SEL=-1;return invR()}});
 
 function toast(m){const e=$('#msg');e.textContent=m;e.style.opacity=1;clearTimeout(mt);mt=setTimeout(()=>e.style.opacity=0,2600)}
 function search(){
@@ -817,8 +852,8 @@ function upd(dt){
 
 /* ---------- survivors: people modeled on the hunger games sim tributes (names, personalities, backgrounds, speech, thoughts, grief, allies) ---------- */
 let HM=[],TK=null;
-const FNM='marlo:he,isa:she,brant:he,wren:she,kade:he,sela:she,orin:he,tess:she,dax:he,lyra:she,finn:he,nova:she,rook:he,maeve:she,cato:he,pim:he,joss:he,ember:she,hale:he,yara:she,teo:he,bryn:she,quill:they,sable:she,ansel:he,mira:she,dorn:he,cleo:she,vex:they,lark:she,rue:she,ivo:he,nell:she,gale:he,pike:he,zora:she,hob:he,tamsin:she,rhys:he,odette:she'.split(',').map(s=>s.split(':')),
-LNM='ashford,bellamy,calloway,dunmore,everett,fairbanks,garrow,hollis,ingram,jessop,kestrel,langley,marsh,navarre,oakes,pryce,rennick,sutter,thorne,underhill,voss,whitlock,yardley,zeller,alder,briar,crane,finch,hartwell,keane'.split(','),
+const FNM='marlo:he,isa:she,brant:he,wren:she,kade:he,sela:she,orin:he,tess:she,dax:he,lyra:she,finn:he,nova:she,rook:he,maeve:she,cato:he,pim:he,joss:he,ember:she,hale:he,yara:she,teo:he,bryn:she,quill:they,sable:she,ansel:he,mira:she,dorn:he,cleo:she,vex:they,lark:she,rue:she,ivo:he,nell:she,gale:he,pike:he,zora:she,hob:he,tamsin:she,rhys:he,odette:she,juno:she,cass:she,milo:he,iris:she,bram:he,posy:she,ezra:he,thea:she,luca:he,wilma:she,otto:he,petra:she,silas:he,dina:she,kiran:they,hugo:he,alma:she,reed:he,nico:he,fern:she,gus:he,lena:she,abel:he,opal:she,roan:they,vera:she,jude:he,celia:she,ned:he,tilda:she,arlo:he,mabel:she,emil:he,sunny:she,bo:he,ines:she,leif:he,wynn:they,carmen:she,tobias:he,noor:she,felix:he,agnes:she,ravi:he,june:she,kofi:he,hana:she,declan:he,priya:she,mateo:he,linh:she,omar:he,greta:she,idris:he,saoirse:she,anders:he,keiko:she,boris:he,amara:she,cyrus:he,dolores:she,enzo:he,farah:she,gideon:he,harper:she,ignacio:he,jovita:she,kenji:he,leona:she,marcus:he,nadia:she,osric:he,paloma:she,quincy:he,rosalind:she,stellan:he,talia:she,ulises:he,viola:she,walt:he,xena:she,yusuf:he,zadie:she'.split(',').map(s=>s.split(':')),
+LNM='ashford,bellamy,calloway,dunmore,everett,fairbanks,garrow,hollis,ingram,jessop,kestrel,langley,marsh,navarre,oakes,pryce,rennick,sutter,thorne,underhill,voss,whitlock,yardley,zeller,alder,briar,crane,finch,hartwell,keane,abbott,barlow,castellan,delacroix,eastwood,farrow,gallagher,hargrove,iverson,jankowski,kowalski,lindqvist,mcallister,nakamura,okafor,petrov,quinlan,rasmussen,santoro,tran,umber,vasquez,winslow,xu,yoder,zimmer,achebe,brightwell,castillo,devereaux,ellison,fontaine,grayson,haddad,ibarra,jovanovic,kaplan,lombardi,moreau,novak,ortega,pellegrino,ramos,sorensen,tanaka,ulrich,varga,wexler,yamada,zielinski'.split(','),
 JOBS=['nurse','mechanic','cook','teacher','courier','electrician','student','paramedic','security guard','librarian','bartender','farmer'],
 PRS={kind:{ag:-.15,soc:.15},friendly:{ag:-.05,soc:.25},silly:{ag:0,soc:.1},neutral:{ag:0,soc:0},cold:{ag:.1,soc:-.2},competitive:{ag:.15,soc:0},shy:{ag:-.05,soc:-.25},stoic:{ag:0,soc:-.05}},PL=Object.keys(PRS),
 GL={kind:n=>[`${n}... i’m so sorry.`,`${n} didn’t deserve this.`,`i keep thinking about ${n}.`],friendly:n=>[`${n}... no. not ${n}.`,`i can’t believe ${n} is gone.`,`i miss ${n} already.`],silly:n=>[`${n} would have made a joke about this.`,'heh. ...no. it’s not funny.','why isn’t this funny.'],neutral:n=>[`${n} is gone.`,`i keep seeing ${n}’s face.`,'i didn’t get to say goodbye.'],cold:n=>[`${n}. ...fine. keep moving.`,'it doesn’t matter. it doesn’t.'],competitive:n=>[`i’ll get out of here for ${n}.`,'it should have been me.',`${n} deserved better.`],shy:n=>[`oh... ${n}.`,'i didn’t even say goodbye.',`i’m sorry, ${n}.`],stoic:n=>['...',`${n}. rest.`,'keep moving. keep moving.']},
@@ -848,7 +883,7 @@ function mkH(x,y,f,bi,nm){const pe=hpk(PL),Q=PRS[pe],jb=Math.random()*12|0,tough
  att:0,met:0,ally:0,host:0,pl:0,seen:0,say:null,thk:null,sT:0,thT:hrn(4,20),tc:0,gv:0,dead:0,last:'',lt:null,ltT:0,bad:new Set(),zz:null,zd:999,zn:0,vs:0,bg:[hpk(BGF),hpk(BGA),hpk(BGW),hpk(BGR)]};
  if(h.gun)h.ammo=6+(Math.random()*6|0);h.host=(pe==='cold'||pe==='competitive')?Math.random()<.55:Math.random()<.05;return h}
 function initH(){HM=[];const nm=FNM.slice().sort(()=>Math.random()-.5);
- for(let i=0,n=0;i<9000&&n<HM_N;i++){let x,y,f=0,bi=-1;
+ for(let i=0,n=0;i<40000&&n<HM_N;i++){let x,y,f=0,bi=-1;
   if(i%2){const b=hpk(B);f=Math.random()*b.F|0;const lx=1+Math.random()*(b.w-2)|0,ly=1+Math.random()*(b.h-2)|0;if(b.fl[f][ly*b.w+lx]!==0)continue;x=(b.x+lx+.5)*TS;y=(b.y+ly+.5)*TS;bi=B.indexOf(b)}
   else{x=Math.random()*N*TS;y=Math.random()*N*TS;if(!walk(x,y))continue;bi=BI[(y/TS|0)*N+(x/TS|0)]}
   if(Math.hypot(x-P.x,y-P.y)<450||blk(x,y,8,f,bi))continue;HM.push(mkH(x,y,f,bi,nm[n++%nm.length]))}}
@@ -860,7 +895,7 @@ function thinkH(h){const L=[`i keep thinking about ${h.bg[0]}.`,`i’m scared of
 function nzH(h,r){for(const z of Z)if(hctx(z,h)&&Math.hypot(z.x-h.x,z.y-h.y)<r&&!(z.st&&!z.ht)){z.ht=h;z.st=1;z.tx=h.x;z.ty=h.y;z.tb=h.bi;z.tf=h.f;z.lost=4}}
 // zombies also notice and hunt survivors
 function zh(z,sr){let h=z.ht;if(h&&(h.dead||!hctx(z,h)||Math.hypot(h.x-z.x,h.y-z.y)>sr+60||!los(z.x,z.y,h.x,h.y,z.f,z.bi)))z.ht=h=null;
- if(!h&&(!z.st||z.lost<5)){let bd=sr*.8;for(const q of HM)if(!q.dead&&hctx(z,q)){const d=Math.hypot(q.x-z.x,q.y-z.y);if(d<bd&&los(z.x,z.y,q.x,q.y,z.f,z.bi)){bd=d;h=q}}z.ht=h}
+ if(!h&&(!z.st||z.lost<5)){let bd=sr*.8;for(const q of HM)if(!q.dead&&Math.abs(q.x-z.x)<sr&&hctx(z,q)){const d=Math.hypot(q.x-z.x,q.y-z.y);if(d<bd&&los(z.x,z.y,q.x,q.y,z.f,z.bi)){bd=d;h=q}}z.ht=h}
  if(h){z.st=1;z.tx=h.x;z.ty=h.y;z.tb=h.bi;z.tf=h.f;z.lost=4}}
 function hurtH(h,d){h.hp-=d;h.hit=.2;splat(h.x,h.y,d*1.2,h);if(Math.random()<.25)h.bleed=1;if(h.hp<=0)dieH(h,'z');else if(Math.random()<.4)sayH(h,null,hpk(HU))}
 function hitH(h,d,a){h.hp-=d;h.hit=.15;h.kx=Math.cos(a)*160;h.ky=Math.sin(a)*160;splat(h.x,h.y,d,h,a);if(h.hp<=0)dieH(h,'p')}
@@ -921,7 +956,7 @@ function updH(dt){
   h.kx*=.86;h.ky*=.86;if(!mv(h,(vx*h.spd*s+h.kx)*dt,(vy*h.spd*s+h.ky)*dt,8)&&dir)h.wt=0;
   if(hctx(h,P)&&dP<22&&dP>.1){const p=(22-dP)/dP*.5,nx=h.x+(h.x-P.x)*p,ny=h.y+(h.y-P.y)*p;if(!blk(nx,ny,8,h.f,h.bi)){h.x=nx;h.y=ny}}
   if(!h.host&&hctx(h,P)&&dP<54&&dP<P.nd){P.nh=h;P.nd=dP}}
- for(let i=0;i<HM.length;i++)for(let j=i+1;j<HM.length;j++){const a=HM[i],b=HM[j];if(a.dead||b.dead||!hctx(a,b))continue;const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy);
+ for(let i=0;i<HM.length;i++)for(let j=i+1;j<HM.length;j++){const a=HM[i],b=HM[j],dx=b.x-a.x,dy=b.y-a.y;if(dx>18||dx<-18||dy>18||dy<-18||a.dead||b.dead||!hctx(a,b))continue;const d=Math.hypot(dx,dy);
   if(d<18&&d>.1){const p=(18-d)/d/2,ux=dx*p,uy=dy*p;if(!blk(a.x-ux,a.y-uy,8,a.f,a.bi)){a.x-=ux;a.y-=uy}if(!blk(b.x+ux,b.y+uy,8,b.f,b.bi)){b.x+=ux;b.y+=uy}}}
  if(S.t>(HM.bt||0)){const a=HM.filter(h=>h.ally&&!h.dead&&!h.zz);if(a.length>1){const x=hpk(a),y=a.find(q=>q!==x&&hctx(q,x)&&Math.hypot(q.x-x.x,q.y-x.y)<130);if(y){const e=hpk(BAN);sayH(x,null,e[0]);y.dq={t:2.4,txt:e[1]};HM.bt=S.t+40+Math.random()*40}}}
  if(TK&&(TK.dead||!hctx(TK,P)||Math.hypot(TK.x-P.x,TK.y-P.y)>120))closeTK()}
@@ -1449,7 +1484,7 @@ function hud(){
  for(let i=0;i<HOT;i++){const e=slots[i],s=P.items[i],D=s&&IT[s.id];e.className='s'+(i===P.eq?' on':'')+(s?'':' no');e.children[1].textContent=s?D.e:'';e.lastChild.textContent=s?(s.id==='gun'?cnt('ammo'):s.n>1?s.n:''):'';
   const du=e.querySelector('.du');if(s&&s.d!=null){const f=Math.min(1,Math.max(0,s.d)/BATMAX);du.style.display='block';du.firstChild.style.width=f*100+'%';du.firstChild.style.background=`hsl(${f*120},100%,45%)`}else du.style.display='none'}
  if(CTO&&(P.car||CTO.f!==P.f||CTO.bi!==P.bi||Math.hypot(CTO.x-P.x,CTO.y-P.y)>80))closeCt();
- if(INVO){const sg=JSON.stringify([P.items,P.eq,SEL,CTO&&CTO.items]);if(sg!==invS){invS=sg;invR()}}
+ if(INVO){const sg=JSON.stringify([P.items,P.eq,SEL,CTO&&CTO.items,HELD]);if(sg!==invS){invS=sg;invR()}}
 }
 
 /* ---------- input / setup ---------- */
