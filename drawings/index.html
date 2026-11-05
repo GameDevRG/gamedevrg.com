@@ -4697,7 +4697,7 @@ if (document.fonts)
    PF.px = also pause drop shadows and layer effects while moving
    exports always render at full quality (pfExp) */
 const PFP = {
-  auto: { q: 4, pb: "auto", px: 0 },
+  auto: { q: 4, pb: 1, px: 0 },
   high: { q: 4, pb: 0, px: 0 },
   balanced: { q: 2, pb: 1, px: 0 },
   low: { q: 1, pb: 1, px: 1 },
@@ -4715,7 +4715,7 @@ let PF = { ...PFP.auto },
 try {
   const o = JSON.parse(localStorage.getItem("gdperf") || "{}");
   if ([0, 1, 2, 4].includes(o.q)) PF.q = o.q;
-  if (o.pb === "auto" || o.pb === 0 || o.pb === 1) PF.pb = o.pb;
+  if (o.pb === 0 || o.pb === 1) PF.pb = o.pb; /* a saved "auto" now means pause while moving */
   if (o.px === 0 || o.px === 1) PF.px = o.px;
 } catch (e) {}
 const pfQ = () => (pfExp ? 4 : PF.q);
@@ -4750,6 +4750,7 @@ function pfFrame(t) {
 function pfStart() {
   clearTimeout(pfT);
   if (!pfBusy) {
+    if (PF.pb === "auto" && !pfSlow && S.reduce((n, q) => n + (q.blur > 0), 0) > 4) pfSlow = 1; /* lots of blur: do not wait for slow frames */
     pfBusy = 1;
     pfN = 0;
     pfSum = 0;
@@ -4782,7 +4783,10 @@ addEventListener("blur", () => {
   pfEnd(0);
 });
 function perfPanel() {
-  const a = [...$("#menus").children].find((x) => x.textContent == "view") || $("#menus"),
+  const a =
+      [...$("#menus").children].find((x) => x.textContent == "performance") ||
+      [...$("#menus").children].find((x) => x.textContent == "view") ||
+      $("#menus"),
     seg = (attr, L) =>
       `<div class="pfs">${L.map(([v, l]) => `<button type="button" data-${attr}="${v}">${l}</button>`).join("")}</div>`;
   pe(
@@ -4950,6 +4954,8 @@ function groupMask(lg, gw) {
   }
   gw.g.setAttribute("mask", `url(#gm${lg})`);
 }
+const BF_PER_FRAME = 3; /* background-blur objects rebuilt per frame when many are out of date */
+let bfT = 0;
 var xfUid = 0,
   xfLQ = 0,
   wrGen = 0; /* bumps whenever a cached word art bitmap finishes, so warped word art redraws with it */ /* 1 while a skew / distort / warp drag is in progress: cheaper warp quality until release */
@@ -4957,8 +4963,14 @@ function patchShapes() {
   const host = $("#sh"),
     ids = new Set(S.map((s) => s.id)),
     hb = S.some((s) => s.blur > 0);
+  /* zoom only changes how thin hit areas and word art bitmaps are drawn, so shapes are keyed to quarter-octave zoom steps
+     instead of every zoom value; zooming no longer rebuilds every shape each frame */
+  const zQ = Math.ceil(Math.log2(zH || 1) * 4);
   let acc = 0,
-    i = 0;
+    i = 0,
+    bfN = 0,
+    bfPend = 0,
+    bfPrev = [];
   for (const [id, e] of RC)
     if (!ids.has(id)) {
       if (e.n.parentNode) e.n.parentNode.removeChild(e.n);
@@ -4998,15 +5010,40 @@ function patchShapes() {
     for (; i < S.length && S[i].lyr == L.id; i++) {
       const s = S[i];
       if (s.cut) cuts.push(s);
-      let sg = sigOf(s) + "|" + zH + "|" + fgen + (editing == s.id ? "e" : "") + sl + (s.blur > 0 ? "|q" + pfQ() : "") + (xfLQ && (s.dq || s.wp) ? "|lq" : "") + (xfLQ && xfAny(s) && !isL(s) ? "|pv" + wrGen : "") + (s.t == "wordart" && (s.dq || s.wp) ? "|w" + wrGen : "");
+      let sg = sigOf(s) + "|" + zQ + "|" + fgen + (editing == s.id ? "e" : "") + sl + (s.blur > 0 ? "|q" + pfQ() : "") + (xfLQ && (s.dq || s.wp) ? "|lq" : "") + (xfLQ && xfAny(s) && !isL(s) ? "|pv" + wrGen : "") + (s.t == "wordart" && (s.dq || s.wp) ? "|w" + wrGen : "");
       if (hb) {
+        /* a blur only needs a redo when something under its own box changed, not when anything below it did.
+           shapes whose reach is hard to bound (word art, warps, shadows, reflections, cutouts, layer effects) always count */
         const base = sg + "|" + lk;
-        sg = s.blur > 0 ? base + "|" + acc : base;
-        for (let j = 0; j < base.length; j++) acc = (acc * 31 + base.charCodeAt(j)) | 0;
+        let bh = 0;
+        for (let j = 0; j < base.length; j++) bh = (bh * 31 + base.charCodeAt(j)) | 0;
+        if (s.blur > 0) {
+          let reg = null;
+          if (s.t != "wordart" && !xfAny(s)) {
+            const r = bb(s),
+              pd = s.blur * 3 + 16 + Math.max(r[2] - r[0], r[3] - r[1]) * 0.1 + 8;
+            reg = [r[0] - pd, r[1] - pd, r[2] + pd, r[3] + pd];
+          }
+          let h = 0;
+          for (const q of bfPrev)
+            if (!reg || !q.r || (q.r[0] < reg[2] && q.r[2] > reg[0] && q.r[1] < reg[3] && q.r[3] > reg[1])) h = (h * 31 + q.h) | 0;
+          sg = base + "|" + h;
+        } else sg = base;
+        let r = null;
+        if (!(s.t == "wordart" || xfAny(s) || s.shd || s.rfl || s.cut || L.fx || L.role == "sil" || s.blur > 0 && s.bm)) {
+          const q = bb(s),
+            pd = (s.sw || 0) + 24;
+          r = [q[0] - pd, q[1] - pd, q[2] + pd, q[3] + pd];
+        }
+        bfPrev.push({ h: bh, r });
       }
       let e = RC.get(s.id),
         n;
-      if (e && e.sg === sg) n = e.n;
+      /* staggering: when lots of blur objects go stale at once, rebuild only BF_PER_FRAME of them per frame;
+         the rest keep their previous blur for a moment and catch up on the following frames. exports never stagger */
+      const bfLate = e && e.sg !== sg && s.blur > 0 && !pfExp && ++bfN > BF_PER_FRAME;
+      if (bfLate) bfPend = 1;
+      if (e && (e.sg === sg || bfLate)) n = e.n;
       else {
         if (e && e.n.parentNode) {
           if (e.n === cur) cur = cur.nextSibling;
@@ -5047,6 +5084,11 @@ function patchShapes() {
     syncKids(gw.g, [gw.m, ...kids]);
   }
   syncKids(host, top);
+  if (bfPend && !bfT)
+    bfT = requestAnimationFrame(() => {
+      bfT = 0;
+      rq();
+    });
 }
 function doSave() {
   clearTimeout(lsT);
@@ -5074,6 +5116,16 @@ function rq(v) {
   rqOn = 1;
   requestAnimationFrame(() => {
     if (rqOn) render(rqV);
+  });
+}
+/* overlay-only redraw (rubber bands, lasso, polygon): skips the full render pipeline; a pending full render covers it */
+let rqOO = 0;
+function rqO() {
+  if (rqOn || rqOO) return;
+  rqOO = 1;
+  requestAnimationFrame(() => {
+    rqOO = 0;
+    if (!rqOn) $("#ov").innerHTML = overlay();
   });
 }
 let selTouch = 0;
@@ -8619,7 +8671,7 @@ function overlay() {
   if (drag && drag.k == "lasso" && drag.pts.length > 1) {
     const tch = !!selTouch !== !!drag.alt,
       mc = tch ? "34,197,94" : "59,130,246";
-    o += `<path d="M${drag.pts.map((q) => q[0] + " " + q[1]).join("L")}Z" fill="rgba(${mc},.08)" stroke="rgb(${mc})" stroke-width="${k}"${tch ? ` stroke-dasharray="${5 * k} ${3 * k}"` : ""} stroke-linejoin="round" pointer-events="none"/>`;
+    o += `<path d="${drag.d}Z" fill="rgba(${mc},.08)" stroke="rgb(${mc})" stroke-width="${k}"${tch ? ` stroke-dasharray="${5 * k} ${3 * k}"` : ""} stroke-linejoin="round" pointer-events="none"/>`;
   }
   if (psel && psel.pts.length) {
     const tch = !!selTouch !== !!psel.alt,
@@ -9527,6 +9579,10 @@ function ovl() {
     `<line x1="0" y1="${-s.h / 2}" x2="0" y2="${-s.h / 2 - 18 * k}" stroke="#3b82f6" stroke-width="${k * 2}"/><circle cx="0" cy="${-s.h / 2 - 26 * k}" r="${8.5 * k}" fill="#3b82f6" data-h="rot" style="cursor:grab"/><g transform="translate(0 ${-s.h / 2 - 26 * k}) scale(${k})" pointer-events="none"><path d="M-3.500 0a3.500 3.500 0 1 1 1.300 2.700M-3.500 -3.500v3.500h3.500" fill="none" stroke="#fff" stroke-width="1.400" stroke-linecap="round" stroke-linejoin="round"/></g></g>`
   );
 }
+const setA = (el, k, v) => {
+  v = String(v);
+  if (el.getAttribute(k) !== v) el.setAttribute(k, v);
+};
 function render(vo) {
   rqOn = 0;
   rqV = 1;
@@ -9542,18 +9598,26 @@ function render(vo) {
   $("#ov").innerHTML = overlay();
   svg.style.setProperty("--z", z); /* word art outlines read this every frame */
   $("#vp").setAttribute("transform", `translate(${ox} ${oy}) scale(${z})`);
-  $("#pg").setAttribute("style", "filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))");
-  $("#pgf").setAttribute("fill", PG.bg || "none");
-  $("#pg").setAttribute("width", PGW());
-  $("#pg").setAttribute("height", PGH());
-  $("#pgf").setAttribute("width", PGW());
-  $("#pgf").setAttribute("height", PGH());
-  $("#pgh").setAttribute("transform", `translate(${PGW()} ${PGH()}) scale(${1 / z})`);
-  $("#pgl").textContent = pgDrag ? PGW() + " × " + PGH() : "";
+  const pg = $("#pg"),
+    pgf = $("#pgf"),
+    pw = PGW(),
+    ph = PGH();
+  setA(pg, "style", "filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))");
+  setA(pgf, "fill", PG.bg || "none");
+  setA(pg, "width", pw);
+  setA(pg, "height", ph);
+  setA(pgf, "width", pw);
+  setA(pgf, "height", ph);
+  $("#pgh").setAttribute("transform", `translate(${pw} ${ph}) scale(${1 / z})`);
+  const pgl = pgDrag ? pw + " × " + ph : "";
+  if ($("#pgl").textContent !== pgl) $("#pgl").textContent = pgl;
   $("#rgn").innerHTML = rgOvl();
   rgPlace();
-  $("#zm").textContent = Math.round(z * 100) + "%";
-  $("#zc").textContent = Math.round(z * 100) + "%";
+  const zt = Math.round(z * 100) + "%";
+  if ($("#zm").textContent !== zt) {
+    $("#zm").textContent = zt;
+    $("#zc").textContent = zt;
+  }
   $("#zoom").value = "c";
   drawRuler();
   updHint();
@@ -10155,10 +10219,13 @@ svg.addEventListener("pointermove", (e) => {
   if (drag && drag.k == "lasso") {
     const p = pt(e),
       L = drag.pts[drag.pts.length - 1];
-    if (Math.hypot(p.x - L[0], p.y - L[1]) > 3 / z) drag.pts.push([p.x, p.y]);
+    if (Math.hypot(p.x - L[0], p.y - L[1]) > 3 / z) {
+      drag.pts.push([p.x, p.y]);
+      drag.d += "L" + p.x + " " + p.y; /* path string grows incrementally instead of being rebuilt every frame */
+    }
     drag.alt = e.shiftKey;
     if (e.altKey) drag.add = true;
-    rq();
+    rqO();
     return;
   }
   if (psel && !drag) {
@@ -10166,7 +10233,7 @@ svg.addEventListener("pointermove", (e) => {
     if (e.altKey) psel.add = true;
     psel.hov = [p.x, p.y];
     psel.alt = e.shiftKey;
-    rq();
+    rqO();
     return;
   }
   if (drag && drag.k == "meas") {
@@ -10684,7 +10751,8 @@ svg.addEventListener("pointermove", (e) => {
     d.da = da;
     d.gs = d.o.map(([q]) => rotGeo(q, da, d.c));
   }
-  rq(d.k == "pan");
+  if (d.k == "box") rqO();
+  else rq(d.k == "pan");
 });
 svg.addEventListener("pointerup", (e) => {
   document.body.classList.remove("panning");
@@ -14704,6 +14772,66 @@ M.arrange.push(0, [
       ),
   },
 ]);
+/* top-level performance menu: same settings as view > performance settings…, with live check marks */
+Object.defineProperty(M, "performance", {
+  enumerable: true,
+  get() {
+    const ap = () => {
+        savePF();
+        pfSet();
+        render();
+      },
+      ck = (on) => (on ? "✓" : "");
+    return [
+      ...Object.keys(PFP).map((k) => {
+        const o = PFP[k];
+        return [
+          k,
+          () => {
+            PF = { ...o };
+            pfSlow = 0;
+            ap();
+          },
+          ck(o.q === PF.q && o.pb === PF.pb && o.px === PF.px),
+        ];
+      }),
+      0,
+      [
+        "background blur quality",
+        [[4, "high"], [2, "medium"], [1, "low"], [0, "off"]].map(([v, l]) => [
+          l,
+          () => {
+            PF.q = v;
+            ap();
+          },
+          ck(PF.q === v),
+        ]),
+      ],
+      [
+        "pause blur while moving",
+        [["auto", "auto"], [1, "on"], [0, "off"]].map(([v, l]) => [
+          l,
+          () => {
+            PF.pb = v;
+            if (v === "auto") pfSlow = 0;
+            ap();
+          },
+          ck(PF.pb === v),
+        ]),
+      ],
+      [
+        "pause shadows and effects while moving",
+        () => {
+          PF.px = PF.px ? 0 : 1;
+          ap();
+        },
+        ck(PF.px),
+      ],
+      0,
+      ["all settings…", () => perfPanel()],
+    ];
+  },
+});
 $("#menus").innerHTML = Object.keys(M)
   .map((k) => `<div class="mb">${k}</div>`)
   .join("");
@@ -17063,7 +17191,7 @@ function lsDown(e, p) {
   /* the existing selection is remembered either way; shift (held at the start, during, or at the end) decides whether the new one is added to it */
   const cur = ms.length > 1 ? ms.slice() : sel != null ? [sel] : [];
   if (tool == "lasso" && !psel) {
-    drag = { k: "lasso", pts: [[p.x, p.y]], base: cur, add: e.altKey, alt: e.shiftKey };
+    drag = { k: "lasso", pts: [[p.x, p.y]], d: "M" + p.x + " " + p.y, base: cur, add: e.altKey, alt: e.shiftKey };
     render();
     return;
   }
@@ -17087,11 +17215,33 @@ function lsDone(pts, base, alt, add) {
     sel = null;
   }
   if (pts.length >= 3) {
+    let x0 = Infinity,
+      y0 = Infinity,
+      x1 = -Infinity,
+      y1 = -Infinity;
+    for (const v of pts) {
+      if (v[0] < x0) x0 = v[0];
+      if (v[0] > x1) x1 = v[0];
+      if (v[1] < y0) y0 = v[1];
+      if (v[1] > y1) y1 = v[1];
+    }
     const touch = !!selTouch !== !!alt,
       h = S.filter((q) => {
         if (!selOK(q)) return false;
         const P = shapePoly(q);
-        return touch ? lsTouch(P, !isL(q), pts) : P.every((v) => lsPip(v, pts));
+        /* cheap bounding-box rejection before the point-in-polygon / segment tests */
+        let a = Infinity,
+          b = Infinity,
+          c = -Infinity,
+          d = -Infinity;
+        for (const v of P) {
+          if (v[0] < a) a = v[0];
+          if (v[0] > c) c = v[0];
+          if (v[1] < b) b = v[1];
+          if (v[1] > d) d = v[1];
+        }
+        if (touch) return !(c < x0 || a > x1 || d < y0 || b > y1) && lsTouch(P, !isL(q), pts);
+        return a >= x0 && c <= x1 && b >= y0 && d <= y1 && P.every((v) => lsPip(v, pts));
       }).map((q) => q.id),
       u0 = [...new Set([...(base || []), ...h])],
       gs = new Set(S.filter((q) => q.gid != null && u0.includes(q.id)).map((q) => q.gid)),
@@ -20586,7 +20736,8 @@ function insChar(ch, eid) {
       T.x = ox;
       T.y = oy;
       T.a = null;
-      render();
+      pfStart();
+      render(true);
       e.stopImmediatePropagation();
     },
     true,
@@ -20597,7 +20748,11 @@ function insChar(ch, eid) {
     clearTimeout(lp);
     P.delete(e.pointerId);
     if (g) {
-      if (P.size < 2 || g.n == 1) g = null;
+      if (P.size < 2 || g.n == 1) {
+        g = null;
+        pfEnd(120);
+        rq();
+      }
       e.stopImmediatePropagation();
     }
   };
