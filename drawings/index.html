@@ -969,6 +969,59 @@
       margin: 6px 0;
     }
 
+    /* performance: while you drag / pan / zoom, blur (and optionally shadows + layer effects) can pause */
+    body.pfb .bfx { display: none }
+    body.pfx .sfx, body.pfx .lfx { filter: none !important }
+    .pfs { display: flex; gap: 4px; flex-wrap: wrap }
+    .pfs button { flex: 1 1 0; min-width: 0; border: 1px solid var(--bd); border-radius: 6px; background: none; color: var(--tx); padding: 5px 6px; cursor: pointer; font: inherit; font-size: 13px }
+    .pfs button:hover { background: rgba(128, 128, 128, .15) }
+    .pfs button.on { border-color: var(--ac); box-shadow: inset 0 0 0 1px var(--ac) }
+    .pfn { font-size: 12px; color: var(--mut); line-height: 1.35 }
+
+    body.rgk #cv { cursor: crosshair }
+    /* capture area (ctrl + drag) */
+    #rgm { position: fixed; z-index: 40; width: 300px; background: var(--pop); color: var(--tx); border-radius: 12px; box-shadow: var(--sh); padding: 12px 14px 14px; font-size: 13px; display: none; flex-direction: column; gap: 9px }
+    #rgm .rgh { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 14px }
+    #rgm .rgh small { font-weight: 400; font-size: 12px; opacity: .7; margin-left: 8px }
+    #rgm .rgx { border: 0; background: none; color: var(--mut); cursor: pointer; font-size: 16px; line-height: 1; padding: 2px 6px; border-radius: 6px }
+    #rgm .rgx:hover { background: var(--hv) }
+    #rgm .rgl { font-size: 12px; opacity: .7; margin-bottom: 3px }
+    #rgm .rgb { display: grid; grid-template-columns: 1fr 1fr; gap: 6px }
+    #rgm .rgb button { border: 1px solid var(--bd); background: none; color: var(--tx); border-radius: 8px; padding: 7px 6px; font: inherit; cursor: pointer }
+    #rgm .rgb button:hover { background: var(--hv) }
+    #rgm .rgb button.pri { background: var(--ac); border-color: var(--ac); color: #fff }
+    /* board resize grip: fades out when the cursor has been idle for a bit */
+    #pgh { transition: opacity .3s }
+    #pgh.idle { opacity: 0; pointer-events: none }
+
+    /* transform panel (skew / distort / warp) */
+    .xfp { padding: 10px 14px 12px; display: flex; flex-direction: column; gap: 10px }
+    .xfh { display: flex; align-items: baseline; justify-content: space-between; font-size: 14px; font-weight: 600 }
+    .xfh small { font-weight: 400; font-size: 12px; color: var(--mut) }
+    .xfm { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; background: var(--bar); padding: 3px; border-radius: 11px }
+    .xfm button { display: flex; flex-direction: column; align-items: center; gap: 2px; border: 0; background: none; color: var(--mut); padding: 6px 0 4px; border-radius: 8px; cursor: pointer; font: inherit; font-size: 11px; min-width: 0 }
+    .xfm button:hover { color: var(--tx) }
+    .xfm button.on { background: var(--pop); color: var(--ac); box-shadow: inset 0 0 0 1px var(--bd) }
+    .xfhint { font-size: 12px; line-height: 1.4; background: var(--on); color: var(--onx); border-radius: 8px; padding: 6px 9px }
+    .xfhint kbd { font: inherit; font-size: 11px; border: 1px solid currentColor; border-radius: 4px; padding: 0 4px; opacity: .85 }
+    .xfs { display: flex; flex-direction: column; gap: 7px; border-top: 1px solid var(--bd); padding-top: 9px }
+    .xft { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 600; color: var(--mut); text-transform: uppercase; letter-spacing: .05em }
+    .xft button { border: 0; background: none; color: var(--ac); font: inherit; font-size: 12px; text-transform: none; letter-spacing: 0; cursor: pointer; padding: 0 2px }
+    .xft button:hover { text-decoration: underline }
+    .xfr { display: grid; grid-template-columns: 74px 1fr 64px; align-items: center; gap: 8px; font-size: 12px }
+    .xfr input[type="range"] { width: 100%; min-width: 0; accent-color: var(--ac) }
+    .xfn { display: flex; align-items: center; border: 1px solid var(--bd); border-radius: 6px; padding-right: 6px }
+    .xfn:focus-within { border-color: var(--ac) }
+    .xfn input { width: 100%; min-width: 0; border: 0; outline: 0; background: none; color: var(--tx); text-align: right; font: inherit; font-size: 12px; padding: 4px 2px; -moz-appearance: textfield }
+    .xfn input::-webkit-inner-spin-button, .xfn input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0 }
+    .xfn i { font-style: normal; color: var(--mut); font-size: 11px }
+    .xfr input:disabled, .xfn:has(input:disabled) { opacity: .45 }
+    .xfw { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px }
+    .xfw button { display: flex; flex-direction: column; align-items: center; gap: 1px; border: 1px solid var(--bd); border-radius: 8px; background: none; color: var(--mut); padding: 4px 0 3px; cursor: pointer; font: inherit; font-size: 10px; min-width: 0 }
+    .xfw button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+    .xfw button:hover { background: var(--hv); color: var(--tx) }
+    .xfw button.on { border-color: var(--ac); color: var(--ac); background: var(--on); box-shadow: inset 0 0 0 1px var(--ac) }
+
     .cph {
       font-size: 12px;
       font-weight: 500;
@@ -1818,6 +1871,14 @@
     #tp,
     #zm {
       transition: right 0.25s ease;
+    }
+
+    /* zoom badge sits flush in the bottom-right corner of the canvas (panels still push it aside when open) */
+    #zm {
+      right: 0;
+      bottom: 0;
+      border-radius: 12px 0 0 0;
+      box-shadow: -1px -1px 3px rgba(0, 0, 0, 0.25);
     }
 
     .ib {
@@ -4494,6 +4555,8 @@
     </select>
     <span class="v"></span>
     <button class="b on" id="t-select" title="select"><i data-ic="sel"></i></button>
+    <button class="b" id="t-lasso" title="advanced select (l): drag to draw a freehand lasso, or click to place polygon corners (double-click, enter or click the first point to close; backspace removes a corner, esc cancels). hold alt to add to the current selection, shift flips inside/touching"><i data-ic="lasso"></i></button>
+    <span class="v"></span>
     <button class="b" id="t-shape" title="shape"><i data-ic="shape"></i><i class="dd"></i></button>
     <button class="b" id="t-line" title="line"><i data-ic="line"></i><i class="dd"></i></button>
     <button class="b" id="t-pen" title="pen: draw curves and sharp corners (p)"><i data-ic="nib"></i></button>
@@ -4509,7 +4572,8 @@
       <button class="b" id="sw" title="border weight"><i data-ic="wt"></i></button>
       <button class="b" id="dash" title="border dash"><i data-ic="ds"></i></button><button class="b" id="blur"
         title="background blur: blurs what is behind the object (use a transparent fill)"><i
-          data-ic="blur"></i></button>
+          data-ic="blur"></i></button><button class="b" id="xform"
+        title="transform: skew, distort, perspective and warp"><i data-ic="xf"></i></button>
     </div>
     <div id="fmt" class="grp"><span class="v"></span>
       <button class="b" id="ff" title="font: any Google font, installed font, or font file"><span id="ffn">Chakra
@@ -4560,6 +4624,8 @@
         <g id="gx" pointer-events="none"></g>
         <g id="sh"></g>
         <g id="ov"></g>
+        <g id="rgn"></g>
+        <g id="pgh"><rect x="-20" y="-20" width="20" height="20" fill="transparent" style="cursor:nwse-resize"><title>drag to resize the board · right-click for preset sizes</title></rect><path d="M-3.500 -13.500L-13.500 -3.500M-3.500 -8.500L-8.500 -3.500" fill="none" stroke="#6b7280" stroke-width="1.400" stroke-linecap="round" pointer-events="none"/><text id="pgl" x="-24" y="-6" text-anchor="end" font-size="11" font-family="sans-serif" fill="#6b7280" pointer-events="none"></text></g>
       </g>
     </svg>
     <div id="hint"></div><div id="ed" contenteditable="true" spellcheck="false" role="textbox" aria-multiline="true"></div>
@@ -4625,6 +4691,156 @@ if (document.fonts)
   document.fonts.addEventListener("loadingdone", () => {
     fgen++;
   });
+/* ===== performance settings =====
+   PF.q  = background-blur quality: taper steps 4 (high) / 2 (medium) / 1 (low) / 0 (blur off)
+   PF.pb = pause background blur while you drag, pan or zoom: "auto" (only if frames are slow) / 1 / 0
+   PF.px = also pause drop shadows and layer effects while moving
+   exports always render at full quality (pfExp) */
+const PFP = {
+  auto: { q: 4, pb: "auto", px: 0 },
+  high: { q: 4, pb: 0, px: 0 },
+  balanced: { q: 2, pb: 1, px: 0 },
+  low: { q: 1, pb: 1, px: 1 },
+};
+let PF = { ...PFP.auto },
+  pfExp = 0,
+  pfSlow = 0,
+  pfBusy = 0,
+  pfDown = 0,
+  pfT = 0,
+  pfN = 0,
+  pfSum = 0,
+  pfLast = 0,
+  pfToast = 0;
+try {
+  const o = JSON.parse(localStorage.getItem("gdperf") || "{}");
+  if ([0, 1, 2, 4].includes(o.q)) PF.q = o.q;
+  if (o.pb === "auto" || o.pb === 0 || o.pb === 1) PF.pb = o.pb;
+  if (o.px === 0 || o.px === 1) PF.px = o.px;
+} catch (e) {}
+const pfQ = () => (pfExp ? 4 : PF.q);
+function savePF() {
+  try {
+    localStorage.setItem("gdperf", JSON.stringify(PF));
+  } catch (e) {}
+}
+function pfSet() {
+  const b = document.body;
+  b.classList.toggle("pfb", !!pfBusy && (PF.pb === "auto" ? !!pfSlow : !!PF.pb));
+  b.classList.toggle("pfx", !!pfBusy && !!PF.px);
+}
+/* auto mode: time the first frames of a drag / pan / zoom; if the page is slow and has blur, pause blur while moving */
+function pfFrame(t) {
+  if (!pfBusy || pfSlow || PF.pb !== "auto") return;
+  if (pfLast) {
+    pfSum += t - pfLast;
+    pfN++;
+  }
+  pfLast = t;
+  if (pfN < 10) return void requestAnimationFrame(pfFrame);
+  if (pfSum / pfN > 34 && S.some((s) => s.blur > 0)) {
+    pfSlow = 1;
+    pfSet();
+    if (!pfToast) {
+      pfToast = 1;
+      toast("slow frames detected: blur pauses while you move things (view > performance settings…)");
+    }
+  }
+}
+function pfStart() {
+  clearTimeout(pfT);
+  if (!pfBusy) {
+    pfBusy = 1;
+    pfN = 0;
+    pfSum = 0;
+    pfLast = 0;
+    if (PF.pb === "auto" && !pfSlow) requestAnimationFrame(pfFrame);
+  }
+  pfSet();
+}
+function pfEnd(ms) {
+  clearTimeout(pfT);
+  pfT = setTimeout(() => {
+    pfBusy = 0;
+    pfSet();
+  }, ms);
+}
+/* a plain click must not flicker the blur: pause only once the pointer actually moves while held */
+svg.addEventListener("pointerdown", () => (pfDown = 1), true);
+addEventListener("pointermove", () => pfDown && pfStart(), true);
+for (const n of ["pointerup", "pointercancel"])
+  addEventListener(
+    n,
+    () => {
+      pfDown = 0;
+      pfEnd(120);
+    },
+    true,
+  );
+addEventListener("blur", () => {
+  pfDown = 0;
+  pfEnd(0);
+});
+function perfPanel() {
+  const a = [...$("#menus").children].find((x) => x.textContent == "view") || $("#menus"),
+    seg = (attr, L) =>
+      `<div class="pfs">${L.map(([v, l]) => `<button type="button" data-${attr}="${v}">${l}</button>`).join("")}</div>`;
+  pe(
+    a,
+    `<div style="padding:8px 16px 12px;display:flex;flex-direction:column;gap:10px"><div class="cph">performance</div>
+ <div class="pfn">if blur or effects make editing laggy, pick a lighter preset. exports and image downloads always use full quality.</div>
+ ${seg("p", Object.keys(PFP).map((k) => [k, k]))}
+ <div class="cph">background blur quality</div>
+ ${seg("q", [[4, "high"], [2, "medium"], [1, "low"], [0, "off"]])}
+ <div class="cph">pause blur while dragging, panning or zooming</div>
+ ${seg("b", [["auto", "auto"], [1, "on"], [0, "off"]])}
+ <div class="pfn" id="pfs"></div>
+ <label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="pfx">also pause shadows and layer effects while moving</label></div>`,
+    () => {},
+  );
+  const P = $("#pp"),
+    sync = () => {
+      P.querySelectorAll("[data-p]").forEach((b) => {
+        const o = PFP[b.dataset.p];
+        b.classList.toggle("on", o.q === PF.q && o.pb === PF.pb && o.px === PF.px);
+      });
+      P.querySelectorAll("[data-q]").forEach((b) => b.classList.toggle("on", +b.dataset.q === PF.q));
+      P.querySelectorAll("[data-b]").forEach((b) => b.classList.toggle("on", String(PF.pb) === b.dataset.b));
+      $("#pfx").checked = !!PF.px;
+      $("#pfs").textContent =
+        PF.pb !== "auto"
+          ? ""
+          : pfSlow
+            ? "slow frames were detected this session, so blur pauses while you move things."
+            : "watches the frame rate while you move things and pauses blur only if it is slow.";
+    },
+    apply = () => {
+      savePF();
+      pfSet();
+      render();
+      sync();
+    };
+  P.style.width = "300px";
+  P.style.left = Math.max(6, Math.min(parseFloat(P.style.left) || 0, innerWidth - 306)) + "px";
+  P.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-p],[data-q],[data-b]");
+    if (!b) return;
+    if (b.dataset.p) {
+      PF = { ...PFP[b.dataset.p] };
+      pfSlow = 0;
+    } else if (b.dataset.q != null) PF.q = +b.dataset.q;
+    else {
+      PF.pb = b.dataset.b === "auto" ? "auto" : +b.dataset.b;
+      if (PF.pb === "auto") pfSlow = 0;
+    }
+    apply();
+  });
+  $("#pfx").onchange = (e) => {
+    PF.px = e.target.checked ? 1 : 0;
+    apply();
+  };
+  sync();
+}
 function sigOf(s) {
   if (s.src) {
     const { src, ...r } = s;
@@ -4665,7 +4881,7 @@ function solidCopy(s, col) {
       .replace(/ marker-end="[^"]*"/, "");
   if (s.t == "img") {
     const [cx, cy] = ctr(s);
-    return `<g transform="translate(${cx} ${cy}) rotate(${s.r || 0})">${maskEl(s.mask || { t: "rect" }, s.w, s.h, `fill="${col}"`)}</g>`;
+    return `<g transform="${tfm(s)}">${maskEl(s.mask || { t: "rect" }, s.w, s.h, `fill="${col}"`)}</g>`;
   }
   return draw(
     {
@@ -4734,6 +4950,9 @@ function groupMask(lg, gw) {
   }
   gw.g.setAttribute("mask", `url(#gm${lg})`);
 }
+var xfUid = 0,
+  xfLQ = 0,
+  wrGen = 0; /* bumps whenever a cached word art bitmap finishes, so warped word art redraws with it */ /* 1 while a skew / distort / warp drag is in progress: cheaper warp quality until release */
 function patchShapes() {
   const host = $("#sh"),
     ids = new Set(S.map((s) => s.id)),
@@ -4779,7 +4998,7 @@ function patchShapes() {
     for (; i < S.length && S[i].lyr == L.id; i++) {
       const s = S[i];
       if (s.cut) cuts.push(s);
-      let sg = sigOf(s) + "|" + zH + "|" + fgen + (editing == s.id ? "e" : "") + sl;
+      let sg = sigOf(s) + "|" + zH + "|" + fgen + (editing == s.id ? "e" : "") + sl + (s.blur > 0 ? "|q" + pfQ() : "") + (xfLQ && (s.dq || s.wp) ? "|lq" : "") + (xfLQ && xfAny(s) && !isL(s) ? "|pv" + wrGen : "") + (s.t == "wordart" && (s.dq || s.wp) ? "|w" + wrGen : "");
       if (hb) {
         const base = sg + "|" + lk;
         sg = s.blur > 0 ? base + "|" + acc : base;
@@ -4858,6 +5077,7 @@ function rq(v) {
   });
 }
 let selTouch = 0;
+let psel = null; /* polygon-select in progress: { pts, base, hov } */
 try {
   selTouch = localStorage.getItem("gdseltouch") == "1" ? 1 : 0;
 } catch (e) {}
@@ -4906,7 +5126,10 @@ var FM_DEF = {
 var FM = { ...FM_DEF },
   GL = [],
   MS = [];
-var PG = { bg: "" };
+var PG = { bg: "" }; /* page: bg colour, optional w / h (default 960 x 540) */
+const PGW = () => PG.w || 960,
+  PGH = () => PG.h || 540;
+var pgDrag = 0;
 var SNAPD = {
   on: 1,
   pageEdge: 1,
@@ -5308,10 +5531,15 @@ const I = {
   hist: '<path d="M4 12a8 8 0 108-8 8 8 0 00-6 2.700M4 4v4h4M12 8v5l3 2"/>',
   cmt: '<path d="M4 4h16v13H8l-4 4zM8 9h8M8 12h6"/>',
   lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>',
+  xf: '<path d="M8 5h13l-5 14H3z"/><path d="M8 5L3 19M16 19l5-14" stroke-dasharray="1.500 2"/>',
   blur: '<circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7" stroke-dasharray="2 2.500"/><circle cx="12" cy="12" r="10.500" stroke-dasharray="1 3.500"/>',
 };
 I.snap =
   '<path d="M4 2.5v19" stroke-dasharray="2.5 2"/><rect x="7" y="5" width="13" height="5" rx="1"/><rect x="7" y="14" width="8" height="5" rx="1"/>';
+I.lasso =
+  '<path d="M12 4c4.500 0 8 1.800 8 4.500S16.500 13 12 13s-8-1.800-8-4.500S7.500 4 12 4z" stroke-dasharray="3 2"/><path d="M8.500 12.500c-.8 2.200-.2 4.200 2 5.500"/><circle cx="11.500" cy="19.500" r="1.500"/>';
+I.polysel =
+  '<path d="M5 7l8-3 7 6-3 9-11-2z" stroke-dasharray="3 2"/><circle cx="5" cy="7" r="1.600"/><circle cx="13" cy="4" r="1.600"/><circle cx="20" cy="10" r="1.600"/><circle cx="17" cy="19" r="1.600"/><circle cx="6" cy="17" r="1.600"/>';
 /* toolbar icons redrawn in a rounder, material-style look */
 Object.assign(I, {
   undo: '<path d="M4 9.500h10a5.500 5.500 0 010 11h-4"/><path d="M8 5.500l-4 4 4 4"/>',
@@ -5679,18 +5907,22 @@ const _cx = document.createElement("canvas").getContext("2d"),
   wesc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 function waM(s) {
   _cx.font = `${s.ital ? "italic " : ""}${s.bold ? "700 " : ""}100px ${ffq(s.ff || "Arial")},sans-serif`;
-  const L = String(s.text || " ").split("\n"),
+  const ls0 = +s.wls || 0,
+    L = String(s.text || " ").split("\n"),
     ms = L.map((t) => _cx.measureText(t || " ")),
-    iw = (m) => m.actualBoundingBoxLeft + m.actualBoundingBoxRight,
+    /* letter spacing adds ls0 after every glyph except the last of a line */
+    ex = L.map((t) => Math.max(0, [...(t || " ")].length - 1) * ls0),
+    iw = (m, i) => m.actualBoundingBoxLeft + m.actualBoundingBoxRight + ex[i],
     W = Math.max(...ms.map(iw), 1),
     top = -ms[0].actualBoundingBoxAscent,
-    gap = 115,
-    last = (L.length - 1) * gap + ms[ms.length - 1].actualBoundingBoxDescent;
+    gap = 100 * (+s.wlh || 1.15),
+    last = (L.length - 1) * gap + ms[ms.length - 1].actualBoundingBoxDescent,
+    al = s.align == "left" ? 0 : s.align == "right" ? 1 : 0.5;
   return {
     W,
     top,
     H: Math.max(last - top, 1),
-    ls: L.map((t, i) => ({ t, x: (W - iw(ms[i])) / 2 + ms[i].actualBoundingBoxLeft, y: i * gap })),
+    ls: L.map((t, i) => ({ t, x: (W - iw(ms[i], i)) * al + ms[i].actualBoundingBoxLeft, y: i * gap })),
   };
 }
 /* y of each line's baseline, measured down from the word art's top edge */
@@ -5713,25 +5945,46 @@ function waEl(s, a) {
     sx = w / m.W,
     sy = h / m.H,
     sk = Math.sqrt(sx * sy) || 1,
-    /* the outline is a screen-space stroke (non-scaling), so its width follows the live zoom through the --z
-       variable: it tracks every frame of a zoom animation instead of staying stale until the zoom stops */
+    sw = +s.sw || 0,
+    /* outline position: "out" (default) keeps the fill intact and grows the outline outward, "in" grows it inward, "mid" is the old centered stroke */
+    pos = s.wsp == "in" || s.wsp == "mid" ? s.wsp : "out",
+    k = pos == "mid" ? 1 : 2,
+    hasS = sw > 0 && !/stroke="none"/.test(a),
     dv = String(s.dash || "").trim(),
-    wsty = `stroke-width:calc(var(--z,1)*${+s.sw || 0}px)${dv ? ";stroke-dasharray:" + dv.split(/[ ,]+/).map((n) => `calc(var(--z,1)*${+n || 0}px)`).join(" ") : ""}`;
-  return `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" fill="transparent"/><g transform="translate(${-w / 2} ${-h / 2}) scale(${sx} ${sy}) translate(0 ${-m.top})" style="${wsty}" ${a
-    .replace(/stroke-width="[^"]*"/, `stroke-width="${s.sw * z}" data-esw="${s.sw / sk}"`)
-    .replace(
-      /stroke-dasharray="([^"]*)"/,
-      (m, v) =>
-        `stroke-dasharray="${
-          v.trim()
-            ? v
-                .trim()
-                .split(/[ ,]+/)
-                .map((n) => +n * z)
-                .join(" ")
-            : ""
-        }" data-eda="${v}"`,
-    )} stroke-linejoin="round" font-family="${ffq(s.ff || "Arial")},sans-serif" font-size="100" font-weight="${s.bold ? 700 : 400}" font-style="${s.ital ? "italic" : "normal"}" text-decoration="${[s.und ? "underline" : "", s.strike ? "line-through" : ""].filter(Boolean).join(" ") || "none"}">${m.ls.map((l) => `<text x="${l.x}" y="${l.y}" vector-effect="non-scaling-stroke">${wesc(l.t)}</text>`).join("")}</g>`;
+    dl = dv ? dv.split(/[ ,]+/) : [],
+    /* the outline is drawn in the word art own units (divided by the stretch), so it scales with the glyphs at every zoom */
+    lj = s.lj || "round",
+    sa = a
+      .replace(/stroke-width="[^"]*"/, `stroke-width="${+((sw * k) / sk).toFixed(4)}" data-esw="${(sw * k) / sk}"`)
+      .replace(
+        /stroke-dasharray="([^"]*)"/,
+        (mm, v) =>
+          `stroke-dasharray="${v.trim() ? v.trim().split(/[ ,]+/).map((n) => +(+n / sk).toFixed(4)).join(" ") : ""}" data-eda="${v}"`,
+      ),
+    fa = a.replace(/stroke="[^"]*"/, 'stroke="none"').replace(/stroke-dasharray="[^"]*"/, "").replace(/stroke-width="[^"]*"/, ""),
+    sta = sa.replace(/fill="[^"]*"/, 'fill="none"'),
+    fnt = `font-family="${ffq(s.ff || "Arial")},sans-serif" font-size="100" font-weight="${s.bold ? 700 : 400}" font-style="${s.ital ? "italic" : "normal"}" text-decoration="${[s.und ? "underline" : "", s.strike ? "line-through" : ""].filter(Boolean).join(" ") || "none"}"` + (+s.wls ? ` letter-spacing="${+s.wls}"` : ""),
+    txt = (ex) =>
+      m.ls.map((l) => `<text x="${l.x}" y="${l.y}"${ex || ""}>${wesc(l.t)}</text>`).join(""),
+    /* the glyph shapes themselves, used to cut the outline away from the fill (outside) or to the fill (inside) */
+    shape = `<g ${fnt} fill="#000" stroke="none">${txt("")}</g>`,
+    big = 1e5,
+    id = "wa" + s.id;
+  let defs = "",
+    st = "";
+  if (hasS) {
+    const lk = `stroke-linejoin="${lj}"${lj == "miter" ? ' stroke-miterlimit="10"' : ""} stroke-linecap="${s.lc || "butt"}"`,
+      layer = `<g ${sta} ${lk} ${fnt}>${txt("")}</g>`;
+    if (pos == "mid") st = layer;
+    else if (pos == "in") {
+      defs = `<clipPath id="${id}c">${txt(" " + fnt)}</clipPath>`;
+      st = `<g clip-path="url(#${id}c)">${layer}</g>`;
+    } else {
+      defs = `<mask id="${id}m" maskUnits="userSpaceOnUse" x="${-big}" y="${-big}" width="${2 * big}" height="${2 * big}"><rect x="${-big}" y="${-big}" width="${2 * big}" height="${2 * big}" fill="#fff"/><g ${fnt} fill="#000" stroke="none">${txt("")}</g></mask>`;
+      st = `<g mask="url(#${id}m)">${layer}</g>`;
+    }
+  }
+  return `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" fill="transparent"/><g transform="translate(${-w / 2} ${-h / 2}) scale(${sx} ${sy}) translate(0 ${-m.top})"><defs>${defs}</defs><g ${fa} ${fnt}>${txt("")}</g>${st}</g>`;
 }
 function wordDlg(s) {
   if ($("#wad")) return;
@@ -5745,10 +5998,15 @@ function wordDlg(s) {
   o.innerHTML =
     '<textarea rows="2" spellcheck="false" style="width:100%;font:20px Arial;border:2px solid var(--tx);border-radius:6px;padding:8px 12px;background:var(--bg);color:var(--tx);resize:none;user-select:text;outline:0"></textarea><div style="margin-top:12px;color:var(--mut);font-size:14px">' +
     (multi ? "editing " + G.length + " word arts at once. " : "") +
-    "use enter to save. use shift+enter for multiple lines.</div>";
+    "use enter to save. use shift+enter for multiple lines.</div>" +
+    '<div id="waopt" style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:12px;color:var(--mut);font-size:14px"><label>letter spacing <input type="number" id="wals" step="1" style="width:56px"></label><label>line height <input type="number" id="walh" step="0.05" min="0.5" style="width:56px"></label><label>outline <select id="wasp"><option value="out">outside</option><option value="mid">centered</option><option value="in">inside</option></select></label></div>';
   document.body.appendChild(o);
   const ta = o.querySelector("textarea"),
     same = multi && G.every((q) => q.text == s.text);
+  const q$ = (x) => o.querySelector(x);
+  q$("#wals").value = s ? +s.wls || 0 : 0;
+  q$("#walh").value = s ? +s.wlh || 1.15 : 1.15;
+  q$("#wasp").value = s && (s.wsp == "in" || s.wsp == "mid") ? s.wsp : "out";
   ta.value = s ? (multi && !same ? "" : s.text) : "";
   if (multi && !same) ta.placeholder = "mixed text. type to replace all " + G.length;
   ta.focus();
@@ -5759,13 +6017,26 @@ function wordDlg(s) {
       done = 1;
       removeEventListener("pointerdown", out, true);
       o.remove();
-      const t = ta.value.replace(/\s+$/, "");
+      const t = ta.value.replace(/\s+$/, ""),
+        ls = +q$("#wals").value || 0,
+        lh = +q$("#walh").value || 1.15,
+        sp = q$("#wasp").value,
+        opt = (q) => {
+          if (ls) q.wls = ls;
+          else delete q.wls;
+          if (Math.abs(lh - 1.15) > 1e-6) q.wlh = lh;
+          else delete q.wlh;
+          if (sp == "out") delete q.wsp;
+          else q.wsp = sp;
+        };
+      o.remove();
       if (!ok || !t.trim()) return;
       snap();
       if (s)
         G.forEach((q) => {
           const [cx] = ctr(q);
           q.text = t;
+          opt(q);
           const m = waM(q);
           q.w = Math.min(900, Math.max(20, (q.h * m.W) / m.H));
           q.x = cx - q.w / 2;
@@ -5773,11 +6044,12 @@ function wordDlg(s) {
       else {
         const n = mk("wordart", { x: 0, y: 0 });
         n.text = t;
+        opt(n);
         const m = waM(n);
         n.h = 110;
         n.w = Math.min(700, Math.max(40, (110 * m.W) / m.H));
-        n.x = 480 - n.w / 2;
-        n.y = 270 - 55;
+        n.x = PGW() / 2 - n.w / 2;
+        n.y = PGH() / 2 - 55;
         S.push(n);
         sel = n.id;
         ms = [];
@@ -5795,6 +6067,16 @@ function wordDlg(s) {
     } else if (e.key == "Escape") fin(0);
   };
   ta.onkeyup = (e) => e.stopPropagation();
+  o.querySelectorAll("#waopt input,#waopt select").forEach((el) => {
+    el.onkeydown = (e) => {
+      e.stopPropagation();
+      if (e.key == "Enter") {
+        e.preventDefault();
+        fin(1);
+      } else if (e.key == "Escape") fin(0);
+    };
+    el.onkeyup = (e) => e.stopPropagation();
+  });
   setTimeout(() => addEventListener("pointerdown", out, true), 0);
 }
 /* insert > curved text: drops an arch-shaped curve with the line hidden and opens the text-on-line box. edit points / drag to reshape the curve afterwards */
@@ -5917,8 +6199,9 @@ function blendMenu() {
   );
 }
 function bd(s, i) {
-  const v = +s.blur;
-  if (!(v > 0) || isL(s)) return "";
+  const v = +s.blur,
+    N = pfQ();
+  if (!(v > 0) || isL(s) || !N) return "";
   const g = draw(
       {
         ...s,
@@ -5936,10 +6219,30 @@ function bd(s, i) {
       1,
     ).replace(/ data-id="\d+"/, ""),
     id = s.id,
-    U = `<defs><g id="bc${id}"><rect width="960" height="540" fill="url(#ck)"/>${PG.bg ? `<rect width="960" height="540" fill="${PG.bg}"/>` : ""}${bkdrop(i)}</g></defs><mask id="bm${id}" maskUnits="userSpaceOnUse" x="-3000" y="-3000" width="7000" height="7000">${g}</mask>`;
-  let L = "";
-  if (!s.bg) L = `<use href="#bc${id}" style="filter:blur(${v}px)"/>`;
-  else {
+    f = (n) => +n.toFixed(4);
+  /* the blur only matters inside the object, so the filter, the mask and the blurred copy are limited to its box
+     (plus the blur reach) instead of the whole page. word art can overflow its box, so it keeps the wide region */
+  let X0 = -3000,
+    Y0 = -3000,
+    X1 = 4000,
+    Y1 = 4000;
+  if (s.t != "wordart") {
+    const r = bb(s),
+      pd = v * 3 + 16 + Math.max(r[2] - r[0], r[3] - r[1]) * 0.1;
+    X0 = r[0] - pd;
+    Y0 = r[1] - pd;
+    X1 = r[2] + pd;
+    Y1 = r[3] + pd;
+  }
+  const rg = `x="${f(X0)}" y="${f(Y0)}" width="${f(X1 - X0)}" height="${f(Y1 - Y0)}"`,
+    bf = (k, sd) =>
+      `<filter id="bf${id}_${k}" filterUnits="userSpaceOnUse" ${rg} color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="${f(sd)}"/></filter>`;
+  let L = "",
+    F = "";
+  if (!s.bg) {
+    F = bf(0, v);
+    L = `<use href="#bc${id}" filter="url(#bf${id}_0)"/>`;
+  } else {
     const r = bb(s),
       cx = (r[0] + r[2]) / 2,
       cy = (r[1] + r[3]) / 2,
@@ -5948,13 +6251,14 @@ function bd(s, i) {
       a = rad(s.ba ?? 180),
       dx = Math.sin(a),
       dy = -Math.cos(a),
-      l = (Math.abs(dx) * w + Math.abs(dy) * h) / 2 || 1,
-      N = 4,
-      f = (n) => +n.toFixed(4);
-    for (let k = 1; k <= N; k++)
-      L += `<linearGradient id="bg${id}_${k}" gradientUnits="userSpaceOnUse" x1="${f(cx - dx * l)}" y1="${f(cy - dy * l)}" x2="${f(cx + dx * l)}" y2="${f(cy + dy * l)}"><stop offset="0" stop-color="#fff"/><stop offset="${f(1 - k / N)}" stop-color="#fff"/><stop offset="${f(1 - (k - 1) / N)}" stop-color="#000"/><stop offset="1" stop-color="#000"/></linearGradient><mask id="bgm${id}_${k}" maskUnits="userSpaceOnUse" x="-3000" y="-3000" width="7000" height="7000"><rect x="-3000" y="-3000" width="7000" height="7000" fill="url(#bg${id}_${k})"/></mask><g mask="url(#bgm${id}_${k})"><use href="#bc${id}" style="filter:blur(${f((v * k) / N)}px)"/></g>`;
+      l = (Math.abs(dx) * w + Math.abs(dy) * h) / 2 || 1;
+    for (let k = 1; k <= N; k++) {
+      F += bf(k, (v * k) / N);
+      L += `<linearGradient id="bg${id}_${k}" gradientUnits="userSpaceOnUse" x1="${f(cx - dx * l)}" y1="${f(cy - dy * l)}" x2="${f(cx + dx * l)}" y2="${f(cy + dy * l)}"><stop offset="0" stop-color="#fff"/><stop offset="${f(1 - k / N)}" stop-color="#fff"/><stop offset="${f(1 - (k - 1) / N)}" stop-color="#000"/><stop offset="1" stop-color="#000"/></linearGradient><mask id="bgm${id}_${k}" maskUnits="userSpaceOnUse" ${rg}><rect x="${f(X0)}" y="${f(Y0)}" width="${f(X1 - X0)}" height="${f(Y1 - Y0)}" fill="url(#bg${id}_${k})"/></mask><g mask="url(#bgm${id}_${k})"><use href="#bc${id}" filter="url(#bf${id}_${k})"/></g>`;
+    }
   }
-  return U + `<g mask="url(#bm${id})" pointer-events="none">${L}</g>`;
+  const U = `<defs><g id="bc${id}"><rect width="${PGW()}" height="${PGH()}" fill="url(#ck)"/>${PG.bg ? `<rect width="${PGW()}" height="${PGH()}" fill="${PG.bg}"/>` : ""}${bkdrop(i)}</g>${F}</defs><mask id="bm${id}" maskUnits="userSpaceOnUse" ${rg}>${g}</mask>`;
+  return U + `<g class="bfx" mask="url(#bm${id})" pointer-events="none">${L}</g>`;
 }
 /* ===== format options helpers: alt text, drop shadow, reflection, text fitting ===== */
 const escA = (t) =>
@@ -5974,7 +6278,7 @@ function shw(s, h) {
     c = /^#[0-9a-f]{6}$/i.test(d.c) ? d.c : "#000000",
     o = Math.max(0, Math.min(100, d.o == null ? 50 : +d.o)) / 100,
     f = (n) => +n.toFixed(2);
-  return `<g style="filter:drop-shadow(${f(Math.cos(a) * ds)}px ${f(Math.sin(a) * ds)}px ${f(Math.max(0, +d.b || 0))}px rgba(${parseInt(c.slice(1, 3), 16)},${parseInt(c.slice(3, 5), 16)},${parseInt(c.slice(5, 7), 16)},${o}))">${h}</g>`;
+  return `<g class="sfx" style="filter:drop-shadow(${f(Math.cos(a) * ds)}px ${f(Math.sin(a) * ds)}px ${f(Math.max(0, +d.b || 0))}px rgba(${parseInt(c.slice(1, 3), 16)},${parseInt(c.slice(3, 5), 16)},${parseInt(c.slice(5, 7), 16)},${o}))">${h}</g>`;
 }
 /* reflection: s.rfl = {o start opacity %, d distance px, z size % of the height}. yb = bottom edge of the object, H = its height, in the coordinates `inner` is drawn in */
 function rflS(s, inner, yb, H) {
@@ -6035,6 +6339,606 @@ function fpPre() {
         s.y = cy + dy - need / 2;
       }
     }
+}
+/* ===== skew, distort and warp (inspired by Illustrator's shear / envelope distort and Photoshop's free transform) =====
+   s.kx, s.ky : skew angles in degrees, in the object's own axes (applied after the distort, before the rotation)
+   s.dq       : [8 numbers] offsets of the four corners (TL, TR, BR, BL) as fractions of the width / height (free distort + perspective)
+   s.wp       : {k preset, b bend %, ax "h" | "v", h horizontal distortion %, v vertical distortion %}
+   vector shapes are re-drawn as warped outlines (they stay crisp); pictures, word art and tables are warped with a triangle mesh */
+let XM = "scale", /* handle mode of the selected object: scale | skew | distort | persp */
+  xfLab = "";
+const WPN = [
+  ["", "none"],
+  ["arc", "arc"],
+  ["arcl", "arc lower"],
+  ["arcu", "arc upper"],
+  ["bulge", "bulge"],
+  ["inflate", "inflate"],
+  ["flag", "flag"],
+  ["wave", "wave"],
+  ["eye", "fisheye"],
+  ["twist", "twist"],
+];
+const wpOn = (s) => !!(s.wp && (s.wp.k || s.wp.h || s.wp.v)),
+  xfNL = (s) => !isL(s) && !!(s.dq || wpOn(s)),
+  xfAny = (s) => !isL(s) && !!(s.kx || s.ky || s.dq || wpOn(s)),
+  skM = (s) => {
+    const tx = -Math.tan(rad(s.kx || 0)),
+      ty = -Math.tan(rad(s.ky || 0));
+    return [1 + tx * ty, ty, tx, 1];
+  },
+  sk = (s, p) => {
+    const [a, b, c, d] = skM(s);
+    return [a * p[0] + c * p[1], b * p[0] + d * p[1]];
+  },
+  unSk = (s, p) => {
+    const tx = -Math.tan(rad(s.kx || 0)),
+      ty = -Math.tan(rad(s.ky || 0));
+    return [p[0] - tx * p[1], -ty * p[0] + (1 + tx * ty) * p[1]];
+  },
+  tfm = (s) => {
+    const [cx, cy] = ctr(s);
+    let t = `translate(${cx} ${cy}) rotate(${s.r || 0})`;
+    if (s.kx || s.ky) t += ` matrix(${skM(s).map((n) => +n.toFixed(6)).join(" ")} 0 0)`;
+    return t;
+  },
+  xfAbs = (s, p) => {
+    const [cx, cy] = ctr(s),
+      q = R(...sk(s, p), rad(s.r || 0));
+    return [cx + q[0], cy + q[1]];
+  };
+/* envelope warp presets: a map from the box (centred, W / H half sizes) to a warped point */
+function wpF(wp, W, H) {
+  const k = wp.k,
+    b = (wp.b ?? 50) / 100,
+    hd = (wp.h || 0) / 100,
+    vd = (wp.v || 0) / 100,
+    vert = wp.ax == "v";
+  return ([x, y]) => {
+    const X = vert ? y : x,
+      Y = vert ? x : y,
+      A = vert ? H : W,
+      B = vert ? W : H,
+      u = A ? X / A : 0,
+      v = B ? Y / B : 0;
+    let dX = 0,
+      dY = 0;
+    if (k == "arc") dY = -b * B * (1 - u * u);
+    else if (k == "arcl") dY = (-b * B * (1 - u * u) * (v + 1)) / 2;
+    else if (k == "arcu") dY = (-b * B * (1 - u * u) * (1 - v)) / 2;
+    else if (k == "bulge") {
+      dY = v * B * b * 0.6 * (1 - u * u);
+      dX = u * A * b * 0.3 * (1 - v * v);
+    } else if (k == "inflate") {
+      dY = v * B * b * 0.7 * (1 - Math.abs(u));
+      dX = u * A * b * 0.7 * (1 - Math.abs(v));
+    } else if (k == "flag") dY = b * B * 0.5 * Math.sin(Math.PI * u);
+    else if (k == "wave") dY = b * B * 0.5 * Math.sin(2 * Math.PI * u) * (0.6 + 0.4 * v);
+    else if (k == "eye") {
+      const t = b * 0.9 * (1 - Math.min(1, Math.hypot(u, v) / 1.42));
+      dX = X * t;
+      dY = Y * t;
+    } else if (k == "twist") {
+      const th = b * 2.2 * (1 - Math.min(1, Math.hypot(u, v) / 1.42)),
+        c = Math.cos(th),
+        sn = Math.sin(th);
+      dX = X * c - Y * sn - X;
+      dY = X * sn + Y * c - Y;
+    }
+    let rx = vert ? x + dY : x + dX,
+      ry = vert ? y + dX : y + dY;
+    /* horizontal / vertical distortion: a perspective-like taper across the other axis */
+    rx *= 1 + hd * 0.5 * (H ? y / H : 0);
+    ry *= 1 + vd * 0.5 * (W ? x / W : 0);
+    return [rx, ry];
+  };
+}
+/* projective map from 4 points to 4 points (free distort / perspective) */
+function homog(src, dst) {
+  const M = [];
+  for (let i = 0; i < 4; i++) {
+    const [x, y] = src[i],
+      [u, v] = dst[i];
+    M.push([x, y, 1, 0, 0, 0, -u * x, -u * y, u]);
+    M.push([0, 0, 0, x, y, 1, -v * x, -v * y, v]);
+  }
+  for (let c = 0; c < 8; c++) {
+    let p = c;
+    for (let r = c + 1; r < 8; r++) if (Math.abs(M[r][c]) > Math.abs(M[p][c])) p = r;
+    if (Math.abs(M[p][c]) < 1e-12) return null;
+    [M[c], M[p]] = [M[p], M[c]];
+    for (let r = 0; r < 8; r++)
+      if (r != c) {
+        const f = M[r][c] / M[c][c];
+        for (let j = c; j < 9; j++) M[r][j] -= f * M[c][j];
+      }
+  }
+  return M.map((r, i) => r[8] / r[i]);
+}
+const hApply = (h, [x, y]) => {
+  const w = h[6] * x + h[7] * y + 1 || 1e-9;
+  return [(h[0] * x + h[1] * y + h[2]) / w, (h[3] * x + h[4] * y + h[5]) / w];
+};
+const xfCorners = (s) => {
+  const W = s.w / 2,
+    H = s.h / 2;
+  return [
+    [-W, -H],
+    [W, -H],
+    [W, H],
+    [-W, H],
+  ];
+};
+function xfF(s) {
+  if (!xfNL(s)) return null;
+  const W = s.w / 2,
+    H = s.h / 2,
+    wf = wpOn(s) ? wpF(s.wp, W, H) : null;
+  let Hm = null;
+  if (s.dq) {
+    const C = xfCorners(s),
+      dst = C.map(([x, y], i) => [x + s.dq[i * 2] * s.w, y + s.dq[i * 2 + 1] * s.h]);
+    Hm = homog(wf ? C.map(wf) : C, dst);
+  }
+  if (!wf && !Hm) return null;
+  return (p) => {
+    if (wf) p = wf(p);
+    if (Hm) p = hApply(Hm, p);
+    return p;
+  };
+}
+/* outline of the (warped) box in local coordinates */
+function xfOutline(s, n) {
+  const f = xfF(s),
+    C = xfCorners(s),
+    m = f ? n || 12 : 1,
+    o = [];
+  for (let e = 0; e < 4; e++) {
+    const a = C[e],
+      b = C[(e + 1) % 4];
+    for (let k = 0; k < m; k++) {
+      const t = k / m,
+        p = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+      o.push(f ? f(p) : p);
+    }
+  }
+  return o;
+}
+const xfAbsPts = (s, P) => P.map((p) => xfAbs(s, p));
+/* ---- SVG path data -> polylines (all commands, arcs included) ---- */
+function arcPts(x1, y1, rx, ry, phi, fa, fs, x2, y2, push) {
+  if (!rx || !ry) return push(x2, y2);
+  rx = Math.abs(rx);
+  ry = Math.abs(ry);
+  const ph = rad(phi),
+    cp = Math.cos(ph),
+    sp = Math.sin(ph),
+    dx = (x1 - x2) / 2,
+    dy = (y1 - y2) / 2,
+    x1p = cp * dx + sp * dy,
+    y1p = -sp * dx + cp * dy,
+    l = (x1p * x1p) / (rx * rx) + (y1p * y1p) / (ry * ry);
+  if (l > 1) {
+    const q = Math.sqrt(l);
+    rx *= q;
+    ry *= q;
+  }
+  const num = rx * rx * ry * ry - rx * rx * y1p * y1p - ry * ry * x1p * x1p,
+    den = rx * rx * y1p * y1p + ry * ry * x1p * x1p,
+    co = (fa == fs ? -1 : 1) * Math.sqrt(Math.max(0, num / (den || 1e-12))),
+    cxp = (co * rx * y1p) / ry,
+    cyp = (-co * ry * x1p) / rx,
+    cx = cp * cxp - sp * cyp + (x1 + x2) / 2,
+    cy = sp * cxp + cp * cyp + (y1 + y2) / 2,
+    t1 = Math.atan2((y1p - cyp) / ry, (x1p - cxp) / rx),
+    ux = (x1p - cxp) / rx,
+    uy = (y1p - cyp) / ry,
+    vx = (-x1p - cxp) / rx,
+    vy = (-y1p - cyp) / ry;
+  let dt = Math.atan2(ux * vy - uy * vx, ux * vx + uy * vy);
+  if (!fs && dt > 0) dt -= 2 * Math.PI;
+  else if (fs && dt < 0) dt += 2 * Math.PI;
+  const n = Math.max(4, Math.ceil(Math.abs(dt) / (Math.PI / 24)));
+  for (let k = 1; k <= n; k++) {
+    const t = t1 + (dt * k) / n,
+      ex = rx * Math.cos(t),
+      ey = ry * Math.sin(t);
+    push(cp * ex - sp * ey + cx, sp * ex + cp * ey + cy);
+  }
+}
+function pathPts(d, fine) {
+  const T = d.match(/[MmLlHhVvCcSsQqTtAaZz]|-?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?/g) || [],
+    polys = [];
+  let cur = null,
+    i = 0,
+    cmd = "",
+    x = 0,
+    y = 0,
+    sx = 0,
+    sy = 0,
+    px = 0,
+    py = 0,
+    pc = "";
+  const num = () => +T[i++],
+    line = (nx, ny) => {
+      if (fine) {
+        const n = Math.min(48, Math.max(1, Math.ceil(Math.hypot(nx - x, ny - y) / (xfLQ ? 24 : 10))));
+        for (let k = 1; k < n; k++) cur.p.push([x + ((nx - x) * k) / n, y + ((ny - y) * k) / n]);
+      }
+      cur.p.push([nx, ny]);
+      x = nx;
+      y = ny;
+    },
+    cub = (x1, y1, x2, y2, x3, y3) => {
+      const n = 16;
+      for (let k = 1; k <= n; k++) {
+        const t = k / n,
+          u = 1 - t;
+        cur.p.push([
+          u * u * u * x + 3 * u * u * t * x1 + 3 * u * t * t * x2 + t * t * t * x3,
+          u * u * u * y + 3 * u * u * t * y1 + 3 * u * t * t * y2 + t * t * t * y3,
+        ]);
+      }
+      x = x3;
+      y = y3;
+    },
+    nums = (n, rel) => {
+      const a = [];
+      for (let j = 0; j < n; j++) a.push(num());
+      return rel ? a.map((v, j) => v + (j % 2 ? y : x)) : a;
+    };
+  while (i < T.length) {
+    if (/[A-Za-z]/.test(T[i])) cmd = T[i++];
+    else if (!cmd) break;
+    const rel = cmd === cmd.toLowerCase(),
+      C = cmd.toUpperCase();
+    if (C == "Z") {
+      if (cur) {
+        cur.c = 1;
+        x = sx;
+        y = sy;
+      }
+      pc = "Z";
+      continue;
+    }
+    if (C == "M") {
+      const [nx, ny] = nums(2, rel);
+      cur = { p: [[nx, ny]], c: 0 };
+      polys.push(cur);
+      x = sx = nx;
+      y = sy = ny;
+      cmd = rel ? "l" : "L";
+      pc = "M";
+      continue;
+    }
+    if (!cur || cur.c) {
+      cur = { p: [[x, y]], c: 0 };
+      polys.push(cur);
+    }
+    if (C == "L") {
+      const [nx, ny] = nums(2, rel);
+      line(nx, ny);
+    } else if (C == "H") {
+      const nx = num() + (rel ? x : 0);
+      line(nx, y);
+    } else if (C == "V") {
+      const ny = num() + (rel ? y : 0);
+      line(x, ny);
+    } else if (C == "C") {
+      const a = nums(6, rel);
+      cub(...a);
+      px = a[2];
+      py = a[3];
+    } else if (C == "S") {
+      const a = nums(4, rel);
+      cub(pc == "C" ? 2 * x - px : x, pc == "C" ? 2 * y - py : y, a[0], a[1], a[2], a[3]);
+      px = a[0];
+      py = a[1];
+      pc = "C";
+      continue;
+    } else if (C == "Q" || C == "T") {
+      let qx, qy, ex, ey;
+      if (C == "Q") [qx, qy, ex, ey] = nums(4, rel);
+      else {
+        [ex, ey] = nums(2, rel);
+        qx = pc == "Q" ? 2 * x - px : x;
+        qy = pc == "Q" ? 2 * y - py : y;
+      }
+      cub(x + (2 / 3) * (qx - x), y + (2 / 3) * (qy - y), ex + (2 / 3) * (qx - ex), ey + (2 / 3) * (qy - ey), ex, ey);
+      px = qx;
+      py = qy;
+      pc = "Q";
+      continue;
+    } else if (C == "A") {
+      const a = [num(), num(), num(), num(), num(), num(), num()];
+      let ex = a[5],
+        ey = a[6];
+      if (rel) {
+        ex += x;
+        ey += y;
+      }
+      arcPts(x, y, a[0], a[1], a[2], a[3], a[4], ex, ey, (qx, qy) => cur.p.push([qx, qy]));
+      x = ex;
+      y = ey;
+    }
+    pc = C;
+  }
+  return polys;
+}
+/* rewrite every rect / ellipse / polygon / path inside a block of markup as a warped path */
+function warpMk(html, f, fine, fl) {
+  const r2 = (n) => Math.round(n * 100) / 100,
+    gv = (a, k, d) => {
+      const m = a.match(new RegExp('(?:^|\\s)' + k + '="([^"]*)"'));
+      return m ? +m[1] : d || 0;
+    },
+    keep = (a, drop) => {
+      let o = "";
+      a.replace(/([\w:-]+)="([^"]*)"/g, (m, k, v) => {
+        if (!drop.includes(k)) o += ` ${k}="${v}"`;
+        return m;
+      });
+      return o;
+    },
+    F = (p) => f([p[0] * fl[0], p[1] * fl[1]]);
+  return html.replace(/<(rect|ellipse|polygon|path)\b([^>]*?)\/>/g, (m, tag, a) => {
+    let polys,
+      drop;
+    if (tag == "path") {
+      polys = pathPts((a.match(/(?:^|\s)d="([^"]*)"/) || [])[1] || "", fine);
+      drop = ["d"];
+    } else if (tag == "rect") {
+      const x = gv(a, "x"),
+        y = gv(a, "y"),
+        w = gv(a, "width"),
+        h = gv(a, "height"),
+        rx = Math.min(gv(a, "rx"), w / 2, h / 2);
+      polys = pathPts(
+        rx > 0
+          ? `M${x + rx} ${y}H${x + w - rx}A${rx} ${rx} 0 0 1 ${x + w} ${y + rx}V${y + h - rx}A${rx} ${rx} 0 0 1 ${x + w - rx} ${y + h}H${x + rx}A${rx} ${rx} 0 0 1 ${x} ${y + h - rx}V${y + rx}A${rx} ${rx} 0 0 1 ${x + rx} ${y}Z`
+          : `M${x} ${y}H${x + w}V${y + h}H${x}Z`,
+        fine,
+      );
+      drop = ["x", "y", "width", "height", "rx", "ry"];
+    } else if (tag == "ellipse") {
+      const cx = gv(a, "cx"),
+        cy = gv(a, "cy"),
+        rx = gv(a, "rx"),
+        ry = gv(a, "ry"),
+        p = [];
+      for (let k = 0; k < 96; k++) p.push([cx + rx * Math.cos((k * Math.PI) / 48), cy + ry * Math.sin((k * Math.PI) / 48)]);
+      polys = [{ p, c: 1 }];
+      drop = ["cx", "cy", "rx", "ry"];
+    } else {
+      const n = ((a.match(/(?:^|\s)points="([^"]*)"/) || [])[1] || "").match(/-?[\d.]+(?:e[-+]?\d+)?/gi) || [],
+        p = [];
+      for (let k = 0; k + 1 < n.length; k += 2) p.push([+n[k], +n[k + 1]]);
+      if (fine) {
+        const q = [];
+        p.forEach((a0, k) => {
+          const b0 = p[(k + 1) % p.length],
+            c = Math.min(48, Math.max(1, Math.ceil(Math.hypot(b0[0] - a0[0], b0[1] - a0[1]) / (xfLQ ? 24 : 10))));
+          for (let j = 0; j < c; j++) q.push([a0[0] + ((b0[0] - a0[0]) * j) / c, a0[1] + ((b0[1] - a0[1]) * j) / c]);
+        });
+        polys = [{ p: q, c: 1 }];
+      } else polys = [{ p, c: 1 }];
+      drop = ["points"];
+    }
+    const d = polys
+      .filter((q) => q.p.length)
+      .map(
+        (q) =>
+          "M" +
+          q.p
+            .map((p) => {
+              const t = F(p);
+              return r2(t[0]) + " " + r2(t[1]);
+            })
+            .join("L") +
+          (q.c ? "Z" : ""),
+      )
+      .join("");
+    return `<path d="${d}"${keep(a, drop)}/>`;
+  });
+}
+/* text keeps its shape: follow the warp with the local linear approximation at the centre */
+function xfAff(f) {
+  const e = 6,
+    c = f([0, 0]),
+    a = f([e, 0]),
+    b = f([-e, 0]),
+    d = f([0, e]),
+    g = f([0, -e]);
+  return `matrix(${[(a[0] - b[0]) / (2 * e), (a[1] - b[1]) / (2 * e), (d[0] - g[0]) / (2 * e), (d[1] - g[1]) / (2 * e), c[0], c[1]].map((n) => +n.toFixed(5)).join(" ")})`;
+}
+/* mesh density: a free distort that is still a parallelogram is exactly affine (2 triangles); perspective only needs as many cells as it bends;
+   envelope warps need a fine grid, but a coarse one while dragging */
+function xfN(s, f, ras) {
+  if (wpOn(s)) return ras ? (xfLQ ? 9 : 14) : xfLQ ? 7 : 14;
+  const q = xfCorners(s).map(f),
+    c = f([0, 0]),
+    mx = (q[0][0] + q[1][0] + q[2][0] + q[3][0]) / 4,
+    my = (q[0][1] + q[1][1] + q[2][1] + q[3][1]) / 4,
+    dev = Math.hypot(c[0] - mx, c[1] - my) / (Math.max(s.w, s.h) || 1);
+  if (dev < 0.004) return 1;
+  return Math.max(2, Math.min(xfLQ ? 6 : 12, Math.ceil(3 + dev * 36)));
+}
+/* warped word art: stroked, masked text re-drawn once per mesh triangle is very slow, and it never changes while you drag a warp.
+   so it is drawn once into a bitmap (fonts embedded, like export) and only the cheap bitmap mesh moves. exports stay vector. */
+const WRC = new Map();
+function wrHash(t) {
+  let h = 5381;
+  for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0;
+  return h + "_" + t.length;
+}
+function wrScale(s) {
+  let sc = 0.5;
+  const want = Math.max(0.5, (zH || 1) * (devicePixelRatio || 1));
+  while (sc < want && sc < 8) sc *= 2;
+  while (sc > 0.5 && s.w * s.h * sc * sc > 1.2e7) sc /= 2;
+  return sc;
+}
+function wrGet(s, inner) {
+  if (pfExp) return null;
+  const key = wrHash(inner + "|" + s.w + "|" + s.h);
+  let e = WRC.get(key);
+  if (!e) {
+    e = {};
+    WRC.set(key, e);
+    if (WRC.size > 40) WRC.delete(WRC.keys().next().value);
+  }
+  const sc = wrScale(s);
+  if (!e[sc]) {
+    e[sc] = { st: 0 };
+    wrMake(s.w, s.h, inner, sc, e[sc]);
+  }
+  if (e[sc].st == 1) return e[sc];
+  /* while the right resolution is being made, reuse another one of the same content (prefer the sharper) */
+  const r = Object.keys(e)
+    .map(Number)
+    .filter((k) => e[k].st == 1)
+    .sort((a, b) => b - a)[0];
+  return r ? e[r] : null;
+}
+async function wrMake(w, h, inner, sc, e) {
+  try {
+    let css = "";
+    try {
+      css = await fontCSS();
+    } catch (x) {}
+    const pw = Math.max(1, Math.round(w * sc)),
+      ph = Math.max(1, Math.round(h * sc)),
+      svgS = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${pw}" height="${ph}" viewBox="${-w / 2} ${-h / 2} ${w} ${h}"><defs>${css ? `<style>${css}</style>` : ""}</defs>${inner}</svg>`,
+      im = new Image();
+    im.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgS);
+    await im.decode();
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    const c = document.createElement("canvas");
+    c.width = pw;
+    c.height = ph;
+    c.getContext("2d").drawImage(im, 0, 0, pw, ph);
+    const b = await new Promise((r) => c.toBlob(r, "image/png"));
+    if (!b) throw 0;
+    e.url = URL.createObjectURL(b);
+    e.st = 1;
+    wrGen++;
+    rq();
+  } catch (x) {
+    e.st = 2;
+  }
+}
+/* triangle-mesh warp for anything that is not plain vector geometry */
+function meshEl(s, inner, f) {
+  const wr = s.t == "wordart" || s.pv ? wrGet(s, inner) : null;
+  const W = s.w / 2,
+    H = s.h / 2,
+    N = xfN(s, f, !!wr),
+    id = s.id,
+    P = [],
+    r2 = (n) => Math.round(n * 100) / 100;
+  for (let j = 0; j <= N; j++) {
+    P[j] = [];
+    for (let i = 0; i <= N; i++) {
+      const p = [-W + (s.w * i) / N, -H + (s.h * j) / N];
+      P[j][i] = { s: p, d: f(p) };
+    }
+  }
+  let o = `<defs>${wr ? `<image id="xs${id}" href="${wr.url}" x="${-W}" y="${-H}" width="${s.w}" height="${s.h}" preserveAspectRatio="none"/>` : `<g id="xs${id}">${inner}</g>`}</defs>`,
+    n = 0;
+  const tri = (a, b, c) => {
+    const [x0, y0] = a.s,
+      [x1, y1] = b.s,
+      [x2, y2] = c.s,
+      [u0, v0] = a.d,
+      [u1, v1] = b.d,
+      [u2, v2] = c.d,
+      det = (x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0);
+    if (Math.abs(det) < 1e-9) return;
+    const A = ((u1 - u0) * (y2 - y0) - (u2 - u0) * (y1 - y0)) / det,
+      C = ((x1 - x0) * (u2 - u0) - (x2 - x0) * (u1 - u0)) / det,
+      E = u0 - A * x0 - C * y0,
+      B = ((v1 - v0) * (y2 - y0) - (v2 - v0) * (y1 - y0)) / det,
+      D = ((x1 - x0) * (v2 - v0) - (x2 - x0) * (v1 - v0)) / det,
+      F = v0 - B * x0 - D * y0,
+      gx = (u0 + u1 + u2) / 3,
+      gy = (v0 + v1 + v2) / 3,
+      q = [a.d, b.d, c.d]
+        .map((p) => {
+          const dx = p[0] - gx,
+            dy = p[1] - gy,
+            l = Math.hypot(dx, dy) || 1;
+          return r2(p[0] + (dx / l) * 1.1) + "," + r2(p[1] + (dy / l) * 1.1);
+        })
+        .join(" "),
+      cid = `xc${id}_${n++}`;
+    o += `<clipPath id="${cid}"><polygon points="${q}"/></clipPath><g clip-path="url(#${cid})"><use href="#xs${id}" transform="matrix(${[A, B, C, D, E, F].map((v) => +v.toFixed(5)).join(" ")})"/></g>`;
+  };
+  for (let j = 0; j < N; j++)
+    for (let i = 0; i < N; i++) {
+      tri(P[j][i], P[j][i + 1], P[j + 1][i]);
+      tri(P[j][i + 1], P[j + 1][i + 1], P[j + 1][i]);
+    }
+  const out = xfOutline(s, 16)
+    .map((p) => r2(p[0]) + "," + r2(p[1]))
+    .join(" ");
+  return `<polygon points="${out}" fill="transparent" stroke="none" data-hit="1"/>` + o;
+}
+/* ---- precise "touching" test for box select: the real (rotated / skewed / warped) outline, not its bounding box ---- */
+function shapePoly(q) {
+  if (isL(q)) {
+    const X2 = q.x + q.w,
+      Y2 = q.y + q.h,
+      M = (q.x + X2) / 2;
+    if (q.t == "elbow")
+      return [
+        [q.x, q.y],
+        [M, q.y],
+        [M, Y2],
+        [X2, Y2],
+      ];
+    if (q.t == "curvec") {
+      const o = [];
+      for (let k = 0; k <= 12; k++) {
+        const t = k / 12,
+          u = 1 - t;
+        o.push([u * u * u * q.x + 3 * u * u * t * M + 3 * u * t * t * M + t * t * t * X2, u * u * u * q.y + 3 * u * u * t * q.y + 3 * u * t * t * Y2 + t * t * t * Y2]);
+      }
+      return o;
+    }
+    return [
+      [q.x, q.y],
+      [X2, Y2],
+    ];
+  }
+  return xfAbsPts(q, xfOutline(q, 10));
+}
+function polyHitRect(P, x0, y0, x1, y1, closed) {
+  const inR = (p) => p[0] >= x0 && p[0] <= x1 && p[1] >= y0 && p[1] <= y1,
+    cr = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]),
+    seg = (a, b, c, d) => {
+      const d1 = cr(a, b, c),
+        d2 = cr(a, b, d),
+        d3 = cr(c, d, a),
+        d4 = cr(c, d, b);
+      return d1 * d2 < 0 && d3 * d4 < 0;
+    },
+    pip = (p, Q) => {
+      let ins = false;
+      for (let i = 0, j = Q.length - 1; i < Q.length; j = i++)
+        if (Q[i][1] > p[1] != Q[j][1] > p[1] && p[0] < ((Q[j][0] - Q[i][0]) * (p[1] - Q[i][1])) / (Q[j][1] - Q[i][1]) + Q[i][0]) ins = !ins;
+      return ins;
+    };
+  if (P.some(inR)) return true;
+  const R4 = [
+      [x0, y0],
+      [x1, y0],
+      [x1, y1],
+      [x0, y1],
+    ],
+    n = P.length;
+  for (let i = 0; i < (closed ? n : n - 1); i++)
+    for (let j = 0; j < 4; j++) if (seg(P[i], P[(i + 1) % n], R4[j], R4[(j + 1) % 4])) return true;
+  return closed && pip(R4[0], P);
 }
 function draw(s, nh) {
   const wgt = s.t == "wordart" && (s.grad || s.sgrad) ? waGT(s) : "",
@@ -6141,12 +7045,49 @@ function draw(s, nh) {
         ? g.split(a).join(ga + gp)
         : maskEl((s.t == "img" && s.mask) || { t: "rect" }, w, h, ga + gp),
       h2 = sl ? hit.split('fill="transparent"').join('fill="none"') : hit;
-    return `<g data-id="${s.id}"${bl(s)} transform="translate(${cx} ${cy}) rotate(${s.r})">${h2}${gh}</g>`;
+    const XF0 = xfF(s),
+      W0 = (x) => (XF0 ? warpMk(x, XF0, wpOn(s), [1, 1]) : x);
+    return `<g data-id="${s.id}"${bl(s)} transform="${tfm(s)}">${W0(h2)}${W0(gh)}</g>`;
   }
   const fq = s.fh || s.fv ? ` transform="scale(${s.fh ? -1 : 1} ${s.fv ? -1 : 1})"` : "",
     fw = (x) => (fq && x ? `<g${fq}>${x}</g>` : x),
-    tx2 = txt(s);
-  return `<g data-id="${s.id}"${bl(s)}${altA(s)} transform="translate(${cx} ${cy}) rotate(${s.r})">${gd}${gs}${fw(hit + g)}${tx2}${fw(px2)}${!nh && s.rfl ? rflS(s, fw(g) + tx2 + fw(px2), h / 2, h) : ""}</g>`;
+    tx2 = txt(s),
+    XF = xfF(s);
+  let body = `${gd}${gs}${fw(hit + g)}${tx2}${fw(px2)}`;
+  if (XF) {
+    if (s.t == "img" || s.t == "wordart" || s.t == "table") body = meshEl(s, body, XF);
+    else {
+      const af = xfAff(XF),
+        TA = (x) => (x ? `<g transform="${af}">${x}</g>` : "");
+      /* text follows curve: the text is bent through the same mesh as the shape (not while editing, so the caret stays put) */
+      const bad = (x) => /NaN|Infinity/.test(x),
+        TF = (x) => (x && !bad(af) ? TA(x) : x ? x : ""),
+        MM = s.wtx && tx2 && editing != s.id ? meshEl({ ...s, id: s.id + "t" + ++xfUid, t: "text" }, tx2, XF).replace(/<polygon [^>]*data-hit="1"[^>]*\/>/, "") : "",
+        /* if the bent text could not be built (folded or degenerate warp), fall back to flat text so it never just disappears */
+        TM = MM && !bad(MM) && MM.includes("<use") ? MM : TF(tx2);
+      body = `${gd}${gs}${warpMk(hit + g, XF, wpOn(s), [s.fh ? -1 : 1, s.fv ? -1 : 1])}${TM}${TA(fw(px2))}`;
+    }
+  }
+  /* live preview: while a skew / distort / warp handle or slider is being dragged, the flat shape is drawn once into a bitmap and only that bitmap is
+     moved or meshed each frame, so dragging stays smooth. on release it is redrawn as sharp vector. exports never use this. */
+  const PVm = xfLQ && !nh && !pfExp && !isL(s) && editing != s.id && xfAny(s) && s.t != "img" && s.t != "wordart" && s.t != "table";
+  if (PVm) {
+    const pd = Math.ceil((s.sw > 0 ? s.sw : 0) / 2) + 2,
+      sp = { ...s, id: s.id + "p" + ++xfUid, w: s.w + 2 * pd, h: s.h + 2 * pd, pv: 1 },
+      ras = gd + gs + fw(g) + (!XF || s.wtx ? tx2 : "") + fw(px2);
+    if (XF) {
+      const M = meshEl(sp, ras, XF);
+      if (!/NaN|Infinity/.test(M)) {
+        const af = xfAff(XF);
+        body = M + (s.wtx || !tx2 || /NaN|Infinity/.test(af) ? "" : `<g transform="${af}">${tx2}</g>`);
+      }
+    } else {
+      const wr = wrGet(sp, ras);
+      if (wr) body = `${hit}<image href="${wr.url}" x="${-sp.w / 2}" y="${-sp.h / 2}" width="${sp.w}" height="${sp.h}" preserveAspectRatio="none"/>`;
+    }
+    return `<g data-id="${s.id}"${bl(s)}${altA(s)} transform="${tfm(s)}">${body}</g>`;
+  }
+  return `<g data-id="${s.id}"${bl(s)}${altA(s)} transform="${tfm(s)}">${body}${!nh && s.rfl ? rflS(s, fw(g) + tx2 + fw(px2), h / 2, h) : ""}</g>`;
 }
 let guides = [],
   pen = null,
@@ -7253,8 +8194,8 @@ function insertPD(v) {
     x1 = Math.max(...all.map((q) => q[0])),
     y1 = Math.max(...all.map((q) => q[1])),
     k = 240 / Math.max(x1 - x0, y1 - y0, 1),
-    ox = 480 - ((x1 - x0) * k) / 2,
-    oy = 270 - ((y1 - y0) * k) / 2,
+    ox = PGW() / 2 - ((x1 - x0) * k) / 2,
+    oy = PGH() / 2 - ((y1 - y0) * k) / 2,
     f = (q) => q && [ox + (q[0] - x0) * k, oy + (q[1] - y0) * k];
   snap();
   subs.forEach((sb) => {
@@ -7278,12 +8219,12 @@ function tg(s, ex) {
   const xs = [],
     ys = [];
   if (snOn("pageEdge")) {
-    xs.push(0, 960);
-    ys.push(0, 540);
+    xs.push(0, PGW());
+    ys.push(0, PGH());
   }
   if (snOn("pageCenter")) {
-    xs.push(480);
-    ys.push(270);
+    xs.push(PGW() / 2);
+    ys.push(PGH() / 2);
   }
   for (const o of S)
     if (o !== s && !(ex && ex.has(o.id)) && !isL(o) && !o.r && ed(o)) {
@@ -7670,7 +8611,25 @@ function overlay() {
   if (drag && drag.k == "box" && drag.p1) {
     const a = drag.p0,
       b = drag.p1;
-    o += `<rect x="${Math.min(a.x, b.x)}" y="${Math.min(a.y, b.y)}" width="${Math.abs(a.x - b.x)}" height="${Math.abs(a.y - b.y)}" fill="rgba(59,130,246,.08)" stroke="#3b82f6" stroke-width="${k}" pointer-events="none"/>`;
+    /* solid blue = objects must be fully inside, dashed green = objects only need to touch (hold alt to flip) */
+    const tch = !!selTouch !== !!drag.alt,
+      mc = tch ? "34,197,94" : "59,130,246";
+    o += `<rect x="${Math.min(a.x, b.x)}" y="${Math.min(a.y, b.y)}" width="${Math.abs(a.x - b.x)}" height="${Math.abs(a.y - b.y)}" fill="rgba(${mc},.08)" stroke="rgb(${mc})" stroke-width="${k}"${tch ? ` stroke-dasharray="${5 * k} ${3 * k}"` : ""} pointer-events="none"/>`;
+  }
+  if (drag && drag.k == "lasso" && drag.pts.length > 1) {
+    const tch = !!selTouch !== !!drag.alt,
+      mc = tch ? "34,197,94" : "59,130,246";
+    o += `<path d="M${drag.pts.map((q) => q[0] + " " + q[1]).join("L")}Z" fill="rgba(${mc},.08)" stroke="rgb(${mc})" stroke-width="${k}"${tch ? ` stroke-dasharray="${5 * k} ${3 * k}"` : ""} stroke-linejoin="round" pointer-events="none"/>`;
+  }
+  if (psel && psel.pts.length) {
+    const tch = !!selTouch !== !!psel.alt,
+      mc = tch ? "34,197,94" : "59,130,246",
+      P = psel.hov ? [...psel.pts, psel.hov] : psel.pts,
+      near = psel.hov && psel.pts.length >= 3 && Math.hypot(psel.hov[0] - psel.pts[0][0], psel.hov[1] - psel.pts[0][1]) < 8 / z;
+    o += `<path d="M${P.map((q) => q[0] + " " + q[1]).join("L")}Z" fill="rgba(${mc},.08)" stroke="rgb(${mc})" stroke-width="${k}"${tch ? ` stroke-dasharray="${5 * k} ${3 * k}"` : ""} stroke-linejoin="round" pointer-events="none"/>`;
+    psel.pts.forEach((q, i) => {
+      o += `<circle cx="${q[0]}" cy="${q[1]}" r="${(i == 0 && near ? 6 : 3.5) * k}" fill="${i == 0 ? `rgb(${mc})` : "#fff"}" stroke="rgb(${mc})" stroke-width="${k}" pointer-events="none"/>`;
+    });
   }
   if (pen) o += penOv();
   {
@@ -7749,10 +8708,733 @@ function dragReadout() {
   }
   return null;
 }
+/* ---- selection overlay for skewed / distorted objects and for the skew / distort / perspective handle modes ---- */
+function xfOvl(s) {
+  const k = 1 / z,
+    hs = 8 * k,
+    r = s.r || 0,
+    W = s.w / 2,
+    H = s.h / 2,
+    A = (p) => xfAbs(s, p),
+    f2 = (n) => +n.toFixed(2),
+    poly = (P, at) => `<polygon points="${P.map((p) => f2(p[0]) + "," + f2(p[1])).join(" ")}" ${at} pointer-events="none"/>`,
+    G = (p, inner) => {
+      const a = A(p);
+      return `<g transform="translate(${f2(a[0])} ${f2(a[1])}) rotate(${r})">${inner}</g>`;
+    },
+    st = `fill="#fff" stroke="#3b82f6" stroke-width="${k * 2}"`,
+    warped = xfNL(s);
+  let o = poly(xfAbsPts(s, xfOutline(s, 12)), `fill="none" stroke="#3b82f6" stroke-width="${2 * k}"`);
+  if (warped || XM == "distort" || XM == "persp") {
+    /* a guide grid that follows the warp, so you can see how the surface is being bent */
+    const f0 = xfF(s) || ((p) => p),
+      gl = [];
+    for (const t of [0.25, 0.5, 0.75]) {
+      const hz = [],
+        vt = [];
+      for (let i = 0; i <= 12; i++) {
+        hz.push(A(f0([-W + (2 * W * i) / 12, -H + 2 * H * t])));
+        vt.push(A(f0([-W + 2 * W * t, -H + (2 * H * i) / 12])));
+      }
+      gl.push(hz, vt);
+    }
+    o += gl.map((P) => `<polyline points="${P.map((p) => f2(p[0]) + "," + f2(p[1])).join(" ")}" fill="none" stroke="#3b82f6" stroke-width="${k}" stroke-dasharray="${2 * k} ${3 * k}" opacity=".4" pointer-events="none"/>`).join("");
+  }
+  if (warped)
+    o += poly(xfCorners(s).map(A), `fill="none" stroke="#3b82f6" stroke-width="${k}" stroke-dasharray="${5 * k} ${4 * k}" opacity=".55"`);
+  if (XM == "scale") {
+    const cur = { "-1,-1": "nwse", "0,-1": "ns", "1,-1": "nesw", "-1,0": "ew", "1,0": "ew", "-1,1": "nesw", "0,1": "ns", "1,1": "nwse" };
+    for (const hx of [-1, 0, 1])
+      for (const hy of [-1, 0, 1])
+        if ((hx || hy) && !(hx == 0 && s.w * z < 48) && !(hy == 0 && s.h * z < 48)) {
+          const c = `cursor:${cur[hx + "," + hy]}-resize`;
+          o += G(
+            [hx * W, hy * H],
+            hx && hy
+              ? `<circle r="${hs * 0.62}" data-h="${hx},${hy}" ${st} style="${c}"/>`
+              : `<rect x="${-(hx ? hs / 2 : hs)}" y="${-(hx ? hs : hs / 2)}" width="${hx ? hs : 2 * hs}" height="${hx ? 2 * hs : hs}" rx="${hs / 2}" data-h="${hx},${hy}" ${st} style="${c}"/>`,
+          );
+        }
+    if (hasAdj(s)) {
+      const rx = Math.min(s.w, s.h) * (s.adj ?? adjDef(s)),
+        rs = CORN[s.t] && !CORN[s.t][0] ? 1 : -1,
+        hx0 = rs * W - rs * rx;
+      o += G(
+        [hx0, -H],
+        `<polygon points="0,${-hs * 0.7} ${hs * 0.7},0 0,${hs * 0.7} ${-hs * 0.7},0" fill="#fbbc04" stroke="#b58100" stroke-width="${k}" data-h="adj" style="cursor:pointer"/>`,
+      );
+    }
+    const t0 = A([0, -H]),
+      u = R(0, -1, rad(r)),
+      Hx = t0[0] + u[0] * 26 * k,
+      Hy = t0[1] + u[1] * 26 * k;
+    o += `<line x1="${f2(t0[0])}" y1="${f2(t0[1])}" x2="${f2(Hx)}" y2="${f2(Hy)}" stroke="#3b82f6" stroke-width="${k * 2}"/><circle cx="${f2(Hx)}" cy="${f2(Hy)}" r="${8.5 * k}" fill="#3b82f6" data-h="rot" style="cursor:grab"/>${rotIcon(f2(Hx), f2(Hy), k)}`;
+  } else if (XM == "skew") {
+    for (const [id, x, y, rot] of [
+      ["t", 0, -H, 0],
+      ["b", 0, H, 0],
+      ["l", -W, 0, 90],
+      ["r", W, 0, 90],
+    ])
+      o += G(
+        [x, y],
+        `<g transform="rotate(${rot})"><rect x="${-hs * 2.1}" y="${-hs * 0.85}" width="${hs * 4.2}" height="${hs * 1.7}" rx="${hs * 0.85}" fill="#f59e0b" stroke="#b45309" stroke-width="${k}" pointer-events="none"/><path d="M${-hs * 1.45} 0l${hs * 0.65} ${-hs * 0.5}v${hs}zM${hs * 1.45} 0l${-hs * 0.65} ${-hs * 0.5}v${hs}z" fill="#fff" pointer-events="none"/><rect x="${-hs * 2.4}" y="${-hs * 1.2}" width="${hs * 4.8}" height="${hs * 2.4}" fill="transparent" data-h="x:sk:${id}" style="cursor:${rot ? "ns" : "ew"}-resize"/></g>`,
+      );
+  } else {
+    const per = XM == "persp";
+    xfCorners(s).forEach((c, i) => {
+      const p = [c[0] + (s.dq ? s.dq[i * 2] * s.w : 0), c[1] + (s.dq ? s.dq[i * 2 + 1] * s.h : 0)];
+      o += G(
+        p,
+        per
+          ? `<polygon points="0,${-hs * 0.95} ${hs * 0.95},0 0,${hs * 0.95} ${-hs * 0.95},0" fill="#f59e0b" stroke="#b45309" stroke-width="${k * 1.5}" data-h="x:pc:${i}" style="cursor:move"/>`
+          : `<rect x="${-hs * 0.7}" y="${-hs * 0.7}" width="${hs * 1.4}" height="${hs * 1.4}" fill="#fff" stroke="#3b82f6" stroke-width="${k * 2}" data-h="x:dc:${i}" style="cursor:crosshair"/>`,
+      );
+    });
+  }
+  if (xfLab) {
+    const a = A([0, H]);
+    const bw = (xfLab.length * 6.6 + 18) * k;
+    o += `<g pointer-events="none"><rect x="${f2(a[0] - bw / 2)}" y="${f2(a[1] + 14 * k)}" width="${f2(bw)}" height="${f2(22 * k)}" rx="${11 * k}" fill="#1e3a8a" opacity=".92"/><text x="${f2(a[0])}" y="${f2(a[1] + 29 * k)}" font-size="${12 * k}" text-anchor="middle" fill="#fff" font-family="sans-serif">${xfLab}</text></g>`;
+  }
+  return o;
+}
+/* ---- dragging the skew / distort / perspective handles (own listeners so the resize code stays untouched) ---- */
+function xfMove(s, D, p, e) {
+  const [cx, cy] = ctr(s),
+    r = rad(s.r || 0);
+  if (D.kind == "sk") {
+    const v = R(p.x - D.pa[0], p.y - D.pa[1], -r);
+    let a;
+    if (D.id == "t" || D.id == "b") a = (-Math.atan(((D.id == "t" ? -1 : 1) * v[0]) / (s.h || 1)) * 180) / Math.PI;
+    else a = (-Math.atan(((D.id == "r" ? 1 : -1) * v[1]) / (s.w || 1)) * 180) / Math.PI;
+    a = Math.max(-80, Math.min(80, a));
+    a = e.shiftKey ? Math.round(a / 15) * 15 : Math.round(a * 10) / 10;
+    const key = D.id == "t" || D.id == "b" ? "kx" : "ky";
+    if (a) s[key] = a;
+    else delete s[key];
+    const na = xfAbs(s, D.pv);
+    s.x += D.pa[0] - na[0];
+    s.y += D.pa[1] - na[1];
+    xfLab = (key == "kx" ? "skew H " : "skew V ") + a.toFixed(1) + "°";
+    return;
+  }
+  const q = unSk(s, R(p.x - cx, p.y - cy, -r)),
+    i = +D.id,
+    C = xfCorners(s)[i],
+    dq = D.dq0.slice();
+  if (D.kind == "dc") {
+    let nx = q[0],
+      ny = q[1];
+    if (e.shiftKey) {
+      /* constrain to the horizontal or vertical axis from where the corner started */
+      const ox = C[0] + D.dq0[i * 2] * s.w,
+        oy = C[1] + D.dq0[i * 2 + 1] * s.h;
+      if (Math.abs(nx - ox) > Math.abs(ny - oy)) ny = oy;
+      else nx = ox;
+    }
+    dq[i * 2] = (nx - C[0]) / (s.w || 1);
+    dq[i * 2 + 1] = (ny - C[1]) / (s.h || 1);
+  } else {
+    const dx = q[0] - (C[0] + D.dq0[i * 2] * s.w),
+      dy = q[1] - (C[1] + D.dq0[i * 2 + 1] * s.h);
+    if (Math.abs(dx) >= Math.abs(dy)) {
+      const j = [1, 0, 3, 2][i];
+      dq[i * 2] = D.dq0[i * 2] + dx / (s.w || 1);
+      dq[j * 2] = D.dq0[j * 2] - dx / (s.w || 1);
+    } else {
+      const j = [3, 2, 1, 0][i];
+      dq[i * 2 + 1] = D.dq0[i * 2 + 1] + dy / (s.h || 1);
+      dq[j * 2 + 1] = D.dq0[j * 2 + 1] - dy / (s.h || 1);
+    }
+  }
+  s.dq = dq;
+}
+svg.addEventListener(
+  "pointerdown",
+  (e) => {
+    const h = e.target.dataset && e.target.dataset.h;
+    if (!h || !h.startsWith("x:") || e.button) return;
+    const s = get();
+    if (!s || isL(s)) return;
+    e.stopPropagation();
+    e.preventDefault();
+    snap();
+    const [, kind, id] = h.split(":"),
+      D = { kind, id, dq0: (s.dq || [0, 0, 0, 0, 0, 0, 0, 0]).slice() };
+    if (kind == "sk") {
+      D.pv = { t: [0, s.h / 2], b: [0, -s.h / 2], l: [s.w / 2, 0], r: [-s.w / 2, 0] }[id];
+      D.pa = xfAbs(s, D.pv);
+    }
+    xfLQ = 1;
+    const mv = (ev) => {
+        xfMove(s, D, pt(ev), ev);
+        rq();
+      },
+      up = () => {
+        removeEventListener("pointermove", mv);
+        removeEventListener("pointerup", up);
+        removeEventListener("pointercancel", up);
+        if (s.dq && s.dq.every((v) => Math.abs(v) < 1e-4)) delete s.dq;
+        xfLab = "";
+        xfLQ = 0;
+        render();
+      };
+    addEventListener("pointermove", mv);
+    addEventListener("pointerup", up);
+    addEventListener("pointercancel", up);
+  },
+  true,
+);
+/* ---- board size: drag the grip at the bottom-right corner of the page (shift keeps the ratio); right-click it for preset sizes ---- */
+function setPageSize(w, h, ns) {
+  w = Math.max(16, Math.min(20000, Math.round(w)));
+  h = Math.max(16, Math.min(20000, Math.round(h)));
+  if (w == PGW() && h == PGH()) return;
+  if (!ns) snap();
+  PG = { ...PG };
+  if (w == 960 && h == 540) {
+    delete PG.w;
+    delete PG.h;
+  } else {
+    PG.w = w;
+    PG.h = h;
+  }
+  fgen++;
+  render();
+}
+svg.addEventListener(
+  "pointerdown",
+  (e) => {
+    if (e.button || !e.target.closest || !e.target.closest("#pgh")) return;
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    const p0 = pt(e),
+      W0 = PGW(),
+      H0 = PGH(),
+      dx = p0.x - W0,
+      dy = p0.y - H0;
+    let moved = 0;
+    const mv = (ev) => {
+        const p = pt(ev);
+        let w = p.x - dx,
+          h = p.y - dy;
+        if (ev.shiftKey) {
+          const k = Math.max(w / W0, h / H0);
+          w = W0 * k;
+          h = H0 * k;
+        }
+        w = Math.max(16, Math.min(20000, Math.round(w)));
+        h = Math.max(16, Math.min(20000, Math.round(h)));
+        if (w == PGW() && h == PGH()) return;
+        if (!moved) {
+          snap();
+          moved = 1;
+          pgDrag = 1;
+        }
+        PG = { ...PG };
+        PG.w = w;
+        PG.h = h;
+        rq();
+      },
+      up = () => {
+        removeEventListener("pointermove", mv);
+        removeEventListener("pointerup", up);
+        removeEventListener("pointercancel", up);
+        pgDrag = 0;
+        if (PG.w == 960 && PG.h == 540) {
+          delete PG.w;
+          delete PG.h;
+        }
+        fgen++;
+        render();
+      };
+    addEventListener("pointermove", mv);
+    addEventListener("pointerup", up);
+    addEventListener("pointercancel", up);
+  },
+  true,
+);
+/* the board grip hides after the cursor sits still for a moment, and comes back as soon as it moves */
+{
+  let tm = 0;
+  const g = $("#pgh"),
+    wake = () => {
+      g.classList.remove("idle");
+      clearTimeout(tm);
+      tm = setTimeout(() => {
+        if (pgDrag) return wake();
+        g.classList.add("idle");
+      }, 2500);
+    };
+  for (const ev of ["pointermove", "pointerdown", "wheel", "keydown"]) addEventListener(ev, wake, { capture: true, passive: true });
+  wake();
+}
+/* ---- capture area: hold ctrl (cmd on a mac) and drag to mark a dotted box, then screenshot it, boost its resolution, or print only that area ---- */
+var RG = null,
+  PRR = null,
+  RGk = 2,
+  RGbg = "t",
+  rgBusy = 0;
+async function regionSVG(r, bg) {
+  const o = await drawingSVG("");
+  let sv = o.svg.replace(/ width="[^"]*" height="[^"]*" viewBox="[^"]*"><defs>/, ` width="${r.w}" height="${r.h}" viewBox="${r.x} ${r.y} ${r.w} ${r.h}"><defs>`);
+  if (bg) sv = sv.replace("</defs>", `</defs><rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" fill="${bg}"/>`);
+  return { W: r.w, H: r.h, svg: sv };
+}
+async function regionRaster(r, type, bg, k) {
+  const { svg } = await regionSVG(r, bg),
+    u = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" })),
+    im = new Image();
+  k = expScale(k, r.w, r.h);
+  await new Promise((ok, no) => {
+    im.onload = ok;
+    im.onerror = no;
+    im.src = u;
+  });
+  const c = document.createElement("canvas");
+  c.width = Math.max(1, Math.round(r.w * k));
+  c.height = Math.max(1, Math.round(r.h * k));
+  c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+  URL.revokeObjectURL(u);
+  return new Promise((ok) => c.toBlob(ok, type, 0.95));
+}
+const rgNorm = (l, t, r, b) => {
+  const x = Math.round(Math.min(l, r)),
+    y = Math.round(Math.min(t, b));
+  return { x, y, w: Math.max(1, Math.round(Math.max(l, r)) - x), h: Math.max(1, Math.round(Math.max(t, b)) - y) };
+};
+function rgOvl() {
+  if (!RG) return "";
+  const k = 1 / z,
+    { x, y, w, h } = RG,
+    hs = 4.5 * k,
+    H = [
+      ["nw", x, y, "nwse"],
+      ["n", x + w / 2, y, "ns"],
+      ["ne", x + w, y, "nesw"],
+      ["e", x + w, y + h / 2, "ew"],
+      ["se", x + w, y + h, "nwse"],
+      ["s", x + w / 2, y + h, "ns"],
+      ["sw", x, y + h, "nesw"],
+      ["w", x, y + h / 2, "ew"],
+    ];
+  return (
+    `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="rgba(59,130,246,.07)" stroke="#fff" stroke-width="${3 * k}" pointer-events="none"/><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="#1d4ed8" stroke-width="${1.5 * k}" stroke-dasharray="${6 * k} ${4 * k}" pointer-events="none"/>` +
+    H.map(([n, hx, hy, c]) => `<rect x="${hx - hs}" y="${hy - hs}" width="${2 * hs}" height="${2 * hs}" rx="${hs / 3}" fill="#fff" stroke="#1d4ed8" stroke-width="${1.5 * k}" data-rg="${n}" style="cursor:${c}-resize"/>`).join("") +
+    (rgBusy ? `<text x="${x + w / 2}" y="${y + h + 20 * k}" text-anchor="middle" font-size="${12 * k}" font-family="sans-serif" fill="#1d4ed8" stroke="#fff" stroke-width="${3 * k}" paint-order="stroke" pointer-events="none">${w} × ${h}</text>` : "")
+  );
+}
+function rgPanel() {
+  let m = $("#rgm");
+  if (m) return m;
+  m = document.createElement("div");
+  m.id = "rgm";
+  m.setAttribute("role", "dialog");
+  m.setAttribute("aria-label", "capture area");
+  m.innerHTML = `<div class="rgh"><span>capture area<small id="rgs"></small></span><button type="button" class="rgx" data-a="x" title="close (esc)">✕</button></div>
+    <div><div class="rgl">resolution boost · <span id="rgd"></span></div><div class="pfs" data-k="k">${[1, 2, 3, 4, 6, 8].map((n) => `<button type="button" data-v="${n}">${n}×</button>`).join("")}</div></div>
+    <div><div class="rgl">background</div><div class="pfs" data-k="bg"><button type="button" data-v="t">transparent</button><button type="button" data-v="w">white</button></div></div>
+    <div class="rgb"><button type="button" class="pri" data-a="copy">copy image</button><button type="button" data-a="png">save png</button><button type="button" data-a="jpg">save jpg</button><button type="button" data-a="svg">save svg</button><button type="button" data-a="print">print this area</button><button type="button" data-a="csvg">copy svg code</button></div>`;
+  document.body.appendChild(m);
+  m.addEventListener("contextmenu", (e) => e.preventDefault());
+  m.addEventListener("click", async (e) => {
+    const b = e.target.closest("button");
+    if (!b || !RG) return;
+    if (b.dataset.v != null) {
+      if (b.parentNode.dataset.k == "k") RGk = +b.dataset.v;
+      else RGbg = b.dataset.v;
+      rgPlace();
+      return;
+    }
+    const a = b.dataset.a,
+      r = { ...RG },
+      bg = RGbg == "w" ? "#ffffff" : "",
+      n = expName() + "-area";
+    if (a == "x") {
+      RG = null;
+      render();
+      return;
+    }
+    if (a == "print") {
+      PRR = r;
+      printMenu();
+      PRR = null;
+      return;
+    }
+    try {
+      toast("capturing…");
+      if (a == "copy") {
+        await navigator.clipboard.write([new ClipboardItem({ "image/png": regionRaster(r, "image/png", bg, RGk) })]);
+        toast("copied the area as an image");
+      } else if (a == "png") {
+        dlFile(await regionRaster(r, "image/png", bg, RGk), n + ".png");
+        toast("saved png");
+      } else if (a == "jpg") {
+        dlFile(await regionRaster(r, "image/jpeg", "#ffffff", RGk), n + ".jpg");
+        toast("saved jpg");
+      } else if (a == "svg") {
+        dlFile(new Blob([(await regionSVG(r, bg)).svg], { type: "image/svg+xml" }), n + ".svg");
+        toast("saved svg");
+      } else if (a == "csvg") {
+        await navigator.clipboard.writeText((await regionSVG(r, bg)).svg);
+        toast("copied svg code");
+      }
+    } catch (er) {
+      toast("couldn’t capture (" + ((er && er.message) || er) + ")");
+    }
+  });
+  return m;
+}
+function rgPlace() {
+  const m = $("#rgm");
+  if (!RG || rgBusy) {
+    if (m) m.style.display = "none";
+    return;
+  }
+  const P = rgPanel(),
+    r = svg.getBoundingClientRect(),
+    q = expScale(RGk, RG.w, RG.h);
+  P.style.display = "flex";
+  P.querySelectorAll(".pfs").forEach((g) => g.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.v == (g.dataset.k == "k" ? String(RGk) : RGbg))));
+  $("#rgs").textContent = RG.w + " × " + RG.h + " px";
+  $("#rgd").textContent = Math.round(RG.w * q) + " × " + Math.round(RG.h * q) + " px" + (q < RGk ? " (browser max)" : "");
+  const pw = P.offsetWidth,
+    ph = P.offsetHeight,
+    L = r.left + ox + RG.x * z,
+    T = r.top + oy + RG.y * z,
+    R = L + RG.w * z,
+    B = T + RG.h * z;
+  let x = (L + R) / 2 - pw / 2,
+    y = B + 12;
+  if (y + ph > innerHeight - 8) y = T - ph - 12;
+  if (y < 8) y = Math.max(8, Math.min(innerHeight - ph - 8, B - ph - 12));
+  P.style.left = Math.max(8, Math.min(x, innerWidth - pw - 8)) + "px";
+  P.style.top = y + "px";
+}
+{
+  const mod = (e) => (cmMac ? e.metaKey && !e.ctrlKey : e.ctrlKey),
+    cur = (e) => document.body.classList.toggle("rgk", !!mod(e) && !e.shiftKey && !e.altKey);
+  addEventListener("keydown", cur, { capture: true, passive: true });
+  addEventListener("keyup", cur, { capture: true, passive: true });
+  addEventListener("blur", () => document.body.classList.remove("rgk"));
+  addEventListener(
+    "keydown",
+    (e) => {
+      if (e.key == "Escape" && RG && !$("#prd") && !$("#cmenu")) {
+        RG = null;
+        render();
+      }
+    },
+    true,
+  );
+  svg.addEventListener(
+    "pointerdown",
+    (e) => {
+      if (e.button || !e.target.closest || e.target.closest("#pgh")) return;
+      const hn = e.target.dataset && e.target.dataset.rg;
+      if (!hn && !(mod(e) && !e.shiftKey && !e.altKey && !editing)) return;
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      const p0 = pt(e),
+        r0 = RG ? { ...RG } : null,
+        sn = (v, a) => {
+          for (const t of a) if (Math.abs(t - v) < 6 / z) return t;
+          return v;
+        };
+      let moved = 0;
+      const mv = (ev) => {
+          const p = pt(ev);
+          if (!moved && Math.hypot(p.x - p0.x, p.y - p0.y) * z < 4) return;
+          moved = 1;
+          rgBusy = 1;
+          let l, t, r, b;
+          if (hn) {
+            ({ x: l, y: t } = r0);
+            r = r0.x + r0.w;
+            b = r0.y + r0.h;
+            if (hn.includes("w")) l = p.x;
+            if (hn.includes("e")) r = p.x;
+            if (hn.includes("n")) t = p.y;
+            if (hn.includes("s")) b = p.y;
+          } else {
+            l = p0.x;
+            t = p0.y;
+            r = p.x;
+            b = p.y;
+          }
+          if (!ev.altKey) {
+            const X = [0, PGW()],
+              Y = [0, PGH()];
+            if (!hn || hn.includes("w") || hn.includes("e")) (hn && hn.includes("w") ? (l = sn(l, X)) : (r = sn(r, X)));
+            if (!hn || hn.includes("n") || hn.includes("s")) (hn && hn.includes("n") ? (t = sn(t, Y)) : (b = sn(b, Y)));
+          }
+          RG = rgNorm(l, t, r, b);
+          rq();
+        },
+        up = () => {
+          removeEventListener("pointermove", mv);
+          removeEventListener("pointerup", up);
+          removeEventListener("pointercancel", up);
+          rgBusy = 0;
+          if (!hn && (!moved || RG.w < 4 || RG.h < 4)) RG = r0 && moved ? r0 : null;
+          render();
+        };
+      addEventListener("pointermove", mv);
+      addEventListener("pointerup", up);
+      addEventListener("pointercancel", up);
+    },
+    true,
+  );
+}
+const PGP = [
+  [
+    "slides",
+    [
+      ["widescreen 16:9", 960, 540],
+      ["standard 4:3", 960, 720],
+      ["16:10", 960, 600],
+    ],
+  ],
+  [
+    "social media",
+    [
+      ["instagram post", 1080, 1080],
+      ["instagram portrait", 1080, 1350],
+      ["story / reel / tiktok", 1080, 1920],
+      ["facebook post", 1200, 630],
+      ["x / twitter post", 1600, 900],
+      ["x / twitter header", 1500, 500],
+      ["linkedin banner", 1584, 396],
+      ["pinterest pin", 1000, 1500],
+      ["youtube thumbnail", 1280, 720],
+      ["youtube banner", 2560, 1440],
+    ],
+  ],
+  [
+    "print",
+    [
+      ["a4 portrait", 794, 1123],
+      ["a4 landscape", 1123, 794],
+      ["us letter portrait", 816, 1056],
+      ["us letter landscape", 1056, 816],
+      ["business card", 336, 192],
+      ["postcard 6 × 4 in", 576, 384],
+      ["poster 18 × 24 in", 1728, 2304],
+    ],
+  ],
+  [
+    "screen & web",
+    [
+      ["hd 1080p", 1920, 1080],
+      ["4k", 3840, 2160],
+      ["desktop wallpaper", 2560, 1440],
+      ["web banner", 728, 90],
+      ["app icon", 512, 512],
+      ["favicon", 64, 64],
+    ],
+  ],
+];
+function pgMenu(x, y) {
+  const w = PGW(),
+    h = PGH(),
+    it = ([n, a, b]) => [n, () => (setPageSize(a, b), fit()), a + " × " + b + (a == w && b == h ? "  ✓" : "")];
+  cmMenu(
+    x,
+    y,
+    [
+      it(["this device’s screen", Math.round(screen.width), Math.round(screen.height)]),
+      0,
+      ...PGP.map(([n, L]) => [n, L.map(it)]),
+      0,
+      ["swap width and height", () => (setPageSize(h, w), fit()), w + " × " + h],
+      [
+        "custom size…",
+        () => {
+          const v = prompt("board size in pixels (width × height)", w + " × " + h),
+            m = v && v.match(/(\d+(?:\.\d+)?)\D+(\d+(?:\.\d+)?)/);
+          if (m) (setPageSize(+m[1], +m[2]), fit());
+          else if (v) toast("enter two numbers, like 1280 × 720");
+        },
+      ],
+    ],
+    false,
+  );
+}
+/* ---- the transform panel (toolbar button / arrange menu) ---- */
+function xfTargets() {
+  return (ms.length > 1 ? msS() : [get()]).filter((q) => q && !isL(q));
+}
+function xfReset(what) {
+  const g = xfTargets();
+  if (!g.length) return toast("select a shape, picture or text box first");
+  snap();
+  g.forEach((q) => {
+    if (what != "warp") {
+      delete q.kx;
+      delete q.ky;
+      delete q.dq;
+    }
+    if (what != "skew") {
+      delete q.wp;
+      delete q.wtx;
+    }
+  });
+  render();
+}
+/* mini preview of a warp preset: the preset really applied to a little grid */
+function wpTile(k) {
+  const f = k ? wpF({ k, b: 55, ax: "h" }, 22, 13) : (p) => p,
+    P = (p) => f(p).map((n) => n.toFixed(1)).join(","),
+    ln = (a, b) => {
+      let d = "";
+      for (let i = 0; i <= 10; i++) d += (i ? "L" : "M") + P([a[0] + ((b[0] - a[0]) * i) / 10, a[1] + ((b[1] - a[1]) * i) / 10]);
+      return d;
+    };
+  let d = "";
+  for (const y of [-13, 0, 13]) d += ln([-22, y], [22, y]);
+  for (const x of [-22, -11, 0, 11, 22]) d += ln([x, -13], [x, 13]);
+  return `<svg viewBox="-30 -22 60 44" width="38" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;
+}
+const XFM = [
+  ["scale", "resize", '<rect x="5" y="5" width="12" height="12" rx="1.5"/><path d="M14 20h6v-6M20 20l-5-5"/>'],
+  ["skew", "skew", '<path d="M8 6h12l-4 12H4z"/>'],
+  ["distort", "distort", '<path d="M5 8l13-3 2 12-14 2z"/><circle cx="5" cy="8" r="1.4" fill="currentColor"/><circle cx="18" cy="5" r="1.4" fill="currentColor"/><circle cx="20" cy="17" r="1.4" fill="currentColor"/><circle cx="6" cy="19" r="1.4" fill="currentColor"/>'],
+  ["persp", "perspective", '<path d="M9 5h6l5 14H4z"/><path d="M12 5v14" stroke-dasharray="1.5 2.5"/>'],
+];
+function xfPanel(el) {
+  const g = xfTargets();
+  if (!g.length) return toast("select a shape, picture or text box first (lines can’t be skewed or warped)");
+  const o = g[0],
+    wp = () => o.wp || {},
+    row = (lbl, id, mn, mx, u, tip) =>
+      `<div class="xfr" title="${tip}"><label for="${id}">${lbl}</label><input type="range" id="${id}" min="${mn}" max="${mx}" step="1"><span class="xfn"><input type="number" id="${id}n" min="${mn}" max="${mx}" step="1"><i>${u}</i></span></div>`;
+  let sn = 0;
+  const upd = (fn) => {
+    if (!sn) {
+      snap();
+      sn = 1;
+    }
+    g.forEach(fn);
+    rq();
+  };
+  pe(
+    el,
+    `<div class="xfp"><div class="xfh"><span>transform</span><small>${g.length > 1 ? g.length + " objects" : "1 object"}</small></div>
+ <div class="xfm">${XFM.map(([v, l, ic]) => `<button type="button" data-m="${v}" title="${l}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${ic}</svg>${l}</button>`).join("")}</div>
+ <div class="xfhint" id="xfh"></div>
+ <div class="xfs"><div class="xft"><span>skew</span><button type="button" data-z="skew">reset</button></div>
+ ${row("horizontal", "xkx", -80, 80, "°", "double-click the slider to reset")}
+ ${row("vertical", "xky", -80, 80, "°", "double-click the slider to reset")}</div>
+ <div class="xfs"><div class="xft"><span>warp</span><button type="button" data-z="warp">reset</button></div>
+ <div class="xfw">${WPN.map(([v, l]) => `<button type="button" data-w="${v}" title="${l}">${wpTile(v)}<span>${l}</span></button>`).join("")}</div>
+ <div class="pfs"><button type="button" data-a="h">horizontal bend</button><button type="button" data-a="v">vertical bend</button></div>
+ ${row("bend", "xwb", -100, 100, "%", "double-click the slider to reset")}
+ ${row("h. distort", "xwh", -100, 100, "%", "perspective-like taper across the horizontal axis")}
+ ${row("v. distort", "xwv", -100, 100, "%", "perspective-like taper across the vertical axis")}
+ <div class="pfs"><button type="button" data-t="1" title="bend the text along with the shape instead of keeping it flat">text follows curve</button></div></div>
+ <div class="xfs xff"><div class="pfs"><button type="button" data-f="h">flip ↔</button><button type="button" data-f="v">flip ↕</button><button type="button" data-z="all">reset all</button></div>
+ <div class="pfn">pictures, word art and tables are warped with a mesh; turn on “text follows curve” to bend text with the shape; otherwise it stays flat at the centre. everything is non-destructive.</div></div></div>`,
+    () => {},
+  );
+  const P = $("#pp"),
+    hint = {
+      scale: "drag the handles to resize; the top handle rotates.",
+      skew: "drag a side handle to shear. <kbd>shift</kbd> snaps to 15°.",
+      distort: "drag any corner freely. <kbd>shift</kbd> locks to one axis.",
+      persp: "drag a corner; its neighbour mirrors it for a vanishing point.",
+    },
+    num = (n) => (Math.round(n * 10) / 10).toString(),
+    sync = () => {
+      P.querySelectorAll("[data-m]").forEach((b) => b.classList.toggle("on", b.dataset.m == XM));
+      P.querySelectorAll("[data-w]").forEach((b) => b.classList.toggle("on", b.dataset.w == (o.wp?.k || "")));
+      P.querySelectorAll("[data-a]").forEach((b) => b.classList.toggle("on", b.dataset.a == (o.wp?.ax || "h")));
+      P.querySelectorAll("[data-t]").forEach((b) => b.classList.toggle("on", !!o.wtx));
+      $("#xfh").innerHTML = hint[XM];
+      const V = { xkx: o.kx || 0, xky: o.ky || 0, xwb: o.wp?.b ?? 50, xwh: o.wp?.h || 0, xwv: o.wp?.v || 0 };
+      for (const id in V) {
+        $("#" + id).value = V[id];
+        const n = $("#" + id + "n");
+        if (document.activeElement !== n) n.value = num(V[id]);
+      }
+      const nw = !o.wp?.k;
+      ["xwb"].forEach((id) => {
+        $("#" + id).disabled = nw;
+        $("#" + id + "n").disabled = nw;
+      });
+    },
+    setW = (q) =>
+      upd((x) => {
+        x.wp = { ...(x.wp || {}), ...q };
+        if (!x.wp.k && !x.wp.h && !x.wp.v) delete x.wp;
+      });
+  P.style.width = "320px";
+  P.style.maxHeight = "82vh";
+  P.style.overflowY = "auto";
+  P.style.left = Math.max(6, Math.min(parseFloat(P.style.left) || 0, innerWidth - 326)) + "px";
+  P.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    if (b.dataset.m) {
+      XM = b.dataset.m;
+      render();
+    } else if (b.dataset.w != null) setW({ k: b.dataset.w, b: o.wp?.b ?? 50 });
+    else if (b.dataset.a) setW({ ax: b.dataset.a });
+    else if (b.dataset.t)
+      upd((x) => {
+        if (x.wtx) delete x.wtx;
+        else x.wtx = 1;
+      });
+    else if (b.dataset.f)
+      upd((x) => {
+        const k = b.dataset.f == "h" ? "fh" : "fv";
+        x[k] = x[k] ? 0 : 1;
+      });
+    else if (b.dataset.z) {
+      xfReset(b.dataset.z);
+      sn = 0;
+    }
+    sync();
+  });
+  /* slider + number box share one handler; while dragging, warps are drawn coarser and one frame at a time, then redrawn sharp on release */
+  const bind = (id, fn, def) => {
+    const R = $(id),
+      N = $(id + "n"),
+      go = (v) => {
+        xfLQ = 1;
+        fn(v);
+        sync();
+      },
+      done = () => {
+        xfLQ = 0;
+        render();
+        sync();
+      };
+    R.oninput = () => go(+R.value);
+    N.oninput = () => {
+      const v = parseFloat(N.value);
+      if (!isNaN(v)) go(Math.max(+R.min, Math.min(+R.max, v)));
+    };
+    R.onchange = N.onchange = done;
+    N.onblur = sync;
+    R.ondblclick = () => {
+      go(def);
+      done();
+    };
+  };
+  bind("#xkx", (v) => upd((x) => (v ? (x.kx = v) : delete x.kx)), 0);
+  bind("#xky", (v) => upd((x) => (v ? (x.ky = v) : delete x.ky)), 0);
+  bind("#xwb", (v) => setW({ b: v }), 50);
+  bind("#xwh", (v) => setW({ h: v }), 0);
+  bind("#xwv", (v) => setW({ v: v }), 0);
+  sync();
+}
+$("#xform").onclick = (e) => xfPanel(e.currentTarget);
 function ovl() {
   const s = get();
   if (!s) return ms.length > 1 ? msOv() : "";
   if (editP == s.id && s.t == "path") return editOv(s);
+  if (!isL(s) && editing != s.id && (XM != "scale" || xfAny(s))) return xfOvl(s);
   const k = 1 / z,
     hs = 8 * k,
     st = `fill="#fff" stroke="#3b82f6" stroke-width="${k * 2}"`;
@@ -7862,8 +9544,14 @@ function render(vo) {
   $("#vp").setAttribute("transform", `translate(${ox} ${oy}) scale(${z})`);
   $("#pg").setAttribute("style", "filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))");
   $("#pgf").setAttribute("fill", PG.bg || "none");
-  $("#pgf").setAttribute("width", $("#pg").getAttribute("width"));
-  $("#pgf").setAttribute("height", $("#pg").getAttribute("height"));
+  $("#pg").setAttribute("width", PGW());
+  $("#pg").setAttribute("height", PGH());
+  $("#pgf").setAttribute("width", PGW());
+  $("#pgf").setAttribute("height", PGH());
+  $("#pgh").setAttribute("transform", `translate(${PGW()} ${PGH()}) scale(${1 / z})`);
+  $("#pgl").textContent = pgDrag ? PGW() + " × " + PGH() : "";
+  $("#rgn").innerHTML = rgOvl();
+  rgPlace();
   $("#zm").textContent = Math.round(z * 100) + "%";
   $("#zc").textContent = Math.round(z * 100) + "%";
   $("#zoom").value = "c";
@@ -7943,7 +9631,7 @@ function drawRulerAxis(c, len, thick, off, vert, key) {
   const col = getComputedStyle(document.documentElement).getPropertyValue("--mut").trim() || "#888",
     u = rUnit(),
     { step, subs, ppu } = rulerSteps(u),
-    pageLen = (vert ? 540 : 960) * z;
+    pageLen = (vert ? PGH() : PGW()) * z;
   g.fillStyle = col;
   g.strokeStyle = col;
   g.font = "11px var(--uif), Roboto,Arial";
@@ -8044,6 +9732,7 @@ function syncTB() {
   $("#sw-color").style.background = s.color;
   $("#ffn").textContent = s.ff || "Arial";
   $("#blur").classList.toggle("on", !!s.blur);
+  $("#xform").classList.toggle("on", xfAny(s) || XM != "scale");
   tpSync();
   $("#underl").classList.toggle("on", !!s.und);
   $("#strk").classList.toggle("on", !!s.strike);
@@ -8055,8 +9744,8 @@ function syncTB() {
   $("#ital").classList.toggle("on", !!s.ital);
   {
     const g = ms.length > 1 ? msS() : [get()].filter(Boolean),
-      tx = (q) => (!isL(q) && q.t != "img" && q.t != "path" && q.t != "wordart") || !!q.ptx;
-    $("#sty").style.display = g.length || tool != "select" ? "" : "none";
+      tx = (q) => (!isL(q) && q.t != "img" && q.t != "path") || !!q.ptx;
+    $("#sty").style.display = g.length || (tool != "select" && tool != "lasso" && tool != "polysel") ? "" : "none";
     $("#fill").closest("label").style.display =
       g.length && g.every((q) => isL(q) || q.t == "img") ? "none" : "";
     $("#fmt").style.display = editing || tool == "text" || g.some(tx) ? "" : "none";
@@ -8067,7 +9756,7 @@ function syncTB() {
     const R = actRE();
     if (R) rtUI(R, s);
   }
-  for (const t of ["select", "line", "text", "shape", "pen", "measure"])
+  for (const t of ["select", "lasso", "line", "text", "shape", "pen", "measure"])
     $("#t-" + t).classList.toggle(
       "on",
       t == tool || (t == "line" && ["arrow", "elbow", "curvec", "scribble"].includes(tool)),
@@ -8108,7 +9797,10 @@ function setP(k, v) {
     if (!ms.length && !get()) D.sgrad = 0;
   }
   const s = get(),
-    g = ms.length > 1 ? msS() : 0;
+    g = ms.length > 1 ? msS() : 0,
+    /* word art is a stretched graphic: when a change alters glyph widths it keeps its stretch instead of squashing */
+    WA = (g || [s]).filter((q) => q && q.t == "wordart" && ["ff", "bold", "ital", "wls", "wlh"].includes(k)),
+    r0 = new Map(WA.map((q) => [q, (() => { const m = waM(q); return m.W / m.H; })()]));
   if (g) {
     snap();
     g.forEach((q) => {
@@ -8118,6 +9810,21 @@ function setP(k, v) {
     snap();
     s[k] = v;
   } else D[k] = v;
+  /* the text colour button colours word art (its glyphs are filled shapes) */
+  if (k == "color")
+    (g || [s]).forEach((q) => {
+      if (q && q.t == "wordart") {
+        q.fill = v;
+        q.grad = 0;
+        delete q.cut;
+      }
+    });
+  WA.forEach((q) => {
+    const m = waM(q),
+      cx = q.x + q.w / 2;
+    q.w = Math.min(900, Math.max(20, (q.w * (m.W / m.H)) / r0.get(q)));
+    q.x = cx - q.w / 2;
+  });
   if (k == "fill" || k == "grad")
     (g || [s]).forEach((q) => {
       if (q) delete q.cut;
@@ -8276,6 +9983,10 @@ svg.addEventListener("pointerdown", (e) => {
     return;
   }
   const before = ser();
+  if ((tool == "lasso" || tool == "polysel") && e.button == 0) {
+    lsDown(e, p);
+    return;
+  }
   if (cropId) {
     const c = S.find((x) => x.id == cropId);
     if (c && (+id == cropId || inImg(c, p))) {
@@ -8312,6 +10023,17 @@ svg.addEventListener("pointerdown", (e) => {
   if (editP) {
     if (!editDown(e, p, h, id)) editP = null;
     else return;
+  }
+  if (e.altKey && !h && e.button == 0 && tool == "select") {
+    /* alt: start a selection box even on top of an object, so objects never get in the way. shift keeps the current selection */
+    const cur = e.shiftKey ? (ms.length > 1 ? ms.slice() : sel != null ? [sel] : []) : [];
+    if (!e.shiftKey) {
+      ms = [];
+      sel = null;
+    }
+    drag = { k: "box", p0: p, p1: p, before, base: cur, thru: 1 };
+    render();
+    return;
   }
   if (h == "g:rot") {
     const B = msS().map(bb),
@@ -8430,6 +10152,23 @@ svg.addEventListener("pointerdown", (e) => {
   }
 });
 svg.addEventListener("pointermove", (e) => {
+  if (drag && drag.k == "lasso") {
+    const p = pt(e),
+      L = drag.pts[drag.pts.length - 1];
+    if (Math.hypot(p.x - L[0], p.y - L[1]) > 3 / z) drag.pts.push([p.x, p.y]);
+    drag.alt = e.shiftKey;
+    if (e.altKey) drag.add = true;
+    rq();
+    return;
+  }
+  if (psel && !drag) {
+    const p = pt(e);
+    if (e.altKey) psel.add = true;
+    psel.hov = [p.x, p.y];
+    psel.alt = e.shiftKey;
+    rq();
+    return;
+  }
   if (drag && drag.k == "meas") {
     measMove(e);
     return;
@@ -8480,7 +10219,13 @@ svg.addEventListener("pointermove", (e) => {
     return;
   }
   if (d.k == "box") {
-    d.p1 = p;
+    /* holding shift snaps the selection box's moving corner to the guidelines (page edges, object edges/centres, custom guides) */
+    guides = [];
+    if (e.shiftKey && (!e.altKey || d.thru)) {
+      const T = d.tg || (d.tg = tg(null, null));
+      d.p1 = { x: nr(p.x, T[0], "v"), y: nr(p.y, T[1], "h") };
+    } else d.p1 = p;
+    d.alt = e.altKey && !d.thru;
   } else if (d.k == "gh") {
     const [hx, hy] = d.h,
       [x0, y0, x1, y1] = d.box;
@@ -8763,7 +10508,7 @@ svg.addEventListener("pointermove", (e) => {
       s.h = p.y - s.y;
     } else if (h == "adj") {
       const [cx, cy] = ctr(s),
-        q = R(p.x - cx, p.y - cy, -rad(s.r)),
+        q = unSk(s, R(p.x - cx, p.y - cy, -rad(s.r))),
         m = Math.min(s.w, s.h),
         fr = CORN[s.t] && !CORN[s.t][0];
       s.adj = Math.max(0, Math.min(0.5, (fr ? s.w / 2 - q[0] : q[0] + s.w / 2) / m));
@@ -8778,7 +10523,7 @@ svg.addEventListener("pointermove", (e) => {
       if (!d.snap && !e.altKey) radSnap(s, d);
     } else if (/^m[lrtb]$/.test(h)) {
       const [cx, cy] = ctr(s),
-        q = R(p.x - cx, p.y - cy, -rad(s.r)),
+        q = unSk(s, R(p.x - cx, p.y - cy, -rad(s.r))),
         len = h == "ml" || h == "mr" ? s.w : s.h;
       let v =
         h == "ml"
@@ -8823,7 +10568,7 @@ svg.addEventListener("pointermove", (e) => {
     } else {
       const [hx, hy] = h.split(",").map(Number),
         [cx, cy] = ctr(s),
-        q = R(p.x - cx, p.y - cy, -rad(s.r));
+        q = unSk(s, R(p.x - cx, p.y - cy, -rad(s.r)));
       let l = -s.w / 2,
         r = s.w / 2,
         t = -s.h / 2,
@@ -8833,7 +10578,7 @@ svg.addEventListener("pointermove", (e) => {
       if (hy == 1) b = q[1];
       if (hy == -1) t = q[1];
       if (e.altKey) guides = [];
-      else if (!s.r) {
+      else if (!s.r && !s.kx && !s.ky) {
         guides = [];
         const [xs, ys] = tg(s);
         if (hx == 1) r = nr(r + cx, xs, "v") - cx;
@@ -8915,7 +10660,7 @@ svg.addEventListener("pointermove", (e) => {
       }
       const w = Math.max(r - l, 0.01),
         hh = Math.max(b - t, 0.01),
-        lc = R((l + r) / 2, (t + b) / 2, rad(s.r));
+        lc = R(...sk(s, [(l + r) / 2, (t + b) / 2]), rad(s.r));
       if (s.t == "img" && s.w && s.h && (s.ix || s.iy)) {
         s.ix = ((s.ix || 0) * w) / s.w;
         s.iy = ((s.iy || 0) * hh) / s.h;
@@ -8951,6 +10696,17 @@ svg.addEventListener("pointerup", (e) => {
   rd = null;
   if (d.k == "meas") {
     measUp(d);
+    return;
+  }
+  if (d.k == "lasso") {
+    const f = d.pts[0];
+    if (d.pts.every((q) => Math.hypot(q[0] - f[0], q[1] - f[1]) < 4 / z)) {
+      /* a plain click rather than a drag: start a polygon */
+      psel = { pts: [f], base: d.base, add: d.add || e.altKey, hov: f, alt: e.shiftKey };
+      render();
+      return;
+    }
+    lsDone(d.pts, d.base, e.shiftKey, d.add || e.altKey);
     return;
   }
   if (d.k == "scr") {
@@ -8993,9 +10749,12 @@ svg.addEventListener("pointerup", (e) => {
         h = S.filter((q) => {
           if (!selOK(q)) return false;
           const r = bb(q);
-          return selTouch
-            ? r[2] >= x0 && r[0] <= x1 && r[3] >= y0 && r[1] <= y1
-            : r[0] >= x0 && r[2] <= x1 && r[1] >= y0 && r[3] <= y1;
+          if (!!selTouch !== !!(e.altKey && !d.thru)) {
+            /* touching: first the cheap bounding-box test, then the real outline (rotated, skewed, warped, diagonal lines) */
+            if (!(r[2] >= x0 && r[0] <= x1 && r[3] >= y0 && r[1] <= y1)) return false;
+            return polyHitRect(shapePoly(q), x0, y0, x1, y1, !isL(q));
+          }
+          return r[0] >= x0 && r[2] <= x1 && r[1] >= y0 && r[3] <= y1;
         }).map((q) => q.id),
         u0 = [...new Set([...(d.base || []), ...h])],
         gs = new Set(S.filter((q) => q.gid != null && u0.includes(q.id)).map((q) => q.gid)),
@@ -9075,6 +10834,12 @@ svg.addEventListener(
   true,
 );
 svg.addEventListener("dblclick", (e) => {
+  if (psel) {
+    psel.pts.pop(); /* the second click of the double-click already added a duplicate corner */
+    lsDone(psel.pts, psel.base, e.shiftKey, psel.add || e.altKey);
+    return;
+  }
+  if (tool == "lasso" || tool == "polysel") return;
   let id = e.target.closest("[data-id]")?.dataset.id;
   if (id == null && lastDn.id != null && Date.now() - lastDn.t < 800) id = lastDn.id;
   if (pen) {
@@ -9125,6 +10890,7 @@ function tick() {
     oy = T.y;
   }
   zAnim = m;
+  m ? pfStart() : pfEnd(150);
   render(!!m);
   if (m) requestAnimationFrame(tick);
   else T.run = 0;
@@ -9745,24 +11511,8 @@ function tgl(k) {
   setP(k, g.every((q) => q[k]) ? 0 : 1);
 }
 function waStyle(k) {
-  /* bold / italic / underline / strike on text and word art; word art keeps its stretch when glyph widths change */
-  const g = ms.length > 1 ? msS() : [get()].filter(Boolean),
-    W = g.filter((q) => q.t == "wordart"),
-    r0 = new Map(
-      W.map((q) => {
-        const m = waM(q);
-        return [q, m.W / m.H];
-      }),
-    );
+  /* bold / italic / underline / strike on text and word art; setP keeps a word art's stretch when glyph widths change */
   tgl(k);
-  if (!W.length) return;
-  W.forEach((q) => {
-    const m = waM(q),
-      cx = q.x + q.w / 2;
-    q.w = Math.min(900, Math.max(20, (q.w * (m.W / m.H)) / r0.get(q)));
-    q.x = cx - q.w / 2;
-  });
-  render();
 }
 function bump(d) {
   const R = actRE(),
@@ -9943,7 +11693,7 @@ function edStyle(s) {
   Object.assign(t.style, {
     top: oy + cy * z - (s.h * z) / 2 + bt * z + "px",
     transformOrigin: w / 2 + "px " + (s.h / 2 - bt) * z + "px",
-    transform: `rotate(${s.r || 0}deg)`,
+    transform: `rotate(${s.r || 0}deg)${s.kx || s.ky ? ` matrix(${skM(s).join(",")},0,0)` : ""}`,
   });
 }
 Object.assign(I, {
@@ -10054,7 +11804,8 @@ $("#ed").addEventListener("keydown", (e) => {
   }
 });
 function setTool(t, pp) {
-  svg.style.cursor = t == "measure" ? "crosshair" : "";
+  svg.style.cursor = t == "measure" || t == "lasso" || t == "polysel" ? "crosshair" : "";
+  psel = null;
   if (pen) penDone(false);
   penPoly = pp ? 1 : 0;
   tool = t;
@@ -10063,7 +11814,7 @@ function setTool(t, pp) {
   if (editing) endEdit();
   render();
 }
-for (const t of ["select", "text", "pen", "measure"]) $("#t-" + t).onclick = () => setTool(t);
+for (const t of ["select", "lasso", "text", "pen", "measure"]) $("#t-" + t).onclick = () => setTool(t);
 let popCp = null;
 function pop(x, y, html, fn) {
   closePop();
@@ -10181,9 +11932,9 @@ function order(f) {
 }
 function fit() {
   const r = svg.getBoundingClientRect();
-  z = Math.min((r.width - 80) / 960, (r.height - 80) / 540);
-  ox = (r.width - 960 * z) / 2;
-  oy = (r.height - 540 * z) / 2;
+  z = Math.min((r.width - 80) / PGW(), (r.height - 80) / PGH());
+  ox = (r.width - PGW() * z) / 2;
+  oy = (r.height - PGH() * z) / 2;
   T.z = z;
   T.x = ox;
   T.y = oy;
@@ -10284,6 +12035,8 @@ const tgs = () => (ms.length > 1 ? msS() : [get()].filter(Boolean)),
     "send to back": () => !get(),
     "rotate 90°": noGeo,
     "reset rotation": noGeo,
+    "skew, distort & warp…": () => !xfTargets().length,
+    "reset skew, distort & warp": () => !xfTargets().length,
     undo: () => !hist.length,
     redo: () => !fut.length,
     copy: () => !tgs().length,
@@ -10436,7 +12189,7 @@ function insTable(c, r) {
   insGroup(() => {
     const W = Math.min(720, c * 160),
       H = Math.min(48, Math.floor(420 / r)) * r;
-    mkS("table", 480 - W / 2, 270 - H / 2, W, H, {
+    mkS("table", PGW() / 2 - W / 2, PGH() / 2 - H / 2, W, H, {
       cols: Array(c).fill(1 / c),
       rows: Array(r).fill(1 / r),
       cells: Array(c * r).fill(""),
@@ -10884,7 +12637,7 @@ function setDefFont(n, nosave) {
 
 /* ===== help menu: icons, menu search (alt+/), keyboard shortcuts (ctrl+/), report a problem ===== */
 const HELP_TXT =
-  "alt while dragging skips snapping. shift locks to one axis. hold space (or alt on empty canvas) and drag to pan.";
+  "alt while dragging skips snapping. shift locks to one axis. hold space and drag to pan. alt-drag starts a selection box, even on top of an object.";
 const HLP_IC = {
   help: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 114 2c-.9.6-1.5 1.1-1.5 2.2M12 17v.2"/></svg>',
   report:
@@ -11041,7 +12794,7 @@ addEventListener("keydown", (e) => {
 
 /* ===== the manual: full-page guide opened from help > help (or F1) ===== */
 const MAN_CSS =
-  '#man .live{display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:6px 8px;background:var(--bar);border:1px solid var(--bd);border-radius:8px;pointer-events:none;user-select:none}#man figure .live svg{width:20px;height:20px;display:block}#man{position:fixed;inset:0;z-index:99999;display:flex;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.65;counter-reset:ms}#man nav{width:262px;flex:none;border-right:1px solid var(--bd);background:var(--bar);overflow:auto;padding:16px 12px}#man nav h2{margin:2px 8px 12px;font-size:17px;display:flex;align-items:center;gap:8px}#man nav h2:before{content:"";width:10px;height:10px;border-radius:3px;background:var(--ac)}#man nav input{width:100%;box-sizing:border-box;margin:0 0 12px;padding:8px 14px;border-radius:18px;border:1px solid var(--bd);background:var(--bg);color:inherit;font:inherit;font-size:13px;outline:0}#man nav input:focus{border-color:var(--ac)}#man nav a{display:block;padding:6px 10px 6px 12px;border-radius:8px;color:inherit;text-decoration:none;cursor:pointer;font-size:13.5px;border-left:3px solid transparent}#man nav a:hover{background:var(--hv)}#man nav a.on{background:var(--on);color:var(--onx);border-left-color:var(--ac);font-weight:600}#man main{flex:1;overflow:auto;padding:0 6vw 90px;scroll-behavior:smooth}#man article{max-width:860px;margin:0 auto}#man .hero{margin:0 -6vw 30px;padding:46px 6vw 34px;background:linear-gradient(135deg,var(--on),var(--bar));border-bottom:1px solid var(--bd)}#man .hero>div{max-width:860px;margin:0 auto}#man .hero h1{margin:0 0 8px;font-size:34px;letter-spacing:-.5px}#man .hero p{margin:0;color:var(--mut);font-size:16px;max-width:620px}#man .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}#man .chips span{padding:4px 12px;border-radius:14px;background:var(--bg);border:1px solid var(--bd);font-size:12.5px}#man section{margin-bottom:56px}#man h3{counter-increment:ms;font-size:23px;margin:0 0 12px;padding-top:6px;display:flex;align-items:center;gap:12px}#man h3:before{content:counter(ms);flex:none;width:32px;height:32px;border-radius:10px;background:var(--ac);color:#fff;display:grid;place-items:center;font-size:15px;font-weight:700}#man h4{margin:22px 0 4px;font-size:15px;color:var(--onx)}#man p{margin:8px 0}#man ul{margin:8px 0;padding-left:22px}#man li{margin:4px 0}#man li::marker{color:var(--ac)}#man kbd{font:600 11.5px monospace;padding:2px 7px;border:1px solid var(--bd);border-bottom-width:2px;border-radius:6px;background:var(--bar);white-space:nowrap}#man code{font:12.5px monospace;background:var(--bar);padding:1px 5px;border-radius:4px}#man figure{margin:16px 0;padding:12px;border:1px solid var(--bd);border-radius:14px;background:var(--cv);background-image:radial-gradient(var(--bd) 1px,transparent 1px);background-size:16px 16px;box-shadow:0 1px 3px rgba(0,0,0,.08)}#man figure svg{width:100%;height:auto;display:block;color:var(--tx)}#man figcaption{font-size:12.5px;color:var(--mut);margin-top:8px;text-align:center}#man .tip{margin:14px 0;padding:10px 14px;border-radius:10px;background:var(--on);color:var(--onx);border-left:4px solid var(--ac);font-size:14px}#man .tip:before{content:"TIP  ";font-weight:800;font-size:11px;letter-spacing:.8px}#man .sc{display:flex;justify-content:space-between;gap:20px;padding:6px 4px;border-bottom:1px solid var(--bd)}#man .sc:hover{background:var(--hv)}#man .x{position:fixed;top:12px;right:18px;border:1px solid var(--bd);background:var(--bar);color:inherit;border-radius:18px;padding:7px 18px;cursor:pointer;font:inherit;font-size:13px;z-index:2}#man .x:hover{background:var(--hv)}#man svg .a{fill:var(--ac);stroke:none}#man svg .as{stroke:var(--ac)}#man svg .af{fill:var(--ac);fill-opacity:.2;stroke:var(--ac)}#man svg .f{fill:var(--bg)}#man svg .m{fill:var(--mut);stroke:none}#man svg .g{stroke:var(--mut);stroke-dasharray:4 4}#man .tip.na:before{content:"NOTICE  "}#man .hero{position:relative;overflow:hidden}#man .hlogo{position:absolute;right:calc(6vw + 10px);top:50%;transform:translateY(-50%) rotate(-6deg);width:190px;height:190px;color:var(--bg);opacity:.75;pointer-events:none}#man .hero>div{position:relative}@media(max-width:700px){#man nav{display:none}}';
+  '#man .live{display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:6px 8px;background:var(--bar);border:1px solid var(--bd);border-radius:8px;pointer-events:none;user-select:none}#man figure .live svg{width:20px;height:20px;display:block}#man{position:fixed;inset:0;z-index:99999;display:flex;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.65;counter-reset:ms}#man nav{width:262px;flex:none;border-right:1px solid var(--bd);background:var(--bar);overflow:auto;padding:16px 12px}#man nav h2{margin:2px 8px 12px;font-size:17px;display:flex;align-items:center;gap:8px}#man nav h2:before{content:"";width:10px;height:10px;border-radius:3px;background:var(--ac)}#man nav input{width:100%;box-sizing:border-box;margin:0 0 12px;padding:8px 14px;border-radius:18px;border:1px solid var(--bd);background:var(--bg);color:inherit;font:inherit;font-size:13px;outline:0}#man nav input:focus{border-color:var(--ac)}#man nav a{display:block;padding:6px 10px 6px 12px;border-radius:8px;color:inherit;text-decoration:none;cursor:pointer;font-size:13.5px;border-left:3px solid transparent}#man nav a:hover{background:var(--hv)}#man nav a.on{background:var(--on);color:var(--onx);border-left-color:var(--ac);font-weight:600}#man main{flex:1;overflow:auto;padding:0 6vw 90px;scroll-behavior:smooth}#man article{max-width:860px;margin:0 auto}#man .hero{margin:0 -6vw 30px;padding:46px 6vw 34px;background:linear-gradient(135deg,var(--on),var(--bar));border-bottom:1px solid var(--bd)}#man .hero>div{max-width:860px;margin:0 auto}#man .hero h1{margin:0 0 8px;font-size:34px;letter-spacing:-.5px}#man .hero p{margin:0;color:var(--mut);font-size:16px;max-width:620px}#man .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}#man .chips span{padding:4px 12px;border-radius:14px;background:var(--bg);border:1px solid var(--bd);font-size:12.5px}#man section{margin-bottom:56px}#man h3{counter-increment:ms;font-size:23px;margin:0 0 12px;padding-top:6px;display:flex;align-items:center;gap:12px}#man h3:before{content:counter(ms);flex:none;width:32px;height:32px;border-radius:10px;background:var(--ac);color:#fff;display:grid;place-items:center;font-size:15px;font-weight:700}#man h4{margin:22px 0 4px;font-size:15px;color:var(--onx)}#man p{margin:8px 0}#man ul{margin:8px 0;padding-left:22px}#man li{margin:4px 0}#man li::marker{color:var(--ac)}#man kbd{font:600 11.5px monospace;padding:2px 7px;border:1px solid var(--bd);border-bottom-width:2px;border-radius:6px;background:var(--bar);white-space:nowrap}#man code{font:12.5px monospace;background:var(--bar);padding:1px 5px;border-radius:4px}#man figure{margin:16px 0;padding:12px;border:1px solid var(--bd);border-radius:14px;background:var(--cv);background-image:radial-gradient(var(--bd) 1px,transparent 1px);background-size:16px 16px;box-shadow:0 1px 3px rgba(0,0,0,.08)}#man figure svg{width:100%;height:auto;display:block;color:var(--tx)}#man figcaption{font-size:12.5px;color:var(--mut);margin-top:8px;text-align:center}#man .tip{margin:14px 0;padding:10px 14px;border-radius:10px;background:var(--on);color:var(--onx);border-left:4px solid var(--ac);font-size:14px}#man .tip:before{content:"TIP  ";font-weight:800;font-size:11px;letter-spacing:.8px}#man .sc{display:flex;justify-content:space-between;gap:20px;padding:6px 4px;border-bottom:1px solid var(--bd)}#man .sc:hover{background:var(--hv)}#man .x{position:fixed;top:12px;right:18px;border:1px solid var(--bd);background:var(--bar);color:inherit;border-radius:18px;padding:7px 18px;cursor:pointer;font:inherit;font-size:13px;z-index:2}#man .x:hover{background:var(--hv)}#man svg .a{fill:var(--ac);stroke:none}#man svg .as{stroke:var(--ac)}#man svg .af{fill:var(--ac);fill-opacity:.2;stroke:var(--ac)}#man svg .f{fill:var(--bg)}#man svg .m{fill:var(--mut);stroke:none}#man svg .g{stroke:var(--mut);stroke-dasharray:4 4}#man .tip.na:before{content:"NOTICE  "}#man .hero{position:relative;overflow:hidden}#man .hlogo{position:absolute;right:calc(6vw + 10px);top:50%;transform:translateY(-50%) rotate(-6deg);width:190px;height:190px;color:var(--bg);opacity:.75;pointer-events:none}#man .hero>div{position:relative}@media(max-width:700px){#man nav{display:none}}#man section.mflash{border-radius:12px;animation:mflash 2.4s ease-out}@keyframes mflash{0%,40%{background:var(--on);box-shadow:0 0 0 10px var(--on),0 0 0 13px var(--ac)}100%{background:transparent;box-shadow:0 0 0 10px transparent,0 0 0 13px transparent}}';
 const mF = (svg, cap) =>
   `<figure><svg viewBox="0 0 640 ${svg[0]}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" font-family="sans-serif" font-size="13">${svg[1]}</svg><figcaption>${cap}</figcaption></figure>`;
 const mT = (x, y, t, a) =>
@@ -11196,7 +12949,7 @@ const MAN = [
     "extra",
     "what is different from Google Drawings?",
     () =>
-      `<p>features gamedevrg drawings has that Google Drawings does not, as far as we know. features both share (tables, charts, diagrams, word art) are not listed.</p><h4>drawing &amp; editing</h4><ul><li><b>pen tool</b> with curve and corner points, and editing of individual points (extreme points, smooth / sharp toggles)</li><li><b>border options:</b> round / miter / bevel joins, butt / round / square caps, and extra dash patterns (long dash, short dash, dash dot dot) with live previews in the menus</li><li><b>cutout</b> (negative space) fills</li><li><b>gradient</b> fills and gradient borders</li><li><b>image masks</b> and cropping into a shape</li><li><b>SVG files</b> import as editable shapes, not just pictures</li><li><b>special characters</b> picker (insert &gt; special characters)</li></ul><h4>measuring &amp; layout</h4><ul><li><b>measure tool</b> (M): click a stem or stroke for its width, or drag for a ruler</li><li><b>ruler units:</b> px, pt, picas, in, cm, mm</li><li><b>guides</b>, including guides made from a selection, and an adjustable <b>grid</b></li><li>zoom up to 3200%</li></ul><h4>layers &amp; effects</h4><ul><li><b>layers panel</b> with layer groups, hide / lock, merge down, drag to combine, and &quot;only select on current layer&quot;</li><li><b>color blending</b> modes and <b>background blur</b></li><li><b>image effects:</b> grayscale, sepia, invert, brightness, contrast, saturation, hue shift, posterize, brightness to transparency</li><li><b>drop shadow, glow, outline</b> and <b>reflection</b></li><li>right-click &gt; <b>select all objects with this</b> fill, stroke and more</li></ul><h4>fonts &amp; text</h4><ul><li><b>font design tools:</b> font guides, glyph layers, glyph preview, export as an SVG font</li><li>use any Google font, installed font or your own font file</li><li>format just the highlighted part of a text with hotkeys such as ctrl+B, plus highlight color and strikethrough</li></ul><h4>export</h4><ul><li>export as an image at 1&times; to 8&times;</li><li>copy a shape as SVG, or view and copy the SVG code</li><li>transparent or colored page background</li></ul><h4>interface</h4><ul><li>many <b>themes:</b> light, dark, midnight, paper, sherbert, frosted glass, gamedevrg, neo brutalism, slate and blueprint</li><li>custom <b>UI font</b></li><li>hide all UI with Tab</li><li>a <b>hint</b> in the bottom-left explaining the current tool or held modifier key</li><li>this manual, with live examples and an automatic keyboard shortcuts list</li></ul>`,
+      `<p>features gamedevrg drawings has that Google Drawings does not, as far as we know. features both share (tables, charts, diagrams, word art) are not listed.</p><h4>drawing &amp; editing</h4><ul><li><b>advanced select:</b> freehand lasso and click-to-place polygon selection, with add-to-selection and inside/touching modes</li><li><b>pen tool</b> with curve and corner points, and editing of individual points (extreme points, smooth / sharp toggles)</li><li><b>border options:</b> round / miter / bevel joins, butt / round / square caps, and extra dash patterns (long dash, short dash, dash dot dot) with live previews in the menus</li><li><b>cutout</b> (negative space) fills</li><li><b>gradient</b> fills and gradient borders</li><li><b>image masks</b> and cropping into a shape</li><li><b>SVG files</b> import as editable shapes, not just pictures</li><li><b>special characters</b> picker (insert &gt; special characters)</li></ul><h4>measuring &amp; layout</h4><ul><li><b>measure tool</b> (M): click a stem or stroke for its width, or drag for a ruler</li><li><b>ruler units:</b> px, pt, picas, in, cm, mm</li><li><b>guides</b>, including guides made from a selection, and an adjustable <b>grid</b></li><li>zoom up to 3200%</li></ul><h4>layers &amp; effects</h4><ul><li><b>layers panel</b> with layer groups, hide / lock, merge down, drag to combine, and &quot;only select on current layer&quot;</li><li><b>color blending</b> modes and <b>background blur</b></li><li><b>image effects:</b> grayscale, sepia, invert, brightness, contrast, saturation, hue shift, posterize, brightness to transparency</li><li><b>drop shadow, glow, outline</b> and <b>reflection</b></li><li>right-click &gt; <b>select all objects with this</b> fill, stroke and more</li></ul><h4>fonts &amp; text</h4><ul><li><b>font design tools:</b> font guides, glyph layers, glyph preview, export as an SVG font</li><li>use any Google font, installed font or your own font file</li><li>format just the highlighted part of a text with hotkeys such as ctrl+B, plus highlight color and strikethrough</li></ul><h4>export</h4><ul><li>export as an image at 1&times; to 8&times;</li><li>copy a shape as SVG, or view and copy the SVG code</li><li>transparent or colored page background</li></ul><h4>interface</h4><ul><li>many <b>themes:</b> light, dark, midnight, paper, sherbert, frosted glass, gamedevrg, neo brutalism, slate and blueprint</li><li>custom <b>UI font</b></li><li>hide all UI with Tab</li><li>a <b>hint</b> in the bottom-left explaining the current tool or held modifier key</li><li>this manual, with live examples and an automatic keyboard shortcuts list</li></ul>`,
   ],
   [
     "start",
@@ -11216,13 +12969,13 @@ const MAN = [
     "title",
     "title bar & menu bar",
     () =>
-      `<ul><li><b>Title:</b> click the document name at the top left to rename the drawing.</li><li><b>Menus:</b> file, edit, view, insert, format, arrange, alignment, font, layers, themes and help. Click one to open it; once one is open, just hover another to switch.</li><li><b>Drive status:</b> next to the menus the save-to-Drive button shows whether the drawing is saved.</li><li><b>Export</b> (top right): download or copy the drawing, see <a data-g="save">saving &amp; exporting</a>.</li><li><b>Hide UI</b> (top right, also ${kb("Tab")}): hides the interface.</li></ul><p>Menu items that are greyed out aren't available right now (for example, "crop image" needs an image selected). A few items, like link and special characters, are placeholders that match Google Drawings but don't do anything yet.</p>`,
+      `<ul><li><b>Title:</b> click the document name at the top left to rename the drawing.</li><li><b>Menus:</b> file, edit, view, insert, format, arrange, alignment, font, layers, themes and help. Click one to open it; once one is open, just hover another to switch. <b>Right-click any menu or menu item</b> and choose <b>show in manual</b> to jump to the part of this manual that explains it.</li><li><b>Drive status:</b> next to the menus the save-to-Drive button shows whether the drawing is saved.</li><li><b>Export</b> (top right): download or copy the drawing, see <a data-g="save">saving &amp; exporting</a>.</li><li><b>Hide UI</b> (top right, also ${kb("Tab")}): hides the interface.</li></ul><p>Menu items that are greyed out aren't available right now (for example, "crop image" needs an image selected). A few items, like link and special characters, are placeholders that match Google Drawings but don't do anything yet.</p>`,
   ],
   [
     "canvas",
     "canvas, zoom & panning",
     () =>
-      `<ul><li><b>Zoom:</b> scroll the mouse wheel, use the zoom control in the toolbar, or view &gt; zoom in / zoom out / fit. Zooming is animated.</li><li><b>Fit:</b> view &gt; fit centres the whole page in the window.</li><li><b>Pan:</b> hold ${kb("space")} and drag, or hold ${kb("alt")} and drag on empty canvas.</li><li><b>Page background:</b> view &gt; page background: transparent (shown as a checkerboard), white, black or a custom colour. The page background is saved with the drawing and used by exports.</li><li><b>Checkerboard follows theme:</b> view &gt; checkerboard follows theme tints the transparent checkerboard to match your theme.</li><li><b>Rulers:</b> the rulers along the canvas edge show the current unit. Click the unit label, or use alignment &gt; ruler units, to switch between the available units.</li><li><b>Toggle dark mode:</b> view &gt; toggle dark mode flips between the dark and light version of your theme.</li></ul>`,
+      `<ul><li><b>Zoom:</b> scroll the mouse wheel, use the zoom control in the toolbar, or view &gt; zoom in / zoom out / fit. Zooming is animated.</li><li><b>Fit:</b> view &gt; fit centres the whole page in the window.</li><li><b>Pan:</b> hold ${kb("space")} and drag, or drag with the middle mouse button.</li><li><b>Page background:</b> view &gt; page background: transparent (shown as a checkerboard), white, black or a custom colour. The page background is saved with the drawing and used by exports.</li><li><b>Checkerboard follows theme:</b> view &gt; checkerboard follows theme tints the transparent checkerboard to match your theme.</li><li><b>Rulers:</b> the rulers along the canvas edge show the current unit. Click the unit label, or use alignment &gt; ruler units, to switch between the available units.</li><li><b>Toggle dark mode:</b> view &gt; toggle dark mode flips between the dark and light version of your theme.</li></ul>`,
   ],
   [
     "select",
@@ -11250,7 +13003,19 @@ const MAN = [
         ],
         "a selected object: resize handles on the edges and corners, a rotation handle on top.",
       ) +
-      `<h4>selecting</h4><ul><li>Click an object to select it. Click empty canvas to deselect (or press ${kb("Esc")}).</li><li>Drag a box on empty canvas to select everything inside it; shift-click adds or removes objects from a multi-selection.</li><li>${kb("ctrl", "A")} selects everything.</li><li>Objects in a <b>group</b> select together. Objects on hidden or locked layers can't be selected.</li></ul><h4>moving, resizing, rotating</h4><ul><li>Drag an object to move it. Arrow keys nudge by 1 px; with ${kb("shift")} they nudge by 10. This also works with several objects selected.</li><li>Drag a handle to resize. Drag the circular handle above the object to rotate. Some shapes have an extra yellow-style adjustment handle (for corner radius, arrow heads, etc.).</li><li>While you resize, the size is shown next to the cursor.</li></ul><h4>modifier keys (a hint appears at the bottom-left while you hold them)</h4><ul><li>${kb("shift")} while resizing: keep proportions. While moving: lock to one axis.</li><li>${kb("ctrl")} while resizing: scale from the centre instead of the opposite corner.</li><li>${kb("alt")}: turn snapping off for this drag.</li></ul><h4>copy, paste and delete</h4><ul><li>${kb("ctrl", "C")}, ${kb("ctrl", "X")}, ${kb("ctrl", "V")}: copy, cut and paste. Pasted objects land slightly offset. Pasting an image from your system clipboard also works.</li><li>${kb("ctrl", "D")}: duplicate. ${kb("Del")} or ${kb("Backspace")}: delete.</li><li>${kb("Enter")} on a selected shape starts editing its text.</li></ul>`,
+      `<h4>selecting</h4><ul><li>Click an object to select it. Click empty canvas to deselect (or press ${kb("Esc")}).</li><li>Drag a box on empty canvas to select everything inside it. A solid blue box needs objects to be fully inside; a dashed green box selects anything it touches (switch the default in the alignment &amp; snapping panel, or flip it for one drag with ${kb("alt")}).</li><li>Shift-click adds or removes objects from a multi-selection. Shift-drag on empty canvas adds a box to the current selection.</li><li>Hold ${kb("shift")} while dragging a box and its moving corner snaps to your guidelines: page edges and centre, object edges and centres, and custom guides.</li><li>Hold ${kb("alt")} and drag to start a selection box even when you press down on top of an object, so objects never get in the way. Add ${kb("shift")} to keep the current selection. An alt-started box does not flip inside/touching.</li><li><b>Advanced select</b> (toolbar button next to the select tool, or ${kb("L")}) selects with a freehand lasso or a click-by-click polygon. See <a data-g="advanced">advanced select: lasso &amp; polygon</a>.</li><li>${kb("ctrl", "A")} selects everything.</li><li>Objects in a <b>group</b> select together. Objects on hidden or locked layers can't be selected.</li></ul><h4>moving, resizing, rotating</h4><ul><li>Drag an object to move it. Arrow keys nudge by 1 px; with ${kb("shift")} they nudge by 10. This also works with several objects selected.</li><li>Drag a handle to resize. Drag the circular handle above the object to rotate. Some shapes have an extra yellow-style adjustment handle (for corner radius, arrow heads, etc.).</li><li>While you resize, the size is shown next to the cursor.</li></ul><h4>modifier keys (a hint appears at the bottom-left while you hold them)</h4><ul><li>${kb("shift")} while resizing: keep proportions. While moving: lock to one axis.</li><li>${kb("ctrl")} while resizing: scale from the centre instead of the opposite corner.</li><li>${kb("alt")}: turn snapping off for this drag. In a selection box, ${kb("alt")} starts the box even on top of an object (see selecting, above).</li></ul><h4>copy, paste and delete</h4><ul><li>${kb("ctrl", "C")}, ${kb("ctrl", "X")}, ${kb("ctrl", "V")}: copy, cut and paste. Pasted objects land slightly offset. Pasting an image from your system clipboard also works.</li><li>${kb("ctrl", "D")}: duplicate. ${kb("Del")} or ${kb("Backspace")}: delete.</li><li>${kb("Enter")} on a selected shape starts editing its text.</li></ul>`,
+  ],
+  [
+    "advanced",
+    "advanced select: lasso & polygon",
+    () =>
+      `<p>Advanced select picks objects by drawing around them instead of dragging a rectangle. It is the second button in the toolbar, next to the select tool (also ${kb("L")} or ${kb("K")}, or alignment &gt; advanced select).</p><h4>lasso</h4><ul><li>Press and drag to draw a freehand loop. Release and the loop closes by itself; everything inside it is selected.</li></ul><h4>polygon</h4><ul><li>Click without dragging to place the first corner, then keep clicking to add corners. A rubber band shows the next edge.</li><li>Close the polygon by double-clicking, pressing ${kb("Enter")}, or clicking the first point (it grows when you are close enough to close).</li><li>${kb("Backspace")} removes the last corner. ${kb("Esc")} cancels the polygon.</li></ul><h4>modifier keys</h4><ul><li>${kb("alt")}: add the new selection to the current one instead of replacing it. Hold it at the start, at any time while drawing or placing corners, or when you finish.</li><li>${kb("shift")}: flip between <b>inside</b> (solid blue outline: objects must be fully inside) and <b>touching</b> (dashed green outline: anything the shape touches). The default is set in the alignment &amp; snapping panel.</li></ul><h4>good to know</h4><ul><li>Objects in a group are selected together. Objects on hidden or locked layers are skipped.</li><li>Clicking empty canvas without ${kb("alt")} clears the selection.</li><li>The tool stays active so you can keep selecting. Press ${kb("Esc")} or click the select tool to go back to moving things.</li><li>The ordinary box selection has its own tricks, see <a data-g="select">selecting &amp; moving</a>.</li></ul>`,
+  ],
+  [
+    "ctx",
+    "right-click menus & show in manual",
+    () =>
+      `<h4>canvas menu</h4><ul><li>Right-click the canvas for a menu like Google Drawings: cut, copy, paste, <b>paste without formatting</b> (pasted objects keep their geometry and text but get the default style), delete, page background, comment and guides.</li><li>With something selected you also get object actions, including <b>format options…</b>.</li><li>Right-clicking only opens the menu. It never draws, drags or starts a selection box.</li></ul><h4>show in manual</h4><ul><li>Right-click any menu name or menu item in the menu bar and choose <b>show in manual</b>. The manual opens at the section that explains it and flashes that section so you can see where it is.</li></ul><h4>page size</h4><ul><li>Drag the grip at the bottom-right corner of the page to resize it (hold ${kb("shift")} to keep the ratio). Right-click the grip for preset sizes.</li></ul>`,
   ],
   [
     "shapes",
@@ -11322,10 +13087,22 @@ const MAN = [
       `<h4>word art</h4><p>insert &gt; word art opens a box: type the text and press ${kb("Enter")} (${kb("shift", "Enter")} for a new line). The text becomes a stretchable graphic that you resize like a shape. Select several word arts and edit them together. Bold/italic/underline keep the art's stretch.</p>`,
   ],
   [
+    "textbar",
+    "text toolbar: alignment, spacing, lists & links",
+    () =>
+      `<ul><li><b>font size:</b> type a size, or use the increase and decrease buttons.</li><li><b>text colour</b> applies to the selected text while you are editing.</li><li><b>align:</b> the align button opens a small palette: left, centre, right and justify for horizontal alignment, and top, middle and bottom for where the text sits inside its shape or box. The text panel has a vertical align menu and the format menu has the same alignment items.</li><li><b>line spacing</b> offers single, 1.15, 1.5 and double, switches for space before or after a paragraph, and custom spacing. The format menu has line &amp; paragraph spacing….</li><li><b>bulleted list</b> and <b>numbered list</b> buttons turn paragraphs into lists. The small arrow beside the bulleted list picks a bullet style. <b>increase indent</b> and decrease indent move the list level.</li></ul><p>For fonts, sizes and typography in general see <a data-g="text">text boxes &amp; text formatting</a>.</p>`,
+  ],
+  [
     "insert",
     "images, tables, charts & diagrams",
     () =>
       `<h4>images</h4><ul><li><b>insert &gt; image &gt; upload from computer…</b> (or the image tool): choose one or more images. <b>SVG file…</b> loads an SVG; <b>from SVG code…</b> opens a box to paste SVG markup.</li><li>You can also paste an image from your clipboard.</li><li><b>Crop:</b> select an image and use arrange &gt; crop image (or double-click). Drag the crop handles, press ${kb("Enter")} when done.</li><li><b>Mask:</b> arrange &gt; mask image… clips an image to a shape: rectangle, rounded rectangle, ellipse, triangle, diamond, star, arrow, any closed path you drew (listed as "custom shape"), or remove mask.</li><li>Images can also use background blur, blending and layer effects.</li></ul><h4>tables</h4><ul><li>insert &gt; table opens a grid; drag over it to choose the size. Click a cell to edit it.</li><li>Add or delete rows and columns with format &gt; format options (<i>add row below</i>, <i>add column right</i>, <i>delete row</i>, <i>delete column</i>).</li></ul><h4>charts</h4><ul><li>insert &gt; chart: <b>bar</b>, <b>column</b>, <b>line</b> or <b>pie</b>. Charts are drawn as editable vector objects. "from sheets" isn't connected in this app.</li></ul><h4>diagrams</h4><ul><li>insert &gt; diagram: <b>grid</b>, <b>hierarchy</b>, <b>timeline</b>, <b>process</b>, <b>relationship</b> and <b>cycle</b> templates, made of ordinary shapes you then restyle and edit. "view all" is a placeholder for more templates later.</li></ul><h4>placeholders</h4><p>insert &gt; special characters and link appear for parity with Google Drawings; they are greyed out or show a short notice because they aren't supported yet.</p>`,
+  ],
+  [
+    "tables",
+    "tables",
+    () =>
+      `<ul><li>Insert a table from the insert menu, then click into a cell to type.</li><li>While editing, ${kb("Tab")} moves to the next cell and ${kb("shift", "Tab")} to the previous one.</li><li>The format menu has <b>table: add row below</b>, <b>add column right</b>, <b>delete row</b> and <b>delete column</b>. They act on the cell you are in.</li><li>Tables are objects like any other: move, resize, fill, border and layer them. See <a data-g="insert">images, tables, charts &amp; diagrams</a>.</li></ul>`,
   ],
   [
     "style",
@@ -11338,7 +13115,7 @@ const MAN = [
         ],
         "fill, border weight and dash.",
       ) +
-      `<h4>fill and border colour</h4><ul><li>The <b>fill color</b> and <b>border color</b> swatches in the toolbar open a colour picker with a palette (several palettes to choose from), custom colours and recent colours.</li><li>Fill can be <b>solid</b>, a <b>gradient</b> (add and edit stops, choose a custom gradient), a <b>cutout (negative space)</b> that punches through to what's behind, or <b>transparent</b>.</li></ul><h4>border</h4><ul><li><b>Weight:</b> 1, 2, 3, 4, 6, 8 or 12 px (format &gt; borders &amp; lines &gt; border weight, or the toolbar).</li><li><b>Dash:</b> solid, dash, dot or dash-dot.</li><li><b>Decorations:</b> joins (round / miter / bevel) and caps (butt / round / square).</li></ul><h4>background blur</h4><p>The blur button blurs whatever is <i>behind</i> the object, like frosted glass. Set the fill to transparent to see it. Choose the amount (0 to 64 px), and optionally <b>taper off (gradient)</b> so the blur fades out toward an angle you set.</p><h4>colour blending</h4><p>format &gt; format options &gt; color blending… offers blend modes: normal, multiply, screen, overlay, darken, lighten, colour dodge, colour burn, hard light, soft light, difference, exclusion, hue, saturation, colour and luminosity.</p><h4>paint format</h4><p>Select an object, click the <b>paint format</b> button, then click another object to copy the look across. The button only shows when something is selected.</p><h4>format options panel</h4><p>The format options button shows or hides extra toolbar controls (the blur, blending and table tools).</p>`,
+      `<h4>fill and border colour</h4><ul><li>The <b>fill color</b> and <b>border color</b> swatches in the toolbar open a colour picker with a palette (several palettes to choose from), custom colours and recent colours.</li><li>Fill can be <b>solid</b>, a <b>gradient</b> (add and edit stops, choose a custom gradient), a <b>cutout (negative space)</b> that punches through to what's behind, or <b>transparent</b>.</li></ul><h4>border</h4><ul><li><b>Weight:</b> 1, 2, 3, 4, 6, 8 or 12 px (format &gt; borders &amp; lines &gt; border weight, or the toolbar).</li><li><b>Dash:</b> solid, dash, dot or dash-dot.</li><li><b>Decorations:</b> joins (round / miter / bevel) and caps (butt / round / square).</li></ul><h4>background blur</h4><p>The blur button blurs whatever is <i>behind</i> the object, like frosted glass. Set the fill to transparent to see it. Choose the amount (0 to 64 px), and optionally <b>taper off (gradient)</b> so the blur fades out toward an angle you set.</p><h4>skew, distort &amp; warp</h4><p>Open <b>arrange &gt; skew, distort &amp; warp…</b> (or the transform button in the format options bar). <b>Skew</b> shears an object along its own axes: pick the skew handle mode and drag a side handle (shift snaps to 15°), or use the sliders. <b>Distort</b> lets you drag each corner anywhere, and <b>perspective</b> moves the neighbouring corner the opposite way so you get a vanishing point. <b>Warp</b> bends the object with presets (arc, bulge, flag, wave, fisheye, twist and more) with a bend amount, horizontal or vertical bend, and horizontal and vertical distortion. Shapes are re-drawn as warped outlines and stay crisp; pictures, word art and tables are warped with a mesh. Everything is non-destructive: <b>reset</b> puts the object back.</p><h4>box select</h4><p>Edit &gt; <b>box select: touching counts</b> chooses whether a drag-box must fully contain objects (solid blue box) or only touch them (dashed green box). Hold <b>alt</b> while dragging to use the other mode for that drag. Touching uses the real outline, so a rotated or diagonal object is only picked when the box actually reaches it.</p><h4>performance</h4><p>If blur or effects make editing laggy, open <b>view &gt; performance settings…</b>. You can lower the blur quality, turn blur off, or pause blur (and optionally shadows and layer effects) while you drag, pan or zoom. <b>Auto</b> only pauses when it notices slow frames. Exports and image downloads always use full quality.</p><h4>colour blending</h4><p>format &gt; format options &gt; color blending… offers blend modes: normal, multiply, screen, overlay, darken, lighten, colour dodge, colour burn, hard light, soft light, difference, exclusion, hue, saturation, colour and luminosity.</p><h4>paint format</h4><p>Select an object, click the <b>paint format</b> button, then click another object to copy the look across. The button only shows when something is selected.</p><h4>format options panel</h4><p>The format options button shows or hides extra toolbar controls (the blur, blending and table tools).</p>`,
   ],
   [
     "layers",
@@ -11360,6 +13137,12 @@ const MAN = [
       `<ul><li><b>Group / ungroup:</b> ${kb("ctrl", "G")} and ${kb("ctrl", "shift", "G")}. A group moves, scales and copies as one; clicking any member selects the group.</li><li><b>Align</b> two or more objects: horizontally (left, centre, right) or vertically (top, middle, bottom). <b>Distribute</b> spaces them evenly, horizontally or vertically.</li><li><b>Order</b> within a layer: bring to front (${kb("ctrl", "shift", "↑")}), bring forward (${kb("ctrl", "↑")}), send backward (${kb("ctrl", "↓")}), send to back (${kb("ctrl", "shift", "↓")}).</li><li><b>Rotate 90°</b> and <b>reset rotation</b>.</li><li><b>Mask image</b>, <b>crop image</b> and <b>edit points</b> are in this menu too; see the images and pen sections.</li></ul>`,
   ],
   [
+    "xform",
+    "skew, distort & perspective",
+    () =>
+      `<ul><li><b>skew:</b> drag a side handle to shear the object. ${kb("shift")} snaps to 15°.</li><li><b>distort:</b> drag any corner freely. ${kb("shift")} locks the move to one axis.</li><li><b>perspective:</b> drag a corner; its neighbour mirrors it so the edges meet at a vanishing point.</li><li><b>reset skew, distort &amp; warp</b> (arrange menu) puts the selected objects back to their normal shape.</li></ul><p>For moving, resizing and rotating see <a data-g="select">selecting &amp; moving</a>; for ordering and aligning see <a data-g="arrange">arranging objects</a>.</p>`,
+  ],
+  [
     "snap",
     "alignment, snapping, grid & guides",
     () =>
@@ -11371,6 +13154,12 @@ const MAN = [
         "objects snap to guides, edges and centres.",
       ) +
       `<h4>snapping</h4><ul><li>The <b>alignment &amp; snapping</b> button (or alignment &gt; snapping toggles…) opens a panel of switches: page edges, page centre, object edges, object centres, baseline, spacing, radius, nodes, handle H/V, angle, grid, font guides and guides. A master switch turns all snapping on or off, and <b>reset snapping</b> restores the defaults.</li><li>Snapping applies to multi-selections too. Hold ${kb("alt")} to skip it temporarily.</li></ul><h4>grid</h4><ul><li><b>show grid</b> and <b>grid size</b> (1, 2, 5, 10, 20, 25 or 50 px; plus "1 font unit" when font guides are on).</li></ul><h4>guides</h4><ul><li><b>show guides</b> toggles them. <b>guides…</b> opens a list where you add horizontal or vertical guides at exact positions, remove them, or create them <b>from selection</b>.</li><li><b>guides from selection</b> adds guides at the selected object's edges.</li></ul><h4>measuring</h4><ul><li>The <b>measure tool</b> (${kb("M")}): click inside a stem, on an edge or on a stroke to read its width; drag to measure a distance.</li><li><b>show measurements</b> keeps them visible; <b>clear measurements</b> removes them.</li></ul><h4>move selection to</h4><p>With font guides on, alignment &gt; move selection to places the selection on the baseline, x-height, cap height, ascender, descender, centre of the glyph frame, or the left/right sidebearing.</p>`,
+  ],
+  [
+    "measure",
+    "measure tool & measurements",
+    () =>
+      `<ul><li>Press ${kb("M")} (or alignment &gt; measure tool) to switch to the measure tool.</li><li>Click inside a stem, on its edge or on a stroke to read its width. Drag to pull out a ruler between two points.</li><li><b>show measurements</b> and <b>clear measurements</b> (alignment menu) show, hide or remove the measurements you have made.</li><li>The rulers along the canvas edge use the current unit. Click the unit label, or use alignment &gt; ruler units, to change it. See <a data-g="snap">alignment, snapping, grid &amp; guides</a> for guides and spacing.</li></ul>`,
   ],
   [
     "font",
@@ -11396,6 +13185,12 @@ const MAN = [
         "the export menu (top right).",
       ) +
       `<h4>export (top right)</h4><ul><li>Choose an <b>image resolution</b> (1×, 2×, 3×, 4×, 6× or 8×); the pixel size is shown.</li><li>Download as <b>png</b>, <b>jpeg</b>, <b>svg</b> (vector) or <b>pdf</b>.</li><li><b>copy as png</b> and <b>copy as SVG</b> put the drawing on your clipboard.</li><li><b>print…</b> (${kb("ctrl", "P")}) prints the drawing; the print button in the toolbar does the same.</li></ul><h4>Google Drive</h4><ul><li><b>save to Google Drive</b> (${kb("ctrl", "S")}), <b>save a copy to Drive</b>, <b>open from Google Drive…</b>, <b>auto-save to Drive</b> (shows a tick when on) and <b>sign out of Drive</b> are in the file menu.</li><li>The status next to the title shows whether your latest changes are saved.</li></ul><h4>copy as SVG (edit menu)</h4><p>Select one shape and use edit &gt; copy as SVG to get just that shape's SVG code in a box you can copy.</p><h4>new drawing</h4><p>file &gt; new drawing starts a blank page.</p>`,
+  ],
+  [
+    "helpmenu",
+    "help menu & reporting a problem",
+    () =>
+      `<ul><li><b>help &gt; manual</b> (or ${kb("F1")}) opens this manual. The box at the top of the navigation searches it.</li><li><b>Search the menus:</b> ${kb("alt", "/")} opens a search over every menu item, with its shortcut.</li><li><b>Keyboard shortcuts:</b> ${kb("ctrl", "/")} lists them all, see also <a data-g="keys">keyboard shortcuts</a>.</li><li><b>report a problem:</b> describe what went wrong and press copy. The text goes to your clipboard so you can paste it wherever you track bugs.</li><li>Hold a modifier key and a hint appears at the bottom-left reminding you what it does.</li><li>Right-click any menu item and choose <b>show in manual</b> to jump to its explanation.</li></ul>`,
   ],
   [
     "tips",
@@ -11425,6 +13220,7 @@ const MAN = [
       }
       const extra = [
         ["pen tool", "P"],
+        ["advanced select (lasso / polygon)", "L"],
         ["measure tool", "M"],
         ["show/hide the interface", "Tab"],
         ["this manual", "F1"],
@@ -11460,7 +13256,7 @@ function manKey(e) {
     closeManual();
   }
 }
-function openManual() {
+function openManual(sec) {
   closeManual();
   if (!$("#manst")) {
     const st = document.createElement("style");
@@ -11519,7 +13315,97 @@ function openManual() {
     };
   main.addEventListener("scroll", spy);
   spy();
+  if (typeof sec == "string") {
+    const t = d.querySelector("#man-" + sec);
+    if (t) {
+      main.style.scrollBehavior = "auto";
+      main.scrollTo({ top: t.offsetTop - 20 });
+      spy();
+      main.style.scrollBehavior = "";
+      /* flash the section so it is easy to spot */
+      t.classList.remove("mflash");
+      void t.offsetWidth;
+      t.classList.add("mflash");
+      t.addEventListener("animationend", () => t.classList.remove("mflash"), { once: true });
+    }
+  }
 }
+/* ---- right-click a menu item: "show in manual" ---- */
+const MAN_MENU = { file: "save", edit: "select", view: "canvas", insert: "insert", format: "style", arrange: "arrange", tools: "snap", alignment: "snap", font: "font", themes: "themes", layers: "layers", help: "start" };
+const MAN_RULES = [
+  [/advanced select|lasso/, "advanced"],
+  [/^table|table:/, "tables"],
+  [/measure|measurement/, "measure"],
+  [/skew|distort|warp|perspective/, "xform"],
+  [/paste without|format options|^comment/, "ctx"],
+  [/line & paragraph|bullet|numbered|indent|vertical align|^align (center|right|left|justify)/, "textbar"],
+  [/^report|^manual$|search the menus/, "helpmenu"],
+  [/shortcut|keyboard|search the menus/, "keys"],
+  [/advanced select|lasso|select|deselect|undo|redo|\bcut\b|\bcopy\b(?! as)|paste|duplicate|delete|nudge/, "select"],
+  [/bold|italic|underline|strike|bullet|numbered|line spacing|paragraph|superscript|subscript|highlight|text box|word ?art|^align|justify|indent|font size|text/, "text", ["format", "insert", "edit"]],
+  [/pen|node|anchor|corner point|smooth point|outline path|edit points|path/, "pen"],
+  [/shape|rectangle|ellipse|circle|triangle|star|polygon|callout/, "shapes"],
+  [/arrow|connector|elbow|scribble|curve|polyline|^line$|^lines?\b/, "lines"],
+  [/image|picture|table|chart|diagram|upload|special char|equation/, "insert"],
+  [/layer|group|ungroup|lock|unlock|hide|reveal/, "layers"],
+  [/snap|grid|guide|ruler|unit|measure|spacing|distribute|baseline/, "snap"],
+  [/order|front|back|forward|backward|rotate|flip|align|center|centre|resize|size/, "arrange"],
+  [/fill|border|colou?r|shadow|reflection|gradient|opacity|blur|effect|dash|weight|cutout|transparen|stroke|round/, "style"],
+  [/font|glyph|metric|kerning/, "font"],
+  [/theme|dark mode|palette/, "themes"],
+  [/download|save|export|print|import|\bopen\b|\bnew\b|rename|png|svg|pdf|json|share|drive|history/, "save"],
+  [/zoom|fit|pan|background|checkerboard|page|board|full ?screen|interface/, "canvas"],
+  [/manual|help|about|report/, "start"],
+];
+function manSecFor(menu, label) {
+  const l = (label || "").toLowerCase().trim();
+  for (const [re, sec, only] of MAN_RULES) if ((!only || only.includes(menu)) && re.test(l)) return sec;
+  return MAN_MENU[menu] || "start";
+}
+function manCtx(x, y, sec) {
+  document.querySelector("#mctx")?.remove();
+  const d = document.createElement("div");
+  d.className = "pop";
+  d.id = "mctx";
+  d.style.cssText = `position:fixed;left:${Math.max(4, Math.min(x, innerWidth - 190))}px;top:${Math.max(4, Math.min(y, innerHeight - 46))}px;z-index:99998;min-width:170px`;
+  d.innerHTML = '<div class="it">show in manual</div>';
+  document.body.appendChild(d);
+  const kill = () => {
+      d.remove();
+      removeEventListener("pointerdown", away, true);
+      removeEventListener("keydown", esc, true);
+    },
+    away = (e) => {
+      if (!d.contains(e.target)) kill();
+    },
+    esc = (e) => {
+      if (e.key == "Escape") kill();
+    };
+  addEventListener("pointerdown", away, true);
+  addEventListener("keydown", esc, true);
+  d.querySelector(".it").onclick = () => {
+    kill();
+    closePop();
+    document.querySelectorAll("#menus .mb.on").forEach((m) => m.classList.remove("on"));
+    openManual(sec);
+  };
+}
+addEventListener(
+  "contextmenu",
+  (e) => {
+    const t = e.target.closest ? e.target.closest("#pp .it, .fly .it, #menus .mb") : null;
+    if (!t) return;
+    const on = document.querySelector("#menus .mb.on"),
+      mb = t.matches("#menus .mb") ? t : on;
+    if (!mb || !M[mb.textContent]) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const menu = mb.textContent,
+      label = t === mb ? "" : t.querySelector(".lb")?.textContent ?? t.childNodes[0]?.textContent;
+    manCtx(e.clientX, e.clientY, manSecFor(menu, label));
+  },
+  true,
+);
 addEventListener("keydown", (e) => {
   if (e.key == "F1") {
     e.preventDefault();
@@ -11562,7 +13448,7 @@ const M = {
     ["select all", selAll, "ctrl+A"],
     0,
     [
-      "box select: touching counts",
+      "box select: touching counts (alt flips)",
       () => {
         selTouch = selTouch ? 0 : 1;
         try {
@@ -11607,6 +13493,8 @@ const M = {
       ["zoom in", () => zoomTo(Math.min(64, z * 1.25))],
       ["zoom out", () => zoomTo(Math.max(0.1, z / 1.25))],
       ["fit", fit],
+      0,
+      ["performance settings…", () => perfPanel()],
       [
         "toggle dark mode",
         () =>
@@ -11875,6 +13763,12 @@ const M = {
         }
       },
     ],
+    0,
+    [
+      "skew, distort & warp…",
+      () => xfPanel([...$("#menus").children].find((x) => x.textContent == "arrange") || $("#menus")),
+    ],
+    ["reset skew, distort & warp", () => xfReset("all")],
   ],
   get alignment() {
     const t = (k) => [SNAPL[k], () => togSnap(k), SNAP[k] ? "✓" : ""],
@@ -11915,6 +13809,7 @@ const M = {
       ["show guides", () => togView("guides", "guides"), VIEW.guides ? "✓" : ""],
       ["guides…", guideDlg],
       0,
+      ["advanced select", () => setTool("lasso"), "L"],
       ["measure tool", () => setTool("measure"), "M"],
       ["show measurements", () => togView("meas", "measurements"), VIEW.meas ? "✓" : ""],
       ["clear measurements", clearMeas],
@@ -12009,7 +13904,7 @@ const M = {
 };
 
 /* ===== layers: real layers with visibility, lock, opacity and filters ===== */
-const ser = () => JSON.stringify(PG.bg ? { S, LY, curL, FM, GL, PG } : { S, LY, curL, FM, GL }),
+const ser = () => JSON.stringify(PG.bg || PG.w || PG.h ? { S, LY, curL, FM, GL, PG } : { S, LY, curL, FM, GL }),
   unser = (x) => {
     const o = JSON.parse(x);
     PG = { bg: "" };
@@ -12020,7 +13915,15 @@ const ser = () => JSON.stringify(PG.bg ? { S, LY, curL, FM, GL, PG } : { S, LY, 
       curL = o.curL;
       FM = { ...FM_DEF, ...(o.FM || {}) };
       GL = Array.isArray(o.GL) ? o.GL : [];
-      if (o.PG && typeof o.PG.bg == "string" && safeC(o.PG.bg)) PG = { bg: o.PG.bg };
+      if (o.PG) {
+        PG = { bg: typeof o.PG.bg == "string" && safeC(o.PG.bg) ? o.PG.bg : "" };
+        const pw = Math.round(+o.PG.w),
+          ph = Math.round(+o.PG.h);
+        if (pw >= 16 && pw <= 20000 && ph >= 16 && ph <= 20000) {
+          PG.w = pw;
+          PG.h = ph;
+        }
+      }
     }
     for (const q of S)
       if (q && q.t == "path" && q.pts && q.pts.length)
@@ -12204,7 +14107,11 @@ function syncLW(L, w) {
     _tmpG.textContent = "";
     g.insertBefore(w.d, g.firstChild);
     g.setAttribute("filter", `url(#fx${L.id})`);
-  } else g.removeAttribute("filter");
+    g.classList.add("lfx");
+  } else {
+    g.removeAttribute("filter");
+    g.classList.remove("lfx");
+  }
 }
 function bkdrop(i) {
   let o = "",
@@ -12960,10 +14867,23 @@ addEventListener("keydown", (e) => {
       k == "arrowleft" ? -n : k == "arrowright" ? n : 0,
       k == "arrowup" ? -n : k == "arrowdown" ? n : 0,
     );
+  } else if (psel && k == "backspace") {
+    e.preventDefault();
+    psel.pts.pop();
+    if (!psel.pts.length) psel = null;
+    render();
+  } else if (psel && k == "enter") {
+    e.preventDefault();
+    lsDone(psel.pts, psel.base, e.shiftKey, psel.add || e.altKey);
+  } else if (psel && k == "escape") {
+    psel = null;
+    render();
   } else if (k == "delete" || k == "backspace") {
     editP && ei != null ? delPt() : del();
   } else if (k == "p" && !c) setTool("pen");
   else if (k == "m" && !c) setTool("measure");
+  else if (k == "l" && !c && !e.altKey) setTool("lasso");
+  else if (k == "k" && !c && !e.altKey) setTool("lasso");
   else if (k == "escape") {
     cropId = null;
     pen = null;
@@ -13241,7 +15161,228 @@ $("#clr").onclick = () => {
     }
   }
 };
-$("#print").onclick = () => print();
+/* print: a dialog with a live preview of the sheet. paper, orientation, scaling (fit / fill / custom %, optionally tiled across several pages),
+   margins, position, border, caption, grayscale and mirror. the preview and the printout are drawn by the same code, so they match. */
+const PRP = {
+    a4: ["A4", 210, 297],
+    a3: ["A3", 297, 420],
+    a5: ["A5", 148, 210],
+    letter: ["US Letter", 215.9, 279.4],
+    legal: ["US Legal", 215.9, 355.6],
+    tabloid: ["Tabloid", 279.4, 431.8],
+    board: ["same size as the board"],
+  },
+  PRS = { p: /-(US|CA|MX)$/i.test(navigator.language || "") ? "letter" : "a4", o: "auto", f: "fit", s: 100, m: 48, a: "c", tile: 1, bd: 0, cap: 0, gr: 0, fl: 0 };
+function prCalc(W, H) {
+  const o = PRS;
+  let pw, ph, wmm, hmm, land;
+  if (o.p == "board") {
+    pw = W;
+    ph = H;
+    wmm = (W * 25.4) / 96;
+    hmm = (H * 25.4) / 96;
+    land = W >= H;
+  } else {
+    const [, a, b] = PRP[o.p];
+    land = o.o == "landscape" || (o.o == "auto" && W >= H);
+    wmm = land ? Math.max(a, b) : Math.min(a, b);
+    hmm = land ? Math.min(a, b) : Math.max(a, b);
+    pw = (wmm * 96) / 25.4;
+    ph = (hmm * 96) / 25.4;
+  }
+  const mg = Math.min(+o.m || 0, Math.min(pw, ph) / 3),
+    cap = o.cap ? 26 : 0,
+    aw = Math.max(20, pw - 2 * mg),
+    ah = Math.max(20, ph - 2 * mg - cap),
+    sc = o.f == "fit" ? Math.min(aw / W, ah / H) : o.f == "fill" ? Math.max(aw / W, ah / H) : Math.max(0.1, Math.min(10, (+o.s || 100) / 100)),
+    bw = W * sc,
+    bh = H * sc,
+    tiled = o.f == "scale" && !!o.tile && (bw > aw + 0.5 || bh > ah + 0.5),
+    cols = tiled ? Math.ceil(bw / aw - 0.001) : 1,
+    rows = tiled ? Math.ceil(bh / ah - 0.001) : 1;
+  return { pw, ph, wmm, hmm, land, mg, cap, aw, ah, sc, bw, bh, tiled, cols, rows, n: cols * rows, ox: o.a == "c" ? (aw - bw) / 2 : 0, oy: o.a == "c" ? (ah - bh) / 2 : 0 };
+}
+function prSheet(L, i, url, pr) {
+  const o = PRS,
+    c = L.tiled ? i % L.cols : 0,
+    r = L.tiled ? Math.floor(i / L.cols) : 0,
+    ix = L.tiled ? -c * L.aw : L.ox,
+    iy = L.tiled ? -r * L.ah : L.oy,
+    f2 = (n) => +n.toFixed(2),
+    t = ($("#title").value || "drawing").replace(/&/g, "&amp;").replace(/</g, "&lt;"),
+    dt = new Date().toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+  return `<div style="position:relative;width:${f2(L.pw)}px;height:${f2(pr ? L.ph - 1.5 : L.ph)}px;background:#fff;overflow:hidden;box-sizing:border-box"><div style="position:absolute;left:${f2(L.mg)}px;top:${f2(L.mg)}px;width:${f2(L.aw)}px;height:${f2(L.ah)}px;overflow:hidden;${o.gr ? "filter:grayscale(1);" : ""}${o.fl ? "transform:scaleX(-1);" : ""}"><div style="position:absolute;left:${f2(ix)}px;top:${f2(iy)}px;width:${f2(L.bw)}px;height:${f2(L.bh)}px"><img src="${url}" draggable="false" style="display:block;width:100%;height:100%">${o.bd ? '<div style="position:absolute;inset:0;border:1px solid #999;box-sizing:border-box"></div>' : ""}</div></div>${L.cap ? `<div style="position:absolute;left:${f2(L.mg)}px;right:${f2(L.mg)}px;bottom:${f2(L.mg + 4)}px;display:flex;justify-content:space-between;font:11px sans-serif;color:#555"><span>${t} · ${dt}</span><span>${L.n > 1 ? "page " + (i + 1) + " of " + L.n : ""}</span></div>` : ""}</div>`;
+}
+async function printMenu() {
+  if ($("#prd")) return;
+  if (editing) endEdit();
+  const AR = PRR,
+    [W, H] = AR ? [AR.w, AR.h] : pgWH(),
+    d = document.createElement("div");
+  d.id = "prd";
+  d.style.cssText = "position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box";
+  const seg = (k, L) => `<div class="pfs" data-k="${k}">${L.map(([v, l]) => `<button type="button" data-v="${v}">${l}</button>`).join("")}</div>`,
+    lab = (x) => `<div style="font-size:12px;opacity:.7;margin:0 0 4px">${x}</div>`,
+    chk = (k, l) => `<label style="display:flex;gap:7px;align-items:center;cursor:pointer"><input type="checkbox" data-c="${k}">${l}</label>`;
+  d.innerHTML = `<div style="background:var(--pop);color:var(--tx);border-radius:14px;box-shadow:var(--sh);width:min(780px,100%);max-height:100%;overflow:auto;display:flex;flex-direction:column" role="dialog" aria-label="print">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;padding:16px 20px 6px;font-weight:600;font-size:17px"><span>print</span><small style="font-weight:400;font-size:12px;opacity:.7">${AR ? "selected area" : "board"} ${W} × ${H} px</small></div>
+    <div style="display:flex;flex-wrap:wrap;gap:18px;padding:8px 20px 14px">
+      <div style="flex:1 1 280px;min-width:240px;display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--bar);border-radius:10px;padding:14px 10px">
+        <div id="prv" style="min-height:200px;display:flex;align-items:center;justify-content:center;font-size:13px;opacity:.8">preparing preview…</div>
+        <div id="prn" style="display:none;align-items:center;gap:10px;font-size:13px"><button type="button" data-n="-1" style="border:1px solid var(--bd);background:none;color:var(--tx);border-radius:6px;padding:2px 10px;cursor:pointer;font:inherit">‹</button><span id="prp"></span><button type="button" data-n="1" style="border:1px solid var(--bd);background:none;color:var(--tx);border-radius:6px;padding:2px 10px;cursor:pointer;font:inherit">›</button></div>
+        <div id="pri" style="font-size:12px;opacity:.75;text-align:center"></div>
+      </div>
+      <div style="flex:1 1 290px;min-width:250px;display:flex;flex-direction:column;gap:11px;font-size:14px">
+        <div>${lab("paper")}<select data-k="p" style="width:100%;border:1px solid var(--bd);border-radius:6px;background:none;color:var(--tx);font:inherit;padding:5px 6px">${Object.entries(PRP).map(([k, v]) => `<option value="${k}" style="color:#000">${v[0]}${v[1] ? " (" + v[1] + " × " + v[2] + " mm)" : ""}</option>`).join("")}</select></div>
+        <div id="pro">${lab("orientation")}${seg("o", [["auto", "match board"], ["portrait", "portrait"], ["landscape", "landscape"]])}</div>
+        <div>${lab("scaling")}${seg("f", [["fit", "fit"], ["fill", "fill"], ["scale", "scale %"]])}<div id="prs" style="margin-top:6px;display:flex;align-items:center;gap:8px"><input type="range" id="prsr" min="10" max="400" step="1" style="flex:1;accent-color:var(--ac)"><span class="xfn" style="width:72px"><input type="number" id="prsn" min="10" max="1000" step="1"><i>%</i></span></div></div>
+        <div>${lab("margins")}${seg("m", [["0", "none"], ["24", "narrow"], ["48", "normal"], ["96", "wide"]])}</div>
+        <div>${lab("position")}${seg("a", [["c", "center"], ["t", "top left"]])}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 12px">${chk("tile", "split across pages")}${chk("bd", "border")}${chk("cap", "title & date")}${chk("gr", "grayscale")}${chk("fl", "mirror")}</div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;padding:6px 20px 16px"><button type="button" data-x="c" style="border:1px solid var(--bd);background:none;color:var(--tx);border-radius:8px;padding:8px 18px;font:inherit;cursor:pointer">cancel</button><button type="button" data-x="p" style="border:0;background:var(--ac);color:#fff;border-radius:8px;padding:8px 22px;font:inherit;cursor:pointer;opacity:.5" disabled>print</button></div></div>`;
+  document.body.appendChild(d);
+  let url = "",
+    ready = 0,
+    pi = 0,
+    gone = 0;
+  const q = (x) => d.querySelector(x),
+    close = (keep) => {
+      gone = 1;
+      removeEventListener("keydown", key, true);
+      d.remove();
+      if (!keep && url) URL.revokeObjectURL(url);
+    },
+    refresh = () => {
+      const L = prCalc(W, H);
+      pi = Math.min(pi, L.n - 1);
+      d.querySelectorAll(".pfs").forEach((g) => g.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.v == String(PRS[g.dataset.k]))));
+      d.querySelectorAll("[data-c]").forEach((c) => {
+        c.checked = !!PRS[c.dataset.c];
+        if (c.dataset.c == "tile") c.disabled = PRS.f != "scale";
+      });
+      q("select").value = PRS.p;
+      q("#pro").style.opacity = PRS.p == "board" ? 0.4 : 1;
+      q("#pro").style.pointerEvents = PRS.p == "board" ? "none" : "";
+      q("#prs").style.opacity = PRS.f == "scale" ? 1 : 0.4;
+      q("#prs").style.pointerEvents = PRS.f == "scale" ? "" : "none";
+      q("#prsr").value = Math.min(400, Math.max(10, PRS.s));
+      if (document.activeElement !== q("#prsn")) q("#prsn").value = Math.round(PRS.s);
+      if (!ready) return;
+      const k = Math.min(1, 300 / L.pw, 330 / L.ph);
+      q("#prv").style.opacity = 1;
+      q("#prv").innerHTML = `<div style="width:${L.pw * k}px;height:${L.ph * k}px;box-shadow:0 2px 10px rgba(0,0,0,.35);flex:none"><div style="transform:scale(${k});transform-origin:0 0;width:${L.pw}px;height:${L.ph}px">${prSheet(L, pi, url, 0)}</div></div>`;
+      q("#prn").style.display = L.n > 1 ? "flex" : "none";
+      q("#prp").textContent = "page " + (pi + 1) + " of " + L.n;
+      const cut = !L.tiled && (L.bw > L.aw + 0.5 || L.bh > L.ah + 0.5) && PRS.f != "fit";
+      q("#pri").textContent = (PRP[PRS.p][1] ? PRP[PRS.p][0] + " " + (L.land ? "landscape" : "portrait") : "board-sized page") + " · " + L.n + (L.n > 1 ? " pages" : " page") + " · " + Math.round(L.sc * 100) + "%" + (cut ? " · edges are cut off" : "");
+    },
+    go = () => {
+      if (!ready) return;
+      const L = prCalc(W, H),
+        u = url;
+      close(1);
+      doPrint(L, u);
+    },
+    key = (e) => {
+      const f = e.target && e.target.closest && e.target.closest("input,select");
+      if (e.key == "Escape") {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        close();
+      } else if (e.key == "Enter" && !f) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        go();
+      }
+    };
+  d.addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (b && b.dataset.v != null) {
+      const k = b.parentNode.dataset.k;
+      PRS[k] = k == "m" ? +b.dataset.v : b.dataset.v;
+      pi = 0;
+      refresh();
+    } else if (b && b.dataset.n) {
+      const L = prCalc(W, H);
+      pi = (pi + +b.dataset.n + L.n) % L.n;
+      refresh();
+    } else if (b && b.dataset.x == "p") go();
+    else if ((b && b.dataset.x == "c") || e.target === d) close();
+  });
+  d.addEventListener("change", (e) => {
+    const t = e.target;
+    if (t.dataset.c) PRS[t.dataset.c] = t.checked ? 1 : 0;
+    else if (t.tagName == "SELECT") PRS.p = t.value;
+    else if (t.id == "prsn") PRS.s = Math.max(10, Math.min(1000, +t.value || 100));
+    pi = 0;
+    refresh();
+  });
+  d.addEventListener("input", (e) => {
+    if (e.target.id == "prsr") PRS.s = +e.target.value;
+    else if (e.target.id == "prsn") {
+      const v = parseFloat(e.target.value);
+      if (!isNaN(v)) PRS.s = Math.max(10, Math.min(1000, v));
+    } else return;
+    refresh();
+  });
+  d.oncontextmenu = (e) => e.preventDefault();
+  addEventListener("keydown", key, true);
+  refresh();
+  try {
+    const r = await (AR ? regionSVG(AR, "#ffffff") : drawingSVG("#ffffff"));
+    if (gone) return;
+    url = URL.createObjectURL(new Blob([r.svg], { type: "image/svg+xml" }));
+    ready = 1;
+    const pb = q('[data-x="p"]');
+    pb.disabled = false;
+    pb.style.opacity = 1;
+    pb.focus();
+    refresh();
+  } catch (er) {
+    close();
+    toast("couldn’t prepare the print preview (" + ((er && er.message) || er) + ")");
+  }
+}
+async function doPrint(L, url) {
+  try {
+    const f = document.createElement("iframe"),
+      pages = [];
+    for (let i = 0; i < L.n; i++) pages.push(`<div class="pb">${prSheet(L, i, url, 1)}</div>`);
+    f.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0";
+    f.srcdoc = `<!doctype html><html><head><meta charset="utf-8"><title>${($("#title").value || "drawing").replace(/&/g, "&amp;").replace(/</g, "&lt;")}</title><style>@page{size:${PRS.p == "board" ? L.pw.toFixed(2) + "px " + L.ph.toFixed(2) + "px" : L.wmm.toFixed(2) + "mm " + L.hmm.toFixed(2) + "mm"};margin:0}html,body{margin:0;padding:0;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.pb{break-after:page;page-break-after:always}.pb:last-child{break-after:auto;page-break-after:auto}</style></head><body>${pages.join("")}</body></html>`;
+    f.onload = async () => {
+      try {
+        await Promise.all([...f.contentDocument.images].map((im) => im.decode().catch(() => {})));
+        await new Promise((r) => setTimeout(r, 150));
+        f.contentWindow.focus();
+        f.contentWindow.print();
+      } catch (e) {
+        toast("couldn’t open the print dialog");
+      }
+      setTimeout(() => {
+        f.remove();
+        URL.revokeObjectURL(url);
+      }, 120000);
+    };
+    document.body.appendChild(f);
+  } catch (e) {
+    toast("couldn’t print (" + ((e && e.message) || e) + ")");
+  }
+}
+$("#print").onclick = () => printMenu();
+addEventListener(
+  "keydown",
+  (e) => {
+    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() == "p") {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      printMenu();
+    }
+  },
+  true,
+);
 /* export */
 const _b64 = (b) =>
     new Promise((r) => {
@@ -13287,10 +15428,12 @@ async function drawingSVG(bg) {
   z = 1;
   ox = 0;
   oy = 0;
+  pfExp = 1; /* exports always use full blur quality */
   render();
   const cl = $("#sh").cloneNode(true);
   cl.querySelectorAll("[data-gh]").forEach((n) => n.remove());
   const g = new XMLSerializer().serializeToString(cl);
+  pfExp = 0;
   [z, ox, oy] = v;
   render();
   const W = +$("#pg").getAttribute("width"),
@@ -13414,7 +15557,7 @@ async function doExport(k) {
     } else if (k == "csvg") {
       await navigator.clipboard.writeText((await drawingSVG("")).svg);
       toast("copied svg code");
-    } else if (k == "print") print();
+    } else if (k == "print") printMenu();
     if (k != "cpng" && k != "csvg" && k != "print") toast("exported " + k);
   } catch (e) {
     toast("couldn’t export (" + ((e && e.message) || e) + ")");
@@ -14853,9 +16996,9 @@ function alignObjs(m) {
   const pg = g.length == 1,
     B = g.map((q) => [q, bb(q)]),
     X0 = pg ? 0 : Math.min(...B.map((b) => b[1][0])),
-    X1 = pg ? 960 : Math.max(...B.map((b) => b[1][2])),
+    X1 = pg ? PGW() : Math.max(...B.map((b) => b[1][2])),
     Y0 = pg ? 0 : Math.min(...B.map((b) => b[1][1])),
-    Y1 = pg ? 540 : Math.max(...B.map((b) => b[1][3]));
+    Y1 = pg ? PGH() : Math.max(...B.map((b) => b[1][3]));
   if (m[0] == "d") {
     if (g.length < 3) return toast("select three or more objects to distribute");
     const h = m == "dh",
@@ -14897,6 +17040,69 @@ function alignObjs(m) {
   });
   render();
 }
+/* ---- lasso / polygon select ---- */
+function lsPip(p, Q) {
+  let ins = false;
+  for (let i = 0, j = Q.length - 1; i < Q.length; j = i++)
+    if (Q[i][1] > p[1] != Q[j][1] > p[1] && p[0] < ((Q[j][0] - Q[i][0]) * (p[1] - Q[i][1])) / (Q[j][1] - Q[i][1]) + Q[i][0]) ins = !ins;
+  return ins;
+}
+function lsSeg(a, b, c, d) {
+  const cr = (p, q, r) => (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]);
+  return cr(a, b, c) * cr(a, b, d) < 0 && cr(c, d, a) * cr(c, d, b) < 0;
+}
+/* does the outline P (closed or an open polyline) touch the lasso polygon Q? */
+function lsTouch(P, closed, Q) {
+  if (P.some((p) => lsPip(p, Q))) return true;
+  const n = P.length;
+  for (let i = 0; i < (closed ? n : n - 1); i++)
+    for (let j = 0; j < Q.length; j++) if (lsSeg(P[i], P[(i + 1) % n], Q[j], Q[(j + 1) % Q.length])) return true;
+  return closed && lsPip(Q[0], P);
+}
+function lsDown(e, p) {
+  /* the existing selection is remembered either way; shift (held at the start, during, or at the end) decides whether the new one is added to it */
+  const cur = ms.length > 1 ? ms.slice() : sel != null ? [sel] : [];
+  if (tool == "lasso" && !psel) {
+    drag = { k: "lasso", pts: [[p.x, p.y]], base: cur, add: e.altKey, alt: e.shiftKey };
+    render();
+    return;
+  }
+  if (!psel) psel = { pts: [], base: cur, add: false, hov: null };
+  if (e.altKey) psel.add = true;
+  psel.alt = e.shiftKey;
+  const f = psel.pts[0];
+  if (f && psel.pts.length >= 3 && Math.hypot(p.x - f[0], p.y - f[1]) < 8 / z) {
+    lsDone(psel.pts, psel.base, e.shiftKey, psel.add);
+    return;
+  }
+  psel.pts.push([p.x, p.y]);
+  psel.hov = [p.x, p.y];
+  render();
+}
+function lsDone(pts, base, alt, add) {
+  psel = null;
+  if (!add) {
+    base = [];
+    ms = [];
+    sel = null;
+  }
+  if (pts.length >= 3) {
+    const touch = !!selTouch !== !!alt,
+      h = S.filter((q) => {
+        if (!selOK(q)) return false;
+        const P = shapePoly(q);
+        return touch ? lsTouch(P, !isL(q), pts) : P.every((v) => lsPip(v, pts));
+      }).map((q) => q.id),
+      u0 = [...new Set([...(base || []), ...h])],
+      gs = new Set(S.filter((q) => q.gid != null && u0.includes(q.id)).map((q) => q.gid)),
+      u = [...new Set([...u0, ...S.filter((q) => gs.has(q.gid) && selOK(q)).map((q) => q.id)])];
+    ms = [];
+    sel = null;
+    if (u.length == 1) sel = u[0];
+    else if (u.length > 1) ms = u;
+  }
+  render();
+}
 function selAll() {
   const A = S.filter(selOK);
   if (A.length > 1) {
@@ -14913,6 +17119,12 @@ function bb(s) {
       Math.max(s.x, s.x + s.w),
       Math.max(s.y, s.y + s.h),
     ];
+  if (xfAny(s)) {
+    const P = xfAbsPts(s, xfOutline(s, 10)),
+      X = P.map((p) => p[0]),
+      Y = P.map((p) => p[1]);
+    return [Math.min(...X), Math.min(...Y), Math.max(...X), Math.max(...Y)];
+  }
   const [cx, cy] = ctr(s),
     a = rad(s.r || 0),
     xs = [],
@@ -15684,7 +17896,7 @@ function applyCk() {
 applyCk();
 function setPageBg(v, ns) {
   if (!ns) snap();
-  PG = { bg: v || "" };
+  PG = { ...PG, bg: v || "" };
   fgen++;
   render();
 }
@@ -15929,6 +18141,7 @@ const MIC = {
   "font guides…": FI.fontG,
   "show guides": SNAPI.guides,
   "guides…": SNAPI.guides,
+  "advanced select": I.lasso,
   "measure tool": "%RULER%",
   "show measurements": FI.preview,
   "clear measurements":
@@ -15969,6 +18182,8 @@ const MIC = {
   "send to back": '<path d="M5 20h14M12 4v12M7.500 11.500L12 16l4.500-4.500"/>',
   "rotate 90°": '<path d="M20 12a8 8 0 11-3-6.200M20 4v4h-4"/>',
   "reset rotation": I.undo,
+  "skew, distort & warp…": I.xf,
+  "reset skew, distort & warp": I.undo,
   "move to layer": I.layers,
   "select all":
     '<rect x="3.500" y="3.500" width="17" height="17" stroke-dasharray="2.600 2.400"/><rect x="8" y="8" width="8" height="8"/>',
@@ -18066,6 +20281,11 @@ addEventListener(
     if (cmColorEvent(e)) return;
     if (t.closest("#cmenu, .fly")) {
       e.preventDefault();
+      return;
+    }
+    if (t.closest("#pgh")) {
+      e.preventDefault();
+      pgMenu(e.clientX, e.clientY);
       return;
     }
     if (t.closest("#cv")) {
