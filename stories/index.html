@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>gamedevrg stories</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Noto+Sans+JP:wght@500;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#1f2730;
+    --text:#fff;
+    --muted:rgba(255,255,255,.5);
+    --accent:#4a6cf7;
+    --hero-h:460px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--text);font-family:'Chakra Petch','Noto Sans JP',system-ui,sans-serif;min-height:100%}
+
+  /* ---------- top bar ---------- */
+  .topbar{position:absolute;top:0;left:0;right:0;z-index:10;padding:16px 26px;font-size:2.4rem;line-height:1;letter-spacing:.01em;text-shadow:0 2px 12px rgba(0,0,0,.35)}
+  .topbar b{font-weight:700}
+  .topbar span{font-weight:400;opacity:.8}
+  .topbar a{color:inherit;text-decoration:none}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;height:var(--hero-h);overflow:hidden}
+  .slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .9s ease,visibility 0s .9s}
+  .slide.active{opacity:1;visibility:visible;transition:opacity .9s ease}
+  .slide .bg{position:absolute;inset:0;background-color:#5d7587;background-size:cover;background-position:center}
+  .slide .bg::after{ /* darken + fade to page colour */
+    content:"";position:absolute;inset:0;
+    background:
+      linear-gradient(to bottom,rgba(31,39,48,0) 45%,var(--bg) 100%),
+      rgba(40,55,70,.55);
+  }
+  .slide .inner{position:relative;height:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);align-items:start;padding:112px 6vw 0 0}
+  .logo{justify-self:center;text-align:center;font-family:'Noto Sans JP',sans-serif;font-weight:900;line-height:1.02;text-shadow:0 3px 14px rgba(0,0,0,.35)}
+  .logo img{max-width:min(300px,100%);display:block;margin:0 auto}
+  .logo .l1{font-size:3.3rem;letter-spacing:.02em}
+  .logo .l2{font-size:5.3rem;letter-spacing:-.02em;margin:-.1em 0}
+  .logo .l3{font-size:2.3rem}
+  .logo .l4{font-size:.8rem;font-weight:500;margin-top:.3em}
+  .info{padding-top:2px}
+  .info .alt{font-size:1.05rem;font-weight:500;opacity:.9}
+  .info h1{font-size:2.45rem;font-weight:700;line-height:1.1;margin:.12em 0 .05em}
+  .info .year{font-size:1.5rem;font-weight:400;opacity:.85}
+  .info p{margin-top:1.1rem;font-size:.95rem;line-height:1.3;max-width:60ch;opacity:.95}
+  .actions{display:flex;align-items:center;gap:20px;margin-top:8px}
+  .open{font:inherit;font-size:.95rem;color:#fff;background:rgba(0,0,0,.25);border:2px solid #fff;padding:4px 20px;cursor:pointer;text-decoration:none;transition:background .15s,color .15s}
+  .open:hover,.open:focus-visible{background:#fff;color:var(--bg);outline:none}
+  .meta{font-size:.95rem;color:var(--muted)}
+
+  .dots{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);display:flex;gap:10px;z-index:5}
+  .dots button{width:34px;height:4px;border:0;background:rgba(255,255,255,.3);cursor:pointer;position:relative;overflow:hidden;padding:0}
+  .dots button.active::after{content:"";position:absolute;inset:0;background:#fff;transform-origin:left;animation:fill var(--dur,7s) linear forwards}
+  .hero.paused .dots button.active::after{animation-play-state:paused}
+  .dots button:focus-visible{outline:2px solid #fff;outline-offset:3px}
+  @keyframes fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+  /* ---------- rows ---------- */
+  main{padding:0 48px 80px}
+  .row{margin-top:30px}
+  .row h2{font-size:2rem;font-weight:600;border-left:3px solid var(--accent);padding-left:12px;line-height:1.1;margin-bottom:26px}
+  .cards{display:flex;gap:20px;flex-wrap:wrap;padding-left:10px}
+  .card{width:322px;aspect-ratio:322/180;background:#eee;border:2px solid #cfd6dd;cursor:pointer;position:relative;overflow:hidden;display:block;color:inherit;text-decoration:none}
+  .card img,.card .thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .card .label{position:absolute;left:0;right:0;bottom:0;padding:22px 10px 8px;font-size:.9rem;font-weight:600;background:linear-gradient(transparent,rgba(0,0,0,.75));opacity:0;transition:opacity .15s}
+  .card:hover .label,.card:focus-visible .label{opacity:1}
+  .card:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .empty{color:var(--muted);padding-left:10px}
+
+  @media (max-width:800px){
+    :root{--hero-h:560px}
+    .topbar{font-size:1.8rem;padding:14px 16px}
+    .slide .inner{grid-template-columns:1fr;padding:80px 20px 0;gap:14px}
+    .logo .l1{font-size:2rem}.logo .l2{font-size:3.2rem}.logo .l3{font-size:1.5rem}
+    .info h1{font-size:1.7rem}
+    main{padding:0 16px 60px}
+    .card{width:100%}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .slide,.slide.active{transition:none}
+    .dots button.active::after{animation:none;transform:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero" id="hero" aria-roledescription="carousel" aria-label="featured stories">
+  <div class="topbar"><a href="#"><b>gamedevrg</b> <span>stories</span></a></div>
+  <div id="slides"></div>
+  <div class="dots" id="dots"></div>
+</header>
+
+<main>
+  <section class="row">
+    <h2>recently added</h2>
+    <div class="cards" id="recent"></div>
+  </section>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+fetch('stories.json')
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(init)
+  .catch(e => {
+    $('recent').innerHTML = '<p class="empty">couldn\'t load stories.json (' + esc(e.message) + '). open this page from a web server, not file://</p>';
+  });
+
+function init(data){
+  const cfg = Object.assign({ rotateMs:7000, imageFolder:'images/', recentCount:12, storyPage:'story.html' }, data.settings);
+  const stories = data.stories || [];
+  const img = f => f ? cfg.imageFolder + f : '';
+  const link = s => cfg.storyPage + '?id=' + encodeURIComponent(s.id);
+
+  /* ---------- hero ---------- */
+  const featured = stories.filter(s => s.featured).slice(0,3);
+  const slidesEl = $('slides'), dotsEl = $('dots'), hero = $('hero');
+  hero.style.setProperty('--dur', cfg.rotateMs + 'ms');
+
+  const metaText = s => { const n = (s.parts||[]).length; return n > 1 ? `${s.type} - ${n} ${s.unit||'episode'}s` : s.type; };
+
+  featured.forEach((s,i) => {
+    const el = document.createElement('div');
+    el.className = 'slide';
+    el.setAttribute('role','group');
+    el.setAttribute('aria-label', `${i+1} of ${featured.length}`);
+    el.innerHTML = `
+      <div class="bg" style="background-image:url('${esc(img(s.bg))}')"></div>
+      <div class="inner">
+        <div class="logo">${s.logo ? `<img src="${esc(img(s.logo))}" alt="${esc(s.title)}">` : ''}</div>
+        <div class="info">
+          ${s.altTitle?`<div class="alt">${esc(s.altTitle)}</div>`:''}
+          <h1>${esc(s.title)}</h1>
+          <div class="year">${esc(s.year)}</div>
+          <p>${esc(s.description)}</p>
+          <div class="actions">
+            <a class="open" href="${esc(link(s))}">open</a>
+            <span class="meta">${esc(metaText(s))}</span>
+          </div>
+        </div>
+      </div>`;
+    el.querySelectorAll('.logo img').forEach(im => im.onerror = () => im.remove());
+    slidesEl.appendChild(el);
+
+    const dot = document.createElement('button');
+    dot.setAttribute('aria-label', `show ${s.title}`);
+    dot.addEventListener('click', () => { show(i); restart(); });
+    dotsEl.appendChild(dot);
+  });
+
+  let cur = -1, timer = null;
+  function show(i){
+    const sl = slidesEl.children, dt = dotsEl.children;
+    if (!sl.length) return;
+    cur = (i + sl.length) % sl.length;
+    [...sl].forEach((el,k) => el.classList.toggle('active', k === cur));
+    [...dt].forEach((el,k) => {
+      el.classList.remove('active');
+      if (k === cur){ void el.offsetWidth; el.classList.add('active'); }
+    });
+  }
+  function restart(){
+    clearInterval(timer);
+    if (featured.length > 1 && !hero.classList.contains('paused'))
+      timer = setInterval(() => show(cur + 1), cfg.rotateMs);
+  }
+  hero.addEventListener('mouseenter', () => { hero.classList.add('paused'); clearInterval(timer); });
+  hero.addEventListener('mouseleave', () => { hero.classList.remove('paused'); show(cur); restart(); });
+  document.addEventListener('visibilitychange', () => { document.hidden ? clearInterval(timer) : restart(); });
+  show(0); restart();
+
+  /* ---------- recently added ---------- */
+  const recent = [...stories].sort((a,b) => (b.added||'').localeCompare(a.added||'')).slice(0, cfg.recentCount);
+  const recentEl = $('recent');
+  if (!recent.length) recentEl.innerHTML = '<p class="empty">nothing here yet</p>';
+  recent.forEach(s => {
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = link(s);
+    a.setAttribute('aria-label', s.title);
+    a.innerHTML = s.card ? `<img src="${esc(img(s.card))}" alt="">` : '';
+    a.querySelectorAll('img').forEach(im => im.onerror = () => im.remove());
+    recentEl.appendChild(a);
+  });
+}
+</script>
+</body>
+</html>
