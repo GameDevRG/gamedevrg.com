@@ -7243,6 +7243,51 @@ function iar(s) {
   im.src = k;
   return 0;
 }
+/* google-drawings style crop frame: thin dark outline, black L-shaped corners and bars on the edges */
+function cropHandles(c, k) {
+  const hx = c.w / 2,
+    hy = c.h / 2,
+    L = 16 * k,
+    M = 14 * k,
+    sk = `fill="none" stroke="#000" stroke-width="${5 * k}"`,
+    hit = (x, y, a, b, cur) =>
+      `<circle cx="${x}" cy="${y}" r="${13 * k}" fill="transparent" pointer-events="all" data-ch="${a},${b}" style="cursor:${cur}"/>`;
+  let o = `<rect x="${-hx}" y="${-hy}" width="${c.w}" height="${c.h}" fill="none" stroke="#000" stroke-opacity=".7" stroke-width="${k}"/>`;
+  [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([a, b]) => {
+    o += `<path d="M${a * hx} ${b * (hy - L)}V${b * hy}H${a * (hx - L)}" ${sk}/>` + hit(a * hx, b * hy, a, b, a * b > 0 ? "nwse-resize" : "nesw-resize");
+  });
+  [[-1, 0], [1, 0], [0, -1], [0, 1]].forEach(([a, b]) => {
+    o += `<path d="M${a * hx + b * M} ${b * hy + a * M}L${a * hx - b * M} ${b * hy - a * M}" ${sk}/>` + hit(a * hx, b * hy, a, b, a ? "ew-resize" : "ns-resize");
+  });
+  return o;
+}
+function cropBox(d, p) {
+  const s = d.s,
+    o = d.o,
+    q = R(p.x - d.p0.x, p.y - d.p0.y, -rad(s.r)),
+    [cw, ch] = imCov({ ...s, w: o.w, h: o.h, iz: o.iz }),
+    cl = (v, a, b) => Math.max(a, Math.min(b, v));
+  let L = -o.w / 2,
+    Rr = o.w / 2,
+    T = -o.h / 2,
+    B = o.h / 2;
+  if (d.a < 0) L = cl(L + q[0], o.ix - cw / 2, Rr - 20);
+  if (d.a > 0) Rr = cl(Rr + q[0], L + 20, o.ix + cw / 2);
+  if (d.b < 0) T = cl(T + q[1], o.iy - ch / 2, B - 20);
+  if (d.b > 0) B = cl(B + q[1], T + 20, o.iy + ch / 2);
+  const w = Rr - L,
+    h = B - T,
+    off = [(L + Rr) / 2, (T + B) / 2],
+    cc = R(off[0], off[1], rad(s.r)),
+    a = iar(s) || cw / ch;
+  s.w = w;
+  s.h = h;
+  s.x = o.x + o.w / 2 + cc[0] - w / 2;
+  s.y = o.y + o.h / 2 + cc[1] - h / 2;
+  s.ix = o.ix - off[0];
+  s.iy = o.iy - off[1];
+  s.iz = cw / Math.max(w, h * a);
+}
 function imCov(s) {
   const iz = s.iz || 1,
     W = s.w * iz,
@@ -8025,7 +8070,7 @@ function updHint() {
     b = [];
   } else if (cropId && s) {
     t =
-      "drag the picture to reposition it inside the frame. scroll to zoom it. press enter or done to finish.";
+      "drag the black handles to crop · drag the picture to reposition it · scroll to zoom · press enter or done to finish.";
     b = [["cdone", "done"]];
   } else if (s && s.t == "img") {
     t =
@@ -8657,7 +8702,7 @@ function overlay() {
     if (c) {
       const [cx, cy] = ctr(c),
         iz = c.iz || 1;
-      o += `<g pointer-events="none" transform="translate(${cx} ${cy}) rotate(${c.r})"><image href="${c.src}" opacity=".35" x="${(-c.w * iz) / 2 + (c.ix || 0)}" y="${(-c.h * iz) / 2 + (c.iy || 0)}" width="${c.w * iz}" height="${c.h * iz}" preserveAspectRatio="xMidYMid slice"/><rect x="${-c.w / 2}" y="${-c.h / 2}" width="${c.w}" height="${c.h}" fill="none" stroke="#3b82f6" stroke-width="${2 * k}"/></g>`;
+      o += `<g pointer-events="none" transform="translate(${cx} ${cy}) rotate(${c.r})"><image href="${c.src}" opacity=".35" x="${(-c.w * iz) / 2 + (c.ix || 0)}" y="${(-c.h * iz) / 2 + (c.iy || 0)}" width="${c.w * iz}" height="${c.h * iz}" preserveAspectRatio="xMidYMid slice"/>${cropHandles(c, k)}</g>`;
     }
   }
   if (drag && drag.k == "box" && drag.p1) {
@@ -9486,6 +9531,7 @@ function ovl() {
   const s = get();
   if (!s) return ms.length > 1 ? msOv() : "";
   if (editP == s.id && s.t == "path") return editOv(s);
+  if (cropId && s.id == cropId) return "";
   if (!isL(s) && editing != s.id && (XM != "scale" || xfAny(s))) return xfOvl(s);
   const k = 1 / z,
     hs = 8 * k,
@@ -10031,7 +10077,27 @@ svg.addEventListener("pointerdown", (e) => {
   if (editing && mh) e.preventDefault();
   const p = pt(e),
     h = e.target.dataset.h,
-    id = e.target.closest("[data-id]")?.dataset.id;
+    id = e.target.closest("[data-id]")?.dataset.id,
+    cp = e.target.dataset?.cp;
+  if (cp) {
+    e.preventDefault();
+    e.stopPropagation();
+    const c = get();
+    if (c && c.chart) {
+      if (cp == "edit") chEdit(c);
+      else
+        pe(e.target, '<div class="it" data-i="edit">edit chart…</div><div class="it" data-i="del">delete chart</div>', (a) => {
+          if (a == "edit") chEdit(c);
+          else {
+            snap();
+            S.splice(S.indexOf(c), 1);
+            sel = null;
+            render();
+          }
+        });
+    }
+    return;
+  }
   if (drag && e.pointerType == "touch") dragAbort(); /* a stale drag from a touch that never ended */
   dragPid = e.pointerId;
   try {
@@ -10052,7 +10118,13 @@ svg.addEventListener("pointerdown", (e) => {
     return;
   }
   if (cropId) {
-    const c = S.find((x) => x.id == cropId);
+    const c = S.find((x) => x.id == cropId),
+      ch = e.target.dataset?.ch;
+    if (c && ch) {
+      const [a, b] = ch.split(",").map(Number);
+      drag = { k: "cbox", s: c, a, b, p0: p, o: { x: c.x, y: c.y, w: c.w, h: c.h, ix: c.ix || 0, iy: c.iy || 0, iz: c.iz || 1 }, before };
+      return;
+    }
     if (c && (+id == cropId || inImg(c, p))) {
       drag = { k: "crop", s: c, p0: p, ix: c.ix || 0, iy: c.iy || 0, before };
       return;
@@ -10435,6 +10507,8 @@ svg.addEventListener("pointermove", (e) => {
   } else if (d.k == "pan") {
     ox = d.ox + e.clientX - d.sx;
     oy = d.oy + e.clientY - d.sy;
+  } else if (d.k == "cbox") {
+    cropBox(d, p);
   } else if (d.k == "crop") {
     const q = R(p.x - d.p0.x, p.y - d.p0.y, -rad(s.r)),
       [lx, ly] = cropLim(s);
@@ -12204,8 +12278,8 @@ const tableFly = {
     let hc = 1,
       hr = 1;
     const draw = () => {
-      const C = Math.min(20, Math.max(6, hc + 2)),
-        R = Math.min(20, Math.max(6, hr + 2));
+      const C = Math.min(20, Math.max(6, hc + 1)),
+        R = Math.min(20, Math.max(6, hr + 1));
       let h = "";
       for (let r = 1; r <= R; r++)
         for (let c = 1; c <= C; c++)
@@ -12457,74 +12531,366 @@ const CHA = { x: 240, y: 130, w: 480, h: 290 },
   CHC = ["#4285f4", "#ea4335", "#fbbc04", "#34a853", "#ab47bc"],
   CHV = [40, 65, 50, 85, 60],
   CHX = { fill: "", stroke: "#9aa0a6", sw: 1 };
-function insChart(k) {
-  insGroup(() => {
-    const n = CHV.length;
-    if (k == "pie") {
-      let a0 = -Math.PI / 2;
-      [35, 25, 20, 20].forEach((v, j) => {
-        const a1 = a0 + (v / 100) * 2 * Math.PI,
-          m = Math.max(2, Math.ceil((a1 - a0) / 0.1)),
-          P = [{ a: [480, 275], i: null, o: null, sm: 0 }];
-        for (let q = 0; q <= m; q++) {
-          const a = a0 + ((a1 - a0) * q) / m;
-          P.push({
-            a: [480 + 140 * Math.cos(a), 275 + 140 * Math.sin(a)],
-            i: null,
-            o: null,
-            sm: 0,
-          });
-        }
-        const s = mk("path", { x: 0, y: 0 });
-        setP2(s, P);
-        s.closed = true;
-        s.fill = CHC[j];
-        s.stroke = "#ffffff";
-        s.sw = 2;
-        S.push(s);
-        a0 = a1;
-      });
-      return;
+/* charts pulled from the selected table: pick a data range like in Google Sheets' chart editor */
+const CHP = ["#5b93b0", "#024662", "#ff6f31", "#1f7585", "#8cb7cc", "#f2a65a"],
+  colN = (n) => {
+    let s = "";
+    for (n++; n > 0; n = Math.floor((n - 1) / 26)) s = String.fromCharCode(65 + ((n - 1) % 26)) + s;
+    return s;
+  },
+  colI = (l) => l.split("").reduce((a, c) => a * 26 + c.charCodeAt(0) - 64, 0) - 1,
+  isNum = (v) => v !== "" && isFinite(parseFloat(String(v).replace(/,/g, ""))),
+  nv = (v) => (isNum(v) ? parseFloat(String(v).replace(/,/g, "")) : 0);
+function chRange(t, C, R) {
+  const m = /^\s*([a-z]+)(\d+)\s*(?::\s*([a-z]+)(\d+))?\s*$/i.exec(t);
+  if (!m) return null;
+  const a = [colI(m[1].toUpperCase()), +m[2] - 1],
+    b = m[3] ? [colI(m[3].toUpperCase()), +m[4] - 1] : a,
+    g = {
+      c0: Math.min(a[0], b[0]),
+      r0: Math.min(a[1], b[1]),
+      c1: Math.min(C - 1, Math.max(a[0], b[0])),
+      r1: Math.min(R - 1, Math.max(a[1], b[1])),
+    };
+  return g.c0 < 0 || g.r0 < 0 || g.c0 > g.c1 || g.r0 > g.r1 ? null : g;
+}
+function chData(s, g, sw, hd, lb) {
+  const C = s.cols.length,
+    A = [];
+  for (let r = g.r0; r <= g.r1; r++) {
+    const row = [];
+    for (let c = g.c0; c <= g.c1; c++) row.push(s.cells[r * C + c] || "");
+    A.push(row);
+  }
+  const G = sw ? A[0].map((_, i) => A.map((r) => r[i])) : A,
+    o = lb ? 1 : 0,
+    body = hd ? G.slice(1) : G,
+    n = G[0].length - o;
+  if (n < 1 || !body.length) return null;
+  return {
+    names: Array.from({ length: n }, (_, j) => (hd && G[0][j + o]) || "Series " + (j + 1)),
+    labels: body.map((r, i) => (lb ? r[0] : String(i + 1))),
+    ser: Array.from({ length: n }, (_, j) => body.map((r) => nv(r[j + o]))),
+  };
+}
+/* a chart is drawn as one SVG picture and inserted as an image object */
+const CHD = { bg: "#ffffff", ff: "Arial", tc: "#222222", fs: 14, title: "Chart title", ts: 28, tcol: "#757575", hT: "", vT: "", cols: [], lg: "top", hShow: 1, vShow: 1, vMax: "", grid: 1, gc: "#cccccc", gn: 4, lw: 2.5 };
+function chDraw(k, d, P) {
+  const E = [],
+    xe = (x) => String(x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"),
+    mk = () => ({}),
+    setP2 = (s, Q) => (s.Q = Q),
+    S = {
+      push: (s) =>
+        E.push(
+          `<path d="M${s.Q.map((q) => q.a[0].toFixed(2) + " " + q.a[1].toFixed(2)).join("L")}${s.closed ? "Z" : ""}" fill="${s.fill || "none"}" stroke="${s.stroke}" stroke-width="${s.sw}" stroke-linejoin="round" stroke-linecap="round"/>`,
+        ),
+    },
+    mkS = (t, x, y, w, h, o) => {
+      if (t == "rect") E.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${o.fill}"/>`);
+      else if (t == "line")
+        E.push(`<line x1="${x}" y1="${y}" x2="${x + w}" y2="${y + h}" stroke="${o.stroke}" stroke-width="${o.sw}"/>`);
+      else {
+        const al = o.align == "right" ? [x + w, "end"] : o.align == "center" ? [x + w / 2, "middle"] : [x, "start"];
+        E.push(
+          `<text x="${al[0]}" y="${y + h / 2}" text-anchor="${al[1]}" dominant-baseline="central" fill="${o.color}" font-size="${o.fs}" font-family="${xe(o.ff)}, Arial, sans-serif"${o.r ? ` transform="rotate(${o.r} ${x + w / 2} ${y + h / 2})"` : ""}>${xe(o.text)}</text>`,
+        );
+      }
+    };
+  const W = 620,
+    H = 380,
+    ox = 0,
+    oy = 0,
+    n = d.labels.length,
+    m = d.ser.length,
+    T = (x, y, w, h, text, o) =>
+      mkS("text", x, y, w, h, { text, ff: P.ff, valign: "middle", color: P.tc, fs: P.fs, ...o }),
+    G = { fill: "", stroke: P.gc, sw: 1 },
+    CP = (j) => P.cols[j] || CHP[j % CHP.length];
+  mkS("rect", ox, oy, W, H, { fill: P.bg, sw: 0 });
+  T(ox + 24, oy + 14, W - 48, 44, P.title, { fs: P.ts, color: P.tcol, align: "left" });
+  if (k == "pie") {
+    const v = d.ser[0],
+      tot = v.reduce((a, b) => a + b, 0) || 1,
+      cx = ox + W / 2,
+      cy = oy + 70 + (H - 80) / 2,
+      R = Math.min(W / 2 - 130, (H - 100) / 2);
+    let a0 = -Math.PI / 2;
+    v.forEach((x, j) => {
+      const a1 = a0 + (x / tot) * 2 * Math.PI,
+        q = Math.max(2, Math.ceil((a1 - a0) / 0.1)),
+        P = [{ a: [cx, cy], i: null, o: null, sm: 0 }];
+      for (let i = 0; i <= q; i++) {
+        const a = a0 + ((a1 - a0) * i) / q;
+        P.push({ a: [cx + R * Math.cos(a), cy + R * Math.sin(a)], i: null, o: null, sm: 0 });
+      }
+      const s = mk("path", { x: 0, y: 0 });
+      setP2(s, P);
+      s.closed = true;
+      s.fill = CP(j);
+      s.stroke = "#ffffff";
+      s.sw = 1;
+      S.push(s);
+      const am = (a0 + a1) / 2,
+        c = Math.cos(am),
+        lx = cx + (R + 12) * c,
+        ly = cy + (R + 12) * Math.sin(am),
+        al = c >= 0 ? "left" : "right",
+        bx = c >= 0 ? lx : lx - 120;
+      T(bx, ly - 20, 120, 22, d.labels[j], { fs: 16, align: al });
+      T(bx, ly, 120, 20, ((x / tot) * 100).toFixed(1) + "%", { fs: 15, color: "#9e9e9e", align: al });
+      a0 = a1;
+    });
+    return E.join("");
+  }
+  const hz = k == "bar",
+    mx = Math.max(1, ...d.ser.flat()),
+    raw = (+P.vMax || mx) / P.gn,
+    mag = Math.pow(10, Math.floor(Math.log10(raw))),
+    st = [1, 2, 2.5, 5, 10].map((f) => f * mag).find((f) => f >= raw),
+    top = +P.vMax || Math.ceil(mx / st) * st,
+    ticks = Array.from({ length: Math.floor(top / st + 1e-9) + 1 }, (_, i) => i * st),
+    lw = (hz ? Math.min(130, Math.max(...d.labels.map((l) => l.length * 8.5 + 14), 30)) : 44) + (P.vT ? 24 : 0),
+    lg = m > 1 && P.lg != "none",
+    lb = lg && P.lg == "bottom",
+    lgy = lb ? oy + H - 32 : oy + 74,
+    px = ox + 24 + lw,
+    py = oy + (lg && !lb ? 104 : 74),
+    pw = W - 24 - lw - 30,
+    ph = H - (py - oy) - (hz ? 40 : 44) - (lb ? 30 : 0) - (P.hT ? 24 : 0),
+    fmt = (x) => String(+x.toFixed(2));
+  if (lg) {
+    const ws = d.names.map((t) => 36 + t.length * 8 + 22),
+      tw = ws.reduce((a, b) => a + b, 0) - 22;
+    let x = ox + W / 2 - tw / 2;
+    d.names.forEach((t, j) => {
+      if (k == "line") mkS("line", x, lgy + 8, 18, 0, { fill: "", stroke: CP(j), sw: 4 });
+      else mkS("rect", x, lgy, 16, 16, { fill: CP(j), sw: 0 });
+      T(x + 26, lgy - 4, t.length * 8 + 20, 24, t, { align: "left" });
+      x += ws[j];
+    });
+  }
+  ticks.forEach((t) => {
+    if (hz) {
+      const x = px + (t / top) * pw;
+      if (t && P.grid) mkS("line", x, py, 0, ph, G);
+      if (P.hShow) T(x - 30, py + ph + 6, 60, 22, fmt(t), { align: "center" });
+    } else {
+      const y = py + ph - (t / top) * ph;
+      if (t && P.grid) mkS("line", px, y, pw, 0, G);
+      if (P.vShow) T(px - 56, y - 11, 48, 22, fmt(t), { align: "right" });
     }
-    mkS("line", CHA.x, CHA.y, 0, CHA.h, CHX);
-    mkS("line", CHA.x, CHA.y + CHA.h, CHA.w, 0, CHX);
-    if (k == "column")
-      CHV.forEach((v, i) => {
-        const bw = CHA.w / n,
-          h = (v / 100) * CHA.h * 0.92;
-        mkS("rect", CHA.x + i * bw + bw * 0.18, CHA.y + CHA.h - h, bw * 0.64, h, {
-          fill: CHC[0],
-          sw: 0,
-        });
-      });
-    else if (k == "bar")
-      CHV.forEach((v, i) => {
-        const bh = CHA.h / n;
-        mkS("rect", CHA.x, CHA.y + i * bh + bh * 0.18, (v / 100) * CHA.w * 0.92, bh * 0.64, {
-          fill: CHC[0],
-          sw: 0,
-        });
-      });
-    else {
-      const pts = CHV.map((v, i) => [
-          CHA.x + ((i + 0.5) * CHA.w) / n,
-          CHA.y + CHA.h - (v / 100) * CHA.h * 0.92,
-        ]),
-        s = mk("path", { x: 0, y: 0 });
+  });
+  const gs = (hz ? ph : pw) / n;
+  d.labels.forEach((l, i) => {
+    if (hz) P.vShow && T(ox + 24 + (P.vT ? 24 : 0), py + i * gs + gs / 2 - 11, lw - 8 - (P.vT ? 24 : 0), 22, l, { align: "right" });
+    else P.hShow && T(px + i * gs, py + ph + 8, gs, 22, l, { align: "center" });
+  });
+  if (k == "line")
+    d.ser.forEach((v, j) => {
+      const s = mk("path", { x: 0, y: 0 });
       setP2(
         s,
-        pts.map((a) => ({ a, i: null, o: null, sm: 0 })),
+        v.map((x, i) => ({
+          a: [px + (i + 0.5) * gs, py + ph - (x / top) * ph],
+          i: null,
+          o: null,
+          sm: 0,
+        })),
       );
       s.closed = false;
       s.fill = "";
-      s.stroke = CHC[0];
-      s.sw = 3;
+      s.stroke = CP(j);
+      s.sw = P.lw;
       s.lj = "round";
       s.lc = "round";
       S.push(s);
-      pts.forEach(([x, y]) => mkS("ell", x - 6, y - 6, 12, 12, { fill: CHC[0], sw: 0 }));
+    });
+  else {
+    const bw = (gs * 0.72) / m;
+    d.ser.forEach((v, j) =>
+      v.forEach((x, i) => {
+        const o = i * gs + gs * 0.14 + j * bw,
+          l = Math.min(1, x / top) * (hz ? pw : ph);
+        if (hz) mkS("rect", px, py + o, l, bw - 2, { fill: CP(j), sw: 0 });
+        else mkS("rect", px + o, py + ph - l, bw - 2, l, { fill: CP(j), sw: 0 });
+      }),
+    );
+  }
+  if (P.hT) T(px, oy + H - 30, pw, 22, P.hT, { align: "center" });
+  if (P.vT) T(ox + 35 - ph / 2, py + ph / 2 - 11, ph, 22, P.vT, { align: "center", r: -90 });
+  if (hz) mkS("line", px, py, 0, ph, { fill: "", stroke: "#000000", sw: 1 });
+  else mkS("line", px, py + ph, pw, 0, { fill: "", stroke: "#000000", sw: 1 });
+  return E.join("");
+}
+function chSrc(k, d, P) {
+  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="620" height="380" viewBox="0 0 620 380">${chDraw(k, d, P)}</svg>`);
+}
+/* a chart is a picture that remembers its table snapshot and settings, so the chart button can reopen the editor */
+function chImg(k, d, P, meta, ed) {
+  snap();
+  if (ed) {
+    ed.src = chSrc(k, d, P);
+    ed.chart = meta;
+    render();
+    return;
+  }
+  const W = 620,
+    H = 380,
+    s = {
+      id: nid++,
+      t: "img",
+      x: PGW() / 2 - W / 2,
+      y: PGH() / 2 - H / 2,
+      w: W,
+      h: H,
+      r: 0,
+      lyr: openL(),
+      ...D,
+      text: "",
+      src: chSrc(k, d, P),
+      ar: W / H,
+      fill: "",
+      sw: 0,
+      chart: meta,
+    };
+  S.push(s);
+  sel = s.id;
+  ms = [];
+  tool = "select";
+  render();
+}
+function chEdit(s) {
+  const m = s.chart;
+  chartDlg(m.k, { cols: Array(m.C).fill(0), rows: Array(m.R).fill(0), cells: m.cells }, s);
+}
+/* the floating "chart" button on a selected chart, like Google's linked chart pill */
+function chPill(s) {
+  const k = 1 / z,
+    Wp = 150 * k,
+    Hp = 34 * k,
+    x = s.w / 2 - 8 * k - Wp,
+    y = -s.h / 2 + 8 * k,
+    [cx, cy] = ctr(s),
+    hit = (a, w, id) => `<rect x="${x + a * k}" y="${y}" width="${w * k}" height="${Hp}" fill="transparent" pointer-events="all" data-cp="${id}"/>`,
+    my = y + Hp / 2;
+  return `<g transform="translate(${cx} ${cy}) rotate(${s.r || 0})" style="cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))"><rect x="${x}" y="${y}" width="${Wp}" height="${Hp}" rx="${Hp / 2}" fill="#fff" pointer-events="none"/><text x="${x + 16 * k}" y="${my}" dominant-baseline="central" font-family="Roboto, Arial, sans-serif" font-weight="700" font-size="${14 * k}" fill="#202124" pointer-events="none">Chart</text>${[-5, 0, 5].map((o) => `<circle cx="${x + 84 * k}" cy="${my + o * k}" r="${1.6 * k}" fill="#5f6368" pointer-events="none"/>`).join("")}<line x1="${x + 106 * k}" y1="${my - 9 * k}" x2="${x + 106 * k}" y2="${my + 9 * k}" stroke="#dadce0" stroke-width="${k}" pointer-events="none"/><path d="M${x + 123 * k} ${my + 7 * k}l${1 * k} ${-4.500 * k}l${8 * k} ${-8 * k}l${3.500 * k} ${3.500 * k}l${-8 * k} ${8 * k}z" fill="none" stroke="#5f6368" stroke-width="${1.6 * k}" stroke-linejoin="round" pointer-events="none"/>${hit(0, 70, "edit")}${hit(70, 36, "menu")}${hit(106, 44, "edit")}</g>`;
+}
+const ovl0 = ovl;
+ovl = function () {
+  const s = get();
+  return ovl0() + (s && s.t == "img" && s.chart && !cropId && ms.length < 2 && !drag ? chPill(s) : "");
+};
+function chartDlg(k, s, ed) {
+  const C = s.cols.length,
+    R = s.rows.length,
+    full = "A1:" + colN(C - 1) + R,
+    cell = (r, c) => s.cells[r * C + c] || "",
+    hd0 = C > 1 && R > 1 && !Array.from({ length: C - 1 }, (_, c) => cell(0, c + 1)).some(isNum),
+    lb0 = R > 1 && !Array.from({ length: R - 1 }, (_, r) => cell(r + 1, 0)).some(isNum),
+    ip = "width:100%;box-sizing:border-box;padding:8px;border:1px solid var(--bd);border-radius:6px;background:none;color:var(--tx);font:inherit",
+    ti = (id, v) => `<input id="${id}" type="text" value="${String(v).replace(/"/g, "&quot;")}" style="${ip};width:150px">`,
+    nu = (id, v, a, b) => `<input id="${id}" type="number" value="${v}" min="${a}" max="${b}" style="width:70px">`,
+    co = (id, v) => `<input id="${id}" type="color" value="${v}">`,
+    ck = (id, on) => `<input id="${id}" type="checkbox"${on ? " checked" : ""}>`,
+    r = (l, i) => `<label class="chr"><span>${l}</span>${i}</label>`,
+    sec = (t, b) =>
+      `<div class="chs"><div class="chh"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>${t}</div><div class="chb">${b}</div></div>`,
+    sc = [];
+  if (!$("#chcss")) {
+    const e = document.createElement("style");
+    e.id = "chcss";
+    e.textContent = `#cdlg .card.ced{padding:0;overflow:auto;max-height:90vh}.ced .chh0{display:flex;align-items:center;gap:12px;padding:14px 18px;font:400 18px var(--uif),Roboto,Arial}.ced .chh0 #cx{margin-left:auto;border:0;padding:4px 8px;font-size:20px}.ced .cht{display:flex;border-bottom:1px solid var(--bd);padding:0 8px}.ced .cht span{flex:1;text-align:center;padding:10px 0 11px;cursor:pointer;font:500 14px var(--uif),Roboto,Arial;border-bottom:3px solid transparent;border-radius:16px 16px 0 0}.ced .cht span.on{color:#0b6a3b;background:#e6f4ea;border-bottom-color:#0b6a3b}.ced .chs{border-bottom:1px solid var(--bd)}.ced .chh{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;font:500 14px var(--uif),Roboto,Arial}.ced .chh svg{transition:transform .15s;opacity:.6}.ced .chs.open .chh svg{transform:rotate(90deg)}.ced .chb{display:none;padding:2px 18px 14px}.ced .chs.open .chb{display:block}.ced .chr{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0;font-size:14px}.ced .pad{padding:14px 18px 0}`;
+    document.head.appendChild(e);
+  }
+  const [o, q] = mkDlg(
+    360,
+    `<div class="chh0"><svg viewBox="0 0 24 24" width="26" height="26"><rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="#0f9d58" stroke-width="2"/><path d="M8 17v-5M12 17V7M16 17v-3" stroke="#0f9d58" stroke-width="2"/></svg>chart editor<button id="cx">×</button></div><div class="cht"><span class="on" data-t="ps">Setup</span><span data-t="pc">Customize</span></div><div id="ps" class="pad"><div class="cph">chart type</div><select id="ck" style="width:100%;margin-bottom:12px"><option value="bar">bar chart<option value="column">column chart<option value="line">line chart<option value="pie">pie chart</select><div class="cph">data range</div><input id="cr" type="text" spellcheck="false" style="${ip};margin-bottom:6px"><div id="ce" class="cph" style="color:#d93025;min-height:16px"></div>${r("switch rows / columns", ck("cs"))}${r("use row 1 as headers", ck("ch", hd0))}${r("use column A as labels", ck("cl", lb0))}</div><div id="pc" hidden>${sec("Chart style", r("background color", co("pbg", "#ffffff")) + r("font", `<select id="pff"><option>Arial<option>Roboto<option>Georgia<option>Times New Roman<option>Courier New</select>`) + r("font size", nu("pfs", 14, 8, 28)) + r("text color", co("ptc", "#222222")))}${sec("Chart &amp; axis titles", r("chart title", ti("pt", hd0 && C > 1 ? cell(0, 1) : "chart")) + r("title size", nu("pts", 28, 12, 48)) + r("title color", co("ptcol", "#757575")) + r("horizontal axis", ti("pht", "")) + r("vertical axis", ti("pvt", "")))}${sec("Series", '<div id="psr"></div>' + r("line thickness", nu("plw", 2.5, 1, 8)))}${sec("Legend", r("position", `<select id="plg"><option value="top">top<option value="bottom">bottom<option value="none">none</select>`))}${sec("Horizontal axis", r("show labels", ck("phs", 1)))}${sec("Vertical axis", r("show labels", ck("pvs", 1)) + r("max value", nu("pvm", "", 1, 1e9)))}${sec("Gridlines and ticks", r("show gridlines", ck("pgr", 1)) + r("color", co("pgc", "#cccccc")) + r("count", nu("pgn", 4, 2, 10)))}</div><div class="row" style="padding:0 18px 18px"><button id="ok" class="pri">insert</button></div>`,
+  );
+  o.firstChild.classList.add("ced");
+  q("#ck").value = k;
+  q("#cr").value = full;
+  if (ed) {
+    const m = ed.chart,
+      P0 = m.P;
+    q("#cr").value = m.rg;
+    q("#cs").checked = m.sw;
+    q("#ch").checked = m.hd;
+    q("#cl").checked = m.lb;
+    Object.entries({ pbg: "bg", pff: "ff", ptc: "tc", pfs: "fs", pt: "title", pts: "ts", ptcol: "tcol", pht: "hT", pvt: "vT", plg: "lg", pvm: "vMax", pgc: "gc", pgn: "gn", plw: "lw" }).forEach(([i, key]) => (q("#" + i).value = P0[key]));
+    q("#phs").checked = !!P0.hShow;
+    q("#pvs").checked = !!P0.vShow;
+    q("#pgr").checked = !!P0.grid;
+    (m.sc || []).forEach((c, i) => c && (sc[i] = c));
+    q("#ok").textContent = "update";
+  }
+  const v = (x) => q(x).value,
+    cur = () => {
+      const g = chRange(v("#cr"), C, R);
+      return g && chData(s, g, q("#cs").checked, q("#ch").checked, q("#cl").checked);
+    },
+    rs = () => {
+      const d = cur();
+      q("#psr").innerHTML = d
+        ? d.names.map((n, j) => r(n, co("sc" + j, sc[j] || CHP[j % CHP.length]))).join("")
+        : '<div class="cph">set a valid data range first</div>';
+    };
+  q("#psr").oninput = (e) => (sc[+e.target.id.slice(2)] = e.target.value);
+  o.querySelector(".cht").onclick = (e) => {
+    const t = e.target.dataset.t;
+    if (!t) return;
+    o.querySelectorAll(".cht span").forEach((b) => b.classList.toggle("on", b == e.target));
+    q("#ps").hidden = t != "ps";
+    q("#pc").hidden = t != "pc";
+    if (t == "pc") rs();
+  };
+  q("#pc").onclick = (e) => {
+    const h = e.target.closest(".chh");
+    if (h) {
+      h.parentNode.classList.toggle("open");
+      rs();
     }
-  });
+  };
+  q("#ok").onclick = () => {
+    const d = cur();
+    if (!d) {
+      q("#ps").hidden = false;
+      q("#pc").hidden = true;
+      return (q("#ce").textContent = "that range has no data to chart, try something like " + full);
+    }
+    const P = {
+      bg: v("#pbg"),
+      ff: v("#pff"),
+      tc: v("#ptc"),
+      fs: +v("#pfs") || 14,
+      title: v("#pt"),
+      ts: +v("#pts") || 28,
+      tcol: v("#ptcol"),
+      hT: v("#pht"),
+      vT: v("#pvt"),
+      cols: sc.slice(),
+      lg: v("#plg"),
+      hShow: q("#phs").checked,
+      vShow: q("#pvs").checked,
+      vMax: v("#pvm"),
+      grid: q("#pgr").checked,
+      gc: v("#pgc"),
+      gn: Math.max(2, Math.min(10, +v("#pgn") || 4)),
+      lw: +v("#plw") || 2.5,
+    };
+    const m = { k: v("#ck"), C, R, cells: s.cells.slice(), rg: v("#cr"), sw: q("#cs").checked, hd: q("#ch").checked, lb: q("#cl").checked, P, sc: sc.slice() };
+    o.remove();
+    chImg(m.k, d, P, m, ed);
+  };
+}
+function insChart(k) {
+  const s = get();
+  if (s && s.t == "table") chartDlg(k, s);
+  else {
+    const cells = ["", "Period 1", "Period 2", "Team 1", "24", "89", "Team 2", "36", "24", "Team 3", "12", "37", "Team 4", "38", "63"],
+      P = { ...CHD, title: "Points scored" };
+    chImg(k, chData({ cols: [0, 0, 0], rows: Array(5).fill(0), cells }, chRange("A1:C5", 3, 5), false, true, true), P, { k, C: 3, R: 5, cells, rg: "A1:C5", sw: false, hd: true, lb: true, P, sc: [] });
+  }
 }
 const DGB = { fill: "#d3e3fd", stroke: "#4285f4", sw: 1, fs: 16, text: "Text" };
 function insDiagram(k) {
@@ -13164,7 +13530,7 @@ const MAN = [
     "insert",
     "images, tables, charts & diagrams",
     () =>
-      `<h4>images</h4><ul><li><b>insert &gt; image &gt; upload from computer…</b> (or the image tool): choose one or more images. <b>SVG file…</b> loads an SVG; <b>from SVG code…</b> opens a box to paste SVG markup.</li><li>You can also paste an image from your clipboard.</li><li><b>Crop:</b> select an image and use arrange &gt; crop image (or double-click). Drag the crop handles, press ${kb("Enter")} when done.</li><li><b>Mask:</b> arrange &gt; mask image… clips an image to a shape: rectangle, rounded rectangle, ellipse, triangle, diamond, star, arrow, any closed path you drew (listed as "custom shape"), or remove mask.</li><li>Images can also use background blur, blending and layer effects.</li></ul><h4>tables</h4><ul><li>insert &gt; table opens a grid; drag over it to choose the size. Click a cell to edit it.</li><li>Add or delete rows and columns with format &gt; format options (<i>add row below</i>, <i>add column right</i>, <i>delete row</i>, <i>delete column</i>).</li></ul><h4>charts</h4><ul><li>insert &gt; chart: <b>bar</b>, <b>column</b>, <b>line</b> or <b>pie</b>. Charts are drawn as editable vector objects. "from sheets" isn't connected in this app.</li></ul><h4>diagrams</h4><ul><li>insert &gt; diagram: <b>grid</b>, <b>hierarchy</b>, <b>timeline</b>, <b>process</b>, <b>relationship</b> and <b>cycle</b> templates, made of ordinary shapes you then restyle and edit. "view all" is a placeholder for more templates later.</li></ul><h4>placeholders</h4><p>insert &gt; special characters and link appear for parity with Google Drawings; they are greyed out or show a short notice because they aren't supported yet.</p>`,
+      `<h4>images</h4><ul><li><b>insert &gt; image &gt; upload from computer…</b> (or the image tool): choose one or more images. <b>SVG file…</b> loads an SVG; <b>from SVG code…</b> opens a box to paste SVG markup.</li><li>You can also paste an image from your clipboard.</li><li><b>Crop:</b> select an image and use arrange &gt; crop image (or double-click). Drag the crop handles, press ${kb("Enter")} when done.</li><li><b>Mask:</b> arrange &gt; mask image… clips an image to a shape: rectangle, rounded rectangle, ellipse, triangle, diamond, star, arrow, any closed path you drew (listed as "custom shape"), or remove mask.</li><li>Images can also use background blur, blending and layer effects.</li></ul><h4>tables</h4><ul><li>insert &gt; table opens a grid; drag over it to choose the size. Click a cell to edit it.</li><li>Add or delete rows and columns with format &gt; format options (<i>add row below</i>, <i>add column right</i>, <i>delete row</i>, <i>delete column</i>).</li></ul><h4>charts</h4><ul><li>insert &gt; chart: <b>bar</b>, <b>column</b>, <b>line</b> or <b>pie</b>. Select a table first and a chart editor opens: pick the data range (like A1:E50), switch rows / columns, and choose whether row 1 is headers and column A is labels. The chart is a snapshot of the table's data, drawn as editable vector objects. "from sheets" isn't connected in this app.</li></ul><h4>diagrams</h4><ul><li>insert &gt; diagram: <b>grid</b>, <b>hierarchy</b>, <b>timeline</b>, <b>process</b>, <b>relationship</b> and <b>cycle</b> templates, made of ordinary shapes you then restyle and edit. "view all" is a placeholder for more templates later.</li></ul><h4>placeholders</h4><p>insert &gt; special characters and link appear for parity with Google Drawings; they are greyed out or show a short notice because they aren't supported yet.</p>`,
   ],
   [
     "tables",
