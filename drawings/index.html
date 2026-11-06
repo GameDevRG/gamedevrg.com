@@ -7447,21 +7447,494 @@ addEventListener("cut", (e) => {
     del();
   }
 });
+/* paste from outside the editor: pictures, SVG, and objects copied in Google Drawings / Slides.
+   Google keeps the real shape data in its own clipboard format (application/x-vnd.google-docs-…+wrapped) and only a stub id in the html,
+   so everything readable is used (embedded SVG or pictures); when nothing is, a dialog explains it and can save the raw clipboard */
+const GCLIP = /^application\/x-vnd\.google-docs-/i;
+const wrCenter = () => {
+  const r = wr.getBoundingClientRect();
+  return pt({ clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 });
+};
+function clipSnap(cd) {
+  const o = {
+    types: [...cd.types],
+    data: {},
+    files: [...cd.files].map((f) => ({ name: f.name, type: f.type, size: f.size })),
+  };
+  o.types.forEach((t) => {
+    if (t != "Files")
+      try {
+        o.data[t] = cd.getData(t);
+      } catch (_) {}
+  });
+  return o;
+}
+/* walks a Google clip (JSON, often JSON inside a JSON string) for anything this editor can already read */
+function gclipScan(raw) {
+  const out = { svg: [], img: [], urls: [] };
+  const walk = (v, d) => {
+    if (d > 14) return;
+    if (typeof v == "string") {
+      const t = v.trim();
+      if (/^(<\?xml[^>]*>\s*)?<svg[\s>]/i.test(t)) out.svg.push(t);
+      else if (/^data:image\//i.test(t)) out.img.push(t);
+      else if (/^https:\/\/[^\s"']*(googleusercontent|gstatic)\.com\//i.test(t)) out.urls.push(t);
+      else if (/^[\[{]/.test(t) && t.length > 1)
+        try {
+          walk(JSON.parse(t), d + 1);
+        } catch (_) {}
+    } else if (Array.isArray(v)) v.forEach((x) => walk(x, d + 1));
+    else if (v && typeof v == "object") Object.values(v).forEach((x) => walk(x, d + 1));
+  };
+  try {
+    walk(JSON.parse(raw), 0);
+  } catch (_) {}
+  return out;
+}
+/* ---- objects copied in Google Drawings: application/x-vnd.google-docs-drawings-object+wrapped ----
+   the data is a command list. [3, id, type, [a,b,c,d,tx,ty], [prop, value, …]] makes an object, [15, id, _, at, text] puts text in it.
+   one unit is 1/381 px. a shape's own size is the extent in props 8 and 9 (or 100000 when they're absent) times the matrix scale.
+   types read so far: 2 word art (text = prop 33, font = prop 34), 3 picture, 6 rectangle, 108 text box. props: 15 fill, 19 line colour, 22 line width, 18:0 no line */
+/* text styling comes from the html Google also puts on the clipboard: one entry per paragraph, each a list of runs with their own style */
+const GDEF = { b: 0, i: 0, u: 0, st: 0, c: "#000000", h: "", fs: 18.7, ff: "Arial" };
+function gparas(htm) {
+  let doc;
+  try {
+    doc = new DOMParser().parseFromString(htm, "text/html");
+  } catch (_) {
+    return [];
+  }
+  const rgb = (v) => {
+      v = (v || "").trim();
+      let m = v.match(/^#([0-9a-f]{6})$/i);
+      if (m) return "#" + m[1].toLowerCase();
+      m = v.match(/^#([0-9a-f]{3})$/i);
+      if (m) return "#" + [...m[1]].map((c) => c + c).join("").toLowerCase();
+      m = v.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+      return m ? "#" + [m[1], m[2], m[3]].map((n) => (+n).toString(16).padStart(2, "0")).join("") : "";
+    },
+    css = (el) => {
+      const o = {};
+      (el.getAttribute("style") || "").split(";").forEach((x) => {
+        const i = x.indexOf(":");
+        if (i > 0) o[x.slice(0, i).trim().toLowerCase()] = x.slice(i + 1).trim();
+      });
+      return o;
+    },
+    out = [];
+  doc.querySelectorAll("p,li,h1,h2,h3,h4,h5,h6").forEach((el) => {
+    const runs = [],
+      walk = (n, st) => {
+        if (n.nodeType == 3) {
+          const t = n.nodeValue.replace(/\r?\n/g, " ");
+          if (t) runs.push({ ...st, t });
+          return;
+        }
+        if (n.nodeType != 1) return;
+        const tag = n.tagName.toLowerCase();
+        if (tag == "br") {
+          runs.push({ ...st, t: "\n" });
+          return;
+        }
+        const c = css(n),
+          x = { ...st };
+        if (/^(b|strong)$/.test(tag)) x.b = 1;
+        if (/^(i|em)$/.test(tag)) x.i = 1;
+        if (tag == "u") x.u = 1;
+        if (/^(s|strike|del)$/.test(tag)) x.st = 1;
+        if (c["font-weight"]) x.b = c["font-weight"] == "bold" || +c["font-weight"] >= 600 ? 1 : 0;
+        if (c["font-style"]) x.i = /italic|oblique/.test(c["font-style"]) ? 1 : 0;
+        const dc = (c["text-decoration"] || "") + " " + (c["text-decoration-line"] || "");
+        if (c["text-decoration"] || c["text-decoration-line"]) {
+          x.u = /underline/.test(dc) ? 1 : 0;
+          x.st = /line-through/.test(dc) ? 1 : 0;
+        }
+        const fz = (c["font-size"] || "").match(/([\d.]+)(pt|px)/);
+        if (fz) x.fs = Math.round((fz[2] == "pt" ? (+fz[1] * 4) / 3 : +fz[1]) * 10) / 10;
+        if (c["font-family"]) x.ff = c["font-family"].split(",")[0].replace(/["']/g, "").trim();
+        if (c.color && rgb(c.color)) x.c = rgb(c.color);
+        if (c["background-color"]) x.h = rgb(c["background-color"]);
+        n.childNodes.forEach((k) => walk(k, x));
+      };
+    walk(el, {});
+    const al = (css(el)["text-align"] || "").toLowerCase();
+    out.push({ runs, text: runs.map((r) => r.t).join(""), al: al == "center" || al == "right" ? al : "" });
+  });
+  return out;
+}
+/* the paragraphs that make up this text, in order; each paragraph is only used once */
+function gmatch(paras, used, text) {
+  const nz = (x) => x.replace(/[\s\u00a0\u200b\u000b]+/g, ""),
+    want = nz(text);
+  if (!want) return null;
+  for (let i = 0; i < paras.length; i++) {
+    if (used.has(i)) continue;
+    let acc = "",
+      j = i;
+    const blk = [];
+    while (j < paras.length && !used.has(j) && acc.length < want.length) {
+      acc += nz(paras[j].text);
+      blk.push(j++);
+      if (!want.startsWith(acc)) break;
+    }
+    if (acc == want) {
+      blk.forEach((k) => used.add(k));
+      return blk.map((k) => paras[k]);
+    }
+  }
+  return null;
+}
+/* base style = the run with the most text; the rest are stored as runs that differ from it */
+function gstyle(q, blk) {
+  const runs = [];
+  blk.forEach((p, i) => {
+    p.runs.forEach((r) => runs.push(r));
+    if (i < blk.length - 1) runs.push({ ...(p.runs[p.runs.length - 1] || {}), t: "\n" });
+  });
+  const f = (r, k) => (r[k] === undefined ? GDEF[k] : r[k]),
+    base = runs.filter((r) => r.t.trim()).reduce((a, r) => (!a || r.t.length > a.t.length ? r : a), null) || runs[0] || {};
+  q.bold = f(base, "b");
+  q.ital = f(base, "i");
+  q.und = f(base, "u");
+  q.strike = f(base, "st");
+  q.color = f(base, "c");
+  q.hl = f(base, "h");
+  q.fs = f(base, "fs");
+  q.ff = f(base, "ff");
+  q.text = runs.map((r) => r.t).join("");
+  const st = rtStore(runs.map((r) => {
+    const y = { t: r.t };
+    for (const k of RK) if (f(r, k) !== f(base, k)) y[k] = f(r, k);
+    return y;
+  }));
+  if (st) q.rt = st;
+  else delete q.rt;
+  if (blk[0].al) q.align = blk[0].al;
+  return [...new Set(runs.map((r) => f(r, "ff")))];
+}
+const GTYPES = { 2: "wordart", 3: "img", 6: "rect", 108: "text" };
+function gdecode(raw, htm) {
+  let w;
+  try {
+    w = JSON.parse(JSON.parse(raw).data);
+  } catch (_) {
+    return null;
+  }
+  const cmds = Array.isArray(w) ? w : w && w.resolved;
+  if (!Array.isArray(cmds)) return null;
+  const objs = [],
+    byId = {},
+    skipped = [];
+  for (const c of cmds) {
+    if (!Array.isArray(c)) continue;
+    if (c[0] == 3 && Array.isArray(c[3]) && c[3].length >= 6) {
+      const pr = {},
+        a = Array.isArray(c[4]) ? c[4] : [];
+      for (let i = 0; i + 1 < a.length; i += 2) pr[a[i]] = a[i + 1];
+      const o = { id: c[1], type: c[2], m: c[3].map(Number), pr, text: "" };
+      byId[o.id] = o;
+      objs.push(o);
+    } else if (c[0] == 15 && byId[c[1]] && typeof c[4] == "string") byId[c[1]].text += c[4];
+    else if (c[0] == 17 && byId[c[1]] && Array.isArray(c[6]) && c[6][0] == 12 && byId[c[1]].al == null) byId[c[1]].al = c[6][1];
+  }
+  if (!objs.length) return null;
+  const imgs = [];
+  if (htm) {
+    const re = /<img[^>]+src="(data:image\/[^"]+)"/gi;
+    let m;
+    while ((m = re.exec(htm))) imgs.push(m[1]);
+  }
+  const col = (v) => (typeof v == "string" && /^#[0-9a-f]{6}$/i.test(v) ? v.toLowerCase() : "");
+  /* box in px: centre, size and turn, with the unrotated top-left kept as x / y */
+  const geo = (o) => {
+    const [a, b, c, d, tx, ty] = o.m,
+      L8 = +o.pr[8] > 0 ? +o.pr[8] : 1e5,
+      L9 = +o.pr[9] > 0 ? +o.pr[9] : 1e5,
+      w = (Math.hypot(a, b) * L8) / 381,
+      h = (Math.hypot(c, d) * L9) / 381,
+      cx = (a * L8 / 2 + c * L9 / 2 + tx) / 381,
+      cy = (b * L8 / 2 + d * L9 / 2 + ty) / 381;
+    return { w, h, cx, cy, r: (Math.atan2(b, a) * 180) / Math.PI };
+  };
+  const todo = objs.filter((o) => GTYPES[o.type]);
+  objs.filter((o) => !GTYPES[o.type]).forEach((o) => skipped.push(o.type));
+  const G = todo.map((o) => ({ o, g: geo(o) }));
+  if (!G.length) return { shapes: [], skipped, fonts: [] };
+  /* a pasted selection keeps its own layout and lands centred on the view */
+  let x0 = 1e18, y0 = 1e18, x1 = -1e18, y1 = -1e18;
+  G.forEach(({ g }) => {
+    const t = (g.r * Math.PI) / 180,
+      ex = (Math.abs(Math.cos(t)) * g.w + Math.abs(Math.sin(t)) * g.h) / 2,
+      ey = (Math.abs(Math.sin(t)) * g.w + Math.abs(Math.cos(t)) * g.h) / 2;
+    x0 = Math.min(x0, g.cx - ex);
+    x1 = Math.max(x1, g.cx + ex);
+    y0 = Math.min(y0, g.cy - ey);
+    y1 = Math.max(y1, g.cy + ey);
+  });
+  /* the pictures in the html come in reading order (top to bottom), which is how they are matched to picture objects */
+  const pics = G.filter(({ o }) => GTYPES[o.type] == "img").sort((p, q) => p.g.cy - q.g.cy || p.g.cx - q.g.cx);
+  pics.forEach((p, i) => (p.src = imgs[i] || ""));
+  /* text: match each text-bearing object (reading order) to its paragraphs in the html */
+  const paras = htm ? gparas(htm) : [],
+    used = new Set();
+  G.filter(({ o }) => GTYPES[o.type] != "img" && GTYPES[o.type] != "wordart" && o.text.trim())
+    .sort((p, q) => p.g.cy - q.g.cy || p.g.cx - q.g.cx)
+    .forEach((e) => (e.blk = gmatch(paras, used, e.o.text)));
+  const fonts = new Set(),
+    shapes = [];
+  let lost = 0;
+  G.forEach((e) => {
+    const { o, g } = e,
+      k = GTYPES[o.type],
+      pr = o.pr,
+      line = col(pr[19]) && pr[18] !== 0,
+      sw = line ? Math.max(1, Math.round((+pr[22] || 381) / 381)) : 0;
+    let q;
+    if (k == "img") {
+      if (!e.src) {
+        lost++;
+        return;
+      }
+      q = { id: 0, t: "img", ...D, text: "", src: e.src, ar: g.w / g.h, fill: "", sw: 0 };
+    } else {
+      q = mk(k, { x: 0, y: 0 });
+      const AL = { 1: "left", 2: "center", 3: "right" };
+      if (k != "wordart" && o.text.trim()) {
+        if (e.blk) gstyle(q, e.blk).forEach((n) => fonts.add(n));
+        else {
+          q.text = o.text.replace(/\r?\n$/, "");
+          q.fs = 19;
+          q.ff = "Arial";
+          q.color = "#000000";
+        }
+        if (!(e.blk && e.blk[0].al) && AL[o.al]) q.align = AL[o.al];
+        if (k == "text" && !(e.blk && e.blk[0].al) && !AL[o.al]) q.align = "left";
+      }
+      if (k == "text") {
+        q.valign = "top";
+        if (col(pr[15])) q.fill = col(pr[15]);
+        if (sw) {
+          q.stroke = col(pr[19]);
+          q.sw = sw;
+        }
+        if (!q.text) return;
+      } else {
+        if (k == "wordart") {
+          q.text = String(pr[33] ?? o.text ?? "");
+          q.ff = String(pr[34] || pr[33] || q.ff);
+          fonts.add(q.ff);
+        }
+        q.fill = col(pr[15]) || (k == "wordart" ? "#000000" : "");
+        q.stroke = col(pr[19]) || q.stroke;
+        q.sw = sw;
+      }
+    }
+    q.w = g.w;
+    q.h = g.h;
+    q.r = g.r;
+    q.x = g.cx - g.w / 2;
+    q.y = g.cy - g.h / 2;
+    q._ox = (x0 + x1) / 2;
+    q._oy = (y0 + y1) / 2;
+    shapes.push(q);
+  });
+  return { shapes, skipped, lost, fonts: [...fonts] };
+}
+async function gplace(r, c) {
+  snap();
+  const ids = [];
+  r.shapes.forEach((q) => {
+    const ox = q._ox,
+      oy = q._oy;
+    delete q._ox;
+    delete q._oy;
+    q.id = nid++;
+    q.x += c.x - ox;
+    q.y += c.y - oy;
+    q.lyr = openL();
+    S.push(q);
+    ids.push(q.id);
+  });
+  if (ids.length == 1) {
+    sel = ids[0];
+    ms = [];
+  } else {
+    sel = null;
+    ms = ids;
+  }
+  tool = "select";
+  render();
+  /* word art is stretched to its box, so the box has to match this editor's own measure of the font or the letters come out squashed or stretched.
+     once the fonts are loaded the width stays as Google had it and the height follows the text, around the same centre */
+  for (const n of r.fonts) {
+    if (!allFonts().includes(n) && !hasLocal(n) && (await loadG(n))) {
+      FS.g.push(n);
+      saveFS();
+    }
+    try {
+      await document.fonts.load("100px " + ffq(n));
+    } catch (_) {}
+  }
+  r.shapes.forEach((q) => {
+    if (q.t != "wordart" || !S.includes(q)) return;
+    const m = waM(q);
+    if (m.W > 1 && m.H > 0 && q.w > 0) {
+      const cy = q.y + q.h / 2;
+      q.h = (q.w * m.H) / m.W;
+      q.y = cy - q.h / 2;
+    }
+  });
+  render();
+}
+async function urlToImg(u, c, n) {
+  if (/^data:image\//i.test(u)) {
+    const im = await new Promise((ok, no) => {
+      const i = new Image();
+      i.onload = () => ok(i);
+      i.onerror = no;
+      i.src = u;
+    });
+    const k = Math.min(1, 400 / im.width, 300 / im.height),
+      w = im.width * k,
+      h = im.height * k;
+    snap();
+    const q = { id: nid++, t: "img", x: c.x - w / 2 + n * 24, y: c.y - h / 2 + n * 24, w, h, r: 0, lyr: openL(), ...D, text: "", src: u, ar: im.width / im.height, fill: "", sw: 0 };
+    S.push(q);
+    sel = q.id;
+    ms = [];
+    tool = "select";
+    render();
+    return;
+  }
+  const b = await (await fetch(u, { credentials: "omit" })).blob();
+  if (!b.type.startsWith("image/")) throw new Error("not an image");
+  addImg(new File([b], "pasted", { type: b.type }), c, n);
+}
+function gDlg(sn) {
+  const ty = sn.types.filter((t) => t != "Files");
+  dlg(
+    "paste from Google Drawings",
+    "This copy from Google Drawings didn't contain any objects this editor can read yet (it reads rectangles, word art, text boxes and pictures), so there was nothing to place on the canvas.\n\n" +
+      "What works today:\n" +
+      "- In Google Drawings choose file > download > SVG, then here use insert > image > SVG file… The shapes arrive as editable objects.\n" +
+      "- Or screenshot the objects and paste the picture here.\n\n" +
+      "Formats on your clipboard:\n" +
+      (ty.length ? ty.map((t) => "- " + t + " (" + (sn.data[t] || "").length + " characters)").join("\n") : "- none") +
+      "\n\n“download clipboard dump” saves exactly what Google put on the clipboard. That file is what's needed to add more shape types.",
+    "download clipboard dump",
+    () => {
+      const a = document.createElement("a"),
+        u = URL.createObjectURL(new Blob([JSON.stringify(sn, null, 1)], { type: "application/json" }));
+      a.href = u;
+      a.download = "google-drawings-clipboard-dump.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(u), 4000);
+      return false;
+    },
+  );
+  const t = $("#dt");
+  if (t) {
+    t.readOnly = true;
+    t.setSelectionRange(0, 0);
+    t.scrollTop = 0;
+  }
+}
+async function pasteOutside(sn, fs) {
+  const c = wrCenter(),
+    htm = sn.data["text/html"] || "",
+    txt = sn.data["text/plain"] || "",
+    gt = sn.types.filter((t) => GCLIP.test(t)),
+    isG = gt.length > 0 || (/docs-internal-guid/.test(htm) && !txt.trim());
+  let n = 0;
+  if (fs.length) {
+    /* the picture that copy leaves on the clipboard (same pixel size as the last copy) means "paste those objects again" */
+    if (fs.length == 1 && clip && lastImg)
+      try {
+        const bm = await createImageBitmap(fs[0]),
+          same = bm.width == lastImg.w && bm.height == lastImg.h;
+        if (bm.close) bm.close();
+        if (same) {
+          paste(Date.now() - cmPV < 700);
+          return true;
+        }
+      } catch (_) {}
+    fs.forEach((f, i) => addImg(f, c, i));
+    return true;
+  }
+  /* objects copied in Google Drawings */
+  const go = sn.types.find((t) => /^application\/x-vnd\.google-docs-drawings-object/i.test(t));
+  if (go) {
+    const r = gdecode(sn.data[go], htm);
+    if (r && r.shapes.length) {
+      await gplace(r, c);
+      const bad = (r.skipped || []).length + (r.lost || 0);
+      if (bad)
+        toast(
+          bad + (bad == 1 ? " object" : " objects") + " from Google Drawings couldn’t be brought over" +
+            (r.skipped.length ? " (shape type " + [...new Set(r.skipped)].join(", ") + " isn’t supported yet)" : ""),
+        );
+      return true;
+    }
+  }
+  /* SVG as a file type, as text, or inside the html */
+  let svg = sn.data["image/svg+xml"] || "";
+  if (!svg && /^(<\?xml[^>]*>\s*)?<svg[\s>]/i.test(txt.trim())) svg = txt;
+  let doc = null;
+  if (htm)
+    try {
+      doc = new DOMParser().parseFromString(htm, "text/html");
+    } catch (_) {}
+  if (!svg && doc) svg = doc.querySelector("svg")?.outerHTML || "";
+  if (svg) {
+    const m = importSVG(svg);
+    if (m) toast(m);
+    return true;
+  }
+  /* anything embedded in a Google clip */
+  const cand = [];
+  gt.forEach((t) => {
+    const r = gclipScan(sn.data[t]);
+    r.svg.forEach((v) => {
+      if (!importSVG(v)) n++;
+    });
+    cand.push(...r.img, ...r.urls);
+  });
+  if (doc) doc.querySelectorAll("img[src]").forEach((im) => cand.push(im.getAttribute("src")));
+  for (const u of cand) {
+    if (!/^(data:image\/|https?:\/\/)/i.test(u)) continue;
+    try {
+      await urlToImg(u, c, n);
+      n++;
+    } catch (_) {}
+  }
+  if (n) return true;
+  if (isG) {
+    gDlg(sn);
+    return true;
+  }
+  if (cand.length) {
+    toast("couldn’t load the pasted picture. save it and use insert > image instead.");
+    return true;
+  }
+  return false;
+}
 addEventListener("paste", (e) => {
   if (!clipOK(e)) return;
   const cd = e.clipboardData,
     txt = cd ? cd.getData("text/plain") : "",
     fs = [...(cd?.files || [])].filter((f) => f.type.startsWith("image/"));
   e.preventDefault();
-  if (txt == "gdrg-clip" || (!fs.length && !txt)) {
+  if (txt == "gdrg-clip") {
     paste(Date.now() - cmPV < 700);
     return;
   }
-  if (fs.length) {
-    const r = wr.getBoundingClientRect(),
-      c = pt({ clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 });
-    fs.forEach((f, i) => addImg(f, c, i));
-  }
+  /* the clipboard can only be read during the event, so take it all now and do the slow work afterwards */
+  const sn = cd ? clipSnap(cd) : { types: [], data: {}, files: [] };
+  pasteOutside(sn, fs).then((used) => {
+    if (!used && !txt) paste(Date.now() - cmPV < 700);
+  });
 });
 const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
 function P2(s) {
@@ -13530,7 +14003,7 @@ const MAN = [
     "insert",
     "images, tables, charts & diagrams",
     () =>
-      `<h4>images</h4><ul><li><b>insert &gt; image &gt; upload from computer…</b> (or the image tool): choose one or more images. <b>SVG file…</b> loads an SVG; <b>from SVG code…</b> opens a box to paste SVG markup.</li><li>You can also paste an image from your clipboard.</li><li><b>Crop:</b> select an image and use arrange &gt; crop image (or double-click). Drag the crop handles, press ${kb("Enter")} when done.</li><li><b>Mask:</b> arrange &gt; mask image… clips an image to a shape: rectangle, rounded rectangle, ellipse, triangle, diamond, star, arrow, any closed path you drew (listed as "custom shape"), or remove mask.</li><li>Images can also use background blur, blending and layer effects.</li></ul><h4>tables</h4><ul><li>insert &gt; table opens a grid; drag over it to choose the size. Click a cell to edit it.</li><li>Add or delete rows and columns with format &gt; format options (<i>add row below</i>, <i>add column right</i>, <i>delete row</i>, <i>delete column</i>).</li></ul><h4>charts</h4><ul><li>insert &gt; chart: <b>bar</b>, <b>column</b>, <b>line</b> or <b>pie</b>. Select a table first and a chart editor opens: pick the data range (like A1:E50), switch rows / columns, and choose whether row 1 is headers and column A is labels. The chart is a snapshot of the table's data, drawn as editable vector objects. "from sheets" isn't connected in this app.</li></ul><h4>diagrams</h4><ul><li>insert &gt; diagram: <b>grid</b>, <b>hierarchy</b>, <b>timeline</b>, <b>process</b>, <b>relationship</b> and <b>cycle</b> templates, made of ordinary shapes you then restyle and edit. "view all" is a placeholder for more templates later.</li></ul><h4>placeholders</h4><p>insert &gt; special characters and link appear for parity with Google Drawings; they are greyed out or show a short notice because they aren't supported yet.</p>`,
+      `<h4>images</h4><ul><li><b>insert &gt; image &gt; upload from computer…</b> (or the image tool): choose one or more images. <b>SVG file…</b> loads an SVG; <b>from SVG code…</b> opens a box to paste SVG markup.</li><li>You can also paste an image from your clipboard. Copied SVG code, or an SVG on the clipboard, pastes as editable shapes.</li><li><b>Google Drawings:</b> copying objects here also puts a picture of them on the clipboard, so ctrl+V in Google Drawings pastes them as an image (Google can’t take editable shapes from outside its own apps), while ctrl+V here still pastes the editable objects. In the other direction, select objects there, copy, and paste here. Rectangles, word art, text boxes and pictures come over with their position, size, rotation, fill and outline, centred on the view. Other shape types aren’t read yet: you’re told how many were left out, and for any others use file &gt; download &gt; SVG in Google Drawings and then <b>SVG file…</b> here.</li><li><b>Crop:</b> select an image and use arrange &gt; crop image (or double-click). Drag the crop handles, press ${kb("Enter")} when done.</li><li><b>Mask:</b> arrange &gt; mask image… clips an image to a shape: rectangle, rounded rectangle, ellipse, triangle, diamond, star, arrow, any closed path you drew (listed as "custom shape"), or remove mask.</li><li>Images can also use background blur, blending and layer effects.</li></ul><h4>tables</h4><ul><li>insert &gt; table opens a grid; drag over it to choose the size. Click a cell to edit it.</li><li>Add or delete rows and columns with format &gt; format options (<i>add row below</i>, <i>add column right</i>, <i>delete row</i>, <i>delete column</i>).</li></ul><h4>charts</h4><ul><li>insert &gt; chart: <b>bar</b>, <b>column</b>, <b>line</b> or <b>pie</b>. Select a table first and a chart editor opens: pick the data range (like A1:E50), switch rows / columns, and choose whether row 1 is headers and column A is labels. The chart is a snapshot of the table's data, drawn as editable vector objects. "from sheets" isn't connected in this app.</li></ul><h4>diagrams</h4><ul><li>insert &gt; diagram: <b>grid</b>, <b>hierarchy</b>, <b>timeline</b>, <b>process</b>, <b>relationship</b> and <b>cycle</b> templates, made of ordinary shapes you then restyle and edit. "view all" is a placeholder for more templates later.</li></ul><h4>placeholders</h4><p>insert &gt; special characters and link appear for parity with Google Drawings; they are greyed out or show a short notice because they aren't supported yet.</p>`,
   ],
   [
     "tables",
@@ -13867,10 +14340,7 @@ const M = {
     [
       "copy",
       () => {
-        if (copySel())
-          try {
-            navigator.clipboard.writeText("gdrg-clip").catch(() => {});
-          } catch (e) {}
+        copySel();
       },
       "ctrl+C",
     ],
@@ -15257,7 +15727,76 @@ function copySel() {
   if (!g.length) return false;
   clip = JSON.stringify(g.map((q) => ({ ...q })));
   clipN = 0;
+  clipImgStart(g);
   return true;
+}
+/* copy also puts a transparent picture of just the copied objects on the system clipboard, so ctrl+V in Google Drawings (or any
+   app that takes pictures) gets them. pasting here recognises that picture as the copy it came from and brings back the real objects */
+let lastImg = null;
+async function clipPng(g) {
+  const set = new Set(g),
+    keep = S;
+  let r;
+  S = S.filter((q) => set.has(q));
+  try {
+    r = drawingSVG(""); /* everything that reads the shapes happens before its first await */
+  } finally {
+    S = keep;
+    render();
+  }
+  let x0 = 1e18,
+    y0 = 1e18,
+    x1 = -1e18,
+    y1 = -1e18;
+  g.forEach((q) => {
+    const t = ((q.r || 0) * Math.PI) / 180,
+      c = Math.abs(Math.cos(t)),
+      n = Math.abs(Math.sin(t)),
+      ex = (c * q.w + n * q.h) / 2,
+      ey = (n * q.w + c * q.h) / 2,
+      cx = q.x + q.w / 2,
+      cy = q.y + q.h / 2,
+      pd = 10 + (q.sw || 0) / 2 + (q.blur > 0 ? q.blur * 2 : 0) + (q.shd ? 30 : 0);
+    x0 = Math.min(x0, cx - ex - pd);
+    x1 = Math.max(x1, cx + ex + pd);
+    y0 = Math.min(y0, cy - ey - pd);
+    y1 = Math.max(y1, cy + ey + pd);
+  });
+  x0 = Math.floor(x0);
+  y0 = Math.floor(y0);
+  const w = Math.max(1, Math.ceil(x1) - x0),
+    h = Math.max(1, Math.ceil(y1) - y0),
+    o = await r,
+    sv = o.svg.replace(/ width="[^"]*" height="[^"]*" viewBox="[^"]*"><defs>/, ` width="${w}" height="${h}" viewBox="${x0} ${y0} ${w} ${h}"><defs>`),
+    u = URL.createObjectURL(new Blob([sv], { type: "image/svg+xml" })),
+    im = new Image(),
+    k = expScale(2, w, h);
+  await new Promise((ok, no) => {
+    im.onload = ok;
+    im.onerror = no;
+    im.src = u;
+  });
+  const cv = document.createElement("canvas");
+  cv.width = Math.max(1, Math.round(w * k));
+  cv.height = Math.max(1, Math.round(h * k));
+  cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
+  URL.revokeObjectURL(u);
+  lastImg = { w: cv.width, h: cv.height };
+  return new Promise((ok, no) => cv.toBlob((b) => (b ? ok(b) : no(new Error("no picture"))), "image/png"));
+}
+function clipImgStart(g) {
+  lastImg = null;
+  const fb = () => {
+    try {
+      navigator.clipboard.writeText("gdrg-clip").catch(() => {});
+    } catch (_) {}
+  };
+  if (!navigator.clipboard || !navigator.clipboard.write || typeof ClipboardItem == "undefined") return fb();
+  try {
+    navigator.clipboard.write([new ClipboardItem({ "image/png": clipPng(g) })]).catch(fb);
+  } catch (_) {
+    fb();
+  }
 }
 function paste(nf) {
   if (!clip) return;
@@ -20713,10 +21252,7 @@ function cmCanvas(e) {
     if (R.length) L.push(...R, 0);
   }
   const cp = () => {
-      if (copySel())
-        try {
-          navigator.clipboard.writeText("gdrg-clip").catch(() => {});
-        } catch (er) {}
+      copySel();
     },
     off = has ? "" : "dis";
   L.push(
