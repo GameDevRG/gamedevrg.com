@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>gamedevrg stories</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Noto+Sans+JP:wght@500;900&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#1f2730;--panel:#27313b;--muted:rgba(255,255,255,.5);--accent:#4a6cf7;--read-size:1.1rem}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:#fff;font-family:'Chakra Petch','Noto Sans JP',system-ui,sans-serif;min-height:100%}
+  a{color:inherit}
+  [hidden]{display:none!important}
+
+  .topbar{position:absolute;top:0;left:0;right:0;z-index:10;padding:16px 26px;font-size:2.4rem;line-height:1;text-shadow:0 2px 12px rgba(0,0,0,.35)}
+  .topbar a{text-decoration:none}
+  .topbar b{font-weight:700}.topbar span{font-weight:400;opacity:.8}
+  body.reading .topbar{position:static;font-size:1.6rem;padding:14px 26px;border-bottom:1px solid rgba(255,255,255,.08)}
+
+  /* ---------- story header ---------- */
+  .hero{position:relative;height:420px;overflow:hidden}
+  .hero .bg{position:absolute;inset:0;background:#5d7587 center/cover}
+  .hero .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(31,39,48,0) 45%,var(--bg) 100%),rgba(40,55,70,.55)}
+  .hero .inner{position:relative;height:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);align-items:start;padding:108px 6vw 0 0}
+  .logo{justify-self:center}
+  .logo img{max-width:min(300px,100%);display:block}
+  .info .alt{font-size:1.05rem;font-weight:500;opacity:.9}
+  .info h1{font-size:2.45rem;font-weight:700;line-height:1.1;margin:.12em 0 .05em}
+  .info .year{font-size:1.5rem;opacity:.85}
+  .info p{margin-top:1rem;font-size:.95rem;line-height:1.35;max-width:60ch}
+  .actions{display:flex;align-items:center;gap:20px;margin-top:10px}
+  .btn{font:inherit;font-size:.95rem;color:#fff;background:rgba(0,0,0,.25);border:2px solid #fff;padding:4px 20px;cursor:pointer;text-decoration:none;transition:background .15s,color .15s}
+  .btn:hover,.btn:focus-visible{background:#fff;color:var(--bg);outline:none}
+  .btn[aria-disabled=true]{opacity:.35;pointer-events:none}
+  .meta{font-size:.95rem;color:var(--muted)}
+
+  /* ---------- parts list ---------- */
+  main{padding:0 48px 80px}
+  h2.rowtitle{font-size:2rem;font-weight:600;border-left:3px solid var(--accent);padding-left:12px;line-height:1.1;margin:30px 0 22px}
+  .parts{list-style:none;max-width:900px;margin-left:10px}
+  .parts a{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:baseline;padding:14px 16px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.08)}
+  .parts a:hover,.parts a:focus-visible{background:var(--panel);outline:none}
+  .parts .n{font-size:1.5rem;font-weight:600;color:var(--muted)}
+  .parts .t{font-size:1.15rem;font-weight:500}
+  .parts .s{display:block;font-size:.9rem;color:var(--muted);margin-top:3px;font-weight:400}
+  .parts .done{font-size:.85rem;color:var(--muted)}
+  .parts a.read .t{opacity:.55}
+  .parts a.current{border-left:3px solid var(--accent);padding-left:13px}
+
+  /* ---------- reader ---------- */
+  .bar{position:sticky;top:0;z-index:5;background:rgba(31,39,48,.94);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:14px;padding:10px 26px}
+  .bar .name{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted);font-size:.95rem}
+  .bar .btn{padding:3px 14px;font-size:.9rem}
+  .bar .size{display:flex;gap:6px}
+  article{max-width:68ch;margin:0 auto;padding:48px 20px 24px;font-size:var(--read-size);line-height:1.8}
+  article .label{color:var(--muted);font-size:.9rem}
+  article h1{font-size:2rem;line-height:1.2;margin:.2em 0 1.4em}
+  article p{margin-bottom:1.1em}
+  article hr{border:0;text-align:center;margin:2em 0;color:var(--muted)}
+  article hr::before{content:"* * *";letter-spacing:.5em}
+  .pager{max-width:68ch;margin:0 auto;padding:10px 20px 80px;display:flex;justify-content:space-between;gap:12px}
+  .err{color:var(--muted);padding:0 10px}
+
+  @media (max-width:800px){
+    .topbar{font-size:1.8rem;padding:14px 16px}
+    .hero{height:auto;min-height:480px}
+    .hero .inner{grid-template-columns:1fr;padding:80px 20px 40px;gap:14px}
+    .info h1{font-size:1.7rem}
+    main{padding:0 12px 60px}
+    .bar{padding:8px 12px}.bar .size{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar" id="topbar"><a id="home" href="gamedevrg_stories.html"><b>gamedevrg</b> <span>stories</span></a></div>
+
+<section id="listView" hidden>
+  <header class="hero">
+    <div class="bg" id="bg"></div>
+    <div class="inner">
+      <div class="logo" id="logo"></div>
+      <div class="info">
+        <div class="alt" id="alt"></div>
+        <h1 id="title"></h1>
+        <div class="year" id="year"></div>
+        <p id="desc"></p>
+        <div class="actions">
+          <a class="btn" id="start" href="#1">start</a>
+          <span class="meta" id="meta"></span>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main>
+    <h2 class="rowtitle" id="listTitle"></h2>
+    <ol class="parts" id="parts"></ol>
+  </main>
+</section>
+
+<section id="reader" hidden>
+  <div class="bar">
+    <a class="btn" id="back" href="#">all</a>
+    <span class="name" id="rname"></span>
+    <span class="size">
+      <button class="btn" id="smaller" aria-label="smaller text">A-</button>
+      <button class="btn" id="bigger" aria-label="larger text">A+</button>
+    </span>
+    <a class="btn" id="prevT" href="#">prev</a>
+    <a class="btn" id="nextT" href="#">next</a>
+  </div>
+  <article id="text"></article>
+  <div class="pager">
+    <a class="btn" id="prevB" href="#">prev</a>
+    <a class="btn" id="nextB" href="#">next</a>
+  </div>
+</section>
+
+<p class="err" id="err" hidden></p>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const params = new URLSearchParams(location.search);
+
+fetch('stories.json')
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(init)
+  .catch(e => fail("couldn't load stories.json (" + e.message + "). open this page from a web server, not file://"));
+
+function fail(msg){ $('err').textContent = msg; $('err').hidden = false; $('listView').hidden = $('reader').hidden = true; }
+
+function init(data){
+  const cfg = Object.assign({ imageFolder:'images/', homePage:'gamedevrg_stories.html' }, data.settings);
+  const story = (data.stories || []).find(s => s.id === params.get('id'));
+  if (!story) return fail('story not found. go back to the library and pick one.');
+
+  const unit = story.unit || 'episode';
+  const parts = story.parts || [];
+  const img = f => f ? cfg.imageFolder + f : '';
+  $('home').href = cfg.homePage;
+  document.title = story.title + ' - gamedevrg stories';
+
+  /* ---- progress (last part + read set), per story ---- */
+  const KEY = 'gdr-stories:' + story.id;
+  let prog = { last:0, read:[] };
+  try { prog = Object.assign(prog, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch(e){}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(prog)); } catch(e){} };
+
+  /* ---- header ---- */
+  if (story.bg) $('bg').style.backgroundImage = `url('${img(story.bg)}')`;
+  if (story.logo) {
+    const im = new Image(); im.src = img(story.logo); im.alt = story.title;
+    im.onerror = () => im.remove();
+    $('logo').appendChild(im);
+  }
+  $('alt').textContent = story.altTitle || '';
+  $('title').textContent = story.title;
+  $('year').textContent = story.year || '';
+  $('desc').textContent = story.description || '';
+  $('meta').textContent = parts.length > 1 ? `${story.type} - ${parts.length} ${unit}s` : (story.type || '');
+  $('listTitle').textContent = unit + 's';
+
+  /* ---- parts list ---- */
+  const list = $('parts');
+  parts.forEach((p,i) => {
+    const li = document.createElement('li');
+    const isRead = prog.read.includes(i);
+    li.innerHTML = `<a href="#${i+1}" class="${isRead?'read':''}">
+      <span class="n">${i+1}</span>
+      <span class="t">${esc(p.title || unit + ' ' + (i+1))}${p.summary ? `<span class="s">${esc(p.summary)}</span>` : ''}</span>
+      <span class="done">${isRead ? 'read' : ''}</span></a>`;
+    list.appendChild(li);
+  });
+
+  const hasProg = prog.last > 0 && prog.last <= parts.length;
+  $('start').textContent = hasProg ? `continue - ${unit} ${prog.last}` : (parts.length > 1 ? 'start' : 'read');
+  $('start').href = '#' + (hasProg ? prog.last : 1);
+  if (!parts.length) $('start').setAttribute('aria-disabled','true');
+
+  /* ---- reader ---- */
+  const fmt = t => t.replace(/\r/g,'').trim().split(/\n{2,}/).map(b => {
+    b = b.trim();
+    if (/^(-{3,}|\*{3,})$/.test(b)) return '<hr>';
+    return '<p>' + esc(b).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>').replace(/\n/g,'<br>') + '</p>';
+  }).join('');
+
+  let token = 0;
+  function route(){
+    const n = parseInt(location.hash.slice(1), 10);
+    if (n >= 1 && n <= parts.length) return open(n);
+    $('reader').hidden = true; $('listView').hidden = false;
+    document.body.classList.remove('reading');
+    list.querySelectorAll('a').forEach((a,i) => a.classList.toggle('current', i + 1 === prog.last));
+  }
+
+  async function open(n){
+    const p = parts[n-1], my = ++token;
+    $('listView').hidden = true; $('reader').hidden = false;
+    document.body.classList.add('reading');
+    $('rname').textContent = `${story.title} / ${unit} ${n} of ${parts.length}`;
+    const setNav = (el, to) => { el.href = to ? '#' + to : '#'; el.setAttribute('aria-disabled', to ? 'false' : 'true'); };
+    ['prevT','prevB'].forEach(id => setNav($(id), n > 1 ? n - 1 : 0));
+    ['nextT','nextB'].forEach(id => setNav($(id), n < parts.length ? n + 1 : 0));
+    $('text').innerHTML = '<p class="err">loading...</p>';
+    window.scrollTo(0, 0);
+    try {
+      const r = await fetch(p.file);
+      if (!r.ok) throw new Error(r.status);
+      const txt = await r.text();
+      if (my !== token) return;
+      $('text').innerHTML = `<div class="label">${esc(unit)} ${n}</div><h1>${esc(p.title || '')}</h1>${fmt(txt)}`;
+      prog.last = n;
+      if (!prog.read.includes(n - 1)) prog.read.push(n - 1);
+      save();
+      document.querySelectorAll('#parts a')[n-1]?.classList.add('read');
+    } catch(e){
+      if (my === token) $('text').innerHTML = `<p class="err">couldn't load ${esc(p.file)} (${esc(e.message)}).</p>`;
+    }
+  }
+
+  /* text size */
+  let size = 1.1;
+  try { size = parseFloat(localStorage.getItem('gdr-stories:size')) || 1.1; } catch(e){}
+  const applySize = d => {
+    size = Math.min(1.8, Math.max(.9, size + d));
+    document.documentElement.style.setProperty('--read-size', size + 'rem');
+    try { localStorage.setItem('gdr-stories:size', size); } catch(e){}
+  };
+  applySize(0);
+  $('smaller').onclick = () => applySize(-.1);
+  $('bigger').onclick = () => applySize(.1);
+
+  document.addEventListener('keydown', e => {
+    if ($('reader').hidden || e.target.closest('input,textarea')) return;
+    const n = parseInt(location.hash.slice(1), 10);
+    if (e.key === 'ArrowRight' && n < parts.length) location.hash = n + 1;
+    if (e.key === 'ArrowLeft' && n > 1) location.hash = n - 1;
+  });
+
+  window.addEventListener('hashchange', route);
+  route();
+}
+</script>
+</body>
+</html>
