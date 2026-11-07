@@ -1448,6 +1448,10 @@
             color: var(--blue)
         }
 
+        #slist .dv10 {
+            color: var(--red)
+        }
+
         #slist .dv6,
         #slist .mhc {
             color: var(--imag)
@@ -1730,6 +1734,10 @@
 
         .dv8 {
             color: var(--blue)
+        }
+
+        .dv10 {
+            color: var(--red)
         }
 
         .dv6,
@@ -3116,6 +3124,38 @@
         .pack.yellow { --pc: var(--gold) }
         .pack.green { --pc: var(--ok) }
         .pack.orange { --pc: var(--orange) }
+        /* ---------- function transformations pack: lives inside the normal level board ---------- */
+        .pack.purple { --pc: var(--purple) }
+        .pack[data-p="ft"] { --ic: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%222%22 stroke-linecap=%22square%22 stroke-linejoin=%22miter%22%3E%3Cpath d=%22M4 20V4M4 20h16M8 17c1.5-9 6.5-9 8 0%22/%3E%3C/svg%3E") }
+        #ftbox { display: none; margin: 2px auto 12px }
+        main.ftmode #ftbox { display: block }
+        main.ftmode .board .row { display: none }
+        #nlwrap.ftoff { display: none !important }
+        #ftbox .ftleg { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; font-size: .85rem; color: var(--soft); margin-bottom: 8px; text-transform: lowercase }
+        #ftbox .ftleg i { display: inline-block; width: 20px; height: 0; border-top: 3px solid; vertical-align: middle; margin-right: 6px }
+        #ftbox .ftleg .s i { border-top-style: dotted; border-color: var(--soft) }
+        #ftbox .ftleg .n i { border-color: var(--imag) }
+        #ftbox .ftleg .t i { border-top-style: dashed; border-color: var(--blue) }
+        #ftcv { display: block; width: min(100%, 38vh); aspect-ratio: 1; margin: 0 auto; background: var(--cell); border: 2px solid var(--line); touch-action: pan-y }
+        #ftbox.won #ftcv { border-color: var(--ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 35%, transparent) }
+        #ftbox .fteq { margin-top: 10px; display: grid; gap: 4px; text-align: left; font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", "Times New Roman", serif; font-size: 1.05rem; text-transform: none }
+        #ftbox .fteq div { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap }
+        #ftbox .fteq em { font: normal 700 .78rem 'Chakra Petch', system-ui, sans-serif; text-transform: lowercase; min-width: 52px; color: var(--soft) }
+        #ftbox .fteq .n span { color: var(--imag); font-weight: 700 }
+        #ftbox .fteq .t span { color: var(--blue); font-weight: 700 }
+        #ftbox .fteq .s span { color: var(--soft) }
+        @media (max-width: 520px) { #ftcv { width: min(100%, 29vh) } #ftbox { margin-bottom: 6px } #ftbox .fteq { font-size: .95rem } }
+        main.ftmode #ops button { flex: 0 0 112px; font-size: 1.05rem; padding: 12px 6px }
+        .ftm, #ftbox .fteq span { font-family: "Cambria Math", "STIX Two Math", "Latin Modern Math", "Times New Roman", serif }
+        .ftm { font-size: 1.15em; font-weight: 700 }
+        .ftm i, #ftbox .fteq i { font-style: italic }
+        .ftm .fr, #ftbox .fteq .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: .88em; line-height: 1.15; margin: 0 .12em }
+        .ftm .fr > span:first-child, #ftbox .fteq .fr > span:first-child { border-bottom: 1.5px solid currentColor; padding: 0 .2em }
+        .ftm .sq, #ftbox .fteq .sq { display: inline-flex; align-items: stretch; vertical-align: middle; margin: 0 .1em }
+        .ftm .rs, #ftbox .fteq .rs { width: .7em; flex: none; overflow: visible }
+        .ftm .rv, #ftbox .fteq .rv { border-top: 1.5px solid currentColor; padding: .08em .12em 0 .1em; line-height: 1.2 }
+        .ftm sup, #ftbox .fteq sup { font-size: .65em; line-height: 0 }
+        #ftbox .fteq > div > span { font-size: 1.25rem; line-height: 1.7 }
         /* complex plane: beside the board when the window has room (placePlane sets left and width) */
         #nlwrap.side { top: 0; bottom: 0; right: auto; display: flex; align-items: center; padding: 0 }
         #nlwrap.side #nl, #nlwrap.corner #nl { height: auto }
@@ -4185,6 +4225,7 @@ body, body:not(.inmenu), body.inmenu {
 @media (max-width:600px) {
     body, body:not(.inmenu), body.inmenu { padding-bottom: 0 !important; height: calc(100dvh - 38px - env(safe-area-inset-top, 0px) - var(--dockh, 80px) - env(safe-area-inset-bottom, 0px)) }
 }
+
 </style>
 
 <script id="scroll-shim">
@@ -4372,6 +4413,7 @@ body, body:not(.inmenu), body.inmenu {
             <button class="mopt pack go blue" type="button" data-p="vars"><b>variables</b><span>operations that use variables</span></button>
             <button class="mopt pack go yellow" type="button" data-p="complex"><b>complex numbers</b><span>numbers with an imaginary part</span></button>
             <button class="mopt pack go green" type="button" data-p="trig"><b>trigonometric functions</b><span>sine, cosine, tangent and friends</span></button>
+            <button class="mopt pack go purple" type="button" data-p="ft"><b>function transformations</b><span>shift, stretch and flip a graph to match the target</span></button>
             <button class="mopt pack go orange" type="button" data-p="calc"><b>calculus</b><span>derivatives and more</span></button>
         </div>
         <div class="tools"><button id="mback">back to menu</button></div>
@@ -4399,6 +4441,7 @@ body, body:not(.inmenu), body.inmenu {
             <button class="mopt pack blue" type="button" data-p="vars" aria-pressed="false" disabled><b>variables</b><span>operations that use variables</span><em class="ptag">coming soon</em></button>
             <button class="mopt pack yellow" type="button" data-p="complex" aria-pressed="false"><b>complex numbers</b><span>numbers with an imaginary part</span></button>
             <button class="mopt pack green" type="button" data-p="trig" aria-pressed="false" disabled><b>trigonometric functions</b><span>sine, cosine, tangent and friends</span><em class="ptag">coming soon</em></button>
+            <button class="mopt pack purple" type="button" data-p="ft" aria-pressed="false"><b>function transformations</b><span>shift, stretch and flip a graph to match the target</span></button>
             <button class="mopt pack orange" type="button" data-p="calc" aria-pressed="false" disabled><b>calculus</b><span>derivatives and more</span><em class="ptag">coming soon</em></button>
         </div>
         <div class="tools"><button id="packplay">play</button><button id="packback">back to menu</button></div>
@@ -4432,6 +4475,15 @@ body, body:not(.inmenu), body.inmenu {
                     <div class="lbl full" id="goalfull"></div>
                 </div>
             </div>
+            <div id="ftbox">
+                <div class="ftleg"><span class="s"><i></i>start</span><span class="n"><i></i>now</span><span class="t"><i></i>target</span></div>
+                <canvas id="ftcv" role="img" aria-label="graphs of the start, current and target functions"></canvas>
+                <div class="fteq">
+                    <div class="s"><em>start</em><span id="fteqs"></span></div>
+                    <div class="n"><em>now</em><span id="fteqn"></span></div>
+                    <div class="t"><em>target</em><span id="fteqt"></span></div>
+                </div>
+            </div>
             <div id="pips" aria-live="polite"></div>
             <div class="lbl" id="left"></div>
             <div class="lbl" id="pitnote" hidden style="color:#d4a64f"></div>
@@ -4446,6 +4498,7 @@ body, body:not(.inmenu), body.inmenu {
                     <option value="4" selected>medium</option>
                     <option value="6">hard</option>
                     <option value="8">challenge</option>
+                    <option value="10">extreme</option>
                 </select></div>
             <div id="modeinfo">
                 <div><i>difficulty:</i> <span id="miD"></span></div>
@@ -4658,16 +4711,170 @@ body, body:not(.inmenu), body.inmenu {
 
     <script>
         const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b] } return a || 1 };
-        let NB = 100000, CAP = 1e9, ROOTS = false; /* ROOTS: the current level allows √ of non-squares (set when a level is made) */ const BMAX = 200;
+        let NB = 100000, CAP = 1e9, ROOTS = false, MAXD = 8; /* MAXD: how many moves deep the solvers look (extreme levels need more) */ /* ROOTS: the current level allows √ of non-squares (set when a level is made) */ const BMAX = 200;
         function F(n, d = 1, b = 1) { if (d < 0) { n = -n; d = -d } if (n === 0) b = 1; const g = gcd(n, d); n /= g; d /= g; if (Math.abs(n) > NB || d > NB || b > BMAX) return null; return { n, d, b } }
         const sqfC = new Map();
         /* m = k²·r with r having no square factor: returns [k, r] */
         function sqf(m) { let c = sqfC.get(m); if (c) return c; let k = 1, r = m; for (let p = 2; p * p <= r; p++) while (r % (p * p) === 0) { r /= p * p; k *= p } c = [k, r]; sqfC.set(m, c); return c }
-        const key = x => x.c ? 'c' + x.re + ',' + x.im : x.n + '/' + x.d + (x.b > 1 ? 'r' + x.b : '');
+        /* ---------- function transformations pack ----------
+           a function is y = a·B(b·x + c) + d. a level value is {ft:1, B, qa, qb, qc, qd}: the shape B and four exact fractions.
+           every operation acts on f(x) as a whole (shift, stretch, flip), so one level is a short chain of them */
+        const FT = (function () {
+            const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a || 1; };
+            const Fr = (n, d = 1) => { if (d < 0) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+            const fadd = (x, y) => Fr(x.n * y.d + y.n * x.d, x.d * y.d), fmul = (x, y) => Fr(x.n * y.n, x.d * y.d), fv = x => x.n / x.d, feq = (x, y) => x.n === y.n && x.d === y.d;
+            const rnd = n => Math.floor(Math.random() * n), pick = a => a[rnd(a.length)];
+            const BASES = {
+                lin: { f: u => u, t: u => u },
+                abs: { f: Math.abs, t: u => '|' + u + '|' },
+                quad: { f: u => u * u, t: (u, p) => p ? 'x²' : '(' + u + ')²' },
+                cube: { f: u => u * u * u, t: (u, p) => p ? 'x³' : '(' + u + ')³' },
+                sqrt: { f: Math.sqrt, t: (u, p) => p ? '√x' : '√(' + u + ')' },
+                inv: { f: u => 1 / u, t: (u, p) => p ? '1/x' : '1/(' + u + ')' },
+                sin: { f: Math.sin, t: u => 'sin(' + u + ')' },
+                exp: { f: u => Math.pow(2, u), t: (u, p) => p ? '2ˣ' : '2^(' + u + ')' }
+            };
+            const toF = s => ({ B: s.B, a: fv(s.qa), b: fv(s.qb), c: fv(s.qc), d: fv(s.qd) });
+            const sampleF = (f, x) => f.a * BASES[f.B].f(f.b * x + f.c) + f.d;
+            const skey = s => [s.qa, s.qb, s.qc, s.qd].map(q => q.n + '/' + q.d).join(',');
+            const XS = Array.from({ length: 161 }, (_, i) => -8.017 + i * 0.1);
+            /* two values are the same level state when their graphs match everywhere (so |−x| and |x| count as equal) */
+            const matcher = goal => {
+                const gf = toF(goal), gy = XS.map(x => sampleF(gf, x));
+                return s => {
+                    const f = toF(s);
+                    for (let i = 0; i < XS.length; i++) {
+                        const y = sampleF(f, XS[i]), g = gy[i], fy = isFinite(y), fg = isFinite(g);
+                        if (fy !== fg) return false;
+                        if (fy && Math.abs(y - g) > 1e-7 * (1 + Math.abs(g))) return false;
+                    }
+                    return true;
+                };
+            };
+            let goalRef = null, goalIsG = null;
+            const setGoal = (g, isG) => { goalRef = g; goalIsG = isG; };
+            const same = (a, b) => { if (b === goalRef && goalIsG) return goalIsG(a); if (a === goalRef && goalIsG) return goalIsG(b); return matcher(b)(a); };
+            const fs = q => q.d === 1 ? String(Math.abs(q.n)) : Math.abs(q.n) + '/' + q.d;
+            function bx(b) {
+                if (feq(b, Fr(1))) return 'x'; if (feq(b, Fr(-1))) return '−x';
+                const sg = b.n < 0 ? '−' : '', n = Math.abs(b.n);
+                return b.d === 1 ? sg + n + 'x' : sg + (n === 1 ? '' : n) + 'x/' + b.d;
+            }
+            function eq(s) {
+                const plain = feq(s.qb, Fr(1)) && s.qc.n === 0;
+                let u = bx(s.qb); if (s.qc.n > 0) u += ' + ' + fs(s.qc); else if (s.qc.n < 0) u += ' − ' + fs(s.qc);
+                let body = BASES[s.B].t(u, plain);
+                const m = Fr(Math.abs(s.qa.n), s.qa.d), one = feq(m, Fr(1)), neg = s.qa.n < 0;
+                if (!one || neg) { if ((s.B === 'lin' && !plain) || s.B === 'inv') body = '(' + body + ')'; }
+                let mag = one ? '' : (m.d === 1 ? String(m.n) : '(' + m.n + '/' + m.d + ')');
+                if (mag && /^[0-9]/.test(body)) mag += '·';
+                let t = (neg ? '−' : '') + mag + body;
+                if (s.qd.n > 0) t += ' + ' + fs(s.qd); else if (s.qd.n < 0) t += ' − ' + fs(s.qd);
+                return 'y = ' + t;
+            }
+            /* the same equation drawn as typeset math: stacked fractions, a bar over radicands, real superscripts */
+            const X = '<i>x</i>', frac = (n, d) => '<span class="fr"><span>' + n + '</span><span>' + d + '</span></span>';
+            const fH = q => q.d === 1 ? String(Math.abs(q.n)) : frac(Math.abs(q.n), q.d);
+            function bxH(b) {
+                if (feq(b, Fr(1))) return X; if (feq(b, Fr(-1))) return '−' + X;
+                const sg = b.n < 0 ? '−' : '', n = Math.abs(b.n);
+                return b.d === 1 ? sg + n + X : sg + frac(n, b.d) + X;
+            }
+            function html(s) {
+                const plain = feq(s.qb, Fr(1)) && s.qc.n === 0;
+                let u = bxH(s.qb); if (s.qc.n > 0) u += ' + ' + fH(s.qc); else if (s.qc.n < 0) u += ' − ' + fH(s.qc);
+                const bodyH = ({
+                    lin: u, abs: '|' + u + '|',
+                    quad: plain ? X + '<sup>2</sup>' : '(' + u + ')<sup>2</sup>', cube: plain ? X + '<sup>3</sup>' : '(' + u + ')<sup>3</sup>',
+                    sqrt: '<span class="sq"><svg class="rs" viewBox="0 0 10 20" preserveAspectRatio="none" aria-hidden="true"><path d="M0.5 12.5L2.5 11L5 18.5L9.5 0.8H10" fill="none" stroke="currentColor" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg><span class="rv">' + u + '</span></span>', inv: frac('1', u),
+                    sin: 'sin(' + u + ')', exp: '2<sup>' + u + '</sup>'
+                })[s.B];
+                const m = Fr(Math.abs(s.qa.n), s.qa.d), one = feq(m, Fr(1)), neg = s.qa.n < 0;
+                let t;
+                if (s.B === 'inv' && m.d === 1) t = frac((neg ? '−' : '') + m.n, u);
+                else {
+                    let mag = one ? '' : fH(m);
+                    if (mag && /^[0-9]/.test(BASES[s.B].t(bx(s.qb), plain))) mag += '·';
+                    const body = (!one || neg) && s.B === 'lin' && !plain ? '(' + bodyH + ')' : bodyH;
+                    t = (neg ? '−' : '') + mag + body;
+                }
+                if (s.qd.n > 0) t += ' + ' + fH(s.qd); else if (s.qd.n < 0) t += ' − ' + fH(s.qd);
+                return '<i>y</i> = ' + t;
+            }
+            const mkOp = (id, kind, top, sub, ap, h) => ({ id, kind, top, sub, ap, h: h || top });
+            function opFrom(sp) {
+                const t = sp[0], k = sp[1];
+                switch (t) {
+                    case 'up': return mkOp('up' + k, 't', 'f(x) + ' + k, 'up ' + k, s => ({ ...s, qd: fadd(s.qd, Fr(k)) }));
+                    case 'down': return mkOp('dn' + k, 't', 'f(x) − ' + k, 'down ' + k, s => ({ ...s, qd: fadd(s.qd, Fr(-k)) }));
+                    case 'right': return mkOp('rt' + k, 't', 'f(x − ' + k + ')', 'right ' + k, s => ({ ...s, qc: fadd(s.qc, fmul(s.qb, Fr(-k))) }));
+                    case 'left': return mkOp('lf' + k, 't', 'f(x + ' + k + ')', 'left ' + k, s => ({ ...s, qc: fadd(s.qc, fmul(s.qb, Fr(k))) }));
+                    case 'vs': return mkOp('vs' + k, 's', k + '·f(x)', 'taller ×' + k, s => ({ ...s, qa: fmul(s.qa, Fr(k)), qd: fmul(s.qd, Fr(k)) }));
+                    case 'vc': return mkOp('vc' + k, 's', 'f(x)/' + k, 'shorter ÷' + k, s => ({ ...s, qa: fmul(s.qa, Fr(1, k)), qd: fmul(s.qd, Fr(1, k)) }), frac('f(x)', k));
+                    case 'hc': return mkOp('hc' + k, 's', 'f(' + k + 'x)', 'narrower ÷' + k, s => ({ ...s, qb: fmul(s.qb, Fr(k)) }));
+                    case 'hs': return mkOp('hs' + k, 's', 'f(x/' + k + ')', 'wider ×' + k, s => ({ ...s, qb: fmul(s.qb, Fr(1, k)) }), 'f(' + frac('x', k) + ')');
+                    case 'fx': return mkOp('fx', 'f', '−f(x)', 'flip over x-axis', s => ({ ...s, qa: fmul(s.qa, Fr(-1)), qd: fmul(s.qd, Fr(-1)) }));
+                    default: return mkOp('fy', 'f', 'f(−x)', 'flip over y-axis', s => ({ ...s, qb: fmul(s.qb, Fr(-1)) }));
+                }
+            }
+            const shifts = ks => ks.flatMap(k => [['up', k], ['down', k], ['left', k], ['right', k]]);
+            const CFG = {
+                easy: { n: 2, pal: 5, bases: ['abs', 'quad', 'lin'], specs: [...shifts([1, 2, 3]), ['fx'], ['fy']], pre: 0 },
+                medium: { n: 3, pal: 6, bases: ['abs', 'quad', 'sqrt', 'cube'], specs: [...shifts([1, 2, 3, 4]), ['fx'], ['fy'], ['vs', 2], ['vc', 2]], pre: 0 },
+                hard: { n: 4, pal: 7, bases: ['abs', 'quad', 'sqrt', 'cube', 'inv', 'sin'], specs: [...shifts([1, 2, 3, 4]), ['fx'], ['fy'], ['vs', 2], ['vs', 3], ['vc', 2], ['hc', 2], ['hs', 2]], pre: 1 },
+                challenge: { n: 5, pal: 8, bases: ['abs', 'quad', 'sqrt', 'cube', 'inv', 'sin', 'exp'], specs: [...shifts([1, 2, 3, 4, 5]), ['fx'], ['fy'], ['vs', 2], ['vs', 3], ['vc', 2], ['vc', 3], ['hc', 2], ['hc', 3], ['hs', 2], ['hs', 3]], pre: 2 }
+            };
+            const KORD = { t: 0, s: 1, f: 2 };
+            const sortOps = a => a.sort((x, y) => KORD[x.kind] - KORD[y.kind] || x.id.localeCompare(y.id, undefined, { numeric: true }));
+            const inb = s => Math.abs(fv(s.qa)) <= 12 && Math.abs(fv(s.qb)) <= 12 && Math.abs(fv(s.qc)) <= 30 && Math.abs(fv(s.qd)) <= 30 && s.qa.d <= 36 && s.qb.d <= 36 && s.qc.d <= 36 && s.qd.d <= 36;
+            function visible(s) { const f = toF(s); let n = 0; for (let x = -10; x <= 10; x += .5) { const y = sampleF(f, x); if (isFinite(y) && Math.abs(y) <= 10) n++; } return n >= 10; }
+            function solveFt(s0, ops, isG, maxD) {
+                if (isG(s0)) return [];
+                let layer = [{ s: s0, p: [] }]; const seen = new Set([skey(s0)]);
+                for (let d = 1; d <= maxD; d++) {
+                    const next = [];
+                    for (const { s, p } of layer) for (let i = 0; i < ops.length; i++) {
+                        const n = ops[i].ap(s); if (!inb(n)) continue;
+                        const k = skey(n); if (seen.has(k)) continue; seen.add(k);
+                        const np = p.concat(i); if (isG(n)) return np; next.push({ s: n, p: np });
+                    }
+                    layer = next; if (layer.length > 60000) break;
+                }
+                return null;
+            }
+            const base = B => ({ ft: 1, B, qa: Fr(1), qb: Fr(1), qc: Fr(0), qd: Fr(0) });
+            function gen(diff) {
+                const cfg = CFG[diff]; let best = null;
+                for (let t = 0; t < 60; t++) {
+                    let start = base(pick(cfg.bases));
+                    for (let i = 0; i < cfg.pre; i++) start = opFrom(pick(cfg.specs)).ap(start);
+                    const seq = []; let prev = null, tries = 0;
+                    while (seq.length < cfg.n && tries++ < 50) { const o = opFrom(pick(cfg.specs)); if (prev && prev.kind === 'f' && o.id === prev.id) continue; seq.push(o); prev = o; }
+                    if (seq.length < cfg.n) continue;
+                    let goal = start; seq.forEach(o => { goal = o.ap(goal); });
+                    if (!inb(goal) || !inb(start) || !visible(goal) || !visible(start)) continue;
+                    const isG = matcher(goal); if (isG(start)) continue;
+                    const map = new Map(); seq.forEach(o => map.set(o.id, o));
+                    let guard = 0; while (map.size < cfg.pal && guard++ < 80) { const o = opFrom(pick(cfg.specs)); if (!map.has(o.id)) map.set(o.id, o); }
+                    const ops = sortOps([...map.values()]), path = solveFt(start, ops, isG, seq.length);
+                    if (!path) continue;
+                    const L2 = { start, goal, ops, par: path.length, isG };
+                    if (path.length >= Math.max(2, cfg.n - 1)) return L2;
+                    if (!best || path.length > best.par) best = L2;
+                }
+                if (best) return best;
+                const start = base('quad'), ops = sortOps([opFrom(['up', 2]), opFrom(['right', 1]), opFrom(['fx']), opFrom(['down', 1]), opFrom(['left', 1])]);
+                const goal = ops[0].ap(ops[1].ap(start)); /* fallback level */
+                const isG = matcher(goal); return { start, goal, ops, par: solveFt(start, ops, isG, 3).length, isG };
+            }
+            return { gen, eq, html, toF, inb, same, setGoal, sampleF };
+        })();
+        const key = x => x.ft ? 'f' + FT.eq(x) : x.c ? 'c' + x.re + ',' + x.im : x.n + '/' + x.d + (x.b > 1 ? 'r' + x.b : '');
         const term = x => { let d = x.d; while (d % 2 === 0) d /= 2; while (d % 5 === 0) d /= 5; return d === 1 };
         /* complex numbers (the complex numbers pack) are {c:1, re, im} with whole parts, shown like 3+2i */
         const fmtC = x => { const a = Math.abs(x.im), co = a === 1 ? '' : a; if (!x.im) return String(x.re); if (!x.re) return (x.im < 0 ? '-' : '') + co + 'i'; return x.re + (x.im < 0 ? '−' : '+') + co + 'i'; };
         const fmt = x => {
+            if (x.ft) return FT.eq(x);
             if (x.c) return fmtC(x);
             if (x.b > 1) { const a = Math.abs(x.n); return (x.n < 0 ? '-' : '') + (a === 1 ? '' : a) + '√' + x.b + (x.d > 1 ? '/' + x.d : ''); } /* a root like 2√3 or √3/2 */
             if (x.d === 1) return String(x.n);
@@ -4679,7 +4886,7 @@ body, body:not(.inmenu), body.inmenu {
             return x.n + '/' + x.d;
         };
         const fmtS = x => { const f = fmt(x), i = f.indexOf('.'); return i >= 0 && f.length - i - 1 > 2 ? f.slice(0, i + 3) : f; };
-        const same = (a, b) => (a.c || b.c) ? !!(a.c && b.c && a.re === b.re && a.im === b.im) : a.n === b.n && a.d === b.d && (a.b || 1) === (b.b || 1);
+        const same = (a, b) => (a.ft || b.ft) ? !!(a.ft && b.ft && FT.same(a, b)) : (a.c || b.c) ? !!(a.c && b.c && a.re === b.re && a.im === b.im) : a.n === b.n && a.d === b.d && (a.b || 1) === (b.b || 1);
         function mk(s, mode) {
             /* numbers can be a root like 2√3 = {n:2, d:1, b:3} (value n/d·√b, b with no square factor); in fractions mode √x of a non-square gives one */
             if (s === 'x²') return { s, f: x => F(x.n * x.n * x.b, x.d * x.d) };
@@ -4697,7 +4904,7 @@ body, body:not(.inmenu), body.inmenu {
         }
         function solve(start, goal, ops) {
             let seen = new Set([key(start)]), fr = [start];
-            for (let d = 1; d <= 8; d++) {
+            for (let d = 1; d <= MAXD; d++) {
                 const nx = []; if (seen.size > CAP) return null;
                 for (const n of fr) for (const o of ops) {
                     const v = o.f(n);
@@ -4710,7 +4917,7 @@ body, body:not(.inmenu), body.inmenu {
         }
         function countBest(start, goal, ops) {
             let layer = new Map([[key(start), [start, 1]]]), seen = new Set([key(start)]);
-            for (let d = 1; d <= 8; d++) {
+            for (let d = 1; d <= MAXD; d++) {
                 const nx = new Map(); if (seen.size > CAP) return 0;
                 for (const [x, c] of layer.values()) for (const o of ops) {
                     const v = o.f(x);
@@ -4726,12 +4933,13 @@ body, body:not(.inmenu), body.inmenu {
         const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
         function genOp(tier, mode) {
             const dec = mode === 'dec', more = mode !== 'whole';
-            if (tier === 8) {
+            if (tier >= 8) {
+                const XT = tier >= 10, big = XT ? 19 : 12, mx = XT ? 7 : 5;
                 const r = ri(0, more ? 16 : 15); const hh = () => dec && Math.random() < .4, hf = () => mode === 'frac' && Math.random() < .35, fq = () => { let d, n; do { d = ri(2, 5); n = ri(1, d * 3) } while (gcd(n, d) !== 1); return n + '/' + d }, dd = () => { let v; do { v = ri(1, 49) } while (v % 10 === 0); return v / 10 };
-                if (r < 2) return mk('+' + (hh() ? dd() : hf() ? fq() : ri(1, 12)), mode); if (r < 4) return mk('−' + (hh() ? dd() : hf() ? fq() : ri(1, 12)), mode);
-                if (r < 6) return mk('×' + (hh() ? ['0.5', '1.5', '2.5'][ri(0, 2)] : hf() ? fq() : ri(2, 5)), mode); if (r < 8) return mk('÷' + (hh() ? ['0.5', '2.5'][ri(0, 1)] : hf() ? fq() : ri(2, 5)), mode);
+                if (r < 2) return mk('+' + (hh() ? dd() : hf() ? fq() : ri(1, big)), mode); if (r < 4) return mk('−' + (hh() ? dd() : hf() ? fq() : ri(1, big)), mode);
+                if (r < 6) return mk('×' + (hh() ? ['0.5', '1.5', '2.5'][ri(0, 2)] : hf() ? fq() : ri(2, mx)), mode); if (r < 8) return mk('÷' + (hh() ? ['0.5', '2.5'][ri(0, 1)] : hf() ? fq() : ri(2, mx)), mode);
                 if (r === 8) return mk('x²', mode); if (r === 9) return mk('|x|', mode); if (r === 10) return mk('√x', mode); if (r === 11) return mk('x³', mode);
-                if (r === 12) return mk('−x', mode); if (r === 13) return mk('mod ' + ri(3, 9), mode); return mk(more ? 'x⁻¹' : '|x|', mode);
+                if (r === 12) return mk('−x', mode); if (r === 13) return mk('mod ' + ri(3, XT ? 13 : 9), mode); return mk(more ? 'x⁻¹' : '|x|', mode);
             }
             const t = ri(0, more ? 10 : 9), h = () => dec && Math.random() < .5,
                 dk = () => { let v; do { v = ri(1, 49) } while (v % 10 === 0); return v / 10 }, pk = a => a[ri(0, a.length - 1)];
@@ -4833,6 +5041,7 @@ body, body:not(.inmenu), body.inmenu {
                 "d_medium": "medium",
                 "d_hard": "hard",
                 "d_challenge": "challenge",
+                "d_extreme": "extreme",
                 "hardcore": "hardcore",
                 "normal": "normal",
                 "youhave": "you have",
@@ -5025,6 +5234,7 @@ body, body:not(.inmenu), body.inmenu {
                 "d_medium": "medio",
                 "d_hard": "difícil",
                 "d_challenge": "desafío",
+                "d_extreme": "extremo",
                 "hardcore": "hardcore",
                 "normal": "normal",
                 "youhave": "tienes",
@@ -5217,6 +5427,7 @@ body, body:not(.inmenu), body.inmenu {
                 "d_medium": "普通",
                 "d_hard": "難しい",
                 "d_challenge": "チャレンジ",
+                "d_extreme": "エクストリーム",
                 "hardcore": "ハードコア",
                 "normal": "ノーマル",
                 "youhave": "いまの数",
@@ -5409,6 +5620,7 @@ body, body:not(.inmenu), body.inmenu {
                 "d_medium": "中等",
                 "d_hard": "困難",
                 "d_challenge": "挑戰",
+                "d_extreme": "極限",
                 "hardcore": "硬核",
                 "normal": "普通",
                 "youhave": "你現在是",
@@ -5572,6 +5784,10 @@ body, body:not(.inmenu), body.inmenu {
         Object.assign(I18N.ja, {"mp_sub": "ゲームパックを選んでレベルを見よう", "mp_back": "パック選択に戻る"});
         Object.assign(I18N.ja, {"pk_calc_b": "微積分", "pk_calc_d": "導関数など"});
         Object.assign(I18N.zh, {"packs_t": "選擇游戲包", "packs_sub": "每個隨機關卡都來自你開啟的其中一個游戲包", "pk_base_b": "基礎游戲", "pk_base_d": "熟悉的運算，基礎游戲", "pk_vars_b": "變量", "pk_vars_d": "使用變量的運算", "pk_cx_b": "複數", "pk_cx_d": "帶虛部的數", "pk_trig_b": "三角函數", "pk_trig_d": "正弦、餘弦、正切等", "pk_soon": "即將上線", "pk_play": "開始"});
+        Object.assign(I18N.en, {"pk_ft_b": "function transformations", "pk_ft_d": "shift, stretch and flip a graph to match the target", "ft_psub": "turn the start graph into the target in par moves or fewer"});
+        Object.assign(I18N.es, {"pk_ft_b": "transformaciones de funciones", "pk_ft_d": "desplaza, estira y refleja una gráfica hasta igualar la meta", "ft_psub": "convierte la gráfica inicial en la meta con par movimientos o menos"});
+        Object.assign(I18N.ja, {"pk_ft_b": "関数の変換", "pk_ft_d": "グラフを動かし、伸ばし、反転させて目標に合わせる", "ft_psub": "パー以内の手数で、スタートのグラフを目標に変えよう"});
+        Object.assign(I18N.zh, {"pk_ft_b": "函數變換", "pk_ft_d": "平移、伸縮、翻轉圖像，使其與目標相符", "ft_psub": "用不超過標準桿的步數，把起始圖像變成目標圖像"});
         Object.assign(I18N.zh, {"cplane": "複平面"});
         Object.assign(I18N.zh, {"mp_sub": "選擇一個游戲包查看關卡", "mp_back": "返回游戲包"});
         Object.assign(I18N.zh, {"pk_calc_b": "微積分", "pk_calc_d": "導數等"});
@@ -5767,6 +5983,7 @@ Object.assign(I18N.zh, {"onl_t": "在線關卡", "onl_s": "玩其他玩家發布
         }
         function drawLine() {
             cancelAnimationFrame(raf);
+            if (L && L.pack === 'ft') { pend = false; view = null; drawFtAnimated(); return; }
             { const nl = $('nl'); nl.setAttribute('aria-label', L.pack === 'complex' ? 'complex plane showing your ball, your hits and the hole' : 'number line showing your ball, your hits and the hole'); }
             placePlane(L.pack === 'complex');
             if (L.pack === 'complex') {
@@ -5898,7 +6115,7 @@ Object.assign(I18N.zh, {"onl_t": "在線關卡", "onl_s": "玩其他玩家發布
             return pits.length && share >= lo ? { pits, par: np } : null;
         }
         function genComplex(tier) {
-            CAP = tier === 8 ? 40000 : 200000;
+            CAP = tier === 8 ? 40000 : 200000; MAXD = 8;
             const tp = tier === 8 ? ri(5, 7) : 0;
             for (let tries = 0; tries < 3000; tries++) {
                 const n = tier === 8 ? ri(6, 7) : ri(4, 5) + (tier >= 4 ? 1 : 0), pool = [];
@@ -5973,7 +6190,56 @@ Object.assign(I18N.zh, {"onl_t": "在線關卡", "onl_s": "玩其他玩家發布
             $('nl').style.height = H + 'px'; $('nl').setAttribute('viewBox', `0 0 ${W} ${H}`); $('nl').innerHTML = h;
             if (!bl) planeLast = tgt;
         }
-        const PACK_GEN = { base: t => genLevel(t), complex: t => genComplex(t) };
+        /* ---------- function transformations pack (level generator and graph) ---------- */
+        function genFt(tier) {
+            const lv = FT.gen(tier <= 2 ? 'easy' : tier <= 4 ? 'medium' : tier <= 6 ? 'hard' : 'challenge');
+            FT.setGoal(lv.goal, lv.isG);
+            L = { start: lv.start, goal: lv.goal, limit: lv.par, pack: 'ft', ops: lv.ops.map(o => ({ s: o.top, sub: o.sub, h: o.h, k: o.kind, f: x => { const n = o.ap(x); return FT.inb(n) ? n : null; } })) };
+            cur = L.start; hist = []; undosUsed = 0; counted = false; render(); return true;
+        }
+        let ftShown = null, ftShownFor = null;
+        function drawFt() {
+            const cv = $('ftcv'); if (!cv || !L || L.pack !== 'ft' || !ftShown) return;
+            const r = cv.getBoundingClientRect(); if (!r.width) return;
+            const dpr = window.devicePixelRatio || 1, W = Math.round(r.width * dpr), H = Math.round(r.height * dpr);
+            if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+            const g = cv.getContext('2d'), cs = getComputedStyle(document.documentElement), col = n => cs.getPropertyValue(n).trim(), won = same(cur, L.goal);
+            const R = 10, sx = W / (2 * R), px = x => (x + R) * sx, py = y => H - (y + R) * sx;
+            g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = col('--cell'); g.fillRect(0, 0, W, H);
+            g.lineWidth = dpr;
+            for (let i = -R; i <= R; i++) { g.strokeStyle = i % 5 === 0 ? col('--line') : col('--grid'); g.beginPath(); g.moveTo(px(i), 0); g.lineTo(px(i), H); g.moveTo(0, py(i)); g.lineTo(W, py(i)); g.stroke(); }
+            g.strokeStyle = col('--soft'); g.lineWidth = 1.6 * dpr; g.beginPath(); g.moveTo(px(0), 0); g.lineTo(px(0), H); g.moveTo(0, py(0)); g.lineTo(W, py(0)); g.stroke();
+            g.fillStyle = col('--soft'); g.font = (10 * dpr) + 'px "Chakra Petch", sans-serif'; g.textAlign = 'center';
+            for (let i = -R + 2; i < R; i += 2) if (i) { g.fillText(String(i).replace('-', '−'), px(i), py(0) + 13 * dpr); g.textAlign = 'left'; g.fillText(String(i).replace('-', '−'), px(0) + 4 * dpr, py(i) + 3 * dpr); g.textAlign = 'center'; }
+            const plot = (f, color, w, dash) => {
+                g.strokeStyle = color; g.lineWidth = w * dpr; g.setLineDash(dash.map(v => v * dpr)); g.lineJoin = 'round'; g.beginPath();
+                let pen = false, y0 = 0; const stp = Math.max(1, Math.round(dpr));
+                for (let i = 0; i <= W; i += stp) {
+                    const y = FT.sampleF(f, i / sx - R);
+                    if (!isFinite(y) || Math.abs(y) > 1e4) { pen = false; continue; }
+                    const Y = py(y); if (pen && Math.abs(Y - y0) > H * .8) pen = false;
+                    if (!pen) { g.moveTo(i, Y); pen = true; } else g.lineTo(i, Y); y0 = Y;
+                }
+                g.stroke(); g.setLineDash([]);
+            };
+            plot(FT.toF(L.start), col('--soft'), 2, [2, 5]);
+            plot(FT.toF(L.goal), col('--blue'), 3, [9, 6]);
+            plot(ftShown, won ? col('--ok') : col('--imag'), won ? 4.5 : 3.5, []);
+        }
+        /* the curve glides from the old shape to the new one (instantly when ball animations are off) */
+        function drawFtAnimated() {
+            const to = FT.toF(cur);
+            if (ftShownFor !== L || !ftShown || !animOn('ball')) { ftShownFor = L; ftShown = to; drawFt(); return; }
+            const from = ftShown, t0 = performance.now(), D = 320;
+            const step = now => {
+                const p = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - p, 3);
+                ftShown = { B: to.B, a: from.a + (to.a - from.a) * e, b: from.b + (to.b - from.b) * e, c: from.c + (to.c - from.c) * e, d: from.d + (to.d - from.d) * e };
+                drawFt(); if (p < 1) raf = requestAnimationFrame(step);
+            };
+            raf = requestAnimationFrame(step);
+        }
+        if (window.ResizeObserver) new ResizeObserver(() => drawFt()).observe($('ftcv')); else addEventListener('resize', drawFt);
+        const PACK_GEN = { base: t => genLevel(t), complex: t => genComplex(t >= 10 ? 8 : t), ft: t => genFt(t) };
         let packsOn = ['base'];
         try { const s = JSON.parse(localStorage.getItem('hs_packs') || 'null'); if (Array.isArray(s)) { const ok = s.filter(p => PACK_GEN[p]); if (ok.length) packsOn = ok; } } catch (e) { }
         const savePacks = () => { try { localStorage.setItem('hs_packs', JSON.stringify(packsOn)); } catch (e) { } };
@@ -5981,13 +6247,13 @@ Object.assign(I18N.zh, {"onl_t": "在線關卡", "onl_s": "玩其他玩家發布
         /* a random level is only worked out when the game screen is opened (not at load, not while you are still picking packs): until then L is this cheap stand-in, which is never shown */
         let STANDIN = null;
         const packKey = () => packsOn.slice().sort().join();
-        function staleLevel() { ROOTS = false; NB = 100000; CAP = 1e9; STANDIN = L = { start: F(1), goal: F(10), ops: [mk('+3'), mk('×2')], limit: 3 }; cur = L.start; hist = []; undosUsed = 0; counted = false; }
+        function staleLevel() { ROOTS = false; NB = 100000; CAP = 1e9; MAXD = 8; STANDIN = L = { start: F(1), goal: F(10), ops: [mk('+3'), mk('×2')], limit: 3 }; cur = L.start; hist = []; undosUsed = 0; counted = false; }
         const pickGen = () => PACK_GEN[packsOn[Math.floor(Math.random() * packsOn.length)]] || PACK_GEN.base;
         function newLevel() {
             view = null; stopReplay(); stopFx();
             const t0 = parseInt($('diff').value, 10), gen = pickGen();
-            if (gen(t0) || (t0 === 8 && gen(6))) return;
-            ROOTS = false; NB = 100000; CAP = 1e9;
+            if (gen(t0) || (t0 === 10 && gen(8)) || (t0 >= 8 && gen(6))) return;
+            ROOTS = false; NB = 100000; CAP = 1e9; MAXD = 8;
             L = { start: F(1), goal: F(10), ops: [mk('+3'), mk('×2')], limit: 3 }; cur = L.start; hist = []; undosUsed = 0; counted = false; render();
         }
 
@@ -6018,7 +6284,7 @@ Object.assign(I18N.zh, {"onl_t": "在線關卡", "onl_s": "玩其他玩家發布
         }
         function solveAvoid(start, goal, ops, blocked) { /* blocked: a list of sand pits (numbers or ranges) */
             let seen = new Set([key(start)]), fr = [start];
-            for (let d = 1; d <= 8; d++) {
+            for (let d = 1; d <= MAXD; d++) {
                 const nx = []; if (seen.size > CAP) return null;
                 for (const n of fr) for (const o of ops) {
                     const v = o.f(n);
@@ -6077,16 +6343,85 @@ Object.assign(I18N.zh, {"onl_t": "在線關卡", "onl_s": "玩其他玩家發布
             }
             return pits.length && share >= lo ? { pits: pits.map(pitCopy), par: np } : null;
         }
+        /* ---- extreme difficulty: extra checks so that a level is never easy or guessable ---- */
+        const POWER_OPS = ['x²', '|x|', '√x', 'x³', '−x', 'x⁻¹'], isPower = o => POWER_OPS.includes(o.s) || o.s.startsWith('mod');
+        /* one shortest route (as op indexes and the numbers it visits), or null */
+        function pathBest(start, goal, ops, par) {
+            const from = new Map([[key(start), null]]); let fr = [start];
+            for (let d = 1; d <= par; d++) {
+                const nx = []; if (from.size > CAP) return null;
+                for (const n of fr) for (let i = 0; i < ops.length; i++) {
+                    const v = ops[i].f(n); if (!v) continue; const k = key(v);
+                    if (from.has(k)) continue; from.set(k, [key(n), i, v]);
+                    if (same(v, goal)) { const idx = [], vals = []; let c = from.get(k); while (c) { idx.push(c[1]); vals.push(c[2]); c = from.get(c[0]); } return { idx: idx.reverse(), vals: vals.reverse() }; }
+                    nx.push(v);
+                }
+                fr = nx;
+            }
+            return null;
+        }
+        /* the number you reach by always playing the move that lands closest to the goal (a "greedy" player) */
+        function greedyReaches(start, goal, ops, steps) {
+            const gv = val(goal), seen = new Set([key(start)]); let g = start;
+            for (let i = 0; i < steps; i++) {
+                let best = null, bd = Infinity;
+                for (const o of ops) { const r = o.f(g); if (!r || seen.has(key(r))) continue; const d = Math.abs(val(r) - gv); if (d < bd) { bd = d; best = r; } }
+                if (!best) return false; g = best; seen.add(key(g)); if (same(g, goal)) return true;
+            }
+            return false;
+        }
+        /* cheap checks on one shortest route (op indexes + the numbers it visits): the route has to be varied, use some big moves, and wander away from the goal */
+        function routeOk(ops, idx, vals, start, goal, strict) {
+            const uniq = new Set(idx), gv = val(goal);
+            if (uniq.size < 4 || ops.length - uniq.size < 2) return false;                  /* at least 4 different moves on the route, and at least 2 decoys */
+            const cnt = {}; idx.forEach(i => { cnt[i] = (cnt[i] || 0) + 1; }); if (Math.max(...Object.values(cnt)) >= (strict ? 3 : 4)) return false;   /* no grinding one move */
+            if (new Set(idx.filter(i => isPower(ops[i]))).size < 2) return false;           /* at least 2 different "big" moves (squares, roots, mod, ...) */
+            let away = 0, dp = Math.abs(val(start) - gv); for (const v of vals) { const d = Math.abs(val(v) - gv); if (d > dp) away++; dp = d; }
+            return away >= (strict ? 2 : 1);                                                /* it has to go backwards (away from the goal) at least twice */
+        }
+        /* true if the level (with true shortest length par) is hard enough for extreme; strict = the tight version tried first */
+        function extremeOk(start, goal, ops, par, strict) {
+            const best = pathBest(start, goal, ops, par); if (!best || !routeOk(ops, best.idx, best.vals, start, goal, strict)) return false;
+            const gv = val(goal), c = countBest(start, goal, ops); if (!c || c > (strict ? 3 : 6)) return false;   /* only a few shortest routes */
+            if (greedyReaches(start, goal, ops, par + 3)) return false;                      /* walking straight at the goal must not work */
+            /* the move that looks best (lands closest to the goal) must not be the start of a shortest route */
+            let bi = -1, bd = Infinity; ops.forEach((o, i) => { const r = o.f(start); if (!r) return; const d = Math.abs(val(r) - gv); if (d < bd) { bd = d; bi = i; } });
+            if (bi >= 0) { const r = ops[bi].f(start); if (r && (same(r, goal) || solve(r, goal, ops) === par - 1)) return false; }
+            return true;
+        }
+        /* whole-number levels: search outward from the start once, then look through the numbers that need 6 to 9 moves (those closest to a randomly aimed length are tried first)
+           and keep the first that passes every check. returns a goal or null */
+        function extremeDeep(start, ops, strict) {
+            let layer = [start]; const from = new Map([[key(start), null]]), cand = [], want = [6, 7, 7, 8, 8, 9][ri(0, 5)];   /* the length we are aiming for this time */
+            for (let d = 1; d <= 9; d++) {
+                const nx = []; if (from.size > CAP) return null;
+                for (const n of layer) for (let i = 0; i < ops.length; i++) {
+                    const v = ops[i].f(n); if (!v) continue; const k = key(v); if (from.has(k)) continue;
+                    from.set(k, [key(n), i, v]); nx.push(v); if (d >= 6 && v.b === 1 && v.d === 1) cand.push({ v, k: -Math.abs(d - want) + Math.random() * .99 });
+                }
+                if (!nx.length) break; layer = nx;
+            }
+            cand.sort((x, y) => y.k - x.k);
+            let heavy = 0;
+            for (const { v } of cand.slice(0, 80)) {
+                const idx = [], vals = []; let c = from.get(key(v)); while (c) { idx.push(c[1]); vals.push(c[2]); c = from.get(c[0]); } idx.reverse(); vals.reverse();
+                if (!routeOk(ops, idx, vals, start, v, strict)) continue;
+                if (extremeOk(start, v, ops, idx.length, strict)) return v;
+                if (++heavy >= 6) break;
+            }
+            return null;
+        }
         function genLevel(tier) {
             ROOTS = !!settings.roots;
-            NB = tier === 8 ? 3000 : 100000; CAP = tier === 8 ? 40000 : 1e9;
-            const tp = tier === 8 ? ri(5, 7) : 0, mode = settings.num, gd = mode === 'dec' && !!settings.gdec, gf = mode === 'frac' && !!settings.gfrac, special = o => o.s === 'x⁻¹' || o.s.includes('.') || o.s.includes('/');
-            for (let tries = 0; tries < 3000; tries++) {
-                const pool = []; const n = tier === 8 ? ri(7, 8) : ri(4, 5) + (tier >= 4 ? 1 : 0);
+            const XT = tier >= 10;   /* extreme: long, deceptive levels (see extremeOk) */
+            NB = tier >= 8 ? 3000 : 100000; CAP = XT ? 150000 : tier === 8 ? 40000 : 1e9; MAXD = XT ? 11 : 8;
+            const tp = XT ? ri(7, 9) : tier === 8 ? ri(5, 7) : 0, mode = settings.num, gd = mode === 'dec' && !!settings.gdec, gf = mode === 'frac' && !!settings.gfrac, special = o => o.s === 'x⁻¹' || o.s.includes('.') || o.s.includes('/');
+            for (let tries = 0; tries < (XT ? 6000 : 3000); tries++) {
+                const pool = []; const n = XT ? ri(8, 9) : tier === 8 ? ri(7, 8) : ri(4, 5) + (tier >= 4 ? 1 : 0);
                 while (pool.length < n) { const o = genOp(tier, mode); if (!pool.some(p => p.s === o.s)) pool.push(o); }
                 if (mode !== 'whole' && !pool.some(special)) continue;
-                if (tier === 8 && pool.filter(o => ['|x|', '√x', 'x³', '−x', 'x²', 'x⁻¹'].includes(o.s) || o.s.startsWith('mod')).length < 3) continue;
-                const start = F(tier === 8 ? ri(2, 40) : ri(1, tier >= 6 ? 20 : 12)); let v = start; const steps = tier === 8 ? tp : ri(tier, tier + 1); let ok = true;
+                if (tier >= 8 && pool.filter(isPower).length < (XT ? 4 : 3)) continue;
+                const start = F(XT ? ri(3, 99) : tier === 8 ? ri(2, 40) : ri(1, tier >= 6 ? 20 : 12)); let v = start; const deep = XT && mode === 'whole' && !ROOTS; if (deep) { v = extremeDeep(start, pool, tries < 1500); if (!v) continue; } const steps = deep ? 0 : tier >= 8 ? tp : ri(tier, tier + 1); let ok = true;
                 for (let i = 0; i < steps; i++) {
                     const o = pool[ri(0, pool.length - 1)]; const r = o.f(v);
                     if (!r || Math.abs(r.n) > 5000 || r.d > 5000) { ok = false; break; } v = r;
@@ -6096,12 +6431,16 @@ Object.assign(I18N.zh, {"onl_t": "在線關卡", "onl_s": "玩其他玩家發布
                 if (v.d !== 1 && !(gd && term(v) && v.d <= 100) && !(gf && v.d <= 30 && Math.abs(v.n) <= 500)) continue;
                 if ((gd || gf) && v.d === 1 && Math.random() < .6) continue;
                 const par = solve(start, v, pool);
-                if (tier === 8) {
+                if (XT) {
+                    /* extreme: par = the TRUE shortest route (at least 6 moves), and the level must pass every anti-guessing check; the checks loosen only after many failed tries */
+                    if (!par || par < 6 || (tries > 2200 && par < 5)) continue;
+                    if (!extremeOk(start, v, pool, par, tries < 1500)) continue;
+                } else if (tier === 8) {
                     /* challenge: par = the planted route (always reachable); a shorter route must also exist */
                     if (!par || par >= tp || par < Math.max(3, tp - 2)) continue;
                     if (tries < 1800 && par !== tp - 1) continue; /* prefer exactly 1 under par */
                 } else if (!par || par < Math.max(2, tier - 1) || par > tier + 1) continue;
-                const need = tier === 8 ? (tries < 1200 ? 2 : 1) : (tries < 2000 ? 2 : 1);
+                const need = XT ? 1 : tier === 8 ? (tries < 1200 ? 2 : 1) : (tries < 2000 ? 2 : 1);
                 if (need > 1 && countBest(start, v, pool) < need) continue;
                 let lim = tier === 8 ? tp : par, pits;
                 if (settings.sandpits) { const pp = placePits(start, v, pool, par, tier, tp, tries < 1500 ? 1 : tries < 2500 ? .5 : 0); if (!pp) continue; pits = pp.pits; if (tier !== 8) lim = pp.par; }   /* sand pits option: par becomes the shortest route that avoids them */
@@ -6112,7 +6451,7 @@ Object.assign(I18N.zh, {"onl_t": "在線關卡", "onl_s": "玩其他玩家發布
         /* fit the start and goal numbers inside the panel: begin at the biggest size and shrink by however much the row overflows (works for flip tiles and plain text, any length).
            if that would make them tiny, stack the start above the goal so each one gets the full width */
         function updateNs() {
-            if (!L) return;
+            if (!L || L.pack === 'ft') return;
             const bd = $('cur').closest('.board'), row = bd && bd.querySelector('.row'); if (!row) return; /* the level board (the daily and stats pages have boards of their own) */
             const fit = () => {
                 let ns = matchMedia('(max-width:520px)').matches ? 2.6 : 3.2; bd.style.setProperty('--ns', ns + 'rem');
@@ -6165,33 +6504,39 @@ Object.assign(I18N.zh, {"onl_t": "在線關卡", "onl_s": "玩其他玩家發布
             return e.h + ' <span class="op">=</span> <b>' + mNum(fmt(cur)) + '</b>';
         }
         function render() {
-            { const sh = $('sharelv'); if (sh) sh.hidden = !!dailyMode || !L || L.pack === 'complex'; }
+            const isFt = !!L && L.pack === 'ft';
+            document.querySelector('main').classList.toggle('ftmode', isFt); $('nlwrap').classList.toggle('ftoff', isFt);
+            { const sh = $('sharelv'); if (sh) sh.hidden = !!dailyMode || !L || L.pack === 'complex' || isFt; }
             {
                 const dv = $('diff').value, mi = $('miD'), mm = $('miM');
-                mi.textContent = { 2: 'd_easy', 4: 'd_medium', 6: 'd_hard' }[dv] ? tr({ 2: 'd_easy', 4: 'd_medium', 6: 'd_hard' }[dv]) : ''; mi.className = 'dv' + dv;
+                mi.textContent = { 2: 'd_easy', 4: 'd_medium', 6: 'd_hard', 10: 'd_extreme' }[dv] ? tr({ 2: 'd_easy', 4: 'd_medium', 6: 'd_hard', 10: 'd_extreme' }[dv]) : ''; mi.className = 'dv' + dv;
                 mm.options[0].textContent = tr('normal'); mm.options[1].textContent = tr('hardcore'); mm.value = settings.hc ? 'hc' : 'normal'; mm.className = settings.hc ? 'mhc' : 'mnorm';
             }
             $('cur').classList.toggle('winp', same(cur, L.goal));
             const used = hist.length, won = same(cur, L.goal), stuck = !won && inPit(cur), over = dailyMode ? 0 : used - L.limit; /* daily levels have no par */
             $('lbplay').hidden = !dailyMode;
-            $('psub').textContent = dailyMode ? tr('psub_daily') : tr('psub_par');
+            $('psub').textContent = dailyMode ? tr('psub_daily') : isFt ? tr('ft_psub') : tr('psub_par');
             const sc = over < 0 ? tr('sc_under', { n: -over }) : over === 0 ? tr('sc_par') : tr('sc_over', { n: over });
             const full = hcOn() && !won && used >= L.limit;
-            setFlip($('cur'), fmtS(cur), fmt(cur)); setFlip($('goal'), fmtS(L.goal), fmt(L.goal));
-            $('goalfull').textContent = fmtS(L.goal) !== fmt(L.goal) ? fmt(L.goal) : '';
-            $('curfull').textContent = fmtS(cur) !== fmt(cur) ? fmt(cur) : '';
+            if (isFt) { $('fteqs').innerHTML = FT.html(L.start); $('fteqn').innerHTML = FT.html(cur); $('fteqt').innerHTML = FT.html(L.goal); $('ftbox').classList.toggle('won', won); $('ftcv').setAttribute('aria-label', 'start ' + fmt(L.start) + '; now ' + fmt(cur) + '; target ' + fmt(L.goal)); }
+            else {
+                setFlip($('cur'), fmtS(cur), fmt(cur)); setFlip($('goal'), fmtS(L.goal), fmt(L.goal));
+                $('goalfull').textContent = fmtS(L.goal) !== fmt(L.goal) ? fmt(L.goal) : '';
+                $('curfull').textContent = fmtS(cur) !== fmt(cur) ? fmt(cur) : '';
+            }
             document.querySelector('.board').classList.toggle('dec', settings.num === 'dec');
             updateNs();
             $('pips').innerHTML = dailyMode ? '' : Array.from({ length: Math.max(L.limit, used) }, (_, i) => `<span class="pip${i < used ? ' used' : ''}${i >= L.limit ? ' over' : ''}"></span>`).join('');
             $('left').textContent = dailyMode ? tr('moves', { n: used }) : tr('par_left', { p: L.limit, m: tr('moves', { n: used }) }) + (over > 0 ? ' · ' + tr('sc_over', { n: over }) : '');
             $('left').style.color = over > 0 ? 'var(--imag)' : '';
             const tk = t => /^[+−×÷][\d.]/.test(t) ? t[0] + ' ' + t.slice(1) : t === '−x' ? tr('negate') : t;
-            $('trail').innerHTML = trailHTML(); $('trail').setAttribute('aria-label', hist.length ? [fmt(L.start), ...hist.map(h => tk(h.s))].join(' ') + ' = ' + fmt(cur) : fmt(L.start));
+            if (isFt) $('trail').textContent = hist.map(h => h.s).join('  →  '); else $('trail').innerHTML = trailHTML(); $('trail').setAttribute('aria-label', hist.length ? [fmt(L.start), ...hist.map(h => tk(h.s))].join(' ') + ' = ' + fmt(cur) : fmt(L.start));
             $('ops').innerHTML = '';
             L.ops.forEach(o => {
-                const b = document.createElement('button'); b.innerHTML = opLabel(o.s);
+                const b = document.createElement('button'); b.innerHTML = isFt ? '<span class="ftm">' + o.h + '</span>' : opLabel(o.s);
+                if (isFt) b.setAttribute('aria-label', o.sub + ': ' + o.s);
                 const v = o.f(cur); b.disabled = won || !v || busy || full || stuck;
-                if (!won && !v && !stuck) { const w = whyNot(o.s); b.title = w; b.innerHTML = opLabel(o.s) + '<small>' + w + '</small>'; }
+                if (!isFt && !won && !v && !stuck) { const w = whyNot(o.s); b.title = w; b.innerHTML = opLabel(o.s) + '<small>' + w + '</small>'; }
                 b.onclick = () => { hist.push({ prev: cur, s: o.s }); cur = v; pend = true; render(); }; $('ops').appendChild(b);
             });
             drawLine();
@@ -6207,7 +6552,7 @@ Object.assign(I18N.zh, {"onl_t": "在線關卡", "onl_s": "玩其他玩家發布
             else if (stuck && !busy) { m.className = 'lose'; m.textContent = tr('sand_stuck'); }
             { const pn = $('pitnote'), pl = L.pits || []; pn.hidden = !pl.length; pn.textContent = pl.length ? tr('sand_note') + ' ' + pl.map(pitFmt).join(', ') : ''; }
             if (won) {
-                if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); L.pack === 'complex' || saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: !!settings.hc, num: settings.num, rt: !!ROOTS, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s), pt: (L.pits || []).map(pitTxt) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
+                if (!counted && !gaveUp) { counted = true; if (dailyMode) submitDaily(); else { holes++; total += Math.max(over, 0); L.pack === 'complex' || isFt || saveScore({ t: Date.now(), d: parseInt($('diff').value, 10), hc: !!settings.hc, num: settings.num, rt: !!ROOTS, dec: settings.num !== 'whole', s: fmt(L.start), g: fmt(L.goal), par: L.limit, m: used, o: L.ops.map(o => o.s), pt: (L.pits || []).map(pitTxt) }); } clearTimeout(fxTimer); fxTimer = setTimeout(confetti, 650); }
                 m.className = gaveUp ? 'lose' : 'win';
                 m.innerHTML = dailyMode ? tr('win_daily', { m: tr('moves', { n: used }) }) + '<br><span id="dnote"></span><br><button id="nx">' + tr('back_cal') + '</button>' : gaveUp ? tr(used < L.limit ? 'give_under' : 'give_par', { m: tr('moves', { n: used }) }) + '<br><button id="nx">' + tr('next_level') + '</button>' : tr('win', { n: used, sc }) + '<br><button id="nx">' + tr('next_level') + '</button>';
                 $('nx').onclick = dailyMode ? openDaily : newLevel; $('nx').focus(); if ($('dnote')) $('dnote').textContent = dailyNote;
@@ -6294,7 +6639,7 @@ Object.assign(I18N.zh, {"onl_t": "在線關卡", "onl_s": "玩其他玩家發布
             }
         }
         /* saved scores (localStorage) */
-        const SKEY = 'hs1_scores', DN = { 2: 'easy', 4: 'medium', 6: 'hard', 8: 'challenge' };
+        const SKEY = 'hs1_scores', DN = { 2: 'easy', 4: 'medium', 6: 'hard', 8: 'challenge', 10: 'extreme' };
         function loadScores() { try { const a = JSON.parse(localStorage.getItem(SKEY) || '[]'); return Array.isArray(a) ? a : [] } catch (e) { return [] } }
         function saveScore(e) { const a = loadScores(); a.push(e); while (a.length > 300) a.shift(); try { localStorage.setItem(SKEY, JSON.stringify(a)) } catch (x) { } }
         function renderScores() {
@@ -6331,7 +6676,7 @@ Object.assign(I18N.zh, {"onl_t": "在線關卡", "onl_s": "玩其他玩家發布
         function replayScore(e) {
             if (!DN[e.d]) return;
             dailyMode = false;
-            NB = e.d === 8 ? 3000 : 100000;
+            NB = e.d >= 8 ? 3000 : 100000; MAXD = e.d === 10 ? 11 : 8; if (e.d === 10) CAP = 150000;
             settings.hc = !!e.hc; settings.num = e.num || (e.dec ? 'dec' : 'whole'); saveSettings(); applySettings();
             $('diff').value = String(e.d);
             const start = parseNum(e.s), goal = parseNum(e.g);
@@ -6339,7 +6684,7 @@ Object.assign(I18N.zh, {"onl_t": "在線關卡", "onl_s": "玩其他玩家發布
             if (start && goal && Array.isArray(e.o)) {
                 try { ROOTS = !!e.rt; ops = e.o.map(s => mk(s, settings.num)); } catch (x) { ops = null; }
                 const pits = (Array.isArray(e.pt) ? e.pt : []).map(pitParse).filter(Boolean), sv = () => pits.length ? solveAvoid(start, goal, ops, pits) : solve(start, goal, ops);
-                if (ops && (ops.some(o => !o) || (e.d === 8 ? !(sv() <= e.par) : sv() !== e.par))) ops = null; else if (ops) ops.pits = pits;
+                if (ops && (ops.some(o => !o) || (e.d >= 8 ? !(sv() <= e.par) : sv() !== e.par))) ops = null; else if (ops) ops.pits = pits;
             }
             if (ops) {
                 stopReplay(); stopFx(); pend = false;
@@ -6638,7 +6983,7 @@ Object.assign(I18N.zh, {"onl_t": "在線關卡", "onl_s": "玩其他玩家發布
             const mv = ds.reduce((a, d) => a + days[d].moves, 0);
             rows($('strows'), [[tr('st_avg'), n ? (mv / n).toFixed(1) : '–'], [tr('st_total'), n ? mv : '–'], [tr('st_fewest'), n ? Math.min(...ds.map(d => days[d].moves)) : '–'], [tr('st_first'), ds[0] || '–'], [tr('st_recent'), ds[n - 1] || '–']]);
             const sc = loadScores(), cnt = k => sc.filter(e => e.d === k).length, so = sc.reduce((a, e) => a + Math.max(0, e.m - e.par), 0);
-            rows($('strows2'), [[tr('st_lv'), sc.length], [tr('st_atpar'), sc.length ? `${sc.filter(e => e.m <= e.par).length} (${Math.round(100 * sc.filter(e => e.m <= e.par).length / sc.length)}%)` : '–'], [tr('st_avgover'), sc.length ? (so / sc.length).toFixed(2) : '–'], [tr('st_hc'), sc.filter(e => e.hc).length], [tr('d_easy'), cnt(2), 'dv2'], [tr('d_medium'), cnt(4), 'dv4'], [tr('d_hard'), cnt(6), 'dv6'], [tr('d_challenge'), cnt(8), 'dv8']]);
+            rows($('strows2'), [[tr('st_lv'), sc.length], [tr('st_atpar'), sc.length ? `${sc.filter(e => e.m <= e.par).length} (${Math.round(100 * sc.filter(e => e.m <= e.par).length / sc.length)}%)` : '–'], [tr('st_avgover'), sc.length ? (so / sc.length).toFixed(2) : '–'], [tr('st_hc'), sc.filter(e => e.hc).length], [tr('d_easy'), cnt(2), 'dv2'], [tr('d_medium'), cnt(4), 'dv4'], [tr('d_hard'), cnt(6), 'dv6'], [tr('d_challenge'), cnt(8), 'dv8'], [tr('d_extreme'), cnt(10), 'dv10']]);
         }
         $('moptS').onclick = openStats;
         $('stback').onclick = () => showView('menu');
@@ -6679,7 +7024,7 @@ Object.assign(I18N.zh, {"onl_t": "在線關卡", "onl_s": "玩其他玩家發布
            ===================================================================== */
         /* the equation on screen, as plain text the calculator can read (mirrors mStep) */
         function trailText() {
-            if (!L) return '';
+            if (!L || L.pack === 'ft') return '';
             const par = e => '(' + e.t + ')', wrap = (e, min) => e.p < min ? par(e) : e.t;
             const num = t => {
                 t = String(t).replace(/^-/, '−');
@@ -7154,7 +7499,7 @@ Object.assign(I18N.zh, {"onl_t": "在線關卡", "onl_s": "玩其他玩家發布
             if (focusIdx != null) { const fld = calcFields[focusIdx]; if (fld && (arguments[1] || !calcMobile())) fld.focus(true); }
         }
         function numText(v) {
-            if (!L) return '';
+            if (!L || (v && v.ft)) return '';
             const t = String(fmt(v)).replace(/^-/, '−');
             const rm = /^(−?)(\d*)√(\d+)(?:\/(\d+))?$/.exec(t);
             if (rm) { const top = rm[2] + '√' + rm[3]; return rm[1] + (rm[4] ? '(' + top + ')/' + rm[4] : top); }
@@ -8005,7 +8350,7 @@ function calcClose() { if (calcOpen) calcSet(false); }
         })();
         /* links from the bar on the other pages: #main, #random, #code, #stats */
         try { sessionStorage.removeItem('gdvNav'); } catch (e) { }
-        setTimeout(() => { const t = { main: 'mopt2', random: 'mopt1', code: 'moptC', stats: 'moptS' }[location.hash.slice(1)]; if (t && $(t)) { history.replaceState(null, '', location.pathname + location.search); $(t).click(); } }, 60);
+        setTimeout(() => { const t = { main: 'mopt2', random: 'mopt1', code: 'moptC', stats: 'moptS', ft: 'mopt1' }[location.hash.slice(1)]; if (t && $(t)) { history.replaceState(null, '', location.pathname + location.search); $(t).click(); } }, 60);
     </script>
 
 <script id="gtop-js">
