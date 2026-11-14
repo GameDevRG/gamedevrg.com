@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Furigana typer</title>
+<link id="gf" rel="stylesheet" crossorigin="anonymous" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500&family=Noto+Serif+JP:wght@500&family=Zen+Old+Mincho:wght@500&family=Kaisei+Tokumin:wght@500&family=Kaisei+Decol:wght@500&family=Noto+Sans+JP:wght@500&family=Zen+Kaku+Gothic+New:wght@500&family=Zen+Kaku+Gothic+Antique:wght@500&family=M+PLUS+1p:wght@500&family=BIZ+UDPGothic:wght@400&family=Zen+Maru+Gothic:wght@500&family=M+PLUS+Rounded+1c:wght@500&family=Kosugi+Maru&family=Kiwi+Maru:wght@500&family=Klee+One:wght@400&family=Yuji+Syuku&family=Yomogi&family=Zen+Antique&family=Hachi+Maru+Pop&display=swap">
+<style>
+:root {
+  --paper: #f3efe6; --ink: #1d2433; --accent: #a3342b;
+  --panel: #e6e0d2; --line: #c9c0ad; --field: #fbf9f3; --muted: #6c6a63; --sel: #f0c9a8;
+  --size: 56px; color-scheme: light; box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #151a24; --ink: #ece6d6; --accent: #e8806f; --panel: #1e2432; --line: #38405a;
+    --field: #11151e; --muted: #9a98a0; --sel: #4a3a3a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #151a24; --ink: #ece6d6; --accent: #e8806f; --panel: #1e2432; --line: #38405a;
+  --field: #11151e; --muted: #9a98a0; --sel: #4a3a3a; color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: inherit; }
+html, body { height: 100%; margin: 0; }
+@supports (height: 100dvh) { body { height: 100dvh; } }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+  display: grid; grid-template-rows: minmax(0, 1fr) auto; overflow: hidden;
+}
+#stage { display: flex; align-items: center; justify-content: center; padding: 24px; overflow: auto; min-height: 0; cursor: text; }
+#out {
+  margin: auto; min-width: 2em; max-width: 100%; text-align: center;
+  font-size: var(--size); line-height: 2.1; font-weight: 500;
+  font-family: var(--font); overflow-wrap: anywhere; white-space: pre-wrap; outline: none; caret-color: var(--accent);
+}
+#out.vertical { writing-mode: vertical-rl; text-orientation: upright; max-height: 100%; }
+#out.vertical.sideways { text-orientation: mixed; }
+#out:empty::before { content: attr(data-placeholder); color: var(--muted); font-size: 0.5em; }
+#out rt { font-size: 0.42em; color: inherit; font-weight: 500; user-select: none; cursor: pointer; border-radius: 3px; }
+#out rt:hover { background: var(--sel); }
+#out ::selection { background: var(--sel); }
+
+.float {
+  position: fixed; z-index: 10; left: 0; top: 0; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; max-width: calc(100vw - 16px);
+  padding: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.25);
+  font: 14px system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.float[hidden] { display: none; }
+#panel {
+  background: var(--panel); border-top: 1px solid var(--line); padding: 10px 16px 12px;
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  font: 14px system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+body.hidden #panel > :not(#hide) { display: none; }
+body.hidden #panel { justify-content: flex-end; padding: 4px 8px; background: transparent; border: 0; }
+button, input[type="text"] {
+  font: inherit; color: var(--ink); background: var(--field);
+  border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px;
+}
+button { cursor: pointer; }
+button.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+#rin { flex: 1; min-width: 130px; width: 180px; font-size: 16px; }
+.sw { width: 22px; height: 22px; padding: 0; border-radius: 50%; background: var(--c); }
+.sw.reset { width: auto; border-radius: 6px; padding: 2px 8px; font-size: 12px; background: var(--field); }
+.sw.tc { background: var(--field); color: var(--c); border-radius: 6px; font-weight: 700; font-size: 14px; line-height: 1; }
+.sw.hl { border-radius: 4px; }
+.tsep { width: 1px; align-self: stretch; background: var(--line); }
+:root { --g-noun: #2a6fd0; --g-verb: #c4372c; --g-aux: #278a4f; --g-hl: rgba(255,190,0,.45); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --g-noun: #6fb0ff; --g-verb: #ff8a7a; --g-aux: #6fd49a; }
+}
+:root[data-theme="dark"] { --g-noun: #6fb0ff; --g-verb: #ff8a7a; --g-aux: #6fd49a; }
+.g-prt { background: var(--g-hl); border-radius: 3px; }
+.g-noun { color: var(--g-noun); }
+.g-verb { color: var(--g-verb); }
+.g-aux { color: var(--g-aux); }
+#legend { display: flex; flex-wrap: wrap; gap: 6px; }
+#legend[hidden] { display: none; }
+.chip { padding: 1px 8px; border-radius: 4px; font-size: 12px; }
+.hint { color: var(--muted); }
+.grow { flex: 1; }
+label.size { display: flex; gap: 6px; align-items: center; color: var(--muted); }
+input[type="range"] {
+  -webkit-appearance: none; appearance: none; width: 120px; height: 24px;
+  background: transparent; padding: 0; margin: 0; cursor: pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px; border-radius: 2px;
+  background: linear-gradient(to right, var(--accent) var(--pct, 30%), var(--line) var(--pct, 30%));
+}
+input[type="range"]::-moz-range-track { height: 4px; border-radius: 2px; background: var(--line); }
+input[type="range"]::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--accent); }
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 18px; height: 18px; margin-top: -7px; border-radius: 50%;
+  background: var(--ink); border: 2px solid var(--panel); box-shadow: 0 0 0 1px var(--ink);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--ink); border: 2px solid var(--panel); box-shadow: 0 0 0 1px var(--ink);
+}
+input[type="range"]:focus-visible { outline: none; }
+input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px var(--accent); }
+input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px var(--accent); }
+@media (pointer: coarse) {
+  input[type="range"] { height: 36px; }
+  input[type="range"]::-webkit-slider-thumb { width: 26px; height: 26px; margin-top: -11px; }
+  input[type="range"]::-moz-range-thumb { width: 22px; height: 22px; }
+}
+#sideways { display: none; }
+body.is-vertical #sideways { display: inline-block; }
+#sideways[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+#hide { opacity: .8; }
+label.opt { display: flex; gap: 6px; align-items: center; color: var(--muted); }
+select {
+  font: inherit; color: var(--ink); background: var(--field);
+  border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px;
+}
+select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+@media (pointer: coarse) { select { min-height: 40px; font-size: 16px; } }
+#ddmenu {
+  position: fixed; z-index: 20; left: 0; top: 0; min-width: 230px; max-width: calc(100vw - 16px); overflow: auto;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.25); font: 14px system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+#ddmenu[hidden] { display: none; }
+#ddmenu button { display: block; width: 100%; border: 0; background: transparent; text-align: left; border-radius: 6px; padding: 7px 10px; }
+#ddmenu button:hover, #ddmenu .on { background: var(--sel); }
+#ddmenu .grp { display: flex; align-items: stretch; }
+#ddmenu .cat { flex: 1; display: flex; justify-content: space-between; gap: 14px; font-weight: 600; }
+#ddmenu .cat small { color: var(--muted); font-weight: 400; }
+#ddmenu .chev { width: 40px; text-align: center; }
+#ddmenu .fl { padding-left: 14px; }
+body.hidden #hide { transition: opacity .6s; }
+body.hidden.idle #hide { opacity: 0; pointer-events: none; }
+@media (pointer: coarse) {
+  button, input[type="text"] { min-height: 40px; }
+  .sw { width: 34px; height: 34px; min-height: 0; }
+  .sw.reset { width: auto; min-height: 34px; }
+  #out rt { padding: 0 .3em; }
+  #panel { gap: 6px; }
+}
+@media (max-width: 600px) {
+  .hint { display: none; }
+  #stage { padding: 12px; }
+  label.size { flex: 1 1 100%; }
+  input[type="range"] { flex: 1; }
+}
+</style>
+</head>
+<body>
+<main id="stage"><div id="out" class="sideways" contenteditable="true" spellcheck="false" lang="ja" data-placeholder="Type here. Select text to add furigana."></div></main>
+
+<div id="tip" class="float" hidden>
+  <button class="primary" id="fab">Add furigana</button>
+  <span class="tsep"></span>
+  <button class="sw tc" data-c="#d6453d" style="--c:#d6453d" aria-label="Red text" title="Red text">A</button>
+  <button class="sw tc" data-c="#d98a1f" style="--c:#d98a1f" aria-label="Orange text" title="Orange text">A</button>
+  <button class="sw tc" data-c="#2f9e5a" style="--c:#2f9e5a" aria-label="Green text" title="Green text">A</button>
+  <button class="sw tc" data-c="#2f7fd1" style="--c:#2f7fd1" aria-label="Blue text" title="Blue text">A</button>
+  <button class="sw tc" data-c="#8e5bd0" style="--c:#8e5bd0" aria-label="Purple text" title="Purple text">A</button>
+  <span class="tsep"></span>
+  <button class="sw hl" data-h="rgba(255,214,10,.5)" style="--c:rgba(255,214,10,.5)" aria-label="Yellow highlight" title="Yellow highlight"></button>
+  <button class="sw hl" data-h="rgba(255,105,150,.45)" style="--c:rgba(255,105,150,.45)" aria-label="Pink highlight" title="Pink highlight"></button>
+  <button class="sw hl" data-h="rgba(80,200,120,.45)" style="--c:rgba(80,200,120,.45)" aria-label="Green highlight" title="Green highlight"></button>
+  <button class="sw hl" data-h="rgba(80,160,255,.45)" style="--c:rgba(80,160,255,.45)" aria-label="Blue highlight" title="Blue highlight"></button>
+  <button class="sw hl" data-h="rgba(170,120,240,.45)" style="--c:rgba(170,120,240,.45)" aria-label="Purple highlight" title="Purple highlight"></button>
+  <span class="tsep"></span>
+  <button class="sw reset" data-c="reset" title="Remove color and highlight">Clear</button>
+</div>
+<div id="pop" class="float" hidden>
+  <input type="text" id="rin" lang="ja" placeholder="Reading, e.g. かんじ" aria-label="Furigana reading">
+  <button class="primary" id="ok">Done</button>
+  <button id="rm">Remove</button>
+</div>
+
+<section id="panel">
+  <span class="hint">Select text to add furigana. Click furigana to edit it.</span>
+  <button id="auto" title="Color words by type: particles highlighted, nouns, verbs and endings">Auto-color words</button>
+  <button id="autoOff" hidden>Clear auto-color</button>
+  <span id="legend" hidden>
+    <span class="chip g-prt">Particles</span>
+    <span class="chip g-noun">Nouns</span>
+    <span class="chip g-verb">Verbs &amp; adjectives</span>
+    <span class="chip g-aux">Endings</span>
+  </span>
+  <span class="grow"></span>
+  <label class="size">Size <input type="range" id="size" min="24" max="160" value="56"></label>
+  <label class="opt">Font
+    <span class="dd"><button type="button" id="fontBtn"></button><input type="hidden" id="font" value="Shippori Mincho"></span>
+  </label>
+  <label class="opt" title="Use a different font for hiragana and katakana, e.g. gothic kanji with mincho kana">Kana
+    <span class="dd"><button type="button" id="kanaBtn"></button><input type="hidden" id="kana" value="same"></span>
+  </label>
+  <button id="vert">Vertical</button>
+  <button id="sideways" aria-pressed="true" title="Rotate English letters 90 degrees in vertical text">English sideways</button>
+  <button id="theme">Light / dark</button>
+  <button id="hide">Hide panel (Esc)</button>
+</section>
+
+<script>
+(function () {
+  var $ = function (i) { return document.getElementById(i); };
+  var out = $('out'), stage = $('stage'), tip = $('tip'), pop = $('pop'), rin = $('rin');
+  var root = document.documentElement;
+  var KEY = 'furigana-typer-v2', ZW = '\u200B';
+  var saved = null, cur = null, orig = null, timer, tipLock = false;
+
+  function save() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify({
+        html: out.innerHTML, size: $('size').value, font: $('font').value, kana: $('kana').value, defs: defs, vertical: out.classList.contains('vertical'),
+        sideways: out.classList.contains('sideways'), theme: root.getAttribute('data-theme') || ''
+      }));
+    } catch (e) {}
+  }
+  function load() {
+    try {
+      var d = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (!d) return false;
+      out.innerHTML = d.html || '';
+      if (d.size) { $('size').value = d.size; root.style.setProperty('--size', d.size + 'px'); }
+      if (d.font) $('font').value = d.font;
+      if (d.kana) $('kana').value = d.kana;
+      if (d.defs) { for (var c in d.defs) { if (FB[d.defs[c]]) defs[c] = d.defs[c]; } }
+      if (d.vertical) out.classList.add('vertical');
+      if (d.sideways === false) out.classList.remove('sideways');
+      if (d.theme) root.setAttribute('data-theme', d.theme);
+      return !!d.html;
+    } catch (e) { return false; }
+  }
+  function strip(s) { return s.split(ZW).join(''); }
+  function rtOf(ruby) { return ruby.querySelector('rt'); }
+  function baseText(ruby) {
+    var c = ruby.cloneNode(true);
+    c.querySelectorAll('rt').forEach(function (r) { r.remove(); });
+    return strip(c.textContent);
+  }
+  function unwrap(ruby) {
+    var kids = Array.prototype.slice.call(ruby.childNodes).filter(function (n) { return n.nodeName !== 'RT'; });
+    var f = document.createDocumentFragment();
+    kids.forEach(function (n) { f.appendChild(n); });
+    ruby.replaceWith(f);
+    return kids[kids.length - 1] || null;
+  }
+  function cleanup() {
+    out.querySelectorAll('ruby').forEach(function (rb) {
+      var rt = rtOf(rb);
+      if (!baseText(rb)) { rb.remove(); return; }
+      if (!rt) { unwrap(rb); return; }
+      rt.setAttribute('contenteditable', 'false');
+      if (rb !== cur && !strip(rt.textContent).trim()) unwrap(rb);
+    });
+    if (!strip(out.textContent) && !out.querySelector('ruby')) out.innerHTML = '';
+  }
+  function syncRt() {
+    out.querySelectorAll('ruby').forEach(function (rb) {
+      var rt = rtOf(rb);
+      var n = Array.prototype.slice.call(rb.childNodes).filter(function (x) { return x !== rt; })[0];
+      if (n && n.nodeType === 1 && n.style && n.style.color) rt.style.color = n.style.color;
+      else rt.style.removeProperty('color');
+      if (n && n.nodeType === 1 && n.style && n.style.backgroundColor) rt.style.backgroundColor = n.style.backgroundColor;
+      else rt.style.removeProperty('background-color');
+    });
+  }
+  function caretAfterNode(n) {
+    var s = window.getSelection(), r = document.createRange();
+    r.setStartAfter(n); r.collapse(true);
+    out.focus(); s.removeAllRanges(); s.addRange(r);
+  }
+  function caretAfterRuby(ruby) {
+    var n = ruby.nextSibling;
+    if (!n || n.nodeType !== 3) { n = document.createTextNode(ZW); ruby.after(n); }
+    var s = window.getSelection(), r = document.createRange();
+    r.setStart(n, n.nodeValue.charAt(0) === ZW ? 1 : 0); r.collapse(true);
+    out.focus(); s.removeAllRanges(); s.addRange(r);
+  }
+  var touch = window.matchMedia('(pointer: coarse)').matches;
+  function place(el, rect, below) {
+    el.hidden = false;
+    var vv = window.visualViewport;
+    var L = vv ? vv.offsetLeft : 0, T = vv ? vv.offsetTop : 0;
+    var W = vv ? vv.width : window.innerWidth, H = vv ? vv.height : window.innerHeight;
+    var w = el.offsetWidth, h = el.offsetHeight;
+    var x = Math.min(Math.max(L + 8, rect.right - w), L + W - w - 8);
+    var y = below ? rect.bottom + 28 : rect.top - h - 8;
+    if (below && y + h > T + H - 8) y = rect.top - h - 8;
+    if (y < T + 8) y = Math.min(rect.bottom + 8, T + H - h - 8);
+    el.style.left = x + 'px'; el.style.top = y + 'px';
+  }
+
+  /* Furigana editor: a small box next to the word, with a live preview */
+  function open(ruby, isNew) {
+    cur = ruby; orig = isNew ? null : rtOf(ruby).textContent;
+    rin.value = orig || '';
+    tip.hidden = true;
+    place(pop, ruby.getBoundingClientRect());
+    rin.focus(); rin.select();
+  }
+  function closePop(mode) {
+    if (!cur) return;
+    var ruby = cur, rt = rtOf(ruby), val = rin.value.trim(), last = null, gone = false;
+    if (mode === 'remove' || (mode === 'cancel' && orig === null) || (mode !== 'cancel' && !val)) { last = unwrap(ruby); gone = true; }
+    else rt.textContent = mode === 'cancel' ? orig : val;
+    cur = null; orig = null; pop.hidden = true;
+    if (mode !== 'blur') { if (gone) { if (last) caretAfterNode(last); } else caretAfterRuby(ruby); }
+    cleanup(); syncRt(); save();
+  }
+  rin.addEventListener('input', function () { if (cur) rtOf(cur).textContent = rin.value; });
+  rin.addEventListener('keydown', function (e) {
+    if (e.isComposing) return;
+    if (e.key === 'Enter') { e.preventDefault(); closePop('ok'); }
+    else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closePop('cancel'); }
+  });
+  $('ok').addEventListener('click', function () { closePop('ok'); });
+  $('rm').addEventListener('click', function () { closePop('remove'); });
+  document.addEventListener('mousedown', function (e) { if (cur && !pop.contains(e.target)) closePop('blur'); });
+  out.addEventListener('click', function (e) {
+    var rt = e.target.closest && e.target.closest('rt');
+    if (rt && out.contains(rt)) open(rt.parentNode, false);
+  });
+
+  /* Selection toolbar */
+  function updateTip() {
+    if (tipLock) return;
+    var s = window.getSelection();
+    if (cur || !s.rangeCount || s.isCollapsed || !out.contains(s.anchorNode)) { tip.hidden = true; return; }
+    var r = s.getRangeAt(0), rs = r.getClientRects();
+    if (!rs.length || !strip(r.toString()).trim()) { tip.hidden = true; return; }
+    saved = r.cloneRange();
+    place(tip, rs[rs.length - 1], touch);
+  }
+  document.addEventListener('selectionchange', function () {
+    if (window.getSelection().isCollapsed && !tipLock) tip.hidden = true;
+    clearTimeout(timer); timer = setTimeout(updateTip, 200);
+  });
+  stage.addEventListener('scroll', updateTip);
+  function reflow() { if (cur) place(pop, cur.getBoundingClientRect()); else updateTip(); }
+  window.addEventListener('resize', reflow);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', reflow);
+    window.visualViewport.addEventListener('scroll', reflow);
+  }
+  tip.addEventListener('pointerdown', function () { tipLock = true; setTimeout(function () { tipLock = false; }, 700); });
+  tip.addEventListener('mousedown', function (e) { e.preventDefault(); });
+
+  $('fab').addEventListener('click', function () {
+    if (!saved || saved.collapsed) return;
+    var anc = saved.commonAncestorContainer;
+    var host = (anc.nodeType === 1 ? anc : anc.parentElement).closest('ruby');
+    if (host) { open(host, false); return; }
+    var frag = saved.cloneContents();
+    frag.querySelectorAll('rt').forEach(function (r) { r.remove(); });
+    var text = strip(frag.textContent);
+    if (!text.trim()) return;
+    var r = saved.cloneRange();
+    r.deleteContents();
+    var ruby = document.createElement('ruby');
+    ruby.appendChild(document.createTextNode(text));
+    var rt = document.createElement('rt');
+    rt.setAttribute('contenteditable', 'false');
+    ruby.appendChild(rt);
+    r.insertNode(document.createTextNode(ZW));
+    r.insertNode(ruby);
+    open(ruby, true);
+  });
+  tip.querySelectorAll('.sw').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (!saved) return;
+      var c = b.getAttribute('data-c'), h = b.getAttribute('data-h'), s = window.getSelection();
+      out.focus(); s.removeAllRanges(); s.addRange(saved);
+      document.execCommand('styleWithCSS', false, true);
+      if (c === 'reset') document.execCommand('removeFormat');
+      else if (h) document.execCommand('hiliteColor', false, h);
+      else document.execCommand('foreColor', false, c);
+      syncRt(); cleanup(); save(); updateTip();
+    });
+  });
+
+  /* Editing behaviour */
+  out.addEventListener('input', function () { cleanup(); save(); });
+  out.addEventListener('paste', function (e) {
+    e.preventDefault();
+    document.execCommand('insertText', false, (e.clipboardData || window.clipboardData).getData('text/plain'));
+  });
+  /* Typing at either edge of a furigana word goes outside it, not into it */
+  function escapeRuby() {
+    var s = window.getSelection();
+    if (!s.rangeCount || !s.isCollapsed) return;
+    var n = s.anchorNode, o = s.anchorOffset;
+    var el = n.nodeType === 1 ? n : n.parentElement;
+    var ruby = el && el.closest ? el.closest('ruby') : null;
+    if (!ruby || !out.contains(ruby) || el.closest('rt')) return;
+    var r = document.createRange();
+    r.setStart(ruby, 0); r.setEnd(n, o);
+    var frag = r.cloneContents();
+    frag.querySelectorAll('rt').forEach(function (x) { x.remove(); });
+    var before = strip(frag.textContent).length;
+    var total = baseText(ruby).length;
+    var nr = document.createRange();
+    if (before === 0) {
+      var p = ruby.previousSibling;
+      if (!p || p.nodeType !== 3) { p = document.createTextNode(ZW); ruby.before(p); }
+      nr.setStart(p, p.nodeValue.length);
+    } else if (before >= total) {
+      var q = ruby.nextSibling;
+      if (!q || q.nodeType !== 3) { q = document.createTextNode(ZW); ruby.after(q); }
+      nr.setStart(q, q.nodeValue.charAt(0) === ZW ? 1 : 0);
+    } else return;
+    nr.collapse(true);
+    s.removeAllRanges(); s.addRange(nr);
+  }
+  out.addEventListener('compositionstart', escapeRuby);
+  out.addEventListener('beforeinput', function (e) {
+    if (e.isComposing) return;
+    if (e.inputType === 'insertText' || e.inputType === 'insertCompositionText' || e.inputType === 'insertFromPaste') escapeRuby();
+    var s = window.getSelection();
+    if (e.inputType === 'insertParagraph') { e.preventDefault(); document.execCommand('insertLineBreak'); }
+    else if (e.inputType === 'deleteContentBackward' && s.isCollapsed && s.anchorNode && s.anchorNode.nodeType === 3 &&
+             s.anchorOffset > 0 && s.anchorNode.nodeValue.charAt(s.anchorOffset - 1) === ZW) {
+      e.preventDefault();
+      s.anchorNode.deleteData(s.anchorOffset - 1, 1); /* skip the invisible spacer in one press */
+      document.execCommand('delete');
+    }
+  });
+  stage.addEventListener('mousedown', function (e) { if (e.target === stage) { e.preventDefault(); out.focus(); } });
+  stage.addEventListener('click', function (e) { if (e.target === stage) out.focus(); });
+
+  /* Options */
+  /* Fonts. Mixed mode copies each font's kana glyph ranges under a second name, so kana can use a different font than kanji. */
+  var GROUPS = [
+    ['Mincho', '"Hiragino Mincho ProN", "Yu Mincho", serif',
+      ['Shippori Mincho', 'Noto Serif JP', 'Zen Old Mincho', 'Kaisei Tokumin', 'Kaisei Decol']],
+    ['Gothic', '"Hiragino Sans", "Yu Gothic", sans-serif',
+      ['Noto Sans JP', 'Zen Kaku Gothic New', 'Zen Kaku Gothic Antique', 'M PLUS 1p', 'BIZ UDPGothic']],
+    ['Maru (rounded)', '"Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif',
+      ['Zen Maru Gothic', 'M PLUS Rounded 1c', 'Kosugi Maru', 'Kiwi Maru']],
+    ['Textbook, brush and handwriting', '"Yu Mincho", "Hiragino Mincho ProN", serif',
+      ['Klee One', 'Yuji Syuku', 'Yomogi', 'Zen Antique', 'Hachi Maru Pop']]
+  ];
+  var FB = {}, CAT = {}, defs = {};
+  GROUPS.forEach(function (g) {
+    defs[g[0]] = g[2][0];
+    g[2].forEach(function (n) { FB[n] = g[1]; CAT[n] = g[0]; });
+  });
+  var menu = document.createElement('div');
+  menu.id = 'ddmenu'; menu.hidden = true;
+  document.body.appendChild(menu);
+  var menuFor = null;
+  function closeMenu() { menu.hidden = true; menuFor = null; }
+  function setVal(which, v) { $(which).value = v; closeMenu(); applyFont(); save(); }
+  function item(text, fn, cls) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = cls; b.textContent = text;
+    if (fn) b.addEventListener('click', fn);
+    return b;
+  }
+  function buildMenu(which) {
+    menu.innerHTML = '';
+    var curVal = $(which).value;
+    if (which === 'kana') {
+      var same = item('Same as font', function () { setVal('kana', 'same'); }, 'row');
+      if (curVal === 'same') same.classList.add('on');
+      menu.appendChild(same);
+    }
+    GROUPS.forEach(function (g) {
+      var isCur = CAT[curVal] === g[0];
+      var row = document.createElement('div');
+      row.className = 'grp';
+      var cat = item(g[0], function () { setVal(which, defs[g[0]]); }, 'cat');
+      cat.title = 'Use ' + defs[g[0]] + ' (default for this type)';
+      var small = document.createElement('small');
+      small.textContent = defs[g[0]];
+      cat.appendChild(small);
+      if (isCur) cat.classList.add('on');
+      var chev = item(isCur ? '▾' : '▸', null, 'chev');
+      chev.setAttribute('aria-label', 'Show ' + g[0] + ' fonts');
+      var list = document.createElement('div');
+      list.className = 'fl'; list.hidden = !isCur;
+      g[2].forEach(function (n) {
+        var b = item(n, function () { defs[g[0]] = n; setVal(which, n); }, 'row');
+        if (curVal === n) b.classList.add('on');
+        list.appendChild(b);
+      });
+      chev.addEventListener('click', function () {
+        list.hidden = !list.hidden;
+        chev.textContent = list.hidden ? '▸' : '▾';
+      });
+      row.appendChild(cat); row.appendChild(chev);
+      menu.appendChild(row); menu.appendChild(list);
+    });
+  }
+  function openMenu(which, btn) {
+    if (menuFor === which && !menu.hidden) { closeMenu(); return; }
+    menuFor = which; buildMenu(which); menu.hidden = false;
+    var r = btn.getBoundingClientRect();
+    menu.style.maxHeight = Math.max(160, r.top - 16) + 'px';
+    menu.style.left = Math.max(8, Math.min(r.left, window.innerWidth - menu.offsetWidth - 8)) + 'px';
+    menu.style.top = Math.max(8, r.top - menu.offsetHeight - 6) + 'px';
+  }
+  $('fontBtn').addEventListener('click', function () { openMenu('font', this); });
+  $('kanaBtn').addEventListener('click', function () { openMenu('kana', this); });
+  document.addEventListener('pointerdown', function (e) {
+    if (!menu.hidden && !menu.contains(e.target) && !(e.target.closest && e.target.closest('.dd'))) closeMenu();
+  });
+  var kanaReady = false;
+  function kanaRanges(s) {
+    if (!s) return 'U+3000-30ff';
+    var res = [];
+    s.split(',').forEach(function (t) {
+      t = t.trim().replace(/^U\+/i, '');
+      var a, b;
+      if (t.indexOf('-') > -1) { var p = t.split('-'); a = parseInt(p[0], 16); b = parseInt(p[1], 16); }
+      else if (t.indexOf('?') > -1) { a = parseInt(t.replace(/\?/g, '0'), 16); b = parseInt(t.replace(/\?/g, 'F'), 16); }
+      else { a = b = parseInt(t, 16); }
+      a = Math.max(a, 0x3000); b = Math.min(b, 0x30FF);
+      if (a <= b) res.push('U+' + a.toString(16) + (a === b ? '' : '-' + b.toString(16)));
+    });
+    return res.join(',');
+  }
+  function buildKana() {
+    try {
+      var sheet = $('gf').sheet;
+      if (!sheet) return false;
+      var css = '';
+      Array.prototype.forEach.call(sheet.cssRules, function (r) {
+        if (!(window.CSSFontFaceRule && r instanceof CSSFontFaceRule)) return;
+        var fam = r.style.getPropertyValue('font-family').replace(/["']/g, '').trim();
+        var ur = kanaRanges(r.style.getPropertyValue('unicode-range'));
+        if (!ur) return;
+        css += '@font-face{font-family:"Kana-' + fam + '";src:' + r.style.getPropertyValue('src') +
+          ';font-weight:' + (r.style.getPropertyValue('font-weight') || '400') + ';font-display:swap;unicode-range:' + ur + ';}';
+      });
+      if (!css) return false;
+      var st = document.createElement('style');
+      st.textContent = css;
+      document.head.appendChild(st);
+      return true;
+    } catch (e) { return false; }
+  }
+  function applyFont() {
+    var f = FB[$('font').value] ? $('font').value : GROUPS[0][2][0];
+    var k = $('kana').value, st = [];
+    if (k !== 'same' && !FB[k]) k = 'same';
+    $('font').value = f; $('kana').value = k;
+    $('fontBtn').textContent = f + ' ▾';
+    $('kanaBtn').textContent = (k === 'same' ? 'Same as font' : k) + ' ▾';
+    if (kanaReady && k !== 'same' && k !== f) st.push('"Kana-' + k + '"');
+    st.push('"' + f + '"', FB[f]);
+    root.style.setProperty('--font', st.join(', '));
+  }
+  function initKana() { kanaReady = buildKana(); applyFont(); }
+  if ($('gf').sheet) initKana(); else $('gf').addEventListener('load', initKana);
+
+  /* Auto-color by word type. Approximate: it uses the browser's Japanese word splitter plus simple rules. */
+  var PART = {}, AUXW = {}, segmenter = null;
+  ('は が を に へ と で も の や か ね よ ぞ ぜ わ な より から まで だけ しか ばかり こそ さえ でも など なら ので のに けど けれど けれども って とか ほど くらい ぐらい ながら たり だり ても では には とは へは からは までに として について').split(' ').forEach(function (w) { PART[w] = 1; });
+  ('です でした でしょう ます ました ません ましょう だ だった だろう ない なかった たい たかった れる られる せる させる ぬ べき らしい そうだ ようだ').split(' ').forEach(function (w) { AUXW[w] = 1; });
+  function isK(ch) {
+    var c = ch.charCodeAt(0);
+    return (c >= 0x3400 && c <= 0x9fff) || (c >= 0xf900 && c <= 0xfaff) || c === 0x3005 || c === 0x3006;
+  }
+  function classify(w) {
+    if (PART[w]) return 'prt';
+    if (AUXW[w]) return 'aux';
+    var k = false, h = false, t = false, after = false;
+    for (var i = 0; i < w.length; i++) {
+      var ch = w.charAt(i), c = w.charCodeAt(i);
+      if (isK(ch)) k = true;
+      else if (c >= 0x3041 && c <= 0x309F) { h = true; if (k) after = true; }
+      else if (c >= 0x30A0 && c <= 0x30FF) t = true;
+      else return null;
+    }
+    if (k) return after ? 'verb' : 'noun';
+    if (t && !h) return 'noun';
+    if (h && !t) {
+      if (w.length >= 2 && /[くぐすつぬぶむる]$/.test(w)) return 'verb';
+      if (w.length >= 3 && /い$/.test(w)) return 'verb';
+    }
+    return null;
+  }
+  function clearAuto() {
+    out.querySelectorAll('span.g').forEach(function (s) {
+      var f = document.createDocumentFragment();
+      while (s.firstChild) f.appendChild(s.firstChild);
+      s.replaceWith(f);
+    });
+    out.querySelectorAll('rt').forEach(function (rt) { rt.classList.remove('g', 'g-prt', 'g-noun', 'g-verb', 'g-aux'); });
+    out.normalize();
+  }
+  function showAuto() {
+    var on = !!out.querySelector('.g');
+    $('autoOff').hidden = !on; $('legend').hidden = !on;
+    $('auto').textContent = on ? 'Re-color' : 'Auto-color words';
+  }
+  function applyAuto() {
+    if (!(window.Intl && Intl.Segmenter)) {
+      $('auto').textContent = 'Not supported in this browser';
+      setTimeout(showAuto, 2500);
+      return;
+    }
+    if (!segmenter) segmenter = new Intl.Segmenter('ja', { granularity: 'word' });
+    clearAuto();
+    var full = '', map = [], n;
+    var walker = document.createTreeWalker(out, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, {
+      acceptNode: function (x) { return x.nodeName === 'RT' ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT; }
+    });
+    while ((n = walker.nextNode())) {
+      if (n.nodeName === 'BR') { full += '\n'; map.push(null); }
+      else if (n.nodeType === 3) {
+        var t = n.nodeValue;
+        for (var i = 0; i < t.length; i++) {
+          if (t.charAt(i) === ZW) continue;
+          full += t.charAt(i); map.push({ n: n, o: i });
+        }
+      }
+    }
+    var pieces = [];
+    for (var seg of segmenter.segment(full)) {
+      if (!seg.isWordLike) continue;
+      var cls = classify(seg.segment);
+      if (!cls) continue;
+      var cur = null;
+      for (var j = seg.index; j < seg.index + seg.segment.length; j++) {
+        var m = map[j];
+        if (!m) continue;
+        if (cur && cur.n === m.n && m.o === cur.e) cur.e = m.o + 1;
+        else { cur = { n: m.n, s: m.o, e: m.o + 1, cls: cls }; pieces.push(cur); }
+      }
+    }
+    for (var p = pieces.length - 1; p >= 0; p--) {
+      var pc = pieces[p], r = document.createRange();
+      r.setStart(pc.n, pc.s); r.setEnd(pc.n, pc.e);
+      var sp = document.createElement('span');
+      sp.className = 'g g-' + pc.cls;
+      r.surroundContents(sp);
+      var rb = sp.parentElement && sp.parentElement.closest('ruby');
+      var rt = rb && rtOf(rb);
+      if (rt) rt.classList.add('g', 'g-' + pc.cls);
+    }
+    showAuto(); save();
+  }
+  $('auto').addEventListener('click', applyAuto);
+  $('autoOff').addEventListener('click', function () { clearAuto(); showAuto(); save(); });
+
+  function fillSize() {
+    var r = $('size');
+    r.style.setProperty('--pct', ((r.value - r.min) / (r.max - r.min) * 100) + '%');
+  }
+  $('size').addEventListener('input', function (e) { root.style.setProperty('--size', e.target.value + 'px'); fillSize(); save(); });
+  function syncVert() {
+    document.body.classList.toggle('is-vertical', out.classList.contains('vertical'));
+    $('sideways').setAttribute('aria-pressed', out.classList.contains('sideways'));
+  }
+  $('vert').addEventListener('click', function () { out.classList.toggle('vertical'); syncVert(); save(); });
+  $('sideways').addEventListener('click', function () { out.classList.toggle('sideways'); syncVert(); save(); });
+  $('theme').addEventListener('click', function () {
+    root.setAttribute('data-theme', getComputedStyle(root).colorScheme === 'dark' ? 'light' : 'dark'); save();
+  });
+  function togglePanel() {
+    document.body.classList.toggle('hidden');
+    wake();
+    var k = touch ? '' : ' (Esc)';
+    $('hide').textContent = (document.body.classList.contains('hidden') ? 'Show panel' : 'Hide panel') + k;
+    out.focus();
+  }
+  var idleT;
+  function wake() {
+    document.body.classList.remove('idle');
+    clearTimeout(idleT);
+    if (document.body.classList.contains('hidden')) {
+      idleT = setTimeout(function () { document.body.classList.add('idle'); }, 2500);
+    }
+  }
+  ['mousemove', 'pointerdown', 'touchstart'].forEach(function (ev) {
+    document.addEventListener(ev, wake, { passive: true });
+  });
+  $('hide').addEventListener('click', togglePanel);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !menu.hidden) { closeMenu(); return; }
+    if (e.key === 'Escape' && !e.isComposing && !cur) togglePanel();
+  });
+
+  if (!load()) out.innerHTML = '<ruby>日本語<rt>にほんご</rt></ruby>' + ZW + 'を打ってみてください';
+  cleanup(); syncVert(); fillSize(); applyFont(); showAuto();
+  if (touch) $('hide').textContent = 'Hide panel'; else out.focus();
+})();
+</script>
+</body>
+</html>
