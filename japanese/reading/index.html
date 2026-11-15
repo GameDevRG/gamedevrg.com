@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Japanese reading practice</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500&display=swap">
+<style>
+:root {
+  --paper: #f3efe6; --ink: #1d2433; --accent: #a3342b; --panel: #e6e0d2; --line: #c9c0ad;
+  --field: #fbf9f3; --muted: #6c6a63; --size: clamp(28px, 6vw, 56px);
+  color-scheme: light; box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #151a24; --ink: #ece6d6; --accent: #e8806f; --panel: #1e2432; --line: #38405a;
+    --field: #11151e; --muted: #9a98a0; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #151a24; --ink: #ece6d6; --accent: #e8806f; --panel: #1e2432; --line: #38405a;
+  --field: #11151e; --muted: #9a98a0; color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: inherit; }
+html, body { height: 100%; margin: 0; }
+@supports (height: 100dvh) { body { height: 100dvh; } }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+  display: grid; grid-template-rows: minmax(0, 1fr) auto; overflow: hidden;
+}
+#stage { display: flex; flex-direction: column; align-items: center; padding: 24px; overflow: auto; min-height: 0; }
+#read { margin: auto; width: 100%; max-width: 34em; display: grid; gap: 1.1em; }
+#jp { margin: 0; font-size: var(--size); line-height: 2.3; font-weight: 500; overflow-wrap: anywhere; text-align: left; }
+#jp rt { font-size: 0.5em; font-weight: 500; }
+#jp .s { cursor: pointer; border-radius: 4px; padding: 2px 0; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+body.nofuri #jp ruby:not(.rev) rt { display: none; }
+body.nofuri #jp ruby { cursor: help; }
+body.nofuri #jp { line-height: 1.9; }
+#en {
+  margin: 0; padding-top: .8em; border-top: 1px solid var(--line); color: var(--muted);
+  font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+#en[hidden] { display: none; }
+.hint { margin: 0; color: var(--muted); font: 13px system-ui, -apple-system, "Segoe UI", sans-serif; }
+#panel {
+  background: var(--panel); border-top: 1px solid var(--line); padding: 10px 16px 12px;
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center;
+  font: 14px system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+button, select {
+  font: inherit; color: var(--ink); background: var(--field);
+  border: 1px solid var(--line); border-radius: 6px; padding: 7px 12px; cursor: pointer;
+}
+button.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); font-weight: 600; padding: 7px 20px; }
+button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+button:disabled { opacity: .4; cursor: default; }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+label.size { display: flex; gap: 6px; align-items: center; color: var(--muted); }
+input[type="range"] {
+  -webkit-appearance: none; appearance: none; width: 110px; height: 24px; background: transparent; margin: 0; padding: 0; cursor: pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: var(--line); }
+input[type="range"]::-moz-range-track { height: 4px; border-radius: 2px; background: var(--line); }
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 18px; height: 18px; margin-top: -7px; border-radius: 50%;
+  background: var(--ink); border: 2px solid var(--panel); box-shadow: 0 0 0 1px var(--ink);
+}
+input[type="range"]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--ink); border: 2px solid var(--panel); }
+@media (pointer: coarse) {
+  button, select { min-height: 42px; }
+  select { font-size: 16px; }
+  input[type="range"] { height: 36px; }
+  input[type="range"]::-webkit-slider-thumb { width: 26px; height: 26px; margin-top: -11px; }
+}
+@media (max-width: 600px) { #stage { padding: 14px; } .tip { display: none; } }
+.tip { color: var(--muted); }
+#gm {
+  position: fixed; z-index: 20; left: 0; top: 0; width: min(400px, calc(100vw - 16px)); overflow: auto;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.25); font: 14px system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+#gm[hidden] { display: none; }
+#gm .gtop { display: flex; gap: 6px; flex-wrap: wrap; }
+#gm .gh { margin: 10px 4px 2px; color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .05em; }
+#gm label { display: flex; gap: 10px; align-items: center; padding: 6px; border-radius: 6px; cursor: pointer; }
+#gm label:hover { background: rgba(255,190,0,.18); }
+#gm input { width: 18px; height: 18px; margin: 0; flex: none; accent-color: var(--ink); }
+@media (pointer: coarse) { #gm label { padding: 10px 6px; } }
+#wc {
+  position: fixed; z-index: 15; left: 0; top: 0; width: min(300px, calc(100vw - 16px));
+  background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.25); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+#wc[hidden] { display: none; }
+#hl { position: fixed; z-index: 5; pointer-events: none; left: 0; top: 0; }
+#hl .hb { position: fixed; background: rgba(128,128,128,.3); border-radius: 4px; }
+#hl[hidden] { display: none; }
+#wc .ww { font: 500 24px/1.3 "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; }
+#wc .wsp { position: absolute; top: 8px; right: 8px; width: 36px; height: 36px; padding: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+#wc .wsp svg { display: block; }
+#wc .wsp.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+#wc.hasq .ww { padding-right: 44px; }
+#wc .wr { font-size: 14px; color: var(--muted); font-family: system-ui, sans-serif; }
+#wc .wt { display: inline-block; font: 600 12px/1 system-ui, sans-serif; padding: 4px 8px; border-radius: 999px; border: 1px solid currentColor; letter-spacing: .02em; }
+#wc .wtr { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+#wc .wts { font-size: 13px; color: var(--muted); }
+#wc .wt.p { color: #1f5fbf; background: rgba(31,95,191,.10); }
+#wc .wt.a { color: #1d7a52; background: rgba(29,122,82,.10); }
+#wc .wt.v { color: #8a5a00; background: rgba(138,90,0,.10); }
+:root[data-theme="dark"] #wc .wt.p { color: #7db2ff; background: rgba(125,178,255,.14); }
+:root[data-theme="dark"] #wc .wt.a { color: #6fd7a3; background: rgba(111,215,163,.14); }
+:root[data-theme="dark"] #wc .wt.v { color: #e5b457; background: rgba(229,180,87,.14); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #wc .wt.p { color: #7db2ff; background: rgba(125,178,255,.14); }
+  :root:not([data-theme="light"]) #wc .wt.a { color: #6fd7a3; background: rgba(111,215,163,.14); }
+  :root:not([data-theme="light"]) #wc .wt.v { color: #e5b457; background: rgba(229,180,87,.14); }
+}
+#hl.k-p .hb { background: rgba(31,95,191,.28); }
+#hl.k-a .hb { background: rgba(29,122,82,.28); }
+#hl.k-v .hb { background: rgba(214,150,20,.28); }
+#wc .wm { margin-top: 4px; }
+#wc .wf { margin-top: 6px; color: var(--muted); }
+#wc .wf b { color: var(--ink); font-weight: 600; margin-right: 8px; }
+#wc .wn { margin-top: 3px; font-size: 13px; color: var(--muted); }
+#wc .wkl { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); display: grid; gap: 2px; color: var(--muted); }
+#wc .wk b { color: var(--ink); font: 500 16px "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; margin-right: 6px; }
+button, select { touch-action: manipulation; }
+#jp .s { -webkit-tap-highlight-color: transparent; }
+body.tate #read { max-width: 100%; }
+body.tate #jp { writing-mode: vertical-rl; width: 100%; height: 62vh; height: 62dvh; min-height: 14em; overflow-x: auto; overflow-y: hidden; line-height: 2.1; padding: 0 4px; }
+body.tate #jp .pb { height: auto; width: .9em; }
+body.tate.nofuri #jp { line-height: 1.8; }
+#jp .s.say { background: rgba(255,190,0,.28); }
+label.rate span { min-width: 3em; text-align: right; font-variant-numeric: tabular-nums; }
+#menu label.rate { grid-template-columns: 90px 1fr 3.2em; }
+#more { display: inline-block; }
+#more svg { display: block; }
+#jp .pb { display: block; height: .9em; }
+@media (max-width: 700px) {
+  html, body { height: auto; }
+  body { display: flex; flex-direction: column; min-height: 100vh; overflow: auto; }
+  #panel { order: -1; border-top: 0; border-bottom: 1px solid var(--line); }
+  #stage { flex: 1 0 auto; overflow: visible; }
+  .emb #panel { padding-top: 56px; }
+}
+
+#menu {
+  position: fixed; z-index: 12; left: 8px; right: 8px; bottom: 0; display: grid; gap: 10px; overflow: auto;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px;
+  box-shadow: 0 3px 14px rgba(0,0,0,.3); font: 14px system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+#menu[hidden] { display: none; }
+#menu .mrow, #menu label.size { display: grid; grid-template-columns: 90px 1fr; gap: 8px; align-items: center; color: var(--muted); }
+#menu button, #menu select { width: 100%; padding: 10px; }
+#menu input[type="range"] { width: 100%; }
+@media (max-width: 700px) {
+  #panel { gap: 6px; padding: 8px 10px; }
+  #panel button, #panel select { padding: 8px 10px; }
+  #more { display: inline-block; }
+  #new { flex: 1 1 auto; }
+  #panel:not(.open) .x { display: none; }
+  .x { order: 2; }
+  #panel label.size.x { flex: 1 1 100%; }
+  #panel label.size.x input { flex: 1; }
+  #stage { padding: 14px 14px 8px; }
+  .hint { font-size: 12px; }
+}
+
+/* Three-lines menu: popover on computers, bottom sheet on phones */
+.tip { display: none !important; }
+#menu { display: block; left: auto; right: auto; top: auto; bottom: auto; width: 360px; max-width: calc(100vw - 16px); padding: 6px 16px 14px; border-radius: 12px; overflow: auto; }
+#menu .mgrip { display: none; }
+#menu .mh { margin: 16px 0 4px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+#menu .mgrip + .mh, #menu > .mh:first-child { margin-top: 10px; }
+#menu .mrow, #menu label.size { display: grid; grid-template-columns: 110px 1fr; gap: 10px; align-items: center; padding: 5px 0; color: var(--ink); }
+#menu label.rate { grid-template-columns: 110px 1fr 3.2em; }
+#menu button, #menu select { width: 100%; padding: 8px 10px; }
+#mback { display: none; position: fixed; inset: 0; z-index: 11; background: rgba(0,0,0,.4); }
+#mback[hidden] { display: none; }
+@keyframes sheet { from { transform: translateY(100%); } to { transform: none; } }
+@media (max-width: 700px) {
+  #menu { left: 0; right: 0; bottom: 0; top: auto; width: auto; max-width: none; max-height: 78vh; max-height: 78dvh; border-radius: 16px 16px 0 0; border-bottom: 0;
+    padding: 8px 18px calc(18px + env(safe-area-inset-bottom, 0px)); animation: sheet .22s ease-out; }
+  #menu .mgrip { display: block; width: 44px; height: 4px; border-radius: 2px; background: var(--line); margin: 4px auto 6px; }
+  #menu button, #menu select { min-height: 44px; }
+  #mback { display: block; }
+}
+@media (prefers-reduced-motion: reduce) { #menu { animation: none; } }
+
+/* Four floating icon buttons, bottom right */
+#panel { position: fixed; right: calc(14px + env(safe-area-inset-right, 0px)); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); left: auto; top: auto; z-index: 10;
+  width: auto; order: 0; background: transparent; border: 0; padding: 0; gap: 10px; flex-wrap: nowrap; justify-content: flex-end; }
+.emb #panel { padding-top: 0; }
+#panel button { width: 48px; height: 48px; min-height: 0; padding: 0; flex: none; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+  background: var(--panel); color: var(--ink); border: 1px solid var(--line); box-shadow: 0 2px 10px rgba(0,0,0,.25); }
+#panel button.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+#panel button[aria-pressed="true"] { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+#panel button[hidden] { display: none; }
+#panel button svg { display: block; }
+#stage { padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px)); }
+@media (max-width: 700px) { #stage { padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px)); } #panel { order: 0; border: 0; padding: 0; gap: 10px; } }
+
+/* Pitch accent */
+:root { --pa0: #1f5fbf; --pa1: #c0392b; --pa2: #1d7a52; --pa3: #8a4bbf; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --pa0: #7db2ff; --pa1: #ff8f80; --pa2: #6fd7a3; --pa3: #c9a2f5; } }
+:root[data-theme="dark"] { --pa0: #7db2ff; --pa1: #ff8f80; --pa2: #6fd7a3; --pa3: #c9a2f5; }
+#jp { position: relative; }
+#jp .pal { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; }
+#jp .pau { position: absolute; border-radius: 2px; opacity: .85; pointer-events: none; }
+.pau.c0, .mleg .c0::before { background: var(--pa0); } .pau.c1, .mleg .c1::before { background: var(--pa1); }
+.pau.c2, .mleg .c2::before { background: var(--pa2); } .pau.c3, .mleg .c3::before { background: var(--pa3); }
+#menu .mleg { display: flex; flex-wrap: wrap; gap: 4px 14px; padding: 2px 0 6px; font-size: 12px; color: var(--muted); }
+#menu .mleg span::before { content: ""; display: inline-block; width: 14px; height: 3px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+#wc .wpa { margin-top: 8px; padding: 8px 0 2px; border-top: 1px solid var(--line); }
+#wc .wpa.t0 { --pc: var(--pa0); } #wc .wpa.t1 { --pc: var(--pa1); } #wc .wpa.t2 { --pc: var(--pa2); } #wc .wpa.t3 { --pc: var(--pa3); }
+#wc .wpa .wt { color: var(--pc); background: transparent; }
+#wc .wpm { margin-top: 8px; display: flex; flex-wrap: wrap; }
+#wc .pm { min-width: 1.5em; padding: 6px 1px 1px; text-align: center; font: 500 18px "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; border-top: 2px solid transparent; border-right: 2px solid transparent; }
+#wc .pm.h { border-top-color: var(--pc); } #wc .pm.d { border-right-color: var(--pc); }
+#wc .pm.pp { color: var(--muted); font-size: 14px; }
+#menu .hint { margin: 4px 0 6px; font-size: 12.5px; line-height: 1.5; }
+#menu .hint:empty { display: none; }
+/* Stop button floats directly above the Listen button (the rightmost one) */
+#panel #stopbtn { position: absolute; right: 0; bottom: 58px; }
+/* Selected buttons: a soft tint of the system accent color (muted slate fallback) */
+#panel button[aria-pressed="true"], #menu button[aria-pressed="true"] {
+  background: #d3d9e6; color: var(--ink); border-color: #8e9ab5;
+  background: color-mix(in srgb, AccentColor 20%, var(--panel)); border-color: color-mix(in srgb, AccentColor 50%, var(--line));
+}
+:root[data-theme="dark"] #panel button[aria-pressed="true"], :root[data-theme="dark"] #menu button[aria-pressed="true"] { background: #38405a; border-color: #6a7595; background: color-mix(in srgb, AccentColor 28%, var(--panel)); border-color: color-mix(in srgb, AccentColor 50%, var(--line)); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #panel button[aria-pressed="true"], :root:not([data-theme="light"]) #menu button[aria-pressed="true"] { background: #38405a; border-color: #6a7595; background: color-mix(in srgb, AccentColor 28%, var(--panel)); border-color: color-mix(in srgb, AccentColor 50%, var(--line)); } }
+</style>
+</head>
+<body>
+<main id="stage">
+  <div id="read">
+    <p id="jp" lang="ja"></p>
+    <p id="en" hidden></p>
+    <p class="hint" id="hint">Tap a word to see its meaning and whether it is a particle, an auxiliary verb or vocabulary. With furigana off, tapping also peeks at the reading.</p>
+    <p class="hint" id="chk"></p>
+  </div>
+</main>
+
+<section id="panel">
+  <button id="back" title="Previous (Left arrow)">Back</button>
+  <button class="primary" id="new" aria-label="New passage" title="New passage (Space or Right arrow)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 10-2.3 6.3"/><path d="M20 4v7h-7"/></svg></button>
+  <select id="lvl" class="x" aria-label="JLPT level" title="Reading level (sets the default grammar)">
+    <option value="N5">N5</option>
+    <option value="N4">N4</option>
+    <option value="N3">N3</option>
+    <option value="N2">N2</option>
+    <option value="N1">N1</option>
+  </select>
+  <select id="mode" class="x" aria-label="Mode" title="Random: unrelated sentences. Connected: one person, place and event. Narrative: a short story with a beginning, middle and end.">
+    <option value="random">Random</option>
+    <option value="connected">Connected</option>
+    <option value="narrative">Narrative</option>
+  </select>
+  <select id="top" class="x" aria-label="Topic" title="Topic">
+    <option value="">Any topic</option>
+    <option value="food">Food</option>
+    <option value="travel">Travel</option>
+    <option value="school">School</option>
+    <option value="nature">Nature</option>
+    <option value="hobby">Hobbies</option>
+  </select>
+  <select id="len" class="x" aria-label="Length">
+    <option value="1">1 sentence</option>
+    <option value="3">3 sentences</option>
+    <option value="5" selected>5 sentences</option>
+    <option value="8">8 sentences</option>
+    <option value="12">12 sentences (long)</option>
+    <option value="20">20 sentences (very long)</option>
+    <option value="30">30 sentences (extra long)</option>
+  </select>
+  <button id="gbtn" class="x" aria-haspopup="true" title="Choose which grammar to practice">Grammar</button>
+  <button id="furi" aria-pressed="true">Furigana</button>
+  <button id="eng" aria-pressed="false" aria-label="Translation" title="Show or hide the translation"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h9M8.5 3v2M6 5c.5 3 2.5 5.5 5.5 7M12 5c-.7 3-3 6-7.5 8"/><path d="M12 20l4-9 4 9M13.5 17h5"/></svg></button>
+  <button id="stopbtn" aria-label="Stop" title="Stop reading" hidden><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" stroke="none"/></svg></button>
+  <button id="listen" aria-pressed="false" aria-label="Listen" title="Read the passage aloud"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.5v5h4l5 4v-13l-5 4H3z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 010 7M18 6a8.5 8.5 0 010 12"/></svg></button>
+  <button id="more" aria-expanded="false" aria-controls="menu" aria-label="Menu"><svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true"><path d="M1 1.5h18M1 7h18M1 12.5h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button>
+  <button id="casual" class="x" aria-pressed="false" title="Casual speech: plain forms instead of polite です/ます">Casual</button>
+  <button id="spk" class="x" aria-pressed="false" title="Send the kanji text to the voice instead of the furigana reading">Send kanji text</button>
+  <select id="voice" class="x" aria-label="Voice" title="Japanese voice (the list depends on your device)"></select>
+  <label class="size x rate" id="rateRow" title="Speech speed">Speed <input type="range" id="rate" min="0.5" max="1.5" step="0.1" value="0.9" aria-label="Speech speed"><span id="rateV">0.9×</span></label>
+  <button id="pa" class="x" aria-pressed="false" title="Underline words by pitch accent pattern">Show accent</button>
+  <button id="vert" class="x" aria-pressed="false" title="Vertical writing (tategaki), read right to left">Vertical</button>
+  <button id="copy" class="x">Copy</button>
+  <label class="size x">Size <input type="range" id="size" min="14" max="48" value="22"></label>
+  <button id="theme" class="x">Light / dark</button>
+  <span class="tip x">Space = new</span>
+</section>
+
+<script>
+(function () {
+  var $ = function (i) { return document.getElementById(i); };
+  var rnd = function (a) { return a[Math.floor(Math.random() * a.length)]; };
+  var art = function (w) { return (/^[aeiou]/.test(w) ? 'an ' : 'a ') + w; };
+  var lc = function (s) { return /^(Every|Yesterday|Last|On|At|Today|Tomorrow|Next|During|This|That|There|The|My|She|He|They|According|Despite|Although|Whether|While|As|Without|Breaking|Against|Hearing|Though|Please|Because|Since|It|If|From|Now|When)\b/.test(s) ? s.charAt(0).toLowerCase() + s.slice(1) : s; };
+
+  /* Words: text{reading} marks furigana for the kanji just before it */
+  var TP = [['毎朝{まいあさ}', 'Every morning'], ['毎日{まいにち}', 'Every day'], ['週末{しゅうまつ}には', 'On weekends'], ['夜{よる}は', 'At night']];
+  var TS = [['昨日{きのう}', 'Yesterday'], ['先週{せんしゅう}', 'Last week'], ['昨夜{さくや}', 'Last night'], ['去年{きょねん}', 'Last year']];
+  var WHO = [['私{わたし}', 'I', 0, 'I'], ['友達{ともだち}', 'my friend', 1, 'she'], ['母{はは}', 'my mother', 1, 'she'], ['兄{あに}', 'my older brother', 1, 'he'], ['先生{せんせい}', 'the teacher', 1, 'he'], ['田中{たなか}さん', 'Mr. Tanaka', 1, 'he']];
+  var ACTS = [
+    ['本{ほん}を読{よ}み', 'read a book', 'reads a book', 'read a book'],
+    ['お茶{ちゃ}を飲{の}み', 'drink tea', 'drinks tea', 'drank tea'],
+    ['音楽{おんがく}を聞{き}き', 'listen to music', 'listens to music', 'listened to music'],
+    ['写真{しゃしん}を撮{と}り', 'take photos', 'takes photos', 'took photos'],
+    ['手紙{てがみ}を書{か}き', 'write a letter', 'writes a letter', 'wrote a letter'],
+    ['ご飯{はん}を食{た}べ', 'eat a meal', 'eats a meal', 'ate a meal'],
+    ['勉強{べんきょう}し', 'study', 'studies', 'studied'],
+    ['散歩{さんぽ}し', 'take a walk', 'takes a walk', 'took a walk'],
+    ['映画{えいが}を見{み}', 'watch a movie', 'watches a movie', 'watched a movie']
+  ];
+  var PLACES = [['公園{こうえん}', 'at the park'], ['図書館{としょかん}', 'at the library'], ['駅{えき}', 'at the station'], ['学校{がっこう}', 'at school'], ['喫茶店{きっさてん}', 'at a café'], ['家{いえ}', 'at home']];
+  var DEM = [['この', 'This'], ['その', 'That'], ['あの', 'That']];
+  var ADV = [['とても', 'very '], ['ちょっと', 'a little '], ['', '']];
+  var THINGS = [
+    ['本{ほん}', 'book', [['面白{おもしろ}', 'i', 'interesting'], ['古{ふる}', 'i', 'old'], ['新{あたら}し', 'i', 'new'], ['つまらな', 'i', 'boring']]],
+    ['映画{えいが}', 'movie', [['面白{おもしろ}', 'i', 'interesting'], ['つまらな', 'i', 'boring'], ['長{なが}', 'i', 'long']]],
+    ['部屋{へや}', 'room', [['大{おお}き', 'i', 'big'], ['小{ちい}さ', 'i', 'small'], ['静{しず}か', 'na', 'quiet'], ['明{あか}る', 'i', 'bright']]],
+    ['町{まち}', 'town', [['静{しず}か', 'na', 'quiet'], ['小{ちい}さ', 'i', 'small'], ['古{ふる}', 'i', 'old'], ['大{おお}き', 'i', 'big']]],
+    ['料理{りょうり}', 'dish', [['美味{おい}し', 'i', 'delicious'], ['辛{から}', 'i', 'spicy'], ['熱{あつ}', 'i', 'hot']]],
+    ['庭{にわ}', 'garden', [['広{ひろ}', 'i', 'spacious'], ['綺麗{きれい}', 'na', 'beautiful'], ['小{ちい}さ', 'i', 'small']]]
+  ];
+  var FUT = [['来週{らいしゅう}', 'Next week'], ['来月{らいげつ}', 'Next month'], ['来年{らいねん}', 'Next year'], ['夏休{なつやす}み', 'During summer vacation']];
+  var DEST = [['京都{きょうと}', 'Kyoto'], ['北海道{ほっかいどう}', 'Hokkaido'], ['沖縄{おきなわ}', 'Okinawa'], ['大阪{おおさか}', 'Osaka'], ['奈良{なら}', 'Nara'], ['東京{とうきょう}', 'Tokyo']];
+  var DAY = [['今日{きょう}', 'Today', 'is', 'です'], ['明日{あした}', 'Tomorrow', 'will probably be', 'でしょう'], ['昨日{きのう}', 'Yesterday', 'was', 'でした']];
+  var WEA = [['晴{は}れ', 'sunny'], ['雨{あめ}', 'rainy'], ['曇{くも}り', 'cloudy'], ['雪{ゆき}', 'snowy']];
+  var SPOT = [['公園{こうえん}', 'in the park'], ['庭{にわ}', 'in the garden'], ['部屋{へや}', 'in the room'], ['駅の近{ちか}く', 'near the station']];
+  var ITEM = [['木{き}', 'tree', 0], ['犬{いぬ}', 'dog', 1], ['猫{ねこ}', 'cat', 1], ['池{いけ}', 'pond', 0], ['ベンチ', 'bench', 0]];
+  var SIZE = [['', ''], ['大{おお}きい', 'big '], ['小{ちい}さい', 'small ']];
+  var CONN = [['そして、', 'And then, '], ['それから、', 'After that, '], ['でも、', 'But '], ['だから、', 'So '], ['また、', 'Also, ']];
+
+  /* Sentence continuity: a sentence can leave behind a "focus" (an animal, a place, something read) that the next description refers back to with その */
+  var AJ = {
+    big: ['大{おお}き', 'i', 'big'], small: ['小{ちい}さ', 'i', 'small'], old: ['古{ふる}', 'i', 'old'], nu: ['新{あたら}し', 'i', 'new'],
+    spac: ['広{ひろ}', 'i', 'spacious'], quiet: ['静{しず}か', 'na', 'quiet'], pretty: ['綺麗{きれい}', 'na', 'beautiful'], bright: ['明{あか}る', 'i', 'bright'],
+    cute: ['可愛{かわい}', 'i', 'cute'], tall: ['高{たか}', 'i', 'tall'], deep: ['深{ふか}', 'i', 'deep'], white: ['白{しろ}', 'i', 'white'],
+    lively: ['元気{げんき}', 'na', 'lively'], fun: ['面白{おもしろ}', 'i', 'interesting'], dull: ['つまらな', 'i', 'boring'], tasty: ['美味{おい}し', 'i', 'delicious'],
+    hot: ['熱{あつ}', 'i', 'hot'], long: ['長{なが}', 'i', 'long'], spicy: ['辛{から}', 'i', 'spicy']
+  };
+  var ADJX = Object.keys(AJ).map(function (k) { return AJ[k]; });
+  var REGTH = THINGS.concat([['', '', ADJX]]);
+  var ITEM_ADJ = [[AJ.big, AJ.old, AJ.tall, AJ.pretty], [AJ.big, AJ.small, AJ.cute, AJ.lively], [AJ.cute, AJ.small, AJ.pretty, AJ.big], [AJ.big, AJ.small, AJ.deep, AJ.pretty], [AJ.old, AJ.nu, AJ.small, AJ.white]];
+  var PLACE_ADJ = [[AJ.spac, AJ.quiet, AJ.pretty, AJ.big], [AJ.quiet, AJ.big, AJ.old, AJ.nu], [AJ.big, AJ.old, AJ.small, AJ.nu], [AJ.big, AJ.old, AJ.nu, AJ.spac], [AJ.small, AJ.quiet, AJ.old, AJ.bright], [AJ.spac, AJ.small, AJ.old, AJ.quiet, AJ.nu]];
+  var OBJ_ADJ = [[AJ.fun, AJ.old, AJ.nu, AJ.dull], [AJ.tasty, AJ.hot], [AJ.pretty, AJ.quiet, AJ.long], [AJ.pretty, AJ.old, AJ.nu, AJ.big], [AJ.long, AJ.old, AJ.nu], [AJ.tasty, AJ.spicy, AJ.hot], null, null, [AJ.fun, AJ.dull, AJ.long]];
+  var OBJ_JP = ['本{ほん}', 'お茶{ちゃ}', '音楽{おんがく}', '写真{しゃしん}', '手紙{てがみ}', 'ご飯{はん}', '', '', '映画{えいが}'];
+  var OBJ_EN = ['book', 'tea', 'music', 'photo', 'letter', 'meal', '', '', 'movie'];
+  var DEST_ADJ = [AJ.big, AJ.old, AJ.quiet, AJ.pretty];
+  var contFlag = false;
+  function setFoc() { if (ctx) ctx.nf = Array.prototype.slice.call(arguments).filter(Boolean); }
+  function entItem(i, z) { return { kind: 'item', jp: i[0], en: i[1], adj: ITEM_ADJ[ITEM.indexOf(i)].filter(function (a) { return !(z && ((z[1] === 'big ' && a === AJ.big) || (z[1] === 'small ' && a === AJ.small))); }) }; }
+  function entPlace(k) { return { kind: 'place', jp: PLACES[k][0], en: PLACES[k][1].replace(/^at (the |a )?/, '').replace(/^home$/, 'house'), adj: PLACE_ADJ[k] }; }
+  function entObj(k) { return OBJ_ADJ[k] ? { kind: 'obj', jp: OBJ_JP[k], en: OBJ_EN[k], adj: OBJ_ADJ[k] } : null; }
+  function entDest() { return { kind: 'dest', jp: '場所{ばしょ}', en: 'place', adj: DEST_ADJ }; }
+  /* The next sentence may pick up what the last one introduced */
+  function takeFoc(kinds, skip) {
+    if (!ctx || !ctx.pf || Math.random() > 0.9) return null;
+    var c = ctx.pf.filter(function (f) { return kinds.indexOf(f.kind) >= 0; });
+    if (!c.length) return null;
+    var f = rnd(c), adj = f.adj.filter(function (a) { return !skip || skip.indexOf(a) < 0; });
+    if (!adj.length) return null;
+    contFlag = true;
+    return { jp: f.jp, en: f.en, adj: adj, kind: f.kind };
+  }
+
+  /* Topics: each limits which words the sentence patterns may pick (indexes into the lists below) */
+  var T = null;
+  var TOP = {
+    food: { a: [1, 5], p: [4, 5], t: [4], d: [3, 5], f: ['a', 'b', 'prog', 'while', 'sou', 'exp'] },
+    travel: { a: [3, 7, 2], p: [2, 0], t: [3], s: [3], i: [4, 1, 2], f: ['a', 'b', 'c', 'e', 'exp', 'prog', 'sou'] },
+    school: { a: [0, 4, 6], p: [1, 3], t: [0], f: ['a', 'b', 'prog', 'while', 'sou'] },
+    nature: { a: [7, 3], p: [0], t: [5, 3], d: [1, 2, 4], s: [0, 1], i: [0, 3, 1, 2], f: ['a', 'b', 'c', 'e', 'exp', 'prog', 'sou'] },
+    hobby: { a: [2, 8, 0, 3], p: [0, 4, 5], t: [1, 0], f: ['a', 'b', 'c', 'prog', 'while', 'sou', 'exp'] }
+  };
+  var CAS = false;
+  var ACTD = [['本{ほん}を読{よ}む', '本{ほん}を読{よ}んだ'], ['お茶{ちゃ}を飲{の}む', 'お茶{ちゃ}を飲{の}んだ'], ['音楽{おんがく}を聞{き}く', '音楽{おんがく}を聞{き}いた'],
+    ['写真{しゃしん}を撮{と}る', '写真{しゃしん}を撮{と}った'], ['手紙{てがみ}を書{か}く', '手紙{てがみ}を書{か}いた'], ['ご飯{はん}を食{た}べる', 'ご飯{はん}を食{た}べた'],
+    ['勉強{べんきょう}する', '勉強{べんきょう}した'], ['散歩{さんぽ}する', '散歩{さんぽ}した'], ['映画{えいが}を見{み}る', '映画{えいが}を見{み}た']];
+  var RESC = ['散歩{さんぽ}に行{い}く', '家{いえ}にいる', '友達{ともだち}に会{あ}う'];
+  var RESBC = ['上手{じょうず}になる', '間{ま}に合{あ}う', '成功{せいこう}するだろう'];
+  function actJ(a, past) { return CAS ? ACTD[ACTS.indexOf(a)][past ? 1 : 0] : a[0] + (past ? 'ました' : 'ます'); }
+  function dEnd(x) { return CAS ? { 'です': 'だ', 'でしょう': 'だろう', 'でした': 'だった' }[x] : x; }
+  var ctx = null, lastW = null;
+  function pw() { lastW = ctx ? ctx.w : rnd(WHO); return lastW; }
+  function tense() { return ctx ? ctx.past : Math.random() < 0.45; }
+  function pk(list, key) {
+    if (ctx && ctx[key] !== undefined) { var v = ctx[key]; return list[Array.isArray(v) ? rnd(v) : v]; }
+    var ix = T && T[key];
+    return ix ? list[rnd(ix)] : rnd(list);
+  }
+  function ai() { if (ctx) return rnd(ctx.a); var ix = T && T.a; return ix ? rnd(ix) : ri(9); }
+  /* One subject, place, activities and destination are chosen per passage so the sentences hang together */
+  function mkCtx() {
+    var tp = T || {};
+    var any = function (n) { var r = []; for (var q = 0; q < n; q++) r.push(q); return r; };
+    var acts = (tp.a || any(9)).slice().sort(function () { return Math.random() - 0.5; }).slice(0, 3);
+    ctx = { w: rnd(WHO), past: Math.random() < 0.45, a: acts, p: rnd(tp.p || any(6)), t: rnd(tp.t || any(6)),
+            d: rnd(tp.d || any(6)), s: rnd(tp.s || any(4)), tm: null, tu: false };
+  }
+
+  /* Word meanings: built from the word lists above, plus a few extras */
+  var GL = {}, KJ = {};
+  var plain = function (m) { return m.replace(/\{[^}]*\}/g, ''); };
+  [TP, TS, WHO, PLACES, FUT, DEST, DAY, WEA, SPOT, ITEM, SIZE, THINGS, DEM, ADV].forEach(function (list) {
+    list.forEach(function (x) {
+      var k = plain(x[0]), v = (x[1] || '').trim().replace(/^(at|in|near) (the |a )?/, '');
+      if (k && v) GL[k] = v;
+    });
+  });
+  REGTH.forEach(function (th) {
+    th[2].forEach(function (ad) { var k = plain(ad[0]); GL[k] = ad[2]; if (ad[1] === 'i') GL[k + '\u3044'] = ad[2]; });
+  });
+  ('\u306f=topic marker|\u304c=subject marker|\u3092=object marker|\u306b,\u306b\u306f=at, to, in (time or place)|\u3067=at, by, with|\u3078=toward|\u3068=and, with|\u3082=also, too|\u306e=of (possessive)|\u304b\u3089=from, because|\u307e\u3067=until, as far as|\u3084=and (among others)|\u304b=question marker|\u306d=right? (seeking agreement)|\u3088=emphasis marker|\u306a\u304c\u3089=while doing|\u3066\u3082=even if|\u305f\u3089=if, when|\u3070=if|\u307e\u3059=polite verb ending|\u307e\u3057\u305f=polite past ending|\u307e\u305b\u3093=polite negative ending|\u3067\u3059=is, am, are (polite)|\u3067\u3057\u305f=was, were (polite)|\u3067\u3057\u3087\u3046=probably|\u305f\u3044=want to|\u306a\u3044=not|\u3066=and (te-form)|\u3044,\u3044\u307e\u3059=to be (living things)|\u3042\u308a,\u3042\u308a\u307e\u3059=to exist (things)|\u8aad\u307f,\u8aad\u3093\u3067=to read|\u98f2\u307f,\u98f2\u3093\u3067=to drink|\u805e\u304d,\u805e\u3044\u3066=to listen, to hear|\u64ae\u308a,\u64ae\u3063\u3066=to take (a photo)|\u66f8\u304d,\u66f8\u3044\u3066=to write|\u98df\u3079,\u98df\u3079\u3066=to eat|\u3057,\u3057\u3066=to do|\u898b,\u898b\u3066=to see, to watch|\u884c\u304d,\u884c\u3063\u3066,\u884c\u304f=to go|\u4f1a\u3044=to meet|\u304a\u8336=tea|\u97f3\u697d=music|\u5199\u771f=photo|\u624b\u7d19=letter|\u3054\u98ef=meal, rice|\u52c9\u5f37=study|\u6563\u6b69=walk|\u6620\u753b=movie|\u4eca=now|\u591c=night|\u9031\u672b=weekend').split('|').forEach(function (e) {
+    var q = e.split('=');
+    q[0].split(',').forEach(function (k) { GL[k] = q[1]; });
+  });
+  ('\u6bce:every|\u671d:morning|\u65e5:day, sun|\u9031:week|\u672b:end|\u591c:night|\u6628:previous|\u5148:ahead, previous|\u53bb:leave, last (year)|\u5e74:year|\u6765:come, next|\u6708:month, moon|\u4eca:now|\u660e:bright, tomorrow|\u672c:book, origin|\u8aad:read|\u8336:tea|\u98f2:drink|\u97f3:sound|\u697d:music, enjoy|\u805e:hear, ask|\u5199:copy|\u771f:true|\u64ae:photograph|\u624b:hand|\u7d19:paper|\u66f8:write|\u98ef:meal, rice|\u98df:eat|\u52c9:effort|\u5f37:strong|\u6563:scatter|\u6b69:walk|\u6620:reflect|\u753b:picture|\u898b:see|\u516c:public|\u5712:garden|\u56f3:diagram|\u9928:hall, building|\u99c5:station|\u5b66:study|\u6821:school|\u559c:joy|\u5e97:shop|\u5bb6:house|\u79c1:I, private|\u53cb:friend|\u9054:plural marker|\u6bcd:mother|\u5144:older brother|\u751f:life, birth|\u7530:rice field|\u4e2d:middle, inside|\u9762:face, surface|\u767d:white|\u53e4:old|\u65b0:new|\u9577:long|\u5927:big|\u5c0f:small|\u9759:quiet|\u753a:town|\u8f9b:spicy, bitter|\u71b1:heat, hot|\u5e83:wide|\u7dba:beautiful|\u9e97:lovely|\u7f8e:beautiful|\u5473:taste|\u5ead:garden|\u90e8:section|\u5c4b:roof, room|\u6599:materials|\u7406:reason, logic|\u4eac:capital|\u90fd:metropolis|\u5317:north|\u6d77:sea|\u9053:road, way|\u6c96:offshore|\u7e04:rope|\u962a:slope|\u5948:Nara|\u6771:east|\u884c:go|\u6674:clear weather|\u96e8:rain|\u66c7:cloudy|\u96ea:snow|\u6728:tree|\u72ac:dog|\u732b:cat|\u6c60:pond|\u601d:think|\u4f1a:meet|\u6cf3:swim|\u8a71:talk|\u6f22:Chinese|\u5b57:character|\u4f5c:make|\u8eca:car|\u904b:carry, luck|\u8ee2:turn|\u5f3e:play (an instrument)|\u7a93:window|\u958b:open|\u5ea7:sit|\u96fb:electricity|\u4f7f:use|\u5bbf:lodging|\u984c:topic|\u85ac:medicine|\u5bdd:sleep|\u590f:summer|\u4f11:rest|\u5929:heaven|\u6c17:spirit|\u4e88:beforehand|\u5831:report').split('|').forEach(function (e) {
+    KJ[e.charAt(0)] = e.slice(2);
+  });
+  KJ['\u55ab'] = 'drink, consume';
+  GL['\u8fd1\u304f'] = 'near, nearby'; GL['\u5834\u6240'] = 'place'; GL['\u9ad8\u3044'] = 'tall, expensive';
+  '可:can|愛:love|高:tall|深:deep|元:origin|気:spirit|近:near|場:place|所:place'.split('|').forEach(function (e) { if (!KJ[e.charAt(0)]) KJ[e.charAt(0)] = e.slice(2); });
+  REGTH.forEach(function (th) {
+    th[2].forEach(function (ad) {
+      var k = plain(ad[0]);
+      GL[k + 'そう'] = 'looks ' + ad[2];
+      if (ad[1] === 'i') { GL[k + 'かった'] = ad[2] + ' (past)'; GL[k + 'かっ'] = ad[2] + ' (past)'; }
+    });
+  });
+  ('あと=also, and then (casual)|ある=to exist (things)|いる=to be (living things)|そして=and, and then (adds or continues)|それから=after that, and then (next in time)|でも=but|だから=so, therefore|また=also, again|しかし=however|そのため=for that reason|さらに=furthermore|一方=on the other hand|' +
+   '田中=Tanaka (surname)|さん=Mr., Ms.|彼=he|彼女=she, her|日本語=Japanese language|話す,話し=to speak|漢字=kanji|書く,書い=to write|泳ぐ,泳ぎ=to swim|作る,作り,作っ=to make, to cook|車=car|運転=driving|する=to do|ピアノ=piano|弾く,弾き=to play (an instrument)|できます,でき,できる=can do|こと=thing, matter|ここ=here|窓=window|開け,開ける=to open|座っ,座る=to sit|電話=phone, call|使っ,使う=to use|いい=good, OK|' +
+   '忙しい=busy|難しい=difficult|電車=train|遅れる,遅れ=to be late|なる,なり=to become|思い,思う=to think|運動=exercise|早く=early, quickly|起きる=to get up|日記=diary|お酒=alcohol, sake|やめる=to quit|宿題=homework|寝,寝る=to sleep, to go to bed|薬=medicine|飲ま=to drink, to take|片付け,片付ける=to tidy up|なければ=if not|なりません=must (lit. will not do)|なければなりません=must, have to|降っ,降る=to fall (rain)|時間=time|あっ=to have, to exist|よく=well, often|練習=practice|すれ=if one does|出れ,出る,出=to leave, to go out|もう少し=a little more|頑張れ,頑張る=to try hard|上手=skilled, good at|間に合い,間に合う=to be in time|成功=success|天気予報=weather forecast|新聞=newspaper|によると=according to|待た,待つ,待ち=to wait|諦め,諦める=to give up|認め,認める=to admit|ざるを得ません=have no choice but to|行か=to go|行った,行っ=went|た=past tense ending|まし=polite past ending|ませ,ん=negative ending|ありません=there is not (polite)|そう=looks like, seems|' +
+   '一日中=all day long|にもかかわらず=in spite of|試合=match, game|予定通り=as planned|行われ,行う=to be held, to carry out|わけではない,わけではありません=it is not that...|たがらない=does not want to|止まっ,止まる=to stop|ため=because of|会議=meeting|遅刻=being late|しまい,しまう=to end up doing|ほど=the more... / to the extent that|仕事=job, work|経験=experience|なくて=without|はず=should be, expected to|帰国=returning to one s country|ばかり=just, only|時差=time difference|ぼけ=fogginess|残っ,残る=to remain|ようです,よう=it seems|ように=so that|約束=promise, appointment|うちに=while, before|文化=culture|興味=interest|持つ,持っ=to have, to hold|ようになりました=came to (do)|昼食=lunch|暇=free time|さえ=even|笑っ,笑う=to laugh|真面目=serious|話=talk, story|飲んだ=drank|後=after|眠く,眠い=sleepy|学生=student|多く=many|積む=to accumulate, to gain|べき=should|' +
+   '努力=effort|なくしては=without|あり得=possible|春=spring|とはいえ=although|朝晩=morning and evening|冷え込み,冷え込む=to turn cold|初心者=beginner|腕前=skill|見事=splendid|台風=typhoon|接近=approach|に伴い,に伴って=along with|各地=various places|運休=service suspension|相次い,相次ぐ=to occur one after another|知らせ=news|喜ば,喜ぶ=to rejoice|ずにはいられません,ずにはいられませんでした=cannot help but|医者=doctor|でありながら=although being|小説=novel|景気=economy|回復=recovery|背景=background|企業=company|投資=investment|増え,増える=to increase|破る=to break|信じ,信じる=to believe|がたい=hard to|行為=act, deed|多忙=very busy|極める=to carry to the extreme|読書=reading (books)|だけは=at least|欠かさ,欠かす=to omit, to skip|ならでは=unique to|味=flavor, taste|一度=once|賞味=tasting|ください=please|優しさ=kindness|感謝=gratitude|てやみません=cannot stop (feeling)|否か=whether or not|今後=from now on|次第=depends on|事故=accident|原因=cause|いまだに=still, even now|解明=clarification|許す=to permit|限り=as long as|お手伝い=help|いたします=will do (humble)').split('|').forEach(function (e) {
+    var q = e.split('=');
+    q[0].split(',').forEach(function (k) { GL[k] = q[1]; });
+  });
+  ('彼:he|女:woman|忙:busy|難:difficult|遅:late|動:move|起:wake|酒:alcohol|降:fall|間:interval|練:practice|習:learn|頑:stubborn|張:stretch|成:become|功:merit|諦:resign|認:acknowledge|待:wait|止:stop|議:deliberation|刻:carve|経:pass through|験:test|帰:return|国:country|残:remain|約:promise|束:bundle|文:sentence|化:change|興:interest|持:hold|昼:noon|暇:leisure|笑:laugh|目:eye|後:after|眠:sleep|多:many|積:accumulate|努:strive|力:power|春:spring|冷:cold|込:crowd, include|初:first|心:heart|者:person|腕:arm|台:stand|風:wind|接:touch|近:near|各:each|相:mutual|次:next|喜:joy|医:medicine|説:theory|景:scenery|回:times|復:return|背:back|企:plan|業:business|投:throw|資:resources|増:increase|破:break|信:trust|為:do|極:extreme|欠:lack|否:no|第:ordinal|事:matter|故:reason|因:cause|解:solve|許:permit|限:limit|伝:convey').split('|').forEach(function (e) {
+    KJ[e.charAt(0)] = e.slice(2);
+  });
+
+  var wc = document.createElement('div');
+  wc.id = 'wc'; wc.hidden = true;
+  document.body.appendChild(wc);
+  var lastKey = '', jseg = null;
+  var esc = function (t) { return String(t).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); };
+  var hl = document.createElement('div');
+  hl.id = 'hl'; hl.hidden = true;
+  document.body.appendChild(hl);
+  function setHl(rs, cat) {
+    hl.innerHTML = '';
+    hl.className = cat ? 'k-' + cat : '';
+    if (!rs || !rs.length) { hl.hidden = true; return; }
+    hl.hidden = false;
+    Array.prototype.forEach.call(rs, function (r) {
+      var d = document.createElement('div');
+      d.className = 'hb';
+      d.style.left = (r.left - 2) + 'px'; d.style.top = r.top + 'px';
+      d.style.width = (r.width + 4) + 'px'; d.style.height = r.height + 'px';
+      hl.appendChild(d);
+    });
+  }
+  function closeWc() { wc.hidden = true; setHl(null); }
+  function caretAt(x, y) {
+    if (document.caretPositionFromPoint) { var p = document.caretPositionFromPoint(x, y); return p && { node: p.offsetNode, offset: p.offset }; }
+    if (document.caretRangeFromPoint) { var r = document.caretRangeFromPoint(x, y); return r && { node: r.startContainer, offset: r.startOffset }; }
+    return null;
+  }
+  function wordAt(sp, x, y) {
+    var pos = caretAt(x, y);
+    if (!pos || !pos.node || pos.node.nodeType !== 3 || !sp.contains(pos.node)) return null;
+    var chars = [], text = '', at = -1, n, vt = document.body.classList.contains('tate');
+    var walker = document.createTreeWalker(sp, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (t) { return t.parentNode.nodeName === 'RT' ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT; }
+    });
+    while ((n = walker.nextNode())) {
+      var rb = n.parentNode.nodeName === 'RUBY' ? n.parentNode : null, rt = rb && rb.querySelector('rt');
+      for (var k = 0; k < n.nodeValue.length; k++) {
+        if (n === pos.node && k === pos.offset) at = chars.length;
+        chars.push({ n: n, o: k, rt: rb ? (k === 0 && rt ? rt.textContent : '') : null });
+        text += n.nodeValue.charAt(k);
+      }
+      if (n === pos.node && pos.offset >= n.nodeValue.length) at = chars.length - 1;
+    }
+    if (at < 0 && pos.node.parentNode.nodeName === 'RT') {
+      var bn = pos.node.parentNode.parentNode.firstChild;
+      for (var q = 0; q < chars.length; q++) if (chars[q].n === bn) { at = q; break; }
+    }
+    if (at < 0) return null;
+    var rectOf = function (c) { var r = document.createRange(); r.setStart(c.n, c.o); r.setEnd(c.n, c.o + 1); return r.getBoundingClientRect(); };
+    var inR = function (r) { return x >= r.left - 1 && x <= r.right + 1 && y >= r.top - 1 && y <= r.bottom + 1; };
+    if (at > 0 && !inR(rectOf(chars[at])) && inR(rectOf(chars[at - 1]))) at--;
+    var start = at, word = text.charAt(at);
+    if (window.Intl && Intl.Segmenter) {
+      if (!jseg) jseg = new Intl.Segmenter('ja', { granularity: 'word' });
+      for (var g of jseg.segment(text)) {
+        if (at >= g.index && at < g.index + g.segment.length) { start = g.index; word = g.segment; break; }
+      }
+    }
+    var known = function (k) { return GL[k] || (k.length > 1 && (AX[k] || PT[k])); };
+    if (!known(word)) {
+      var best = null;
+      for (var s0 = Math.max(0, at - 8); s0 <= at; s0++) {
+        for (var l = Math.min(9, text.length - s0); l >= 1; l--) {
+          if (s0 + l <= at) break;
+          var key = text.substr(s0, l);
+          if (known(key)) { if (!best || l > best.w.length) best = { w: key, s: s0 }; break; }
+        }
+      }
+      if (best) { start = best.s; word = best.w; }
+    }
+    if (!/[\u3041-\u30ff\u3400-\u9fff]/.test(word)) return null;
+    var reading = '';
+    for (var j = start; j < start + word.length; j++) reading += chars[j].rt !== null ? chars[j].rt : text.charAt(j);
+    /* One tidy box per line: built from the characters themselves (not the ruby/base fragments), then stretched to cover any furigana */
+    var lines = [], rts = [];
+    for (var j2 = start; j2 < start + word.length; j2++) {
+      var cr = rectOf(chars[j2]);
+      if (cr.width > 0) {
+        var cy = vt ? (cr.left + cr.right) / 2 : (cr.top + cr.bottom) / 2, ln = null;
+        for (var li = 0; li < lines.length; li++) if (Math.abs(lines[li].cy - cy) < (vt ? cr.width : cr.height) * 0.6) { ln = lines[li]; break; }
+        if (!ln) { ln = { cy: cy, left: cr.left, right: cr.right, top: cr.top, bottom: cr.bottom }; lines.push(ln); }
+        else { ln.left = Math.min(ln.left, cr.left); ln.right = Math.max(ln.right, cr.right); ln.top = Math.min(ln.top, cr.top); ln.bottom = Math.max(ln.bottom, cr.bottom); }
+      }
+      var rbn = chars[j2].n.parentNode;
+      if (rbn.nodeName === 'RUBY' && rts.indexOf(rbn) < 0) rts.push(rbn);
+    }
+    rts.forEach(function (rb2) {
+      var rt2 = rb2.querySelector('rt'), q2 = rt2 && rt2.getBoundingClientRect();
+      if (!q2 || !q2.width) return;
+      var rq = rb2.getBoundingClientRect(), qc = vt ? (rq.left + rq.right) / 2 : (rq.top + rq.bottom) / 2, bl = null;
+      lines.forEach(function (l) { if (!bl || Math.abs(l.cy - qc) < Math.abs(bl.cy - qc)) bl = l; });
+      if (bl) { if (vt) bl.right = Math.max(bl.right, q2.right); else bl.top = Math.min(bl.top, q2.top); }
+    });
+    var rs = lines.map(function (l) { return { left: l.left, right: l.right, top: l.top, bottom: l.bottom, width: l.right - l.left, height: l.bottom - l.top }; });
+    if (!rs.length) { var rg = document.createRange(); rg.setStart(chars[start].n, chars[start].o); rg.setEnd(chars[start + word.length - 1].n, chars[start + word.length - 1].o + 1); rs = [rg.getBoundingClientRect()]; }
+    return { index: start, word: word, reading: reading, after: text.slice(start + word.length, start + word.length + 6), rects: rs, rect: rs[rs.length - 1] };
+  }
+  /* Dictionary forms, and why a word is in the form it is in */
+  var VF = {}, ADJ = {}, PARTS = {}, ENDN = {};
+  [
+    '読{よ}む:読み|i,読ん|t,読んで|te,読んだ|ta', '飲{の}む:飲み|i,飲ま|n,飲ん|t,飲んで|te,飲んだ|ta', '聞{き}く:聞き|i,聞い|t,聞いて|te,聞いた|ta',
+    '撮{と}る:撮り|i,撮っ|t,撮って|te,撮った|ta', '書{か}く:書き|i,書い|t,書いて|te,書いた|ta', '食{た}べる:食べ|x,食べて|te,食べた|ta', 'する:し|x,して|te,すれ|e,した|ta',
+    '見{み}る:見|x,見て|te,見た|ta', '行{い}く:行き|i,行っ|t,行って|te,行か|n,行った|ta', '会{あ}う:会い|i,会った|ta', '話{はな}す:話し|i', '泳{およ}ぐ:泳ぎ|i',
+    '作{つく}る:作り|i,作っ|t', '弾{ひ}く:弾き|i', '思{おも}う:思い|i', 'なる:なり|i', '待{ま}つ:待ち|i,待っ|t,待た|n',
+    '間{ま}に合{あ}う:間に合い|i', '冷{ひ}え込{こ}む:冷え込み|i', '開{あ}ける:開け|x', '遅{おく}れる:遅れ|x', '起{お}きる:起き|x', '寝{ね}る:寝|x',
+    '片付{かたづ}ける:片付け|x', '諦{あきら}める:諦め|x', '認{みと}める:認め|x', '増{ふ}える:増え|x', '信{しん}じる:信じ|x', '出{で}る:出|x,出れ|e',
+    '頑張{がんば}る:頑張れ|e', '座{すわ}る:座っ|t', '使{つか}う:使っ|t', '降{ふ}る:降っ|t', '止{と}まる:止まっ|t', '残{のこ}る:残っ|t',
+    '持{も}つ:持っ|t', '笑{わら}う:笑っ|t', 'ある:あっ|t,あり|i', 'いる:い|x', 'できる:でき|x', '喜{よろこ}ぶ:喜ば|n', '欠{か}かす:欠かさ|n',
+    '行{おこな}う:行われ|p', '相次{あいつ}ぐ:相次い|t', 'しまう:しまい|i', 'やめる:', '許{ゆる}す:', '破{やぶ}る:', '極{きわ}める:'
+  ].forEach(function (line) {
+    var pr = line.split(':'), dict = pr[0];
+    VF[plain(dict)] = { d: dict, c: 'd' };
+    pr[1].split(',').forEach(function (e) { var q = e.split('|'); if (q[1]) VF[q[0]] = { d: dict, c: q[1] }; });
+    var pd = plain(dict), fs = pr[1] ? pr[1].split(',').map(function (e) { return e.split('|')[0]; }) : [];
+    for (var u = 0; u < fs.length && !GL[pd]; u++) if (GL[fs[u]]) GL[pd] = GL[fs[u]];
+    fs.forEach(function (k) { if (!GL[k] && GL[pd]) GL[k] = GL[pd]; });
+  });
+  REGTH.forEach(function (th) {
+    th[2].forEach(function (ad) {
+      var m = ad[0], k = plain(m);
+      if (ad[1] === 'i') {
+        var dm = m + '\u3044';
+        ADJ[k + '\u3044'] = { d: dm, l: 'Dictionary form (い-adjective)', n: 'い-adjectives end in い. Add です to make them polite.' };
+        ADJ[k + 'かった'] = ADJ[k + 'かっ'] = { d: dm, l: 'Past form (い-adjective)', n: 'Drop い and add かった (polite: かったです).' };
+        ADJ[k + 'そう'] = { d: dm, l: 'Stem + そう (looks like)', n: 'Drop い and add そう: it looks ' + ad[2] + '.' };
+      } else {
+        ADJ[k] = { d: m, l: 'な-adjective', n: 'Add な before a noun (静かな町). Add です to make it polite.' };
+        ADJ[k + 'そう'] = { d: m, l: 'Stem + そう (looks like)', n: 'Add そう to the stem: it looks ' + ad[2] + '.' };
+      }
+    });
+  });
+  /* Word types: particles (助詞), auxiliary verbs (助動詞), everything else is vocabulary */
+  var PT = {}, AX = {};
+  [
+    ['Case particle (格助詞)', [
+      ['が', 'Marks the subject of the sentence.'], ['を', 'Marks the direct object of an action.'],
+      ['に', 'Marks a target, a point in time, or where something exists.'], ['で', 'Marks where an action happens, or the means used.'],
+      ['へ', 'Marks the direction of movement.'], ['と', 'Means “with” or “and”; also marks a quotation (〜と思う).'],
+      ['の', 'Links two nouns (possession, description), or turns a phrase into a noun.'], ['から', 'Marks a starting point; after a clause it means “because”.'],
+      ['より', 'Marks the thing compared against: “than”.'], ['に は', ''], ['には', 'に plus the topic marker は: emphasizes the place or time.'],
+      ['とは', 'と plus は: used to define or react to something.'], ['って', 'Casual quotation or topic marker (like と or とは).']]],
+    ['Binding particle (係助詞)', [
+      ['は', 'Marks the topic: what the sentence is about.'], ['も', 'Adds to something already mentioned: “also, too”.'],
+      ['こそ', 'Stresses the word before it: “precisely, of all things”.'], ['だけは', 'だけ plus は: “at least, at the very least”.']]],
+    ['Adverbial particle (副助詞)', [
+      ['まで', 'Marks a limit: “until, as far as”.'], ['だけ', 'Means “only, just”.'], ['ばかり', 'Means “only, nothing but”; also “just did”.'],
+      ['さえ', 'Means “even”: an extreme example.'], ['すら', 'Means “even”: a stronger, more formal さえ.'], ['しか', 'Means “nothing but”; always used with a negative.'],
+      ['ほど', 'Means “about, to the extent of”.'], ['くらい', 'Means “about, approximately”.'], ['ぐらい', 'Means “about, approximately”.'],
+      ['など', 'Means “and so on, such as”.'], ['ずつ', 'Means “each, at a time”.'], ['でも', 'Means “even; or something”.']]],
+    ['Parallel particle (並立助詞)', [['や', 'Lists examples: “A and B (among others)”.']]],
+    ['Conjunctive particle (接続助詞)', [
+      ['て', 'Joins a verb to what follows (the て-form): “and, then”.'], ['ながら', 'Attaches to a verb stem: “while doing”.'],
+      ['ても', 'て plus も: “even if, even though”.'], ['ば', 'Attaches to the え-row stem: “if”.'],
+      ['ので', 'Gives a reason: “because”.'], ['のに', 'Means “even though”.'], ['けど', 'Means “but” (casual).'],
+      ['けれど', 'Means “but”.'], ['けれども', 'Means “but” (formal).'], ['し', 'Lists reasons or facts: “and what is more”.']]],
+    ['Sentence-final particle (終助詞)', [
+      ['か', 'Turns a sentence into a question.'], ['ね', 'Seeks agreement: “right?, isn’t it?”.'], ['よ', 'Asserts or informs: “you know”.'],
+      ['な', 'Casual: softens a sentence, or (after a verb) a prohibition.'], ['わ', 'Soft, often feminine, sentence ending.'], ['かな', 'Wondering: “I wonder”.']]]
+  ].forEach(function (grp) { grp[1].forEach(function (e) { if (e[1]) PT[e[0]] = [grp[0], e[1]]; }); });
+  [
+    ['Polite auxiliary (丁寧)', [
+      ['ます', 'Makes a verb polite (present or future).'], ['ました', 'Polite past ending.'], ['ません', 'Polite negative ending.'],
+      ['ませんでした', 'Polite negative past ending.'], ['ましょう', 'Polite “let us” or invitation.']]],
+    ['Copula (断定)', [
+      ['です', 'Polite “is / am / are”.'], ['でした', 'Polite past of です.'], ['でしょう', 'Polite “probably”.'],
+      ['だ', 'Casual “is / am / are”; the plain form of です.'], ['だった', 'Casual past; the plain form of でした.'], ['だろう', 'Casual “probably”; the plain form of でしょう.'],
+      ['である', 'Formal, written “is”.'], ['でありながら', 'である plus ながら: “although being”.']]],
+    ['Desire auxiliary (希望)', [['たい', 'Attaches to a verb stem: “want to”.'], ['たかった', 'Past of たい: “wanted to”.'], ['たく', 'The く-form of たい, before ない or て.']]],
+    ['Negative auxiliary (否定)', [
+      ['ない', 'Attaches to the negative stem: “not”.'], ['なかった', 'Past of ない: “did not”.'], ['なく', 'The く-form of ない, before て or なる.'],
+      ['なけれ', 'Stem of ない before ば (なければ): “if not”.'], ['ず', 'Literary negative: “without doing”.'], ['ざる', 'Literary negative, before を得ない.']]],
+    ['Past / perfective auxiliary (過去)', [['た', 'Past tense ending.'], ['だ', '']]],
+    ['Conditional auxiliary', [['たら', 'た plus ら: “if, when”.']]],
+    ['Passive / potential auxiliary (受身・可能)', [['れる', 'Added to a verb: passive or potential.'], ['られる', 'Added to a verb: passive or potential.'], ['れ', 'Stem of れる.'], ['られ', 'Stem of られる.']]],
+    ['Causative auxiliary (使役)', [['せる', 'Added to a verb: “make or let someone do”.'], ['させる', 'Added to a verb: “make or let someone do”.']]],
+    ['Appearance auxiliary (様態・伝聞)', [['そうです', 'Says something looks like it or is reported: “it seems”.'], ['らしい', 'Means “seems, apparently”.']]]
+  ].forEach(function (grp) { grp[1].forEach(function (e) { if (e[1] && !AX[e[0]]) AX[e[0]] = [grp[0], e[1]]; }); });
+  Object.keys(PT).forEach(function (k) { PARTS[k] = 1; });
+  /* Returns { cat: 'p' | 'a' | 'v', name, sub, note } for any tapped word */
+  function wordType(k) {
+    if (AX[k]) return { cat: 'a', name: 'Auxiliary verb', sub: AX[k][0], note: AX[k][1] };
+    if (VF[k]) return { cat: 'v', name: 'Vocabulary', sub: 'Verb' };
+    if (PT[k]) return { cat: 'p', name: 'Particle', sub: PT[k][0], note: PT[k][1] };
+    if (ADJ[k]) return { cat: 'v', name: 'Vocabulary', sub: /い-adj/.test(ADJ[k].l) ? 'い-adjective' : 'な-adjective' };
+    return { cat: 'v', name: 'Vocabulary', sub: /^to /.test(GL[k] || '') ? 'Verb' : '' };
+  }
+  ('ます=Makes a verb polite (present or future).|ました=Polite past ending.|ません=Polite negative ending.|ましょう=Polite “let us” or invitation.|です=Polite “is / am / are”.|でした=Polite past of です.|でしょう=Polite “probably”.|たい=Attaches to a verb stem: “want to”.|ない=Negative ending: “not”.|た=Past tense ending.|だ=Casual “is / am / are”; the plain form of です.|だった=Casual past; the plain form of でした.|だろう=Casual “probably”; the plain form of でしょう.').split('|').forEach(function (e) {
+    var q = e.split('='); ENDN[q[0]] = q[1];
+  });
+  var NX = [
+    ['ます', 'Polite ます-stem', 'The stem before ます makes the verb polite.', 'p'],
+    ['まし', 'Polite ます-stem', 'The stem before ました makes the polite past.', 'p'],
+    ['ませ', 'Polite ます-stem', 'The stem before ません makes the polite negative.', 'p'],
+    ['たい', 'Stem + たい (want to)', 'Add たい to the stem to say you want to do it.', 'p'],
+    ['たが', 'Stem + たがる (wants to)', 'Used for what another person wants to do.', 'p'],
+    ['ながら', 'Stem + ながら (while doing)', 'Two actions happening at the same time.', 'p'],
+    ['がたい', 'Stem + がたい (hard to do)', 'A formal pattern meaning hard to do (信じがたい = hard to believe).', 'p'],
+    ['そう', 'Stem + そう (looks like)', 'Says something looks or seems about to happen.', 'p'],
+    ['に', 'Stem + に (in order to)', 'Used before 行く or 来る: 食べに行く = go to eat.', 'p'],
+    ['なけれ', 'Negative stem (before なければ)', 'なければならない means must.', 'n'],
+    ['ない', 'Negative stem (before ない)', 'Add ない to say not.', 'n'],
+    ['なかっ', 'Negative stem (before なかった)', 'なかった is the past of ない.', 'n'],
+    ['ず', 'Negative stem (before ず)', 'ずに means without doing.', 'n'],
+    ['ざる', 'Negative stem (before ざる)', 'ざるを得ない means have no choice but to.', 'n']
+  ];
+  function formOfVerb(c, f) {
+    var c0 = f.charAt(0);
+    if (c === 'd') return ['Dictionary form', 'The plain present form, the one you look up in a dictionary.'];
+    if (c === 'te') return ['て-form', 'Links actions or makes requests; with います it shows an action in progress.'];
+    if (c === 'ta') return ['Plain past form', 'The casual past tense (polite: ました).'];
+    if (c === 'e') return f.indexOf('ば') === 0 ? ['ば-form (conditional)', 'The え-row stem plus ば means if.'] : ['え-row stem', 'The stem used for ば (if) and potential forms.'];
+    if (c === 'p') return ['Passive form stem', 'The れる-form: the action is done to something (行われる = to be held).'];
+    if (c === 't') {
+      if (c0 === 'た' || c0 === 'だ') return ['Plain past (〜た)', 'Before た the dictionary ending changes sound (っ, い or ん).'];
+      if (c0 === 'て' || c0 === 'で') return ['て-form (〜て)', 'Before て the dictionary ending changes sound (っ, い or ん).'];
+      return ['Past / て-form stem', 'The sound-changed stem used before た and て.'];
+    }
+    for (var i = 0; i < NX.length; i++) {
+      var x = NX[i];
+      if (f.indexOf(x[0]) === 0 && (x[3] === 'p' ? (c === 'i' || c === 'x') : (c === 'n' || c === 'x'))) return [x[1], x[2]];
+    }
+    if (c === 'n') return ['Negative stem', 'The base used before ない, なければ, ず and ざる.'];
+    if (c === 'x' && (c0 === 'て' || c0 === 'で')) return ['て-form stem', 'Drop る and add て.'];
+    if (c === 'x' && c0 === 'た') return ['Past stem', 'Drop る and add た.'];
+    return ['Stem (連用形)', 'The base used before ます, たい, ながら and similar endings.'];
+  }
+  var rubyM = function (t) { return esc(t).replace(/([\u4e00-\u9fff々]+)\{([^}]+)\}/g, '<ruby>$1<rt>$2</rt></ruby>'); };
+  function formHtml(w) {
+    var k = w.word, v = VF[k], a = ADJ[k];
+    var row = function (l, t) { return '<div class="wf"><b>' + l + '</b>' + t + '</div>'; };
+    if (v) { var f = formOfVerb(v.c, w.after || ''); return row('Dictionary form', rubyM(v.d)) + row('Form', esc(f[0])) + '<div class="wn">' + esc(f[1]) + '</div>'; }
+    if (a) return row('Dictionary form', rubyM(a.d)) + row('Form', esc(a.l)) + '<div class="wn">' + esc(a.n) + '</div>';
+    return '';
+  }
+  function showWc(w) {
+    var g = GL[w.word];
+    var h = '<div class="ww">' + esc(w.word) + (w.reading && w.reading !== w.word ? ' <span class="wr">' + esc(w.reading) + '</span>' : '') + '</div>';
+    var wt = wordType(w.word);
+    h += '<div class="wtr"><span class="wt ' + wt.cat + '">' + wt.name + '</span>' + (wt.sub ? '<span class="wts">' + esc(wt.sub) + '</span>' : '') + '</div>';
+    h += paHtml(w.word);
+    var shown = g || (wt.cat !== 'v' && wt.note) || '';
+    h += '<div class="wm">' + (shown ? esc(shown) : 'Not in the built-in word list yet.') + '</div>';
+    if (wt.cat !== 'v' && wt.note && wt.note !== shown) h += '<div class="wn">' + esc(wt.note) + '</div>';
+    h += formHtml(w);
+    var ks = '';
+    for (var i = 0; i < w.word.length; i++) {
+      var c = w.word.charAt(i);
+      if (KJ[c]) ks += '<div class="wk"><b>' + c + '</b>' + esc(KJ[c]) + '</div>';
+    }
+    if (ks) h += '<div class="wkl">' + ks + '</div>';
+    var canSay = typeof TTS !== 'undefined' && !!TTS;
+    if (canSay) h = '<button type="button" class="wsp" aria-label="Speak this word" title="Speak this word"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9.5v5h4l5 4v-13l-5 4H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 010 7M18 6a8.5 8.5 0 010 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button>' + h;
+    wc.classList.toggle('hasq', canSay);
+    wc.setAttribute('data-kanji', w.word);
+    wc.setAttribute('data-say', (w.reading || w.word).replace(/[\s、。]/g, ''));
+    wc.innerHTML = h; wc.hidden = false;
+    var r = w.rect, vw = window.innerWidth, vh = window.innerHeight;
+    var x = Math.min(Math.max(8, r.left), vw - wc.offsetWidth - 8);
+    var y = r.bottom + 8;
+    if (y + wc.offsetHeight > vh - 8) y = Math.max(8, r.top - wc.offsetHeight - 8);
+    wc.style.left = x + 'px'; wc.style.top = y + 'px';
+    setHl(w.rects, wt.cat);
+  }
+  document.addEventListener('pointerdown', function (e) {
+    if (!wc.hidden && !wc.contains(e.target) && !(e.target.closest && e.target.closest('#jp .s'))) closeWc();
+  });
+
+  function fA() {
+    var past = tense(), w = pw(), a = pk(ACTS, 'a'), p = pk(PLACES, 'p'), tm;
+    if (ctx) { if (!ctx.tm) ctx.tm = rnd(past ? TS : TP); tm = ctx.tu ? null : ctx.tm; ctx.tu = true; }
+    else tm = rnd(past ? TS : TP);
+    setFoc(entObj(ACTS.indexOf(a)), entPlace(PLACES.indexOf(p)));
+    return { jp: (tm ? tm[0] + '、' : '') + w[0] + 'は' + p[0] + 'で' + actJ(a, past) + '。',
+             en: (tm ? tm[1] + ', ' : '') + w[1] + ' ' + (past ? a[3] : (w[2] ? a[2] : a[1])) + ' ' + p[1] + '.' };
+  }
+  function fB() {
+    var past = tense(), foc = takeFoc(['item', 'place', 'obj', 'dest']), nj, ne, ad, d, v = rnd(ADV);
+    if (foc) { nj = foc.jp; ne = foc.en; ad = rnd(foc.adj); d = ['その', 'That']; v = rnd([ADV[0], ADV[2]]); }
+    else { var th = pk(THINGS, 't'); nj = th[0]; ne = th[1]; ad = rnd(th[2]); d = rnd(DEM); }
+    var f = ad[1] === 'i' ? ad[0] + (past ? 'かった' : 'い') + (CAS ? '' : 'です') : ad[0] + (CAS ? (past ? 'だった' : 'だ') : (past ? 'でした' : 'です'));
+    return { jp: d[0] + nj + 'は' + v[0] + f + '。', en: d[1] + ' ' + ne + ' ' + (past ? 'was' : 'is') + ' ' + v[1] + ad[2] + '.' };
+  }
+  function fC() {
+    var t = rnd(FUT), d = pk(DEST, 'd'), w = pw();
+    setFoc(entDest());
+    return { jp: t[0] + '、' + w[0] + 'は' + d[0] + 'へ行{い}' + (w[2] ? (CAS ? 'きたがっている' : 'きたがっています') : (CAS ? 'きたい' : 'きたいです')) + '。',
+             en: t[1] + ', ' + w[1] + ' ' + (w[2] ? 'wants' : 'want') + ' to go to ' + d[1] + '.' };
+  }
+  function fD() {
+    var d, w;
+    if (ctx) {
+      var wx = ctx.wx || (ctx.wx = {}), days = ctx.past ? [DAY[2]] : [DAY[0], DAY[1]];
+      var free = days.filter(function (x) { return !wx[x[0]]; });
+      d = rnd(free.length ? free : days);
+      w = wx[d[0]] || (wx[d[0]] = rnd(WEA));
+    } else { d = rnd(DAY); w = rnd(WEA); }
+    return { jp: d[0] + 'は' + w[0] + dEnd(d[3]) + '。', en: d[1] + ' ' + d[2] + ' ' + w[1] + '.' };
+  }
+  function fE() {
+    var s = pk(SPOT, 's'), i = pk(ITEM, 'i'), z = rnd(SIZE), past = ctx ? ctx.past : false;
+    setFoc(entItem(i, z));
+    var v = CAS ? (past ? (i[2] ? 'いた' : 'あった') : (i[2] ? 'いる' : 'ある')) : (past ? (i[2] ? 'いました' : 'ありました') : (i[2] ? 'います' : 'あります'));
+    return { jp: s[0] + 'に' + z[0] + i[0] + 'が' + v + '。',
+             en: (past ? 'There was ' : 'There is ') + art(z[1] + i[1]) + ' ' + s[1] + '.' };
+  }
+  var ri = function (n) { return Math.floor(Math.random() * n); };
+  var cap = function (s) { return s.charAt(0).toUpperCase() + s.slice(1); };
+  var CONNH = [['また、', 'Also, '], ['しかし、', 'However, '], ['そのため、', 'For this reason, '], ['さらに、', 'Furthermore, '], ['一方{いっぽう}、', 'On the other hand, ']];
+  /* N4 and N3 pieces */
+  var OBJ = ['本{ほん}を', 'お茶{ちゃ}を', '音楽{おんがく}を', '写真{しゃしん}を', '手紙{てがみ}を', 'ご飯{はん}を', '', '', '映画{えいが}を'];
+  var TEV = ['読{よ}んで', '飲{の}んで', '聞{き}いて', '撮{と}って', '書{か}いて', '食{た}べて', '勉強{べんきょう}して', '散歩{さんぽ}して', '見{み}て'];
+  var ING = ['reading a book', 'drinking tea', 'listening to music', 'taking photos', 'writing a letter', 'eating a meal', 'studying', 'taking a walk', 'watching a movie'];
+  var CAN = [['日本語{にほんご}を話{はな}す', 'speak Japanese'], ['漢字{かんじ}を書{か}く', 'write kanji'], ['泳{およ}ぐ', 'swim'], ['料理{りょうり}を作{つく}る', 'cook'], ['車{くるま}を運転{うんてん}する', 'drive a car'], ['ピアノを弾{ひ}く', 'play the piano']];
+  var MAY = [['ここで写真{しゃしん}を撮{と}っ', 'take photos here'], ['窓{まど}を開{あ}け', 'open the window'], ['ここに座{すわ}っ', 'sit here'], ['電話{でんわ}を使{つか}っ', 'use the phone']];
+  var CL = [['明日{あした}は雨{あめ}になる', 'it will rain tomorrow'], ['この映画{えいが}は面白{おもしろ}い', 'this movie is interesting'], ['彼{かれ}は忙{いそが}しい', 'he is busy'], ['日本語{にほんご}は難{むずか}しい', 'Japanese is difficult'], ['電車{でんしゃ}は遅{おく}れる', 'the train will be late']];
+  var DEC = [['毎日{まいにち}運動{うんどう}する', 'exercise every day'], ['早{はや}く起{お}きる', 'get up early'], ['日記{にっき}を書{か}く', 'keep a diary'], ['お酒{さけ}をやめる', 'quit drinking']];
+  var MUST = [['宿題{しゅくだい}をし', 'do homework'], ['早{はや}く寝{ね}', 'go to bed early'], ['薬{くすり}を飲{の}ま', 'take medicine'], ['部屋{へや}を片付{かたづ}け', 'tidy the room']];
+  var CND = [['雨{あめ}が降{ふ}ったら', 'If it rains'], ['時間{じかん}があったら', 'If I have time'], ['明日{あした}晴{は}れたら', 'If it is sunny tomorrow']];
+  var RES = [['散歩{さんぽ}に行{い}きます', 'I will go for a walk'], ['家{いえ}にいます', 'I will stay home'], ['友達{ともだち}に会{あ}います', 'I will meet a friend']];
+  var BA = [['よく練習{れんしゅう}すれ', 'If you practice well'], ['早{はや}く出{で}れ', 'If you leave early'], ['もう少{すこ}し頑張{がんば}れ', 'If you try a little harder']];
+  var RESB = [['上手{じょうず}になります', 'you will get better'], ['間{ま}に合{あ}います', 'you will make it in time'], ['成功{せいこう}するでしょう', 'you will probably succeed']];
+  var SRC = [['天気予報{てんきよほう}', 'the weather forecast'], ['新聞{しんぶん}', 'the newspaper'], ['先生{せんせい}', 'the teacher']];
+  var NC = [['行{い}か', 'go'], ['待{ま}た', 'wait'], ['諦{あきら}め', 'give up'], ['認{みと}め', 'admit']];
+  /* N2 and N1 sentences */
+  var C2 = [
+    ['天気予報{てんきよほう}によると、明日{あした}は一日中{いちにちじゅう}雨{あめ}が降{ふ}るそうです。', 'According to the weather forecast, it will rain all day tomorrow.'],
+    ['雨{あめ}にもかかわらず、試合{しあい}は予定通{よていどお}り行{おこな}われました。', 'Despite the rain, the game was held as scheduled.'],
+    ['彼{かれ}は忙{いそが}しいわけではないが、会{あ}いたがらない。', 'It is not that he is busy, but he does not want to meet.'],
+    ['電車{でんしゃ}が止{と}まったため、会議{かいぎ}に遅刻{ちこく}してしまいました。', 'Because the train stopped, I ended up late for the meeting.'],
+    ['練習{れんしゅう}すればするほど、上手{じょうず}になります。', 'The more you practice, the better you get.'],
+    ['この仕事{しごと}は、経験{けいけん}がなくてもできるはずです。', 'You should be able to do this job even without experience.'],
+    ['彼{かれ}は帰国{きこく}したばかりなので、まだ時差{じさ}ぼけが残{のこ}っているようです。', 'Since he has just returned home, it seems he still has jet lag.'],
+    ['約束{やくそく}の時間{じかん}に間{ま}に合{あ}うように、早{はや}く家{いえ}を出{で}ました。', 'I left home early so as to make it in time for the appointment.'],
+    ['日本語{にほんご}を勉強{べんきょう}するうちに、日本{にほん}の文化{ぶんか}にも興味{きょうみ}を持{も}つようになりました。', 'While studying Japanese, I came to take an interest in Japanese culture too.'],
+    ['忙{いそが}しくて、昼食{ちゅうしょく}を食{た}べる暇{ひま}さえありませんでした。', 'I was so busy that I did not even have time to eat lunch.'],
+    ['彼女{かのじょ}は笑{わら}ってばかりいて、真面目{まじめ}に話{はなし}を聞{き}きません。', 'She just keeps laughing and does not listen seriously.'],
+    ['この薬{くすり}は、飲{の}んだ後{あと}で眠{ねむ}くなることがあります。', 'This medicine may make you sleepy after you take it.'],
+    ['学生{がくせい}のうちに、できるだけ多{おお}くの経験{けいけん}を積{つ}むべきだ。', 'While you are a student, you should gain as much experience as possible.']
+  ];
+  var C1 = [
+    ['彼女{かのじょ}の努力{どりょく}なくしては、この成功{せいこう}はあり得{え}なかったでしょう。', 'Without her effort, this success would not have been possible.'],
+    ['春{はる}とはいえ、朝晩{あさばん}はまだ冷{ひ}え込{こ}みます。', 'Although it is spring, mornings and evenings are still quite cold.'],
+    ['初心者{しょしんしゃ}とはいえ、彼{かれ}の腕前{うでまえ}は見事{みごと}です。', 'Although he is a beginner, his skill is remarkable.'],
+    ['台風{たいふう}の接近{せっきん}に伴{ともな}い、各地{かくち}で運休{うんきゅう}が相次{あいつ}いでいます。', 'As the typhoon approaches, service suspensions are occurring one after another across the region.'],
+    ['その知{し}らせを聞{き}いて、喜{よろこ}ばずにはいられませんでした。', 'Hearing that news, I could not help but rejoice.'],
+    ['彼{かれ}は医者{いしゃ}でありながら、小説{しょうせつ}も書{か}いています。', 'Though a doctor, he also writes novels.'],
+    ['景気{けいき}の回復{かいふく}を背景{はいけい}に、企業{きぎょう}の投資{とうし}が増{ふ}えています。', 'Against the backdrop of the economic recovery, corporate investment is increasing.'],
+    ['約束{やくそく}を破{やぶ}るとは、信{しん}じがたい行為{こうい}だ。', 'Breaking a promise is an unbelievable act.'],
+    ['多忙{たぼう}を極{きわ}める毎日{まいにち}ではあるが、読書{どくしょ}の時間{じかん}だけは欠{か}かさない。', 'Though my days are extremely busy, I never skip time for reading.'],
+    ['この町{まち}ならではの味{あじ}を、ぜひ一度{いちど}ご賞味{しょうみ}ください。', 'Please try, at least once, a flavor unique to this town.'],
+    ['彼女{かのじょ}の優{やさ}しさには、感謝{かんしゃ}してやみません。', 'I cannot thank her enough for her kindness.'],
+    ['成功{せいこう}するか否{いな}かは、今後{こんご}の努力{どりょく}次第{しだい}だ。', 'Whether we succeed or not depends on our future efforts.'],
+    ['事故{じこ}の原因{げんいん}は、いまだに解明{かいめい}されていない。', 'The cause of the accident has still not been clarified.'],
+    ['時間{じかん}が許{ゆる}す限{かぎ}り、お手伝{てつだ}いいたします。', 'I will help as long as time permits.']
+  ];
+  function fProg() {
+    var i = ai(), w = pw(), p = pk(PLACES, 'p');
+    setFoc(entObj(i), entPlace(PLACES.indexOf(p)));
+    return { jp: '今{いま}、' + w[0] + 'は' + p[0] + 'で' + OBJ[i] + TEV[i] + (CAS ? 'いる' : 'います') + '。',
+             en: 'Now, ' + w[1] + ' ' + (w[2] ? 'is' : 'am') + ' ' + ING[i] + ' ' + p[1] + '.' };
+  }
+  function fExp() {
+    var w = pw(), d = pk(DEST, 'd'), neg = Math.random() < 0.3;
+    setFoc(entDest());
+    return { jp: w[0] + 'は' + d[0] + 'へ行{い}ったことが' + (CAS ? (neg ? 'ない' : 'ある') : (neg ? 'ありません' : 'あります')) + '。',
+             en: w[1] + ' ' + (neg ? (w[2] ? 'has never' : 'have never') : (w[2] ? 'has' : 'have')) + ' been to ' + d[1] + '.' };
+  }
+  function fWhile() {
+    var i = ai(), j, w = pw();
+    do { j = ai(); } while (j === i);
+    return { jp: w[0] + 'は' + ACTS[i][0] + 'ながら' + (CAS ? ACTD[j][0] : ACTS[j][0] + 'ます') + '。',
+             en: w[1] + ' ' + (w[2] ? ACTS[j][2] : ACTS[j][1]) + ' while ' + ING[i] + '.' };
+  }
+  function fCan() {
+    var w = pw(), c = rnd(CAN);
+    return { jp: w[0] + 'は' + c[0] + (CAS ? 'ことができる' : 'ことができます') + '。', en: w[1] + ' can ' + c[1] + '.' };
+  }
+  function fMay() {
+    var m = rnd(MAY);
+    return { jp: m[0] + (CAS ? 'てもいい？' : 'てもいいですか。'), en: 'May I ' + m[1] + '?' };
+  }
+  function fThink() {
+    var w = pw(), c = rnd(CL);
+    return { jp: w[0] + 'は' + c[0] + 'と思{おも}' + (CAS ? 'う' : 'います') + '。', en: w[1] + ' think' + (w[2] ? 's' : '') + ' that ' + c[1] + '.' };
+  }
+  function fDecide() {
+    var w = pw(), d = rnd(DEC);
+    return { jp: '来月{らいげつ}から、' + w[0] + 'は' + d[0] + 'ことに' + (CAS ? 'した' : 'しました') + '。', en: 'From next month, ' + w[1] + ' decided to ' + d[1] + '.' };
+  }
+  function fMust() {
+    var w = pw(), m = rnd(MUST);
+    return { jp: w[0] + 'は' + m[0] + (CAS ? 'なければならない' : 'なければなりません') + '。', en: w[1] + ' ' + (w[2] ? 'has' : 'have') + ' to ' + m[1] + '.' };
+  }
+  function fSou() {
+    var foc = takeFoc(['item', 'place', 'dest'], [AJ.cute, AJ.dull]), nj, ne, ad, d;
+    if (foc) { nj = foc.jp; ne = foc.en; ad = rnd(foc.adj); d = ['その', 'That']; }
+    else { var th = pk(THINGS, 't'); nj = th[0]; ne = th[1]; ad = rnd(th[2]); d = rnd(DEM); }
+    return { jp: d[0] + nj + 'は' + ad[0] + (CAS ? 'そうだ' : 'そうです') + '。', en: d[1] + ' ' + ne + ' looks ' + ad[2] + '.' };
+  }
+  function fTara() {
+    var c = rnd(CND), r = rnd(RES);
+    return { jp: c[0] + '、' + (CAS ? RESC[RES.indexOf(r)] : r[0]) + '。', en: c[1] + ', ' + r[1] + '.' };
+  }
+  function fBa() {
+    var b = rnd(BA), r = rnd(RESB);
+    return { jp: b[0] + 'ば、' + (CAS ? RESBC[RESB.indexOf(r)] : r[0]) + '。', en: b[1] + ', ' + r[1] + '.' };
+  }
+  function fSource() {
+    var s = rnd(SRC), c = rnd(CL);
+    return { jp: s[0] + 'によると、' + c[0] + (CAS ? 'そうだ' : 'そうです') + '。', en: 'According to ' + s[1] + ', ' + c[1] + '.' };
+  }
+  function fNoChoice() {
+    var w = pw(), n = rnd(NC);
+    return { jp: w[0] + 'は' + n[0] + 'ざるを得{え}' + (CAS ? 'ない' : 'ません') + '。', en: w[1] + ' ' + (w[2] ? 'has' : 'have') + ' no choice but to ' + n[1] + '.' };
+  }
+  function fCur(list) {
+    var f = function () {
+      var c = list;
+      if (REG) { var m = list.filter(function (x) { return regOf(x[0]) === REG; }); if (m.length) c = m; }
+      var x = rnd(c);
+      if (!REG) REG = regOf(x[0]);
+      return { jp: x[0], en: x[1] };
+    };
+    f.cur = true;
+    return f;
+  }
+  var c2 = fCur(C2), c1 = fCur(C1);
+  /* Grammar points the person can switch on and off */
+  var ITEMS = [
+    ['a', 'Daily routines (ます / ました)', 'N5', fA],
+    ['b', 'Descriptions (です, adjectives)', 'N5', fB],
+    ['c', 'Wishes (〜たい)', 'N5', fC],
+    ['d', 'Weather and days', 'N5', fD],
+    ['e', 'There is / there are (ある, いる)', 'N5', fE],
+    ['prog', 'Happening now (〜ている)', 'N4', fProg],
+    ['exp', 'Experience (〜たことがある)', 'N4', fExp],
+    ['while', 'At the same time (〜ながら)', 'N4', fWhile],
+    ['can', 'Ability (〜ことができる)', 'N4', fCan],
+    ['may', 'Permission (〜てもいいですか)', 'N4', fMay],
+    ['think', 'Opinions (〜と思います)', 'N3', fThink],
+    ['decide', 'Decisions (〜ことにする)', 'N3', fDecide],
+    ['must', 'Obligation (〜なければならない)', 'N3', fMust],
+    ['sou', 'Appearance (〜そうです)', 'N3', fSou],
+    ['tara', 'If / when (〜たら)', 'N3', fTara],
+    ['ba', 'Conditions (〜ば)', 'N3', fBa],
+    ['src', 'Reported information (〜によると)', 'N2', fSource],
+    ['nc', 'No choice (〜ざるを得ない)', 'N2', fNoChoice],
+    ['c2', 'Mixed sentences (〜にもかかわらず, 〜ほど, 〜さえ)', 'N2', c2],
+    ['c1', 'Literary sentences (〜とはいえ, 〜ずにはいられない, 〜ならでは)', 'N1', c1]
+  ];
+  var ORDER = ['N5', 'N4', 'N3', 'N2', 'N1'];
+  var on = {};
+  function preset(lv) {
+    var r = ORDER.indexOf(lv);
+    on = {};
+    ITEMS.forEach(function (it) { var k = ORDER.indexOf(it[2]); if (k === r || k === r - 1) on[it[0]] = true; });
+  }
+  preset('N5');
+  function pool() {
+    var pick = function () { return ITEMS.filter(function (it) { return on[it[0]]; }); };
+    T = TOP[$('top').value] || null;
+    CAS = $('casual').getAttribute('aria-pressed') === 'true';
+    var sel = pick();
+    if (!sel.length) { preset($('lvl').value); sel = pick(); }
+    if (CAS) { var nc = sel.filter(function (it) { return !it[3].cur; }); if (nc.length) sel = nc; }
+    if (T) {
+      var inT = function (it) { return T.f.indexOf(it[0]) >= 0; };
+      var ts = sel.filter(inT);
+      sel = ts.length ? ts : ITEMS.filter(inT);
+    }
+    return {
+      items: sel,
+      hard: sel.every(function (it) { return ORDER.indexOf(it[2]) >= 2; })
+    };
+  }
+  var gm = document.createElement('div');
+  gm.id = 'gm'; gm.hidden = true;
+  document.body.appendChild(gm);
+  var gmChanged = false;
+  function closeGm() { gm.hidden = true; if (gmChanged) { gmChanged = false; fresh(); } }
+  function buildGm() {
+    gm.innerHTML = '';
+    var top = document.createElement('div');
+    top.className = 'gtop';
+    [['All', function () { ITEMS.forEach(function (it) { on[it[0]] = true; }); }],
+     ['None', function () { on = {}; }],
+     ['Level default', function () { preset($('lvl').value); }]].forEach(function (b) {
+      var el = document.createElement('button');
+      el.type = 'button'; el.textContent = b[0];
+      el.addEventListener('click', function () { b[1](); gmChanged = true; save(); buildGm(); });
+      top.appendChild(el);
+    });
+    gm.appendChild(top);
+    ORDER.forEach(function (lv) {
+      var h = document.createElement('div');
+      h.className = 'gh'; h.textContent = lv;
+      gm.appendChild(h);
+      ITEMS.forEach(function (it) {
+        if (it[2] !== lv) return;
+        var lab = document.createElement('label'), cb = document.createElement('input');
+        cb.type = 'checkbox'; cb.checked = !!on[it[0]];
+        cb.addEventListener('change', function () { on[it[0]] = cb.checked; gmChanged = true; save(); });
+        lab.appendChild(cb);
+        lab.appendChild(document.createTextNode(it[1]));
+        gm.appendChild(lab);
+      });
+    });
+  }
+  $('gbtn').addEventListener('click', function () {
+    if (!gm.hidden) { closeGm(); return; }
+    buildGm();
+    gm.hidden = false;
+    var r = this.getBoundingClientRect();
+    var topMode = r.top < window.innerHeight / 2;
+    gm.style.maxHeight = Math.min(440, Math.max(160, topMode ? window.innerHeight - r.bottom - 16 : r.top - 16)) + 'px';
+    gm.style.left = Math.max(8, Math.min(r.left, window.innerWidth - gm.offsetWidth - 8)) + 'px';
+    gm.style.top = (topMode ? r.bottom + 6 : Math.max(8, r.top - gm.offsetHeight - 6)) + 'px';
+  });
+  document.addEventListener('pointerdown', function (e) {
+    if (!gm.hidden && !gm.contains(e.target) && e.target !== $('gbtn')) closeGm();
+  });
+
+  var ROLE = { d: 0, a: 0, prog: 0, b: 1, e: 1, 'while': 1, sou: 1, can: 1, may: 1, c1: 1, c2: 1, exp: 2, think: 2, must: 2, nc: 2, src: 2, tara: 2, ba: 2, c: 3, decide: 3 };
+  /* Consistency checks: every passage is tested before it is shown, and clashing drafts are replaced */
+  var REG = null;
+  var regOf = function (jp) {
+    var t = plain(jp).replace(/[。？！」\s]+$/, '');
+    return /(ます|ました|ません|ませんでした|ましょう|です|でした|でしょう|ください)(か)?$/.test(t) ? 'polite' : 'plain';
+  };
+  var FRAMES = { past: ['昨日', '昨夜', '先週', '去年'], now: ['今日', '今'], future: ['明日', '来週', '来月', '来年', '夏休み'] };
+  var frameOf = function (jp) {
+    var m = jp.match(/^(昨日|昨夜|先週|去年|今日|今|明日|来週|来月|来年|夏休み)(、|は|には)/);
+    if (m) { for (var f in FRAMES) if (FRAMES[f].indexOf(m[1]) >= 0) return { f: f, w: m[1] }; }
+    m = jp.match(/^(毎朝|毎日|週末には|夜は)/);
+    return m ? { f: 'habit', w: m[1] } : null;
+  };
+  var endsPast = function (jp) { return /(ました|ませんでした|でした|だった|かった|った|いた|んだ|いだ|した|べた|みた)$/.test(jp.replace(/[。？！]+$/, '')); };
+  var NOT_AT = [['散歩', ['図書館', '学校', '喫茶店', '家'], 'a walk'], ['映画', ['公園', '駅', '図書館'], 'a movie'], ['お茶', ['図書館'], 'tea'], ['ご飯', ['図書館'], 'a meal'], ['勉強', ['駅'], 'studying']];
+  function checkRows(rows, pastPara) {
+    var out = [], wx = {};
+    var add = function (m) { if (out.indexOf(m) < 0) out.push(m); };
+    rows.forEach(function (r) {
+      var jp = plain(r.s.jp), fr = frameOf(jp), past = endsPast(jp);
+      if (fr) {
+        if (pastPara && fr.f !== 'past') add('time: “' + fr.w + '” does not fit a passage told in the past');
+        if (!pastPara && fr.f === 'past') add('time: “' + fr.w + '” does not fit a passage told in the present');
+        if (fr.f === 'past' && !past) add('tense: “' + fr.w + '” needs a past-tense ending');
+        if (fr.f !== 'past' && past) add('tense: “' + fr.w + '” needs a non-past ending');
+      }
+      var m = jp.match(/^(今日|明日|昨日)は(晴れ|雨|曇り|雪)/);
+      if (m) { if (wx[m[1]] && wx[m[1]] !== m[2]) add('weather: two different forecasts for ' + m[1]); wx[m[1]] = m[2]; }
+      if (/部屋に.*(木|池)が/.test(jp)) add('setting: a tree or pond inside a room');
+      NOT_AT.forEach(function (n) {
+        n[1].forEach(function (pl) { if (jp.indexOf(pl + 'で') >= 0 && jp.indexOf(n[0]) >= 0) add('setting: ' + n[2] + ' at the ' + pl); });
+      });
+      if (REG && regOf(jp) !== REG) add('style: polite and plain endings mixed');
+    });
+    return out;
+  }
+  function buildRows(size, items, used) {
+    var seq = [];
+    for (var k = 0; k < size; k++) {
+      var cand, tr = 0;
+      do { cand = rnd(items); tr++; } while (seq.length && items.length > 1 && !cand[3].cur && cand === seq[seq.length - 1] && tr < 6);
+      seq.push(cand);
+    }
+    seq.sort(function (a, b) { return (ROLE[a[0]] === undefined ? 1 : ROLE[a[0]]) - (ROLE[b[0]] === undefined ? 1 : ROLE[b[0]]); });
+    var PROD = { a: 1, prog: 1, e: 1, exp: 1, c: 1 }, CONS = { b: 1, sou: 1 };
+    for (var q = 0; q < seq.length; q++) {
+      if (!CONS[seq[q][0]] || (q > 0 && PROD[seq[q - 1][0]])) continue;
+      for (var z = 0; z < seq.length; z++) {
+        if (PROD[seq[z][0]] && !(seq[z + 1] && CONS[seq[z + 1][0]]) && z !== q - 1 && Math.random() < 0.8) {
+          var moved = seq.splice(q, 1)[0];
+          seq.splice(z < q ? z + 1 : z, 0, moved);
+          break;
+        }
+      }
+    }
+    var u = {}, rows = [];
+    seq.forEach(function (it) {
+      var s, tr2 = 0;
+      if (ctx) { ctx.pf = ctx.nf; ctx.nf = null; }
+      do { lastW = null; contFlag = false; s = it[3](); tr2++; } while ((used[s.jp] || u[s.jp]) && tr2 < 10);
+      u[s.jp] = 1;
+      rows.push({ s: s, subj: lastW, cont: contFlag });
+    });
+    return rows;
+  }
+  function genRandom(n) {
+    var pl = pool(), items = pl.items, hard = pl.hard;
+    var js = [], es = [], br = [], used = {}, left = n, replaced = 0, notes = [], nlink = 0;
+    REG = CAS ? 'plain' : (items.every(function (it) { return it[3].cur; }) ? null : 'polite');
+    var linkers = hard ? [['また、', 'Also, '], ['さらに、', 'Furthermore, ']] : [['そして、', 'And then, '], ['それから、', 'After that, '], ['また、', 'Also, ']];
+    if (CAS) linkers = [['それから、', 'After that, '], ['あと、', 'Also, '], ['そして、', 'And then, ']];
+    while (left > 0) {
+      /* long readings are split into short paragraphs, each with its own subject and setting */
+      var size = n > 8 ? Math.min(left, 4 + ri(3)) : left;
+      if (left - size > 0 && left - size < 3) size = left;
+      var best = null, tries = 0;
+      for (var att = 0; att < 30; att++) {
+        mkCtx();
+        if (att >= 8) ctx.past = false;
+        var rows = buildRows(size, items, used), issues = checkRows(rows, ctx.past);
+        tries++;
+        if (!best || issues.length < best.issues.length) best = { rows: rows, issues: issues };
+        if (!issues.length) break;
+      }
+      replaced += tries - 1;
+      best.issues.forEach(function (m) { if (notes.indexOf(m) < 0) notes.push(m); });
+      if (js.length) br.push(js.length);
+      var prevW = null;
+      best.rows.forEach(function (r, i) {
+        var s = r.s, subj = r.subj;
+        used[s.jp] = 1;
+        if (i > 0 && subj && subj === prevW) {
+          s.jp = s.jp.replace(subj[0] + 'は', '');
+          s.en = s.en.replace(new RegExp('\\b' + subj[1].replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b'), subj[3]);
+        }
+        prevW = subj;
+        s.en = cap(s.en);
+        if (i > 0 && !r.cont) { var c = rnd(linkers); s.jp = c[0] + s.jp; s.en = c[1] + lc(s.en); }
+        if (r.cont) nlink++;
+        js.push(s.jp); es.push(s.en);
+      });
+      left -= size;
+    }
+    return { jp: js.join(''), en: es.join(' '), js: js, es: es, br: br, notes: notes, replaced: replaced, linked: nlink };
+  }
+
+  /* ---- Connected and Narrative modes ---- */
+  /* Beat format: [Japanese, English, optional]. 〔polite|plain〕 switches with the Casual button; {S} = subject (first sentence only); English {s} {p} {o} = he/she/I, his/her/my, him/her/me; {a/b} = I-form/third-person form. A third item of 1 marks a beat that can be dropped from a short story. */
+  var SC = [
+    { t: ['school', 'hobby'], title: 'At the library',
+      facts: [
+        ['{S}図書館{としょかん}によく〔行{い}きます|行{い}く〕。', '{s} often {go/goes} to the library.'],
+        ['図書館{としょかん}は駅{えき}の近{ちか}くに〔あります|ある〕。', 'The library is near the station.'],
+        ['その図書館{としょかん}はとても静{しず}か〔です|だ〕。', 'That library is very quiet.'],
+        ['{S}そこで本{ほん}を読{よ}〔みます|む〕。', '{s} {read/reads} books there.'],
+        ['本{ほん}は一週間{いっしゅうかん}借{か}りられ〔ます|る〕。', 'Books can be borrowed for one week.'],
+        ['{S}よく新{あたら}しい本{ほん}を借{か}り〔ます|る〕。', '{s} often {borrow/borrows} new books.'],
+        ['図書館{としょかん}の人{ひと}も親切{しんせつ}〔です|だ〕。', 'The librarians are kind, too.']],
+      plot: [
+        ['昨日{きのう}、{S}図書館{としょかん}へ行{い}〔きました|った〕。', 'Yesterday, {s} went to the library.'],
+        ['図書館{としょかん}は静{しず}かで、人{ひと}があまり〔いませんでした|いなかった〕。', 'The library was quiet, and there were few people.', 1],
+        ['{S}新{あたら}しい本{ほん}を探{さが}〔しました|した〕。', '{s} looked for a new book.'],
+        ['でも、読{よ}みたい本{ほん}は見{み}つか〔りませんでした|らなかった〕。', 'But {s} could not find the book {s} wanted to read.'],
+        ['そのとき、図書館{としょかん}の人{ひと}が「何{なに}かお探{さが}しですか」と聞{き}〔きました|いた〕。', 'Then a librarian asked, "Are you looking for something?"'],
+        ['その人{ひと}に本{ほん}の名前{なまえ}を話{はな}〔しました|した〕。', '{s} told the librarian the name of the book.', 1],
+        ['その人{ひと}は、棚{たな}の奥{おく}からその本{ほん}を持{も}って〔きました|きた〕。', 'The librarian brought the book from the back of the shelf.'],
+        ['とても嬉{うれ}し〔かったです|かった〕。', '{s} was very happy.'],
+        ['家{いえ}に帰{かえ}って、夜{よる}までその本{ほん}を読{よ}〔みました|んだ〕。', 'Back home, {s} read the book until night.']] },
+    { t: ['nature', 'hobby'], title: 'A walk in the park',
+      facts: [
+        ['{S}毎朝{まいあさ}、犬{いぬ}と公園{こうえん}を散歩{さんぽ}〔します|する〕。', 'Every morning, {s} {walk/walks} {p} dog in the park.'],
+        ['公園{こうえん}は家{いえ}の近{ちか}くに〔あります|ある〕。', 'The park is near the house.'],
+        ['公園{こうえん}には大{おお}きい木{き}が〔あります|ある〕。', 'There is a big tree in the park.'],
+        ['犬{いぬ}はその木{き}が好{す}き〔です|だ〕。', 'The dog likes that tree.'],
+        ['木{き}の下{した}にベンチも〔あります|ある〕。', 'There is also a bench under the tree.'],
+        ['犬{いぬ}はとても元気{げんき}〔です|だ〕。', 'The dog is very lively.'],
+        ['{S}ベンチで少{すこ}し休{やす}〔みます|む〕。', '{s} {rest/rests} a little on the bench.']],
+      plot: [
+        ['日曜日{にちようび}の朝{あさ}、{S}犬{いぬ}と公園{こうえん}へ散歩{さんぽ}に行{い}〔きました|った〕。', 'On Sunday morning, {s} went to the park to walk {p} dog.'],
+        ['公園{こうえん}には大{おお}きい木{き}が〔ありました|あった〕。', 'There was a big tree in the park.', 1],
+        ['犬{いぬ}はその木{き}のそばで、小{ちい}さい猫{ねこ}を見{み}つけ〔ました|た〕。', 'Near the tree, the dog found a small cat.'],
+        ['猫{ねこ}は木{き}の上{うえ}にいて、下{お}りられ〔ませんでした|なかった〕。', 'The cat was up in the tree and could not get down.'],
+        ['ベンチに立{た}って、手{て}を伸{の}ば〔しました|した〕。', '{s} stood on the bench and reached out {p} hand.'],
+        ['猫{ねこ}はゆっくり降{お}りて〔きました|きた〕。', 'The cat slowly came down.'],
+        ['犬{いぬ}は嬉{うれ}しそうに、猫{ねこ}を見{み}て〔いました|いた〕。', 'The dog watched the cat happily.', 1],
+        ['そのあと、猫{ねこ}は走{はし}って〔行{い}きました|行{い}った〕。', 'After that, the cat ran away.', 1],
+        ['犬{いぬ}の頭{あたま}をなでて、一緒{いっしょ}に家{いえ}へ帰{かえ}〔りました|った〕。', '{s} patted the dog on the head, and they went home together.']] },
+    { t: ['food'], title: 'Dinner for a friend',
+      facts: [
+        ['{S}よく友達{ともだち}のために晩{ばん}ご飯{はん}を作{つく}〔ります|る〕。', '{s} often {cook/cooks} dinner for a friend.'],
+        ['台所{だいどころ}は小{ちい}さい〔です|だ〕。', 'The kitchen is small.'],
+        ['{S}スーパーで野菜{やさい}と肉{にく}を買{か}〔います|う〕。', '{s} {buy/buys} vegetables and meat at the supermarket.'],
+        ['野菜{やさい}はとても新{あたら}しい〔です|〕。'.replace('〔です|〕', '〔です|'), 'The vegetables are very fresh.'],
+        ['料理{りょうり}はいつも美味{おい}し〔いです|い〕。', 'The food is always delicious.'],
+        ['友達{ともだち}は、それをたくさん食{た}べ〔ます|る〕。', 'The friend eats a lot of it.'],
+        ['{S}友達{ともだち}と食{た}べるご飯{はん}が好{す}き〔です|だ〕。', '{s} {like/likes} meals with a friend.']],
+      plot: [
+        ['土曜日{どようび}の夜{よる}、{S}友達{ともだち}のために晩{ばん}ご飯{はん}を作{つく}〔りました|った〕。', 'On Saturday night, {s} cooked dinner for a friend.'],
+        ['スーパーで野菜{やさい}と肉{にく}を買{か}〔いました|った〕。', '{s} bought vegetables and meat at the supermarket.', 1],
+        ['台所{だいどころ}で野菜{やさい}を切{き}〔りました|った〕。', '{s} cut the vegetables in the kitchen.', 1],
+        ['塩{しお}が〔ありませんでした|なかった〕。', 'There was no salt.'],
+        ['だから、隣{となり}の人{ひと}に〔もらいに行{い}きました|もらいに行{い}った〕。', 'So {s} went to ask a neighbor for some.'],
+        ['隣{となり}の人{ひと}は、少{すこ}し〔くれました|くれた〕。', 'The neighbor gave {o} a little.'],
+        ['料理{りょうり}はとても美味{おい}し〔かったです|かった〕。', 'The meal was very delicious.'],
+        ['友達{ともだち}は「もっと食{た}べたい」と言{い}〔いました|った〕。', 'The friend said, "I want to eat more."', 1],
+        ['嬉{うれ}し〔かったです|かった〕。', '{s} was happy.']] }
+  ];
+  SC[2].facts[3][0] = '野菜{やさい}はとても新鮮{しんせん}〔です|だ〕。';
+  ('図書館=library|探し=to look for|見つか=to be found|棚=shelf|奥=the back, depths|借り=to borrow|借りられ=can be borrowed|親切=kind|一週間=one week|好き=to like, liked|見つけ=to find|立っ=to stand|伸ばし=to stretch out|降り=to come down|走っ=to run|なで=to pat|帰り=to return|帰っ=to return|買い=to buy|買っ=to buy|買う=to buy|切り=to cut|切っ=to cut|台所=kitchen|塩=salt|隣=next door|隣の人=neighbor|野菜=vegetables|肉=meat|晩ご飯=dinner|くれ=to give (to me)|もらい=to receive|嬉し=happy|嬉しかった=happy (past)|言い=to say|言っ=to say|土曜日=Saturday|日曜日=Sunday|スーパー=supermarket|人=person|上=above, on top|下=below|一緒=together|頭=head|新鮮=fresh|休み=to rest|休む=to rest|ベンチ=bench|いつも=always|たくさん=a lot|少し=a little|もっと=more|そのとき=at that time|そのあと=after that|ゆっくり=slowly|手=hand|夜=night|朝=morning').split('|').forEach(function (e) {
+    var q = e.split('='); if (!GL[q[0]]) GL[q[0]] = q[1];
+  });
+  var PRON = { I: ['my', 'me'], she: ['her', 'her'], he: ['his', 'him'] };
+  function shuf(a) { return a.slice().sort(function () { return Math.random() - 0.5; }); }
+  function pickIdx(list, k, narr) {
+    var L = list.length, all = [], i;
+    for (i = 0; i < L; i++) all.push(i);
+    if (k >= L) return all;
+    if (k <= 1) return [0];
+    var keep;
+    if (narr) {
+      var req = all.filter(function (j) { return !list[j][2]; }), opt = all.filter(function (j) { return list[j][2]; });
+      if (k >= req.length) keep = req.concat(shuf(opt).slice(0, k - req.length));
+      else keep = [0, L - 1].concat(shuf(req.filter(function (j) { return j > 0 && j < L - 1; })).slice(0, k - 2));
+    } else keep = [0].concat(shuf(all.slice(1)).slice(0, k - 1));
+    return keep.sort(function (a, b) { return a - b; });
+  }
+  function fillBeat(b, w, first) {
+    var pr = PRON[w[3]] || ['their', 'them'];
+    var jp = b[0].replace(/〔([^|〕]*)\|([^〕]*)〕/g, function (m, x, y) { return CAS ? y : x; }).replace('{S}', first ? w[0] + 'は' : '');
+    var en = b[1].replace(/\{([A-Za-z]+)\/([A-Za-z]+)\}/g, function (m, x, y) { return w[2] ? y : x; })
+      .replace(/\{s\}/g, first ? w[1] : w[3]).replace(/\{p\}/g, pr[0]).replace(/\{o\}/g, pr[1]);
+    return { jp: jp, en: cap(en) };
+  }
+  function genStory(n, narr) {
+    pool();
+    var tp = $('top').value, sc = SC.filter(function (s) { return !tp || s.t.indexOf(tp) >= 0; });
+    if (!sc.length) sc = SC;
+    var order = shuf(sc), oi = 0, left = n, js = [], es = [], br = [], titles = [];
+    var who = WHO.filter(function (x) { return x[0].indexOf('友達') < 0; });
+    while (left > 0) {
+      var s = order[oi++ % order.length], list = narr ? s.plot : s.facts, k = Math.min(left, list.length);
+      if (left - k > 0 && left - k < 3) k = Math.max(1, left - 3);
+      var w = rnd(who), ix = pickIdx(list, k, narr);
+      if (js.length) br.push(js.length);
+      ix.forEach(function (j, i) { var r = fillBeat(list[j], w, i === 0); js.push(r.jp); es.push(r.en); });
+      if (titles.indexOf(s.title) < 0) titles.push(s.title);
+      left -= ix.length;
+    }
+    var label = narr ? '\u2713 Narrative: ' + titles.join(' / ') + '. Each passage has a beginning, a problem and an ending, with the same people and places throughout.'
+      : '\u2713 Connected: ' + titles.join(' / ') + '. Sentences share one person, one place and one event, but are not a plot.';
+    return { jp: js.join(''), en: es.join(' '), js: js, es: es, br: br, notes: [], replaced: 0, linked: 0, label: label };
+  }
+  function gen(n) {
+    var m = $('mode').value;
+    return m === 'connected' ? genStory(n, false) : m === 'narrative' ? genStory(n, true) : genRandom(n);
+  }
+
+  var hist = [], idx = -1, sel = -1, root = document.documentElement, KEY = 'jp-generator-v2';
+  function showEn() {
+    var it = hist[idx];
+    if (!it) return;
+    var full = $('eng').getAttribute('aria-pressed') === 'true';
+    var t = full ? it.es.join(' ') : (sel >= 0 ? it.es[sel] : '');
+    $('en').textContent = t; $('en').hidden = !t;
+    Array.prototype.forEach.call($('jp').querySelectorAll('.s'), function (s, i) { s.classList.toggle('on', !full && i === sel); });
+  }
+  function render() {
+    var it = hist[idx];
+    stopSpeak && stopSpeak(); sel = -1; lastKey = ''; closeWc();
+    $('stage').scrollTop = 0; $('jp').scrollLeft = 0;
+    $('jp').innerHTML = it.js.map(function (s, i) {
+      return (it.br && it.br.indexOf(i) >= 0 ? '<span class="pb"></span>' : '') + '<span class="s" data-i="' + i + '">' + s.replace(/([\u4e00-\u9fff々]+)\{([^}]+)\}/g, '<ruby>$1<rt>$2</rt></ruby>') + '</span>';
+    }).join('');
+    showEn();
+    var ck = $('chk');
+    ck.textContent = it.label ? it.label : it.notes && it.notes.length ? 'Consistency: could not fully resolve — ' + it.notes.join('; ') + '.'
+      : '\u2713 Consistency checked: time, tense, weather, setting and politeness style' + (it.replaced ? ' (' + it.replaced + ' clashing draft' + (it.replaced > 1 ? 's' : '') + ' replaced)' : '') + '.';
+    $('back').disabled = idx <= 0;
+    schedPA();
+  }
+  function next() {
+    if (idx < hist.length - 1) { idx++; render(); return; }
+    hist.push(gen(parseInt($('len').value, 10)));
+    if (hist.length > 50) { hist.shift(); }
+    idx = hist.length - 1; render();
+  }
+  function fresh() { hist.length = idx + 1; next(); }
+
+  function save() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify({
+        rate: $('rate').value, voice: $('voice').value, len: $('len').value, mode: $('mode').value, lvl: $('lvl').value, top: $('top').value, casual: $('casual').getAttribute('aria-pressed') === 'true', on: on, size: $('size').value,
+        furi: !document.body.classList.contains('nofuri'), eng: $('eng').getAttribute('aria-pressed') === 'true', vert: $('vert').getAttribute('aria-pressed') === 'true', pa: $('pa').getAttribute('aria-pressed') === 'true', spk: $('spk').getAttribute('aria-pressed') === 'true',
+        theme: root.getAttribute('data-theme') || ''
+      }));
+    } catch (e) {}
+  }
+  function apply() {
+    schedPA();
+    $('rateV').textContent = (parseFloat($('rate').value) || 0.9).toFixed(1) + '\u00d7';
+    document.body.classList.toggle('tate', $('vert').getAttribute('aria-pressed') === 'true');
+    document.body.classList.toggle('nofuri', $('furi').getAttribute('aria-pressed') !== 'true');
+    if (hist[idx]) showEn();
+    root.style.setProperty('--size', $('size').value + 'px');
+  }
+  function load() {
+    try {
+      var d = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (!d) return;
+      if (d.len) $('len').value = d.len;
+      if (d.lvl) $('lvl').value = d.lvl;
+      if (d.mode) $('mode').value = d.mode;
+      if (d.rate) $('rate').value = d.rate;
+      if (d.voice) { wantVoice = d.voice; fillVoices(); }
+      if (d.on) on = d.on;
+      if (d.top !== undefined) $('top').value = d.top;
+      if (d.casual) $('casual').setAttribute('aria-pressed', 'true');
+      if (d.size) $('size').value = d.size;
+      $('furi').setAttribute('aria-pressed', d.furi === false ? 'false' : 'true');
+      $('eng').setAttribute('aria-pressed', d.eng ? 'true' : 'false');
+      if (d.vert) $('vert').setAttribute('aria-pressed', 'true');
+      if (d.pa) $('pa').setAttribute('aria-pressed', 'true');
+      if (d.spk) $('spk').setAttribute('aria-pressed', 'true');
+      if (d.theme) root.setAttribute('data-theme', d.theme);
+    } catch (e) {}
+  }
+
+  /* ---- Text to speech (browser Web Speech API) ---- */
+  var IC_PLAY = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.5v5h4l5 4v-13l-5 4H3z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 010 7M18 6a8.5 8.5 0 010 12"/></svg>', IC_STOP = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" stroke="none"/></svg>';
+  var spkSt = 'idle', spkI = 0, IC_PAUSE = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/></svg>';
+  function setBtn() {
+    var b = $('listen');
+    b.setAttribute('aria-pressed', spkSt === 'idle' ? 'false' : 'true');
+    b.innerHTML = spkSt === 'play' ? IC_PAUSE : IC_PLAY;
+    b.title = spkSt === 'play' ? 'Pause' : spkSt === 'pause' ? 'Resume' : 'Read the passage aloud';
+    b.setAttribute('aria-label', b.title);
+    $('stopbtn').hidden = spkSt === 'idle';
+  }
+  var TTS = window.speechSynthesis && window.SpeechSynthesisUtterance ? window.speechSynthesis : null, spkTok = 0, wantVoice = '';
+  function kanjiOn() { return $('spk').getAttribute('aria-pressed') === 'true'; }
+  /* Reading mode sends the furigana kana (reliable readings); kanji mode sends the written text (the voice may pick the accent better, but can misread) */
+  function speechText(s) {
+    return kanjiOn() ? s.replace(/\{[^}]*\}/g, '') : s.replace(/[\u4e00-\u9fff々]+\{([^}]+)\}/g, '$1').replace(/\{[^}]*\}/g, '');
+  }
+  function jaVoice() {
+    var vs = (TTS.getVoices() || []).filter(function (v) { return /^ja/i.test(v.lang); });
+    if (!vs.length) return null;
+    var want = vs.filter(function (v) { return v.name === $('voice').value; });
+    if (want.length) return want[0];
+    var good = vs.filter(function (v) { return /Kyoko|Nanami|Haruka|Otoya|Google|Enhanced|Premium/i.test(v.name); });
+    return (good.length ? good : vs)[0];
+  }
+  function markSay(i) {
+    Array.prototype.forEach.call($('jp').querySelectorAll('.s'), function (s, k) { s.classList.toggle('say', k === i); });
+  }
+  function stopSpeak() {
+    spkTok++;
+    if (TTS) { try { TTS.cancel(); } catch (e) {} }
+    spkSt = 'idle'; setBtn();
+    markSay(-1);
+  }
+  function pauseSpeak() {
+    if (spkSt !== 'play') return;
+    spkTok++;
+    try { TTS.cancel(); } catch (e) {}
+    spkSt = 'pause'; setBtn();
+  }
+  function startSpeak(from) {
+    var it = hist[idx];
+    if (!TTS || !it) return;
+    var voice = jaVoice();
+    stopSpeak();
+    if (!voice && !/^ja/i.test(navigator.language || '')) {
+      $('chk').textContent = 'No Japanese voice was found on this device. Install one in your system speech settings and reload.';
+      return;
+    }
+    var tok = spkTok, rate = parseFloat($('rate').value) || 0.9;
+    spkSt = 'play'; setBtn();
+    function go(i) {
+      if (tok !== spkTok) return;
+      if (i >= it.js.length) { stopSpeak(); return; }
+      spkI = i; markSay(i);
+      var sp = document.querySelector('#jp .s.say');
+      if (sp && sp.scrollIntoView) sp.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      var u = new SpeechSynthesisUtterance(speechText(it.js[i]));
+      u.lang = 'ja-JP'; u.rate = rate;
+      if (voice) u.voice = voice;
+      u.onend = function () { go(i + 1); };
+      u.onerror = function () { if (tok === spkTok) stopSpeak(); };
+      TTS.speak(u);
+    }
+    go(from || 0);
+  }
+  function fillVoices() {
+    if (!TTS) return;
+    var vs = (TTS.getVoices() || []).filter(function (v) { return /^ja/i.test(v.lang); }), sel = $('voice'), cur = wantVoice || sel.value;
+    sel.innerHTML = '';
+    if (!vs.length) { sel.appendChild(new Option('Default voice', '')); return; }
+    vs.forEach(function (v) { sel.appendChild(new Option(v.name + (v.localService === false ? ' (online)' : ''), v.name)); });
+    if (vs.some(function (v) { return v.name === cur; })) sel.value = cur;
+  }
+  if (!TTS) { $('listen').hidden = true; $('rateRow').hidden = true; $('voice').hidden = true; }
+  else {
+    $('listen').addEventListener('click', function () { if (spkSt === 'play') pauseSpeak(); else if (spkSt === 'pause') startSpeak(spkI); else startSpeak(0); });
+    $('stopbtn').addEventListener('click', stopSpeak);
+    $('rate').addEventListener('input', function () { $('rateV').textContent = parseFloat(this.value).toFixed(1) + '\u00d7'; });
+    $('rate').addEventListener('change', function () { save(); if (spkSt === 'play') startSpeak(spkI); });
+    fillVoices();
+    if (TTS.addEventListener) TTS.addEventListener('voiceschanged', fillVoices); else TTS.onvoiceschanged = fillVoices;
+    $('voice').addEventListener('change', function () {
+      wantVoice = this.value; save();
+      if (spkSt === 'play') { startSpeak(spkI); return; }
+      if (spkSt === 'pause') return;
+      try {
+        TTS.cancel();
+        var u = new SpeechSynthesisUtterance('こんにちは。'), v = jaVoice();
+        u.lang = 'ja-JP'; u.rate = parseFloat($('rate').value) || 0.9;
+        if (v) u.voice = v;
+        TTS.speak(u);
+      } catch (e) {}
+    });
+    window.addEventListener('pagehide', stopSpeak);
+  }
+
+  function speakWord(t, btn) {
+    if (!TTS || !t) return;
+    stopSpeak();
+    var u = new SpeechSynthesisUtterance(t), v = jaVoice();
+    u.lang = 'ja-JP'; u.rate = parseFloat($('rate').value) || 0.9;
+    if (v) u.voice = v;
+    if (btn) { btn.classList.add('on'); u.onend = u.onerror = function () { btn.classList.remove('on'); }; }
+    try { TTS.speak(u); } catch (e) {}
+  }
+  wc.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('.wsp');
+    if (b) speakWord(wc.getAttribute(kanjiOn() ? 'data-kanji' : 'data-say'), b);
+  });
+  /* ---- Pitch accent (Tokyo dialect, accent-nucleus numbers; entered by hand, dictionary forms only) ---- */
+  var PA = {};
+  ('私=わたし/0|友達=ともだち/0|母=はは/1|兄=あに/1|先生=せんせい/3|公園=こうえん/0|図書館=としょかん/2|駅=えき/1|学校=がっこう/0|喫茶店=きっさてん/0|家=いえ/2|本=ほん/1|お茶=おちゃ/0|音楽=おんがく/1|写真=しゃしん/0|手紙=てがみ/1|ご飯=ごはん/1|映画=えいが/1|部屋=へや/2|町=まち/2|料理=りょうり/1|庭=にわ/0|木=き/1|犬=いぬ/2|猫=ねこ/1|池=いけ/2|ベンチ=べんち/1|毎朝=まいあさ/1|毎日=まいにち/1|昨日=きのう/2|今日=きょう/1|明日=あした/3|今=いま/1|先週=せんしゅう/0|来週=らいしゅう/0|来月=らいげつ/1|去年=きょねん/1|夏休み=なつやすみ/3|京都=きょうと/1|北海道=ほっかいどう/3|沖縄=おきなわ/0|大阪=おおさか/0|奈良=なら/1|東京=とうきょう/0|夜=よる/1|朝=あさ/1|週末=しゅうまつ/0|雨=あめ/1|雪=ゆき/2|曇り=くもり/3|晴れ=はれ/2|天気=てんき/1|野菜=やさい/0|肉=にく/2|台所=だいどころ/0|塩=しお/2|隣=となり/0|棚=たな/0|人=ひと/0|名前=なまえ/0|声=こえ/1|頭=あたま/3|手=て/1|上=うえ/0|下=した/0|晩ご飯=ばんごはん/3|日曜日=にちようび/3|土曜日=どようび/2|一緒=いっしょ/0|電車=でんしゃ/0|新聞=しんぶん/0|日本語=にほんご/0|漢字=かんじ/0|宿題=しゅくだい/0|日記=にっき/0|会議=かいぎ/1|窓=まど/1|電話=でんわ/0|薬=くすり/0|春=はる/1|'
+  + '大きい=おおきい/3|小さい=ちいさい/3|古い=ふるい/2|新しい=あたらしい/4|静か=しずか/1|綺麗=きれい/1|明るい=あかるい/0|可愛い=かわいい/3|高い=たかい/2|深い=ふかい/2|白い=しろい/2|元気=げんき/1|面白い=おもしろい/4|つまらない=つまらない/3|美味しい=おいしい/0|熱い=あつい/0|長い=ながい/2|辛い=からい/2|広い=ひろい/2|忙しい=いそがしい/4|難しい=むずかしい/0|嬉しい=うれしい/3|親切=しんせつ/0|新鮮=しんせん/0|好き=すき/2|'
+  + '読む=よむ/1|飲む=のむ/1|聞く=きく/0|撮る=とる/1|書く=かく/1|食べる=たべる/2|勉強=べんきょう/0|散歩=さんぽ/0|見る=みる/1|行く=いく/0|会う=あう/0|話す=はなす/2|泳ぐ=およぐ/0|作る=つくる/2|弾く=ひく/0|思う=おもう/2|買う=かう/0|切る=きる/1|借りる=かりる/0|休む=やすむ/2|帰る=かえる/1|立つ=たつ/1|走る=はしる/2|言う=いう/0|探す=さがす/0|持つ=もつ/1').split('|').forEach(function (e) {
+    var m = e.match(/^(.+)=(.+)\/(\d+)$/);
+    if (m) PA[m[1]] = { r: m[2], n: parseInt(m[3], 10) };
+  });
+  var PA_NAME = ['Heiban 平板', 'Atamadaka 頭高', 'Nakadaka 中高', 'Odaka 尾高'];
+  var SMALL = 'ゃゅょぁぃぅぇぉャュョァィゥェォ';
+  function moras(r) {
+    var out = [];
+    for (var i = 0; i < r.length; i++) {
+      if (SMALL.indexOf(r.charAt(i)) >= 0 && out.length) out[out.length - 1] += r.charAt(i); else out.push(r.charAt(i));
+    }
+    return out;
+  }
+  function paOf(k) {
+    if (PA[k]) return { e: PA[k], via: false };
+    var d = (VF[k] && VF[k].d) || (ADJ[k] && ADJ[k].d);
+    return d && PA[plain(d)] ? { e: PA[plain(d)], via: true } : null;
+  }
+  function paHtml(k) {
+    var p = paOf(k);
+    if (!p) return '';
+    var m = moras(p.e.r), n = p.e.n, L = m.length, t = n === 0 ? 0 : n === 1 ? 1 : n === L ? 3 : 2;
+    var hi = function (i) { return n === 0 ? i > 0 : n === 1 ? i === 0 : (i > 0 && i < n); };
+    var cell = function (txt, i, extra) {
+      return '<span class="pm' + (extra || '') + (hi(i) ? ' h' : '') + (hi(i) && !hi(i + 1) ? ' d' : '') + '">' + esc(txt) + '</span>';
+    };
+    var cells = m.map(function (c, i) { return cell(c, i, ''); }).join('') + cell('\u304c', L, ' pp');
+    return '<div class="wpa t' + t + '"><span class="wt">' + PA_NAME[t] + ' [' + n + ']</span>'
+      + (p.via ? '<span class="wts"> dictionary form: ' + esc(p.e.r) + '</span>' : '') + '<div class="wpm">' + cells + '</div></div>';
+  }
+  var paRaf = 0;
+  function schedPA() { if (paRaf) cancelAnimationFrame(paRaf); paRaf = requestAnimationFrame(drawPA); }
+  function drawPA() {
+    paRaf = 0;
+    var jp = $('jp');
+    Array.prototype.forEach.call(jp.querySelectorAll('.pal'), function (e) { e.remove(); });
+    if ($('pa').getAttribute('aria-pressed') !== 'true') return;
+    var layer = document.createElement('span'), jr = jp.getBoundingClientRect(), vt = document.body.classList.contains('tate');
+    layer.className = 'pal'; jp.appendChild(layer);
+    var isK = function (c) { return /[\u4e00-\u9fff\u3005]/.test(c || ''); };
+    Array.prototype.forEach.call(jp.querySelectorAll('.s'), function (sp) {
+      var chars = [], text = '', n;
+      var walker = document.createTreeWalker(sp, NodeFilter.SHOW_TEXT, { acceptNode: function (t) { return t.parentNode.nodeName === 'RT' ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT; } });
+      while ((n = walker.nextNode())) for (var k = 0; k < n.nodeValue.length; k++) { chars.push({ n: n, o: k }); text += n.nodeValue.charAt(k); }
+      for (var i = 0; i < text.length;) {
+        var hit = 0, key = '';
+        for (var L = Math.min(8, text.length - i); L >= 1; L--) {
+          key = text.substr(i, L);
+          if (PA[key] && !(L === 1 && (isK(text.charAt(i - 1)) || isK(text.charAt(i + 1))))) { hit = L; break; }
+        }
+        if (!hit) { i++; continue; }
+        var e = PA[key], t = e.n === 0 ? 0 : e.n === 1 ? 1 : e.n === moras(e.r).length ? 3 : 2, lines = [];
+        for (var j = i; j < i + hit; j++) {
+          var rg = document.createRange();
+          rg.setStart(chars[j].n, chars[j].o); rg.setEnd(chars[j].n, chars[j].o + 1);
+          var r = rg.getBoundingClientRect();
+          if (!r.width && !r.height) continue;
+          var c = vt ? (r.left + r.right) / 2 : (r.top + r.bottom) / 2, sz = vt ? r.width : r.height, ln = null;
+          for (var q = 0; q < lines.length; q++) if (Math.abs(lines[q].c - c) < sz * 0.6) { ln = lines[q]; break; }
+          if (!ln) lines.push({ c: c, left: r.left, right: r.right, top: r.top, bottom: r.bottom });
+          else { ln.left = Math.min(ln.left, r.left); ln.right = Math.max(ln.right, r.right); ln.top = Math.min(ln.top, r.top); ln.bottom = Math.max(ln.bottom, r.bottom); }
+        }
+        lines.forEach(function (l) {
+          var d = document.createElement('span');
+          d.className = 'pau c' + t;
+          if (vt) {
+            d.style.left = (l.left - jr.left + jp.scrollLeft - 5) + 'px'; d.style.top = (l.top - jr.top + jp.scrollTop) + 'px';
+            d.style.width = '3px'; d.style.height = (l.bottom - l.top) + 'px';
+          } else {
+            d.style.left = (l.left - jr.left + jp.scrollLeft) + 'px'; d.style.top = (l.bottom - jr.top + jp.scrollTop + 1) + 'px';
+            d.style.width = (l.right - l.left) + 'px'; d.style.height = '3px';
+          }
+          layer.appendChild(d);
+        });
+        i += hit;
+      }
+    });
+  }
+  window.addEventListener('resize', schedPA);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedPA);
+
+  $('new').addEventListener('click', fresh);
+  $('jp').addEventListener('click', function (e) {
+    var rb = e.target.closest('ruby');
+    if (rb && document.body.classList.contains('nofuri')) rb.classList.toggle('rev');
+    var s = e.target.closest('.s');
+    if (!s) return;
+    var i = parseInt(s.getAttribute('data-i'), 10);
+    var w = wordAt(s, e.clientX, e.clientY);
+    var key = w ? i + ':' + w.index : '';
+    if (!w || (key === lastKey && !wc.hidden)) { lastKey = ''; closeWc(); return; }
+    lastKey = key; showWc(w);
+  });
+  $('back').addEventListener('click', function () { if (idx > 0) { idx--; render(); } });
+  $('len').addEventListener('change', function () { fresh(); save(); });
+  $('lvl').addEventListener('change', function () { preset(this.value); if (!gm.hidden) buildGm(); fresh(); save(); });
+  $('top').addEventListener('change', function () { fresh(); save(); });
+  $('mode').addEventListener('change', function () { fresh(); save(); });
+  $('casual').addEventListener('click', function () {
+    this.setAttribute('aria-pressed', this.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+    fresh(); save();
+  });
+  $('vert').addEventListener('click', function () { closeWc(); $('jp').scrollLeft = 0; });
+  ['furi', 'eng', 'vert', 'pa', 'spk'].forEach(function (id) {
+    $(id).addEventListener('click', function () {
+      this.setAttribute('aria-pressed', this.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+      apply(); save();
+    });
+  });
+  $('spk').addEventListener('click', function () { if (TTS && spkSt === 'play') startSpeak(spkI); });
+  $('size').addEventListener('input', function () { apply(); save(); });
+  $('theme').addEventListener('click', function () {
+    root.setAttribute('data-theme', getComputedStyle(root).colorScheme === 'dark' ? 'light' : 'dark'); save();
+  });
+  $('copy').addEventListener('click', function () {
+    var it = hist[idx];
+    var t = it.jp.replace(/\{[^}]*\}/g, '') + ($('eng').getAttribute('aria-pressed') === 'true' ? '\n' + it.en : '');
+    var btn = this;
+    function done() { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = 'Copy'; }, 1500); }
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = t; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) {}
+      ta.remove();
+    }
+    try { navigator.clipboard.writeText(t).then(done, fallback); } catch (e) { fallback(); }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !wc.hidden) closeWc();
+    if (e.key === 'Escape' && !menu.hidden) { closeMenu(); return; }
+    if (e.key === 'Escape' && !gm.hidden) { closeGm(); return; }
+    if (e.target !== document.body) return;
+    if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight') { e.preventDefault(); fresh(); }
+    else if (e.key === 'ArrowLeft' && idx > 0) { idx--; render(); }
+  });
+
+  /* Three-lines menu: on narrow screens the extra controls move into a popup */
+  var BARS = '<svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true"><path d="M1 1.5h18M1 7h18M1 12.5h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+  var CLOSE = '<svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true"><path d="M4 1l12 12M16 1L4 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+  var menu = document.createElement('div');
+  menu.id = 'menu'; menu.hidden = true;
+  document.body.appendChild(menu);
+  if (window.self !== window.top) document.documentElement.classList.add('emb');
+  var mb = document.createElement('div');
+  mb.id = 'mback'; mb.hidden = true;
+  document.body.appendChild(mb);
+  mb.addEventListener('click', function () { closeMenu(); });
+  var mq = window.matchMedia('(max-width: 700px)');
+  function closeMenu() {
+    menu.hidden = true; mb.hidden = true;
+    $('more').setAttribute('aria-expanded', 'false');
+    $('more').innerHTML = BARS;
+    if (!gm.hidden) closeGm();
+  }
+  function openMenu() {
+    var r = $('more').getBoundingClientRect();
+    menu.hidden = false;
+    if (mq.matches) {
+      menu.style.left = menu.style.right = menu.style.top = menu.style.bottom = menu.style.maxHeight = '';
+      mb.hidden = false;
+    } else {
+      mb.hidden = true;
+      var mw = menu.offsetWidth, vw = window.innerWidth, vh = window.innerHeight;
+      menu.style.right = 'auto';
+      menu.style.left = Math.max(8, Math.min(r.right - mw, vw - mw - 8)) + 'px';
+      if (r.top < vh / 2) {
+        menu.style.bottom = 'auto'; menu.style.top = (r.bottom + 8) + 'px';
+        menu.style.maxHeight = Math.max(200, vh - r.bottom - 16) + 'px';
+      } else {
+        menu.style.top = 'auto'; menu.style.bottom = (vh - r.top + 8) + 'px';
+        menu.style.maxHeight = Math.max(200, r.top - 16) + 'px';
+      }
+    }
+    $('more').setAttribute('aria-expanded', 'true');
+    $('more').innerHTML = CLOSE;
+  }
+  /* Every secondary control lives in the menu, grouped under headings */
+  var MENU_GROUPS = [['Reading', ['mode', 'lvl', 'top', 'len', 'gbtn', 'casual']], ['Display', ['furi', 'size', 'vert', 'pa', 'theme']], ['Audio', ['voice', 'rateRow', 'spk']], ['Tools', ['back', 'copy']]];
+  var MENU_LABEL = { gbtn: 'Grammar', casual: 'Speech style', vert: 'Writing', theme: 'Theme', copy: 'Passage', furi: 'Furigana', back: 'History', pa: 'Pitch accent', spk: 'Speech text' };
+  (function buildMenu() {
+    var grip = document.createElement('div');
+    grip.className = 'mgrip'; menu.appendChild(grip);
+    MENU_GROUPS.forEach(function (g) {
+      var h = document.createElement('div');
+      h.className = 'mh'; h.textContent = g[0]; menu.appendChild(h);
+      g[1].forEach(function (id) {
+        var el = id === 'size' ? $('size').parentNode : $(id);
+        if (!el) return;
+        if (el.tagName === 'LABEL') { menu.appendChild(el); return; }
+        var row = document.createElement('div'), lab = document.createElement('span');
+        row.className = 'mrow';
+        lab.textContent = MENU_LABEL[id] || el.getAttribute('aria-label') || '';
+        row.appendChild(lab); row.appendChild(el); menu.appendChild(row);
+        if (id === 'pa') {
+          var lg = document.createElement('div');
+          lg.className = 'mleg';
+          lg.innerHTML = '<span class="c0">Flat (heiban)</span><span class="c1">High then drop (atamadaka)</span><span class="c2">Drop in the middle (nakadaka)</span><span class="c3">Drop at the end (odaka)</span>';
+          menu.appendChild(lg);
+        }
+      });
+    });
+    var ih = document.createElement('div');
+    ih.className = 'mh'; ih.textContent = 'Info'; menu.appendChild(ih);
+    menu.appendChild($('hint')); menu.appendChild($('chk'));
+    $('gbtn').textContent = 'Choose\u2026';
+    $('spk').textContent = 'Send kanji text';
+    $('furi').textContent = 'Show furigana'; $('back').textContent = 'Previous passage';
+    $('back').addEventListener('click', function () { closeMenu(); });
+    ['more', 'eng', 'new', 'stopbtn', 'listen'].forEach(function (id) { $('panel').appendChild($(id)); });
+  })();
+  if (mq.addEventListener) mq.addEventListener('change', closeMenu); else mq.addListener(closeMenu);
+  var hovRaf = 0;
+  $('jp').addEventListener('mousemove', function (e) {
+    if (hovRaf || !wc.hidden) return;
+    var x = e.clientX, y = e.clientY, t = e.target;
+    hovRaf = requestAnimationFrame(function () {
+      hovRaf = 0;
+      var sp = t.closest && t.closest('.s'), w = sp && wordAt(sp, x, y);
+      if (wc.hidden) setHl(w ? w.rects : null);
+    });
+  });
+  $('jp').addEventListener('wheel', function (e) {
+    if (!document.body.classList.contains('tate') || e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    e.preventDefault(); this.scrollLeft -= e.deltaY;
+  }, { passive: false });
+  $('jp').addEventListener('mouseleave', function () { if (wc.hidden) setHl(null); });
+  window.addEventListener('scroll', function () { if (wc.hidden) setHl(null); }, true);
+  $('more').addEventListener('click', function () { if (menu.hidden) openMenu(); else closeMenu(); });
+  document.addEventListener('pointerdown', function (e) {
+    if (!menu.hidden && !menu.contains(e.target) && !gm.contains(e.target) && !$('more').contains(e.target)) closeMenu();
+  });
+  if (window.matchMedia('(pointer: coarse)').matches) {
+    $('hint').textContent += ' Swipe left for a new passage, right to go back.';
+  }
+  var tx = 0, ty = 0;
+  $('stage').addEventListener('touchstart', function (e) { var t = e.changedTouches[0]; tx = t.clientX; ty = t.clientY; }, { passive: true });
+  $('stage').addEventListener('touchend', function (e) {
+    if (String(window.getSelection()) || document.body.classList.contains('tate')) return;
+    var t = e.changedTouches[0], dx = t.clientX - tx, dy = t.clientY - ty;
+    if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 2) {
+      if (dx < 0) fresh(); else if (idx > 0) { idx--; render(); }
+    }
+  }, { passive: true });
+
+  load(); apply(); fresh();
+})();
+</script>
+</body>
+</html>
