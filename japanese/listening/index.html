@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Japanese listening practice</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500&display=swap">
+<style>
+:root {
+  --paper: #f3efe6; --ink: #1d2433; --accent: #a3342b; --panel: #e6e0d2; --line: #c9c0ad;
+  --field: #fbf9f3; --muted: #6c6a63; --size: 30px;
+  color-scheme: light; box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #151a24; --ink: #ece6d6; --accent: #e8806f; --panel: #1e2432; --line: #38405a;
+    --field: #11151e; --muted: #9a98a0; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #151a24; --ink: #ece6d6; --accent: #e8806f; --panel: #1e2432; --line: #38405a;
+  --field: #11151e; --muted: #9a98a0; color-scheme: dark;
+}
+:root { --blue: #1f5fbf; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --blue: #7db2ff; } }
+:root[data-theme="dark"] { --blue: #7db2ff; }
+*, *::before, *::after { box-sizing: inherit; }
+html, body { height: 100%; margin: 0; }
+@supports (height: 100dvh) { body { height: 100dvh; } }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+  display: grid; grid-template-rows: minmax(0, 1fr) auto; overflow: hidden;
+}
+#stage { display: flex; flex-direction: column; align-items: center; padding: 20px; overflow: auto; min-height: 0; }
+#card { margin: auto; width: 100%; max-width: 36em; display: grid; gap: 14px; text-align: center; }
+#q { margin: 0; color: var(--muted); font: 15px system-ui, -apple-system, "Segoe UI", sans-serif; }
+#sent { margin: 0; font-size: var(--size); line-height: 2.4; font-weight: 500; overflow-wrap: anywhere; }
+#sent rt { font-size: 0.5em; }
+#sent[hidden], #en[hidden], #fb[hidden] { display: none; }
+body.nofuri #sent rt { display: none; }
+body.nofuri #sent { line-height: 1.9; }
+#en { margin: 0; color: var(--muted); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.blank { display: inline-block; min-width: 1.6em; border-bottom: 2px solid var(--blue); line-height: 1.2; vertical-align: baseline; }
+.ok { background: rgba(60,170,100,.3); border-radius: 4px; }
+.bad { background: rgba(220,80,70,.3); border-radius: 4px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+#ans {
+  width: 100%; font: inherit; font-size: calc(var(--size) * .8); text-align: center; color: var(--ink);
+  background: var(--field); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+}
+#fb { text-align: left; padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font: 15px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+#fb p { margin: 2px 0; }
+.cmpw { overflow-x: auto; padding: 4px 0 6px; }
+.cmp { display: inline-grid; grid-auto-flow: column; grid-template-rows: auto auto; gap: 2px 3px; font-family: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-size: 22px; line-height: 1.5; text-align: center; }
+.cmp > span { min-width: 1.3em; border-radius: 4px; padding: 0 2px; }
+.cmp > .lab { font: 12px system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--muted); align-self: center; text-align: right; padding-right: 8px; white-space: nowrap; }
+.cmp > .gap { color: var(--muted); }
+.w { cursor: pointer; border-radius: 4px; padding: 0 1px; }
+.w:hover { background: rgba(128,128,128,.2); }
+.w.sel { background: rgba(128,128,128,.3); }
+#wc { position: fixed; z-index: 15; left: 0; top: 0; width: min(300px, calc(100vw - 16px)); text-align: left;
+  background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.25); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+#wc[hidden], #hl[hidden] { display: none; }
+#hl { position: fixed; z-index: 5; pointer-events: none; left: 0; top: 0; }
+#hl .hb { position: fixed; background: rgba(128,128,128,.3); border-radius: 4px; }
+#wc .ww { font: 500 24px/1.3 "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; }
+#wc .wsp { position: absolute; top: 8px; right: 8px; width: 36px; height: 36px; min-height: 0; padding: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+#wc .wsp svg { display: block; }
+#wc.hasq .ww { padding-right: 44px; }
+#wc .wr { font-size: 14px; color: var(--muted); font-family: system-ui, sans-serif; }
+#wc .wt { display: inline-block; font: 600 12px/1 system-ui, sans-serif; padding: 4px 8px; border-radius: 999px; border: 1px solid currentColor; letter-spacing: .02em; }
+#wc .wtr { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+#wc .wt.p { color: #1f5fbf; background: rgba(31,95,191,.10); }
+#wc .wt.a { color: #1d7a52; background: rgba(29,122,82,.10); }
+#wc .wt.v { color: #8a5a00; background: rgba(138,90,0,.10); }
+:root[data-theme="dark"] #wc .wt.p { color: #7db2ff; background: rgba(125,178,255,.14); }
+:root[data-theme="dark"] #wc .wt.a { color: #6fd7a3; background: rgba(111,215,163,.14); }
+:root[data-theme="dark"] #wc .wt.v { color: #e5b457; background: rgba(229,180,87,.14); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #wc .wt.p { color: #7db2ff; background: rgba(125,178,255,.14); }
+  :root:not([data-theme="light"]) #wc .wt.a { color: #6fd7a3; background: rgba(111,215,163,.14); }
+  :root:not([data-theme="light"]) #wc .wt.v { color: #e5b457; background: rgba(229,180,87,.14); }
+}
+#hl.k-p .hb { background: rgba(31,95,191,.28); }
+#hl.k-a .hb { background: rgba(29,122,82,.28); }
+#hl.k-v .hb { background: rgba(214,150,20,.28); }
+#wc .wm { margin-top: 4px; }
+
+#kbrow { margin: 0; color: var(--muted); font: 13px system-ui, -apple-system, "Segoe UI", sans-serif; }
+#kbrow #kbtn { display: inline; background: none; border: 0; box-shadow: none; padding: 4px 0; min-height: 0; font: inherit; color: var(--blue); text-decoration: underline; cursor: pointer; }
+#kb { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+#kb[hidden] { display: none; }
+#kb button { padding: 0; min-height: 42px; font-size: 20px; font-family: inherit; border-radius: 6px; }
+#kb button.ctl { font-size: 15px; background: var(--panel); }
+#kb button:active { background: var(--line); }
+
+#fb .t { font-family: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif; font-size: 20px; }
+/* Four floating icon buttons, bottom right */
+#panel { position: fixed; right: calc(14px + env(safe-area-inset-right, 0px)); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); z-index: 10;
+  display: flex; gap: 10px; justify-content: flex-end; }
+#panel button { width: 48px; height: 48px; min-height: 0; padding: 0; flex: none; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+  background: var(--panel); color: var(--ink); border: 1px solid var(--line); box-shadow: 0 2px 10px rgba(0,0,0,.25); }
+#panel button.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+#panel button svg { display: block; }
+/* Three-lines menu: popover on computers, bottom sheet on phones */
+#menu { position: fixed; z-index: 12; display: block; width: 360px; max-width: calc(100vw - 16px); overflow: auto; background: var(--panel); border: 1px solid var(--line);
+  border-radius: 12px; padding: 6px 16px 14px; box-shadow: 0 3px 14px rgba(0,0,0,.3); font: 14px system-ui, -apple-system, "Segoe UI", sans-serif; }
+#menu[hidden], #mback[hidden] { display: none; }
+#menu .mgrip { display: none; }
+#menu .mh { margin: 16px 0 4px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+#menu .mgrip + .mh { margin-top: 10px; }
+#menu .mrow, #menu label.size { display: grid; grid-template-columns: 110px 1fr; gap: 10px; align-items: center; padding: 5px 0; color: var(--ink); }
+#menu label.rate { grid-template-columns: 110px 1fr 3.2em; }
+#menu button, #menu select { width: 100%; padding: 8px 10px; }
+#menu input[type="range"] { width: 100%; }
+#mback { display: none; position: fixed; inset: 0; z-index: 11; background: rgba(0,0,0,.4); }
+@keyframes sheet { from { transform: translateY(100%); } to { transform: none; } }
+button, select { font: inherit; color: var(--ink); background: var(--field); border: 1px solid var(--line); border-radius: 6px; padding: 7px 12px; cursor: pointer; touch-action: manipulation; }
+button.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); font-weight: 600; padding: 7px 20px; }
+/* Selected buttons: a soft tint of the system accent color (muted slate fallback), as on the reading page */
+#panel button[aria-pressed="true"], #menu button[aria-pressed="true"], #kb button[aria-pressed="true"], #card button[aria-pressed="true"] {
+  background: #d6e2f5; color: var(--ink); border-color: #7a9fd8;
+  background: color-mix(in srgb, var(--blue) 20%, var(--panel)); border-color: color-mix(in srgb, var(--blue) 50%, var(--line));
+}
+:root[data-theme="dark"] #panel button[aria-pressed="true"], :root[data-theme="dark"] #menu button[aria-pressed="true"], :root[data-theme="dark"] #kb button[aria-pressed="true"], :root[data-theme="dark"] #card button[aria-pressed="true"] { background: #38405a; border-color: #6a7595; background: color-mix(in srgb, var(--blue) 28%, var(--panel)); border-color: color-mix(in srgb, var(--blue) 50%, var(--line)); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #panel button[aria-pressed="true"], :root:not([data-theme="light"]) #menu button[aria-pressed="true"], :root:not([data-theme="light"]) #kb button[aria-pressed="true"], :root:not([data-theme="light"]) #card button[aria-pressed="true"] { background: #38405a; border-color: #6a7595; background: color-mix(in srgb, var(--blue) 28%, var(--panel)); border-color: color-mix(in srgb, var(--blue) 50%, var(--line)); } }
+button:disabled { opacity: .5; cursor: default; }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+button[hidden] { display: none; }
+label.size { display: flex; gap: 6px; align-items: center; color: var(--muted); }
+#score { color: var(--muted); text-align: left; }
+input[type="range"] { -webkit-appearance: none; appearance: none; width: 100px; height: 24px; background: transparent; margin: 0; padding: 0; cursor: pointer; }
+input[type="range"]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: var(--line); }
+input[type="range"]::-moz-range-track { height: 4px; border-radius: 2px; background: var(--line); }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; margin-top: -7px; border-radius: 50%; background: var(--ink); border: 2px solid var(--panel); box-shadow: 0 0 0 1px var(--ink); }
+input[type="range"]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--ink); border: 2px solid var(--panel); }
+@media (pointer: coarse) {
+  button, select { min-height: 42px; } select, #ans { font-size: 16px; }
+  input[type="range"] { height: 36px; }
+  input[type="range"]::-webkit-slider-thumb { width: 26px; height: 26px; margin-top: -11px; }
+}
+@media (max-width: 700px) {
+  html, body { height: auto; }
+  body { display: flex; flex-direction: column; min-height: 100vh; overflow: auto; }
+  #stage { flex: 1 0 auto; overflow: visible; padding: 12px 12px calc(86px + env(safe-area-inset-bottom, 0px)); }
+  #menu { left: 0; right: 0; bottom: 0; top: auto; width: auto; max-width: none; max-height: 78vh; max-height: 78dvh; border-radius: 16px 16px 0 0; border-bottom: 0;
+    padding: 8px 18px calc(18px + env(safe-area-inset-bottom, 0px)); animation: sheet .22s ease-out; }
+  #menu .mgrip { display: block; width: 44px; height: 4px; border-radius: 2px; background: var(--line); margin: 4px auto 6px; }
+  #menu button, #menu select { min-height: 44px; }
+  #mback { display: block; }
+}
+@media (prefers-reduced-motion: reduce) { #menu { animation: none; } }
+</style>
+</head>
+<body>
+<main id="stage">
+  <div id="card">
+    <p id="q"></p>
+    <p id="sent" lang="ja" hidden></p>
+    <p id="en" hidden></p>
+    <div class="row">
+      <button id="slow">Slower</button>
+      <button id="part">Just the blank</button>
+    </div>
+    <input id="ans" lang="ja" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Your answer">
+    <div class="row">
+      <button id="chk">Check</button>
+      <button id="skip">Show answer</button>
+    </div>
+    <p id="kbrow"><span id="kbtxt"></span> <button type="button" id="kbtn"></button></p>
+    <div id="kb" hidden aria-label="Hiragana keyboard"></div>
+    <div id="fb" hidden></div>
+    <p id="msg" style="margin:0;color:var(--muted);font:13px system-ui,sans-serif"></p>
+  </div>
+</main>
+
+<section id="panel">
+  <button id="hint" aria-pressed="false" aria-label="Translation" title="Show or hide the English translation"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h9M8.5 3v2M6 5c.5 3 2.5 5.5 5.5 7M12 5c-.7 3-3 6-7.5 8"/><path d="M12 20l4-9 4 9M13.5 17h5"/></svg></button>
+  <button class="primary" id="next" aria-label="Next sentence" title="Next sentence (Enter)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 10-2.3 6.3"/><path d="M20 4v7h-7"/></svg></button>
+  <button id="play" aria-label="Listen" title="Play the sentence again"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.5v5h4l5 4v-13l-5 4H3z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 010 7M18 6a8.5 8.5 0 010 12"/></svg></button>
+  <button id="more" aria-expanded="false" aria-controls="menu" aria-label="Menu"><svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true"><path d="M1 1.5h18M1 7h18M1 12.5h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button>
+</section>
+<div id="menu" hidden>
+  <div class="mgrip"></div>
+  <div class="mh">Practice</div>
+  <div class="mrow"><span>Exercise</span><select id="mode" aria-label="Exercise type">
+    <option value="part">Type the missing part</option>
+    <option value="full">Type the whole sentence</option>
+  </select></div>
+  <div class="mrow"><span>Typing</span><select id="inmode" aria-label="How you type">
+    <option value="ime">My Japanese keyboard</option>
+    <option value="romaji">Romaji → kana</option>
+    <option value="kb">Built-in kana keyboard</option>
+  </select></div>
+  <div class="mh">Audio</div>
+  <label class="size rate">Speed <input type="range" id="rate" min="0.5" max="1.5" step="0.1" value="0.9" aria-label="Speech speed"><span id="rateV">0.9×</span></label>
+  <div class="mh">Display</div>
+  <div class="mrow"><span>Furigana</span><button id="furi" aria-pressed="true">Show furigana</button></div>
+  <label class="size">Size <input type="range" id="size" min="20" max="56" value="30"></label>
+  <div class="mrow"><span>Theme</span><button id="theme">Light / dark</button></div>
+  <div class="mh">Progress</div>
+  <div class="mrow"><span>Score</span><span id="score" aria-live="polite">0 / 0</span></div>
+</div>
+<div id="wc" hidden></div>
+<div id="hl" hidden></div>
+<div id="mback" hidden></div>
+
+<script>
+(function () {
+  var $ = function (i) { return document.getElementById(i); };
+  var rnd = function (a) { return a[Math.floor(Math.random() * a.length)]; };
+  var esc = function (t) { return String(t).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); };
+  var KJ = '[\\u4e00-\\u9fff々]+';
+  var rb = function (t) { return esc(t).replace(new RegExp('(' + KJ + ')\\{([^}]+)\\}', 'g'), '<ruby>$1<rt>$2</rt></ruby>'); };
+  var rd = function (t) { return t.replace(new RegExp(KJ + '\\{([^}]+)\\}', 'g'), '$1'); };
+  var wr = function (t) { return t.replace(/\{[^}]*\}/g, ''); };
+  var norm = function (s) {
+    return s.normalize('NFKC').toLowerCase().replace(/[\u30a1-\u30f6]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 96); })
+      .replace(/[\s、。，．,.?？!！・「」『』ー~〜]/g, '');
+  };
+
+  /* Sentences: segments split by |, kanji{reading}, then =English */
+  var D = ('毎朝{まいあさ}|六時{ろくじ}に|起{お}きます=I wake up at six every morning.\n' +
+  '私{わたし}は|昨日{きのう}|図書館{としょかん}で|本{ほん}を|読{よ}みました=Yesterday I read a book at the library.\n' +
+  '友達{ともだち}と|喫茶店{きっさてん}で|お茶{ちゃ}を|飲{の}みました=I drank tea with a friend at a café.\n' +
+  '来週{らいしゅう}|家族{かぞく}と|京都{きょうと}へ|行{い}きます=Next week I will go to Kyoto with my family.\n' +
+  '今日{きょう}は|天気{てんき}が|いいですね=The weather is nice today, isn’t it?\n' +
+  '駅{えき}は|あの|角{かど}の|隣{となり}に|あります=The station is next to that corner.\n' +
+  '母{はは}は|毎晩{まいばん}|料理{りょうり}を|作{つく}ります=My mother cooks every evening.\n' +
+  '先生{せんせい}は|とても|優{やさ}しい|人{ひと}です=The teacher is a very kind person.\n' +
+  '昨夜{さくや}は|遅{おそ}くまで|映画{えいが}を|見{み}ました=Last night I watched a movie until late.\n' +
+  '週末{しゅうまつ}に|公園{こうえん}を|散歩{さんぽ}します=On weekends I take a walk in the park.\n' +
+  'すみません|駅{えき}は|どこですか=Excuse me, where is the station?\n' +
+  'この|電車{でんしゃ}は|東京{とうきょう}に|行{い}きますか=Does this train go to Tokyo?\n' +
+  '私{わたし}の|妹{いもうと}は|犬{いぬ}が|好{す}きです=My younger sister likes dogs.\n' +
+  '雨{あめ}が|降{ふ}っているので|傘{かさ}を|持{も}っていきます=Since it is raining, I will take an umbrella.\n' +
+  '毎日{まいにち}|日本語{にほんご}を|勉強{べんきょう}しています=I study Japanese every day.\n' +
+  '田中{たなか}さんは|九時{くじ}に|会社{かいしゃ}に|着{つ}きました=Mr. Tanaka arrived at the office at nine.\n' +
+  '冷蔵庫{れいぞうこ}に|牛乳{ぎゅうにゅう}が|あります=There is milk in the fridge.\n' +
+  'この|レストランの|料理{りょうり}は|美味{おい}しいです=The food at this restaurant is delicious.\n' +
+  '兄{あに}は|来年{らいねん}|大学{だいがく}を|卒業{そつぎょう}します=My older brother will graduate from university next year.\n' +
+  '日曜日{にちようび}に|友達{ともだち}と|買{か}い物{もの}に|行{い}きました=On Sunday I went shopping with a friend.\n' +
+  '窓{まど}を|開{あ}けても|いいですか=May I open the window?\n' +
+  'もう|少{すこ}し|ゆっくり|話{はな}してください=Please speak a little more slowly.\n' +
+  '夏休{なつやす}みに|海{うみ}へ|泳{およ}ぎに|行{い}きたいです=I want to go swimming at the sea during summer vacation.\n' +
+  '彼女{かのじょ}は|ピアノを|弾{ひ}くのが|上手{じょうず}です=She is good at playing the piano.\n' +
+  '昨日{きのう}は|頭{あたま}が|痛{いた}かったので|早{はや}く|寝{ね}ました=I had a headache yesterday, so I went to bed early.\n' +
+  '図書館{としょかん}は|九時{くじ}から|五時{ごじ}まで|開{あ}いています=The library is open from nine to five.\n' +
+  '駅{えき}まで|歩{ある}いて|十分{じゅっぷん}ぐらいです=It takes about ten minutes to walk to the station.\n' +
+  '公園{こうえん}に|大{おお}きい|木{き}が|あります=There is a big tree in the park.\n' +
+  '電話{でんわ}を|かけても|いいですか=May I make a phone call?\n' +
+  'この|本{ほん}は|思{おも}ったより|面白{おもしろ}かったです=This book was more interesting than I expected.').split('\n').map(function (l) {
+    var p = l.split('='); return { s: p[0].split('|'), en: p[1] };
+  });
+
+  /* Romaji -> hiragana */
+  var T = {}, rows = { '': 'あいうえお', k: 'かきくけこ', s: 'さしすせそ', t: 'たちつてと', n: 'なにぬねの', h: 'はひふへほ', m: 'まみむめも', r: 'らりるれろ',
+    g: 'がぎぐげご', z: 'ざじずぜぞ', d: 'だぢづでど', b: 'ばびぶべぼ', p: 'ぱぴぷぺぽ' }, ys = { ky: 'き', gy: 'ぎ', ny: 'に', hy: 'ひ', by: 'び', py: 'ぴ', my: 'み', ry: 'り', sh: 'し', ch: 'ち', j: 'じ' };
+  Object.keys(rows).forEach(function (c) { 'aiueo'.split('').forEach(function (v, i) { T[c + v] = rows[c][i]; }); });
+  Object.keys(ys).forEach(function (c) { [['a', 'ゃ'], ['u', 'ゅ'], ['o', 'ょ']].forEach(function (x) { T[c + x[0]] = ys[c] + x[1]; }); });
+  T.ya = 'や'; T.yu = 'ゆ'; T.yo = 'よ'; T.wa = 'わ'; T.wo = 'を'; T.shi = 'し'; T.chi = 'ち'; T.tsu = 'つ'; T.fu = 'ふ'; T.ji = 'じ'; T.nn = 'ん'; T["n'"] = 'ん';
+  function toKana(s) {
+    var o = '', i = 0, m;
+    while (i < s.length) {
+      var c = s[i], nx = s[i + 1];
+      if (!/[a-z'\-]/.test(c)) { o += c; i++; continue; }
+      if (c === '-') { o += 'ー'; i++; continue; }
+      if (nx && c === nx && /[kstcpgzdbhmrjfwy]/.test(c)) { o += 'っ'; i++; continue; }
+      if (c === 'n' && nx && !/[aiueoyn']/.test(nx)) { o += 'ん'; i++; continue; }
+      m = null;
+      for (var L = 3; L >= 1 && !m; L--) if (T[s.substr(i, L)]) m = [T[s.substr(i, L)], L];
+      if (m) { o += m[0]; i += m[1]; } else { o += c; i++; }
+    }
+    return o;
+  }
+
+  /* Word meanings: key (as written in the data) > meaning; p: = particle, a: = ending */
+  var G = {};
+  ('p:は>marks the topic: what the sentence is about|p:が>marks the subject (what exists, is liked, or is new information)|p:を>marks the object of an action|p:に>marks a time, place, destination or purpose|p:で>marks where an action happens|p:へ>marks direction: “toward”, “to”|p:と>“with” (a companion) or “and”|p:の>“of”: links two nouns (my sister), or turns a verb into a noun|p:から>“from”: a starting point|p:まで>“until” or “as far as”|p:か>question marker|p:ね>seeks agreement: “isn’t it?”|p:ので>“because”, “since”|p:より>“than”|p:ても>“even if”; with いい it means “may I…?”|p:ぐらい>“about”, “approximately”|a:ます>polite verb ending (present or future)|a:ました>polite past ending|a:です>polite “is / am / are”|a:います>polite “am/is -ing” (after a て-form), or “exists” for people and animals|a:いる>“am/is -ing” (after a て-form)|a:て>the て-form: joins verbs and endings together|a:ください>“please do…”|a:たい>“want to…”|毎朝{まいあさ}>every morning|六時{ろくじ}>six o’clock|起{お}き>wake up (起きる)|私{わたし}>I, me|昨日{きのう}>yesterday|図書館{としょかん}>library|本{ほん}>book|読{よ}み>read (読む)|友達{ともだち}>friend|喫茶店{きっさてん}>café|お茶{ちゃ}>tea|飲{の}み>drink (飲む)|来週{らいしゅう}>next week|家族{かぞく}>family|京都{きょうと}>Kyoto|行{い}き>go (行く)|いき>go (行く)|今日{きょう}>today|天気{てんき}>weather|いい>good|駅{えき}>station|あの>that (over there)|角{かど}>corner|隣{となり}>next to, neighbor|あり>exist, be (ある)|母{はは}>my mother|毎晩{まいばん}>every evening|料理{りょうり}>cooking, a dish|作{つく}り>make, cook (作る)|先生{せんせい}>teacher|とても>very|優{やさ}しい>kind, gentle|人{ひと}>person|昨夜{さくや}>last night|遅{おそ}く>late|映画{えいが}>movie|見{み}>see, watch (見る)|週末{しゅうまつ}>weekend|公園{こうえん}>park|散歩{さんぽ}>a walk|し>do (する)|すみません>excuse me, sorry|どこ>where|この>this|電車{でんしゃ}>train|東京{とうきょう}>Tokyo|妹{いもうと}>younger sister|犬{いぬ}>dog|好{す}き>liked, favorite|雨{あめ}>rain|降{ふ}って>falling (降る)|傘{かさ}>umbrella|持{も}って>holding, bringing (持つ)|毎日{まいにち}>every day|日本語{にほんご}>Japanese language|勉強{べんきょう}>study|田中{たなか}さん>Mr. / Ms. Tanaka|九時{くじ}>nine o’clock|会社{かいしゃ}>company, office|着{つ}き>arrive (着く)|冷蔵庫{れいぞうこ}>refrigerator|牛乳{ぎゅうにゅう}>milk|レストラン>restaurant|美味{おい}しい>delicious|兄{あに}>my older brother|来年{らいねん}>next year|大学{だいがく}>university|卒業{そつぎょう}>graduation|日曜日{にちようび}>Sunday|買{か}い物{もの}>shopping|窓{まど}>window|開{あ}け>open (something) (開ける)|もう>more, another|少{すこ}し>a little|ゆっくり>slowly|話{はな}し>speak (話す)|夏休{なつやす}み>summer vacation|海{うみ}>sea|泳{およ}ぎ>swim (泳ぐ)|彼女{かのじょ}>she, girlfriend|ピアノ>piano|弾{ひ}く>play (piano, guitar)|上手{じょうず}>good at, skilled|頭{あたま}>head|痛{いた}かった>hurt (past of 痛い)|早{はや}く>early|寝{ね}>sleep, go to bed (寝る)|五時{ごじ}>five o’clock|開{あ}い>be open (開く)|歩{ある}い>walk (歩く)|十分{じゅっぷん}>ten minutes|大{おお}きい>big|木{き}>tree|電話{でんわ}>telephone|かけ>make (a call) (かける)|思{おも}った>thought (思う)|面白{おもしろ}かった>was interesting').split('|').forEach(function (l) {
+    var m = l.match(/^(?:([pa]):)?([^>]+)>(.*)$/); if (m) G[m[2]] = { k: m[1] || 'v', m: m[3] };
+  });
+  var GK = Object.keys(G).sort(function (a, b) { return b.length - a.length; });
+  function wd(t) {
+    var o = '', buf = '', i = 0, j, k;
+    function flush() { if (buf) { o += rb(buf); buf = ''; } }
+    while (i < t.length) {
+      if (t.charAt(i) === '{') { j = t.indexOf('}', i); buf += t.slice(i, j + 1); i = j + 1; continue; }
+      k = null;
+      for (j = 0; j < GK.length; j++) if (t.substr(i, GK[j].length) === GK[j]) { k = GK[j]; break; }
+      if (k) { flush(); o += '<span class="w" data-k="' + esc(k) + '">' + rb(k) + '</span>'; i += k.length; }
+      else { buf += t.charAt(i); i++; }
+    }
+    flush(); return o;
+  }
+  var wc = $('wc'), hl = $('hl'), cw = null, WNAME = { p: 'Particle', a: 'Auxiliary verb', v: 'Vocabulary' };
+  function setHl(rs, cat) {
+    hl.innerHTML = ''; hl.className = cat ? 'k-' + cat : '';
+    if (!rs || !rs.length) { hl.hidden = true; return; }
+    hl.hidden = false;
+    Array.prototype.forEach.call(rs, function (r) {
+      var d = document.createElement('div');
+      d.className = 'hb';
+      d.style.left = (r.left - 2) + 'px'; d.style.top = r.top + 'px'; d.style.width = (r.width + 4) + 'px'; d.style.height = r.height + 'px';
+      hl.appendChild(d);
+    });
+  }
+  function closeWc() { wc.hidden = true; cw = null; setHl(null); }
+  $('sent').addEventListener('click', function (e) {
+    var w = e.target.closest && e.target.closest('.w');
+    if (!w) return;
+    if (cw === w && !wc.hidden) { closeWc(); return; }
+    var k = w.getAttribute('data-k'), g = G[k], word = wr(k), rdg = rd(k), br = w.getBoundingClientRect();
+    var h = '<div class="ww">' + esc(word) + (rdg !== word ? ' <span class="wr">' + esc(rdg) + '</span>' : '') + '</div>' +
+      '<div class="wtr"><span class="wt ' + g.k + '">' + WNAME[g.k] + '</span></div><div class="wm">' + esc(g.m) + '</div>';
+    if (TTS) h = '<button type="button" class="wsp" aria-label="Speak this word" title="Speak this word"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9.5v5h4l5 4v-13l-5 4H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 010 7M18 6a8.5 8.5 0 010 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button>' + h;
+    wc.classList.toggle('hasq', !!TTS);
+    wc.setAttribute('data-say', rdg);
+    wc.innerHTML = h; wc.hidden = false; cw = w;
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var x = Math.min(Math.max(8, br.left), vw - wc.offsetWidth - 8), y = br.bottom + 8;
+    if (y + wc.offsetHeight > vh - 8) y = Math.max(8, br.top - wc.offsetHeight - 8);
+    wc.style.left = x + 'px'; wc.style.top = y + 'px';
+    setHl(w.getClientRects(), g.k);
+  });
+  wc.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('.wsp')) say(wc.getAttribute('data-say')); });
+  document.addEventListener('pointerdown', function (e) {
+    if (!wc.hidden && !wc.contains(e.target) && !(e.target.closest && e.target.closest('#sent .w'))) closeWc();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !wc.hidden) closeWc(); });
+  window.addEventListener('scroll', function () { if (!wc.hidden) closeWc(); }, true);
+  window.addEventListener('resize', function () { if (!wc.hidden) closeWc(); });
+  var deck = [], cur, miss = 0, done = false, score = 0, tot = 0, composing = false;
+  var modeP = function () { return $('mode').value === 'part'; };
+  var tgt = function () { return modeP() ? cur.s[miss] : cur.s.join(''); };
+
+  /* Speech */
+  var TTS = window.speechSynthesis && window.SpeechSynthesisUtterance ? window.speechSynthesis : null;
+  function say(text, rate) {
+    if (!TTS) { $('msg').textContent = 'This browser has no speech synthesis, so there is nothing to listen to.'; return; }
+    var vs = (TTS.getVoices() || []).filter(function (v) { return /^ja/i.test(v.lang); });
+    if (!vs.length && !/^ja/i.test(navigator.language || '')) $('msg').textContent = 'No Japanese voice found on this device. Install one in your system speech settings, then reload.';
+    else $('msg').textContent = '';
+    var good = vs.filter(function (v) { return /Kyoko|Nanami|Haruka|Otoya|Google|Enhanced|Premium/i.test(v.name); });
+    var u = new SpeechSynthesisUtterance(rd(text));
+    u.lang = 'ja-JP'; u.rate = rate || parseFloat($('rate').value) || 0.9;
+    if (vs.length) u.voice = (good.length ? good : vs)[0];
+    try { TTS.cancel(); } catch (e) {}
+    TTS.speak(u);
+  }
+
+  function render() {
+    var p = modeP();
+    $('q').textContent = p ? 'Listen to the sentence, then type the missing part. Tap any word for its meaning.' : 'Listen, then type the whole sentence.';
+    $('sent').hidden = !p;
+    $('part').hidden = !p;
+    if (p) $('sent').innerHTML = cur.s.map(function (s, i) {
+      return i === miss ? '<span class="blank" style="width:' + Math.max(2, norm(rd(s)).length * 1.05) + 'em">&nbsp;</span>' : wd(s);
+    }).join('');
+    $('en').textContent = cur.en;
+    $('en').hidden = !(done || $('hint').getAttribute('aria-pressed') === 'true');
+  }
+
+  function next() {
+    if (!deck.length) deck = D.slice().sort(function () { return Math.random() - 0.5; });
+    cur = deck.pop(); done = false;
+    var c = [];
+    cur.s.forEach(function (s, i) { if (norm(rd(s)).length >= 2) c.push(i); });
+    miss = rnd(c.length ? c : [0]);
+    $('ans').value = ''; $('ans').disabled = false; $('chk').disabled = false; $('skip').disabled = false;
+    $('fb').hidden = true; closeWc();
+    render(); $('ans').focus();
+    setTimeout(function () { say(cur.s.join('')); }, 150);
+  }
+
+  function diff(a, b) {
+    var n = a.length, m = b.length, d = [], i, j, k;
+    for (i = 0; i <= n; i++) { d.push([]); for (j = 0; j <= m; j++) d[i][j] = 0; }
+    for (i = n - 1; i >= 0; i--) for (j = m - 1; j >= 0; j--) d[i][j] = a[i] === b[j] ? d[i + 1][j + 1] + 1 : Math.max(d[i + 1][j], d[i][j + 1]);
+    var good = {}; i = 0; j = 0;
+    while (i < n && j < m) { if (a[i] === b[j]) { good[i] = 1; i++; j++; } else if (d[i + 1][j] >= d[i][j + 1]) i++; else j++; }
+    var h = ''; for (k = 0; k < n; k++) h += '<span class="' + (good[k] ? 'ok' : 'bad') + '">' + esc(a[k]) + '</span>';
+    return h;
+  }
+
+  function chars(s) { var o = []; Array.from(s.normalize('NFKC')).forEach(function (ch) { var n = norm(ch); if (n) o.push({ o: ch, n: n }); }); return o; }
+  function align(A, B) {
+    var n = A.length, m = B.length, d = [], i, j, c;
+    for (i = 0; i <= n; i++) d.push([i]);
+    for (j = 1; j <= m; j++) d[0][j] = j;
+    for (i = 1; i <= n; i++) for (j = 1; j <= m; j++)
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (A[i - 1].n === B[j - 1].n ? 0 : 1));
+    var ops = []; i = n; j = m;
+    while (i > 0 || j > 0) {
+      c = i > 0 && j > 0 ? (A[i - 1].n === B[j - 1].n ? 0 : 1) : 9;
+      if (i > 0 && j > 0 && d[i][j] === d[i - 1][j - 1] + c) { ops.push({ a: A[i - 1].o, b: B[j - 1].o, t: c ? 's' : 'm' }); i--; j--; }
+      else if (j > 0 && d[i][j] === d[i][j - 1] + 1) { ops.push({ a: '', b: B[j - 1].o, t: 'i' }); j--; }
+      else { ops.push({ a: A[i - 1].o, b: '', t: 'd' }); i--; }
+    }
+    return ops.reverse();
+  }
+  function why(a, b) {
+    var x = k2h(a), y = k2h(b), i;
+    i = VO.indexOf(y); if (i % 2 === 1 && VO.charAt(i - 1) === x) return y + ' is ' + x + ' with ゛ (dakuten).';
+    i = SE.indexOf(y); if (i % 2 === 1 && SE.charAt(i - 1) === x) return y + ' is ' + x + ' with ゜ (handakuten).';
+    i = SM.indexOf(y); if (i % 2 === 1 && SM.charAt(i - 1) === x) return y + ' is the small version of ' + x + '.';
+    i = VO.indexOf(x); if (i % 2 === 1 && VO.charAt(i - 1) === y) return 'It has an extra ゛: the answer is plain ' + y + '.';
+    i = SE.indexOf(x); if (i % 2 === 1 && SE.charAt(i - 1) === y) return 'It has an extra ゜: the answer is plain ' + y + '.';
+    i = SM.indexOf(x); if (i % 2 === 1 && SM.charAt(i - 1) === y) return 'The answer is the full-size ' + y + ', not the small ' + x + '.';
+    return '';
+  }
+  /* Character-by-character comparison: your answer above, the correct one below, with every difference marked */
+  function cmp(a, t) {
+    var A = chars(a), best = null, h = '', notes = [];
+    [rd(t), wr(t)].forEach(function (x) {
+      var o = align(A, chars(x)), c = o.filter(function (p) { return p.t !== 'm'; }).length;
+      if (!best || c < best.c) best = { o: o, c: c };
+    });
+    h = '<div class="cmpw"><div class="cmp"><span class="lab">You typed</span><span class="lab">Answer</span>';
+    best.o.forEach(function (p) {
+      h += '<span class="' + (p.t === 'm' ? '' : 'bad') + '">' + (p.a ? esc(p.a) : '–') + '</span>';
+      h += '<span class="' + (p.t === 'm' ? '' : p.b ? 'ok' : 'gap') + '">' + (p.b ? esc(p.b) : '–') + '</span>';
+      if (p.t === 's') { var w = why(p.a, p.b); notes.push('<b>' + esc(p.a) + '</b> should be <b>' + esc(p.b) + '</b>' + (w ? ': ' + esc(w) : '.')); }
+      else if (p.t === 'i') notes.push('Missing <b>' + esc(p.b) + '</b>.');
+      else if (p.t === 'd') notes.push('Extra <b>' + esc(p.a) + '</b>: it is not in the answer.');
+    });
+    h += '</div></div>';
+    return h + notes.map(function (n) { return '<p>' + n + '</p>'; }).join('');
+  }
+
+  function finish(a, skipped) {
+    if (done) return;
+    done = true; tot++; closeWc();
+    var t = tgt(), ok = !skipped && a.trim() !== '' && (norm(a) === norm(wr(t)) || norm(a) === norm(rd(t)));
+    if (ok) score++;
+    $('score').textContent = score + ' / ' + tot;
+    $('ans').disabled = true; $('chk').disabled = true; $('skip').disabled = true;
+    var cls = ok ? 'ok' : 'bad';
+    $('sent').innerHTML = cur.s.map(function (s, i) {
+      var h = wd(s); return (modeP() ? i === miss : true) ? '<span class="' + cls + '">' + h + '</span>' : h;
+    }).join('');
+    $('sent').hidden = false;
+    var h = '<p><b>' + (ok ? 'Correct!' : skipped ? 'Here’s the answer.' : 'Not quite.') + '</b></p>';
+    if (!ok && !skipped && a.trim()) h += cmp(a, t);
+    if (!ok) h += '<p>Answer: <span class="t">' + rb(t) + '</span></p>';
+    h += '<p>Press Enter or Next for another sentence.</p>';
+    $('fb').innerHTML = h; $('fb').hidden = false;
+    $('en').hidden = false;
+  }
+
+  $('play').onclick = function () { say(cur.s.join('')); $('ans').focus(); };
+  $('slow').onclick = function () { say(cur.s.join(''), 0.6); $('ans').focus(); };
+  $('part').onclick = function () { say(cur.s[miss]); $('ans').focus(); };
+  $('chk').onclick = function () { finish($('ans').value, false); };
+  $('skip').onclick = function () { finish('', true); };
+  $('next').onclick = next;
+  $('mode').onchange = function () { next(); };
+  $('ans').addEventListener('compositionstart', function () { composing = true; });
+  $('ans').addEventListener('compositionend', function () { composing = false; cend = Date.now(); });
+  $('ans').addEventListener('input', function () {
+    if (composing || $('inmode').value !== 'romaji') return;
+    var v = $('ans').value, k = toKana(v.toLowerCase());
+    if (k !== v) $('ans').value = k;
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' || e.isComposing || composing || e.keyCode === 229 || Date.now() - cend < 100) return;
+    var tg = e.target && e.target.tagName;
+    if (tg === 'BUTTON' || tg === 'SELECT' || e.target.type === 'range') return;
+    e.preventDefault();
+    if (done) next(); else finish($('ans').value, false);
+  });
+  ['hint', 'furi'].forEach(function (id) {
+    $(id).onclick = function () {
+      var on = $(id).getAttribute('aria-pressed') !== 'true';
+      $(id).setAttribute('aria-pressed', on);
+      if (id === 'furi') document.body.classList.toggle('nofuri', !on);
+      if (id === 'hint') $('en').hidden = !(done || on);
+    };
+  });
+  $('size').oninput = function () { document.documentElement.style.setProperty('--size', $('size').value + 'px'); };
+  $('theme').onclick = function () {
+    var r = document.documentElement, c = r.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    r.dataset.theme = c === 'dark' ? 'light' : 'dark';
+  };
+  /* Three-lines menu: popover on computers, bottom sheet on phones */
+  var BARS = '<svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true"><path d="M1 1.5h18M1 7h18M1 12.5h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>', CLOSE = '<svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true"><path d="M4 1l12 12M16 1L4 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+  var menu = $('menu'), mb = $('mback'), mq = window.matchMedia('(max-width: 700px)');
+  function closeMenu() { menu.hidden = true; mb.hidden = true; $('more').setAttribute('aria-expanded', 'false'); $('more').innerHTML = BARS; }
+  function openMenu() {
+    var r = $('more').getBoundingClientRect();
+    menu.hidden = false;
+    if (mq.matches) { menu.style.left = menu.style.right = menu.style.top = menu.style.bottom = menu.style.maxHeight = ''; mb.hidden = false; }
+    else {
+      mb.hidden = true;
+      var mw = menu.offsetWidth, vw = window.innerWidth, vh = window.innerHeight;
+      menu.style.right = 'auto'; menu.style.top = 'auto';
+      menu.style.left = Math.max(8, Math.min(r.right - mw, vw - mw - 8)) + 'px';
+      menu.style.bottom = (vh - r.top + 8) + 'px';
+      menu.style.maxHeight = Math.max(200, r.top - 16) + 'px';
+    }
+    $('more').setAttribute('aria-expanded', 'true'); $('more').innerHTML = CLOSE;
+  }
+  $('more').onclick = function () { if (menu.hidden) openMenu(); else closeMenu(); };
+  mb.onclick = closeMenu;
+  document.addEventListener('pointerdown', function (e) { if (!menu.hidden && !menu.contains(e.target) && !$('more').contains(e.target)) closeMenu(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !menu.hidden) closeMenu(); });
+  if (mq.addEventListener) mq.addEventListener('change', closeMenu);
+  $('rate').oninput = function () { $('rateV').textContent = parseFloat($('rate').value).toFixed(1) + '×'; };
+  $('mode').addEventListener('change', closeMenu);
+  /* Typing: your own Japanese keyboard (default), romaji, or a built-in kana keyboard */
+  var cend = 0, kata = false, kb = $('kb');
+  var KB = ['わらやまはなたさかあ', '.りいみひにちしきい'.replace('りい', 'り.'), 'んるゆむふぬつすくう', '.れ.めへねてせけえ', 'をろよもほのとそこお'];
+  var CTL = ['゛', '゜', '小', 'ー', '、', '。', '？', 'カナ', '⌫', '消'];
+  var VO = 'かがきぎくぐけげこごさざしじすずせぜそぞただちぢつづてでとどはばひびふぶへべほぼ', SE = 'はぱひぴふぷへぺほぽ', SM = 'あぁいぃうぅえぇおぉやゃゆゅよょつっわゎ';
+  var h2k = function (c) { return c.replace(/[\u3041-\u3096]/g, function (x) { return String.fromCharCode(x.charCodeAt(0) + 96); }); };
+  var k2h = function (c) { return c.replace(/[\u30a1-\u30f6]/g, function (x) { return String.fromCharCode(x.charCodeAt(0) - 96); }); };
+  function swap(c, t) { var i = t.indexOf(c); return i < 0 ? null : t.charAt(i % 2 ? i - 1 : i + 1); }
+  (function () {
+    var h = '';
+    KB.forEach(function (r) { r.split('').reverse().forEach(function (c) { h += c === '.' ? '<span></span>' : '<button type="button" data-k="' + c + '">' + c + '</button>'; }); });
+    CTL.forEach(function (c) { h += '<button type="button" class="ctl" data-k="' + c + '">' + c + '</button>'; });
+    kb.innerHTML = h;
+  })();
+  function kbPress(t) {
+    var a = $('ans'); if (done || a.disabled) return;
+    a.focus({ preventScroll: true });
+    var s = a.selectionStart == null ? a.value.length : a.selectionStart, e = a.selectionEnd == null ? s : a.selectionEnd, v = a.value;
+    if (t === '⌫') { if (s === e && s > 0) s--; a.setRangeText('', s, e, 'end'); return; }
+    if (t === '消') { a.value = ''; return; }
+    if (t === 'カナ') {
+      kata = !kata;
+      Array.prototype.forEach.call(kb.querySelectorAll('button'), function (b) { var k = b.getAttribute('data-k'); if (k === 'カナ') b.setAttribute('aria-pressed', kata); else if (!b.classList.contains('ctl')) b.textContent = kata ? h2k(k) : k; });
+      return;
+    }
+    if (t === '゛' || t === '゜' || t === '小') {
+      if (s !== e || s === 0) return;
+      var p = v.charAt(s - 1), wasK = /[\u30a1-\u30f6]/.test(p), c = k2h(p), r = null, i;
+      if (t === '小') r = swap(c, SM);
+      else if (t === '゛') { r = VO.indexOf(c) > -1 ? swap(c, VO) : null; if (!r && SE.indexOf(c) % 2 === 1) r = swap(SE.charAt(SE.indexOf(c) - 1), VO); }
+      else { r = SE.indexOf(c) > -1 ? swap(c, SE) : null; i = VO.indexOf(c); if (!r && i % 2 === 1 && SE.indexOf(VO.charAt(i - 1)) > -1) r = SE.charAt(SE.indexOf(VO.charAt(i - 1)) + 1); }
+      if (r) a.setRangeText(wasK ? h2k(r) : r, s - 1, s, 'end');
+      return;
+    }
+    a.setRangeText(kata ? h2k(t) : t, s, e, 'end');
+  }
+  kb.addEventListener('mousedown', function (e) { e.preventDefault(); });
+  kb.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button'); if (b) kbPress(b.getAttribute('data-k')); });
+  function applyIn() {
+    var m = $('inmode').value, k = m === 'kb';
+    kb.hidden = !k; $('ans').inputMode = k ? 'none' : 'text';
+    $('ans').placeholder = 'ここに書いて';
+    $('kbtxt').textContent = k ? 'Using the built-in keyboard.' : 'No Japanese keyboard?';
+    $('kbtn').textContent = k ? 'Use my own keyboard' : 'Use the built-in one';
+  }
+  $('inmode').addEventListener('change', function () { applyIn(); closeMenu(); $('ans').focus(); });
+  $('kbtn').onclick = function () { $('inmode').value = $('inmode').value === 'kb' ? 'ime' : 'kb'; applyIn(); $('ans').focus(); };
+  applyIn();
+  if (TTS && TTS.onvoiceschanged !== undefined) TTS.onvoiceschanged = function () {};
+  next();
+})();
+</script>
+</body>
+</html>
