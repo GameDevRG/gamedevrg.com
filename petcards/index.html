@@ -6,7 +6,8 @@
 <title>daily pet packs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap"></noscript>
 <style>
 :root{--bg:#fbf6ee;--surface:#fff;--text:#2b2118;--muted:#7a6a5a;--border:#e6d9c6;--accent:#2f7cf6;
 --w:min(72vw,290px);--glit:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='s' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 24 0 0 0 -18'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23s)'/%3E%3C/svg%3E");--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .5' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3Crect width='160' height='160' filter='url(%23f)' opacity='.55'/%3E%3C/svg%3E");--rb:linear-gradient(115deg,#ff7ac6,#ffd36e,#7dffb2,#6ec9ff,#b48aff,#ff7ac6);
@@ -22,7 +23,6 @@ h1{font-size:22px;margin:0 0 2px;text-align:center}
 .stage{min-height:min(82vh,640px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;position:relative}
 .hint{color:var(--muted);font-size:14px;text-align:center;min-height:20px}
 .dots{display:flex;gap:8px}.dots i{width:8px;height:8px;border-radius:50%;background:var(--border)}.dots i.on{background:var(--accent)}.dots i.done{background:var(--muted)}
-/* pack: a foil wrapper you tear open */
 .pk{position:relative;width:var(--w);height:calc(var(--w)*1.5);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab;filter:drop-shadow(0 14px 16px rgba(0,0,0,.32));animation:float 3s ease-in-out infinite;outline:none}
 .pk.touched{animation:none}
 .pk.off{filter:grayscale(.8) opacity(.55);animation:none;cursor:default}
@@ -52,7 +52,6 @@ box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),inset 9px 0 14px rgba(0,0,0,.14)
 .pk.drop .pk-low{transform:translateY(60%) rotate(4deg);opacity:0}
 @keyframes float{50%{transform:translateY(-8px) rotate(-1.5deg)}}
 @keyframes tear{to{transform:scale(1.4) rotate(10deg);opacity:0}}
-/* single card scene */
 .scene{width:100%;height:min(62vh,480px);display:flex;align-items:center;justify-content:center;perspective:1100px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
 .drag,.tilt{transform-style:preserve-3d}
 .drag.enter{animation:enter .35s ease-out}
@@ -83,7 +82,6 @@ box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),inset 9px 0 14px rgba(0,0,0,.14)
 button.act{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:11px 22px;font:600 16px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
 button.ghost{background:none;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font:13px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
 .tg{display:flex;gap:6px;justify-content:center;align-items:center;font-size:13px;color:var(--muted);margin:8px 0 0;cursor:pointer}
-/* holo finishes */
 .holo,.pholo{position:absolute;inset:0;pointer-events:none;opacity:0;border-radius:inherit}
 .holo::before,.holo::after,.pholo::before,.pholo::after{content:"";position:absolute;inset:0}
 .fin-holo .pholo,.fin-edge .pholo,.fin-prism .pholo,.fin-foil .pholo{opacity:.62;filter:saturate(1.6) contrast(1.15);mix-blend-mode:color-dodge;background:repeating-linear-gradient(90deg,rgba(255,255,255,.18) 0 1px,transparent 1px 3px),var(--fg);background-size:auto,300% 300%;background-position:0 0,var(--mx,50%) var(--my,30%)}
@@ -97,13 +95,11 @@ button.ghost{background:none;color:var(--muted);border:1px solid var(--border);b
 .fin-prism .pholo{opacity:.45}
 @keyframes hue{to{filter:hue-rotate(360deg)}}
 @keyframes tw{from{opacity:.2}to{opacity:1}}
-/* single-color metallic tints */
 .front.tint-silver{--fg:repeating-linear-gradient(112deg,#dfe5ec 0,#fff 6%,#9ea8b5 12%,#f1f4f7 18%,#c3cbd5 24%,#dfe5ec 30%)}
 .front.tint-gold{--fg:repeating-linear-gradient(112deg,#f3d98a 0,#fff6cf 6%,#b8892d 12%,#f8e6a8 18%,#d9b04a 24%,#f3d98a 30%)}
 .front.tint-rose{--fg:repeating-linear-gradient(112deg,#f2c4c4 0,#fff0ef 6%,#c98b8b 12%,#f7d9d6 18%,#dca5a5 24%,#f2c4c4 30%)}
 .front.tint-ice{--fg:repeating-linear-gradient(112deg,#c9ecff 0,#f4fcff 6%,#7fb9dd 12%,#e2f6ff 18%,#a6d4ee 24%,#c9ecff 30%)}
 .front:not(.tint-rb) .pholo{mix-blend-mode:soft-light;filter:none;opacity:.9}
-/* real-card collection */
 .cardbox{--th:calc(var(--w)*.01);position:relative;width:var(--w);height:calc(var(--w)*1.4);perspective:700px;cursor:pointer}
 .cardbox .tilt{width:100%;height:100%;transition:transform .12s}
 .cardbox .face{backface-visibility:visible}
@@ -115,7 +111,6 @@ button.ghost{background:none;color:var(--muted);border:1px solid var(--border);b
 #lb{position:fixed;inset:0;z-index:50;background:rgba(10,8,6,.55);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px;touch-action:none}
 #lb.on{display:flex}
 .finl{font-size:.6875em;font-weight:700;margin-top:.4em;color:var(--text)}
-/* extra finishes */
 .fin-foil{border-color:var(--fb);box-shadow:var(--cs),0 0 1.1em var(--fb),inset 0 0 3em var(--wash)}
 .fin-foil .holo{opacity:.5;z-index:2;mix-blend-mode:soft-light;background:var(--fg);background-size:300% 300%;background-position:var(--mx,50%) var(--my,30%)}
 .fin-shimmer .holo{opacity:1;z-index:2;mix-blend-mode:overlay;background:linear-gradient(110deg,transparent 42%,rgba(255,255,255,.8) 50%,transparent 58%);background-size:250% 100%;animation:sweep 2.8s ease-in-out infinite}
@@ -142,9 +137,7 @@ main button,main a.meet,#lb button,#lb a.meet,.pack{font-family:"Chakra Petch",s
 #lb .cardbox .face{backface-visibility:hidden;-webkit-backface-visibility:hidden}
 #lb .cardbox .back{transform:rotateY(180deg) translateZ(calc(var(--th)/2))}
 .fvmark{position:absolute;top:-6px;right:-6px;z-index:5;background:#ffe9a8;border-radius:99px;padding:4px;font-size:14px;line-height:0}
-/* faint card-body texture (not on the photo) */
 .face.front>.tex{position:absolute;inset:0;z-index:0;pointer-events:none;background:#000;opacity:.14;-webkit-mask-repeat:repeat;mask-repeat:repeat}
-/* smiles + shelter links */
 .chip{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:6px 14px;font:600 13px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
 .chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .about{max-width:520px;margin:8px auto 0;font-size:13px;line-height:1.5;color:var(--muted);text-align:center}
@@ -155,7 +148,6 @@ a.meet{display:inline-block;background:var(--accent);color:#fff;text-decoration:
 .fv.sm,a.meet.sm{font-size:12px;padding:5px 10px;margin-top:5px}
 .where{font-size:.6875em;color:var(--muted);margin-top:.3em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fin-reverse .where{color:var(--text)}
-/* summary + collection */
 .sumrow{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;width:100%;max-width:560px}
 h2{font-size:20px;margin:40px 0 4px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px 10px;margin-top:14px;justify-items:center}
@@ -166,9 +158,7 @@ h2{font-size:20px;margin:40px 0 4px}
 .foot{color:var(--muted);font-size:12px;margin-top:28px;line-height:1.5}
 .cardbox,.cardbox *,.scene,.scene *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 #lb .cardbox{touch-action:none}
-/* plain cards keep the brushed grain texture but get no moving gloss */
 .front.fin-none::after{display:none}
-/* ===== super rare finishes ===== */
 .sr{color:var(--text);--text:#f7f3ff;--muted:#cfc6ee;border-color:var(--g);animation:srpulse 2.6s ease-in-out infinite}
 @keyframes srpulse{0%,100%{box-shadow:var(--cs),0 0 .7em var(--g),inset 0 0 1.4em var(--g2)}50%{box-shadow:var(--cs),0 0 1.8em var(--g),inset 0 0 2.6em var(--g2)}}
 .finl.srl{display:block;font-weight:700;text-transform:lowercase;letter-spacing:.06em;background:linear-gradient(90deg,#ffd86b,#fff,#ff8ad8,#8ad8ff,#ffd86b);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:sheen 3s linear infinite}
@@ -183,9 +173,7 @@ h2{font-size:20px;margin:40px 0 4px}
 @keyframes pflash{0%,84%,100%{opacity:0}85%{opacity:.6}86.5%{opacity:.1}88%{opacity:.5}91%{opacity:0}}
 @keyframes fall{0%{background-position:0 0,0 0}50%{background-position:18px 130px,-14px 165px}100%{background-position:0 260px,0 330px}}
 @keyframes meteor{from{background-position:0 0,0 0}to{background-position:300px 300px,220px 220px}}
-/* supernova */
 .fin-nova{--surface:#0c0720;--g:#ffb347;--g2:rgba(255,150,60,.4)}
-/* supernova: a white-hot core with soft rays, a shockwave ring, nebula wash and a drifting starfield */
 .fin-nova .holo{opacity:1;z-index:2;mix-blend-mode:screen;
 background:radial-gradient(circle at 10% 90%,rgba(110,70,255,.34),transparent 55%),radial-gradient(circle at 94% 10%,rgba(255,80,150,.26),transparent 50%),var(--stars);
 background-size:auto,auto,100px 100px;
@@ -205,38 +193,32 @@ animation:novaring 3.6s cubic-bezier(.2,.6,.3,1) infinite}
 @keyframes novaspin{to{rotate:360deg}}
 @keyframes novabreathe{0%,100%{scale:.94;opacity:.86}50%{scale:1.06;opacity:1}}
 @keyframes novaring{0%{scale:.03;opacity:0}6%{opacity:1}100%{scale:1.2;opacity:0}}
-/* inferno */
 .fin-inferno{--surface:#1c0905;--g:#ff6a1f;--g2:rgba(255,90,20,.45)}
 .fin-inferno .holo{opacity:1;z-index:2;mix-blend-mode:screen;background:linear-gradient(0deg,rgba(255,70,10,.8),rgba(255,150,30,.45) 22%,rgba(255,60,0,.12) 50%,transparent 70%);animation:flick 1.3s ease-in-out infinite}
 .fin-inferno .holo::before{background:radial-gradient(ellipse 17% 62% at 8% 106%,#ffb02e,transparent 74%),radial-gradient(ellipse 15% 74% at 27% 106%,#ff6a1a,transparent 74%),radial-gradient(ellipse 19% 86% at 50% 106%,#ffd04a,transparent 74%),radial-gradient(ellipse 15% 68% at 73% 106%,#ff5a1a,transparent 74%),radial-gradient(ellipse 17% 58% at 93% 106%,#ffb02e,transparent 74%);transform-origin:50% 100%;animation:lick 1.1s ease-in-out infinite alternate}
 .fin-inferno .holo::after{background-image:var(--embers),var(--embers);background-size:120px 120px,90px 120px;animation:rise 4s linear infinite}
 .fin-inferno .pholo{opacity:.5;mix-blend-mode:overlay;background:linear-gradient(0deg,rgba(255,80,0,.95),transparent 65%)}
-/* thunderstorm */
 .fin-storm{--surface:#060b1d;--g:#6fb4ff;--g2:rgba(90,150,255,.4)}
 .fin-storm .holo{opacity:1;z-index:2;mix-blend-mode:screen;background-image:var(--rain),var(--rain);background-size:60px 90px,45px 70px;animation:rain .6s linear infinite}
 .fin-storm .holo::before{background:radial-gradient(circle at 50% 28%,rgba(225,238,255,.95),rgba(120,170,255,.45) 40%,transparent 72%);opacity:0;animation:bflash 5s linear infinite}
 .fin-storm .holo::after{background:var(--bolt) no-repeat;background-size:auto 100%;background-position:calc(50% + var(--tx,0)*10%) 0;opacity:0;animation:bflash 5s linear infinite}
 .fin-storm .pholo{opacity:0;mix-blend-mode:screen;background:rgba(190,220,255,.9);animation:pflash 5s linear infinite}
-/* petal storm */
 .fin-sakura{--surface:#2b1228;--g:#ff9ccf;--g2:rgba(255,130,190,.4)}
 .fin-sakura .holo{opacity:1;z-index:0;background-image:var(--petals),var(--petals2);background-size:130px 130px,90px 110px;animation:fall 9s linear infinite}
 .fin-sakura .holo::before{z-index:0;background:radial-gradient(circle at 15% 12%,rgba(255,170,215,.45),transparent 50%),radial-gradient(circle at 88% 90%,rgba(255,140,200,.4),transparent 50%);mix-blend-mode:screen;animation:flick 3s ease-in-out infinite}
 .fin-sakura .holo::after{background-image:var(--glit);background-size:128px 128px;mix-blend-mode:screen;opacity:.9;animation:tw 1.4s ease-in-out infinite alternate}
 .fin-sakura .pholo{opacity:1;background:linear-gradient(160deg,rgba(255,194,224,.3),transparent 60%),var(--petals),var(--petals2);background-size:auto,130px 130px,90px 110px;background-position:0 0,0 0,0 0;animation:fall2 9s linear infinite}
 @keyframes fall2{0%{background-position:0 0,0 0,0 0}50%{background-position:0 0,18px 130px,-14px 165px}100%{background-position:0 0,0 260px,0 330px}}
-/* starfall */
 .fin-starfall{--surface:#050819;--g:#9ad0ff;--g2:rgba(110,160,255,.4)}
 .fin-starfall .holo{opacity:1;z-index:2;mix-blend-mode:screen;background:radial-gradient(circle at 20% 15%,rgba(110,90,255,.35),transparent 50%),radial-gradient(circle at 85% 85%,rgba(60,170,255,.3),transparent 50%)}
 .fin-starfall .holo::before{inset:-30%;background-image:var(--streak),var(--streak);background-size:300px 300px,220px 220px;animation:meteor 1.9s linear infinite}
 .fin-starfall .holo::after{background-image:var(--stars);background-size:100px 100px;background-position:37px 53px;animation:tw 1.8s ease-in-out infinite alternate}
 .fin-starfall .pholo{opacity:.4;mix-blend-mode:screen;background-image:var(--stars);background-size:100px 100px}
-/* crystal prism */
 .fin-crystal{--surface:#0a2130;--g:#7ff0ff;--g2:rgba(80,230,255,.4)}
 .fin-crystal .holo{opacity:.95;z-index:2;mix-blend-mode:overlay;background:conic-gradient(from calc(var(--ang,0deg) + 10deg) at 28% 34%,rgba(255,255,255,0),rgba(140,255,255,.7) 8%,rgba(255,255,255,0) 14%,rgba(190,140,255,.65) 28%,rgba(255,255,255,0) 38%,rgba(120,255,200,.7) 56%,rgba(255,255,255,0) 68%,rgba(255,140,220,.65) 84%,rgba(255,255,255,0)),conic-gradient(from calc(var(--ang,0deg)*-1 + 40deg) at 74% 70%,rgba(255,255,255,0),rgba(255,230,140,.6) 10%,rgba(255,255,255,0) 22%,rgba(120,190,255,.7) 40%,rgba(255,255,255,0) 52%,rgba(255,130,200,.6) 72%,rgba(255,255,255,0) 86%);animation:hue 9s linear infinite}
 .fin-crystal .holo::before{background:linear-gradient(112deg,transparent calc(var(--gx,50%) - 14%),rgba(255,255,255,.85) var(--gx,50%),transparent calc(var(--gx,50%) + 14%));mix-blend-mode:overlay}
 .fin-crystal .holo::after{background-image:var(--glit),var(--glit);background-size:128px 128px,83px 83px;background-position:calc(var(--tx,0)*22px) calc(var(--ty,0)*22px),calc(var(--tx,0)*-11px) calc(var(--ty,0)*-11px);mix-blend-mode:screen;animation:tw 1s ease-in-out infinite alternate}
 .fin-crystal .pholo{opacity:.5;mix-blend-mode:color-dodge;filter:saturate(1.6);background:repeating-linear-gradient(60deg,transparent 0 16px,rgba(255,255,255,.3) 16px 17px,transparent 17px 38px),var(--fg);background-size:auto,300% 300%;background-position:0 0,var(--mx,50%) var(--my,30%)}
-/* reveal burst */
 .srburst{position:fixed;inset:0;z-index:40;pointer-events:none;overflow:hidden}
 .srburst .fl{position:absolute;inset:0;background:radial-gradient(circle at var(--cx) var(--cy),var(--c),transparent 60%);opacity:0;animation:srfl .9s ease-out forwards}
 .srburst .rg{position:absolute;left:var(--cx);top:var(--cy);width:20px;height:20px;border:3px solid var(--c);border-radius:50%;animation:srrg 1s ease-out forwards}
@@ -244,9 +226,7 @@ animation:novaring 3.6s cubic-bezier(.2,.6,.3,1) infinite}
 @keyframes srfl{0%{opacity:0}15%{opacity:.55}100%{opacity:0}}
 @keyframes srrg{from{transform:translate(-50%,-50%) scale(1);opacity:1}to{transform:translate(-50%,-50%) scale(30);opacity:0}}
 @keyframes srpf{from{transform:translate(-50%,-50%);opacity:1}to{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(.2);opacity:0}}
-/* shine pop: any card with a shine effect gets a base color a touch darker, so the shine stands out */
 .front.shy-bg,.front.shy-edge,.front.shy-img,.front.fin-shimmer,.front.fin-holo,.front.fin-edge,.front.fin-reverse,.front.fin-prism,.front.fin-glitter,.front.fin-foil,.front.fin-facet,.front.fin-pearl,.front.fin-chrome,.front.fin-rainbow{--sd:color-mix(in srgb,var(--surface) 93%,#000)}
-/* ===== slightly shiny (1 in 4 cards): soft sheen on the background, border or photo ===== */
 .face.front>.shy{position:absolute;inset:0;z-index:0;pointer-events:none;mix-blend-mode:soft-light;opacity:.95;
 background:linear-gradient(115deg,transparent calc(var(--gx,50%) - 30%),rgba(255,255,255,.7) var(--gx,50%),transparent calc(var(--gx,50%) + 30%)),radial-gradient(circle at var(--mx,50%) var(--my,30%),color-mix(in srgb,var(--rc) 55%,#fff),transparent 60%)}
 .pshy{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;
@@ -256,20 +236,17 @@ background:linear-gradient(115deg,transparent calc(var(--gx,50%) - 24%),rgba(255
 background:linear-gradient(90deg,rgba(0,0,0,var(--shl,0)),rgba(0,0,0,0) 55%,rgba(0,0,0,var(--shr,0))) padding-box,linear-gradient(var(--sd,var(--surface)),var(--sd,var(--surface))) padding-box,
 linear-gradient(115deg,var(--rc) 0,var(--rc) calc(var(--gx,50%) - 30%),color-mix(in srgb,var(--rc) 20%,#fff) var(--gx,50%),var(--rc) calc(var(--gx,50%) + 30%),var(--rc) 100%) border-box}
 .finl.shl{display:block;opacity:.9}
-/* glisten: voronoi shards that each catch the light at a different angle */
 @property --amb{syntax:"<number>";inherits:true;initial-value:0}
 @keyframes amb{from{--amb:-1}to{--amb:1}}
 .fin-facet{border-color:var(--fb2,#cdd5e4);animation:amb 7s ease-in-out infinite alternate}
 .fin-facet .holo{opacity:1;z-index:2;mix-blend-mode:hard-light}
 .fin-facet .holo svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .fc,.fs{--d:calc(abs(var(--tx,0)*var(--a) + var(--ty,0)*var(--b) + var(--amb,0)*.8 - var(--c)));--u:clamp(0,calc(1 - var(--d)*1.2),1);--p:clamp(0,calc(1 - var(--d)*3.2),1)}
-/* each shard is a coloured tile blended with hard-light: unlit it tints/darkens the card a little, lit it flares to a bright coloured glint, at the peak almost white */
 .fc{stroke:none;opacity:calc(var(--m,.7)*.85);fill:hsl(calc(var(--fh,0) + var(--r,.5)*var(--fs,360)) calc(32% + var(--u)*46% - var(--p)*30%) calc(54% + var(--u)*12% + var(--p)*26%))}
 .fs{fill:#fff;stroke:none;opacity:clamp(0,calc((var(--p) - .25)*2.2),1)}
 .fin-facet{--surface:#dde1e8}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fin-facet{--surface:#3b4049}}
 :root[data-theme="dark"] .fin-facet{--surface:#3b4049}
-/* glisten variants (gold, rose gold, ice, emerald, violet, ruby): tinted base, tinted shards and border */
 .fin-facet.tint-gold{--surface:#e9d9a4;--fh:34;--fs:28;--fb2:#d9b04a}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fin-facet.tint-gold{--surface:#4d4222}}
 :root[data-theme="dark"] .fin-facet.tint-gold{--surface:#4d4222}
@@ -288,9 +265,7 @@ linear-gradient(115deg,var(--rc) 0,var(--rc) calc(var(--gx,50%) - 30%),color-mix
 .fin-facet.tint-ruby{--surface:#f0c6cd;--fh:350;--fs:20;--fb2:#d03050}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fin-facet.tint-ruby{--surface:#4f2732}}
 :root[data-theme="dark"] .fin-facet.tint-ruby{--surface:#4f2732}
-/* glisten shine: a bright sweep across the card that drifts on its own and follows the tilt */
 .front.fin-facet::after{background:linear-gradient(115deg,transparent calc(var(--gx,calc(50% + var(--amb,0)*35%)) - 20%),rgba(255,255,255,.8) var(--gx,calc(50% + var(--amb,0)*35%)),transparent calc(var(--gx,calc(50% + var(--amb,0)*35%)) + 20%));mix-blend-mode:overlay}
-/* ===== more finishes: pearl, chrome, rainbow bands, bubbles, snowfall, synthwave, blueprint ===== */
 .fin-pearl{border-color:#e4d6ee}
 .fin-pearl .holo{opacity:.42;z-index:2;background:conic-gradient(from calc(var(--ang,0deg) + 30deg) at calc(35% + var(--tx,0)*18%) calc(30% + var(--ty,0)*18%),#ffc9e3,#fff0c2,#c9ffe0,#c4e6ff,#dccbff,#ffc9e3);animation:hue 10s linear infinite}
 .fin-pearl .holo::before{background:radial-gradient(circle at var(--mx,35%) var(--my,25%),rgba(255,255,255,.9),transparent 55%);mix-blend-mode:overlay}
@@ -317,7 +292,6 @@ linear-gradient(115deg,var(--rc) 0,var(--rc) calc(var(--gx,50%) - 30%),color-mix
 .fin-blueprint .holo::before{inset:0 0 auto 0;height:24%;background:linear-gradient(180deg,transparent,rgba(150,205,255,.4),transparent);animation:bpscan 3.4s linear infinite}
 .fin-blueprint .pholo{opacity:.5;mix-blend-mode:color;background:#3a78e0}
 @keyframes bpscan{from{translate:0 -100%}to{translate:0 420%}}
-/* debug gallery */
 #dbg{position:fixed;inset:0;z-index:45;background:var(--bg);color:var(--text);overflow-y:auto;overscroll-behavior:contain;display:none;padding:0 16px 48px}
 #dbg.on{display:block}
 #dbg .bar{position:sticky;top:0;z-index:2;background:var(--bg);display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:calc(10px + env(safe-area-inset-top,0px)) 0 10px;border-bottom:1px solid var(--border)}
@@ -326,7 +300,6 @@ linear-gradient(115deg,var(--rc) 0,var(--rc) calc(var(--gx,50%) - 30%),color-mix
 #dbg select{font:13px "Chakra Petch",system-ui,sans-serif;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:4px 6px}
 #dbg h3{margin:24px 0 2px;font-size:16px}
 #dbg .dsub{font-size:12px;color:var(--muted);margin:0}
-/* lightbox zoom + original photo viewer */
 #lb .cardbox{flex:none}
 #lb.zoomed .acts{position:fixed;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:3}
 #lb.zoomed .hint,#lb.zoomed .fxl{display:none}
@@ -341,16 +314,16 @@ button.rawbtn{background:var(--surface);color:var(--text);border:1px solid var(-
 #raw .rawcap{color:#fffb;font-size:13px;text-align:center}
 #raw .rawx{color:#fff;border-color:#fff8}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-/* effects run all the way to the card's outer edge, over the border too (not just the inner padding box) */
 @supports (overflow-clip-margin:1px){
 .face.front{overflow:clip;overflow-clip-margin:.3em}
 .face.front>.holo,.face.front>.shy,.face.front>.tex,.face.front::before,.face.front::after{inset:-.3em}
 }
-/* save frames: animations on cards only run while hovered or in the full preview (#lb) */
 #grid .cardbox:not(:hover) *,#grid .cardbox:not(:hover) *::before,#grid .cardbox:not(:hover) *::after,#stage .cardbox:not(:hover) *,#stage .cardbox:not(:hover) *::before,#stage .cardbox:not(:hover) *::after,#dbg .cardbox:not(:hover) *,#dbg .cardbox:not(:hover) *::before,#dbg .cardbox:not(:hover) *::after{animation-play-state:paused!important}
-/* readability: the card text always sits above every finish effect, never under a glow or sparkle */
 .front.front>.txt{z-index:4}
 .sr .txt,.fin-galaxy .txt,.fin-neon .txt,.fin-synth .txt,.fin-blueprint .txt{text-shadow:0 1px 4px rgba(0,0,0,.7);background:rgba(6,4,16,.5);box-shadow:0 0 .7em .55em rgba(6,4,16,.5);border-radius:.6em}
+
+.cell.oos .face,.cell.oos .sl{visibility:hidden}
+body.lbopen #stage *,body.lbopen #stage *::before,body.lbopen #stage *::after{animation-play-state:paused!important}
 </style>
 </head>
 <body>
@@ -478,6 +451,14 @@ try{const s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()};
 const stage=document.getElementById("stage");
+const perFrame=fn=>{let a=null,r=0;const run=()=>{r=0;const x=a;a=null;if(x)fn(...x)};
+ const t=(...x)=>{a=x;if(!r)r=requestAnimationFrame(run)};
+ t.flush=()=>{if(r){cancelAnimationFrame(r);run()}};t.cancel=()=>{cancelAnimationFrame(r);r=0;a=null};return t};
+const mkCull=()=>{if(typeof IntersectionObserver=="undefined")return{watch(){}};
+ const io=new IntersectionObserver(es=>es.forEach(en=>en.target.classList.toggle("oos",!en.isIntersecting)),{rootMargin:"300px 0px"});
+ return{watch(root){io.disconnect();const vh=innerHeight+300;
+  root.querySelectorAll(".cell").forEach(c=>{const r=c.getBoundingClientRect();c.classList.toggle("oos",r.bottom<-300||r.top>vh);io.observe(c)})}}};
+const gridCull=mkCull(),dbgCull=mkCull();
 
 const pkArt=off=>`<div class="pk-art"><span class="pk-crimp t"></span><span class="pk-crimp b"></span><div class="pk-tl"><span>${off?"":"‹ tear here ›"}</span></div><div class="pk-mid"><div class="pk-ic">${ic("paw")}</div><div class="pk-ti">daily pet packs</div><div class="pk-su">${off?"pack opened":"5 shelter pets inside"}</div></div></div>`;
 function renderPack(){
@@ -519,8 +500,9 @@ function bindPack(){
   if(x-tick>18){tick=x;if(navigator.vibrate)navigator.vibrate(6)}
  }
  function shine(e){const r=pk.getBoundingClientRect();pk.style.setProperty("--sx",Math.min(100,Math.max(0,(e.clientX-r.left)/r.width*100))+"%")}
+ const frame=perFrame((cx,drag)=>{shine({clientX:cx});if(drag){apply();pk.style.transform="translate("+((Math.random()-.5)*1.6).toFixed(2)+"px,"+((Math.random()-.5)*1.2).toFixed(2)+"px) rotate("+((Math.random()-.5)*.6).toFixed(2)+"deg)"}});
  function finish(){
-  if(done)return;done=true;cancelAnimationFrame(auto);
+  if(done)return;done=true;frame.cancel();cancelAnimationFrame(auto);
   x=pk.offsetWidth;apply();pk.style.transform="";if(navigator.vibrate)navigator.vibrate(35);
   openPack();
   strip.style.transition="transform .6s cubic-bezier(.5,0,1,.6),opacity .6s";
@@ -537,17 +519,17 @@ function bindPack(){
   auto=requestAnimationFrame(step);
  }
  pk.onpointerdown=e=>{if(done)return;cancelAnimationFrame(auto);down=true;moved=false;sx=e.clientX;base=x;pk.classList.add("touched");pk.setPointerCapture(e.pointerId)};
- pk.onpointermove=e=>{shine(e);if(!down||done)return;
+ pk.onpointermove=e=>{if(done)return;
+  if(!down){frame(e.clientX,false);return}
   const dx=e.clientX-sx;
   if(!moved&&Math.abs(dx)>6)moved=true;
   if(moved&&!locked){mirror=dx<0;locked=true}
-  if(!moved)return;
+  if(!moved){frame(e.clientX,false);return}
   const w=pk.offsetWidth,d=(mirror?-dx:dx)*1.25;
-  x=Math.max(x,Math.min(w,base+d));apply();
-  pk.style.transform="translate("+((Math.random()-.5)*1.6).toFixed(2)+"px,"+((Math.random()-.5)*1.2).toFixed(2)+"px) rotate("+((Math.random()-.5)*.6).toFixed(2)+"deg)";
+  x=Math.max(x,Math.min(w,base+d));frame(e.clientX,true);
   if(x>=w*.97)finish();
  };
- pk.onpointerup=pk.onpointercancel=e=>{if(!down)return;down=false;if(done)return;pk.style.transform="";if(!moved)autoTear()};
+ pk.onpointerup=pk.onpointercancel=e=>{if(!down)return;down=false;if(done)return;frame.flush();pk.style.transform="";if(!moved)autoTear()};
  pk.onkeydown=e=>{if(e.key==" "||e.key=="Enter"){e.preventDefault();autoTear()}};
 }
 
@@ -579,13 +561,14 @@ function bind(){
  scene.onpointerdown=e=>{if(busy)return;SCENE_DRAG=true;cancelAnimationFrame(anim);down=true;moved=false;sx=e.clientX;sy=e.clientY;
   s=[{t:performance.now(),x:e.clientX,y:e.clientY}];drag.classList.remove("enter");drag.style.transition="none";
   scene.setPointerCapture(e.pointerId);scene.style.cursor="grabbing"};
+ const vis=perFrame((cx,cy,ex,pl)=>{if(pl)place();setTilt({clientX:cx,clientY:cy},ex)});
  scene.onpointermove=e=>{if(busy)return;
   if(down){const dx=e.clientX-sx,dy=e.clientY-sy;if(Math.abs(dx)>8||Math.abs(dy)>8)moved=true;
-   if(moved){P.x=dx;P.y=dy*.6;P.r=dx/22;place()}
-   s.push({t:performance.now(),x:e.clientX,y:e.clientY});if(s.length>8)s.shift();setTilt(e,dx/9)}
-  else setTilt(e)};
- scene.onpointerleave=()=>{if(!down){tilt.style.transform="";resetFx(fl.querySelector(".front"))}};
- scene.onpointerup=e=>{if(!down)return;down=false;SCENE_DRAG=false;scene.style.cursor="grab";tilt.style.transform="";
+   if(moved){P.x=dx;P.y=dy*.6;P.r=dx/22}
+   s.push({t:performance.now(),x:e.clientX,y:e.clientY});if(s.length>8)s.shift();vis(e.clientX,e.clientY,dx/9,moved)}
+  else vis(e.clientX,e.clientY,0,false)};
+ scene.onpointerleave=()=>{vis.cancel();if(!down){tilt.style.transform="";resetFx(fl.querySelector(".front"))}};
+ scene.onpointerup=e=>{if(!down)return;vis.cancel();down=false;SCENE_DRAG=false;scene.style.cursor="grab";tilt.style.transform="";
   if(!moved){flip();return}
   const now=performance.now(),rc=s.filter(p=>now-p.t<100);let vx=0,vy=0;
   if(rc.length>1){const a=rc[0],b=rc[rc.length-1],dt=Math.max(1,b.t-a.t);vx=(b.x-a.x)/dt;vy=(b.y-a.y)/dt}
@@ -673,21 +656,31 @@ function fxText(f,t){const[tn,tx,bg,sh0,par0]=(t||"").split(".");const sh=SHY[sh
  if(sh)out.push(`<span>${ic("shimmer","#e0a21b")} shiny ${SHY[sh].toLowerCase()}</span>`);
  if(par)out.push(`<span>${ic("layers","#9fb0c0")} parallax photo</span>`);
  return out.length?`<div class="fxl">${out.join("")}</div>`:`<div class="fxl none">plain card, no special effects</div>`}
-function cardFace(p,f,t){const[tn,tx,bg,sh0,par0]=(t||"").split(".");const par=par0===undefined||par0=="p";const sh=SHY[sh0]?sh0:"";return `<div class="face front sp-${p.sp} fin-${f||"none"}${sh?" shy-"+sh:""}${par?" par":""}${SR[f]?" sr":""}${FOILS[f]?" fin-foil foil-"+f:""} tint-${FOILS[f]?"foil":(tn||"rb")}${bg&&BGS[bg]&&!NOBG.includes(f)&&!SR[f]?" bg-"+bg:""}"><div class="holo">${f=="facet"?facetSVG(seedOf(p,t)):""}</div>${sh=="bg"?'<div class="shy"></div>':""}${tx&&TEX[tx]?`<div class="tex tx-${tx}"></div>`:""}<div><span class="badge">${ic(SPI[p.sp])} ${SPC[p.sp]}</span></div>
- <div class="pw"><img class="photo" src="${photo(p)}" alt="${p.name}, sample photo" draggable="false"><div class="pholo"></div>${sh=="img"?'<div class="pshy"></div>':""}</div>
+const FACES=new Map();
+function cardFace(p,f,t){const k=p.id+"|"+(f||"")+"|"+(t||"");let h=FACES.get(k);if(!h){h=cardFace0(p,f,t);FACES.set(k,h)}return h}
+function cardFace0(p,f,t){const[tn,tx,bg,sh0,par0]=(t||"").split(".");const par=par0===undefined||par0=="p";const sh=SHY[sh0]?sh0:"";return `<div class="face front sp-${p.sp} fin-${f||"none"}${sh?" shy-"+sh:""}${par?" par":""}${SR[f]?" sr":""}${FOILS[f]?" fin-foil foil-"+f:""} tint-${FOILS[f]?"foil":(tn||"rb")}${bg&&BGS[bg]&&!NOBG.includes(f)&&!SR[f]?" bg-"+bg:""}"><div class="holo">${f=="facet"?facetSVG(seedOf(p,t)):""}</div>${sh=="bg"?'<div class="shy"></div>':""}${tx&&TEX[tx]?`<div class="tex tx-${tx}"></div>`:""}<div><span class="badge">${ic(SPI[p.sp])} ${SPC[p.sp]}</span></div>
+ <div class="pw"><img class="photo" decoding="async" src="${photo(p)}" alt="${p.name}, sample photo" draggable="false"><div class="pholo"></div>${sh=="img"?'<div class="pshy"></div>':""}</div>
  <div class="txt"><div class="nm">${p.name}</div><div class="meta">${p.breed} · ${p.age}</div><div class="desc">${p.desc}</div><div class="where">${ic("map-marker")} ${shOf(p).n}</div></div></div>`}
 function cardBox(id,f,t,extra,back){return `<div class="cardbox" data-id="${id}" data-f="${f||""}" data-t="${t||""}"><div class="tilt">${slices()}${cardFace(PETS[id],f,t)}${back?`<div class="face back"><span>${ic("paw")}</span></div>`:""}</div>${extra||""}</div>`}
 const ck=(id,f,t)=>id+"|"+(f||"")+"|"+(t||"");
 function addCard(id,f,t){const k=ck(id,f,t),c=state.col[k];if(c)c.n++;else state.col[k]={id,f:f||"",t:t||"",n:1,at:Date.now()}}
-function renderGrid(){
- const all=Object.values(state.col).sort((a,b)=>b.at-a.at),list=state.filter=="smiles"?all.filter(c=>state.fav[c.id]):all;
+function setCount(all){
  const met=new Set(all.map(c=>c.id)).size,sm=Object.keys(state.fav).length;
  document.getElementById("count").textContent=all.length?`${all.length} card${all.length>1?"s":""} · ${met} animal${met>1?"s":""} met · ${sm} favorite${sm==1?"":"s"} · tap a card for a closer look`:"nothing here yet. open your first pack!";
+}
+function renderGrid(){
+ const all=Object.values(state.col).sort((a,b)=>b.at-a.at),list=state.filter=="smiles"?all.filter(c=>state.fav[c.id]):all;
+ setCount(all);
  document.querySelectorAll("#flt .chip").forEach(b=>b.classList.toggle("on",b.dataset.f==(state.filter||"all")));
- document.getElementById("grid").innerHTML=list.length?list.map(c=>{const p=PETS[c.id];
-  return `<div class="cell">${cardBox(c.id,c.f,c.t,state.fav[c.id]?`<span class="fvmark">${ic("heart","#d6336c")}</span>`:"")}<div class="cap">${c.n>1?"pulled ×"+c.n:"pulled once"}</div></div>`}).join(""):(all.length?`<p class="sub" style="grid-column:1/-1">no favorites yet. tap favorite on any card you love.</p>`:"")}
+ const gEl=document.getElementById("grid");gEl.innerHTML=list.length?list.map(c=>{const p=PETS[c.id];
+  return `<div class="cell">${cardBox(c.id,c.f,c.t,state.fav[c.id]?`<span class="fvmark">${ic("heart","#d6336c")}</span>`:"")}<div class="cap">${c.n>1?"pulled ×"+c.n:"pulled once"}</div></div>`}).join(""):(all.length?`<p class="sub" style="grid-column:1/-1">no favorites yet. tap favorite on any card you love.</p>`:"");gridCull.watch(gEl)}
 function toggleFav(b){const id=+b.dataset.id;if(state.fav[id])delete state.fav[id];else state.fav[id]={f:b.dataset.f,t:b.dataset.t};save();
- const on=!!state.fav[id];document.querySelectorAll('#stage .fv[data-id="'+id+'"],#lb .fv[data-id="'+id+'"]').forEach(x=>{x.classList.toggle("on",on);x.innerHTML=favTxt(on,x.classList.contains("sm")?"sm":"")});renderGrid()}
+ const on=!!state.fav[id];document.querySelectorAll('#stage .fv[data-id="'+id+'"],#lb .fv[data-id="'+id+'"]').forEach(x=>{x.classList.toggle("on",on);x.innerHTML=favTxt(on,x.classList.contains("sm")?"sm":"")});favGrid(id,on)}
+function favGrid(id,on){
+ if(state.filter=="smiles"){renderGrid();return}
+ document.querySelectorAll('#grid .cardbox[data-id="'+id+'"]').forEach(b=>{const m=b.querySelector(".fvmark");
+  if(on&&!m)b.insertAdjacentHTML("beforeend",`<span class="fvmark">${ic("heart","#d6336c")}</span>`);else if(!on&&m)m.remove()});
+ setCount(Object.values(state.col))}
 const resetFx=f=>{if(f)["--mx","--my","--tx","--ty","--gx","--ang","--shl","--shr"].forEach(k=>f.style.removeProperty(k))};
 const cl=v=>Math.min(1,Math.max(0,v));
 function tiltCard(box,e){const b=box.getBoundingClientRect(),px=cl((e.clientX-b.left)/b.width),py=cl((e.clientY-b.top)/b.height);
@@ -709,15 +702,24 @@ const lbFront=()=>{const n=v=>((v%360)+360)%360,f=v=>n(v)<25||n(v)>335;return f(
 function lbReset(){const b=lbBox();if(!b)return;cancelAnimationFrame(LB.raf);LB.spin=false;LB.vx=LB.vy=0;LB.rx=LB.ry=0;b.style.cursor="grab";
  lbApply(b,false);const t=b.querySelector(".tilt");t.style.transition="transform .6s cubic-bezier(.2,.9,.3,1.15)";
  clearTimeout(LB.rt);LB.rt=setTimeout(()=>{t.style.transition=""},650)}
-function endDrag(){if(!LB.drag)return;LB.drag=false;if(!LB.mv){LB.pan=false;lbReset();return}if(LB.pan){LB.pan=false;const b1=lbBox();if(b1)b1.style.cursor="grab";return}LB.spin=true;const b0=lbBox();if(b0)b0.style.cursor="grab";
+function endDrag(){if(!LB.drag)return;pmFrame.flush();LB.drag=false;if(!LB.mv){LB.pan=false;lbReset();return}if(LB.pan){LB.pan=false;const b1=lbBox();if(b1)b1.style.cursor="grab";return}LB.spin=true;const b0=lbBox();if(b0)b0.style.cursor="grab";
  const step=()=>{const b=lbBox();if(!b){LB.spin=false;return}LB.ry+=LB.vx;LB.rx-=LB.vy;LB.vx*=.94;LB.vy*=.94;lbApply(b,true);
   if(Math.abs(LB.vx)+Math.abs(LB.vy)>.1)LB.raf=requestAnimationFrame(step);else{LB.spin=false;lbApply(b,false)}};
  LB.raf=requestAnimationFrame(step)}
 document.addEventListener("pointerup",endDrag);document.addEventListener("pointercancel",endDrag);
-function closeLb(){cancelAnimationFrame(LB.raf);LB.drag=LB.spin=false;LB.z=1;LB.px=LB.py=0;LB.pan=false;lb.classList.remove("on","zoomed");closeRaw();lb.innerHTML=""}
+function closeLb(){cancelAnimationFrame(LB.raf);LB.drag=LB.spin=false;LB.z=1;LB.px=LB.py=0;LB.pan=false;lb.classList.remove("on","zoomed");document.body.classList.remove("lbopen");closeRaw();lb.innerHTML=""}
 function openLb(b){cancelAnimationFrame(LB.raf);LB.z=1;LB.px=LB.py=0;LB.pan=false;lb.classList.remove("zoomed");LB.rx=LB.ry=0;LB.drag=LB.spin=false;const id=+b.dataset.id,p=PETS[id];
  lb.innerHTML=cardBox(id,b.dataset.f,b.dataset.t,"",true).replace('class="cardbox"','class="cardbox" style="--w:min(78vw,320px);cursor:grab"')+`<div class="acts">${favBtn(id,b.dataset.f,b.dataset.t,"made me smile")}${meetLink(p)}${rawBtn(p)}<button class="ghost x" style="color:#fff;border-color:#fff8">close</button></div>${fxText(b.dataset.f,b.dataset.t)}<div class="hint" style="color:#fffa">drag the card to rotate it · scroll to zoom</div>`;
- lb.classList.add("on");lb.querySelector(".x").onclick=closeLb}
+ lb.classList.add("on");document.body.classList.add("lbopen");lb.querySelector(".x").onclick=closeLb;
+ /* fly the card from where it was clicked to the centre of the screen */
+ const nb=lbBox();
+ if(nb&&nb.animate&&!matchMedia("(prefers-reduced-motion:reduce)").matches){
+  const a=b.getBoundingClientRect(),z=nb.getBoundingClientRect();
+  if(a.width&&z.width){
+   const dx=a.left+a.width/2-(z.left+z.width/2),dy=a.top+a.height/2-(z.top+z.height/2),k=a.width/z.width;
+   nb.animate([{transform:`translate(${dx}px,${dy}px) scale(${k})`},{transform:"none"}],{duration:420,easing:"cubic-bezier(.2,.9,.25,1)"});
+   lb.animate([{opacity:0},{opacity:1}],{duration:220,easing:"ease-out"});
+   lb.querySelectorAll(".acts,.fxl,.hint").forEach(e=>e.animate([{opacity:0},{opacity:0,offset:.45},{opacity:1}],{duration:420}))}}}
 lb.onclick=e=>{if(e.target===lb)closeLb()};
 // scroll wheel zooms toward the cursor; once zoomed in, dragging pans instead of rotating
 function lbZoom(b){const w=Math.min(innerWidth*.78,320)*LB.z,mx=Math.max(0,w/2-innerWidth/2)+80,my=Math.max(0,w*1.4/2-innerHeight/2)+80;
@@ -733,10 +735,11 @@ document.addEventListener("click",e=>{const rb=e.target.closest&&e.target.closes
  const ch=e.target.closest&&e.target.closest(".chip");if(ch){state.filter=ch.dataset.f;save();renderGrid();return}
  const v=e.target.closest&&e.target.closest(".fv");if(v){toggleFav(v);return}
  const b=e.target.closest&&e.target.closest(".cardbox[data-id]");if(b&&!b.closest("#lb"))openLb(b)});
-document.addEventListener("pointermove",e=>{if(LB.drag){const b=lbBox();if(!b)return;if(Math.hypot(e.clientX-LB.sx,e.clientY-LB.sy)>5)LB.mv=true;const dx=e.clientX-LB.lx,dy=e.clientY-LB.ly;LB.lx=e.clientX;LB.ly=e.clientY;if(LB.pan){LB.px+=dx;LB.py+=dy;lbZoom(b);return}LB.ry+=dx*.6;LB.rx-=dy*.6;LB.vx=dx*.6;LB.vy=dy*.6;lbApply(b,true);return}
+const pmFrame=perFrame((k,box,cx,cy)=>{if(!box.isConnected)return;if(k==1)lbApply(box,true);else if(k==2)lbZoom(box);else tiltCard(box,{clientX:cx,clientY:cy})});
+document.addEventListener("pointermove",e=>{if(LB.drag){const b=lbBox();if(!b)return;if(Math.hypot(e.clientX-LB.sx,e.clientY-LB.sy)>5)LB.mv=true;const dx=e.clientX-LB.lx,dy=e.clientY-LB.ly;LB.lx=e.clientX;LB.ly=e.clientY;if(LB.pan){LB.px+=dx;LB.py+=dy;pmFrame(2,b);return}LB.ry+=dx*.6;LB.rx-=dy*.6;LB.vx=dx*.6;LB.vy=dy*.6;pmFrame(1,b);return}
  if(LB.spin)return;const inLb=lb.classList.contains("on");if(inLb&&!lbFront())return;/* preview: cursor tilt only while the card faces front */
- const box=inLb?lb.querySelector(".cardbox"):(e.target.closest&&e.target.closest(".cardbox[data-id]"));if(box)tiltCard(box,e)});
-document.addEventListener("pointerout",e=>{const b=e.target.closest&&e.target.closest(".cardbox");if(b&&!b.closest("#lb")&&!b.contains(e.relatedTarget)){b.querySelector(".tilt").style.transform="";resetFx(b.querySelector(".front"))}});
+ const box=inLb?lb.querySelector(".cardbox"):(e.target.closest&&e.target.closest(".cardbox[data-id]"));if(box)pmFrame(0,box,e.clientX,e.clientY)});
+document.addEventListener("pointerout",e=>{const b=e.target.closest&&e.target.closest(".cardbox");if(b&&!b.closest("#lb")&&!b.contains(e.relatedTarget)){pmFrame.cancel();b.querySelector(".tilt").style.transform="";resetFx(b.querySelector(".front"))}});
 document.addEventListener("keydown",e=>{if(e.key=="Escape"){if(rawOpen())closeRaw();else if(lb.classList.contains("on"))closeLb();else closeDbg()}});
 document.getElementById("reset").onclick=()=>{if(confirm("clear your collection and favorites, and reset today’s pack?")){state={last:"",fav:{},col:{},filter:"all",pack:null,unl:state.unl};save();renderPack();renderGrid()}};
 // ===== debug gallery: every finish, tint, texture, shiny mode, parallax and card color =====
@@ -749,7 +752,7 @@ function openDbg(){let d=document.getElementById("dbg");
    <label><input type="checkbox" id="dbg-par"> parallax</label>
    <button class="ghost dx" style="margin-left:auto">close</button></div><div class="dbody"></div>`;
   document.body.appendChild(d);d.querySelector(".bar").addEventListener("change",buildDbg);d.querySelector(".dx").onclick=closeDbg}
- buildDbg();d.classList.add("on");d.scrollTop=0}
+ d.classList.add("on");d.scrollTop=0;buildDbg()}
 function closeDbg(){const d=document.getElementById("dbg");if(d)d.classList.remove("on")}
 function buildDbg(){const d=document.getElementById("dbg"),q=s=>d.querySelector(s);
  const pet=+q("#dbg-pet").value,col=q("#dbg-col").value,shy=q("#dbg-shy").value,par=q("#dbg-par").checked?"p":"";
@@ -768,7 +771,7 @@ function buildDbg(){const d=document.getElementById("dbg"),q=s=>d.querySelector(
  q(".dbody")&&q(".dbody").remove();
  const b=document.createElement("div");b.className="dbody";
  b.innerHTML=sec.map(([h,sub,items])=>`<h3>${h} <span class="dsub">(${items.length})</span></h3><p class="dsub">${sub} hover or tap a card to tilt it; click for the full preview.</p><div class="grid">${items.map(([l,f,t])=>`<div class="cell">${cardBox(pet,f,t)}<div class="cap">${l}</div></div>`).join("")}</div>`).join("");
- d.appendChild(b)}
+ d.appendChild(b);dbgCull.watch(b)}
 document.getElementById("dbgbtn").onclick=openDbg;
 const unl=document.getElementById("unl");unl.checked=!!state.unl;
 unl.onchange=()=>{state.unl=unl.checked;save();if(!document.getElementById("scene")&&!state.pack)renderPack()};
