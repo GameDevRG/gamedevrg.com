@@ -24,6 +24,21 @@ h1{font-size:22px;margin:0 0 2px;text-align:center}
 .sub{color:var(--muted);margin:0;font-size:14px;text-align:center}
 .stage{min-height:min(82vh,640px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;position:relative}
 .hint{color:var(--muted);font-size:14px;text-align:center;min-height:20px}
+/* pack carousel: swipe between unopened packs */
+.pkcar{width:100%;display:flex;align-items:center;justify-content:center;touch-action:pan-y;user-select:none;-webkit-user-select:none;overflow-x:clip;padding:8px 0}
+.pkc{flex:none;display:flex;justify-content:center}
+.pkc.mid.slide{animation:pkin .38s cubic-bezier(.2,.9,.3,1.15)}
+@keyframes pkin{from{opacity:0;transform:translateX(var(--dx,60px)) scale(.92)}}
+.pkc.side{width:calc(var(--w)*.5);margin:0 calc(var(--w)*-.06);position:relative;z-index:0}
+.pkc.mid{z-index:1;margin:0 calc(var(--w)*.04)}
+.pkm{position:relative;width:calc(var(--w)*.5);height:calc(var(--w)*.75);border-radius:3px;overflow:hidden;opacity:.55;filter:saturate(.85) brightness(.82);cursor:pointer;transition:opacity .2s,filter .2s,transform .25s;box-shadow:0 8px 14px rgba(0,0,0,.35)}
+.pkc.l .pkm{transform:perspective(500px) rotateY(26deg)}.pkc.r .pkm{transform:perspective(500px) rotateY(-26deg)}
+.pkm:hover,.pkm:focus-visible{opacity:.9;filter:none;outline:none}
+.pkm .pk-ic{font-size:30px}.pkm .pk-ti{font-size:11px}.pkm .pk-su,.pkm .pk-tl{display:none}.pkm .pk-mid{gap:4px;margin-top:0}.pkm .pk-crimp{height:8px}
+.pkm .cnt{position:absolute;right:5px;bottom:12px;z-index:3;background:rgba(0,0,0,.55);color:#fff;border-radius:99px;padding:1px 7px;font:700 11px "Chakra Petch",system-ui,sans-serif}
+.pkbar{display:flex;align-items:center;gap:12px;color:var(--text);font-size:15px}
+.pkbar b{font-weight:700}.pkbar .nav{width:34px;height:34px;padding:0;border-radius:50%;font-size:20px;line-height:1}
+.pkdots{display:flex;gap:7px;margin-top:-4px}.pkdots i{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:transform .2s,background .2s}.pkdots i.on{background:var(--accent);transform:scale(1.3)}
 .dots{display:flex;gap:8px}.dots i{width:8px;height:8px;border-radius:50%;background:var(--border)}.dots i.on{background:var(--accent)}.dots i.done{background:var(--muted)}
 .pk{position:relative;width:var(--w);height:calc(var(--w)*1.5);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab;filter:drop-shadow(0 14px 16px rgba(0,0,0,.32));outline:none}
 .pk.off{filter:grayscale(.8) opacity(.55);cursor:default}
@@ -40,7 +55,7 @@ h1{font-size:22px;margin:0 0 2px;text-align:center}
 .pk-strip{visibility:hidden;will-change:transform}
 .pk.tearing .pk-strip{visibility:visible}
 .pk-art{position:absolute;inset:0;overflow:hidden;color:#fff;display:flex;align-items:center;justify-content:center;
-background:linear-gradient(115deg,transparent calc(var(--sx,35%) - 20%),rgba(255,255,255,.5) var(--sx,35%),transparent calc(var(--sx,35%) + 20%)),repeating-linear-gradient(112deg,#f58a3f 0,#ffb871 6%,#d8427b 13%,#ff8e57 19%,#c9366b 26%,#f58a3f 32%);
+background:linear-gradient(115deg,transparent calc(var(--sx,35%) - 20%),rgba(255,255,255,.5) var(--sx,35%),transparent calc(var(--sx,35%) + 20%)),var(--pf,repeating-linear-gradient(112deg,#f58a3f 0,#ffb871 6%,#d8427b 13%,#ff8e57 19%,#c9366b 26%,#f58a3f 32%));
 box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),inset 9px 0 14px rgba(0,0,0,.14),inset -9px 0 14px rgba(0,0,0,.14),inset 0 -18px 20px -10px rgba(0,0,0,.25)}
 .pk-art::after{content:"";position:absolute;left:0;right:0;top:16px;bottom:16px;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.3),rgba(255,255,255,.04) 45%,rgba(0,0,0,.2));box-shadow:inset 1.5px 1.5px 0 rgba(255,255,255,.6),inset -1.5px -1.5px 0 rgba(0,0,0,.3),3px 4px 7px rgba(0,0,0,.28),5px 6px 0 -2px rgba(0,0,0,.12)}
 .pk-art::before{content:"";position:absolute;inset:0;background-image:var(--grain);background-size:160px 160px;mix-blend-mode:overlay;opacity:.5}
@@ -322,15 +337,31 @@ linear-gradient(115deg,var(--rc) 0,var(--rc) calc(var(--gx,50%) - 30%),color-mix
 .var-warm{--vhr:-50deg}.var-cool{--vhr:70deg}.var-twilight{--vhr:150deg}
 .front.tint-rb.fin-holo[class*="var-"] .pholo,.front.tint-rb.fin-edge[class*="var-"] .pholo,.front.tint-rb.fin-prism[class*="var-"] .pholo{filter:saturate(1.6) contrast(1.15) hue-rotate(var(--vhr,0deg))}
 .var-reversed .holo,.var-reversed .holo::before,.var-reversed .holo::after,.var-reversed .pholo{animation-direction:reverse!important}
-.pk-art.k-classic{filter:hue-rotate(30deg)}.pk-art.k-mega{filter:hue-rotate(300deg)}.pk-art.k-cat{filter:hue-rotate(250deg)}.pk-art.k-dog{filter:hue-rotate(165deg)}.pk-art.k-critter{filter:hue-rotate(75deg)}.pk-art.k-lucky{filter:hue-rotate(195deg) saturate(1.3)}
+/* a different paint job for every pack */
+.k-mega{--pf:radial-gradient(circle at 50% 118%,rgba(255,222,120,.6) 0 32%,transparent 33%),repeating-linear-gradient(112deg,#4a1fa8 0,#8a4dff 7%,#d46bff 14%,#6a2fd6 21%,#3d1790 28%,#4a1fa8 34%)}
+.k-cat{--pf:radial-gradient(circle at 18% 22%,rgba(255,255,255,.3) 0 2px,transparent 3px) 0 0/26px 26px,repeating-linear-gradient(112deg,#1f3a9e 0,#4f7bff 8%,#9a8bff 15%,#2c4fcf 22%,#1b2f85 30%,#1f3a9e 36%)}
+.k-dog{--pf:repeating-linear-gradient(45deg,rgba(255,255,255,.15) 0 6px,transparent 6px 14px),repeating-linear-gradient(112deg,#0f8a6e 0,#3fe0b0 8%,#17a589 15%,#0b6f5a 24%,#0f8a6e 34%)}
+.k-critter{--pf:radial-gradient(circle at 70% 30%,rgba(255,255,255,.34) 0 3px,transparent 4px) 0 0/30px 30px,repeating-linear-gradient(112deg,#6a9a14 0,#c6e33b 8%,#8fbf1f 16%,#4f7d0e 26%,#6a9a14 34%)}
+.k-lucky{--pf:radial-gradient(circle at 25% 25%,rgba(255,255,255,.7) 0 1.5px,transparent 2.5px) 0 0/24px 24px,radial-gradient(circle at 75% 70%,rgba(255,255,255,.7) 0 1px,transparent 2px) 0 0/19px 19px,repeating-linear-gradient(112deg,#0e7a3d 0,#4de08a 7%,#f3d36a 14%,#1da35a 22%,#0b6030 30%,#0e7a3d 36%)}
 .shop{margin-top:34px;text-align:left}.shop h2{margin-top:0}
-.shopbar{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;color:var(--muted);font-size:14px}.shopbar b{color:var(--text);font-size:16px}
+.shopbar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-top:6px}
+.bal{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#ffe9a8,#f5b82e);color:#4a3000;border-radius:99px;padding:7px 18px 7px 9px;font:700 20px "Chakra Petch",system-ui,sans-serif;box-shadow:0 2px 0 #b57f0a,0 6px 14px rgba(245,184,46,.35)}
+.bal small{font-size:11px;font-weight:600;opacity:.75;letter-spacing:.08em}
+.coin{display:inline-block;width:1.1em;height:1.1em;border-radius:50%;vertical-align:-.18em;background:radial-gradient(circle at 35% 30%,#fff6c9,#f5b82e 55%,#b57f0a);box-shadow:inset 0 0 0 .12em rgba(120,75,0,.35)}
+.lim{display:inline-flex;align-items:center;gap:5px;color:var(--muted);font-size:13px}.lim i{width:10px;height:10px;border-radius:50%;background:var(--accent)}.lim i.u{background:none;border:1.5px solid var(--border)}
 .invrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.packs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
-.pkt{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px}
-.pkt i{display:block;height:6px;border-radius:3px;background:linear-gradient(90deg,#f58a3f,#d8427b)}.pkt b{font-size:15px}.pkt span{font-size:12.5px;color:var(--muted);line-height:1.35;flex:1}
-.pkt button{align-self:flex-start}
-button:disabled{opacity:.45;cursor:default}
+.packs{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:14px;margin-top:14px}
+.pkt{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 12px 12px;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;transition:transform .2s,box-shadow .2s}
+.pkt.can{box-shadow:0 0 0 1.5px var(--accent) inset}
+.pkt:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(0,0,0,.2)}
+.pkt b{font-size:15px}.pkt .pd{font-size:12.5px;color:var(--muted);line-height:1.35;flex:1}.pkt .pm{font-size:11.5px;letter-spacing:.06em;color:var(--muted)}
+.pkt button{width:100%}.pkt .need{width:100%;height:5px;border-radius:3px;background:var(--border);overflow:hidden}.pkt .need i{display:block;height:100%;background:var(--accent)}
+.mp{position:relative;width:96px;aspect-ratio:2/3.1;border-radius:5px;overflow:hidden;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;transform:rotate(-3deg);transition:transform .25s;margin-bottom:4px;background:var(--pf,repeating-linear-gradient(112deg,#f58a3f 0,#ffb871 6%,#d8427b 13%,#ff8e57 19%,#c9366b 26%,#f58a3f 32%));box-shadow:inset 0 0 0 1px rgba(255,255,255,.35),0 8px 14px rgba(0,0,0,.3),3px 3px 0 rgba(0,0,0,.18)}
+.mp::before,.mp::after{content:"";position:absolute;left:0;right:0;height:9px;background:repeating-linear-gradient(90deg,rgba(0,0,0,.3) 0 2px,rgba(255,255,255,.45) 2px 4px,rgba(0,0,0,.12) 4px 6px)}
+.mp::before{top:0}.mp::after{bottom:0}.pkt:hover .mp{transform:rotate(2deg) scale(1.07)}
+.mp .sh{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.55) 50%,transparent 65%) 0 0/250% 100%;animation:sheen 4s linear infinite;mix-blend-mode:soft-light}
+.mp .mi{position:relative;font-size:34px;line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}.mp em{position:relative;font:700 11px "Chakra Petch",system-ui,sans-serif;font-style:normal;text-shadow:0 1px 2px rgba(0,0,0,.4);letter-spacing:.06em}
+.vb{list-style:none;margin:0 0 12px;padding:0;text-align:left;font-size:13px;border-top:1px solid var(--border)}.vb li{display:flex;justify-content:space-between;gap:10px;padding:5px 2px;border-bottom:1px solid var(--border);color:var(--muted)}.vb li b{color:var(--text)}.vb li.st,.vb li.st b{color:#e0a21b;font-weight:700}
 .jr-d{margin-top:34px}.jr{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:12px;text-align:left}
 .jri{display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px}
 .jri img{width:56px;height:56px;border-radius:8px;object-fit:cover;flex:none}.jri div{min-width:0;font-size:13px;line-height:1.35}
@@ -626,7 +657,7 @@ const PETS=[
 /* the rescuegroups api key lives on your server (RESCUEGROUPS_API_KEY in rescuegroups.js), never in this page. set proxy to your server url + /rescuegroups */
 const RG={proxy:"https://gamedevrg-com-backend.vercel.app/rescuegroups"};
 const hasLive=()=>!!RG.proxy&&!/NOT-SET-YET/.test(RG.proxy);
-const RG_BASE="https://api.rescuegroups.org/v5",LIVEK="petpacks:live",POOLK="petpacks:pool",CFGK="petpacks:cfg";
+const RG_BASE="https://api.rescuegroups.org/v5",LIVEK="petpacks:live",POOLK="petpacks:pool2",CFGK="petpacks:cfg";
 let LIVE={},LIVEN=1000,POOL=[],srcErr="";
 try{const s=JSON.parse(localStorage.getItem(LIVEK)||"null");if(s&&s.pets){LIVE=s.pets;LIVEN=s.next||1000}}catch(e){}
 let cfg={zip:""};try{Object.assign(cfg,JSON.parse(localStorage.getItem(CFGK)||"{}"))}catch(e){}
@@ -656,9 +687,12 @@ function parseRG(j){
  (j.data||[]).forEach(a=>{
   const t=a.attributes||{},pic=one(a,"pictures"),pa=pic&&pic.attributes||{},org=one(a,"orgs"),oa=org&&org.attributes||{},spc=one(a,"species"),br=one(a,"breeds");
   const img=(pa.large&&pa.large.url)||(pa.original&&pa.original.url)||(pa.small&&pa.small.url)||t.pictureThumbnailUrl||"";
-  const url=/^https?:\/\//.test(t.url||"")?t.url:"";
-  if(!/^https:\/\//.test(img)||!url||!t.name)return;
-  let name=tidy(t.name).slice(0,24);if(name===name.toUpperCase())name=name.toLowerCase().replace(/(^|[\s-])([a-z])/g,(m,b,c)=>b+c.toUpperCase());
+  const okUrl=u=>{u=String(u||"").trim();if(u&&!/^https?:\/\//i.test(u)&&/^[\w-]+(\.[\w-]+)+/.test(u))u="https://"+u;return/^https?:\/\/[^\/\s]+\.[^\/\s]+/i.test(u)?u:""};
+  /* many shelters give no per-animal page: fall back to the shelter's adoption page, then its site, then a web search for that pet */
+  let url=okUrl(t.url)||okUrl(oa.adoptionUrl)||okUrl(oa.url);
+  if(!url&&t.name)url="https://www.google.com/search?q="+encodeURIComponent(tidy(t.name)+" "+(t.breedPrimary||"")+" "+(oa.name||"")+" "+(oa.citystate||"")+" adopt");
+  if(!/^https:\/\//.test(img)||!url||!t.name||/^[A-Za-z]?\d{4,}$/.test(String(t.name).trim()))return;
+  let name=tidy(t.name).replace(/\(.*?\)/g," ").replace(/\bcourtesy( post| listing)?\s*:?/ig," ").replace(/^zz\s+/i,"").replace(/["\u201c\u201d]/g,"").replace(/\s+\d+\/\d+.*$/,"").replace(/\s+/g," ").trim().slice(0,24);if(!name)return;if(name===name.toUpperCase())name=name.toLowerCase().replace(/(^|[\s-])([a-z])/g,(m,b,c)=>b+c.toUpperCase());
   const sa=spc&&spc.attributes||{},sp=spOf(sa.singular||sa.plural||sa.name);
   const breed=tidy(t.breedPrimary||(br&&br.attributes&&br.attributes.name)||sa.singular||"").slice(0,28)||SPC[sp];
   const age=tidy(t.ageString||t.ageGroup||"").replace(/(\d+)\s*years?/i,"$1 yr").replace(/(\d+)\s*months?/i,"$1 mo").replace(/(\d+)\s*weeks?/i,"$1 wk").replace(/\s+/g," ").toLowerCase();
@@ -668,22 +702,22 @@ function parseRG(j){
  return out}
 async function fetchLive(){
   if(!hasLive())return[];
- const q=new URLSearchParams({limit:"40",sort:"random",include:"breeds,species,orgs,pictures"});
+ const q=new URLSearchParams({limit:"60",sort:"random",include:"breeds,species,orgs,pictures"});
  const zip=(cfg.zip||"").trim(),body=/^\d{5}$/.test(zip)?JSON.stringify({data:{filterRadius:{miles:50,postalcode:zip}}}):null;
  const h={"Content-Type":"application/vnd.api+json"};
  const base=(RG.proxy||RG_BASE).replace(/\/$/,""),ac=new AbortController(),to=setTimeout(()=>ac.abort(),9000);
  try{
   const r=await fetch(base+"/public/animals/search/available/haspic?"+q,{method:body?"POST":"GET",headers:h,body,signal:ac.signal});
-  if(!r.ok)throw new Error(r.status==503?"the server has no rescuegroups key yet":"the server answered with error "+r.status);
-  return parseRG(await r.json())}
- catch(e){throw e.name=="AbortError"?new Error("rescuegroups.org took too long to answer"):e}
+  if(!r.ok){let j=null;try{j=await r.json()}catch(_){}throw new Error((j&&j.message)||(r.status==404?"your server doesn’t have the rescuegroups route yet":"the server answered with error "+r.status))}
+  let j;try{j=await r.json()}catch(_){throw new Error("the server sent something that isn’t pet data")}return parseRG(j)}
+ catch(e){throw e.name=="AbortError"?new Error("the server took too long to answer"):e instanceof TypeError?new Error("couldn’t reach your server (offline, blocked, or the address is wrong)"):e}
  finally{clearTimeout(to)}}
 async function loadLive(force){
  srcErr="";
  if(!hasLive()){POOL=[];setNote();return}
  try{
   if(!force){const c=JSON.parse(localStorage.getItem(POOLK)||"null");
-   if(c&&c.day===today()&&c.zip===(cfg.zip||"")&&c.ids.every(i=>LIVE[i])&&c.ids.length>=5){POOL=c.ids.map(i=>LIVE[i]);setNote();return}}
+   if(c&&c.day===today()&&c.zip===(cfg.zip||"")&&c.ids.every(i=>LIVE[i])&&c.ids.length>=20){POOL=c.ids.map(i=>LIVE[i]);setNote();return}}
   const list=await fetchLive();
   if(list.length<5)throw new Error("not enough adoptable pets came back"+(cfg.zip?" for that zip code":""));
   POOL=list.map(livePet);saveLive();
@@ -853,6 +887,7 @@ const KEY="petpacks:v3";
 let state={last:"",fav:{},col:{},filter:"all",pack:null,unl:false,pts:0,inv:{},seen:{},shop:{d:"",n:0},cur:null};
 try{const s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(s))}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
+if(!state.econ){state.econ=2;state.pts=Math.round((+state.pts||0)*20)}
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()};
 const stage=document.getElementById("stage");
 const perFrame=fn=>{let a=null,r=0;const run=()=>{r=0;const x=a;a=null;if(x)fn(...x)};
@@ -865,23 +900,60 @@ const mkCull=()=>{if(typeof IntersectionObserver=="undefined")return{watch(){}};
 const gridCull=mkCull(),dbgCull=mkCull();
 
 const PACKS={
- daily:{label:"daily pet packs",n:5,hue:0},
- classic:{label:"classic pack",n:5,cost:6,hue:30,desc:"5 random pets, same odds as the daily pack."},
- mega:{label:"mega pack",n:10,cost:11,hue:300,desc:"10 random pets in one go."},
- cat:{label:"cat pack",n:5,cost:7,hue:250,sp:["cat"],desc:"5 cats, every one looking for a home."},
- dog:{label:"dog pack",n:5,cost:7,hue:165,sp:["dog"],desc:"5 dogs, every one looking for a home."},
- critter:{label:"critter pack",n:5,cost:7,hue:75,sp:["rabbit","bird","small","reptile","horse","farm"],desc:"rabbits, birds, small pets, reptiles and more."},
- lucky:{label:"lucky pack",n:5,cost:10,hue:195,luck:3,desc:"5 pets, with about 3× the chance of finishes, borders and text effects."}
+ daily:{label:"daily pet packs",n:5,hue:0,ico:"paw",what:"shelter pets"},
+ classic:{label:"classic pack",n:5,cost:200,ico:"paw",what:"pets",hue:30,desc:"5 random pets, same odds as the daily pack."},
+ mega:{label:"mega pack",n:10,cost:380,ico:"layers",what:"pets",hue:300,desc:"10 random pets in one go."},
+ cat:{label:"cat pack",n:5,cost:230,ico:"cat",what:"cats",hue:250,sp:["cat"],desc:"5 cats, every one looking for a home."},
+ dog:{label:"dog pack",n:5,cost:230,ico:"dog",what:"dogs",hue:165,sp:["dog"],desc:"5 dogs, every one looking for a home."},
+ critter:{label:"critter pack",n:5,cost:230,ico:"rabbit",what:"critters",hue:75,sp:["rabbit","bird","small","reptile","horse","farm"],desc:"rabbits, birds, small pets, reptiles and more."},
+ lucky:{label:"lucky pack",n:5,cost:350,ico:"star-four-points",what:"pets",hue:195,luck:3,desc:"5 pets, with about 3× the chance of finishes, borders and text effects."}
 };
 const SHOP_CAP=3,PKS=["classic","mega","cat","dog","critter","lucky"];
-const pkArt=(off,kind)=>`<div class="pk-art${kind&&kind!="daily"?" k-"+kind:""}"><span class="pk-crimp t"></span><span class="pk-crimp b"></span><div class="pk-tl"><span>${off?"":"‹ tear here ›"}</span></div><div class="pk-mid"><div class="pk-ic">${ic("paw")}</div><div class="pk-ti">${PACKS[kind||"daily"].label}</div><div class="pk-su">${off?"pack opened":PACKS[kind||"daily"].n+" shelter pets inside"}</div></div></div>`;
+const pkArt=(off,kind)=>`<div class="pk-art${kind&&kind!="daily"?" k-"+kind:""}"><span class="pk-crimp t"></span><span class="pk-crimp b"></span><div class="pk-tl"><span>${off?"":"‹ tear here ›"}</span></div><div class="pk-mid"><div class="pk-ic">${ic(PACKS[kind||"daily"].ico||"paw")}</div><div class="pk-ti">${PACKS[kind||"daily"].label}</div><div class="pk-su">${off?"pack opened":PACKS[kind||"daily"].n+" "+(PACKS[kind||"daily"].what||"shelter pets")+" inside"}</div></div></div>`;
+/* every pack you can open right now: today's daily pack (if not opened yet) plus any packs you bought */
+const packList=()=>{const L=[];if(state.unl||state.last!==today())L.push(["daily",1]);PKS.forEach(k=>{if((state.inv[k]||0)>0)L.push([k,state.inv[k]])});return L};
+let PKDIR=0;
+const pkCur=L=>{const k=state.cur||"daily",i=L.findIndex(x=>x[0]==k);return i<0?0:i};
+function pkTo(j,dir){const L=packList();if(L.length<2||state.pack||document.querySelector(".pk.tearing,.pk.open,.pk.drop"))return;
+ const i=pkCur(L);j=((j%L.length)+L.length)%L.length;if(j==i)return;PKDIR=dir||(j>i?1:-1);
+ state.cur=L[j][0]=="daily"?null:L[j][0];save();renderPack();renderShop()}
+const pkGo=d=>pkTo(pkCur(packList())+d,d);
+function packMarkup(kind,ready){return `<div class="pkw${ready?"":" off"}"><div class="pk${ready?"":" off"}" id="pack" ${ready?'role="button" tabindex="0" aria-label="tear open the pack"':'aria-disabled="true"'}><div class="pk-cards"><i></i><i></i><i></i></div><div class="pk-layer pk-low">${pkArt(!ready,kind)}<i class="pk-rim"></i></div><div class="pk-layer pk-strip">${pkArt(!ready,kind)}<i class="pk-rim"></i></div></div></div>`}
 function renderPack(){
- const kind=state.cur||"daily",ready=state.cur?true:(state.unl||state.last!==today()),has=Object.values(state.inv).some(n=>n>0);
- stage.innerHTML=`<div class="pkw${ready?"":" off"}"><div class="pk${ready?"":" off"}" id="pack" ${ready?'role="button" tabindex="0" aria-label="tear open the pack"':'aria-disabled="true"'}><div class="pk-cards"><i></i><i></i><i></i></div><div class="pk-layer pk-low">${pkArt(!ready,kind)}<i class="pk-rim"></i></div><div class="pk-layer pk-strip">${pkArt(!ready,kind)}<i class="pk-rim"></i></div></div></div>
- <div class="hint">${ready?"swipe across the top to tear the pack open, or just tap it":"come back tomorrow for a fresh pack"+(has?", or open one of your packs below":"")}</div>${state.cur?'<button class="ghost" id="putback">put it back</button>':""}`;
- if(ready)bindPack();
- const pb=document.getElementById("putback");if(pb)pb.onclick=()=>{state.cur=null;save();renderPack();renderShop()};
+ const L=packList(),n=L.length;
+ if(!n){ // nothing to open: today's pack is gone and no bought packs
+  const kind="daily";state.cur=null;
+  stage.innerHTML=packMarkup(kind,false)+`<div class="hint">come back tomorrow for a fresh pack</div>`;return}
+ const kind=state.cur&&L.some(x=>x[0]==state.cur)?state.cur:L[0][0];
+ state.cur=kind=="daily"?null:kind;
+ const i=L.findIndex(x=>x[0]==kind),cnt=L[i][1],dailyDone=!L.some(x=>x[0]=="daily");
+ const lj=n>=3?i-1:(n==2&&i==1?0:null),rj=n>=3?i+1:(n==2&&i==0?1:null);
+ const side=(j,cls)=>{if(j==null)return`<div class="pkc side"></div>`;const[k,c]=L[((j%n)+n)%n];
+  return `<div class="pkc side ${cls}" data-go="${j}"><div class="pkm" role="button" tabindex="0" aria-label="show ${PACKS[k].label}">${pkArt(false,k)}${c>1?`<b class="cnt">×${c}</b>`:""}</div></div>`};
+ const slide=PKDIR?` slide" style="--dx:${PKDIR*70}px`:"";PKDIR=0;
+ stage.innerHTML=(n>1?`<div class="pkcar" id="pkcar">${side(lj,"l")}<div class="pkc mid${slide}">${packMarkup(kind,true)}</div>${side(rj,"r")}</div>`:packMarkup(kind,true))
+  +(n>1?`<div class="pkbar"><button class="ghost nav" data-go="${i-1}" aria-label="previous pack">‹</button><span><b>${PACKS[kind].label}</b>${cnt>1?" ×"+cnt:""}</span><button class="ghost nav" data-go="${i+1}" aria-label="next pack">›</button></div><div class="pkdots">${L.map((x,j)=>`<i class="${j==i?"on":""}" data-go="${j}"></i>`).join("")}</div>`:(kind!="daily"&&cnt>1?`<div class="pkbar"><span><b>${PACKS[kind].label}</b> ×${cnt}</span></div>`:""))
+  +`<div class="hint">swipe across the top to tear the pack open, or just tap it${n>1?"<br>swipe sideways, tap a pack or use ‹ › to switch packs":""}${dailyDone?"<br>today’s daily pack is already opened, come back tomorrow for a fresh one":""}</div>`;
+ if(n>1)bindCar();
+ bindPack();
 }
+function bindCar(){
+ const car=document.getElementById("pkcar");if(!car)return;
+ let sx=0,down=false,moved=false,tgt=null;
+ car.onpointerdown=e=>{if(e.target.closest("#pack"))return;down=true;moved=false;sx=e.clientX;tgt=e.target.closest("[data-go]")};
+ car.onpointermove=e=>{if(down&&Math.abs(e.clientX-sx)>8)moved=true};
+ car.onpointerup=e=>{if(!down)return;down=false;const dx=e.clientX-sx;if(Math.abs(dx)>40)pkGo(dx<0?1:-1);else if(!moved&&tgt)pkTo(+tgt.dataset.go)};
+ car.onpointercancel=()=>{down=false};
+ car.querySelectorAll(".pkm").forEach(m=>m.onkeydown=e=>{if(e.key=="Enter"||e.key==" "){e.preventDefault();pkTo(+m.closest("[data-go]").dataset.go)}});
+ stage.querySelectorAll(".pkbar [data-go],.pkdots [data-go]").forEach(b=>b.onclick=()=>pkTo(+b.dataset.go))}
+let pkWheel=0;
+stage.addEventListener("wheel",e=>{if(!document.getElementById("pkcar"))return;
+ if(Math.abs(e.deltaX)>Math.abs(e.deltaY)&&Math.abs(e.deltaX)>24&&Date.now()-pkWheel>450){pkWheel=Date.now();e.preventDefault();pkGo(e.deltaX>0?1:-1)}},{passive:false});
+document.addEventListener("keydown",e=>{if(e.key!="ArrowLeft"&&e.key!="ArrowRight")return;
+ if(!document.getElementById("pkcar")||state.pack)return;
+ if(e.target.closest&&e.target.closest("input,textarea,select,#tradepop,#raw"))return;
+ const l=document.getElementById("lb");if(l&&l.classList.contains("on"))return;
+ pkGo(e.key=="ArrowRight"?1:-1)});
 // deal today's five cards (called once the pack is fully torn)
 function openPack(){
  const kind=state.cur||"daily",K=PACKS[kind]||PACKS.daily,base=POOL.length>=5?POOL:PETS;
@@ -1207,7 +1279,7 @@ document.addEventListener("pointermove",e=>{if(LB.drag){const b=lbBox();if(!b)re
  const box=inLb?lb.querySelector(".cardbox"):(e.target.closest&&e.target.closest(".cardbox[data-id]"));if(box)pmFrame(0,box,e.clientX,e.clientY)});
 document.addEventListener("pointerout",e=>{const b=e.target.closest&&e.target.closest(".cardbox");if(b&&!b.closest("#lb")&&!b.contains(e.relatedTarget)){pmFrame.cancel();b.querySelector(".tilt").style.transform="";resetFx(b.querySelector(".front"))}});
 document.addEventListener("keydown",e=>{if(e.key=="Escape"){if(rawOpen())closeRaw();else if(lb.classList.contains("on"))closeLb();else closeDbg()}});
-document.getElementById("reset").onclick=()=>{if(confirm("clear your collection and favorites, and reset today’s pack?")){state={last:"",fav:{},col:{},filter:"all",pack:null,unl:state.unl};save();renderPack();renderGrid()}};
+document.getElementById("reset").onclick=()=>{if(confirm("clear your collection and favorites, and reset today’s pack?")){state={last:"",fav:{},col:{},filter:"all",pack:null,unl:state.unl,pts:0,inv:{},seen:{},shop:{d:"",n:0},cur:null,econ:2};save();renderPack();renderGrid()}};
 // ===== debug gallery: every finish, tint, texture, shiny mode, parallax and card color =====
 function openDbg(){let d=document.getElementById("dbg");
  if(!d){d=document.createElement("div");d.id="dbg";
@@ -1316,8 +1388,24 @@ Object.keys(state.fav).forEach(id=>{if(!Object.values(state.col).some(c=>c.id==i
 Object.values(state.col).forEach(c=>{if(!state.seen[c.id])state.seen[c.id]=c.at||Date.now()});
 
 /* ---- trading cards in for points, the pack shop, and the list of pets you've met ---- */
-const cardValue=(f,t)=>{const gd=(t||"").split(".")[5],tf=(t||"").split(".")[6];return SR[f]?5:BORD[gd]?3:(f||TFX[tf])?2:1};
-const ptsTxt=n=>n+" point"+(n==1?"":"s");
+/* points economy: every effect is worth points by how rare it really is (from the same odds the roll uses),
+   and stacking several effects on one card multiplies the whole total */
+const BASE_VALUE=10,STACK_BONUS=.5;
+const pv=p=>p>0?Math.max(5,Math.round(10*Math.pow(1/p,.35)/5)*5):5;
+function valueInfo(f,t){const[tn,tx,bg,sh,par0,gd,tf,vr0]=(t||"").split(".");
+ const parts=[["pet card",BASE_VALUE]];let k=0;const add=(l,p,st)=>{parts.push([l,pv(p)]);if(st)k++};
+ const par=par0===undefined||par0=="p",vr=VARS[vr0]&&VARE.includes(f)?vr0:"";
+ if(f&&FIN[f])add((SR[f]?"super rare ":"")+FIN[f].label,finP(f),1);
+ if(f&&FIN[f]&&tx&&TEX[tx]&&!SR[f])add(TEX[tx][0]+" texture",.12/TEXK.length,1);
+ if(vr)add(VARS[vr].n+" variation",VAR_CHANCE/VARK.length,1);
+ if(BORD[gd])add(BORD[gd].n+" border",BORDER_CHANCE*BORD[gd].w/BFXT,1);
+ if(TFX[tf])add("text: "+TFX[tf].label,TFX_CHANCE*TFX[tf].w/TFLT,1);
+ if(SHY[sh])add("shiny "+SHY[sh].toLowerCase(),SHINY_CHANCE/(EDGE_OK.includes(f||"")?3:2),1);
+ if(par)add("parallax photo",PARALLAX_CHANCE,0);
+ const sum=parts.reduce((s,x)=>s+x[1],0),mult=k>1?1+STACK_BONUS*(k-1):1;
+ return{parts,k,mult,total:Math.round(sum*mult/5)*5}}
+const cardValue=(f,t)=>valueInfo(f,t).total;
+const ptsTxt=n=>n.toLocaleString()+" point"+(n==1?"":"s");
 function tradeBtn(id,f,t,b){
  if(!state.col[ck(id,f,t)]||!(b&&b.closest&&b.closest("#grid,#stage")))return"";
  const fav=!!state.fav[id];
@@ -1329,9 +1417,9 @@ function tradeIn(id,f,t){const k=ck(id,f,t),c=state.col[k];if(!c||state.fav[id])
  state.pts+=cardValue(f,t);c.n--;if(c.n<=0)delete state.col[k];if(!state.seen[id])state.seen[id]=Date.now();save();return true}
 function closeTradePop(){const el=document.getElementById("tradepop");if(el){el.classList.remove("on");el.innerHTML=""}}
 function tradePop(id,f,t){
- const p=petOf(id),v=cardValue(f,t);if(!p)return;
+ const p=petOf(id),vi=valueInfo(f,t),v=vi.total;if(!p)return;
  let el=document.getElementById("tradepop");if(!el){el=document.createElement("div");el.id="tradepop";document.body.appendChild(el)}
- el.innerHTML=`<div class="tpbox" role="dialog" aria-modal="true" aria-label="trade in this card"><div class="tpcard">${cardBox(id,f,t)}</div><h3>trade in ${p.name}?</h3><p>you’ll get <b>${ptsTxt(v)}</b>. the card leaves your collection, but ${p.name} stays in your list of pets you’ve met.</p><div class="tpacts"><button class="act" id="tpyes">trade in</button><button class="ghost" id="tpno">keep it</button></div></div>`;
+ el.innerHTML=`<div class="tpbox" role="dialog" aria-modal="true" aria-label="trade in this card"><div class="tpcard">${cardBox(id,f,t)}</div><h3>trade in ${p.name}?</h3><ul class="vb">${vi.parts.map(x=>`<li><span>${x[0]}</span><b>+${x[1].toLocaleString()}</b></li>`).join("")}${vi.mult>1?`<li class="st"><span>${vi.k} effects stacked</span><b>×${vi.mult}</b></li>`:""}</ul><p>you’ll get <b>${ptsTxt(v)}</b>. the card leaves your collection, but ${p.name} stays in your list of pets you’ve met.</p><div class="tpacts"><button class="act" id="tpyes">trade in</button><button class="ghost" id="tpno">keep it</button></div></div>`;
  el.classList.add("on");
  el.onclick=e=>{e.stopPropagation();if(e.target===el)closeTradePop()};
  document.getElementById("tpno").onclick=closeTradePop;
@@ -1344,14 +1432,15 @@ function shopToday(){if(state.shop.d!==today())state.shop={d:today(),n:0};return
 function poolCount(k){const base=POOL.length>=5?POOL:PETS,K=PACKS[k];return K.sp?base.filter(p=>K.sp.includes(p.sp)).length:base.length}
 function renderShop(){const el=document.getElementById("shop");if(!el)return;
  const sd=shopToday(),left=state.unl?99:Math.max(0,SHOP_CAP-sd.n),busy=!!state.pack,inv=Object.entries(state.inv).filter(([k,n])=>n>0&&PACKS[k]);
- el.innerHTML=`<h2>pack shop</h2><div class="shopbar"><span>points: <b>${state.pts}</b></span><span>${state.unl?"playtest mode: no daily limit":"extra packs you can buy today: "+left+" of "+SHOP_CAP}</span></div>
- <div class="sub" style="text-align:left;margin-top:4px">trade in a card from your collection (open it and tap trade in) to earn points. favorited cards can’t be traded until you unfavorite them.</div>
+ const pips=Array.from({length:SHOP_CAP},(_,i)=>`<i class="${i<left?"":"u"}"></i>`).join("");
+ el.innerHTML=`<h2>pack shop</h2><div class="shopbar"><span class="bal"><span class="coin"></span>${state.pts.toLocaleString()} <small>points</small></span><span class="lim">${state.unl?"playtest mode: no daily limit":"extra packs today "+pips+" · "+left+" of "+SHOP_CAP+" left"}</span></div>
+ <div class="sub" style="text-align:left;margin-top:6px">trade in a card from your collection (open it and tap trade in) to earn points. every effect is worth points by how rare it is, and stacking several effects on one card multiplies the total. favorited cards can’t be traded until you unfavorite them.</div>
  ${inv.length?`<div class="invrow">${inv.map(([k,n])=>`<button class="act" data-open="${k}"${busy?" disabled":""}>open ${PACKS[k].label}${n>1?" ×"+n:""}</button>`).join("")}</div>`:""}
- <div class="packs">${PKS.map(k=>{const K=PACKS[k],few=K.sp&&poolCount(k)<3,why=few?"not enough available today":state.pts<K.cost?"need "+(K.cost-state.pts)+" more":left<1?"daily limit reached":"";
-  return `<div class="pkt"><i style="filter:hue-rotate(${K.hue}deg)"></i><b>${K.label}</b><span>${K.desc}</span><button class="chip" data-buy="${k}"${why?" disabled":""}>${why||"buy · "+ptsTxt(K.cost)}</button></div>`}).join("")}</div>`;
+  <div class="packs">${PKS.map(k=>{const K=PACKS[k],few=K.sp&&poolCount(k)<3,short=K.cost-state.pts,why=few?"not enough available today":short>0?"need "+short.toLocaleString()+" more":left<1?"daily limit reached":"";
+  return `<div class="pkt${why?"":" can"}"><div class="mp k-${k}"><u class="sh"></u><span class="mi">${ic(K.ico,"#fff")}</span><em>${K.label.replace(" pack","")}</em></div><b>${K.label}</b><span class="pd">${K.desc}</span><div class="pm">${K.n} ${K.what}${K.luck?" · "+K.luck+"× sparkle":""}</div>${short>0&&!few?`<div class="need"><i style="width:${Math.min(100,Math.round(state.pts/K.cost*100))}%"></i></div>`:""}<button class="chip" data-buy="${k}"${why?" disabled":""}>${why||'buy · <span class="coin"></span> '+K.cost.toLocaleString()}</button></div>`}).join("")}</div>`;
  el.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>{const k=b.dataset.buy,K=PACKS[k],sd=shopToday();
   if(state.pts<K.cost||(!state.unl&&sd.n>=SHOP_CAP))return;
-  state.pts-=K.cost;state.inv[k]=(state.inv[k]||0)+1;sd.n++;save();renderShop()});
+  state.pts-=K.cost;state.inv[k]=(state.inv[k]||0)+1;sd.n++;save();renderShop();if(!state.pack&&document.getElementById("pack")&&!document.querySelector(".pk.tearing,.pk.open,.pk.drop"))renderPack()});
  el.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{if(state.pack)return;state.cur=b.dataset.open;save();renderPack();renderShop();stage.scrollIntoView({behavior:"smooth",block:"center"})})}
 function renderJournal(){const el=document.getElementById("journal"),sm=document.getElementById("jrs");if(!el)return;
  const ids=Object.keys(state.seen).sort((a,b)=>state.seen[b]-state.seen[a]).filter(i=>petOf(i)),have=new Set(Object.values(state.col).map(c=>+c.id));
