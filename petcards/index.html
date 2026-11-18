@@ -42,11 +42,11 @@ h1{font-size:22px;margin:0 0 2px;text-align:center}
 .pk-art{position:absolute;inset:0;overflow:hidden;color:#fff;display:flex;align-items:center;justify-content:center;
 background:linear-gradient(115deg,transparent calc(var(--sx,35%) - 20%),rgba(255,255,255,.5) var(--sx,35%),transparent calc(var(--sx,35%) + 20%)),repeating-linear-gradient(112deg,#f58a3f 0,#ffb871 6%,#d8427b 13%,#ff8e57 19%,#c9366b 26%,#f58a3f 32%);
 box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),inset 9px 0 14px rgba(0,0,0,.14),inset -9px 0 14px rgba(0,0,0,.14),inset 0 -18px 20px -10px rgba(0,0,0,.25)}
-.pk-art::after{content:"";position:absolute;left:8%;right:8%;top:calc(12% + 12px);bottom:32px;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.3),rgba(255,255,255,.04) 45%,rgba(0,0,0,.2));box-shadow:inset 1.5px 1.5px 0 rgba(255,255,255,.6),inset -1.5px -1.5px 0 rgba(0,0,0,.3),3px 4px 7px rgba(0,0,0,.28),5px 6px 0 -2px rgba(0,0,0,.12)}
+.pk-art::after{content:"";position:absolute;left:0;right:0;top:16px;bottom:16px;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.3),rgba(255,255,255,.04) 45%,rgba(0,0,0,.2));box-shadow:inset 1.5px 1.5px 0 rgba(255,255,255,.6),inset -1.5px -1.5px 0 rgba(0,0,0,.3),3px 4px 7px rgba(0,0,0,.28),5px 6px 0 -2px rgba(0,0,0,.12)}
 .pk-art::before{content:"";position:absolute;inset:0;background-image:var(--grain);background-size:160px 160px;mix-blend-mode:overlay;opacity:.5}
-.pk-crimp{position:absolute;left:0;right:0;height:16px;background:repeating-linear-gradient(90deg,rgba(0,0,0,.3) 0 2px,rgba(255,255,255,.45) 2px 4px,rgba(0,0,0,.12) 4px 6px)}
+.pk-crimp{position:absolute;left:0;right:0;height:16px;z-index:2;background:repeating-linear-gradient(90deg,rgba(0,0,0,.3) 0 2px,rgba(255,255,255,.45) 2px 4px,rgba(0,0,0,.12) 4px 6px)}
 .pk-crimp.t{top:0;border-bottom:1px solid rgba(0,0,0,.25)}.pk-crimp.b{bottom:0;border-top:1px solid rgba(0,0,0,.25)}
-.pk-tl{position:absolute;left:0;right:0;top:12%;border-top:2px dashed rgba(255,255,255,.85)}
+.pk-tl{position:absolute;left:0;right:0;top:12%;z-index:1;border-top:2px dashed rgba(255,255,255,.85)}
 .pk-tl span{position:absolute;left:0;right:0;bottom:4px;text-align:center;font:700 10px "Chakra Petch",system-ui,sans-serif;letter-spacing:.35em;text-shadow:0 1px 2px rgba(0,0,0,.35)}
 .pk-mid{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:10%;text-align:center}
 .pk-ic{font-size:64px;line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
@@ -317,6 +317,29 @@ linear-gradient(115deg,var(--rc) 0,var(--rc) calc(var(--gx,50%) - 30%),color-mix
 #lb.zoomed .acts{position:fixed;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:3}
 #lb.zoomed .hint,#lb.zoomed .fxl{display:none}
 .fxl{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 14px;max-width:min(92vw,420px);color:#fff;font-size:14px;font-weight:700;text-align:center}
+.fxl .rar{display:block;font-style:normal;font-weight:400;font-size:12px;letter-spacing:.02em;opacity:.8}
+.front[class*="var-"] .holo{filter:hue-rotate(var(--vhr,0deg))}
+.var-warm{--vhr:-50deg}.var-cool{--vhr:70deg}.var-twilight{--vhr:150deg}
+.front.tint-rb.fin-holo[class*="var-"] .pholo,.front.tint-rb.fin-edge[class*="var-"] .pholo,.front.tint-rb.fin-prism[class*="var-"] .pholo{filter:saturate(1.6) contrast(1.15) hue-rotate(var(--vhr,0deg))}
+.var-reversed .holo,.var-reversed .holo::before,.var-reversed .holo::after,.var-reversed .pholo{animation-direction:reverse!important}
+.pk-art.k-classic{filter:hue-rotate(30deg)}.pk-art.k-mega{filter:hue-rotate(300deg)}.pk-art.k-cat{filter:hue-rotate(250deg)}.pk-art.k-dog{filter:hue-rotate(165deg)}.pk-art.k-critter{filter:hue-rotate(75deg)}.pk-art.k-lucky{filter:hue-rotate(195deg) saturate(1.3)}
+.shop{margin-top:34px;text-align:left}.shop h2{margin-top:0}
+.shopbar{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;color:var(--muted);font-size:14px}.shopbar b{color:var(--text);font-size:16px}
+.invrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.packs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
+.pkt{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.pkt i{display:block;height:6px;border-radius:3px;background:linear-gradient(90deg,#f58a3f,#d8427b)}.pkt b{font-size:15px}.pkt span{font-size:12.5px;color:var(--muted);line-height:1.35;flex:1}
+.pkt button{align-self:flex-start}
+button:disabled{opacity:.45;cursor:default}
+.jr-d{margin-top:34px}.jr{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:12px;text-align:left}
+.jri{display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px}
+.jri img{width:56px;height:56px;border-radius:8px;object-fit:cover;flex:none}.jri div{min-width:0;font-size:13px;line-height:1.35}
+.jri b{display:block;font-size:14px}.jri small{display:block;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jri a{color:var(--accent);text-decoration:none;font-weight:600}
+#tradepop{position:fixed;inset:0;z-index:2000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}#tradepop.on{display:flex}
+.tpbox{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:16px;padding:20px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.tpbox h3{margin:10px 0 4px;font-size:18px}.tpbox p{margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.45}.tpbox p b{color:var(--text)}
+.tpcard{display:flex;justify-content:center;pointer-events:none}.tpcard .cardbox{--w:130px}.tpacts{display:flex;gap:10px;justify-content:center}
 .fxl.none{font-weight:400;color:#fff9}
 .fxl .srt{background:linear-gradient(90deg,#ffd86b,#fff,#ff8ad8,#8ad8ff,#ffd86b);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:sheen 3s linear infinite;text-transform:lowercase;letter-spacing:.04em}
 button.rawbtn{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:9px 16px;font:600 15px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
@@ -560,7 +583,7 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 <h1><span id="logo"></span> daily pet packs</h1>
 <p class="sub">five real adoptable animals, free every day</p>
 <details class="info" id="info"><summary>about this webpage</summary>
-<p class="about">every animal comes from a local shelter, and every one has exactly the same chance of showing up. no animal is rarer than another; only the sparkle is luck of the draw, and sparkle is rare: most cards are plain, about 1 in 4 has a tinted card color, about 1 in 3 has a parallax photo, about 1 in 4 is slightly shiny, about 1 in 10 has a special finish, and roughly 1 in 100 has a super rare animated one. open a pack, enjoy the reveal, and add the ones that make you smile to your favorites. every card links to its shelter so you can go meet them for real.</p>
+<p class="about">every animal comes from a local shelter, and every one has exactly the same chance of showing up. no animal is rarer than another; only the sparkle is luck of the draw, and sparkle is rare: most cards are plain, about 1 in 4 has a tinted card color, about 1 in 3 has a parallax photo, about 1 in 4 is slightly shiny, about 1 in 10 has a special finish, and roughly 1 in 100 has a super rare animated one. open a pack, enjoy the reveal, and add the ones that make you smile to your favorites. every card links to its shelter so you can go meet them for real. trade in cards you don’t need for points, then spend the points on extra packs in the pack shop. the pet always stays in your list of pets you’ve met, so you can still say hello.</p>
 <label class="tg" id="gyrow" style="display:none"><input type="checkbox" id="gy"> tilt the cards by moving your phone <span id="gymsg" style="color:#d6336c"></span></label>
 <label class="tg"><input type="checkbox" id="unl"> playtest mode: unlimited packs</label>
 <div class="rg"><label>zip code (optional) <input id="rgzip" inputmode="numeric" maxlength="5" placeholder="e.g. 90210"></label><button class="ghost" id="rgsave">save and load pets</button><span id="rgmsg" role="status"></span></div>
@@ -568,10 +591,13 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 </details>
 <div class="stage" id="stage"></div>
 
+<section id="shop" class="shop"></section>
+
 <h2 id="coll">your collection</h2>
 <div class="sub" id="count" style="text-align:left"></div>
 <div class="acts" id="flt" style="justify-content:flex-start;margin-top:10px"><button class="chip on" data-f="all">all cards</button><button class="chip" data-f="smiles">favorites</button></div>
 <div class="grid" id="grid"></div>
+<details class="info jr-d" id="jrd"><summary id="jrs">pets you’ve met</summary><div class="jr" id="journal"></div></details>
 <p class="foot"><span id="srcnote"></span> sparkle finishes vary in rarity, but they’re random and independent of the animal: any pet can come with any finish, and every animal is equally likely to appear. icons: material design icons by pictogrammers (apache 2.0).
 <button class="ghost" id="reset" style="margin-left:6px">reset collection</button></p>
 </main>
@@ -608,7 +634,7 @@ const petOf=id=>PETS[+id]||LIVE[id];
 function saveLive(){
  try{
   if(Object.keys(LIVE).length>400){const keep=new Set(POOL.map(p=>p.id));
-   Object.values(state.col).forEach(c=>keep.add(+c.id));Object.keys(state.fav).forEach(i=>keep.add(+i));
+   Object.values(state.col).forEach(c=>keep.add(+c.id));Object.keys(state.fav).forEach(i=>keep.add(+i));Object.keys(state.seen||{}).forEach(i=>keep.add(+i));
    if(state.pack)state.pack.picks.forEach(x=>keep.add(+x[0]));
    Object.keys(LIVE).forEach(k=>{if(!keep.has(+k))delete LIVE[k]})}
   localStorage.setItem(LIVEK,JSON.stringify({next:LIVEN,pets:LIVE}))}catch(e){}}
@@ -758,7 +784,7 @@ const rollBorder=()=>{
  if(PREVIEW=="gold")return "g";
  if(PREVIEW=="border")return pickW(BFX,BFXT);
  if(PREVIEW.startsWith("border-")&&BN[PREVIEW.slice(7)])return BN[PREVIEW.slice(7)];
- return Math.random()<BORDER_CHANCE?pickW(BFX,BFXT):""};
+ return Math.random()<BORDER_CHANCE*LK?pickW(BFX,BFXT):""};
 // ===== text effects: t field 7 =====
 const TFX={goldfoil:{label:"gold foil",icon:"medal",w:3},silverfoil:{label:"silver foil",icon:"medal",w:3},holotext:{label:"holo text",icon:"palette",w:3},
  facetgold:{label:"glisten gold",icon:"diamond-stone",w:2},facetprism:{label:"glisten prism",icon:"diamond-stone",w:2},
@@ -766,7 +792,7 @@ const TFX={goldfoil:{label:"gold foil",icon:"medal",w:3},silverfoil:{label:"silv
  outline:{label:"outline",icon:"script-text",w:2.5},ember:{label:"ember",icon:"fire",w:1.5},icetext:{label:"frost",icon:"snowflake",w:1.5},
  sparkle:{label:"sparkle",icon:"creation",w:2},shine:{label:"shine sweep",icon:"shimmer",w:3},wave:{label:"wavy letters",icon:"waves",w:2}};
 const TFL=Object.entries(TFX).map(([k,v])=>[k,v.w]),TFLT=TFL.reduce((a,[,w])=>a+w,0),TFX_CHANCE=.03;
-const rollTfx=()=>{if(PREVIEW=="text")return pickW(TFL,TFLT);if(PREVIEW.startsWith("text-")&&TFX[PREVIEW.slice(5)])return PREVIEW.slice(5);return Math.random()<TFX_CHANCE?pickW(TFL,TFLT):""};
+const rollTfx=()=>{if(PREVIEW=="text")return pickW(TFL,TFLT);if(PREVIEW.startsWith("text-")&&TFX[PREVIEW.slice(5)])return PREVIEW.slice(5);return Math.random()<TFX_CHANCE*LK?pickW(TFL,TFLT):""};
 const waveHTML=n=>[...n].map((ch,i)=>ch==" "?" ":`<span class="tfw" style="--i:${i}">${ch}</span>`).join("");
 // faceted-text tiles (a static voronoi texture, clipped to the letters; the highlight sweeps over it)
 function vorTile(seed,hue,spread,sat,l0,l1){
@@ -785,7 +811,7 @@ const GOLD_CHANCE=.004,COLOR_CHANCE=.25,PARALLAX_CHANCE=.33,SHINY_CHANCE=.25,SHY
 const EDGE_OK=["","reverse","paws","hearts","stars","confetti","shimmer","holo"];
 const rollShy=f=>{if(PREVIEW!="shiny"&&Math.random()>=SHINY_CHANCE)return "";
  const m=["bg","img"];if(EDGE_OK.includes(f||""))m.push("edge");return m[Math.floor(Math.random()*m.length)]};
-const rollT=f=>{const t=f?rollTint(f):"",x=f&&!SR[f]&&Math.random()<.12?TEXK[Math.floor(Math.random()*TEXK.length)]:"";return t+"."+x+"."+(Math.random()<COLOR_CHANCE?BGK[Math.floor(Math.random()*BGK.length)]:"")+"."+rollShy(f)+"."+(PREVIEW=="par"||Math.random()<PARALLAX_CHANCE?"p":"")+"."+rollBorder()+"."+rollTfx()};
+const rollT=f=>{const t=f?rollTint(f):"",x=f&&!SR[f]&&Math.random()<.12*LK?TEXK[Math.floor(Math.random()*TEXK.length)]:"";return t+"."+x+"."+(Math.random()<COLOR_CHANCE?BGK[Math.floor(Math.random()*BGK.length)]:"")+"."+rollShy(f)+"."+(PREVIEW=="par"||Math.random()<PARALLAX_CHANCE?"p":"")+"."+rollBorder()+"."+rollTfx()+"."+rollVar(f)};
 {const st2=document.createElement("style");
  st2.textContent=Object.entries(TEX).map(([k,v])=>{const u=`url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='${v[2]}' height='${v[2]}' fill='none'>${v[1]}</svg>`)}")`;return `.tx-${k}{-webkit-mask-image:${u};mask-image:${u};-webkit-mask-size:${v[2]/16}em;mask-size:${v[2]/16}em}`}).join("");
  document.head.appendChild(st2)}
@@ -805,8 +831,13 @@ const FX=Object.entries(W),FXT=FX.reduce((a,[,w])=>a+w,0);
 const SRL=Object.keys(SR).map(k=>[k,1]);
 const pickW=(list,tot)=>{let n=Math.random()*tot;for(const[f,w]of list){if((n-=w)<0)return f}return list[0][0]};
 const PREVIEW=new URLSearchParams(location.search).get("preview")||"";// ?preview=sr (or ?preview=nova) forces super rares for testing
+/* variations: some finishes can come in a different colorway or run backwards. t field 8 */
+const VARS={warm:{n:"warm",deg:-50},cool:{n:"cool",deg:70},twilight:{n:"twilight",deg:150},reversed:{n:"reversed motion",deg:0}},VARK=Object.keys(VARS),VAR_CHANCE=.3;
+const VARE=["holo","edge","prism","aurora","galaxy","neon","glitter","rainbow","oilslick","mosaic","confetti","synth","sunset","laser","bokeh","glow"];
+const rollVar=f=>VARE.includes(f)&&(PREVIEW=="var"||Math.random()<VAR_CHANCE)?VARK[Math.floor(Math.random()*VARK.length)]:"";
+let LK=1; // luck multiplier, raised while a lucky pack is being rolled
 const rollFin=()=>{if(PREVIEW){if(SR[PREVIEW])return PREVIEW;if(FIN[PREVIEW]&&PREVIEW!="gold")return PREVIEW;if(PREVIEW=="sr")return pickW(SRL,SRL.length)}
- const r=Math.random();if(r<SR_CHANCE)return pickW(SRL,SRL.length);if(r<SR_CHANCE+EFFECT_CHANCE)return pickW(FX,FXT);return ""};
+ const r=Math.random();if(r<SR_CHANCE*LK)return pickW(SRL,SRL.length);if(r<(SR_CHANCE+EFFECT_CHANCE)*LK)return pickW(FX,FXT);return ""};
 const rollTint=f=>f=="facet"&&Math.random()<.6?FTINTS[Math.floor(Math.random()*FTINTS.length)]:(f=="holo"||f=="edge"||f=="reverse")&&Math.random()<.5?["silver","gold","rose","ice"][Math.floor(Math.random()*4)]:"";
 const shOf=p=>p.live?{n:p.shn,u:p.url}:SHELTERS[p.sh];
 const rawBtn=(p,c)=>`<button class="rawbtn ${c||""}" data-id="${p.id}">${ic("image")} original photo</button>`;
@@ -819,7 +850,7 @@ const meetLink=(p,c)=>`<a class="meet ${c||""}" href="${p.live?p.url:shOf(p).u+"
 const favBtn=(id,f,t,l,c)=>{const on=!!state.fav[id];return `<button class="fv ${on?"on":""} ${c||""}" data-id="${id}" data-f="${f||""}" data-t="${t||""}">${favTxt(on,c)}</button>`};
 const favTxt=(on,c)=>on?ic("heart","#d6336c")+" favorited":ic("heart-outline")+" "+(c&&String(c).includes("sm")?"favorite":"add to favorites");
 const KEY="petpacks:v3";
-let state={last:"",fav:{},col:{},filter:"all",pack:null,unl:false};
+let state={last:"",fav:{},col:{},filter:"all",pack:null,unl:false,pts:0,inv:{},seen:{},shop:{d:"",n:0},cur:null};
 try{const s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(s))}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()};
@@ -833,18 +864,33 @@ const mkCull=()=>{if(typeof IntersectionObserver=="undefined")return{watch(){}};
   root.querySelectorAll(".cell").forEach(c=>{const r=c.getBoundingClientRect();c.classList.toggle("oos",r.bottom<-300||r.top>vh);io.observe(c)})}}};
 const gridCull=mkCull(),dbgCull=mkCull();
 
-const pkArt=off=>`<div class="pk-art"><span class="pk-crimp t"></span><span class="pk-crimp b"></span><div class="pk-tl"><span>${off?"":"‹ tear here ›"}</span></div><div class="pk-mid"><div class="pk-ic">${ic("paw")}</div><div class="pk-ti">daily pet packs</div><div class="pk-su">${off?"pack opened":"5 shelter pets inside"}</div></div></div>`;
+const PACKS={
+ daily:{label:"daily pet packs",n:5,hue:0},
+ classic:{label:"classic pack",n:5,cost:6,hue:30,desc:"5 random pets, same odds as the daily pack."},
+ mega:{label:"mega pack",n:10,cost:11,hue:300,desc:"10 random pets in one go."},
+ cat:{label:"cat pack",n:5,cost:7,hue:250,sp:["cat"],desc:"5 cats, every one looking for a home."},
+ dog:{label:"dog pack",n:5,cost:7,hue:165,sp:["dog"],desc:"5 dogs, every one looking for a home."},
+ critter:{label:"critter pack",n:5,cost:7,hue:75,sp:["rabbit","bird","small","reptile","horse","farm"],desc:"rabbits, birds, small pets, reptiles and more."},
+ lucky:{label:"lucky pack",n:5,cost:10,hue:195,luck:3,desc:"5 pets, with about 3× the chance of finishes, borders and text effects."}
+};
+const SHOP_CAP=3,PKS=["classic","mega","cat","dog","critter","lucky"];
+const pkArt=(off,kind)=>`<div class="pk-art${kind&&kind!="daily"?" k-"+kind:""}"><span class="pk-crimp t"></span><span class="pk-crimp b"></span><div class="pk-tl"><span>${off?"":"‹ tear here ›"}</span></div><div class="pk-mid"><div class="pk-ic">${ic("paw")}</div><div class="pk-ti">${PACKS[kind||"daily"].label}</div><div class="pk-su">${off?"pack opened":PACKS[kind||"daily"].n+" shelter pets inside"}</div></div></div>`;
 function renderPack(){
- const ready=state.unl||state.last!==today();
- stage.innerHTML=`<div class="pkw${ready?"":" off"}"><div class="pk${ready?"":" off"}" id="pack" ${ready?'role="button" tabindex="0" aria-label="tear open today’s pack"':'aria-disabled="true"'}><div class="pk-cards"><i></i><i></i><i></i></div><div class="pk-layer pk-low">${pkArt(!ready)}<i class="pk-rim"></i></div><div class="pk-layer pk-strip">${pkArt(!ready)}<i class="pk-rim"></i></div></div></div>
- <div class="hint">${ready?"swipe across the top to tear the pack open, or just tap it":"come back tomorrow for a fresh pack"}</div>`;
+ const kind=state.cur||"daily",ready=state.cur?true:(state.unl||state.last!==today()),has=Object.values(state.inv).some(n=>n>0);
+ stage.innerHTML=`<div class="pkw${ready?"":" off"}"><div class="pk${ready?"":" off"}" id="pack" ${ready?'role="button" tabindex="0" aria-label="tear open the pack"':'aria-disabled="true"'}><div class="pk-cards"><i></i><i></i><i></i></div><div class="pk-layer pk-low">${pkArt(!ready,kind)}<i class="pk-rim"></i></div><div class="pk-layer pk-strip">${pkArt(!ready,kind)}<i class="pk-rim"></i></div></div></div>
+ <div class="hint">${ready?"swipe across the top to tear the pack open, or just tap it":"come back tomorrow for a fresh pack"+(has?", or open one of your packs below":"")}</div>${state.cur?'<button class="ghost" id="putback">put it back</button>':""}`;
  if(ready)bindPack();
+ const pb=document.getElementById("putback");if(pb)pb.onclick=()=>{state.cur=null;save();renderPack();renderShop()};
 }
 // deal today's five cards (called once the pack is fully torn)
 function openPack(){
- const pool=(POOL.length>=5?POOL:PETS).slice(),picks=[];
- for(let i=0;i<5;i++){const p=pool.splice(Math.floor(Math.random()*pool.length),1)[0],f=rollFin();picks.push([p.id,f,rollT(f)])}
- state.last=today();state.pack={picks,idx:0};save();
+ const kind=state.cur||"daily",K=PACKS[kind]||PACKS.daily,base=POOL.length>=5?POOL:PETS;
+ let src=K.sp?base.filter(p=>K.sp.includes(p.sp)):base;if(!src.length)src=base;
+ const pool=src.slice(),picks=[],n=Math.min(K.n,pool.length);LK=K.luck||1;
+ for(let i=0;i<n;i++){const p=pool.splice(Math.floor(Math.random()*pool.length),1)[0],f=rollFin();picks.push([p.id,f,rollT(f)])}
+ LK=1;
+ if(kind=="daily")state.last=today();else state.inv[kind]=Math.max(0,(state.inv[kind]||0)-1);
+ state.pack={picks,idx:0,kind};save();
 }
 function bindPack(){
  const pk=document.getElementById("pack"),low=pk.querySelector(".pk-low"),strip=pk.querySelector(".pk-strip");
@@ -918,12 +964,12 @@ function showCard(){
   </div></div></div></div>
  <div class="hint" id="hint">${first?"tap the card to reveal":hintText(idx)}</div>
  <div class="acts" id="acts" style="visibility:${first?"hidden":"visible"}">${favBtn(id,f,t,"made me smile")}${meetLink(p)}${rawBtn(p)}</div>
- <button class="act" id="next" style="visibility:${first?"hidden":"visible"}">${idx==4?"finish":"next card ›"}</button>`;
+ <button class="act" id="next" style="visibility:${first?"hidden":"visible"}">${idx==picks.length-1?"finish":"next card ›"}</button>`;
  bind();if(!first)srBurst();
 }
-const hintText=i=>i==4?"add it to your favorites if it made you smile, then swipe the card away to finish":"add it to your favorites if it made you smile, or swipe the card away for the next one";
+const hintText=i=>i==state.pack.picks.length-1?"add it to your favorites if it made you smile, then swipe the card away to finish":"add it to your favorites if it made you smile, or swipe the card away for the next one";
 // the next card waits face up underneath the one being swiped away
-function ensureUnder(){const sc=document.getElementById("scene");if(!sc||sc.querySelector(".under"))return;const n=state.pack.idx+1;if(n>=5)return;
+function ensureUnder(){const sc=document.getElementById("scene");if(!sc||sc.querySelector(".under"))return;const n=state.pack.idx+1;if(n>=state.pack.picks.length)return;
  const[id,f,t]=state.pack.picks[n];const u=document.createElement("div");u.className="drag under";
  u.innerHTML=`<div class="tilt"><div class="flipper flip">${slices()}<div class="face back"><span>${ic("paw")}</span></div>${cardFace(petOf(id),f,t)}</div></div>`;sc.appendChild(u)}
 const P={x:0,y:0,r:0};let anim=0,SCENE_DRAG=false;
@@ -978,7 +1024,7 @@ function launch(vx,vy,om){
   if(Math.abs(P.x)>innerWidth/2+260||P.y>innerHeight||el>1800){advance();return}
   anim=requestAnimationFrame(step)};
  anim=requestAnimationFrame(step)}
-function advance(){state.pack.idx++;if(state.pack.idx>=5)finish();else{save();showCard()}}
+function advance(){state.pack.idx++;if(state.pack.idx>=state.pack.picks.length)finish();else{save();showCard()}}
 function srBurst(){
  const sc=document.getElementById("scene"),fr=sc&&sc.querySelector(".front.sr");if(!fr)return;
  const h=document.getElementById("hint");if(h)h.textContent="super rare finish! "+h.textContent;
@@ -995,12 +1041,13 @@ function flip(){if(flipped)return;flipped=true;document.getElementById("flipper"
  document.getElementById("next").style.visibility="visible";document.getElementById("acts").style.visibility="visible";srBurst()}
 function fling(dir){if(busy||!flipped)return;launch(dir*1.4,-.5,dir*.18)}
 function finish(){
+ const kind=state.pack.kind||"daily",cnt=state.pack.picks.length;
  const rows=state.pack.picks.map(([id,f,t])=>{const p=petOf(id);
   return `<div class="cell">${cardBox(id,f,t,state.col[ck(id,f,t)]?"":'<span class="new">new</span>')}<div class="cap">${favBtn(id,f,t,"smile","sm")}<br>${meetLink(p,"sm")}</div></div>`}).join("");
- state.pack.picks.forEach(([id,f,t])=>addCard(id,f,t));state.pack=null;save();
+ state.pack.picks.forEach(([id,f,t])=>addCard(id,f,t));state.pack=null;state.cur=null;save();
  stage.innerHTML=`<div style="font-size:48px;color:var(--accent)">${ic("party-popper")}</div><div class="sumrow">${rows}</div>
- <div class="hint">five real animals are hoping to meet you. add anyone who made you smile to your favorites, then say hello.${state.unl?"":" come back tomorrow for five more."}</div>
- <button class="act" onclick="document.getElementById('coll').scrollIntoView()">view your collection</button>${state.unl?'<button class="act" onclick="renderPack()">open another pack</button>':""}`;
+ <div class="hint">${cnt==1?"a real animal is":cnt+" real animals are"} hoping to meet you. add anyone who made you smile to your favorites, then say hello.${kind=="daily"&&!state.unl?" come back tomorrow for a fresh pack.":""}</div>
+ <button class="act" onclick="document.getElementById('coll').scrollIntoView()">view your collection</button>${state.unl?'<button class="act" onclick="renderPack()">open another pack</button>':Object.values(state.inv).some(n=>n>0)?'<button class="act" onclick="renderPack()">back to the pack</button>':""}`;
  renderGrid();
 }
 document.addEventListener("keydown",e=>{if(!state.pack||!document.getElementById("scene"))return;if(e.target.closest&&e.target.closest("button,a,input"))return;
@@ -1029,34 +1076,40 @@ function facetSVG(seed){if(FACET[seed])return FACET[seed];
     out+=`<path class="fs" d="M${cx.toFixed(1)} ${(cy-z).toFixed(1)}L${(cx+q).toFixed(1)} ${(cy-q).toFixed(1)}L${(cx+z).toFixed(1)} ${cy.toFixed(1)}L${(cx+q).toFixed(1)} ${(cy+q).toFixed(1)}L${cx.toFixed(1)} ${(cy+z).toFixed(1)}L${(cx-q).toFixed(1)} ${(cy+q).toFixed(1)}L${(cx-z).toFixed(1)} ${cy.toFixed(1)}L${(cx-q).toFixed(1)} ${(cy-q).toFixed(1)}Z" style="${stl}"/>`}});
  return FACET[seed]=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${out}</svg>`}
 const seedOf=(p,t)=>{let h=2166136261;for(const ch of p.id+"|"+(t||""))h=Math.imul(h^ch.charCodeAt(0),16777619);return h>>>0};
-function fxText(f,t){const[tn,tx,bg,sh0,par0,gd,tf]=(t||"").split(".");const sh=SHY[sh0]?sh0:"",par=par0===undefined||par0=="p";
+/* rarity: the real odds of one card having this effect, worked out from the same numbers the pack roll uses */
+function odds(p){if(!(p>0))return"";let n=1/p;n=n<10?Math.round(n*10)/10:n<100?Math.round(n):Math.round(n/10)*10;
+ const tier=n<5?"common":n<20?"uncommon":n<100?"rare":n<500?"very rare":"ultra rare";
+ return` <em class="rar">${tier} · 1 in ${n}</em>`}
+const finP=f=>SR[f]?SR_CHANCE/SRL.length:W[f]?EFFECT_CHANCE*W[f]/FXT:0;
+function fxText(f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr0]=(t||"").split(".");const vr=VARS[vr0]&&VARE.includes(f)?vr0:"";const sh=SHY[sh0]?sh0:"",par=par0===undefined||par0=="p";
  const out=[];
- if(f)out.push(`<span${SR[f]?' class="srt"':""}>${ic(FIN[f].icon,FIN[f].col)} ${SR[f]?"super rare · ":""}${tn?TN[tn]+" ":""}${FIN[f].label}${tx&&TEX[tx]?" · "+TEX[tx][0]:""}</span>`);
- if(BORD[gd])out.push(`<span class="srt">${ic("medal",BORD[gd].col)} ${BORD[gd].n} border · really rare</span>`);
- if(TFX[tf])out.push(`<span>${ic(TFX[tf].icon,"#e0a21b")} text: ${TFX[tf].label}</span>`);
- if(sh)out.push(`<span>${ic("shimmer","#e0a21b")} shiny ${SHY[sh].toLowerCase()}</span>`);
- if(par)out.push(`<span>${ic("layers","#9fb0c0")} parallax photo</span>`);
+ if(f)out.push(`<span${SR[f]?' class="srt"':""}>${ic(FIN[f].icon,FIN[f].col)} ${SR[f]?"super rare · ":""}${tn?TN[tn]+" ":""}${FIN[f].label}${tx&&TEX[tx]?" · "+TEX[tx][0]:""}${vr?" · "+VARS[vr].n+" variation":""}${odds(finP(f)*(tx&&TEX[tx]&&!SR[f]?.12/TEXK.length:1)*(vr?VAR_CHANCE/VARK.length:1))}</span>`);
+ if(BORD[gd])out.push(`<span class="srt">${ic("medal",BORD[gd].col)} ${BORD[gd].n} border · really rare${odds(BORDER_CHANCE*BORD[gd].w/BFXT)}</span>`);
+ if(TFX[tf])out.push(`<span>${ic(TFX[tf].icon,"#e0a21b")} text: ${TFX[tf].label}${odds(TFX_CHANCE*TFX[tf].w/TFLT)}</span>`);
+ if(sh)out.push(`<span>${ic("shimmer","#e0a21b")} shiny ${SHY[sh].toLowerCase()}${odds(SHINY_CHANCE/(EDGE_OK.includes(f||"")?3:2))}</span>`);
+ if(par)out.push(`<span>${ic("layers","#9fb0c0")} parallax photo${odds(PARALLAX_CHANCE)}</span>`);
  return out.length?`<div class="fxl">${out.join("")}</div>`:`<div class="fxl none">plain card, no special effects</div>`}
 const FACES=new Map();
 function cardFace(p,f,t){const k=p.id+"|"+(f||"")+"|"+(t||"");let h=FACES.get(k);if(!h){h=cardFace0(p,f,t);FACES.set(k,h)}return h}
-function cardFace0(p,f,t){const[tn,tx,bg,sh0,par0,gd,tf]=(t||"").split(".");const par=par0===undefined||par0=="p";const sh=SHY[sh0]?sh0:"";return `<div class="face front sp-${p.sp} fin-${f||"none"}${BORD[gd]?" gold bd-"+gd:""}${TFX[tf]?" tf-"+tf:""}${sh?" shy-"+sh:""}${par?" par":""}${SR[f]?" sr":""}${FOILS[f]?" fin-foil foil-"+f:""} tint-${FOILS[f]?"foil":(tn||"rb")}${bg&&BGS[bg]&&!NOBG.includes(f)&&!SR[f]?" bg-"+bg:""}"><div class="holo">${f=="facet"?facetSVG(seedOf(p,t)):""}</div>${sh=="bg"?'<div class="shy"></div>':""}${tx&&TEX[tx]?`<div class="tex tx-${tx}"></div>`:""}<div><span class="badge">${ic(SPI[p.sp])} ${SPC[p.sp]}</span></div>
+function cardFace0(p,f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr]=(t||"").split(".");const par=par0===undefined||par0=="p";const sh=SHY[sh0]?sh0:"";return `<div class="face front sp-${p.sp} fin-${f||"none"}${BORD[gd]?" gold bd-"+gd:""}${TFX[tf]?" tf-"+tf:""}${sh?" shy-"+sh:""}${VARS[vr]&&VARE.includes(f)?" var-"+vr:""}${par?" par":""}${SR[f]?" sr":""}${FOILS[f]?" fin-foil foil-"+f:""} tint-${FOILS[f]?"foil":(tn||"rb")}${bg&&BGS[bg]&&!NOBG.includes(f)&&!SR[f]?" bg-"+bg:""}"><div class="holo">${f=="facet"?facetSVG(seedOf(p,t)):""}</div>${sh=="bg"?'<div class="shy"></div>':""}${tx&&TEX[tx]?`<div class="tex tx-${tx}"></div>`:""}<div><span class="badge">${ic(SPI[p.sp])} ${SPC[p.sp]}</span></div>
  <div class="pw"><img class="photo" decoding="async" src="${photo(p)}" alt="${p.name}${p.live?"":", sample photo"}" referrerpolicy="no-referrer" draggable="false"><div class="pholo"></div>${sh=="img"?'<div class="pshy"></div>':""}</div>
  ${BORD[gd]?`<div class="gb">${borderSVG(seedOf(p,t))}</div>`:""}<div class="txt"><div class="nm">${tf=="wave"?waveHTML(p.name):p.name}</div><div class="meta">${p.breed} · ${p.age}</div><div class="desc">${p.desc}</div><div class="where">${ic("map-marker")} ${shOf(p).n}</div></div></div>`}
 function cardBox(id,f,t,extra,back){return `<div class="cardbox" data-id="${id}" data-f="${f||""}" data-t="${t||""}"><div class="tilt">${slices()}${cardFace(petOf(id),f,t)}${back?`<div class="face back"><span>${ic("paw")}</span></div>`:""}</div>${extra||""}</div>`}
 const ck=(id,f,t)=>id+"|"+(f||"")+"|"+(t||"");
-function addCard(id,f,t){const k=ck(id,f,t),c=state.col[k];if(c)c.n++;else state.col[k]={id,f:f||"",t:t||"",n:1,at:Date.now()}}
+function addCard(id,f,t){const k=ck(id,f,t),c=state.col[k];if(!state.seen[id])state.seen[id]=Date.now();if(c)c.n++;else state.col[k]={id,f:f||"",t:t||"",n:1,at:Date.now()}}
 function setCount(all){
- const met=new Set(all.map(c=>c.id)).size,sm=Object.keys(state.fav).length;
- document.getElementById("count").textContent=all.length?`${all.length} card${all.length>1?"s":""} · ${met} animal${met>1?"s":""} met · ${sm} favorite${sm==1?"":"s"} · tap a card for a closer look`:"nothing here yet. open your first pack!";
+ const met=Object.keys(state.seen).length,sm=Object.keys(state.fav).length;
+ document.getElementById("count").textContent=all.length?`${all.length} card${all.length>1?"s":""} · ${met} animal${met>1?"s":""} met · ${sm} favorite${sm==1?"":"s"} · tap a card for a closer look`:(met?"no cards right now. open a pack, or see the pets you’ve met below.":"nothing here yet. open your first pack!");
 }
-function renderGrid(){
+function renderGrid(){renderGrid0();renderJournal();renderShop()}
+function renderGrid0(){
  const all=Object.values(state.col).filter(c=>petOf(c.id)).sort((a,b)=>b.at-a.at),list=state.filter=="smiles"?all.filter(c=>state.fav[c.id]):all;
  setCount(all);
  document.querySelectorAll("#flt .chip").forEach(b=>b.classList.toggle("on",b.dataset.f==(state.filter||"all")));
  const gEl=document.getElementById("grid");gEl.innerHTML=list.length?list.map(c=>{const p=petOf(c.id);
   return `<div class="cell">${cardBox(c.id,c.f,c.t,state.fav[c.id]?`<span class="fvmark">${ic("heart","#d6336c")}</span>`:"")}<div class="cap">${c.n>1?"pulled ×"+c.n:"pulled once"}</div></div>`}).join(""):(all.length?`<p class="sub" style="grid-column:1/-1">no favorites yet. tap favorite on any card you love.</p>`:"");gridCull.watch(gEl)}
 function toggleFav(b){const id=+b.dataset.id;if(state.fav[id])delete state.fav[id];else state.fav[id]={f:b.dataset.f,t:b.dataset.t};save();
- const on=!!state.fav[id];document.querySelectorAll('#stage .fv[data-id="'+id+'"],#lb .fv[data-id="'+id+'"]').forEach(x=>{x.classList.toggle("on",on);x.innerHTML=favTxt(on,x.classList.contains("sm")?"sm":"")});favGrid(id,on)}
+ const on=!!state.fav[id];document.querySelectorAll('#stage .fv[data-id="'+id+'"],#lb .fv[data-id="'+id+'"]').forEach(x=>{x.classList.toggle("on",on);x.innerHTML=favTxt(on,x.classList.contains("sm")?"sm":"")});refreshTrade();favGrid(id,on)}
 function favGrid(id,on){
  if(state.filter=="smiles"){renderGrid();return}
  document.querySelectorAll('#grid .cardbox[data-id="'+id+'"]').forEach(b=>{const m=b.querySelector(".fvmark");
@@ -1119,7 +1172,7 @@ function closeLb(){
  an.onfinish=fin;an.oncancel=fin}
 function closeLbNow(){lb.getAnimations().forEach(x=>x.cancel());if(LB.src){LB.src.style.visibility="";LB.src=null}cancelAnimationFrame(LB.raf);LB.drag=LB.spin=false;LB.z=1;LB.px=LB.py=0;LB.pan=false;lb.classList.remove("on","zoomed");document.body.classList.remove("lbopen");closeRaw();lb.innerHTML=""}
 function openLb(b){cancelAnimationFrame(LB.raf);LB.z=1;LB.px=LB.py=0;LB.pan=false;lb.classList.remove("zoomed");LB.rx=LB.ry=0;LB.drag=LB.spin=false;const id=+b.dataset.id,p=petOf(id);
- lb.innerHTML=cardBox(id,b.dataset.f,b.dataset.t,"",true).replace('class="cardbox"','class="cardbox" style="--w:var(--lbw);cursor:grab"')+`<div class="acts">${favBtn(id,b.dataset.f,b.dataset.t,"made me smile")}${meetLink(p)}${rawBtn(p)}<button class="lbx x" aria-label="close">close</button></div>${fxText(b.dataset.f,b.dataset.t)}<div class="hint" style="color:#fffa">drag the card to rotate it · ${matchMedia("(pointer:coarse)").matches?"pinch":"scroll"} to zoom</div>`;
+ lb.innerHTML=cardBox(id,b.dataset.f,b.dataset.t,"",true).replace('class="cardbox"','class="cardbox" style="--w:var(--lbw);cursor:grab"')+`<div class="acts">${favBtn(id,b.dataset.f,b.dataset.t,"made me smile")}${meetLink(p)}${rawBtn(p)}${tradeBtn(id,b.dataset.f,b.dataset.t,b)}<button class="lbx x" aria-label="close">close</button></div>${fxText(b.dataset.f,b.dataset.t)}<div class="hint" style="color:#fffa">drag the card to rotate it · ${matchMedia("(pointer:coarse)").matches?"pinch":"scroll"} to zoom</div>`;
  lb.classList.add("on");document.body.classList.add("lbopen");lb.querySelector(".x").onclick=closeLb;
  if(LB.src)LB.src.style.visibility="";LB.src=b;
  /* fly the card from where it was clicked to the centre of the screen */
@@ -1170,9 +1223,9 @@ function openDbg(){let d=document.getElementById("dbg");
 function closeDbg(){const d=document.getElementById("dbg");if(d)d.classList.remove("on")}
 function buildDbg(){const d=document.getElementById("dbg"),q=s=>d.querySelector(s);
  const pet=+q("#dbg-pet").value,col=q("#dbg-col").value,shy=q("#dbg-shy").value,par=q("#dbg-par").checked?"p":"";
- const T=(o={})=>[o.tn||"",o.tx||"",o.bg!==undefined?o.bg:col,o.sh!==undefined?o.sh:shy,o.pa!==undefined?o.pa:par,o.gd||"",o.tf||""].join(".");
+ const T=(o={})=>[o.tn||"",o.tx||"",o.bg!==undefined?o.bg:col,o.sh!==undefined?o.sh:shy,o.pa!==undefined?o.pa:par,o.gd||"",o.tf||"",o.vr||""].join(".");
  const all=q("#dbg-all").checked;
- const have=Object.values(state.col).map(c=>{const[tn,tx,bg,sh,pa,gd,tf]=(c.t||"").split(".");return{gd:gd||"",tf:tf||"",f:c.f||"",tn:tn||"",tx:tx||"",bg:bg||"",sh:SHY[sh]?sh:"",pon:pa===undefined||pa=="p",poff:pa===""}});
+ const have=Object.values(state.col).map(c=>{const[tn,tx,bg,sh,pa,gd,tf,vr]=(c.t||"").split(".");return{vr:vr||"",gd:gd||"",tf:tf||"",f:c.f||"",tn:tn||"",tx:tx||"",bg:bg||"",sh:SHY[sh]?sh:"",pon:pa===undefined||pa=="p",poff:pa===""}});
  const got=fn=>all||have.some(fn);
  const fin=Object.keys(FIN).filter(k=>!SR[k]);
  const sec=[
@@ -1181,6 +1234,7 @@ function buildDbg(){const d=document.getElementById("dbg"),q=s=>d.querySelector(
   ["super rare finishes","animated, 1 in 100.",Object.keys(SR).map(k=>[FIN[k].label,k,T(),got(c=>c.f==k)])],
   ["metal tints","silver, gold, rose and ice versions of three finishes.",["holo","edge","reverse"].flatMap(f=>["silver","gold","rose","ice"].map(tn=>[TN[tn]+" "+FIN[f].label,f,T({tn}),got(c=>c.f==f&&c.tn==tn)]))],
   ["glisten variants","silver, gold, rose gold, ice, emerald, violet and ruby.",["",...FTINTS.filter((v,i,a)=>a.indexOf(v)==i)].map(tn=>[(tn?TN[tn]+" ":"silver ")+FIN.facet.label,"facet",T({tn}),got(c=>c.f=="facet"&&c.tn==tn)])],
+  ["effect variations","some finishes come in other colorways, or run in reverse.",VARE.filter(k=>FIN[k]).flatMap(k=>VARK.map(v=>[FIN[k].label+" · "+VARS[v].n,k,T({vr:v}),got(c=>c.f==k&&c.vr==v)]))],
   ["textures","faint card-body patterns.",TEXK.map(k=>[TEX[k][0],"",T({tx:k}),got(c=>c.tx==k)])],
   ["shiny","slightly shiny: background, border or photo.",Object.keys(SHY).map(k=>["shiny "+SHY[k].toLowerCase(),"",T({sh:k}),got(c=>c.sh==k)])],
   ["parallax photo","tilt the card to see the photo shift.",[["parallax on","",T({pa:"p"}),got(c=>c.pon)],["parallax off","",T({pa:""}),got(c=>c.poff)]]],
@@ -1259,7 +1313,51 @@ gyChk.onchange=async()=>{
 if(gyOK&&state.gyro&&!(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==="function")){gyChk.checked=true;gyEnable().then(ok=>{if(!ok)gyChk.checked=false})}
 document.getElementById("logo").innerHTML=ic("paw");document.querySelector("#flt .chip[data-f=smiles]").innerHTML=ic("heart","#d6336c")+" favorites";
 Object.keys(state.fav).forEach(id=>{if(!Object.values(state.col).some(c=>c.id==id)){const v=state.fav[id];addCard(+id,v.f,v.t)}});
-renderGrid();
+Object.values(state.col).forEach(c=>{if(!state.seen[c.id])state.seen[c.id]=c.at||Date.now()});
+
+/* ---- trading cards in for points, the pack shop, and the list of pets you've met ---- */
+const cardValue=(f,t)=>{const gd=(t||"").split(".")[5],tf=(t||"").split(".")[6];return SR[f]?5:BORD[gd]?3:(f||TFX[tf])?2:1};
+const ptsTxt=n=>n+" point"+(n==1?"":"s");
+function tradeBtn(id,f,t,b){
+ if(!state.col[ck(id,f,t)]||!(b&&b.closest&&b.closest("#grid,#stage")))return"";
+ const fav=!!state.fav[id];
+ return `<button class="rawbtn tradebtn" data-id="${id}" data-f="${f||""}" data-t="${t||""}"${fav?" disabled":""}>${fav?"unfavorite to trade in":"trade in · +"+ptsTxt(cardValue(f,t))}</button>`}
+function refreshTrade(){const bt=document.querySelector("#lb .tradebtn");if(!bt)return;
+ const id=+bt.dataset.id,fav=!!state.fav[id];bt.disabled=fav;delete bt.dataset.armed;
+ bt.textContent=fav?"unfavorite to trade in":"trade in · +"+ptsTxt(cardValue(bt.dataset.f,bt.dataset.t))}
+function tradeIn(id,f,t){const k=ck(id,f,t),c=state.col[k];if(!c||state.fav[id])return false;
+ state.pts+=cardValue(f,t);c.n--;if(c.n<=0)delete state.col[k];if(!state.seen[id])state.seen[id]=Date.now();save();return true}
+function closeTradePop(){const el=document.getElementById("tradepop");if(el){el.classList.remove("on");el.innerHTML=""}}
+function tradePop(id,f,t){
+ const p=petOf(id),v=cardValue(f,t);if(!p)return;
+ let el=document.getElementById("tradepop");if(!el){el=document.createElement("div");el.id="tradepop";document.body.appendChild(el)}
+ el.innerHTML=`<div class="tpbox" role="dialog" aria-modal="true" aria-label="trade in this card"><div class="tpcard">${cardBox(id,f,t)}</div><h3>trade in ${p.name}?</h3><p>you’ll get <b>${ptsTxt(v)}</b>. the card leaves your collection, but ${p.name} stays in your list of pets you’ve met.</p><div class="tpacts"><button class="act" id="tpyes">trade in</button><button class="ghost" id="tpno">keep it</button></div></div>`;
+ el.classList.add("on");
+ el.onclick=e=>{e.stopPropagation();if(e.target===el)closeTradePop()};
+ document.getElementById("tpno").onclick=closeTradePop;
+ document.getElementById("tpyes").onclick=()=>{closeTradePop();if(tradeIn(id,f,t)){closeLbNow();renderGrid()}};
+ document.getElementById("tpno").focus()}
+document.addEventListener("keydown",e=>{const el=document.getElementById("tradepop");if(e.key=="Escape"&&el&&el.classList.contains("on")){e.stopPropagation();closeTradePop()}},true);
+document.addEventListener("click",e=>{const tb=e.target.closest&&e.target.closest(".tradebtn");if(!tb)return;
+ e.stopPropagation();e.preventDefault();if(tb.disabled)return;tradePop(+tb.dataset.id,tb.dataset.f,tb.dataset.t)},true);
+function shopToday(){if(state.shop.d!==today())state.shop={d:today(),n:0};return state.shop}
+function poolCount(k){const base=POOL.length>=5?POOL:PETS,K=PACKS[k];return K.sp?base.filter(p=>K.sp.includes(p.sp)).length:base.length}
+function renderShop(){const el=document.getElementById("shop");if(!el)return;
+ const sd=shopToday(),left=state.unl?99:Math.max(0,SHOP_CAP-sd.n),busy=!!state.pack,inv=Object.entries(state.inv).filter(([k,n])=>n>0&&PACKS[k]);
+ el.innerHTML=`<h2>pack shop</h2><div class="shopbar"><span>points: <b>${state.pts}</b></span><span>${state.unl?"playtest mode: no daily limit":"extra packs you can buy today: "+left+" of "+SHOP_CAP}</span></div>
+ <div class="sub" style="text-align:left;margin-top:4px">trade in a card from your collection (open it and tap trade in) to earn points. favorited cards can’t be traded until you unfavorite them.</div>
+ ${inv.length?`<div class="invrow">${inv.map(([k,n])=>`<button class="act" data-open="${k}"${busy?" disabled":""}>open ${PACKS[k].label}${n>1?" ×"+n:""}</button>`).join("")}</div>`:""}
+ <div class="packs">${PKS.map(k=>{const K=PACKS[k],few=K.sp&&poolCount(k)<3,why=few?"not enough available today":state.pts<K.cost?"need "+(K.cost-state.pts)+" more":left<1?"daily limit reached":"";
+  return `<div class="pkt"><i style="filter:hue-rotate(${K.hue}deg)"></i><b>${K.label}</b><span>${K.desc}</span><button class="chip" data-buy="${k}"${why?" disabled":""}>${why||"buy · "+ptsTxt(K.cost)}</button></div>`}).join("")}</div>`;
+ el.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>{const k=b.dataset.buy,K=PACKS[k],sd=shopToday();
+  if(state.pts<K.cost||(!state.unl&&sd.n>=SHOP_CAP))return;
+  state.pts-=K.cost;state.inv[k]=(state.inv[k]||0)+1;sd.n++;save();renderShop()});
+ el.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{if(state.pack)return;state.cur=b.dataset.open;save();renderPack();renderShop();stage.scrollIntoView({behavior:"smooth",block:"center"})})}
+function renderJournal(){const el=document.getElementById("journal"),sm=document.getElementById("jrs");if(!el)return;
+ const ids=Object.keys(state.seen).sort((a,b)=>state.seen[b]-state.seen[a]).filter(i=>petOf(i)),have=new Set(Object.values(state.col).map(c=>+c.id));
+ sm.textContent="pets you’ve met ("+ids.length+")";
+ el.innerHTML=ids.length?ids.map(i=>{const p=petOf(i),sh=shOf(p);
+  return `<div class="jri"><img src="${photo(p)}" alt="${p.name}" referrerpolicy="no-referrer" loading="lazy" draggable="false"><div><b>${p.name}</b><small>${p.breed} · ${SPC[p.sp]}</small><small>${sh.n}</small><small>${have.has(+i)?"card in your collection":"card traded in"} · <a href="${p.live?p.url:sh.u+"/pets/"+p.id}" target="_blank" rel="noopener">meet ${p.name}</a></small></div></div>`}).join(""):'<p class="sub" style="grid-column:1/-1">open a pack to meet your first pets.</p>'}
 const rgZip=document.getElementById("rgzip"),rgMsg=document.getElementById("rgmsg");
 rgZip.value=cfg.zip;if(!hasLive())document.querySelector(".rg").style.display="none";
 document.getElementById("rgsave").onclick=async()=>{
@@ -1269,11 +1367,11 @@ document.getElementById("rgsave").onclick=async()=>{
  rgMsg.textContent="loading pets…";await loadLive(true);
  rgMsg.textContent=POOL.length?"loaded "+POOL.length+" adoptable pets. your next pack will use them.":("couldn’t load pets: "+srcErr)};
 (async()=>{
- const live=hasLive(),midPack=state.pack&&state.pack.idx<5;
+ const live=hasLive(),midPack=state.pack&&state.pack.idx<state.pack.picks.length;
  if(live&&!midPack){stage.innerHTML='<div class="hint">finding adoptable pets…</div>';await Promise.race([loadLive(),new Promise(r=>setTimeout(r,8000))])}
  else{setNote();if(live)loadLive()}
  renderGrid();
- if(state.pack&&state.pack.idx<5)showCard();else renderPack();
+ if(state.pack&&state.pack.idx<state.pack.picks.length)showCard();else renderPack();
 })();
 </script>
 </body>
