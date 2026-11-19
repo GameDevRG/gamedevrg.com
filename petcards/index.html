@@ -495,7 +495,17 @@ button.rawbtn{background:var(--surface);color:var(--text);border:1px solid var(-
 #wiki .wkbox{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:16px;padding:18px 18px 14px;width:100%;max-width:460px;max-height:min(80vh,640px);overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.5);font-size:14px;line-height:1.5;-webkit-overflow-scrolling:touch}
 #wiki h3{margin:0;font-size:19px}#wiki .wksci{font-style:italic;color:var(--muted);margin:1px 0 10px}
 #wiki .wkdesc{font-size:12px;color:var(--muted);text-transform:lowercase;margin:-4px 0 8px}
-#wiki .wkimg{float:right;max-width:42%;max-height:150px;object-fit:cover;border-radius:10px;margin:0 0 8px 12px}
+#wiki .wkimg{float:right;max-width:42%;max-height:150px;object-fit:cover;border-radius:10px;margin:0 0 8px 12px;cursor:zoom-in}
+#wiki .wkimg:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#wiki .wkbox.gal{position:relative;padding:0;overflow:hidden;background:#000;height:min(80vh,640px);display:block;touch-action:pan-y}
+#wiki .wkgi{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-select:none;-webkit-user-drag:none}
+#wiki .wkgn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.5);color:#fff;font:400 28px/1 "Chakra Petch",system-ui,sans-serif;display:grid;place-items:center;padding:0 0 3px;cursor:pointer}
+#wiki .wkgn:hover{background:rgba(0,0,0,.75)}#wiki .wkgn.prev{left:10px}#wiki .wkgn.next{right:10px}
+#wiki .wkgbar{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:30px 14px 12px;background:linear-gradient(transparent,rgba(0,0,0,.75));color:#fff;font-size:12.5px;line-height:1.35;pointer-events:none}
+#wiki .wkgc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#wiki .wkgc a{color:#9cc3ff;pointer-events:auto}
+#wiki .wkgct{white-space:nowrap;font-weight:600}
+#wiki .wkgx{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.6);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:99px;padding:7px 14px;font:600 13px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
 #wiki p{margin:0 0 10px}#wiki .wkfoot{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;clear:both;font-size:12px;color:var(--muted);margin-top:6px}
 #wiki .wkfoot a{color:var(--accent)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -637,6 +647,8 @@ body.lbopen #stage *,body.lbopen #stage *::before,body.lbopen #stage *::after{an
 @keyframes txwave{50%{transform:translateY(-.18em)}}
 
 /* ===== full art: the photo becomes the whole card (the border stays); text keeps its exact spot, just with a drop shadow ===== */
+.pcr{position:absolute;left:0;right:0;bottom:0;z-index:5;padding:.4em .5em .22em;font-size:.55em;line-height:1.2;text-align:right;color:rgba(255,255,255,.92);background:linear-gradient(transparent,rgba(0,0,0,.62));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.front.fa>.pw>.pcr{top:.1em;bottom:auto;left:.75em;right:.75em;padding:0;background:none;text-shadow:0 .06em .14em rgba(0,0,0,.95),0 0 .35em rgba(0,0,0,.7)}
 .front.fa{color:#fff;--text:#fff;--muted:#fff}
 .front.fa>.pw{position:static;overflow:visible;border:0;border-radius:0}
 .front.fa>.pw::after{display:none}
@@ -801,6 +813,16 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 .tf-popout .nm{color:#fff;-webkit-text-stroke:.05em #111;paint-order:stroke fill;text-shadow:.04em .04em 0 var(--rc),.08em .08em 0 var(--rc),.12em .12em 0 #111}
 .tf-glowpulse .nm{color:var(--text);animation:glowtxt 2.2s ease-in-out infinite alternate}
 @keyframes glowtxt{from{text-shadow:0 0 .1em var(--rc),0 0 .25em var(--rc)}to{text-shadow:0 0 .25em #fff,0 0 .7em var(--rc),0 0 1.2em var(--rc)}}
+#wiki .wkbox.fm{position:relative;overflow:hidden;height:min(80vh,640px)}
+.fmpanel{position:absolute;inset:0;z-index:3;background:var(--surface);color:var(--text);display:flex;flex-direction:column;animation:fmin .28s ease both}
+.fmpanel.out{animation:fmout .22s ease both}@keyframes fmin{from{transform:translateX(100%)}}@keyframes fmout{to{transform:translateX(100%)}}
+.fmtop{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px 6px}
+.fmtop button{background:transparent;color:var(--accent);border:1px solid var(--border);border-radius:99px;padding:6px 12px;font:600 13px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
+.fminfo{padding:0 14px 8px;font-size:13px;min-height:2.6em;color:var(--muted)}
+.fmmap{flex:1;min-height:0;margin:0 10px;border-radius:12px;overflow:hidden;background:rgba(127,127,127,.12)}
+.fmmap svg{display:block;width:100%;height:100%;touch-action:none;cursor:grab}.fmmap path{stroke:var(--surface);stroke-width:.6;vector-effect:non-scaling-stroke;cursor:pointer}.fmmap path:hover{stroke:var(--accent);stroke-width:1.4}
+.fmleg{padding:8px 14px 12px;font-size:11.5px;color:var(--muted)}.fmbar{display:flex;align-items:center;gap:8px;margin-bottom:4px}.fmbar i{flex:0 0 110px;height:8px;border-radius:4px;background:linear-gradient(90deg,rgb(222,235,247),rgb(8,48,107))}.fmleg small{font-size:11.5px;line-height:1.35}
+@media(max-width:600px){#wiki.fmon{padding:0}#wiki.fmon .wkbox.fm{max-width:none;height:100%;max-height:none;border-radius:0}}
 </style>
 </head>
 <body>
@@ -824,7 +846,7 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 <div class="acts" id="flt" style="justify-content:flex-start;margin-top:10px"><button class="chip on" data-f="all">all cards</button><button class="chip" data-f="smiles">favorites</button><label class="srt">sort by <select id="srt"><option value="recent">newest first</option><option value="oldest">oldest first</option><option value="worth">most valuable</option><option value="cheap">least valuable</option><option value="name">name a–z</option><option value="group">animal group</option></select></label></div>
 <div class="grid" id="grid"></div>
 <details class="info jr-d" id="jrd"><summary id="jrs">critters you’ve met</summary><div class="jr" id="journal"></div></details>
-<p class="foot"><span id="srcnote"></span> sparkle finishes vary in rarity, but they’re random and independent of the animal: any critter can come with any finish, and every critter in the day’s pool is equally likely to appear. photos are credited to their photographers in each card’s “original photo” view, and descriptions come from wikipedia when available. icons: material design icons by pictogrammers (apache 2.0).
+<p class="foot"><span id="srcnote"></span> sparkle finishes vary in rarity, but they’re random and independent of the animal: any critter can come with any finish, and every critter in the day’s pool is equally likely to appear. photos are credited to their photographers on each card and in its “original photo” view, and descriptions come from wikipedia when available. icons: material design icons by pictogrammers (apache 2.0).
 <button class="ghost" id="reset" style="margin-left:6px">reset collection</button></p>
 </main>
 <section id="shop" class="shoppage" role="dialog" aria-modal="true" aria-label="pack shop" aria-hidden="true" inert></section>
@@ -1469,8 +1491,13 @@ function fxText(f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr0,fa,ie]=(t||"").split(".")
  return out.length?`<div class="fxl">${out.join("")}</div>`:`<div class="fxl none">plain card, no special effects</div>`}
 const FACES=new Map();
 function cardFace(p,f,t){const k=p.id+"|"+(f||"")+"|"+(t||"");let h=FACES.get(k);if(!h){h=cardFace0(p,f,t);FACES.set(k,h)}return h}
+/* photo credit: a short "photo: name (license)" line on the card, built from the iNaturalist attribution */
+const crTxt=a=>{a=String(a||"");if(!a)return"";const lic=(a.match(/\(CC[^)]*\)/)||[""])[0];
+ const n=a.replace(/\(CC[^)]*\)/,"").replace(/^\s*\(c\)\s*/i,"").replace(/,?\s*some rights reserved/i,"").replace(/no rights reserved,?\s*(uploaded by)?\s*/i,"").replace(/[\s,]+$/,"").trim();
+ return "photo: "+(n||"unknown")+(lic?" "+lic:"")};
+const crHTML=p=>p.credit?`<div class="pcr">${crTxt(p.credit)}</div>`:"";
 function cardFace0(p,f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr,fa,ie]=(t||"").split(".");const par=par0===undefined||par0=="p";const sh=SHY[sh0]?sh0:"";return `<div class="face front sp-${p.sp} fin-${f||"none"}${BORD[gd]?" gold bd-"+gd:""}${FA[fa]?" fa fa-"+fa:""}${IE[ie]?" ie-"+ie:""}${TFX[tf]?" tf-"+tf:""}${sh?" shy-"+sh:""}${VARS[vr]&&VARE.includes(f)?" var-"+vr:""}${par?" par":""}${SR[f]?" sr":""}${FOILS[f]?" fin-foil foil-"+f:""} tint-${FOILS[f]?"foil":(tn||"rb")}${bg&&BGS[bg]&&!NOBG.includes(f)&&!SR[f]?" bg-"+bg:""}"><div class="holo">${f=="facet"?facetSVG(seedOf(p,t)):""}</div>${sh=="bg"?'<div class="shy"></div>':""}${tx&&TEX[tx]?`<div class="tex tx-${tx}"></div>`:""}<div class="hd txt"><div class="nm">${tf=="wave"?waveHTML(p.name):p.name}</div></div><div class="sptab" title="${SPC[p.sp]}" role="img" aria-label="${SPC[p.sp]}">${ic(SPI[p.sp])}</div>
- <div class="pw">${FA[fa]?'<div class="fclip">':""}${IE[ie]?'<div class="ifw">':""}<img class="photo" decoding="async" src="${photo(p)}" alt="${p.name}${p.live?"":", sample photo"}" referrerpolicy="no-referrer" draggable="false">${IE[ie]?"</div>":""}${FA[fa]?"</div>":""}${IE[ie]?'<div class="ifx"></div>':""}<div class="pholo"></div>${sh=="img"?'<div class="pshy"></div>':""}</div>
+ <div class="pw">${FA[fa]?'<div class="fclip">':""}${IE[ie]?'<div class="ifw">':""}<img class="photo" decoding="async" src="${photo(p)}" alt="${p.name}${p.live?"":", sample photo"}" referrerpolicy="no-referrer" draggable="false">${IE[ie]?"</div>":""}${FA[fa]?"</div>":""}${IE[ie]?'<div class="ifx"></div>':""}<div class="pholo"></div>${sh=="img"?'<div class="pshy"></div>':""}${crHTML(p)}</div>
  ${BORD[gd]?`<div class="gb">${borderSVG(seedOf(p,t))}</div>`:""}<div class="bd txt"><div class="meta"><i>${p.breed}</i> · ${p.age}</div><div class="desc">${p.desc}</div></div><div class="ft where txt">${ic("map-marker")}<span>${shOf(p).n}</span>${flagHTML(p)}</div></div>`}
 function cardBox(id,f,t,extra,back){return `<div class="cardbox" data-id="${id}" data-f="${f||""}" data-t="${t||""}"><div class="tilt">${slices()}${cardFace(petOf(id),f,t)}${back?`<div class="face back">${ic("leaf")}</div>`:""}</div>${extra||""}</div>`}
 const ck=(id,f,t)=>id+"|"+(f||"")+"|"+(t||"");
@@ -1601,7 +1628,7 @@ document.addEventListener("pointermove",e=>{if(LB.drag){const b=lbBox();if(!b)re
  if(LB.spin)return;const inLb=lb.classList.contains("on");if(inLb&&!lbFront())return;/* preview: cursor tilt only while the card faces front */
  const box=inLb?lb.querySelector(".cardbox"):(e.target.closest&&e.target.closest(".cardbox[data-id]"));if(box)pmFrame(0,box,e.clientX,e.clientY)});
 document.addEventListener("pointerout",e=>{const b=e.target.closest&&e.target.closest(".cardbox");if(b&&!b.closest("#lb")&&!b.contains(e.relatedTarget)){pmFrame.cancel();b.querySelector(".tilt").style.transform="";resetFx(b.querySelector(".front"))}});
-document.addEventListener("keydown",e=>{if(e.key=="Escape"){if(wikiOpen())closeWiki();else if(rawOpen())closeRaw();else if(lb.classList.contains("on"))closeLb();else closeDbg()}});
+document.addEventListener("keydown",e=>{if(e.key=="Escape"){if(wkZoomOpen())wkZoomClose();else if(wikiOpen())closeWiki();else if(rawOpen())closeRaw();else if(lb.classList.contains("on"))closeLb();else closeDbg()}});
 document.getElementById("reset").onclick=()=>{if(confirm("clear your collection and favorites, and reset today’s pack?")){state={last:"",fav:{},col:{},filter:"all",pack:null,unl:state.unl,pts:0,inv:{},seen:{},shop:{d:"",n:0},cur:null,econ:2};save();renderPack();renderGrid()}};
 // ===== debug gallery: every finish, tint, texture, shiny mode, parallax and card color =====
 function openDbg(){let d=document.getElementById("dbg");
@@ -1868,23 +1895,115 @@ async function wikiFetch(p){
  for(const n of names){
   try{const r=await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(n.replace(/ /g,"_"))+"?redirect=true",{headers:{Accept:"application/json"}});
    if(!r.ok)continue;const j=await r.json();if(j.type=="disambiguation"||!j.extract)continue;
-   const out={title:j.title,desc:j.description||"",extract:j.extract,img:j.thumbnail&&j.thumbnail.source||"",url:j.content_urls&&j.content_urls.desktop&&j.content_urls.desktop.page||""};
+   const out={title:j.title,desc:j.description||"",extract:j.extract,img:j.thumbnail&&j.thumbnail.source||"",orig:j.originalimage&&j.originalimage.source||"",url:j.content_urls&&j.content_urls.desktop&&j.content_urls.desktop.page||""};
    WK.set(p.id,out);return out}
   catch(e){netErr=true}}
  if(netErr)throw new Error("net");
  WK.set(p.id,null);return null}
 function openWiki(id){const p=petOf(id);if(!p)return;let w=document.getElementById("wiki");
- if(!w){w=document.createElement("div");w.id="wiki";w.setAttribute("role","dialog");w.setAttribute("aria-modal","true");w.onclick=e=>{if(e.target===w||e.target.closest(".wkx"))closeWiki()};document.body.appendChild(w)}
+ if(!w){w=document.createElement("div");w.id="wiki";w.setAttribute("role","dialog");w.setAttribute("aria-modal","true");w.onclick=e=>{const gn=e.target.closest&&e.target.closest(".wkgn");if(gn){wkStep(gn.classList.contains("next")?1:-1);return}if(e.target.closest&&e.target.closest(".wkgx")){wkZoomClose();return}const im=e.target.closest&&e.target.closest(".wkimg");if(im){wkZoom();return}if(e.target===w||e.target.closest(".wkx"))closeWiki()};w.onkeydown=e=>{const im=e.target.closest&&e.target.closest(".wkimg");if(im&&(e.key=="Enter"||e.key==" ")){e.preventDefault();wkZoom()}};document.body.appendChild(w)}
  const sci=wkText(p.breed||""),head=`<h3>${p.name}</h3><div class="wksci">${p.breed||""}</div>`,close=`<button class="ghost wkx">close</button>`;
  const box=h=>{w.innerHTML=`<div class="wkbox">${head}${h}</div>`};
- box(`<p>looking it up on wikipedia…</p>`);w.classList.add("on");w._id=id;
+ w._g=null;box(`<p>looking it up on wikipedia…</p>`);w.classList.add("on");w._id=id;
  wikiFetch(p).then(o=>{if(!w.classList.contains("on")||w._id!==id)return;
   if(!o)box(`<p>couldn’t find a wikipedia article for this one.</p><div class="wkfoot"><a href="https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(sci||wkText(p.name))}" target="_blank" rel="noopener">search wikipedia ↗</a>${close}</div>`);
-  else box(`${o.desc?`<div class="wkdesc">${esc(o.desc)}</div>`:""}${o.img?`<img class="wkimg" src="${esc(o.img)}" alt="" referrerpolicy="no-referrer" draggable="false" onerror="this.remove()">`:""}${o.extract.split(/\n+/).map(t=>`<p>${esc(t)}</p>`).join("")}<div class="wkfoot"><span>from wikipedia · <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA</a>${o.url?` · <a href="${esc(o.url)}" target="_blank" rel="noopener">read the full article ↗</a>`:""}</span>${close}</div>`)})
+  else box(`${o.desc?`<div class="wkdesc">${esc(o.desc)}</div>`:""}${o.img?`<img class="wkimg" src="${esc(o.img)}" data-big="${esc(o.img.replace(/\/\d+px-/,"/960px-"))}" data-orig="${esc(o.orig||"")}" tabindex="0" role="button" aria-label="enlarge photo" alt="" referrerpolicy="no-referrer" draggable="false" onerror="this.remove()">`:""}${o.extract.split(/\n+/).map(t=>`<p>${esc(t)}</p>`).join("")}<div class="wkfoot"><span>from wikipedia · <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA</a>${o.url?` · <a href="${esc(o.url)}" target="_blank" rel="noopener">read the full article ↗</a>`:""}</span><span><button class="ghost fmbtn" data-id="${id}">view field map</button> ${close}</span></div>`)})
  .catch(()=>{if(!w.classList.contains("on")||w._id!==id)return;box(`<p>couldn’t reach wikipedia (offline, or blocked).</p><div class="wkfoot"><span></span>${close}</div>`)})}
-function closeWiki(){const w=document.getElementById("wiki");if(w)w.classList.remove("on")}
+/* click the species photo: the picture takes over the whole panel, and if wikipedia has more photos of the animal they become a carousel */
+const WKM=new Map(),wkKey=u=>{try{return decodeURIComponent(String(u||"").split("/").pop()).replace(/^\d+px-/,"").toLowerCase()}catch(e){return String(u||"").toLowerCase()}};
+async function wikiMedia(title){if(WKM.has(title))return WKM.get(title);
+ const r=await fetch("https://en.wikipedia.org/api/rest_v1/page/media-list/"+encodeURIComponent(title.replace(/ /g,"_")),{headers:{Accept:"application/json"}});
+ if(!r.ok)throw new Error("media");const j=await r.json(),out=[];
+ (j.items||[]).forEach(it=>{if(it.type!="image"||it.showInGallery===false)return;const t=String(it.title||"");
+  if(!/\.(jpe?g|png|webp)$/i.test(t)||/(^|[^a-z])(map|range|distribution|icon|logo|symbol|status|flag|commons|diagram|chart|skull|skeleton)([^a-z]|$)/i.test(t))return;
+  const ss=(it.srcset||[]).map(x=>x.src).filter(Boolean).map(u=>u.startsWith("//")?"https:"+u:u);if(!ss.length)return;
+  const top=ss[ss.length-1],big=top.replace(/\/\d+px-/,"/960px-");
+  out.push({key:wkKey(ss[0]),src:big,fb:[top,...ss.slice(0,-1).reverse()].filter(x=>x!==big),cap:wkText((it.caption&&it.caption.text)||"")})});
+ WKM.set(title,out);return out}
+function wkZoom(){const w=document.getElementById("wiki");if(!w||w._g)return;const id=w._id,o=WK.get(id);if(!o||!o.img)return;
+ const big=o.img.replace(/\/\d+px-/,"/960px-");
+ w._art=w.innerHTML;w._g={list:[{key:wkKey(o.img),src:big,fb:[o.orig,o.img].filter(x=>x&&x!==big),cap:o.title||""}],i:0,o};wkGalRender();
+ if(o.title)wikiMedia(o.title).then(list=>{if(!w._g||w._id!==id)return;const g=w._g,have=new Set(g.list.map(x=>x.key));
+  const add=list.filter(x=>!have.has(x.key));if(!add.length)return;g.list.push(...add);wkGalRender()}).catch(()=>{})}
+function wkGalRender(){const w=document.getElementById("wiki"),g=w&&w._g;if(!g)return;const it=g.list[g.i],n=g.list.length;
+ w.innerHTML=`<div class="wkbox gal"><img class="wkgi" alt="${esc(it.cap||"")}" referrerpolicy="no-referrer" draggable="false">${n>1?`<button class="wkgn prev" aria-label="previous photo">‹</button><button class="wkgn next" aria-label="next photo">›</button>`:""}<button class="wkgx" aria-label="back to the article">back</button><div class="wkgbar"><span class="wkgc">${esc(it.cap||"")}${g.o.url?`${it.cap?" · ":""}<a href="${esc(g.o.url)}" target="_blank" rel="noopener">from wikipedia ↗</a>`:""}</span><span class="wkgct">${n>1?(g.i+1)+" / "+n:""}</span></div></div>`;
+ const im=w.querySelector(".wkgi"),fb=(it.fb||[]).slice();
+ im.onerror=()=>{const nx=fb.shift();if(nx){im.src=nx;return}
+  if(g.list.length>1){g.list.splice(g.i,1);g.i=Math.min(g.i,g.list.length-1);wkGalRender()}else wkZoomClose()};
+ im.src=it.src;
+ const bx=w.querySelector(".wkbox");let x0=null;bx.onpointerdown=e=>{x0=e.clientX};bx.onpointerup=e=>{if(x0==null)return;const dx=e.clientX-x0;x0=null;if(Math.abs(dx)>45&&g.list.length>1)wkStep(dx<0?1:-1)}}
+function wkStep(d){const w=document.getElementById("wiki"),g=w&&w._g;if(!g||g.list.length<2)return;g.i=(g.i+d+g.list.length)%g.list.length;wkGalRender()}
+function wkZoomClose(){const w=document.getElementById("wiki");if(w&&w._g){w._g=null;w.innerHTML=w._art||""}}
+const wkZoomOpen=()=>{const w=document.getElementById("wiki");return !!(w&&w._g)};
+document.addEventListener("keydown",e=>{if(!wkZoomOpen())return;if(e.key=="ArrowRight"){e.preventDefault();wkStep(1)}else if(e.key=="ArrowLeft"){e.preventDefault();wkStep(-1)}});
+function closeWiki(){const w=document.getElementById("wiki");if(w){w.classList.remove("on","fmon");w._g=null}}
 const wikiOpen=()=>{const w=document.getElementById("wiki");return !!(w&&w.classList.contains("on"))};
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest(".wikibtn");if(b){e.stopPropagation();e.preventDefault();openWiki(+b.dataset.id)}},true);
+
+/* ===== field map: where the species is recorded (GBIF counts by country) over a country outline, slides over the "about the species" panel ===== */
+const FMC=new Map(),FMURL="https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json",FMM={},FMD={};
+"004AF008AL012DZ024AO032AR036AU040AT031AZ044BS050BD051AM056BE064BT068BO070BA072BW076BR084BZ090SB096BN100BG104MM108BI112BY116KH120CM124CA140CF144LK148TD152CL156CN158TW170CO178CG180CD188CR191HR192CU196CY203CZ204BJ208DK214DO218EC222SV226GQ231ET232ER233EE238FK242FJ246FI250FR260TF262DJ266GA268GE270GM275PS276DE288GH300GR304GL320GT324GN328GY332HT340HN348HU352IS356IN360ID364IR368IQ372IE376IL380IT384CI388JM392JP398KZ400JO404KE408KP410KR414KW417KG418LA422LB426LS428LV430LR434LY440LT442LU450MG454MW458MY466ML478MR484MX496MN498MD499ME504MA508MZ512OM516NA524NP528NL540NC548VU554NZ558NI562NE566NG578NO586PK591PA598PG600PY604PE608PH616PL620PT624GW626TL630PR634QA642RO643RU646RW682SA686SN688RS694SL703SK704VN705SI706SO710ZA716ZW724ES728SS729SD732EH740SR748SZ752SE756CH760SY762TJ764TH768TG780TT784AE788TN792TR795TM800UG804UA807MK818EG826GB834TZ840US854BF858UY860UZ862VE887YE894ZM".replace(/(\d{3})([A-Z]{2})/g,(a,n,c)=>(FMM[n]=c,""));
+/* countries too small to see at world scale (or missing from the outline) get a dot: code, lat, lng */
+"SG1.35,103.8;MT35.9,14.4;MV3.2,73.2;MU-20.3,57.6;SC-4.7,55.5;BH26,50.55;KM-11.9,43.9;CV16,-24;ST.2,6.6;BB13.2,-59.5;GD12.1,-61.7;LC13.9,-61;VC13.2,-61.2;AG17.1,-61.8;DM15.4,-61.4;KN17.3,-62.7;TO-21.2,-175.2;WS-13.8,-172.1;KI1.9,-157.4;FM6.9,158.2;MH7.1,171.2;PW7.5,134.6;NR-.5,166.9;TV-8.5,179.2;LI47.2,9.55;MC43.7,7.4;SM43.9,12.5;AD42.5,1.5;VA41.9,12.45;HK22.3,114.2;MO22.2,113.5;GU13.4,144.8;PF-17.7,-149.4;RE-21.1,55.5;MQ14.6,-61;GP16.25,-61.6;BM32.3,-64.8;KY19.3,-81.3;AW12.5,-70;CW12.2,-69;VI18.3,-64.9;TC21.7,-71.8;MP15.2,145.7;AS-14.3,-170.7;YT-12.8,45.2;SX18,-63.1;MF18.07,-63.05;BL17.9,-62.8;PM46.9,-56.3;WF-13.8,-177.1;NU-19,-169.9;CK-21.2,-159.8;GI36.1,-5.35;JE49.2,-2.1;GG49.5,-2.55;IM54.2,-4.5;FO62,-6.8;AX60.2,20;SJ78,16;BQ12.2,-68.3;AI18.2,-63;VG18.4,-64.6;SH-15.9,-5.7;IO-7.3,72.4;CC-12.2,96.8;CX-10.5,105.7;NF-29,167.95".split(";").forEach(s=>{const m=s.match(/^([A-Z]{2})(.+),(.+)$/);FMD[m[1]]=[+m[2],+m[3]]});
+const fmRN=(()=>{try{return new Intl.DisplayNames(["en"],{type:"region"})}catch(e){return null}})(),fmName=c=>{try{return(fmRN&&fmRN.of(c))||c}catch(e){return c}};
+function fmTopo(){if(window.FM_TOPO)return Promise.resolve(window.FM_TOPO); /* optional: paste a countries-110m TopoJSON object into window.FM_TOPO to make the outline fully offline */
+ if(!fmTopo.p)fmTopo.p=fetch(FMURL).then(r=>{if(!r.ok)throw new Error("topo");return r.json()}).catch(e=>{fmTopo.p=null;throw e});return fmTopo.p}
+function fmShapes(t){const[sx,sy]=t.transform.scale,[tx,ty]=t.transform.translate,
+ arcs=t.arcs.map(a=>{let x=0,y=0;return a.map(q=>{x+=q[0];y+=q[1];return[x*sx+tx,y*sy+ty]})}),
+ ring=ix=>{const r=[];ix.forEach(i=>{const a=i<0?arcs[~i].slice().reverse():arcs[i];(r.length?a.slice(1):a).forEach(q=>r.push(q))});return r},
+ rd=r=>"M"+r.map(q=>q[0].toFixed(2)+" "+(84-q[1]).toFixed(2)).join("L")+"Z",out=[];
+ t.objects.countries.geometries.forEach(g=>{const id=String(g.id==null?"":g.id).padStart(3,"0"),nm=(g.properties&&g.properties.name)||"";
+  const c=g.id==null&&nm=="Kosovo"?"XK":FMM[id];if(!c||!g.arcs)return;
+  const polys=g.type=="Polygon"?[g.arcs]:g.arcs;out.push({c,name:c=="XK"?"Kosovo":fmName(c),d:polys.map(pl=>pl.map(r=>rd(ring(r))).join("")).join("")})});return out}
+async function fmData(sci){if(FMC.has(sci))return FMC.get(sci);
+ const g=async u=>{const r=await fetch(u);if(!r.ok)throw new Error("gbif");return r.json()};
+ const m=await g("https://api.gbif.org/v1/species/match?name="+encodeURIComponent(sci)),key=m.matchType!="NONE"&&(m.usageKey||m.speciesKey);
+ let list=[];if(key){const j=await g("https://api.gbif.org/v1/occurrence/search?limit=0&facet=country&facetLimit=300&taxonKey="+key),f=(j.facets||[]).find(x=>x.field=="COUNTRY");
+  list=((f&&f.counts)||[]).map(x=>({c:x.name,n:x.count})).filter(x=>x.n>=5).sort((a,b)=>b.n-a.n)} /* tiny counts are usually escaped birds or data errors */
+ FMC.set(sci,list);return list}
+const fmCol=t=>"rgb("+[222,235,247].map((v,i)=>Math.round(v+([8,48,107][i]-v)*t)).join(",")+")";
+function fmOpen(id){const w=document.getElementById("wiki"),box=w&&w.querySelector(".wkbox"),p=petOf(id);if(!box||!p||box.querySelector(".fmpanel"))return;
+ const sci=wkText(p.breed||"").trim(),ll=String(p.ll||"").split(",").map(Number),pin=ll.length==2&&isFinite(ll[0])&&isFinite(ll[1])?{lat:ll[0],lng:ll[1]}:null;
+ let shapes=[],list=null,rank={},max=1,st={topo:"load",gbif:"load"},zp=!!pin;
+ const pn=document.createElement("div");pn.className="fmpanel";
+ pn.innerHTML=`<div class="fmtop"><button class="fmback">‹ back</button><b>field map</b>${pin?`<button class="fmworld">see the whole world</button>`:"<span></span>"}</div><div class="fminfo"></div><div class="fmmap"><svg xmlns="http://www.w3.org/2000/svg"><g class="fmg"></g><g class="fmdots"></g><g class="fmpin"></g></svg></div><div class="fmleg"><div class="fmbar"><span>fewer sightings</span><i></i><span>more sightings</span></div><small>shading shows how often a species is recorded, not how many animals there are. it favours places with lots of observers, like the US and western europe.</small></div>`;
+ box.classList.add("fm");w.classList.add("fmon");box.appendChild(pn);
+ const $=s=>pn.querySelector(s),svg=$("svg"),mp=$(".fmmap"),info=$(".fminfo"),gG=$(".fmg"),gD=$(".fmdots"),gP=$(".fmpin");let W=1,H=1,vb={x:-180,y:0,w:360,h:142};
+ const base=()=>[st.topo=="err"?"country outlines couldn’t load, so only the pin is shown.":"",st.gbif=="err"?"range data couldn’t load (offline, or blocked).":st.gbif=="none"?"no records found for this species.":st.gbif=="load"?"loading sightings by country…":"",pin?"":"this sample card has no location, so there’s no pin."].filter(Boolean).join(" ")||"tap a country to see how often it’s recorded.";
+ const show=(c,nm)=>{const r=rank[c];info.textContent=nm+" · "+(r?"#"+r.i+" of "+list.length+" countries · "+r.n.toLocaleString()+" records":list?"no records (or too few to count)":"…")};
+ function setVB(){const k=Math.max(360,142*W/H);vb.w=Math.min(Math.max(vb.w,3),k);vb.h=vb.w*H/W;vb.x=Math.min(Math.max(vb.x+vb.w/2,-180),180)-vb.w/2;vb.y=Math.min(Math.max(vb.y+vb.h/2,0),142)-vb.h/2;
+  svg.setAttribute("viewBox",vb.x+" "+vb.y+" "+vb.w+" "+vb.h);const s=vb.w/W;
+  gD.querySelectorAll("circle").forEach(c=>{c.setAttribute("r",3.6*s);c.setAttribute("stroke-width",1.2*s)});
+  if(pin)gP.setAttribute("transform","translate("+pin.lng+" "+(84-pin.lat)+") scale("+s+")")}
+ const whole=()=>{vb.w=Math.max(360,142*W/H);vb.h=vb.w*H/W;vb.x=-180-(vb.w-360)/2;vb.y=71-vb.h/2;setVB()},
+  toPin=()=>{vb.w=40;vb.h=vb.w*H/W;vb.x=pin.lng-20;vb.y=84-pin.lat-vb.h/2;setVB()};
+ const zoomAt=(f,px,py)=>{const fx=px/W,fy=py/H,ux=vb.x+fx*vb.w,uy=vb.y+fy*vb.h;vb.w*=f;vb.h=vb.w*H/W;vb.x=ux-fx*vb.w;vb.y=uy-fy*vb.h;setVB()};
+ function draw(){gG.innerHTML=shapes.map(s=>{const r=rank[s.c];return`<path data-c="${s.c}" data-n="${esc(s.name)}" d="${s.d}" fill="${r?fmCol(Math.sqrt(r.n/max)):"#c4c4c4"}" fill-rule="evenodd"/>`}).join("");
+  const have=new Set(shapes.map(s=>s.c));
+  gD.innerHTML=(list||[]).filter(x=>FMD[x.c]&&!have.has(x.c)).map(x=>`<circle data-c="${x.c}" data-n="${esc(fmName(x.c))}" cx="${FMD[x.c][1]}" cy="${84-FMD[x.c][0]}" fill="${fmCol(Math.sqrt(x.n/max))}" stroke="#555"/>`).join("");
+  if(!shapes.length){let g="";for(let x=-180;x<=180;x+=30)g+=`M${x} 0V142`;for(let y=0;y<=142;y+=30)g+=`M-180 ${y}H180`;gG.innerHTML=`<path d="${g}" fill="none" stroke="#8884" />`}
+  if(pin&&!gP.firstChild)gP.innerHTML=`<circle r="13" fill="none" stroke="#e5322d" stroke-width="2" opacity=".5"/><circle r="6" fill="#e5322d" stroke="#fff" stroke-width="2"><title>where this photo was taken</title></circle>`;
+  setVB();info.textContent=base()}
+ const rs=()=>{W=mp.clientWidth||1;H=mp.clientHeight||1;setVB()};rs();pn._ro=window.ResizeObserver?new ResizeObserver(rs):null;if(pn._ro)pn._ro.observe(mp);
+ pin?toPin():whole();draw();
+ if(pin)$(".fmworld").onclick=e=>{zp=!zp;zp?toPin():whole();e.target.textContent=zp?"see the whole world":"back to the pin"};
+ $(".fmback").onclick=fmClose;
+ const P=new Map();let mv=0,last=0;const dist=()=>{const a=[...P.values()];return Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1])};
+ svg.onpointerdown=e=>{P.set(e.pointerId,[e.clientX,e.clientY]);mv=0;if(P.size==2)last=dist()};
+ svg.onpointermove=e=>{if(!P.has(e.pointerId))return;const o=P.get(e.pointerId),n=[e.clientX,e.clientY];P.set(e.pointerId,n);
+  if(P.size==1){const k=vb.w/W;vb.x-=(n[0]-o[0])*k;vb.y-=(n[1]-o[1])*k;mv+=Math.abs(n[0]-o[0])+Math.abs(n[1]-o[1]);setVB()}
+  else if(P.size==2){const d=dist(),a=[...P.values()],r=svg.getBoundingClientRect();if(last)zoomAt(last/d,(a[0][0]+a[1][0])/2-r.left,(a[0][1]+a[1][1])/2-r.top);last=d;mv+=9}};
+ svg.onpointerup=svg.onpointercancel=e=>{if(P.size==1&&mv<6&&e.type=="pointerup"){const t=e.target.closest&&e.target.closest("[data-c]");if(t)show(t.dataset.c,t.dataset.n);else info.textContent=base()}P.delete(e.pointerId);last=0};
+ svg.addEventListener("mouseover",e=>{const t=e.target.closest&&e.target.closest("[data-c]");if(t&&!P.size)show(t.dataset.c,t.dataset.n)});
+ svg.addEventListener("wheel",e=>{e.preventDefault();const r=svg.getBoundingClientRect();zoomAt(Math.exp(e.deltaY*.0015),e.clientX-r.left,e.clientY-r.top)},{passive:false});
+ const alive=()=>pn.isConnected;
+ fmTopo().then(t=>{shapes=fmShapes(t);st.topo="ok"}).catch(()=>{st.topo="err"}).then(()=>{if(alive())draw()});
+ (sci?fmData(sci):Promise.resolve([])).then(l=>{list=l;l.forEach((x,i)=>rank[x.c]={i:i+1,n:x.n});max=l.length?l[0].n:1;st.gbif=l.length?"ok":"none"}).catch(()=>{st.gbif="err"}).then(()=>{if(alive())draw()})}
+function fmClose(){const w=document.getElementById("wiki"),pn=w&&w.querySelector(".fmpanel");if(!pn)return;const box=pn.parentElement;if(pn._ro)pn._ro.disconnect();pn.classList.add("out");
+ setTimeout(()=>{pn.remove();box.classList.remove("fm");w.classList.remove("fmon")},220)}
+const fmIsOpen=()=>!!document.querySelector("#wiki.on .fmpanel:not(.out)");
+document.addEventListener("keydown",e=>{if(e.key=="Escape"&&fmIsOpen()){e.stopImmediatePropagation();e.preventDefault();fmClose()}},true);
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest(".fmbtn");if(b){e.stopPropagation();e.preventDefault();fmOpen(+b.dataset.id)}},true);
 
 /* ===== pixel art finish =====
    not a plain pixelate: the photo is downscaled in two steps, given a little extra colour and contrast, squeezed into a 20 colour palette
