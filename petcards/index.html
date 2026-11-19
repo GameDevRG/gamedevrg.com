@@ -10,7 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap"></noscript>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap">
+<!-- fallback fonts for scripts Chakra Petch lacks (chinese, japanese, korean, arabic, cyrillic...); the browser only downloads the pieces a card actually needs -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&family=Noto+Sans+SC:wght@400;600;700&family=Noto+Sans+JP:wght@400;600;700&family=Noto+Sans+KR:wght@400;600;700&family=Noto+Sans+TC:wght@400;600;700&family=Noto+Sans+Arabic:wght@400;600;700&family=Noto+Sans+Hebrew:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Bengali:wght@400;600;700&family=Noto+Sans+Tamil:wght@400;600;700&family=Noto+Sans+Thai:wght@400;600;700&family=Noto+Sans+Georgian:wght@400;600;700&family=Noto+Sans+Armenian:wght@400;600;700&display=swap" media="print" onload="this.media='all'"></noscript>
 <style>
 :root{--bg:#fbf6ee;--surface:#fff;--text:#2b2118;--muted:#7a6a5a;--border:#e6d9c6;--accent:#2f7cf6;
 --w:min(72vw,290px);--glit:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='s' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 24 0 0 0 -18'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23s)'/%3E%3C/svg%3E");--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .5' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3Crect width='160' height='160' filter='url(%23f)' opacity='.55'/%3E%3C/svg%3E");--rb:linear-gradient(115deg,#ff7ac6,#ffd36e,#7dffb2,#6ec9ff,#b48aff,#ff7ac6);
@@ -19,7 +21,7 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 :root[data-theme="dark"]{--bg:#141414;--surface:#232323;--text:#ececec;--muted:#a0a0a0;--border:#333333}
 html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:"Chakra Petch",system-ui,sans-serif;overflow-x:hidden}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;overflow-x:hidden}
 main{max-width:760px;margin:0 auto;padding:16px 16px 48px}
 h1{font-size:22px;margin:0 0 2px;text-align:center}
 .sub{color:var(--muted);margin:0;font-size:14px;text-align:center}
@@ -36,7 +38,7 @@ h1{font-size:22px;margin:0 0 2px;text-align:center}
 .pkc.l .pkm{transform:perspective(500px) rotateY(26deg)}.pkc.r .pkm{transform:perspective(500px) rotateY(-26deg)}
 .pkm:hover,.pkm:focus-visible{opacity:.9;filter:none;outline:none}
 .pkm .pk-ic{font-size:30px}.pkm .pk-ti{font-size:11px}.pkm .pk-su,.pkm .pk-tl{display:none}.pkm .pk-mid{gap:4px;margin-top:0}.pkm .pk-crimp{height:8px}
-.pkm .cnt{position:absolute;right:5px;bottom:12px;z-index:3;background:rgba(0,0,0,.55);color:#fff;border-radius:99px;padding:1px 7px;font:700 11px "Chakra Petch",system-ui,sans-serif}
+.pkm .cnt{position:absolute;right:5px;bottom:12px;z-index:3;background:rgba(0,0,0,.55);color:#fff;border-radius:99px;padding:1px 7px;font:700 11px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif}
 .pkbar{display:flex;align-items:center;gap:12px;color:var(--text);font-size:15px}
 .pkbar b{font-weight:700}.pkbar .nav{width:34px;height:34px;padding:0;border-radius:50%;font-size:20px;line-height:1}
 .pkdots{display:flex;gap:7px;margin-top:-4px}.pkdots i{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:transform .2s,background .2s}.pkdots i.on{background:var(--accent);transform:scale(1.3)}
@@ -63,11 +65,11 @@ box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),inset 9px 0 14px rgba(0,0,0,.14)
 .pk-crimp{position:absolute;left:0;right:0;height:16px;z-index:2;background:repeating-linear-gradient(90deg,rgba(0,0,0,.3) 0 2px,rgba(255,255,255,.45) 2px 4px,rgba(0,0,0,.12) 4px 6px)}
 .pk-crimp.t{top:0;border-bottom:1px solid rgba(0,0,0,.25)}.pk-crimp.b{bottom:0;border-top:1px solid rgba(0,0,0,.25)}
 .pk-tl{position:absolute;left:0;right:0;top:12%;z-index:1;border-top:2px dashed rgba(255,255,255,.85)}
-.pk-tl span{position:absolute;left:0;right:0;bottom:4px;text-align:center;font:700 10px "Chakra Petch",system-ui,sans-serif;letter-spacing:.35em;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.pk-tl span{position:absolute;left:0;right:0;bottom:4px;text-align:center;font:700 10px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;letter-spacing:.35em;text-shadow:0 1px 2px rgba(0,0,0,.35)}
 .pk-mid{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:10%;text-align:center}
 .pk-ic{font-size:64px;line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
-.pk-ti{font:700 21px "Chakra Petch",system-ui,sans-serif;text-shadow:0 2px 4px rgba(0,0,0,.3)}
-.pk-su{font:600 12px "Chakra Petch",system-ui,sans-serif;letter-spacing:.08em;text-transform:lowercase;opacity:.92}
+.pk-ti{font:700 21px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;text-shadow:0 2px 4px rgba(0,0,0,.3)}
+.pk-su{font:600 12px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;letter-spacing:.08em;text-transform:lowercase;opacity:.92}
 .pk-rim{position:absolute;inset:0;pointer-events:none;clip-path:polygon(0 0,0 0,0 0);background:linear-gradient(90deg,#f1f3f8,#ffffff 35%,#c9d0dc 70%,#f4f6fa)}
 .pk-cards{position:absolute;left:7%;right:7%;top:calc(12% - 22px);height:70%;transition:transform .55s cubic-bezier(.2,.9,.3,1.2),opacity .5s}
 .pk-cards i{position:absolute;inset:0;border-radius:8px;border:2px solid #ffd9a3;background:repeating-linear-gradient(45deg,transparent 0 8px,rgba(255,217,163,.18) 8px 9px),repeating-linear-gradient(-45deg,transparent 0 8px,rgba(255,217,163,.18) 8px 9px),linear-gradient(160deg,#4d1e60,#1b0c2a);box-shadow:0 2px 6px rgba(0,0,0,.3)}
@@ -146,8 +148,8 @@ background-blend-mode:normal,overlay,normal,normal,normal,normal;animation:backs
 .front .ft i.flag{display:none}
 .front.mys{align-items:center;justify-content:center;text-align:center;padding:1em .75em}
 .sp-mammal{--rc:#c9741f}.sp-bird{--rc:#1e8fb0}.sp-reptile{--rc:#2f8f58}.sp-amphib{--rc:#6b8f2f}.sp-fish{--rc:#3f6fd1}.sp-insect{--rc:#c2527f}.sp-arachnid{--rc:#7e57c2}.sp-mollusk{--rc:#a07a2f}
-button.act{background:var(--accent);color:#fff;border:0;border-radius:99px;padding:11px 22px;font:600 16px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
-button.ghost{background:none;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font:13px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
+button.act{background:var(--accent);color:#fff;border:0;border-radius:99px;padding:11px 22px;font:600 16px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;cursor:pointer}
+button.ghost{background:none;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font:13px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;cursor:pointer}
 .tg{display:flex;gap:6px;justify-content:center;align-items:center;font-size:13px;color:var(--muted);margin:8px 0 0;cursor:pointer}
 .holo,.pholo{position:absolute;inset:0;pointer-events:none;opacity:0;border-radius:inherit}
 .holo::before,.holo::after,.pholo::before,.pholo::after{content:"";position:absolute;inset:0}
@@ -177,7 +179,7 @@ button.ghost{background:none;color:var(--muted);border:1px solid var(--border);b
 .cell{text-align:center}.cap{font-size:12px;color:var(--muted);margin-top:8px}
 #lb{position:fixed;inset:0;z-index:50;background:rgba(10,8,6,.82);display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px;touch-action:none}
 #lb.on{display:flex}
-#lb .acts .lbx{background:rgba(255,255,255,.16);color:#fff;border:1px solid #fff8;border-radius:99px;padding:9px 16px;font:600 15px "Chakra Petch",system-ui,sans-serif;cursor:pointer;}
+#lb .acts .lbx{background:rgba(255,255,255,.16);color:#fff;border:1px solid #fff8;border-radius:99px;padding:9px 16px;font:600 15px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;cursor:pointer;}
 #lb .acts .lbx:hover{background:rgba(255,255,255,.28)}
 .finl{font-size:.6875em;font-weight:700;margin-top:.4em;color:var(--text)}
 .fin-foil{border-color:var(--fb);box-shadow:var(--cs),0 0 1.1em var(--fb),inset 0 0 3em var(--wash)}
@@ -195,23 +197,23 @@ button.ghost{background:none;color:var(--muted);border:1px solid var(--border);b
 @keyframes neon{0%,100%{border-color:#ff4fd8;box-shadow:var(--cs),0 0 .7em #ff4fd8,inset 0 0 1.2em rgba(255,79,216,.35)}50%{border-color:#4fe3ff;box-shadow:var(--cs),0 0 .7em #4fe3ff,inset 0 0 1.2em rgba(79,227,255,.35)}}
 .fin-paws .holo,.fin-hearts .holo,.fin-stars .holo{opacity:.2;z-index:0}
 .fin-confetti .holo{opacity:.18;z-index:0;background:radial-gradient(circle,#000 0 3px,transparent 4px) 0 0/26px 26px,radial-gradient(circle,#000 0 2px,transparent 3px) 13px 13px/26px 26px,radial-gradient(circle,#000 0 1.5px,transparent 2.5px) 13px 0/26px 26px,radial-gradient(circle,#000 0 1px,transparent 2px) 0 13px/26px 26px}
-main button,main a.meet,#lb button,#lb a.meet,.pack{font-family:"Chakra Petch",system-ui,sans-serif}
+main button,main a.meet,#lb button,#lb a.meet,.pack{font-family:"Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif}
 .ic{width:1em;height:1em;fill:currentColor;vertical-align:-.14em;flex:none}
 #lb .cardbox .face{backface-visibility:hidden;-webkit-backface-visibility:hidden}
 #lb .cardbox .back{transform:rotateY(180deg) translateZ(calc(var(--th)/2))}
 .fvmark{position:absolute;top:-6px;right:-6px;z-index:5;background:#ffe9a8;border-radius:99px;padding:4px;font-size:14px;line-height:0}
 .face.front>.tex{position:absolute;inset:0;z-index:0;pointer-events:none;background:#000;opacity:.14;-webkit-mask-repeat:repeat;mask-repeat:repeat}
-.chip{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:6px 14px;font:600 13px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
+.chip{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:6px 14px;font:600 13px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;cursor:pointer}
 .chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
-.srt{display:inline-flex;align-items:center;gap:8px;margin-left:auto;color:var(--muted);font:600 13px "Chakra Petch",system-ui,sans-serif}
-.srt select{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:6px 12px;font:600 13px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
+.srt{display:inline-flex;align-items:center;gap:8px;margin-left:auto;color:var(--muted);font:600 13px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif}
+.srt select{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:6px 12px;font:600 13px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;cursor:pointer}
 .srt select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 h3.grp{grid-column:1/-1;justify-self:start;margin:16px 0 -4px;font-size:15px}
 .about{max-width:520px;margin:8px auto 0;font-size:13px;line-height:1.5;color:var(--muted);text-align:center}
 .acts{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
-.fv{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:9px 16px;font:600 15px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
+.fv{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:9px 16px;font:600 15px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;cursor:pointer}
 .fv.on{background:#ffe9a8;border-color:#e0a21b;color:#4a3300}
-a.meet{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;border-radius:99px;padding:9px 16px;font:600 15px "Chakra Petch",system-ui,sans-serif}
+a.meet{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;border-radius:99px;padding:9px 16px;font:600 15px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif}
 .fv.sm,a.meet.sm{font-size:12px;padding:5px 10px;margin-top:5px}
 .where{font-size:.6875em;color:var(--muted);margin-top:.3em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fin-reverse .where{color:var(--text)}
@@ -376,7 +378,7 @@ linear-gradient(115deg,var(--rc) 0,var(--rc) calc(var(--gx,50%) - 30%),color-mix
 #dbg .bar{position:sticky;top:0;z-index:2;background:var(--bg);display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:calc(10px + env(safe-area-inset-top,0px)) 0 10px;border-bottom:1px solid var(--border)}
 #dbg .bar b{font-size:16px}
 #dbg .bar label{font-size:13px;color:var(--muted);display:flex;gap:6px;align-items:center}
-#dbg select{font:13px "Chakra Petch",system-ui,sans-serif;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:4px 6px}
+#dbg select{font:13px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:4px 6px}
 #dbg h3{margin:24px 0 2px;font-size:16px}
 #dbg .dsub{font-size:12px;color:var(--muted);margin:0}
 #lb .cardbox{flex:none}
@@ -408,14 +410,14 @@ linear-gradient(115deg,var(--rc) 0,var(--rc) calc(var(--gx,50%) - 30%),color-mix
 .k-turtle{--pf:repeating-linear-gradient(60deg,rgba(255,255,255,.15) 0 1px,transparent 1px 14px),repeating-linear-gradient(-60deg,rgba(255,255,255,.15) 0 1px,transparent 1px 14px),repeating-linear-gradient(112deg,#0c6b5a 0,#2fcfa0 8%,#a6f0cf 15%,#12967a 24%,#07493c 32%,#0c6b5a 38%)}
 /* ===== pack shop: a button on the main page opens this full-screen page (same file, no reload) ===== */
 .shopentry{margin:30px 0 0}
-.shopbtn{width:100%;display:flex;align-items:center;gap:14px;padding:12px 16px 12px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 16px "Chakra Petch",system-ui,sans-serif;cursor:pointer;text-align:left;box-shadow:0 3px 0 var(--border);transition:transform .15s,box-shadow .15s}
+.shopbtn{width:100%;display:flex;align-items:center;gap:14px;padding:12px 16px 12px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 16px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;cursor:pointer;text-align:left;box-shadow:0 3px 0 var(--border);transition:transform .15s,box-shadow .15s}
 .shopbtn:hover{transform:translateY(-2px);box-shadow:0 3px 0 var(--border),0 12px 24px rgba(0,0,0,.16)}
 .shopbtn:active{transform:translateY(1px);box-shadow:0 1px 0 var(--border)}
 .shopbtn .stk{position:relative;width:70px;height:56px;flex:none}
 .mpk{position:absolute;bottom:0;width:32px;height:48px;border-radius:4px;background:var(--pf,repeating-linear-gradient(112deg,#f58a3f 0,#ffb871 6%,#d8427b 13%,#ff8e57 19%,#c9366b 26%,#f58a3f 32%));box-shadow:inset 0 0 0 1px rgba(255,255,255,.4),0 4px 8px rgba(0,0,0,.28);transition:transform .25s}
 .mpk:nth-child(1){left:0;transform:rotate(-12deg)}.mpk:nth-child(2){left:19px;bottom:3px;z-index:1}.mpk:nth-child(3){left:38px;transform:rotate(12deg)}
 .shopbtn:hover .mpk:nth-child(1){transform:rotate(-18deg) translateX(-3px)}.shopbtn:hover .mpk:nth-child(3){transform:rotate(18deg) translateX(3px)}.shopbtn:hover .mpk:nth-child(2){transform:translateY(-4px)}
-.shopbtn .st{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.shopbtn .st b{font-size:18px}.shopbtn .st small{color:var(--muted);font:500 13px "Chakra Petch",system-ui,sans-serif}
+.shopbtn .st{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.shopbtn .st b{font-size:18px}.shopbtn .st small{color:var(--muted);font:500 13px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif}
 .shopbtn .bal{font-size:15px;padding:5px 14px 5px 7px;flex:none}
 .shopbtn .chev{font-size:26px;color:var(--muted);line-height:1;flex:none}
 .shopbtn .rdy{display:inline-block;margin-left:6px;background:var(--accent);color:#fff;border-radius:99px;padding:1px 8px;font-size:11px;font-weight:700;vertical-align:2px}
@@ -425,7 +427,7 @@ body.shop-open{overflow:hidden}
 .sp-top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 96%,transparent);border-bottom:1px solid var(--border)}
 .sp-in{max-width:980px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 18px 10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .sp-in h2{margin:0;font-size:20px;flex:1;min-width:110px}
-.sp-back{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:8px 14px 8px 10px;font:600 14px "Chakra Petch",system-ui,sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.sp-back{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:8px 14px 8px 10px;font:600 14px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
 .sp-back:hover{border-color:var(--accent)}
 .sp-wrap{max-width:980px;margin:0 auto;padding:6px 18px calc(48px + env(safe-area-inset-bottom,0px))}
 .sp-note{display:flex;gap:10px;align-items:flex-start;margin:14px 0 4px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--accent) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 25%,var(--border));font-size:13px;line-height:1.45;color:var(--muted)}
@@ -447,7 +449,7 @@ body.shop-open{overflow:hidden}
 .sp-tags i.hl{background:hsl(var(--h) 80% 55% / .16);color:var(--text)}
 .sp-badge{position:absolute!important;top:10px;right:10px;background:var(--accent);color:#fff;border-radius:99px;padding:2px 10px;font-size:11.5px;font-weight:700;z-index:2}
 .sp-need{width:100%;height:6px;border-radius:3px;background:var(--border);overflow:hidden}.sp-need i{display:block;height:100%;background:linear-gradient(90deg,#f5b82e,#ffd86b);border-radius:3px}
-.sp-buy{width:100%;border:0;border-radius:13px;padding:11px 12px;background:var(--accent);color:#fff;font:700 15px "Chakra Petch",system-ui,sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 3px 0 color-mix(in srgb,var(--accent) 65%,#000);transition:transform .1s,box-shadow .1s}
+.sp-buy{width:100%;border:0;border-radius:13px;padding:11px 12px;background:var(--accent);color:#fff;font:700 15px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 3px 0 color-mix(in srgb,var(--accent) 65%,#000);transition:transform .1s,box-shadow .1s}
 .sp-buy:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 color-mix(in srgb,var(--accent) 65%,#000)}
 .sp-buy:disabled{background:color-mix(in srgb,var(--text) 9%,transparent);color:var(--muted);box-shadow:none;cursor:default;font-weight:600;font-size:13px}
 .sp-card.pop{animation:sppop .6s ease-out}
@@ -457,7 +459,7 @@ body.shop-open{overflow:hidden}
 @media (prefers-reduced-motion:reduce){.shoppage{transition:none}.sp-card.pop{animation:none}}
 .shop{margin-top:34px;text-align:left}.shop h2{margin-top:0}
 .shopbar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-top:6px}
-.bal{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#ffe9a8,#f5b82e);color:#4a3000;border-radius:99px;padding:7px 18px 7px 9px;font:700 20px "Chakra Petch",system-ui,sans-serif;box-shadow:0 2px 0 #b57f0a,0 6px 14px rgba(245,184,46,.35)}
+.bal{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#ffe9a8,#f5b82e);color:#4a3000;border-radius:99px;padding:7px 18px 7px 9px;font:700 20px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;box-shadow:0 2px 0 #b57f0a,0 6px 14px rgba(245,184,46,.35)}
 .bal small{font-size:11px;font-weight:600;opacity:.75;letter-spacing:.08em}
 .coin{display:inline-block;width:1.1em;height:1.1em;border-radius:50%;vertical-align:-.18em;background:radial-gradient(circle at 35% 30%,#fff6c9,#f5b82e 55%,#b57f0a);box-shadow:inset 0 0 0 .12em rgba(120,75,0,.35)}
 .lim{display:inline-flex;align-items:center;gap:5px;color:var(--muted);font-size:13px}.lim i{width:10px;height:10px;border-radius:50%;background:var(--accent)}.lim i.u{background:none;border:1.5px solid var(--border)}
@@ -472,7 +474,7 @@ body.shop-open{overflow:hidden}
 .mp::before,.mp::after{content:"";position:absolute;left:0;right:0;height:9px;background:repeating-linear-gradient(90deg,rgba(0,0,0,.3) 0 2px,rgba(255,255,255,.45) 2px 4px,rgba(0,0,0,.12) 4px 6px)}
 .mp::before{top:0}.mp::after{bottom:0}.pkt:hover .mp{transform:rotate(2deg) scale(1.07)}
 .mp .sh{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.55) 50%,transparent 65%) 0 0/250% 100%;animation:sheen 4s linear infinite;mix-blend-mode:soft-light}
-.mp .mi{position:relative;font-size:34px;line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}.mp em{position:relative;font:700 11px "Chakra Petch",system-ui,sans-serif;font-style:normal;text-shadow:0 1px 2px rgba(0,0,0,.4);letter-spacing:.06em}
+.mp .mi{position:relative;font-size:34px;line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}.mp em{position:relative;font:700 11px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;font-style:normal;text-shadow:0 1px 2px rgba(0,0,0,.4);letter-spacing:.06em}
 .vb{list-style:none;margin:0 0 12px;padding:0;text-align:left;font-size:13px;border-top:1px solid var(--border)}.vb li{display:flex;justify-content:space-between;gap:10px;padding:5px 2px;border-bottom:1px solid var(--border);color:var(--muted)}.vb li b{color:var(--text)}.vb li.st,.vb li.st b{color:#e0a21b;font-weight:700}
 .jr-d{margin-top:34px}.jr{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:12px;text-align:left}
 .jri{display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px}
@@ -485,7 +487,7 @@ body.shop-open{overflow:hidden}
 .tpcard{display:flex;justify-content:center;pointer-events:none}.tpcard .cardbox{--w:130px}.tpacts{display:flex;gap:10px;justify-content:center}
 .fxl.none{font-weight:400;color:#fff9}
 .fxl .srt{background:linear-gradient(90deg,#ffd86b,#fff,#ff8ad8,#8ad8ff,#ffd86b);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:sheen 3s linear infinite;text-transform:lowercase;letter-spacing:.04em}
-button.rawbtn{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:9px 16px;font:600 15px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
+button.rawbtn{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:9px 16px;font:600 15px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;cursor:pointer}
 .acts .rawbtn.sm{font-size:12px;padding:5px 10px}
 #raw{position:fixed;inset:0;z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px));background:rgba(10,8,6,.94);cursor:zoom-out}
 #raw.on{display:flex}
@@ -501,13 +503,13 @@ button.rawbtn{background:var(--surface);color:var(--text);border:1px solid var(-
 #wiki .wkimg:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #wiki .wkbox.gal{position:relative;padding:0;overflow:hidden;background:#000;height:min(80vh,640px);display:block;touch-action:pan-y}
 #wiki .wkgi{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-select:none;-webkit-user-drag:none}
-#wiki .wkgn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.5);color:#fff;font:400 28px/1 "Chakra Petch",system-ui,sans-serif;display:grid;place-items:center;padding:0 0 3px;cursor:pointer}
+#wiki .wkgn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.5);color:#fff;font:400 28px/1 "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;display:grid;place-items:center;padding:0 0 3px;cursor:pointer}
 #wiki .wkgn:hover{background:rgba(0,0,0,.75)}#wiki .wkgn.prev{left:10px}#wiki .wkgn.next{right:10px}
 #wiki .wkgbar{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:30px 14px 12px;background:linear-gradient(transparent,rgba(0,0,0,.75));color:#fff;font-size:12.5px;line-height:1.35;pointer-events:none}
 #wiki .wkgc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 #wiki .wkgc a{color:#9cc3ff;pointer-events:auto}
 #wiki .wkgct{white-space:nowrap;font-weight:600}
-#wiki .wkgx{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.6);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:99px;padding:7px 14px;font:600 13px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
+#wiki .wkgx{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.6);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:99px;padding:7px 14px;font:600 13px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;cursor:pointer}
 #wiki p{margin:0 0 10px}#wiki .wkfoot{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;clear:both;font-size:12px;color:var(--muted);margin-top:6px}
 #wiki .wkfoot a{color:var(--accent)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -774,7 +776,7 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 
 .info{text-align:center}
 .rg{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-top:10px;font-size:13px;color:var(--muted)}
-.rg select,.rg input{font:13px "Chakra Petch",system-ui,sans-serif;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 8px;width:11em}
+.rg select,.rg input{font:13px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 8px;width:11em}
 #rgzip{width:6em}#rgmsg{flex-basis:100%;min-height:1.2em}
 .info>summary{display:inline-block;list-style:none;cursor:pointer;text-align:center;color:var(--muted);font-size:13px;padding:6px 14px;border:1px solid var(--border);border-radius:99px;background:var(--surface);user-select:none;-webkit-user-select:none}
 .info>summary::-webkit-details-marker{display:none}
@@ -819,7 +821,7 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 .fmpanel{position:absolute;inset:0;z-index:3;background:var(--surface);color:var(--text);display:flex;flex-direction:column;animation:fmin .28s ease both}
 .fmpanel.out{animation:fmout .22s ease both}@keyframes fmin{from{transform:translateX(100%)}}@keyframes fmout{to{transform:translateX(100%)}}
 .fmtop{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px 6px}
-.fmtop button{background:transparent;color:var(--accent);border:1px solid var(--border);border-radius:99px;padding:6px 12px;font:600 13px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
+.fmtop button{background:transparent;color:var(--accent);border:1px solid var(--border);border-radius:99px;padding:6px 12px;font:600 13px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;cursor:pointer}
 .fminfo{padding:0 14px 8px;font-size:13px;min-height:2.6em;color:var(--muted)}
 .fmmap{position:relative;--fmbase:color-mix(in srgb,var(--text) 11%,var(--surface));--fmline:color-mix(in srgb,var(--text) 38%,var(--surface));flex:1;min-height:0;margin:0 10px;border-radius:12px;overflow:hidden;background:var(--bg);border:1px solid var(--border)}
 .fmmap svg{display:block;width:100%;height:100%;touch-action:none;cursor:grab}.fmmap path{stroke:var(--fmline);stroke-width:.6;stroke-linejoin:round;vector-effect:non-scaling-stroke;cursor:pointer;transition:filter .12s}.fmmap path:hover{filter:brightness(1.25);stroke:var(--text);stroke-width:1}.fmdots circle{stroke:var(--fmline)}
@@ -831,7 +833,7 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 @media(max-width:600px){#wiki.fmon{padding:0}#wiki.fmon .wkbox.fm{max-width:none;height:100%;max-height:none;border-radius:0}}
 /* card back is static: no sheen sweep, no spinning rays */
 .back,.back *,.back::before,.back::after,.back span::before{animation:none!important}
-.tipb{position:fixed;z-index:9999;max-width:min(80vw,320px);padding:8px 12px;border-radius:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,.45);font:500 13px/1.35 "Chakra Petch",system-ui,sans-serif;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .15s}
+.tipb{position:fixed;z-index:9999;max-width:min(80vw,320px);padding:8px 12px;border-radius:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,.45);font:500 13px/1.35 "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .15s}
 .tipb.on{opacity:1;visibility:visible}
 .tipb:after{content:"";position:absolute;left:calc(50% + var(--tx,0px));bottom:-7px;width:12px;height:12px;background:var(--surface);border:solid var(--border);border-width:0 1px 1px 0;transform:translateX(-50%) rotate(45deg)}
 .tipb.dn:after{bottom:auto;top:-7px;border-width:1px 0 0 1px}
