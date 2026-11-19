@@ -138,7 +138,8 @@ background-blend-mode:normal,overlay,normal,normal,normal,normal;animation:backs
 .front .meta{text-align:center;font-weight:600}
 .front .desc{text-align:left;margin-top:.1em}
 .front .ft{display:flex;align-items:center;gap:.4em;margin:.1em -.75em 0;padding:.5em .8em .6em;border-top:.14em solid var(--rc);background:color-mix(in srgb,var(--rc) 14%,transparent);font-size:.75em;white-space:nowrap}
-.front .ft{flex-wrap:wrap;row-gap:.15em}.front .ft .cr2{flex:0 0 100%;min-width:0;font-size:.78em;line-height:1.2;opacity:.78;padding-left:1.75em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.front .ft{flex-wrap:wrap;row-gap:.15em}.front .ft .lw{display:flex;flex:1 1 0;min-width:0;overflow:hidden}.front .ft .lt{flex:none;overflow:visible;text-overflow:clip;white-space:nowrap;transform-origin:0 50%;scale:var(--sx,1) 1} /* location squeezes horizontally like the name */
+.front .ft .cr2{flex:0 0 100%;min-width:0;font-size:.78em;line-height:1.2;opacity:.78;padding-left:1.75em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .front .ft .ic{width:1.3em;height:1.3em;vertical-align:0;color:var(--rc)}
 .front .ft span{overflow:hidden;text-overflow:ellipsis;min-width:0}
 .front .ft .flag{margin-left:auto;flex:none;height:1.05em;width:auto;display:block;border-radius:.15em;box-shadow:0 0 0 .07em rgba(0,0,0,.28)}
@@ -1505,7 +1506,7 @@ const crTxt=a=>{a=String(a||"");if(!a)return"";const lic=(a.match(/\(CC[^)]*\)/)
 const crHTML=p=>p.credit?`<div class="pcr">${crTxt(p.credit)}</div>`:"";
 function cardFace0(p,f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr,fa,ie]=(t||"").split(".");const par=par0===undefined||par0=="p";const sh=SHY[sh0]?sh0:"";return `<div class="face front sp-${p.sp} fin-${f||"none"}${BORD[gd]?" gold bd-"+gd:""}${FA[fa]?" fa fa-"+fa:""}${IE[ie]?" ie-"+ie:""}${TFX[tf]?" tf-"+tf:""}${sh?" shy-"+sh:""}${VARS[vr]&&VARE.includes(f)?" var-"+vr:""}${par?" par":""}${SR[f]?" sr":""}${FOILS[f]?" fin-foil foil-"+f:""} tint-${FOILS[f]?"foil":(tn||"rb")}${bg&&BGS[bg]&&!NOBG.includes(f)&&!SR[f]?" bg-"+bg:""}"><div class="holo">${f=="facet"?facetSVG(seedOf(p,t)):""}</div>${sh=="bg"?'<div class="shy"></div>':""}${tx&&TEX[tx]?`<div class="tex tx-${tx}"></div>`:""}<div class="hd txt"><div class="nm">${tf=="wave"?waveHTML(p.name):p.name}</div></div><div class="sptab" title="${SPC[p.sp]}" role="img" aria-label="${SPC[p.sp]}">${ic(SPI[p.sp])}</div>
  <div class="pw">${FA[fa]?'<div class="fclip">':""}${IE[ie]?'<div class="ifw">':""}<img class="photo" decoding="async" src="${photo(p)}" alt="${p.name}${p.live?"":", sample photo"}" referrerpolicy="no-referrer" draggable="false">${IE[ie]?"</div>":""}${FA[fa]?"</div>":""}${IE[ie]?'<div class="ifx"></div>':""}<div class="pholo"></div>${sh=="img"?'<div class="pshy"></div>':""}</div>
- ${BORD[gd]?`<div class="gb">${borderSVG(seedOf(p,t))}</div>`:""}<div class="bd txt"><div class="meta"><i>${p.breed}</i> · ${p.age}</div><div class="desc">${p.desc}</div></div><div class="ft where txt">${ic("map-marker")}<span>${shOf(p).n}</span>${flagHTML(p)}${p.credit?`<div class="cr2">${crTxt(p.credit)}</div>`:""}</div></div>`}
+ ${BORD[gd]?`<div class="gb">${borderSVG(seedOf(p,t))}</div>`:""}<div class="bd txt"><div class="meta"><i>${p.breed}</i> · ${p.age}</div><div class="desc">${p.desc}</div></div><div class="ft where txt">${ic("map-marker")}<span class="lw"><span class="lt">${shOf(p).n}</span></span>${flagHTML(p)}${p.credit?`<div class="cr2">${crTxt(p.credit)}</div>`:""}</div></div>`}
 function cardBox(id,f,t,extra,back){return `<div class="cardbox" data-id="${id}" data-f="${f||""}" data-t="${t||""}"><div class="tilt">${slices()}${cardFace(petOf(id),f,t)}${back?`<div class="face back">${ic("leaf")}</div>`:""}</div>${extra||""}</div>`}
 const ck=(id,f,t)=>id+"|"+(f||"")+"|"+(t||"");
 function addCard(id,f,t){const k=ck(id,f,t),c=state.col[k];if(!state.seen[id])state.seen[id]=Date.now();if(c)c.n++;else state.col[k]={id,f:f||"",t:t||"",n:1,at:Date.now()}}
@@ -1867,8 +1868,9 @@ document.getElementById("rgsave").onclick=async()=>{
 /* ===== one-line names: squish horizontally (x only) to fit the space beside the species tab ===== */
 const fitNm=hd=>{const nm=hd.querySelector(".nm");if(!nm)return;const cs=getComputedStyle(hd),av=hd.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),w=nm.offsetWidth;
  if(av<=0||!w)return;const sx=Math.min(1,av/w);nm.style.setProperty("--sx",sx.toFixed(4))};
-const nmRO=new ResizeObserver(es=>es.forEach(e=>fitNm(e.target))),nmSeen=new WeakSet();
-const nmScan=root=>{(root.querySelectorAll?root.querySelectorAll(".front .hd"):[]).forEach(hd=>{if(!nmSeen.has(hd)){nmSeen.add(hd);nmRO.observe(hd)}fitNm(hd)})};
+const fitLc=lw=>{const lt=lw.firstElementChild;if(!lt)return;const av=lw.clientWidth,w=lt.offsetWidth;if(av<=0||!w)return;lt.style.setProperty("--sx",Math.min(1,av/w).toFixed(4))};
+const nmRO=new ResizeObserver(es=>es.forEach(e=>e.target.classList.contains("lw")?fitLc(e.target):fitNm(e.target))),nmSeen=new WeakSet();
+const nmScan=root=>{(root.querySelectorAll?root.querySelectorAll(".front .hd"):[]).forEach(hd=>{if(!nmSeen.has(hd)){nmSeen.add(hd);nmRO.observe(hd)}fitNm(hd)});(root.querySelectorAll?root.querySelectorAll(".front .ft .lw"):[]).forEach(lw=>{if(!nmSeen.has(lw)){nmSeen.add(lw);nmRO.observe(lw)}fitLc(lw)})};
 new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>n.nodeType==1&&nmScan(n)))).observe(document.body,{childList:true,subtree:true});
 nmScan(document);
 if(document.fonts){document.fonts.ready.then(()=>nmScan(document));document.fonts.addEventListener("loadingdone",()=>nmScan(document))}
