@@ -138,6 +138,7 @@ background-blend-mode:normal,overlay,normal,normal,normal,normal;animation:backs
 .front .meta{text-align:center;font-weight:600}
 .front .desc{text-align:left;margin-top:.1em}
 .front .ft{display:flex;align-items:center;gap:.4em;margin:.1em -.75em 0;padding:.5em .8em .6em;border-top:.14em solid var(--rc);background:color-mix(in srgb,var(--rc) 14%,transparent);font-size:.75em;white-space:nowrap}
+.front .ft{flex-wrap:wrap;row-gap:.15em}.front .ft .cr2{flex:0 0 100%;min-width:0;font-size:.78em;line-height:1.2;opacity:.78;padding-left:1.75em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .front .ft .ic{width:1.3em;height:1.3em;vertical-align:0;color:var(--rc)}
 .front .ft span{overflow:hidden;text-overflow:ellipsis;min-width:0}
 .front .ft .flag{margin-left:auto;flex:none;height:1.05em;width:auto;display:block;border-radius:.15em;box-shadow:0 0 0 .07em rgba(0,0,0,.28)}
@@ -819,10 +820,16 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 .fmtop{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px 6px}
 .fmtop button{background:transparent;color:var(--accent);border:1px solid var(--border);border-radius:99px;padding:6px 12px;font:600 13px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
 .fminfo{padding:0 14px 8px;font-size:13px;min-height:2.6em;color:var(--muted)}
-.fmmap{flex:1;min-height:0;margin:0 10px;border-radius:12px;overflow:hidden;background:rgba(127,127,127,.12)}
-.fmmap svg{display:block;width:100%;height:100%;touch-action:none;cursor:grab}.fmmap path{stroke:var(--surface);stroke-width:.6;vector-effect:non-scaling-stroke;cursor:pointer}.fmmap path:hover{stroke:var(--accent);stroke-width:1.4}
-.fmleg{padding:8px 14px 12px;font-size:11.5px;color:var(--muted)}.fmbar{display:flex;align-items:center;gap:8px;margin-bottom:4px}.fmbar i{flex:0 0 110px;height:8px;border-radius:4px;background:linear-gradient(90deg,rgb(222,235,247),rgb(8,48,107))}.fmleg small{font-size:11.5px;line-height:1.35}
+.fmmap{position:relative;--fmbase:color-mix(in srgb,var(--text) 11%,var(--surface));--fmline:color-mix(in srgb,var(--text) 38%,var(--surface));flex:1;min-height:0;margin:0 10px;border-radius:12px;overflow:hidden;background:var(--bg);border:1px solid var(--border)}
+.fmmap svg{display:block;width:100%;height:100%;touch-action:none;cursor:grab}.fmmap path{stroke:var(--fmline);stroke-width:.6;stroke-linejoin:round;vector-effect:non-scaling-stroke;cursor:pointer;transition:filter .12s}.fmmap path:hover{filter:brightness(1.25);stroke:var(--text);stroke-width:1}.fmdots circle{stroke:var(--fmline)}
+.fmleg{padding:8px 14px 12px;font-size:11.5px;color:var(--muted)}.fmbar{display:flex;align-items:center;gap:8px;margin-bottom:4px}.fmbar i{flex:0 0 110px;height:8px;border-radius:4px;background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 22%,color-mix(in srgb,var(--text) 11%,var(--surface))),var(--accent))}.fmleg small{font-size:11.5px;line-height:1.35}
+.fmbub{position:absolute;transform:translate(-50%,-100%);width:64px;padding:4px;border-radius:12px;background:var(--surface);border:1px solid var(--border);box-shadow:0 6px 18px rgba(0,0,0,.4);pointer-events:none;z-index:2}
+.fmbub img{display:block;width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px}
+.fmbub:after{content:"";position:absolute;left:calc(50% + var(--tx,0px));bottom:-7px;width:12px;height:12px;background:var(--surface);border:solid var(--border);border-width:0 1px 1px 0;transform:translateX(-50%) rotate(45deg)}
+.fmbub.dn{transform:translate(-50%,0)}.fmbub.dn:after{bottom:auto;top:-7px;border-width:1px 0 0 1px}
 @media(max-width:600px){#wiki.fmon{padding:0}#wiki.fmon .wkbox.fm{max-width:none;height:100%;max-height:none;border-radius:0}}
+/* card back is static: no sheen sweep, no spinning rays */
+.back,.back *,.back::before,.back::after,.back span::before{animation:none!important}
 </style>
 </head>
 <body>
@@ -1497,8 +1504,8 @@ const crTxt=a=>{a=String(a||"");if(!a)return"";const lic=(a.match(/\(CC[^)]*\)/)
  return "photo: "+(n||"unknown")+(lic?" "+lic:"")};
 const crHTML=p=>p.credit?`<div class="pcr">${crTxt(p.credit)}</div>`:"";
 function cardFace0(p,f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr,fa,ie]=(t||"").split(".");const par=par0===undefined||par0=="p";const sh=SHY[sh0]?sh0:"";return `<div class="face front sp-${p.sp} fin-${f||"none"}${BORD[gd]?" gold bd-"+gd:""}${FA[fa]?" fa fa-"+fa:""}${IE[ie]?" ie-"+ie:""}${TFX[tf]?" tf-"+tf:""}${sh?" shy-"+sh:""}${VARS[vr]&&VARE.includes(f)?" var-"+vr:""}${par?" par":""}${SR[f]?" sr":""}${FOILS[f]?" fin-foil foil-"+f:""} tint-${FOILS[f]?"foil":(tn||"rb")}${bg&&BGS[bg]&&!NOBG.includes(f)&&!SR[f]?" bg-"+bg:""}"><div class="holo">${f=="facet"?facetSVG(seedOf(p,t)):""}</div>${sh=="bg"?'<div class="shy"></div>':""}${tx&&TEX[tx]?`<div class="tex tx-${tx}"></div>`:""}<div class="hd txt"><div class="nm">${tf=="wave"?waveHTML(p.name):p.name}</div></div><div class="sptab" title="${SPC[p.sp]}" role="img" aria-label="${SPC[p.sp]}">${ic(SPI[p.sp])}</div>
- <div class="pw">${FA[fa]?'<div class="fclip">':""}${IE[ie]?'<div class="ifw">':""}<img class="photo" decoding="async" src="${photo(p)}" alt="${p.name}${p.live?"":", sample photo"}" referrerpolicy="no-referrer" draggable="false">${IE[ie]?"</div>":""}${FA[fa]?"</div>":""}${IE[ie]?'<div class="ifx"></div>':""}<div class="pholo"></div>${sh=="img"?'<div class="pshy"></div>':""}${crHTML(p)}</div>
- ${BORD[gd]?`<div class="gb">${borderSVG(seedOf(p,t))}</div>`:""}<div class="bd txt"><div class="meta"><i>${p.breed}</i> · ${p.age}</div><div class="desc">${p.desc}</div></div><div class="ft where txt">${ic("map-marker")}<span>${shOf(p).n}</span>${flagHTML(p)}</div></div>`}
+ <div class="pw">${FA[fa]?'<div class="fclip">':""}${IE[ie]?'<div class="ifw">':""}<img class="photo" decoding="async" src="${photo(p)}" alt="${p.name}${p.live?"":", sample photo"}" referrerpolicy="no-referrer" draggable="false">${IE[ie]?"</div>":""}${FA[fa]?"</div>":""}${IE[ie]?'<div class="ifx"></div>':""}<div class="pholo"></div>${sh=="img"?'<div class="pshy"></div>':""}</div>
+ ${BORD[gd]?`<div class="gb">${borderSVG(seedOf(p,t))}</div>`:""}<div class="bd txt"><div class="meta"><i>${p.breed}</i> · ${p.age}</div><div class="desc">${p.desc}</div></div><div class="ft where txt">${ic("map-marker")}<span>${shOf(p).n}</span>${flagHTML(p)}${p.credit?`<div class="cr2">${crTxt(p.credit)}</div>`:""}</div></div>`}
 function cardBox(id,f,t,extra,back){return `<div class="cardbox" data-id="${id}" data-f="${f||""}" data-t="${t||""}"><div class="tilt">${slices()}${cardFace(petOf(id),f,t)}${back?`<div class="face back">${ic("leaf")}</div>`:""}</div>${extra||""}</div>`}
 const ck=(id,f,t)=>id+"|"+(f||"")+"|"+(t||"");
 function addCard(id,f,t){const k=ck(id,f,t),c=state.col[k];if(!state.seen[id])state.seen[id]=Date.now();if(c)c.n++;else state.col[k]={id,f:f||"",t:t||"",n:1,at:Date.now()}}
@@ -1951,7 +1958,8 @@ function fmTopo(){if(window.FM_TOPO)return Promise.resolve(window.FM_TOPO); /* o
 function fmShapes(t){const[sx,sy]=t.transform.scale,[tx,ty]=t.transform.translate,
  arcs=t.arcs.map(a=>{let x=0,y=0;return a.map(q=>{x+=q[0];y+=q[1];return[x*sx+tx,y*sy+ty]})}),
  ring=ix=>{const r=[];ix.forEach(i=>{const a=i<0?arcs[~i].slice().reverse():arcs[i];(r.length?a.slice(1):a).forEach(q=>r.push(q))});return r},
- rd=r=>"M"+r.map(q=>q[0].toFixed(2)+" "+(84-q[1]).toFixed(2)).join("L")+"Z",out=[];
+ rd=r=>{let o=0,pl=null,pts=[];r.forEach(q=>{let x=q[0]+o;if(pl!=null){if(x-pl>180){o-=360;x-=360}else if(pl-x>180){o+=360;x+=360}}pl=x;pts.push([x,q[1]])}); /* unwrap rings that cross the antimeridian (russia, fiji...) so they don't streak across the map */
+  const xs=pts.map(q=>q[0]),mn=Math.min(...xs),mx=Math.max(...xs);return[0,-360,360].filter(k=>k==0||(k<0&&mx>180)||(k>0&&mn<-180)).map(k=>"M"+pts.map(q=>(q[0]+k).toFixed(2)+" "+(84-q[1]).toFixed(2)).join("L")+"Z").join("")},out=[];
  t.objects.countries.geometries.forEach(g=>{const id=String(g.id==null?"":g.id).padStart(3,"0"),nm=(g.properties&&g.properties.name)||"";
   const c=g.id==null&&nm=="Kosovo"?"XK":FMM[id];if(!c||!g.arcs)return;
   const polys=g.type=="Polygon"?[g.arcs]:g.arcs;out.push({c,name:c=="XK"?"Kosovo":fmName(c),d:polys.map(pl=>pl.map(r=>rd(ring(r))).join("")).join("")})});return out}
@@ -1961,27 +1969,29 @@ async function fmData(sci){if(FMC.has(sci))return FMC.get(sci);
  let list=[];if(key){const j=await g("https://api.gbif.org/v1/occurrence/search?limit=0&facet=country&facetLimit=300&taxonKey="+key),f=(j.facets||[]).find(x=>x.field=="COUNTRY");
   list=((f&&f.counts)||[]).map(x=>({c:x.name,n:x.count})).filter(x=>x.n>=5).sort((a,b)=>b.n-a.n)} /* tiny counts are usually escaped birds or data errors */
  FMC.set(sci,list);return list}
-const fmCol=t=>"rgb("+[222,235,247].map((v,i)=>Math.round(v+([8,48,107][i]-v)*t)).join(",")+")";
+const fmCol=t=>"color-mix(in srgb,var(--accent) "+Math.round(22+78*t)+"%,var(--fmbase))";
 function fmOpen(id){const w=document.getElementById("wiki"),box=w&&w.querySelector(".wkbox"),p=petOf(id);if(!box||!p||box.querySelector(".fmpanel"))return;
  const sci=wkText(p.breed||"").trim(),ll=String(p.ll||"").split(",").map(Number),pin=ll.length==2&&isFinite(ll[0])&&isFinite(ll[1])?{lat:ll[0],lng:ll[1]}:null;
  let shapes=[],list=null,rank={},max=1,st={topo:"load",gbif:"load"},zp=!!pin;
  const pn=document.createElement("div");pn.className="fmpanel";
- pn.innerHTML=`<div class="fmtop"><button class="fmback">‹ back</button><b>field map</b>${pin?`<button class="fmworld">see the whole world</button>`:"<span></span>"}</div><div class="fminfo"></div><div class="fmmap"><svg xmlns="http://www.w3.org/2000/svg"><g class="fmg"></g><g class="fmdots"></g><g class="fmpin"></g></svg></div><div class="fmleg"><div class="fmbar"><span>fewer sightings</span><i></i><span>more sightings</span></div><small>shading shows how often a species is recorded, not how many animals there are. it favours places with lots of observers, like the US and western europe.</small></div>`;
+ pn.innerHTML=`<div class="fmtop"><button class="fmback">‹ back</button><b>field map</b>${pin?`<button class="fmworld">see the whole world</button>`:"<span></span>"}</div><div class="fminfo"></div><div class="fmmap"><svg xmlns="http://www.w3.org/2000/svg"><g class="fmg"></g><g class="fmdots"></g><g class="fmpin"></g></svg>${pin?`<div class="fmbub"><img alt="" referrerpolicy="no-referrer" draggable="false" src="${esc(photo(p))}" onerror="this.parentNode.remove()"></div>`:""}</div><div class="fmleg"><div class="fmbar"><span>fewer sightings</span><i></i><span>more sightings</span></div><small>shading shows how often a species is recorded, not how many animals there are. it favours places with lots of observers, like the US and western europe.</small></div>`;
  box.classList.add("fm");w.classList.add("fmon");box.appendChild(pn);
- const $=s=>pn.querySelector(s),svg=$("svg"),mp=$(".fmmap"),info=$(".fminfo"),gG=$(".fmg"),gD=$(".fmdots"),gP=$(".fmpin");let W=1,H=1,vb={x:-180,y:0,w:360,h:142};
+ const $=s=>pn.querySelector(s),svg=$("svg"),mp=$(".fmmap"),info=$(".fminfo"),gG=$(".fmg"),gD=$(".fmdots"),gP=$(".fmpin"),bub=$(".fmbub");let W=1,H=1,vb={x:-180,y:0,w:360,h:142};
  const base=()=>[st.topo=="err"?"country outlines couldn’t load, so only the pin is shown.":"",st.gbif=="err"?"range data couldn’t load (offline, or blocked).":st.gbif=="none"?"no records found for this species.":st.gbif=="load"?"loading sightings by country…":"",pin?"":"this sample card has no location, so there’s no pin."].filter(Boolean).join(" ")||"tap a country to see how often it’s recorded.";
  const show=(c,nm)=>{const r=rank[c];info.textContent=nm+" · "+(r?"#"+r.i+" of "+list.length+" countries · "+r.n.toLocaleString()+" records":list?"no records (or too few to count)":"…")};
  function setVB(){const k=Math.max(360,142*W/H);vb.w=Math.min(Math.max(vb.w,3),k);vb.h=vb.w*H/W;vb.x=Math.min(Math.max(vb.x+vb.w/2,-180),180)-vb.w/2;vb.y=Math.min(Math.max(vb.y+vb.h/2,0),142)-vb.h/2;
   svg.setAttribute("viewBox",vb.x+" "+vb.y+" "+vb.w+" "+vb.h);const s=vb.w/W;
   gD.querySelectorAll("circle").forEach(c=>{c.setAttribute("r",3.6*s);c.setAttribute("stroke-width",1.2*s)});
-  if(pin)gP.setAttribute("transform","translate("+pin.lng+" "+(84-pin.lat)+") scale("+s+")")}
+  if(pin)gP.setAttribute("transform","translate("+pin.lng+" "+(84-pin.lat)+") scale("+s+")");
+  if(pin&&bub){const px=(pin.lng-vb.x)/vb.w*W,py=(84-pin.lat-vb.y)/vb.h*H,on=px>-20&&px<W+20&&py>-20&&py<H+20,lx=Math.min(Math.max(px,42),W-42),dn=py<96;
+   bub.style.display=on?"block":"none";bub.classList.toggle("dn",dn);bub.style.left=lx+"px";bub.style.top=(dn?py+20:py-20)+"px";bub.style.setProperty("--tx",Math.max(-30,Math.min(30,px-lx))+"px")}}
  const whole=()=>{vb.w=Math.max(360,142*W/H);vb.h=vb.w*H/W;vb.x=-180-(vb.w-360)/2;vb.y=71-vb.h/2;setVB()},
   toPin=()=>{vb.w=40;vb.h=vb.w*H/W;vb.x=pin.lng-20;vb.y=84-pin.lat-vb.h/2;setVB()};
  const zoomAt=(f,px,py)=>{const fx=px/W,fy=py/H,ux=vb.x+fx*vb.w,uy=vb.y+fy*vb.h;vb.w*=f;vb.h=vb.w*H/W;vb.x=ux-fx*vb.w;vb.y=uy-fy*vb.h;setVB()};
- function draw(){gG.innerHTML=shapes.map(s=>{const r=rank[s.c];return`<path data-c="${s.c}" data-n="${esc(s.name)}" d="${s.d}" fill="${r?fmCol(Math.sqrt(r.n/max)):"#c4c4c4"}" fill-rule="evenodd"/>`}).join("");
+ function draw(){gG.innerHTML=shapes.map(s=>{const r=rank[s.c];return`<path data-c="${s.c}" data-n="${esc(s.name)}" d="${s.d}" style="fill:${r?fmCol(Math.sqrt(r.n/max)):"var(--fmbase)"}" fill-rule="evenodd"/>`}).join("");
   const have=new Set(shapes.map(s=>s.c));
-  gD.innerHTML=(list||[]).filter(x=>FMD[x.c]&&!have.has(x.c)).map(x=>`<circle data-c="${x.c}" data-n="${esc(fmName(x.c))}" cx="${FMD[x.c][1]}" cy="${84-FMD[x.c][0]}" fill="${fmCol(Math.sqrt(x.n/max))}" stroke="#555"/>`).join("");
-  if(!shapes.length){let g="";for(let x=-180;x<=180;x+=30)g+=`M${x} 0V142`;for(let y=0;y<=142;y+=30)g+=`M-180 ${y}H180`;gG.innerHTML=`<path d="${g}" fill="none" stroke="#8884" />`}
+  gD.innerHTML=(list||[]).filter(x=>FMD[x.c]&&!have.has(x.c)).map(x=>`<circle data-c="${x.c}" data-n="${esc(fmName(x.c))}" cx="${FMD[x.c][1]}" cy="${84-FMD[x.c][0]}" style="fill:${fmCol(Math.sqrt(x.n/max))}"/>`).join("");
+  if(!shapes.length){let g="";for(let x=-180;x<=180;x+=30)g+=`M${x} 0V142`;for(let y=0;y<=142;y+=30)g+=`M-180 ${y}H180`;gG.innerHTML=`<path d="${g}" fill="none" style="stroke:var(--fmline)"/>`}
   if(pin&&!gP.firstChild)gP.innerHTML=`<circle r="13" fill="none" stroke="#e5322d" stroke-width="2" opacity=".5"/><circle r="6" fill="#e5322d" stroke="#fff" stroke-width="2"><title>where this photo was taken</title></circle>`;
   setVB();info.textContent=base()}
  const rs=()=>{W=mp.clientWidth||1;H=mp.clientHeight||1;setVB()};rs();pn._ro=window.ResizeObserver?new ResizeObserver(rs):null;if(pn._ro)pn._ro.observe(mp);
