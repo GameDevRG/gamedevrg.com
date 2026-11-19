@@ -831,6 +831,10 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 @media(max-width:600px){#wiki.fmon{padding:0}#wiki.fmon .wkbox.fm{max-width:none;height:100%;max-height:none;border-radius:0}}
 /* card back is static: no sheen sweep, no spinning rays */
 .back,.back *,.back::before,.back::after,.back span::before{animation:none!important}
+.tipb{position:fixed;z-index:9999;max-width:min(80vw,320px);padding:8px 12px;border-radius:12px;background:var(--surface);color:var(--text);border:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,.45);font:500 13px/1.35 "Chakra Petch",system-ui,sans-serif;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .15s}
+.tipb.on{opacity:1;visibility:visible}
+.tipb:after{content:"";position:absolute;left:calc(50% + var(--tx,0px));bottom:-7px;width:12px;height:12px;background:var(--surface);border:solid var(--border);border-width:0 1px 1px 0;transform:translateX(-50%) rotate(45deg)}
+.tipb.dn:after{bottom:auto;top:-7px;border-width:1px 0 0 1px}
 </style>
 </head>
 <body>
@@ -922,9 +926,9 @@ function parseINat(list){
   const sp=spOf(t.iconic_taxon_name);if(!sp||!/^https:\/\//.test(ph.url))return;
   seen.add(t.id);
   let name=tidy(t.preferred_common_name);if(name===name.toLowerCase())name=name.replace(/(^|[\s-])([a-z])/g,(m,b,c)=>b+c.toUpperCase());
-  name=esc(clip(name,28));
+  const nameRaw=name;name=esc(clip(name,28));
   const place=tidy(o.place_guess||""),who=tidy(o.user&&(o.user.name||o.user.login)||"");
-  out.push({rg:String(o.id),tid:t.id,name,sp,breed:esc(tidy(t.name)),age:GL[sp],trait:"",
+  out.push({rg:String(o.id),tid:t.id,name,nf:nameRaw,pf:place,sp,breed:esc(tidy(t.name)),age:GL[sp],trait:"",
    desc:esc(name+" spotted "+(place?"in "+clip(place,40):"in the wild")+(who?" by "+clip(who,24):"")+"."),sh:0,live:true,
    img:ph.url.replace("/square.","/medium."),big:ph.url.replace("/square.","/large."),
    url:"https://www.inaturalist.org/observations/"+o.id,shn:esc(clip(place,42))||"somewhere in the wild",credit:esc(tidy(ph.attribution||"")),ll:typeof o.location=="string"?o.location:""})});
@@ -2016,6 +2020,18 @@ function fmClose(){const w=document.getElementById("wiki"),pn=w&&w.querySelector
 const fmIsOpen=()=>!!document.querySelector("#wiki.on .fmpanel:not(.out)");
 document.addEventListener("keydown",e=>{if(e.key=="Escape"&&fmIsOpen()){e.stopImmediatePropagation();e.preventDefault();fmClose()}},true);
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest(".fmbtn");if(b){e.stopPropagation();e.preventDefault();fmOpen(+b.dataset.id)}},true);
+
+/* ===== hover bubble: pause on a name or location that ends in "…" (or a cut-off photo credit) to read the full text ===== */
+const tipEl=document.createElement("div");tipEl.className="tipb";tipEl.setAttribute("role","tooltip");document.body.appendChild(tipEl);let tipT=0,tipFor=null;
+const tipText=el=>{const c=el.closest(".cardbox"),p=c&&petOf(c.dataset.id),cut=el.textContent.trim().endsWith("…");
+ if(el.classList.contains("nm"))return p&&p.nf&&cut?p.nf:"";if(el.classList.contains("lt"))return p&&p.pf&&cut?p.pf:"";
+ return el.scrollWidth>el.clientWidth+1?el.textContent.trim():""};
+function tipHide(){clearTimeout(tipT);tipFor=null;tipEl.classList.remove("on")}
+function tipPos(el){const r=el.getBoundingClientRect(),w=tipEl.offsetWidth,h=tipEl.offsetHeight,cx=r.left+r.width/2,l=Math.min(Math.max(cx-w/2,8),innerWidth-w-8),dn=r.top-h-14<8;
+ tipEl.classList.toggle("dn",dn);tipEl.style.left=l+"px";tipEl.style.top=(dn?r.bottom+12:r.top-h-12)+"px";tipEl.style.setProperty("--tx",Math.max(-w/2+16,Math.min(w/2-16,cx-l-w/2))+"px")}
+document.addEventListener("mouseover",e=>{const el=e.target.closest&&e.target.closest(".front .nm,.front .lt,.front .cr2");if(el===tipFor)return;tipHide();if(!el)return;tipFor=el;
+ tipT=setTimeout(()=>{const t=tipText(el);if(!t||!el.isConnected)return;tipEl.textContent=t;tipEl.classList.add("on");tipPos(el)},450)},true);
+["scroll","wheel","pointerdown","keydown","blur"].forEach(n=>addEventListener(n,tipHide,true));
 
 /* ===== pixel art finish =====
    not a plain pixelate: the photo is downscaled in two steps, given a little extra colour and contrast, squeezed into a 20 colour palette
