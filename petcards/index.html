@@ -104,6 +104,20 @@ box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),inset 9px 0 14px rgba(0,0,0,.14)
 .front .nm{font-weight:700;font-size:1.375em}
 .front .meta{font-size:.8125em;color:var(--muted);line-height:1.4}
 .badge{font-size:.75em;letter-spacing:.1em;text-transform:lowercase;font-weight:700;color:#fff;background:var(--rc);padding:.2em .75em;border-radius:99px}
+/* ===== card layout: name + species icon tab on top, framed photo, breed/age, description, shelter footer ===== */
+.front{align-items:stretch;justify-content:flex-start;text-align:left;gap:.45em;padding:.8em .75em 0}
+.face.front>.sptab{position:absolute;top:0;right:0;z-index:5;width:2.7em;height:2.7em;display:flex;align-items:center;justify-content:center;background:var(--rc);color:#fff;font-size:1em;border-bottom-left-radius:1.1em;box-shadow:-.08em .08em .3em rgba(0,0,0,.25)}
+.face.front>.sptab .ic{width:1.5em;height:1.5em;vertical-align:0}
+.front .hd{min-height:2.1em;display:flex;align-items:center;padding-right:2.3em}
+.front .hd .nm{font-size:1.2em;line-height:1.1;text-align:left;text-wrap:balance;overflow-wrap:anywhere}
+.front .pw{border:.2em solid var(--rc);border-radius:.7em;box-sizing:border-box}
+.front .bd{display:flex;flex-direction:column;gap:.15em}
+.front .meta{text-align:center;font-weight:600}
+.front .desc{text-align:left;margin-top:.1em}
+.front .ft{display:flex;align-items:center;gap:.4em;margin:.1em -.75em 0;padding:.5em .8em .6em;border-top:.14em solid var(--rc);background:color-mix(in srgb,var(--rc) 14%,transparent);font-size:.75em;white-space:nowrap}
+.front .ft .ic{width:1.3em;height:1.3em;vertical-align:0;color:var(--rc)}
+.front .ft span{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.front.mys{align-items:center;justify-content:center;text-align:center;padding:1em .75em}
 .sp-mammal{--rc:#c9741f}.sp-bird{--rc:#1e8fb0}.sp-reptile{--rc:#2f8f58}.sp-amphib{--rc:#6b8f2f}.sp-fish{--rc:#3f6fd1}.sp-insect{--rc:#c2527f}.sp-arachnid{--rc:#7e57c2}.sp-mollusk{--rc:#a07a2f}
 button.act{background:var(--accent);color:#fff;border:0;border-radius:99px;padding:11px 22px;font:600 16px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
 button.ghost{background:none;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font:13px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
@@ -268,10 +282,7 @@ linear-gradient(115deg,var(--rc) 0,var(--rc) calc(var(--gx,50%) - 30%),color-mix
 @keyframes amb{from{--amb:-1}to{--amb:1}}
 .fin-facet{border-color:var(--fb2,#cdd5e4);animation:amb 7s ease-in-out infinite alternate}
 .fin-facet .holo{opacity:1;z-index:2;mix-blend-mode:hard-light}
-.fin-facet .holo svg{position:absolute;inset:0;width:100%;height:100%;display:block}
-.fc,.fs{--d:calc(abs(var(--tx,0)*var(--a) + var(--ty,0)*var(--b) + var(--amb,0)*.8 - var(--c)));--u:clamp(0,calc(1 - var(--d)*1.2),1);--p:clamp(0,calc(1 - var(--d)*3.2),1)}
-.fc{stroke:none;opacity:calc(var(--m,.7)*.85);fill:hsl(calc(var(--fh,0) + var(--r,.5)*var(--fs,360)) calc(32% + var(--u)*46% - var(--p)*30%) calc(54% + var(--u)*12% + var(--p)*26%))}
-.fs{fill:#fff;stroke:none;opacity:clamp(0,calc((var(--p) - .25)*2.2),1)}
+.shc{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
 .fin-facet{--surface:#dde1e8}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fin-facet{--surface:#3b4049}}
 :root[data-theme="dark"] .fin-facet{--surface:#3b4049}
@@ -343,6 +354,61 @@ linear-gradient(115deg,var(--rc) 0,var(--rc) calc(var(--gx,50%) - 30%),color-mix
 .k-mammal{--pf:repeating-linear-gradient(45deg,rgba(255,255,255,.15) 0 6px,transparent 6px 14px),repeating-linear-gradient(112deg,#0f8a6e 0,#3fe0b0 8%,#17a589 15%,#0b6f5a 24%,#0f8a6e 34%)}
 .k-bug{--pf:radial-gradient(circle at 70% 30%,rgba(255,255,255,.34) 0 3px,transparent 4px) 0 0/30px 30px,repeating-linear-gradient(112deg,#6a9a14 0,#c6e33b 8%,#8fbf1f 16%,#4f7d0e 26%,#6a9a14 34%)}
 .k-lucky{--pf:radial-gradient(circle at 25% 25%,rgba(255,255,255,.7) 0 1.5px,transparent 2.5px) 0 0/24px 24px,radial-gradient(circle at 75% 70%,rgba(255,255,255,.7) 0 1px,transparent 2px) 0 0/19px 19px,repeating-linear-gradient(112deg,#0e7a3d 0,#4de08a 7%,#f3d36a 14%,#1da35a 22%,#0b6030 30%,#0e7a3d 36%)}
+.k-asia{--pf:repeating-linear-gradient(0deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(112deg,#b0123f 0,#ff5c7c 8%,#ffb36b 15%,#d02455 24%,#9a0f38 32%,#b0123f 38%)}
+.k-europe{--pf:repeating-linear-gradient(0deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(112deg,#27348f 0,#5b6cff 8%,#9fb0ff 15%,#3846c4 24%,#1f2a75 32%,#27348f 38%)}
+.k-africa{--pf:repeating-linear-gradient(0deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(112deg,#b8650e 0,#f2a93a 8%,#ffd77a 15%,#d68620 24%,#9a520a 32%,#b8650e 38%)}
+.k-namerica{--pf:repeating-linear-gradient(0deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(112deg,#a63a12 0,#ee7a3c 8%,#ffb48a 15%,#c9501e 24%,#8a2f0c 32%,#a63a12 38%)}
+.k-samerica{--pf:repeating-linear-gradient(0deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(112deg,#04702f 0,#1fc15e 8%,#f4d23a 15%,#0e9040 24%,#035a26 32%,#04702f 38%)}
+.k-oceania{--pf:repeating-linear-gradient(0deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(112deg,#06788f 0,#2fd0e6 8%,#9af0e0 15%,#0f9db8 24%,#055a6e 32%,#06788f 38%)}
+/* ===== pack shop: a button on the main page opens this full-screen page (same file, no reload) ===== */
+.shopentry{margin:30px 0 0}
+.shopbtn{width:100%;display:flex;align-items:center;gap:14px;padding:12px 16px 12px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 16px "Chakra Petch",system-ui,sans-serif;cursor:pointer;text-align:left;box-shadow:0 3px 0 var(--border);transition:transform .15s,box-shadow .15s}
+.shopbtn:hover{transform:translateY(-2px);box-shadow:0 3px 0 var(--border),0 12px 24px rgba(0,0,0,.16)}
+.shopbtn:active{transform:translateY(1px);box-shadow:0 1px 0 var(--border)}
+.shopbtn .stk{position:relative;width:70px;height:56px;flex:none}
+.mpk{position:absolute;bottom:0;width:32px;height:48px;border-radius:4px;background:var(--pf,repeating-linear-gradient(112deg,#f58a3f 0,#ffb871 6%,#d8427b 13%,#ff8e57 19%,#c9366b 26%,#f58a3f 32%));box-shadow:inset 0 0 0 1px rgba(255,255,255,.4),0 4px 8px rgba(0,0,0,.28);transition:transform .25s}
+.mpk:nth-child(1){left:0;transform:rotate(-12deg)}.mpk:nth-child(2){left:19px;bottom:3px;z-index:1}.mpk:nth-child(3){left:38px;transform:rotate(12deg)}
+.shopbtn:hover .mpk:nth-child(1){transform:rotate(-18deg) translateX(-3px)}.shopbtn:hover .mpk:nth-child(3){transform:rotate(18deg) translateX(3px)}.shopbtn:hover .mpk:nth-child(2){transform:translateY(-4px)}
+.shopbtn .st{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.shopbtn .st b{font-size:18px}.shopbtn .st small{color:var(--muted);font:500 13px "Chakra Petch",system-ui,sans-serif}
+.shopbtn .bal{font-size:15px;padding:5px 14px 5px 7px;flex:none}
+.shopbtn .chev{font-size:26px;color:var(--muted);line-height:1;flex:none}
+.shopbtn .rdy{display:inline-block;margin-left:6px;background:var(--accent);color:#fff;border-radius:99px;padding:1px 8px;font-size:11px;font-weight:700;vertical-align:2px}
+body.shop-open{overflow:hidden}
+.shoppage{position:fixed;inset:0;z-index:45;background:var(--bg);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;opacity:0;visibility:hidden;transform:translateY(28px);transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .22s,visibility 0s .3s}
+.shoppage.on{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+.sp-top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.sp-in{max-width:980px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 18px 10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.sp-in h2{margin:0;font-size:20px;flex:1;min-width:110px}
+.sp-back{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:8px 14px 8px 10px;font:600 14px "Chakra Petch",system-ui,sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.sp-back:hover{border-color:var(--accent)}
+.sp-wrap{max-width:980px;margin:0 auto;padding:6px 18px calc(48px + env(safe-area-inset-bottom,0px))}
+.sp-note{display:flex;gap:10px;align-items:flex-start;margin:14px 0 4px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--accent) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 25%,var(--border));font-size:13px;line-height:1.45;color:var(--muted)}
+.sp-note .coin{margin-top:2px;flex:none}
+.sp-h{margin:30px 0 2px;font-size:18px}.sp-s{margin:0 0 14px;color:var(--muted);font-size:13px}
+.sp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+.sp-own{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 12px;margin:0 -2px;scroll-snap-type:x proximity}
+.sp-oc{flex:none;scroll-snap-align:start;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:var(--surface);border:1.5px solid var(--accent);min-width:240px}
+.sp-oc .mp{width:50px;margin:0;gap:1px;transform:rotate(-4deg);box-shadow:inset 0 0 0 1px rgba(255,255,255,.35),0 5px 9px rgba(0,0,0,.28)}.sp-oc .mp .mi{font-size:20px}.sp-oc .mp em,.sp-oc .mp::before,.sp-oc .mp::after{display:none}
+.sp-oc div{display:flex;flex-direction:column;gap:6px;min-width:0}.sp-oc b{font-size:14px}
+.sp-card{--h:30;position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;padding:22px 14px 14px;background:var(--surface);border:1px solid var(--border);border-radius:22px;text-align:center;overflow:hidden;transition:transform .2s,box-shadow .2s,border-color .2s}
+.sp-card::before{content:"";position:absolute;left:0;right:0;top:0;height:150px;pointer-events:none;background:radial-gradient(ellipse 80% 100% at 50% 0,hsl(var(--h) 85% 60% / .3),transparent 72%)}
+.sp-card>*{position:relative}
+.sp-card:hover{transform:translateY(-4px);box-shadow:0 16px 30px rgba(0,0,0,.18);border-color:hsl(var(--h) 70% 55% / .7)}
+.sp-card .mp{width:116px;margin:4px 0 10px;transform:rotate(-3deg)}.sp-card .mp .mi{font-size:42px}.sp-card .mp em{font-size:12px;text-align:center;padding:0 6px;line-height:1.15}
+.sp-card:hover .mp{transform:rotate(3deg) scale(1.08)}
+.sp-card b.nm2{font-size:16px}.sp-card .pd{font-size:12.5px;color:var(--muted);line-height:1.4;flex:1}
+.sp-tags{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}.sp-tags i{font-style:normal;font-size:11px;font-weight:600;letter-spacing:.03em;padding:2px 9px;border-radius:99px;background:color-mix(in srgb,var(--text) 7%,transparent);color:var(--muted)}
+.sp-tags i.hl{background:hsl(var(--h) 80% 55% / .16);color:var(--text)}
+.sp-badge{position:absolute!important;top:10px;right:10px;background:var(--accent);color:#fff;border-radius:99px;padding:2px 10px;font-size:11.5px;font-weight:700;z-index:2}
+.sp-need{width:100%;height:6px;border-radius:3px;background:var(--border);overflow:hidden}.sp-need i{display:block;height:100%;background:linear-gradient(90deg,#f5b82e,#ffd86b);border-radius:3px}
+.sp-buy{width:100%;border:0;border-radius:13px;padding:11px 12px;background:var(--accent);color:#fff;font:700 15px "Chakra Petch",system-ui,sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 3px 0 color-mix(in srgb,var(--accent) 65%,#000);transition:transform .1s,box-shadow .1s}
+.sp-buy:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 color-mix(in srgb,var(--accent) 65%,#000)}
+.sp-buy:disabled{background:color-mix(in srgb,var(--text) 9%,transparent);color:var(--muted);box-shadow:none;cursor:default;font-weight:600;font-size:13px}
+.sp-card.pop{animation:sppop .6s ease-out}
+@keyframes sppop{0%{transform:scale(1)}30%{transform:scale(1.045);box-shadow:0 0 0 3px var(--accent),0 16px 30px rgba(0,0,0,.2)}100%{transform:none}}
+.sp-toast{color:#2e9d5b;font-weight:700;font-size:13px;min-height:1em}
+@media (max-width:520px){.sp-grid{grid-template-columns:repeat(2,1fr);gap:12px}.sp-card{padding:18px 10px 12px}.sp-card .mp{width:96px}.shopbtn .st small{display:none}.sp-in h2{font-size:18px}.sp-in .lim{order:9;width:100%}.sp-in .sp-toast{order:8}.sp-in .bal{font-size:16px}.sp-in .bal small{display:none}}
+@media (prefers-reduced-motion:reduce){.shoppage{transition:none}.sp-card.pop{animation:none}}
 .shop{margin-top:34px;text-align:left}.shop h2{margin-top:0}
 .shopbar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-top:6px}
 .bal{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#ffe9a8,#f5b82e);color:#4a3000;border-radius:99px;padding:7px 18px 7px 9px;font:700 20px "Chakra Petch",system-ui,sans-serif;box-shadow:0 2px 0 #b57f0a,0 6px 14px rgba(245,184,46,.35)}
@@ -492,11 +558,7 @@ button.rawbtn{background:var(--surface);color:var(--text);border:1px solid var(-
 background:var(--bgrad);background-size:320% 320%;background-position:var(--mx,50%) var(--my,30%);
 -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);animation:goldglint 3.2s ease-in-out infinite,amb 7s ease-in-out infinite alternate}
 .face.front>.gb::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent calc(var(--gx,calc(50% + var(--amb,0)*35%)) - 14%),rgba(255,255,255,.9) var(--gx,calc(50% + var(--amb,0)*35%)),transparent calc(var(--gx,calc(50% + var(--amb,0)*35%)) + 14%));mix-blend-mode:overlay}
-.gb svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 /* voronoi border shards: same trick as glisten. every cell has its own tilt direction, sweet spot and shade */
-.gc,.gs{--d:calc(abs(var(--tx,0)*var(--a) + var(--ty,0)*var(--b) + var(--amb,0)*.8 - var(--c)));--u:clamp(0,calc(1 - var(--d)*1.2),1);--p:clamp(0,calc(1 - var(--d)*3.2),1)}
-.gc{stroke:rgba(0,0,0,.22);stroke-width:.3;opacity:calc(.55 + var(--m,.7)*.45);fill:hsl(calc(var(--bh,40) + var(--r,.5)*var(--bs,14)) calc(var(--bsat,72%) + var(--u)*18% - var(--p)*var(--bps,30%)) calc(var(--bl,40%) + var(--u)*var(--bu,24%) + var(--p)*var(--bp,30%)))}
-.gs{fill:#fff;stroke:none;opacity:clamp(0,calc((var(--p) - .2)*2.4),1)}
 @keyframes goldglint{0%,100%{filter:brightness(1) saturate(1)}50%{filter:brightness(1.25) saturate(1.2)}}
 .face.front.mys{background:#000!important;--rc:#2a2a2a;justify-content:center;color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.35)}
 .face.front.mys .nm{font-size:2.8em;letter-spacing:.12em}
@@ -622,7 +684,7 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 </details>
 <div class="stage" id="stage"></div>
 
-<section id="shop" class="shop"></section>
+<div id="shopentry" class="shopentry"></div>
 
 <h2 id="coll">your collection</h2>
 <div class="sub" id="count" style="text-align:left"></div>
@@ -632,6 +694,7 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 <p class="foot"><span id="srcnote"></span> sparkle finishes vary in rarity, but they’re random and independent of the animal: any critter can come with any finish, and every critter in the day’s pool is equally likely to appear. photos are credited to their photographers in each card’s “original photo” view, and descriptions come from wikipedia when available. icons: material design icons by pictogrammers (apache 2.0).
 <button class="ghost" id="reset" style="margin-left:6px">reset collection</button></p>
 </main>
+<section id="shop" class="shoppage" role="dialog" aria-modal="true" aria-label="pack shop" aria-hidden="true" inert></section>
 <div id="lb"></div>
 
 <script>
@@ -665,14 +728,14 @@ const CRITTERS=[
 /* ---- live sightings from the public iNaturalist API (no key needed) ---- */
 const INAT="https://api.inaturalist.org/v1",LIVEK="critters:live",POOLK="critters:pool1",CFGK="critters:cfg";
 const hasLive=()=>true;
-let LIVE={},LIVEN=1000,POOL=[],srcErr="";
+let LIVE={},LIVEN=1000,POOL=[],srcErr="";const REGP={}; // fresh critters per world region, for the region packs
 try{const s=JSON.parse(localStorage.getItem(LIVEK)||"null");if(s&&s.pets){LIVE=s.pets;LIVEN=s.next||1000}}catch(e){}
 let cfg={near:false,lat:0,lng:0};try{Object.assign(cfg,JSON.parse(localStorage.getItem(CFGK)||"{}"))}catch(e){}
 const locKey=()=>cfg.near?(+cfg.lat).toFixed(1)+","+(+cfg.lng).toFixed(1):"world";
 const petOf=id=>CRITTERS[+id]||LIVE[id];
 function saveLive(){
  try{
-  if(Object.keys(LIVE).length>400){const keep=new Set(POOL.map(p=>p.id));
+  if(Object.keys(LIVE).length>400){const keep=new Set(POOL.map(p=>p.id));Object.values(REGP).forEach(r=>r.ids.forEach(i=>keep.add(+i)));
    Object.values(state.col).forEach(c=>keep.add(+c.id));Object.keys(state.fav).forEach(i=>keep.add(+i));Object.keys(state.seen||{}).forEach(i=>keep.add(+i));
    if(state.pack)state.pack.picks.forEach(x=>keep.add(+x[0]));
    Object.keys(LIVE).forEach(k=>{if(!keep.has(+k))delete LIVE[k]})}
@@ -687,7 +750,7 @@ function clip(s,n){if(s.length<=n)return s;s=s.slice(0,n);const i=s.lastIndexOf(
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const spOf=n=>({Mammalia:"mammal",Aves:"bird",Reptilia:"reptile",Amphibia:"amphib",Actinopterygii:"fish",Insecta:"insect",Arachnida:"arachnid",Mollusca:"mollusk"})[n]||"";
 const GL={mammal:"mammal",bird:"bird",reptile:"reptile",amphib:"amphibian",fish:"fish",insect:"insect",arachnid:"arachnid",mollusk:"mollusk"};
-const GROUPS=[["Aves",18],["Mammalia",18],["Reptilia,Amphibia",14],["Insecta,Arachnida",18],["Actinopterygii,Mollusca",10]];
+const GROUPS=[["Aves",40],["Mammalia",40],["Reptilia,Amphibia",30],["Insecta,Arachnida",40],["Actinopterygii,Mollusca",24]];
 function parseINat(list){
  const seen=new Set(),out=[];
  list.forEach(o=>{
@@ -710,8 +773,8 @@ async function inat(path,q){
   return await r.json()}
  catch(e){throw e.name=="AbortError"?new Error("iNaturalist took too long to answer"):e instanceof TypeError?new Error("couldn’t reach iNaturalist (offline, or blocked)"):e}
  finally{clearTimeout(to)}}
-async function fetchLive(){
- const loc=cfg.near&&cfg.lat?{lat:(+cfg.lat).toFixed(3),lng:(+cfg.lng).toFixed(3),radius:"50"}:{};
+async function fetchLive(place){
+ const loc=place?{place_id:String(place)}:cfg.near&&cfg.lat?{lat:(+cfg.lat).toFixed(3),lng:(+cfg.lng).toFixed(3),radius:"50"}:{};
  const rs=await Promise.allSettled(GROUPS.map(([t,n])=>inat("/observations",Object.assign({quality_grade:"research",photos:"true",photo_license:"cc0,cc-by,cc-by-sa,cc-by-nc,cc-by-nc-sa",captive:"false",iconic_taxa:t,order_by:"random",per_page:String(n*2),locale:"en"},loc))));
  if(!rs.some(r=>r.status=="fulfilled"))throw rs[0].reason;
  const all=[];rs.forEach((r,i)=>{if(r.status=="fulfilled")all.push(...parseINat(r.value.results||[]).slice(0,GROUPS[i][1]))});
@@ -721,24 +784,37 @@ async function fetchLive(){
  sm.forEach(r=>{if(r.status=="fulfilled")(r.value.results||[]).forEach(t=>{if(t.wikipedia_summary)W[t.id]=t.wikipedia_summary})});
  all.forEach(p=>{const d=clip(tidy(W[p.tid]||""),170);if(d.length>=40)p.desc=esc(d)});
  return all}
-async function loadLive(force){
+let liveBusy=null;
+const POOL_TTL=2*60*1000; // a stored pool is only reused for 2 minutes; every pack gets a fresh pull
+function loadLive(force){if(liveBusy)return liveBusy;liveBusy=loadLive0(force).finally(()=>{liveBusy=null});return liveBusy}
+async function loadLive0(force){
  srcErr="";
  if(!hasLive()){POOL=[];setNote();return}
  try{
   if(!force){const c=JSON.parse(localStorage.getItem(POOLK)||"null");
-   if(c&&c.day===today()&&c.k===locKey()&&c.ids.every(i=>LIVE[i])&&c.ids.length>=20){POOL=c.ids.map(i=>LIVE[i]);setNote();return}}
+   if(c&&c.t&&Date.now()-c.t<POOL_TTL&&c.k===locKey()&&c.ids.every(i=>LIVE[i])&&c.ids.length>=20){POOL=c.ids.map(i=>LIVE[i]);setNote();return}}
   const list=await fetchLive();
   if(list.length<5)throw new Error("not enough critters came back"+(cfg.near?" near you":""));
   POOL=list.map(livePet);saveLive();
-  try{localStorage.setItem(POOLK,JSON.stringify({day:today(),k:locKey(),ids:POOL.map(p=>p.id)}))}catch(e){}
- }catch(e){POOL=[];srcErr=(e&&e.message)||"couldn’t load listings"}
+  try{localStorage.setItem(POOLK,JSON.stringify({t:Date.now(),k:locKey(),ids:POOL.map(p=>p.id)}))}catch(e){}
+ }catch(e){if(!POOL.length||force&&!POOL.length)POOL=[];srcErr=(e&&e.message)||"couldn’t load listings"}
  setNote()}
+/* region packs: every continent has its own iNaturalist place id. a fresh batch is fetched when the pack is on screen and again after each one is opened */
+const regFresh=k=>{const r=REGP[k];return !!(r&&Date.now()-r.t<POOL_TTL*2&&r.ids.every(i=>LIVE[i]))};
+const regPool=k=>REGP[k]?REGP[k].ids.map(i=>LIVE[i]).filter(Boolean):[];
+const regBusy={};
+function regionLoad(k){const K=PACKS[k];if(regFresh(k))return Promise.resolve();if(regBusy[k])return regBusy[k];
+ return regBusy[k]=(async()=>{try{const list=await fetchLive(K.reg);
+   if(list.length<K.n)throw new Error("not enough critters came back for "+K.where);
+   REGP[k]={t:Date.now(),ids:list.map(livePet).map(p=>p.id)};saveLive()}
+  catch(e){srcErr=(e&&e.message)||"couldn’t load critters";throw e}
+  finally{delete regBusy[k]}})()}
 function setNote(){const el=document.getElementById("srcnote");if(!el)return;
- el.textContent=POOL.length?"live sightings from inaturalist.org: every critter, photo and “see the sighting” link comes from a real research-grade observation shared by a nature lover, refreshed daily.":
+ el.textContent=POOL.length?"live sightings from inaturalist.org: every critter, photo and “see the sighting” link comes from a real research-grade observation shared by a nature lover, fetched fresh for every pack.":
   "sample data: these critters use illustrated placeholders instead of photos."+(srcErr?" couldn’t load live sightings ("+srcErr+").":" live sightings from inaturalist.org are loading.")}
 document.addEventListener("error",e=>{const t=e.target;if(t&&t.tagName=="IMG"&&t.classList.contains("photo")){const p=petOf(+t.closest("[data-id]")?.dataset.id);if(p&&p.live&&!p.imgBad){p.imgBad=true;t.src=photo(p)}}},true);
 
-const ICO={"paw": "M8.35 3c1.18-.17 2.43 1.12 2.79 2.9.36 1.77-.29 3.35-1.47 3.53-1.17.18-2.43-1.11-2.8-2.89-.37-1.77.3-3.35 1.48-3.54m7.15 0c1.19.19 1.85 1.77 1.5 3.54-.38 1.78-1.63 3.07-2.81 2.89-1.19-.18-1.84-1.76-1.47-3.53.36-1.78 1.61-3.07 2.78-2.9M3 7.6c1.14-.49 2.69.4 3.5 1.95.76 1.58.5 3.24-.63 3.73s-2.67-.39-3.46-1.96S1.9 8.08 3 7.6m18 0c1.1.48 1.38 2.15.59 3.72s-2.33 2.45-3.46 1.96-1.39-2.15-.63-3.73C18.31 8 19.86 7.11 21 7.6m-1.67 10.78c.04.94-.68 1.98-1.54 2.37-1.79.82-3.91-.88-5.9-.88s-4.13 1.77-5.89.88c-1-.49-1.69-1.79-1.56-2.87.18-1.49 1.97-2.29 3.03-3.38 1.41-1.41 2.41-4.06 4.42-4.06 2 0 3.06 2.61 4.41 4.06 1.11 1.22 2.96 2.25 3.03 3.88", "gift": "M9.06 1.93C7.17 1.92 5.33 3.74 6.17 6H3a2 2 0 0 0-2 2v2a1 1 0 0 0 1 1h9V8h2v3h9a1 1 0 0 0 1-1V8a2 2 0 0 0-2-2h-3.17C19 2.73 14.6.42 12.57 3.24L12 4l-.57-.78c-.63-.89-1.5-1.28-2.37-1.29M9 4c.89 0 1.34 1.08.71 1.71S8 5.89 8 5a1 1 0 0 1 1-1m6 0c.89 0 1.34 1.08.71 1.71S14 5.89 14 5a1 1 0 0 1 1-1M2 12v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-8h-9v8h-2v-8z", "dog": "M18 4c-1.71 0-2.75.33-3.35.61C13.88 4.23 13 4 12 4s-1.88.23-2.65.61C8.75 4.33 7.71 4 6 4c-3 0-5 8-5 10 0 .83 1.32 1.59 3.14 1.9.64 2.24 3.66 3.95 7.36 4.1v-4.28c-.59-.37-1.5-1.04-1.5-1.72 0-1 2-1 2-1s2 0 2 1c0 .68-.91 1.35-1.5 1.72V20c3.7-.15 6.72-1.86 7.36-4.1C21.68 15.59 23 14.83 23 14c0-2-2-10-5-10M4.15 13.87c-.5-.12-.89-.26-1.15-.37.25-2.77 2.2-7.1 3.05-7.5.54 0 .95.06 1.32.11-2.1 2.31-2.93 5.93-3.22 7.76M9 12a1 1 0 0 1-1-1c0-.54.45-1 1-1a1 1 0 0 1 1 1c0 .56-.45 1-1 1m6 0a1 1 0 0 1-1-1c0-.54.45-1 1-1a1 1 0 0 1 1 1c0 .56-.45 1-1 1m4.85 1.87c-.29-1.83-1.12-5.45-3.22-7.76.37-.05.78-.11 1.32-.11.85.4 2.8 4.73 3.05 7.5-.25.11-.64.25-1.15.37", "cat": "m12 8-1.33.09C9.81 7.07 7.4 4.5 5 4.5c0 0-1.97 2.96-.04 6.91-.55.83-.89 1.26-.96 2.25l-1.93.29.21.98 1.76-.26.14.71-1.57.94.47.89 1.45-.89C5.68 18.76 8.59 20 12 20s6.32-1.24 7.47-3.68l1.45.89.47-.89-1.57-.94.14-.71 1.76.26.21-.98-1.93-.29c-.07-.99-.41-1.42-.96-2.25C20.97 7.46 19 4.5 19 4.5c-2.4 0-4.81 2.57-5.67 3.59zm-3 3a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m6 0a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m-4 3h2l-.7 1.39c.2.64.76 1.11 1.45 1.11a1.5 1.5 0 0 0 1.5-1.5h.5a2 2 0 0 1-2 2c-.75 0-1.4-.41-1.75-1-.35.59-1 1-1.75 1a2 2 0 0 1-2-2h.5a1.5 1.5 0 0 0 1.5 1.5c.69 0 1.25-.47 1.45-1.11z", "rabbit": "m18.05 21-2.73-4.74c0-1.73-1.07-2.84-2.37-2.84-.9 0-1.68.5-2.08 1.24.33-.19.72-.29 1.13-.29 1.3 0 2.36 1.06 2.36 2.36 0 1.31-1.05 2.38-2.36 2.38h3.3V21H6.79c-.24 0-.49-.09-.67-.28a.95.95 0 0 1 0-1.34l.5-.5c-.34-.15-.62-.38-.9-.62-.22.5-.72.85-1.3.85a1.425 1.425 0 0 1 0-2.85l.47.08v-1.97a4.73 4.73 0 0 1 4.74-4.74h.02c2.12.01 3.77.84 3.77-.47 0-.93.2-1.3.54-1.82-.73-.34-1.56-.55-2.43-.55-.53 0-.95-.42-.95-.95 0-.43.28-.79.67-.91l-.67-.04c-.52 0-.95-.42-.95-.94 0-.53.43-.95.95-.95h.95c2.1 0 3.94 1.15 4.93 2.85l.28-.01c.71 0 1.37.23 1.91.61l.45.38c2.17 1.95 1.9 3.27 1.9 3.28 0 1.28-1.06 2.33-2.35 2.33l-.49-.05v.08c0 1.11-.48 2.1-1.23 2.8L20.24 21zm.11-13.26c-.53 0-.95.42-.95.94 0 .53.42.95.95.95.52 0 .95-.42.95-.95 0-.52-.43-.94-.95-.94", "bird": "m23 11.5-3.05-1.13c-.26-1.15-.91-1.81-.91-1.81a4.19 4.19 0 0 0-5.93 0l-1.48 1.48L5 3c-1 4 0 8 2.45 11.22L2 19.5s8.89 2 14.07-2.05c2.76-2.16 3.38-3.42 3.77-4.75zm-5.29.22c-.39.39-1.03.39-1.42 0a.996.996 0 0 1 0-1.41c.39-.39 1.03-.39 1.42 0s.39 1.02 0 1.41", "rodent": "M21.33 17.39c1.4 1.27.47 3.61-1.41 3.61h-8.86A5.04 5.04 0 0 1 6 15.94v-.05c-2.3-.47-4-2.48-4-4.89 0-2.75 2.22-5 5-5h2.5c.3 0 .5-.23.5-.5S9.8 5 9.5 5H7V3h2.5C10.88 3 12 4.13 12 5.5 12 6.89 10.88 8 9.5 8H7c-1.66 0-3 1.33-3 3 0 1.37.92 2.5 2.14 2.87.56-2.2 2.53-3.87 4.92-3.87.8 0 1.6.22 2.3.55-1.41.79-2.36 2.25-2.36 3.95 0 1.25.5 2.37 1.33 3.17l.7-.7c-.65-.61-1.03-1.5-1.03-2.47 0-2.59 2.34-3.5 3.5-3.5 2.08 0 3.95 1.89 3.44 4.23zM18 19c.56 0 1-.44 1-1s-.44-1-1-1-1 .44-1 1 .44 1 1 1", "horse": "M22 6v3.5l-1.5.5-1.54-2.46c-.13-.21-.46-.12-.46.13v3.58c0 .98-.39 1.86-1 2.53V21H15v-6h-.25c-.21 0-.42-.03-.62-.06l-4.44-.74-1.12 2.01.96 4.79H7l-1-4.75c-.03-.3 0-.6.16-.86l1.02-1.81a3.27 3.27 0 0 1-1.68-2.77c-.04.15-.06.37-.03.69.03.44.14 1.09.07 1.81-.04.72-.37 1.46-.79 1.95-.43.49-.9.83-1.4 1.09l-.7-.7c.19-.47.38-.89.42-1.28.06-.37-.01-.67-.12-.94l-.53-1.13c-.21-.51-.47-1.25-.42-2.12.03-.85.5-1.96 1.39-2.57.9-.61 1.87-.69 2.66-.53.5.1 1.01.34 1.45.68.37-.17.8-.26 1.25-.26h5.75V7c0-2.21 1.79-4 4-4H22l-.89 1.34c.54.36.89.97.89 1.66", "turtle": "M8.47 5.95c.48-.28 1-.51 1.53-.67V4c0-1.1.87-2 1.97-2.03C13.13 2 14 2.9 14 4v1.28c.53.17 1.05.39 1.53.67l-1.6 2.12h-3.86zM19 12c0 .5-.05.95-.14 1.4l-2.53-.78-1.19-3.66 1.6-2.11q.645.6 1.14 1.35c.79-.07 1.55.05 2.23.39 1.03.53 1.73 1.54 1.89 2.69l-3 .36zM5 12v-.35l-3-.37c.16-1.15.86-2.16 1.89-2.69a3.54 3.54 0 0 1 2.19-.33c.33-.51.71-.98 1.16-1.39l1.62 2.08-1.19 3.67-2.53.78C5.05 12.95 5 12.5 5 12m5.24-2.43h3.52l1.09 3.36L12 15l-2.85-2.07zm-2.11 4.48 3.12 2.26v2.65c-.57-.06-1.12-.19-1.63-.38l-1.23 2.76a3.49 3.49 0 0 1-2.02-2.58c-.14-.76-.02-1.52.32-2.2-.45-.52-.82-1.1-1.1-1.74zm7.74 0 2.54.77c-.28.64-.65 1.22-1.1 1.74.34.68.46 1.44.33 2.2a3.52 3.52 0 0 1-2.03 2.58l-1.22-2.76c-.53.19-1.06.36-1.64.42v-2.69z", "heart": "m12 21.35-1.45-1.32C5.4 15.36 2 12.27 2 8.5 2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.53z", "heart-outline": "m12.1 18.55-.1.1-.11-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04 1 3.57 2.36h1.86C13.46 6 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05M16.5 3c-1.74 0-3.41.81-4.5 2.08C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.41 2 8.5c0 3.77 3.4 6.86 8.55 11.53L12 21.35l1.45-1.32C18.6 15.36 22 12.27 22 8.5 22 5.41 19.58 3 16.5 3", "map-marker": "M12 11.5A2.5 2.5 0 0 1 9.5 9 2.5 2.5 0 0 1 12 6.5 2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7", "party-popper": "m14.53 1.45-1.08 1.08 1.6 1.6q.33.375.33.87c0 .495-.11.64-.33.86L11.5 9.47l1 1.08 3.63-3.61c.53-.59.79-1.24.79-1.94s-.26-1.36-.79-1.95zm-3.98 2.02L9.47 4.55l.61.56c.22.22.33.52.33.89s-.11.67-.33.89l-.61.56 1.08 1.08.56-.61c.53-.59.8-1.23.8-1.92 0-.72-.27-1.37-.8-1.97zM21 5.06c-.69 0-1.33.27-1.92.8l-5.63 5.64 1.08 1 5.58-5.56c.25-.25.55-.38.89-.38s.64.13.89.38l.61.61 1.03-1.08-.56-.61c-.59-.53-1.25-.8-1.97-.8M7 8 2 22l14-5zm12 3.06c-.7 0-1.34.27-1.94.8l-1.59 1.59 1.08 1.08 1.59-1.59c.25-.25.53-.38.86-.38s.63.13.88.38l1.62 1.59 1.05-1.03-1.6-1.64c-.59-.53-1.25-.8-1.95-.8", "arrow-top-right": "M5 17.59 15.59 7H9V5h10v10h-2V8.41L6.41 19z", "star-four-points": "M12 1 9 9l-8 3 8 3 3 8 3-8 8-3-8-3z", "border-all": "M19 11h-6V5h6m0 14h-6v-6h6m-8-2H5V5h6m0 14H5v-6h6m-8 8h18V3H3z", "palette": "M17.5 12a1.5 1.5 0 0 1-1.5-1.5A1.5 1.5 0 0 1 17.5 9a1.5 1.5 0 0 1 1.5 1.5 1.5 1.5 0 0 1-1.5 1.5m-3-4A1.5 1.5 0 0 1 13 6.5 1.5 1.5 0 0 1 14.5 5 1.5 1.5 0 0 1 16 6.5 1.5 1.5 0 0 1 14.5 8m-5 0A1.5 1.5 0 0 1 8 6.5 1.5 1.5 0 0 1 9.5 5 1.5 1.5 0 0 1 11 6.5 1.5 1.5 0 0 1 9.5 8m-3 4A1.5 1.5 0 0 1 5 10.5 1.5 1.5 0 0 1 6.5 9 1.5 1.5 0 0 1 8 10.5 1.5 1.5 0 0 1 6.5 12M12 3a9 9 0 0 0-9 9 9 9 0 0 0 9 9 1.5 1.5 0 0 0 1.5-1.5c0-.39-.15-.74-.39-1-.23-.27-.38-.62-.38-1a1.5 1.5 0 0 1 1.5-1.5H16a5 5 0 0 0 5-5c0-4.42-4.03-8-9-8", "diamond-stone": "M16 9h3l-5 7m-4-7h4l-2 8M5 9h3l2 7m5-12h2l2 3h-3m-5-3h2l1 3h-4M7 4h2L8 7H5m1-5L2 8l10 14L22 8l-4-6z", "shimmer": "M10.6 9.6 9 15 7.4 9.6 2 8l5.4-1.6L9 1l1.6 5.4L16 8zm6.4 4.6 4-2.2-2.2 4 2.2 4-4-2.2-4 2.2 2.2-4-2.2-4zM10 16l-1.7 3 1.7 3-3-1.7L4 22l1.7-3L4 16l3 1.7z", "creation": "m19 1-1.26 2.75L15 5l2.74 1.26L19 9l1.25-2.74L23 5l-2.75-1.25M9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5M19 15l-1.26 2.74L15 19l2.74 1.25L19 23l1.25-2.75L23 19l-2.75-1.26", "waves": "M20 12h2v2h-2c-1.38 0-2.74-.35-4-1-2.5 1.3-5.5 1.3-8 0-1.26.65-2.63 1-4 1H2v-2h2c1.39 0 2.78-.47 4-1.33 2.44 1.71 5.56 1.71 8 0 1.22.86 2.61 1.33 4 1.33m0-6h2v2h-2c-1.38 0-2.74-.35-4-1-2.5 1.3-5.5 1.3-8 0-1.26.65-2.63 1-4 1H2V6h2c1.39 0 2.78-.47 4-1.33 2.44 1.71 5.56 1.71 8 0C17.22 5.53 18.61 6 20 6m0 12h2v2h-2c-1.38 0-2.74-.35-4-1-2.5 1.3-5.5 1.3-8 0-1.26.65-2.63 1-4 1H2v-2h2c1.39 0 2.78-.47 4-1.33 2.44 1.71 5.56 1.71 8 0 1.22.86 2.61 1.33 4 1.33", "orbit": "M8.11 1.75C9.3 1.25 10.62 1 12 1c6.08 0 11 4.92 11 11s-4.92 11-11 11S1 18.08 1 12c0-1.38.25-2.7.72-3.92a4.5 4.5 0 0 0 1.73 1.1C3.16 10.07 3 11 3 12a9 9 0 0 0 9 9 9 9 0 0 0 9-9 9 9 0 0 0-9-9c-1 0-1.93.16-2.82.45-.22-.62-.57-1.21-1.07-1.7M4.93 2.93a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2c0-1.11.89-2 2-2M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5", "flash": "M7 2v11h3v9l7-12h-4l4-8z", "star": "M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.62L12 2 9.19 8.62 2 9.24l5.45 4.73L5.82 21z", "film": "M3.5 3H5V1.8c0-.44.36-.8.8-.8h4.4c.44 0 .8.36.8.8V3h1.5A1.5 1.5 0 0 1 14 4.5V5h8v15h-8v.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 20.5v-16A1.5 1.5 0 0 1 3.5 3M18 7v2h2V7zm-4 0v2h2V7zm-4 0v2h2V7zm4 9v2h2v-2zm4 0v2h2v-2zm-8 0v2h2v-2z", "script-text": "M17.8 20c-.4 1.2-1.5 2-2.8 2H5c-1.7 0-3-1.3-3-3v-1h12.2c.4 1.2 1.5 2 2.8 2zM19 2c1.7 0 3 1.3 3 3v1h-2V5c0-.6-.4-1-1-1s-1 .4-1 1v13h-1c-.6 0-1-.4-1-1v-1H5V5c0-1.7 1.3-3 3-3zM8 6v2h7V6zm0 4v2h6v-2z", "dots-grid": "M12 16c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2M6 16c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m12 12c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2", "medal": "M20 2H4v2l5.81 4.36a7.004 7.004 0 0 0-4.46 8.84 6.996 6.996 0 0 0 8.84 4.46 7 7 0 0 0 0-13.3L20 4zm-5.06 17.5L12 17.78 9.06 19.5l.78-3.33-2.59-2.24 3.41-.29L12 10.5l1.34 3.14 3.41.29-2.59 2.24z", "flower": "M3 13a9 9 0 0 0 9 9c0-5-4.03-9-9-9m9-7.5A2.5 2.5 0 0 1 14.5 8a2.5 2.5 0 0 1-2.5 2.5A2.5 2.5 0 0 1 9.5 8 2.5 2.5 0 0 1 12 5.5m-6.4 4.75a2.5 2.5 0 0 0 2.5 2.5c.53 0 1.02-.17 1.4-.44v.19A2.5 2.5 0 0 0 12 15a2.5 2.5 0 0 0 2.5-2.5v-.19c.38.27.87.44 1.4.44a2.5 2.5 0 0 0 2.5-2.5c0-1-.59-1.85-1.43-2.25.84-.4 1.43-1.26 1.43-2.25a2.5 2.5 0 0 0-2.5-2.5c-.53 0-1.02.16-1.4.44V3.5A2.5 2.5 0 0 0 12 1a2.5 2.5 0 0 0-2.5 2.5v.19c-.38-.28-.87-.44-1.4-.44a2.5 2.5 0 0 0-2.5 2.5c0 .99.59 1.85 1.43 2.25-.84.4-1.43 1.25-1.43 2.25M12 22a9 9 0 0 0 9-9c-5 0-9 4-9 9", "snowflake": "m20.79 13.95-2.33.62-2-1.13v-2.88l2-1.13 2.33.62.52-1.93-1.77-.47.46-1.77-1.93-.52-.62 2.33-2 1.13L13 7.38V5.12l1.71-1.71L13.29 2 12 3.29 10.71 2 9.29 3.41 11 5.12v2.26L8.5 8.82l-2-1.13-.58-2.33L4 5.88l.47 1.77-1.77.47.52 1.93 2.33-.62 2 1.13v2.89l-2 1.13-2.33-.62-.52 1.93 1.77.47L4 18.12l1.93.52.62-2.33 2-1.13L11 16.62v2.26l-1.71 1.71L10.71 22 12 20.71 13.29 22l1.41-1.41-1.7-1.71v-2.26l2.5-1.45 2 1.13.62 2.33 1.88-.51-.47-1.77 1.77-.47zM9.5 10.56 12 9.11l2.5 1.45v2.88L12 14.89l-2.5-1.45z", "weather-sunset": "M3 12h4a5 5 0 0 1 5-5 5 5 0 0 1 5 5h4a1 1 0 0 1 1 1 1 1 0 0 1-1 1H3a1 1 0 0 1-1-1 1 1 0 0 1 1-1m2 4h14a1 1 0 0 1 1 1 1 1 0 0 1-1 1H5a1 1 0 0 1-1-1 1 1 0 0 1 1-1m12 4a1 1 0 0 1 1 1 1 1 0 0 1-1 1H7a1 1 0 0 1-1-1 1 1 0 0 1 1-1zm-2-8a3 3 0 0 0-3-3 3 3 0 0 0-3 3zM12 2l2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm17.31 0-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15z"};
+const ICO={"earth":"M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z","paw": "M8.35 3c1.18-.17 2.43 1.12 2.79 2.9.36 1.77-.29 3.35-1.47 3.53-1.17.18-2.43-1.11-2.8-2.89-.37-1.77.3-3.35 1.48-3.54m7.15 0c1.19.19 1.85 1.77 1.5 3.54-.38 1.78-1.63 3.07-2.81 2.89-1.19-.18-1.84-1.76-1.47-3.53.36-1.78 1.61-3.07 2.78-2.9M3 7.6c1.14-.49 2.69.4 3.5 1.95.76 1.58.5 3.24-.63 3.73s-2.67-.39-3.46-1.96S1.9 8.08 3 7.6m18 0c1.1.48 1.38 2.15.59 3.72s-2.33 2.45-3.46 1.96-1.39-2.15-.63-3.73C18.31 8 19.86 7.11 21 7.6m-1.67 10.78c.04.94-.68 1.98-1.54 2.37-1.79.82-3.91-.88-5.9-.88s-4.13 1.77-5.89.88c-1-.49-1.69-1.79-1.56-2.87.18-1.49 1.97-2.29 3.03-3.38 1.41-1.41 2.41-4.06 4.42-4.06 2 0 3.06 2.61 4.41 4.06 1.11 1.22 2.96 2.25 3.03 3.88", "gift": "M9.06 1.93C7.17 1.92 5.33 3.74 6.17 6H3a2 2 0 0 0-2 2v2a1 1 0 0 0 1 1h9V8h2v3h9a1 1 0 0 0 1-1V8a2 2 0 0 0-2-2h-3.17C19 2.73 14.6.42 12.57 3.24L12 4l-.57-.78c-.63-.89-1.5-1.28-2.37-1.29M9 4c.89 0 1.34 1.08.71 1.71S8 5.89 8 5a1 1 0 0 1 1-1m6 0c.89 0 1.34 1.08.71 1.71S14 5.89 14 5a1 1 0 0 1 1-1M2 12v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-8h-9v8h-2v-8z", "dog": "M18 4c-1.71 0-2.75.33-3.35.61C13.88 4.23 13 4 12 4s-1.88.23-2.65.61C8.75 4.33 7.71 4 6 4c-3 0-5 8-5 10 0 .83 1.32 1.59 3.14 1.9.64 2.24 3.66 3.95 7.36 4.1v-4.28c-.59-.37-1.5-1.04-1.5-1.72 0-1 2-1 2-1s2 0 2 1c0 .68-.91 1.35-1.5 1.72V20c3.7-.15 6.72-1.86 7.36-4.1C21.68 15.59 23 14.83 23 14c0-2-2-10-5-10M4.15 13.87c-.5-.12-.89-.26-1.15-.37.25-2.77 2.2-7.1 3.05-7.5.54 0 .95.06 1.32.11-2.1 2.31-2.93 5.93-3.22 7.76M9 12a1 1 0 0 1-1-1c0-.54.45-1 1-1a1 1 0 0 1 1 1c0 .56-.45 1-1 1m6 0a1 1 0 0 1-1-1c0-.54.45-1 1-1a1 1 0 0 1 1 1c0 .56-.45 1-1 1m4.85 1.87c-.29-1.83-1.12-5.45-3.22-7.76.37-.05.78-.11 1.32-.11.85.4 2.8 4.73 3.05 7.5-.25.11-.64.25-1.15.37", "cat": "m12 8-1.33.09C9.81 7.07 7.4 4.5 5 4.5c0 0-1.97 2.96-.04 6.91-.55.83-.89 1.26-.96 2.25l-1.93.29.21.98 1.76-.26.14.71-1.57.94.47.89 1.45-.89C5.68 18.76 8.59 20 12 20s6.32-1.24 7.47-3.68l1.45.89.47-.89-1.57-.94.14-.71 1.76.26.21-.98-1.93-.29c-.07-.99-.41-1.42-.96-2.25C20.97 7.46 19 4.5 19 4.5c-2.4 0-4.81 2.57-5.67 3.59zm-3 3a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m6 0a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m-4 3h2l-.7 1.39c.2.64.76 1.11 1.45 1.11a1.5 1.5 0 0 0 1.5-1.5h.5a2 2 0 0 1-2 2c-.75 0-1.4-.41-1.75-1-.35.59-1 1-1.75 1a2 2 0 0 1-2-2h.5a1.5 1.5 0 0 0 1.5 1.5c.69 0 1.25-.47 1.45-1.11z", "rabbit": "m18.05 21-2.73-4.74c0-1.73-1.07-2.84-2.37-2.84-.9 0-1.68.5-2.08 1.24.33-.19.72-.29 1.13-.29 1.3 0 2.36 1.06 2.36 2.36 0 1.31-1.05 2.38-2.36 2.38h3.3V21H6.79c-.24 0-.49-.09-.67-.28a.95.95 0 0 1 0-1.34l.5-.5c-.34-.15-.62-.38-.9-.62-.22.5-.72.85-1.3.85a1.425 1.425 0 0 1 0-2.85l.47.08v-1.97a4.73 4.73 0 0 1 4.74-4.74h.02c2.12.01 3.77.84 3.77-.47 0-.93.2-1.3.54-1.82-.73-.34-1.56-.55-2.43-.55-.53 0-.95-.42-.95-.95 0-.43.28-.79.67-.91l-.67-.04c-.52 0-.95-.42-.95-.94 0-.53.43-.95.95-.95h.95c2.1 0 3.94 1.15 4.93 2.85l.28-.01c.71 0 1.37.23 1.91.61l.45.38c2.17 1.95 1.9 3.27 1.9 3.28 0 1.28-1.06 2.33-2.35 2.33l-.49-.05v.08c0 1.11-.48 2.1-1.23 2.8L20.24 21zm.11-13.26c-.53 0-.95.42-.95.94 0 .53.42.95.95.95.52 0 .95-.42.95-.95 0-.52-.43-.94-.95-.94", "bird": "m23 11.5-3.05-1.13c-.26-1.15-.91-1.81-.91-1.81a4.19 4.19 0 0 0-5.93 0l-1.48 1.48L5 3c-1 4 0 8 2.45 11.22L2 19.5s8.89 2 14.07-2.05c2.76-2.16 3.38-3.42 3.77-4.75zm-5.29.22c-.39.39-1.03.39-1.42 0a.996.996 0 0 1 0-1.41c.39-.39 1.03-.39 1.42 0s.39 1.02 0 1.41", "rodent": "M21.33 17.39c1.4 1.27.47 3.61-1.41 3.61h-8.86A5.04 5.04 0 0 1 6 15.94v-.05c-2.3-.47-4-2.48-4-4.89 0-2.75 2.22-5 5-5h2.5c.3 0 .5-.23.5-.5S9.8 5 9.5 5H7V3h2.5C10.88 3 12 4.13 12 5.5 12 6.89 10.88 8 9.5 8H7c-1.66 0-3 1.33-3 3 0 1.37.92 2.5 2.14 2.87.56-2.2 2.53-3.87 4.92-3.87.8 0 1.6.22 2.3.55-1.41.79-2.36 2.25-2.36 3.95 0 1.25.5 2.37 1.33 3.17l.7-.7c-.65-.61-1.03-1.5-1.03-2.47 0-2.59 2.34-3.5 3.5-3.5 2.08 0 3.95 1.89 3.44 4.23zM18 19c.56 0 1-.44 1-1s-.44-1-1-1-1 .44-1 1 .44 1 1 1", "horse": "M22 6v3.5l-1.5.5-1.54-2.46c-.13-.21-.46-.12-.46.13v3.58c0 .98-.39 1.86-1 2.53V21H15v-6h-.25c-.21 0-.42-.03-.62-.06l-4.44-.74-1.12 2.01.96 4.79H7l-1-4.75c-.03-.3 0-.6.16-.86l1.02-1.81a3.27 3.27 0 0 1-1.68-2.77c-.04.15-.06.37-.03.69.03.44.14 1.09.07 1.81-.04.72-.37 1.46-.79 1.95-.43.49-.9.83-1.4 1.09l-.7-.7c.19-.47.38-.89.42-1.28.06-.37-.01-.67-.12-.94l-.53-1.13c-.21-.51-.47-1.25-.42-2.12.03-.85.5-1.96 1.39-2.57.9-.61 1.87-.69 2.66-.53.5.1 1.01.34 1.45.68.37-.17.8-.26 1.25-.26h5.75V7c0-2.21 1.79-4 4-4H22l-.89 1.34c.54.36.89.97.89 1.66", "turtle": "M8.47 5.95c.48-.28 1-.51 1.53-.67V4c0-1.1.87-2 1.97-2.03C13.13 2 14 2.9 14 4v1.28c.53.17 1.05.39 1.53.67l-1.6 2.12h-3.86zM19 12c0 .5-.05.95-.14 1.4l-2.53-.78-1.19-3.66 1.6-2.11q.645.6 1.14 1.35c.79-.07 1.55.05 2.23.39 1.03.53 1.73 1.54 1.89 2.69l-3 .36zM5 12v-.35l-3-.37c.16-1.15.86-2.16 1.89-2.69a3.54 3.54 0 0 1 2.19-.33c.33-.51.71-.98 1.16-1.39l1.62 2.08-1.19 3.67-2.53.78C5.05 12.95 5 12.5 5 12m5.24-2.43h3.52l1.09 3.36L12 15l-2.85-2.07zm-2.11 4.48 3.12 2.26v2.65c-.57-.06-1.12-.19-1.63-.38l-1.23 2.76a3.49 3.49 0 0 1-2.02-2.58c-.14-.76-.02-1.52.32-2.2-.45-.52-.82-1.1-1.1-1.74zm7.74 0 2.54.77c-.28.64-.65 1.22-1.1 1.74.34.68.46 1.44.33 2.2a3.52 3.52 0 0 1-2.03 2.58l-1.22-2.76c-.53.19-1.06.36-1.64.42v-2.69z", "heart": "m12 21.35-1.45-1.32C5.4 15.36 2 12.27 2 8.5 2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.53z", "heart-outline": "m12.1 18.55-.1.1-.11-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04 1 3.57 2.36h1.86C13.46 6 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05M16.5 3c-1.74 0-3.41.81-4.5 2.08C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.41 2 8.5c0 3.77 3.4 6.86 8.55 11.53L12 21.35l1.45-1.32C18.6 15.36 22 12.27 22 8.5 22 5.41 19.58 3 16.5 3", "map-marker": "M12 11.5A2.5 2.5 0 0 1 9.5 9 2.5 2.5 0 0 1 12 6.5 2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7", "party-popper": "m14.53 1.45-1.08 1.08 1.6 1.6q.33.375.33.87c0 .495-.11.64-.33.86L11.5 9.47l1 1.08 3.63-3.61c.53-.59.79-1.24.79-1.94s-.26-1.36-.79-1.95zm-3.98 2.02L9.47 4.55l.61.56c.22.22.33.52.33.89s-.11.67-.33.89l-.61.56 1.08 1.08.56-.61c.53-.59.8-1.23.8-1.92 0-.72-.27-1.37-.8-1.97zM21 5.06c-.69 0-1.33.27-1.92.8l-5.63 5.64 1.08 1 5.58-5.56c.25-.25.55-.38.89-.38s.64.13.89.38l.61.61 1.03-1.08-.56-.61c-.59-.53-1.25-.8-1.97-.8M7 8 2 22l14-5zm12 3.06c-.7 0-1.34.27-1.94.8l-1.59 1.59 1.08 1.08 1.59-1.59c.25-.25.53-.38.86-.38s.63.13.88.38l1.62 1.59 1.05-1.03-1.6-1.64c-.59-.53-1.25-.8-1.95-.8", "arrow-top-right": "M5 17.59 15.59 7H9V5h10v10h-2V8.41L6.41 19z", "star-four-points": "M12 1 9 9l-8 3 8 3 3 8 3-8 8-3-8-3z", "border-all": "M19 11h-6V5h6m0 14h-6v-6h6m-8-2H5V5h6m0 14H5v-6h6m-8 8h18V3H3z", "palette": "M17.5 12a1.5 1.5 0 0 1-1.5-1.5A1.5 1.5 0 0 1 17.5 9a1.5 1.5 0 0 1 1.5 1.5 1.5 1.5 0 0 1-1.5 1.5m-3-4A1.5 1.5 0 0 1 13 6.5 1.5 1.5 0 0 1 14.5 5 1.5 1.5 0 0 1 16 6.5 1.5 1.5 0 0 1 14.5 8m-5 0A1.5 1.5 0 0 1 8 6.5 1.5 1.5 0 0 1 9.5 5 1.5 1.5 0 0 1 11 6.5 1.5 1.5 0 0 1 9.5 8m-3 4A1.5 1.5 0 0 1 5 10.5 1.5 1.5 0 0 1 6.5 9 1.5 1.5 0 0 1 8 10.5 1.5 1.5 0 0 1 6.5 12M12 3a9 9 0 0 0-9 9 9 9 0 0 0 9 9 1.5 1.5 0 0 0 1.5-1.5c0-.39-.15-.74-.39-1-.23-.27-.38-.62-.38-1a1.5 1.5 0 0 1 1.5-1.5H16a5 5 0 0 0 5-5c0-4.42-4.03-8-9-8", "diamond-stone": "M16 9h3l-5 7m-4-7h4l-2 8M5 9h3l2 7m5-12h2l2 3h-3m-5-3h2l1 3h-4M7 4h2L8 7H5m1-5L2 8l10 14L22 8l-4-6z", "shimmer": "M10.6 9.6 9 15 7.4 9.6 2 8l5.4-1.6L9 1l1.6 5.4L16 8zm6.4 4.6 4-2.2-2.2 4 2.2 4-4-2.2-4 2.2 2.2-4-2.2-4zM10 16l-1.7 3 1.7 3-3-1.7L4 22l1.7-3L4 16l3 1.7z", "creation": "m19 1-1.26 2.75L15 5l2.74 1.26L19 9l1.25-2.74L23 5l-2.75-1.25M9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5M19 15l-1.26 2.74L15 19l2.74 1.25L19 23l1.25-2.75L23 19l-2.75-1.26", "waves": "M20 12h2v2h-2c-1.38 0-2.74-.35-4-1-2.5 1.3-5.5 1.3-8 0-1.26.65-2.63 1-4 1H2v-2h2c1.39 0 2.78-.47 4-1.33 2.44 1.71 5.56 1.71 8 0 1.22.86 2.61 1.33 4 1.33m0-6h2v2h-2c-1.38 0-2.74-.35-4-1-2.5 1.3-5.5 1.3-8 0-1.26.65-2.63 1-4 1H2V6h2c1.39 0 2.78-.47 4-1.33 2.44 1.71 5.56 1.71 8 0C17.22 5.53 18.61 6 20 6m0 12h2v2h-2c-1.38 0-2.74-.35-4-1-2.5 1.3-5.5 1.3-8 0-1.26.65-2.63 1-4 1H2v-2h2c1.39 0 2.78-.47 4-1.33 2.44 1.71 5.56 1.71 8 0 1.22.86 2.61 1.33 4 1.33", "orbit": "M8.11 1.75C9.3 1.25 10.62 1 12 1c6.08 0 11 4.92 11 11s-4.92 11-11 11S1 18.08 1 12c0-1.38.25-2.7.72-3.92a4.5 4.5 0 0 0 1.73 1.1C3.16 10.07 3 11 3 12a9 9 0 0 0 9 9 9 9 0 0 0 9-9 9 9 0 0 0-9-9c-1 0-1.93.16-2.82.45-.22-.62-.57-1.21-1.07-1.7M4.93 2.93a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2c0-1.11.89-2 2-2M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5", "flash": "M7 2v11h3v9l7-12h-4l4-8z", "star": "M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.62L12 2 9.19 8.62 2 9.24l5.45 4.73L5.82 21z", "film": "M3.5 3H5V1.8c0-.44.36-.8.8-.8h4.4c.44 0 .8.36.8.8V3h1.5A1.5 1.5 0 0 1 14 4.5V5h8v15h-8v.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 20.5v-16A1.5 1.5 0 0 1 3.5 3M18 7v2h2V7zm-4 0v2h2V7zm-4 0v2h2V7zm4 9v2h2v-2zm4 0v2h2v-2zm-8 0v2h2v-2z", "script-text": "M17.8 20c-.4 1.2-1.5 2-2.8 2H5c-1.7 0-3-1.3-3-3v-1h12.2c.4 1.2 1.5 2 2.8 2zM19 2c1.7 0 3 1.3 3 3v1h-2V5c0-.6-.4-1-1-1s-1 .4-1 1v13h-1c-.6 0-1-.4-1-1v-1H5V5c0-1.7 1.3-3 3-3zM8 6v2h7V6zm0 4v2h6v-2z", "dots-grid": "M12 16c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2M6 16c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m12 12c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2", "medal": "M20 2H4v2l5.81 4.36a7.004 7.004 0 0 0-4.46 8.84 6.996 6.996 0 0 0 8.84 4.46 7 7 0 0 0 0-13.3L20 4zm-5.06 17.5L12 17.78 9.06 19.5l.78-3.33-2.59-2.24 3.41-.29L12 10.5l1.34 3.14 3.41.29-2.59 2.24z", "flower": "M3 13a9 9 0 0 0 9 9c0-5-4.03-9-9-9m9-7.5A2.5 2.5 0 0 1 14.5 8a2.5 2.5 0 0 1-2.5 2.5A2.5 2.5 0 0 1 9.5 8 2.5 2.5 0 0 1 12 5.5m-6.4 4.75a2.5 2.5 0 0 0 2.5 2.5c.53 0 1.02-.17 1.4-.44v.19A2.5 2.5 0 0 0 12 15a2.5 2.5 0 0 0 2.5-2.5v-.19c.38.27.87.44 1.4.44a2.5 2.5 0 0 0 2.5-2.5c0-1-.59-1.85-1.43-2.25.84-.4 1.43-1.26 1.43-2.25a2.5 2.5 0 0 0-2.5-2.5c-.53 0-1.02.16-1.4.44V3.5A2.5 2.5 0 0 0 12 1a2.5 2.5 0 0 0-2.5 2.5v.19c-.38-.28-.87-.44-1.4-.44a2.5 2.5 0 0 0-2.5 2.5c0 .99.59 1.85 1.43 2.25-.84.4-1.43 1.25-1.43 2.25M12 22a9 9 0 0 0 9-9c-5 0-9 4-9 9", "snowflake": "m20.79 13.95-2.33.62-2-1.13v-2.88l2-1.13 2.33.62.52-1.93-1.77-.47.46-1.77-1.93-.52-.62 2.33-2 1.13L13 7.38V5.12l1.71-1.71L13.29 2 12 3.29 10.71 2 9.29 3.41 11 5.12v2.26L8.5 8.82l-2-1.13-.58-2.33L4 5.88l.47 1.77-1.77.47.52 1.93 2.33-.62 2 1.13v2.89l-2 1.13-2.33-.62-.52 1.93 1.77.47L4 18.12l1.93.52.62-2.33 2-1.13L11 16.62v2.26l-1.71 1.71L10.71 22 12 20.71 13.29 22l1.41-1.41-1.7-1.71v-2.26l2.5-1.45 2 1.13.62 2.33 1.88-.51-.47-1.77 1.77-.47zM9.5 10.56 12 9.11l2.5 1.45v2.88L12 14.89l-2.5-1.45z", "weather-sunset": "M3 12h4a5 5 0 0 1 5-5 5 5 0 0 1 5 5h4a1 1 0 0 1 1 1 1 1 0 0 1-1 1H3a1 1 0 0 1-1-1 1 1 0 0 1 1-1m2 4h14a1 1 0 0 1 1 1 1 1 0 0 1-1 1H5a1 1 0 0 1-1-1 1 1 0 0 1 1-1m12 4a1 1 0 0 1 1 1 1 1 0 0 1-1 1H7a1 1 0 0 1-1-1 1 1 0 0 1 1-1zm-2-8a3 3 0 0 0-3-3 3 3 0 0 0-3 3zM12 2l2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm17.31 0-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15z"};
 ICO.image="M8.5 13.5l2.5 3 3.5-4.5 4.5 6H5m16 1V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z";
 ICO.bug="M12 12c-2-5-6-7-9-6 0 4 2 8 6 8zm0 0c2-5 6-7 9-6 0 4-2 8-6 8zm-3 3c-3 0-5 2-4 5 3 1 5-1 4-5zm6 0c3 0 5 2 4 5-3 1-5-1-4-5zM11.2 7h1.6v12h-1.6z";
 ICO.fish="M2 12c3-5.5 9-7 13-4l4-3v14l-4-3c-4 3-10 1.5-13-4z";
@@ -811,20 +887,18 @@ const BN={gold:"g",silver:"s",copper:"c",rose:"r",ice:"i",emerald:"e",ruby:"y",s
  st.textContent=Object.entries(BORD).map(([k,v])=>{const[c1,c2,c3,c4]=v.c;return `.bd-${k}{--bh:${v.h};--bs:${v.s};--bsat:${v.sat}%;--bl:${v.bl}%;--bu:${v.bu}%;--bp:${v.bp}%;--bps:${v.bps||30}%;--bglow:${v.glow};--bgrad:linear-gradient(115deg,${c1} 0%,${c2} 12%,${c3} 24%,${c4} 30%,${c3} 38%,${c2} 52%,${c3} 66%,${c4} 72%,${c2} 86%,${c1} 100%)}`}).join("");
  document.head.appendChild(st)}
 // voronoi ring, only the cells that touch the frame are drawn
-const BSV={};
-function borderSVG(seed){if(BSV[seed])return BSV[seed];
- const rnd=vRnd(seed),W=300,H=420,C=56,R=78,sx=W/C,sy=H/R,G=new Map();
+function borderCells(seed){
+ const rnd=vRnd(seed),W=300,H=420,C=56,R=78,sx=W/C,sy=H/R,G=new Map(),cells=[];
  for(let r=0;r<R;r++)for(let c=0;c<C;c++){const x=(c+.12+rnd()*.76)*sx,y=(r+.12+rnd()*.76)*sy,e=Math.min(x,W-x,y,H-y);if(e<18)G.set(r*C+c,[x,y,r,c])}
- let out="";
  G.forEach(p=>{if(Math.min(p[0],W-p[0],p[1],H-p[1])>8)return;
   let poly=[[0,0],[W,0],[W,H],[0,H]];
   for(let dr=-2;dr<=2&&poly.length>2;dr++)for(let dc=-2;dc<=2;dc++){if(!dr&&!dc)continue;const cc=p[3]+dc;if(cc<0||cc>=C)continue;const q=G.get((p[2]+dr)*C+cc);if(q)poly=vClip(poly,p,q)}
   if(poly.length<3)return;
-  const stl=`--a:${(rnd()*3-1.5).toFixed(2)};--b:${(rnd()*3-1.5).toFixed(2)};--c:${(rnd()*2-1).toFixed(2)}`;
-  out+=`<polygon class="gc" points="${vStr(poly)}" style="${stl};--m:${(.45+rnd()*.5).toFixed(2)};--r:${rnd().toFixed(2)}"/>`;
-  if(rnd()<.07){const z=2.2+rnd()*2.6,q=z*.24,x=p[0],y=p[1];
-   out+=`<path class="gs" d="M${x.toFixed(1)} ${(y-z).toFixed(1)}L${(x+q).toFixed(1)} ${(y-q).toFixed(1)}L${(x+z).toFixed(1)} ${y.toFixed(1)}L${(x+q).toFixed(1)} ${(y+q).toFixed(1)}L${x.toFixed(1)} ${(y+z).toFixed(1)}L${(x-q).toFixed(1)} ${(y+q).toFixed(1)}L${(x-z).toFixed(1)} ${y.toFixed(1)}L${(x-q).toFixed(1)} ${(y-q).toFixed(1)}Z" style="${stl}"/>`}});
- return BSV[seed]=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${out}</svg>`}
+  const cell={poly,a:rnd()*3-1.5,b:rnd()*3-1.5,c:rnd()*2-1,m:.45+rnd()*.5,r:rnd(),star:null};
+  if(rnd()<.07){const z=2.2+rnd()*2.6;cell.star={x:p[0],y:p[1],z,q:z*.24}}
+  cells.push(cell)});
+ return cells}
+const borderSVG=seed=>`<canvas class="shc" width="360" height="504" data-k="b" data-seed="${seed}" aria-hidden="true"></canvas>`;
 const BORDER_CHANCE=.014,BFX=Object.entries(BORD).map(([k,v])=>[k,v.w]),BFXT=BFX.reduce((a,[,w])=>a+w,0);
 const rollBorder=()=>{
  if(PREVIEW=="gold")return "g";
@@ -918,9 +992,15 @@ const PACKS={
  bird:{label:"bird pack",n:5,cost:230,ico:"bird",what:"birds",hue:250,sp:["bird"],desc:"5 birds, all spotted in the wild."},
  mammal:{label:"mammal pack",n:5,cost:230,ico:"paw",what:"mammals",hue:165,sp:["mammal"],desc:"5 mammals from around the world."},
  bug:{label:"bug pack",n:5,cost:230,ico:"bug",what:"bugs",hue:75,sp:["insect","arachnid"],desc:"insects and spiders, up close."},
+ asia:{label:"asia pack",n:5,cost:260,ico:"earth",what:"critters from asia",where:"asia",reg:"97395",hue:340,desc:"5 wild critters spotted in asia."},
+ europe:{label:"europe pack",n:5,cost:260,ico:"earth",what:"critters from europe",where:"europe",reg:"97391",hue:235,desc:"5 wild critters spotted in europe."},
+ africa:{label:"africa pack",n:5,cost:260,ico:"earth",what:"critters from africa",where:"africa",reg:"97392",hue:45,desc:"5 wild critters spotted in africa."},
+ namerica:{label:"north america pack",n:5,cost:260,ico:"earth",what:"critters from north america",where:"north america",reg:"97394",hue:20,desc:"5 wild critters spotted in north america."},
+ samerica:{label:"south america pack",n:5,cost:260,ico:"earth",what:"critters from south america",where:"south america",reg:"97389",hue:130,desc:"5 wild critters spotted in south america."},
+ oceania:{label:"oceania pack",n:5,cost:260,ico:"earth",what:"critters from oceania",where:"oceania",reg:"97393",hue:185,desc:"5 wild critters spotted in oceania, from australia to the pacific islands."},
  lucky:{label:"lucky pack",n:5,cost:350,ico:"star-four-points",what:"critters",hue:195,luck:3,desc:"5 critters, with about 3× the chance of finishes, borders and text effects."}
 };
-const SHOP_CAP=3,PKS=["classic","mega","bird","mammal","bug","lucky"];
+const SHOP_CAP=3,PKS=["classic","mega","bird","mammal","bug","lucky","asia","europe","africa","namerica","samerica","oceania"];
 const pkArt=(off,kind)=>`<div class="pk-art${kind&&kind!="daily"?" k-"+kind:""}"><span class="pk-crimp t"></span><span class="pk-crimp b"></span><div class="pk-tl"><span>${off?"":"‹ tear here ›"}</span></div><div class="pk-mid"><div class="pk-ic">${ic(PACKS[kind||"daily"].ico||"paw")}</div><div class="pk-ti">${PACKS[kind||"daily"].label}</div><div class="pk-su">${off?"pack opened":PACKS[kind||"daily"].n+" "+(PACKS[kind||"daily"].what||"wild critters")+" inside"}</div></div></div>`;
 /* every pack you can open right now: today's daily pack (if not opened yet) plus any packs you bought */
 const packList=()=>{const L=[];if(state.unl||state.last!==today())L.push(["daily",1]);PKS.forEach(k=>{if((state.inv[k]||0)>0)L.push([k,state.inv[k]])});return L};
@@ -948,6 +1028,7 @@ function renderPack(){
   +`<div class="hint">swipe across the top to tear the pack open, or just tap it${n>1?"<br>swipe sideways, tap a pack or use ‹ › to switch packs":""}${dailyDone?"<br>today’s daily pack is already opened, come back tomorrow for a fresh one":""}</div>`;
  if(n>1)bindCar();
  bindPack();
+ {const K0=PACKS[kind];if(K0&&K0.reg&&hasLive()&&!regFresh(kind))regionLoad(kind).catch(()=>{})}
 }
 function bindCar(){
  const car=document.getElementById("pkcar");if(!car)return;
@@ -962,19 +1043,20 @@ let pkWheel=0;
 stage.addEventListener("wheel",e=>{if(!document.getElementById("pkcar"))return;
  if(Math.abs(e.deltaX)>Math.abs(e.deltaY)&&Math.abs(e.deltaX)>24&&Date.now()-pkWheel>450){pkWheel=Date.now();e.preventDefault();pkGo(e.deltaX>0?1:-1)}},{passive:false});
 document.addEventListener("keydown",e=>{if(e.key!="ArrowLeft"&&e.key!="ArrowRight")return;
- if(!document.getElementById("pkcar")||state.pack)return;
+ if(!document.getElementById("pkcar")||state.pack||document.body.classList.contains("shop-open"))return;
  if(e.target.closest&&e.target.closest("input,textarea,select,#tradepop,#raw"))return;
  const l=document.getElementById("lb");if(l&&l.classList.contains("on"))return;
  pkGo(e.key=="ArrowRight"?1:-1)});
 // deal today's five cards (called once the pack is fully torn)
 function openPack(){
- const kind=state.cur||"daily",K=PACKS[kind]||PACKS.daily,base=POOL.length>=5?POOL:CRITTERS;
+ const kind=state.cur||"daily",K=PACKS[kind]||PACKS.daily,base=K.reg?regPool(kind):POOL.length>=5?POOL:CRITTERS;
  let src=K.sp?base.filter(p=>K.sp.includes(p.sp)):base;if(!src.length)src=base;
- const pool=src.slice(),picks=[],n=Math.min(K.n,pool.length);LK=K.luck||1;
+ const unmet=src.filter(p=>!state.seen[p.id]),pool=(unmet.length>=K.n?unmet:src).slice(),picks=[],n=Math.min(K.n,pool.length);LK=K.luck||1;
  for(let i=0;i<n;i++){const p=pool.splice(Math.floor(Math.random()*pool.length),1)[0],f=rollFin();picks.push([p.id,f,rollT(f)])}
  LK=1;
  if(kind=="daily")state.last=today();else state.inv[kind]=Math.max(0,(state.inv[kind]||0)-1);
  state.pack={picks,idx:0,kind};save();
+ setTimeout(()=>{if(!hasLive())return;if(K.reg){delete REGP[kind];regionLoad(kind).catch(()=>{})}else loadLive(true)},1200); // line up brand new critters for the next pack
 }
 function bindPack(){
  const pk=document.getElementById("pack"),low=pk.querySelector(".pk-low"),strip=pk.querySelector(".pk-strip");
@@ -1007,12 +1089,16 @@ function bindPack(){
  function finish(){
   if(done)return;done=true;frame.cancel();cancelAnimationFrame(auto);
   x=pk.offsetWidth;apply();pk.style.transform="";if(navigator.vibrate)navigator.vibrate(35);
-  openPack();
+  const go=()=>{openPack();
   strip.style.transition="transform .6s cubic-bezier(.5,0,1,.6),opacity .6s";
   strip.style.transform="translate("+(mirror?120:-120)+"px,-230px) rotate("+(mirror?-75:75)+"deg)";strip.style.opacity="0";
   setTimeout(()=>pk.classList.add("open"),180);
   setTimeout(()=>pk.classList.add("drop"),750);
-  setTimeout(showCard,1250);
+  setTimeout(showCard,1250);};
+  const kk=state.cur||"daily",KK=PACKS[kk];
+  if(KK&&KK.reg&&!regFresh(kk)){const h=stage.querySelector(".hint");if(h)h.textContent="finding critters from "+KK.where+"…";
+   regionLoad(kk).then(go,()=>{renderPack();const h2=stage.querySelector(".hint");if(h2)h2.textContent="couldn’t load critters from "+KK.where+" ("+srcErr+"). your pack is safe, try again in a moment."})}
+  else go();
  }
  function autoTear(){
   if(done||down)return;pk.classList.add("touched");cancelAnimationFrame(auto);
@@ -1138,14 +1224,48 @@ document.addEventListener("keydown",e=>{if(!state.pack||!document.getElementById
  if(e.key==" "||e.key=="Enter"){e.preventDefault();flipped?fling(1):flip()}
  else if(e.key=="ArrowRight")fling(1);else if(e.key=="ArrowLeft")fling(-1)});
 
+
+/* ===== shard renderer =====
+   glisten cards and the shining borders used to be hundreds of svg polygons whose colours were css calc() on the live tilt variables,
+   so every tilt frame re-styled and repainted all of them. now each one is a single canvas that is redrawn only when the tilt
+   (or the slow ambient shimmer) actually changes, and at most ~30 times a second while only the ambient shimmer is moving. */
+const SHD={f:{},b:{}};
+const shClamp=(v,a,b)=>v<a?a:v>b?b:v;
+function shardDraw(cv,v){
+ const k=cv.dataset.k,seed=+cv.dataset.seed,cells=SHD[k][seed]||(SHD[k][seed]=k=="f"?facetCells(seed):borderCells(seed));
+ const ctx=cv.getContext("2d"),sc=cv.width/300;ctx.setTransform(sc,0,0,sc,0,0);ctx.clearRect(0,0,300,420);
+ const star=(x,y,z,q)=>{ctx.moveTo(x,y-z);ctx.lineTo(x+q,y-q);ctx.lineTo(x+z,y);ctx.lineTo(x+q,y+q);ctx.lineTo(x,y+z);ctx.lineTo(x-q,y+q);ctx.lineTo(x-z,y);ctx.lineTo(x-q,y-q);ctx.closePath()};
+ ctx.lineJoin="round";
+ for(let n=0;n<cells.length;n++){const c=cells[n],d=Math.abs(v.tx*c.a+v.ty*c.b+v.amb*.8-c.c),u=shClamp(1-d*1.2,0,1),p=shClamp(1-d*3.2,0,1);
+  let h,sat,l,al;
+  if(k=="f"){h=v.fh+c.r*v.fs;sat=32+u*46-p*30;l=54+u*12+p*26;al=c.m*.85}
+  else{h=v.bh+c.r*v.bs;sat=v.bsat+u*18-p*v.bps;l=v.bl+u*v.bu+p*v.bp;al=.55+c.m*.45}
+  ctx.globalAlpha=al;ctx.fillStyle="hsl("+(((h%360)+360)%360).toFixed(1)+","+shClamp(sat,0,100).toFixed(1)+"%,"+shClamp(l,0,100).toFixed(1)+"%)";
+  ctx.beginPath();const P=c.poly;ctx.moveTo(P[0][0],P[0][1]);for(let i=1;i<P.length;i++)ctx.lineTo(P[i][0],P[i][1]);ctx.closePath();ctx.fill();
+  if(k=="b"){ctx.strokeStyle="rgba(0,0,0,.22)";ctx.lineWidth=.3;ctx.stroke()}
+  if(c.star){const sa=k=="f"?shClamp((p-.25)*2.2,0,1):shClamp((p-.2)*2.4,0,1);
+   if(sa>.01){ctx.globalAlpha=sa;ctx.fillStyle="#fff";ctx.beginPath();star(c.star.x,c.star.y,c.star.z,c.star.q);ctx.fill()}}}
+ ctx.globalAlpha=1}
+const shNum=(cs,n,d)=>{const x=parseFloat(cs.getPropertyValue(n));return isNaN(x)?d:x};
+function shardTick(now){
+ const list=document.getElementsByClassName("shc");
+ for(let i=0;i<list.length;i++){const cv=list[i];
+  const cell=cv.closest&&cv.closest(".cell");if(cell&&cell.classList.contains("oos"))continue;
+  if(!cv.offsetParent&&cv.offsetWidth==0)continue;
+  const cs=getComputedStyle(cv),tx=shNum(cs,"--tx",0),ty=shNum(cs,"--ty",0),amb=shNum(cs,"--amb",0);
+  const moved=cv._tx===undefined||Math.abs(tx-cv._tx)>.003||Math.abs(ty-cv._ty)>.003;
+  if(!moved&&cv._amb!==undefined&&(Math.abs(amb-cv._amb)<.004||now-(cv._at||0)<33))continue;
+  cv._tx=tx;cv._ty=ty;cv._amb=amb;cv._at=now;
+  shardDraw(cv,{tx,ty,amb,fh:shNum(cs,"--fh",0),fs:shNum(cs,"--fs",360),bh:shNum(cs,"--bh",40),bs:shNum(cs,"--bs",14),bsat:shNum(cs,"--bsat",72),bl:shNum(cs,"--bl",40),bu:shNum(cs,"--bu",24),bp:shNum(cs,"--bp",30),bps:shNum(cs,"--bps",30)})}
+ requestAnimationFrame(shardTick)}
+requestAnimationFrame(shardTick);
 const slices=()=>[-.45,-.3,-.15,0,.15,.3,.45].map(k=>`<i class="sl" style="--k:${k}"></i>`).join("");
 // voronoi shards: every cell gets its own tilt direction (--a,--b), sweet spot (--c) and hue (--h)
 const FACET={};
-function facetSVG(seed){if(FACET[seed])return FACET[seed];
+function facetCells(seed){
  let a=seed>>>0||1;const rnd=()=>{a=(a+0x6D2B79F5)|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
- const W=300,H=420,C=20,R=28,pts=[];
+ const W=300,H=420,C=20,R=28,pts=[],cells=[];
  for(let r=0;r<R;r++)for(let c=0;c<C;c++)pts.push([(c+.12+rnd()*.76)*W/C,(r+.12+rnd()*.76)*H/R]);
- let out="",edges="";
  pts.forEach((p,i)=>{let poly=[[0,0],[W,0],[W,H],[0,H]];
   for(let j=0;j<pts.length&&poly.length>2;j++){if(j==i||Math.abs((j/C|0)-(i/C|0))>3||Math.abs(j%C-i%C)>3)continue;const q=pts[j],nx=q[0]-p[0],ny=q[1]-p[1],mx=(p[0]+q[0])/2,my=(p[1]+q[1])/2,d=(x,y)=>(x-mx)*nx+(y-my)*ny,res=[];
    for(let k=0;k<poly.length;k++){const A=poly[k],B=poly[(k+1)%poly.length],da=d(A[0],A[1]),db=d(B[0],B[1]);
@@ -1153,12 +1273,12 @@ function facetSVG(seed){if(FACET[seed])return FACET[seed];
     if((da<0&&db>0)||(da>0&&db<0)){const u=da/(da-db);res.push([A[0]+(B[0]-A[0])*u,A[1]+(B[1]-A[1])*u])}}
    poly=res}
   if(poly.length<3)return;
-  const pts2=poly.map(v=>v[0].toFixed(1)+","+v[1].toFixed(1)).join(" ");
-  const sa=(rnd()*3-1.5).toFixed(2),sb=(rnd()*3-1.5).toFixed(2),sc=(rnd()*2-1).toFixed(2),sm=(.45+rnd()*.5).toFixed(2),sr=rnd().toFixed(2),stl=`--a:${sa};--b:${sb};--c:${sc}`;
-   out+=`<polygon class="fc" points="${pts2}" style="${stl};--m:${sm};--r:${sr}"/>`;
-   if(rnd()<.2){const cx=poly.reduce((t,v)=>t+v[0],0)/poly.length,cy=poly.reduce((t,v)=>t+v[1],0)/poly.length,z=3+rnd()*4,q=z*.22;
-    out+=`<path class="fs" d="M${cx.toFixed(1)} ${(cy-z).toFixed(1)}L${(cx+q).toFixed(1)} ${(cy-q).toFixed(1)}L${(cx+z).toFixed(1)} ${cy.toFixed(1)}L${(cx+q).toFixed(1)} ${(cy+q).toFixed(1)}L${cx.toFixed(1)} ${(cy+z).toFixed(1)}L${(cx-q).toFixed(1)} ${(cy+q).toFixed(1)}L${(cx-z).toFixed(1)} ${cy.toFixed(1)}L${(cx-q).toFixed(1)} ${(cy-q).toFixed(1)}Z" style="${stl}"/>`}});
- return FACET[seed]=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${out}</svg>`}
+  const cell={poly,a:rnd()*3-1.5,b:rnd()*3-1.5,c:rnd()*2-1,m:.45+rnd()*.5,r:rnd(),star:null};
+  if(rnd()<.2){const cx=poly.reduce((t,v)=>t+v[0],0)/poly.length,cy=poly.reduce((t,v)=>t+v[1],0)/poly.length,z=3+rnd()*4;cell.star={x:cx,y:cy,z,q:z*.22}}
+  cells.push(cell)});
+ return cells}
+// the shards are painted on one canvas (see the shard renderer below) instead of ~560 svg polygons with live css calc()
+const facetSVG=seed=>`<canvas class="shc" width="360" height="504" data-k="f" data-seed="${seed}" aria-hidden="true"></canvas>`;
 const seedOf=(p,t)=>{let h=2166136261;for(const ch of p.id+"|"+(t||""))h=Math.imul(h^ch.charCodeAt(0),16777619);return h>>>0};
 /* rarity: the real odds of one card having this effect, worked out from the same numbers the pack roll uses */
 function odds(p){if(!(p>0))return"";let n=1/p;n=n<10?Math.round(n*10)/10:n<100?Math.round(n):Math.round(n/10)*10;
@@ -1175,9 +1295,9 @@ function fxText(f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr0]=(t||"").split(".");const
  return out.length?`<div class="fxl">${out.join("")}</div>`:`<div class="fxl none">plain card, no special effects</div>`}
 const FACES=new Map();
 function cardFace(p,f,t){const k=p.id+"|"+(f||"")+"|"+(t||"");let h=FACES.get(k);if(!h){h=cardFace0(p,f,t);FACES.set(k,h)}return h}
-function cardFace0(p,f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr]=(t||"").split(".");const par=par0===undefined||par0=="p";const sh=SHY[sh0]?sh0:"";return `<div class="face front sp-${p.sp} fin-${f||"none"}${BORD[gd]?" gold bd-"+gd:""}${TFX[tf]?" tf-"+tf:""}${sh?" shy-"+sh:""}${VARS[vr]&&VARE.includes(f)?" var-"+vr:""}${par?" par":""}${SR[f]?" sr":""}${FOILS[f]?" fin-foil foil-"+f:""} tint-${FOILS[f]?"foil":(tn||"rb")}${bg&&BGS[bg]&&!NOBG.includes(f)&&!SR[f]?" bg-"+bg:""}"><div class="holo">${f=="facet"?facetSVG(seedOf(p,t)):""}</div>${sh=="bg"?'<div class="shy"></div>':""}${tx&&TEX[tx]?`<div class="tex tx-${tx}"></div>`:""}<div><span class="badge">${ic(SPI[p.sp])} ${SPC[p.sp]}</span></div>
+function cardFace0(p,f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr]=(t||"").split(".");const par=par0===undefined||par0=="p";const sh=SHY[sh0]?sh0:"";return `<div class="face front sp-${p.sp} fin-${f||"none"}${BORD[gd]?" gold bd-"+gd:""}${TFX[tf]?" tf-"+tf:""}${sh?" shy-"+sh:""}${VARS[vr]&&VARE.includes(f)?" var-"+vr:""}${par?" par":""}${SR[f]?" sr":""}${FOILS[f]?" fin-foil foil-"+f:""} tint-${FOILS[f]?"foil":(tn||"rb")}${bg&&BGS[bg]&&!NOBG.includes(f)&&!SR[f]?" bg-"+bg:""}"><div class="holo">${f=="facet"?facetSVG(seedOf(p,t)):""}</div>${sh=="bg"?'<div class="shy"></div>':""}${tx&&TEX[tx]?`<div class="tex tx-${tx}"></div>`:""}<div class="hd txt"><div class="nm">${tf=="wave"?waveHTML(p.name):p.name}</div></div><div class="sptab" title="${SPC[p.sp]}" role="img" aria-label="${SPC[p.sp]}">${ic(SPI[p.sp])}</div>
  <div class="pw"><img class="photo" decoding="async" src="${photo(p)}" alt="${p.name}${p.live?"":", sample photo"}" referrerpolicy="no-referrer" draggable="false"><div class="pholo"></div>${sh=="img"?'<div class="pshy"></div>':""}</div>
- ${BORD[gd]?`<div class="gb">${borderSVG(seedOf(p,t))}</div>`:""}<div class="txt"><div class="nm">${tf=="wave"?waveHTML(p.name):p.name}</div><div class="meta"><i>${p.breed}</i> · ${p.age}</div><div class="desc">${p.desc}</div><div class="where">${ic("map-marker")} ${shOf(p).n}</div></div></div>`}
+ ${BORD[gd]?`<div class="gb">${borderSVG(seedOf(p,t))}</div>`:""}<div class="bd txt"><div class="meta"><i>${p.breed}</i> · ${p.age}</div><div class="desc">${p.desc}</div></div><div class="ft where txt">${ic("map-marker")}<span>${shOf(p).n}</span></div></div>`}
 function cardBox(id,f,t,extra,back){return `<div class="cardbox" data-id="${id}" data-f="${f||""}" data-t="${t||""}"><div class="tilt">${slices()}${cardFace(petOf(id),f,t)}${back?`<div class="face back"><span>${ic("paw")}</span></div>`:""}</div>${extra||""}</div>`}
 const ck=(id,f,t)=>id+"|"+(f||"")+"|"+(t||"");
 function addCard(id,f,t){const k=ck(id,f,t),c=state.col[k];if(!state.seen[id])state.seen[id]=Date.now();if(c)c.n++;else state.col[k]={id,f:f||"",t:t||"",n:1,at:Date.now()}}
@@ -1442,18 +1562,51 @@ document.addEventListener("click",e=>{const tb=e.target.closest&&e.target.closes
  e.stopPropagation();e.preventDefault();if(tb.disabled)return;tradePop(+tb.dataset.id,tb.dataset.f,tb.dataset.t)},true);
 function shopToday(){if(state.shop.d!==today())state.shop={d:today(),n:0};return state.shop}
 function poolCount(k){const base=POOL.length>=5?POOL:CRITTERS,K=PACKS[k];return K.sp?base.filter(p=>K.sp.includes(p.sp)).length:base.length}
-function renderShop(){const el=document.getElementById("shop");if(!el)return;
+const SHOPG=[["classic packs","random critters from anywhere in the world",["classic","mega","lucky"]],["by animal","pick the kind of critter you want",["bird","mammal","bug"]],["around the world","wild critters spotted on each continent, fetched fresh every time",["asia","europe","africa","namerica","samerica","oceania"]]];
+let shopPop="",shopMsgT=0;
+const shopEl=document.getElementById("shop"),shopEntry=document.getElementById("shopentry");
+const shopIsOpen=()=>shopEl.classList.contains("on");
+function packTile(k,own,left,busy){
+ const K=PACKS[k],few=K.sp&&poolCount(k)<3,short=K.cost-state.pts,why=few?"not enough available today":short>0?"need "+short.toLocaleString()+" more":left<1?"daily limit reached":"";
+ const tags=[`<i class="hl">${K.n} cards</i>`];if(K.luck)tags.push(`<i class="hl">${K.luck}× sparkle</i>`);if(K.reg)tags.push(`<i class="hl">live sightings</i>`);if(K.sp)tags.push(`<i>${K.what}</i>`);
+ return `<div class="sp-card${shopPop==k?" pop":""}" style="--h:${K.hue||30}">${own>0?`<span class="sp-badge">×${own} owned</span>`:""}
+  <div class="mp k-${k}"><u class="sh"></u><span class="mi">${ic(K.ico,"#fff")}</span><em>${K.label.replace(" pack","")}</em></div>
+  <b class="nm2">${K.label}</b><span class="pd">${K.desc}</span><div class="sp-tags">${tags.join("")}</div>
+  ${short>0&&!few?`<div class="sp-need" title="${Math.min(100,Math.round(state.pts/K.cost*100))}% of the way there"><i style="width:${Math.min(100,Math.round(state.pts/K.cost*100))}%"></i></div>`:""}
+  <button class="sp-buy" data-buy="${k}"${why?" disabled":""}>${why||'buy · <span class="coin"></span> '+K.cost.toLocaleString()}</button></div>`}
+function renderShop(){if(!shopEl)return;
  const sd=shopToday(),left=state.unl?99:Math.max(0,SHOP_CAP-sd.n),busy=!!state.pack,inv=Object.entries(state.inv).filter(([k,n])=>n>0&&PACKS[k]);
+ const ready=inv.reduce((a,[,n])=>a+n,0);
  const pips=Array.from({length:SHOP_CAP},(_,i)=>`<i class="${i<left?"":"u"}"></i>`).join("");
- el.innerHTML=`<h2>pack shop</h2><div class="shopbar"><span class="bal"><span class="coin"></span>${state.pts.toLocaleString()} <small>points</small></span><span class="lim">${state.unl?"playtest mode: no daily limit":"extra packs today "+pips+" · "+left+" of "+SHOP_CAP+" left"}</span></div>
- <div class="sub" style="text-align:left;margin-top:6px">trade in a card from your collection (open it and tap trade in) to earn points. every effect is worth points by how rare it is, and stacking several effects on one card multiplies the total. favorited cards can’t be traded until you unfavorite them.</div>
- ${inv.length?`<div class="invrow">${inv.map(([k,n])=>`<button class="act" data-open="${k}"${busy?" disabled":""}>open ${PACKS[k].label}${n>1?" ×"+n:""}</button>`).join("")}</div>`:""}
-  <div class="packs">${PKS.map(k=>{const K=PACKS[k],few=K.sp&&poolCount(k)<3,short=K.cost-state.pts,why=few?"not enough available today":short>0?"need "+short.toLocaleString()+" more":left<1?"daily limit reached":"";
-  return `<div class="pkt${why?"":" can"}"><div class="mp k-${k}"><u class="sh"></u><span class="mi">${ic(K.ico,"#fff")}</span><em>${K.label.replace(" pack","")}</em></div><b>${K.label}</b><span class="pd">${K.desc}</span><div class="pm">${K.n} ${K.what}${K.luck?" · "+K.luck+"× sparkle":""}</div>${short>0&&!few?`<div class="need"><i style="width:${Math.min(100,Math.round(state.pts/K.cost*100))}%"></i></div>`:""}<button class="chip" data-buy="${k}"${why?" disabled":""}>${why||'buy · <span class="coin"></span> '+K.cost.toLocaleString()}</button></div>`}).join("")}</div>`;
- el.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>{const k=b.dataset.buy,K=PACKS[k],sd=shopToday();
+ // the button on the main page
+ shopEntry.innerHTML=`<button class="shopbtn" id="shopbtn" aria-haspopup="dialog"><span class="stk"><i class="mpk k-bird"></i><i class="mpk k-asia"></i><i class="mpk k-lucky"></i></span><span class="st"><b>pack shop${ready?`<span class="rdy">${ready} ready</span>`:""}</b><small>spend your points on extra packs, 12 kinds to collect</small></span><span class="bal"><span class="coin"></span>${state.pts.toLocaleString()}</span><span class="chev" aria-hidden="true">›</span></button>`;
+ shopEntry.querySelector("#shopbtn").onclick=shopOpen;
+ // the full-screen page
+ shopEl.innerHTML=`<div class="sp-top"><div class="sp-in"><button class="sp-back" id="spback" aria-label="back to your packs">‹ back</button><h2>pack shop</h2><span class="sp-toast" id="sptoast" role="status"></span><span class="lim">${state.unl?"playtest mode: no daily limit":"extra packs today "+pips+" · "+left+" of "+SHOP_CAP+" left"}</span><span class="bal"><span class="coin"></span>${state.pts.toLocaleString()} <small>points</small></span></div></div>
+ <div class="sp-wrap">
+  <div class="sp-note"><span class="coin"></span><span>earn points by trading in cards: open a card from your collection and tap <b>trade in</b>. every effect is worth points by how rare it is, and stacking effects multiplies the total. favorited cards can’t be traded until you unfavorite them.</span></div>
+  ${inv.length?`<h3 class="sp-h">your packs</h3><p class="sp-s">${busy?"finish the cards you’re looking at first, then open these":"bought and ready to open"}</p><div class="sp-own">${inv.map(([k,n])=>`<div class="sp-oc" style="--h:${PACKS[k].hue||30}"><div class="mp k-${k}"><u class="sh"></u><span class="mi">${ic(PACKS[k].ico,"#fff")}</span></div><div><b>${PACKS[k].label}${n>1?" ×"+n:""}</b><button class="sp-buy" data-open="${k}"${busy?" disabled":""}>${busy?"finish current cards":"open now"}</button></div></div>`).join("")}</div>`:""}
+  ${SHOPG.map(([h,sub,ks])=>`<h3 class="sp-h">${h}</h3><p class="sp-s">${sub}</p><div class="sp-grid">${ks.map(k=>packTile(k,state.inv[k]||0,left,busy)).join("")}</div>`).join("")}
+ </div>`;
+ shopPop="";
+ shopEl.querySelector("#spback").onclick=shopClose;
+ shopEl.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>{const k=b.dataset.buy,K=PACKS[k],sd=shopToday();
   if(state.pts<K.cost||(!state.unl&&sd.n>=SHOP_CAP))return;
-  state.pts-=K.cost;state.inv[k]=(state.inv[k]||0)+1;sd.n++;save();renderShop();if(!state.pack&&document.getElementById("pack")&&!document.querySelector(".pk.tearing,.pk.open,.pk.drop"))renderPack()});
- el.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{if(state.pack)return;state.cur=b.dataset.open;save();renderPack();renderShop();stage.scrollIntoView({behavior:"smooth",block:"center"})})}
+  state.pts-=K.cost;state.inv[k]=(state.inv[k]||0)+1;sd.n++;save();shopPop=k;renderShop();
+  const t=shopEl.querySelector("#sptoast");if(t){t.textContent="✓ "+K.label+" added";clearTimeout(shopMsgT);shopMsgT=setTimeout(()=>{const t2=document.getElementById("sptoast");if(t2)t2.textContent=""},2600)}
+  if(!state.pack&&document.getElementById("pack")&&!document.querySelector(".pk.tearing,.pk.open,.pk.drop"))renderPack()});
+ shopEl.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{if(state.pack)return;state.cur=b.dataset.open;save();shopClose(true);renderPack();renderShop();setTimeout(()=>stage.scrollIntoView({behavior:"smooth",block:"center"}),60)})}
+function shopOpen(){if(shopIsOpen())return;renderShop();shopLast=document.activeElement;
+ shopEl.inert=false;shopEl.setAttribute("aria-hidden","false");shopEl.classList.add("on");document.body.classList.add("shop-open");shopEl.scrollTop=0;
+ try{history.pushState({shop:1},"")}catch(e){}
+ setTimeout(()=>{const b=shopEl.querySelector("#spback");if(b)b.focus({preventScroll:true})},50)}
+let shopLast=null;
+function shopClose(noBack){if(!shopIsOpen())return;
+ shopEl.classList.remove("on");shopEl.setAttribute("aria-hidden","true");shopEl.inert=true;document.body.classList.remove("shop-open");
+ try{if(history.state&&history.state.shop)history.back()}catch(e){}
+ if(!noBack&&shopLast&&shopLast.focus)try{shopLast.focus({preventScroll:true})}catch(e){}}
+window.addEventListener("popstate",()=>{if(shopIsOpen()){shopEl.classList.remove("on");shopEl.setAttribute("aria-hidden","true");shopEl.inert=true;document.body.classList.remove("shop-open")}});
+document.addEventListener("keydown",e=>{if(e.key=="Escape"&&shopIsOpen()){e.preventDefault();shopClose()}});
 function renderJournal(){const el=document.getElementById("journal"),sm=document.getElementById("jrs");if(!el)return;
  const ids=Object.keys(state.seen).sort((a,b)=>state.seen[b]-state.seen[a]).filter(i=>petOf(i)),have=new Set(Object.values(state.col).map(c=>+c.id));
  sm.textContent="critters you’ve met ("+ids.length+")";
@@ -1472,12 +1625,14 @@ document.getElementById("rgsave").onclick=async()=>{
  rgMsg.textContent=POOL.length?"loaded "+POOL.length+" critters. your next pack will use them.":("couldn’t load critters: "+srcErr)};
 (async()=>{
  const live=hasLive(),midPack=state.pack&&state.pack.idx<state.pack.picks.length;
- if(live&&!midPack){stage.innerHTML='<div class="hint">finding critters…</div>';await Promise.race([loadLive(),new Promise(r=>setTimeout(r,12000))])}
- else{setNote();if(live)loadLive()}
+ let cached=false;
+ try{const c=JSON.parse(localStorage.getItem(POOLK)||"null");
+  if(c&&c.k===locKey()&&c.ids&&c.ids.length>=20&&c.ids.every(i=>LIVE[i])){POOL=c.ids.map(i=>LIVE[i]);cached=true}}catch(e){}
+ if(live&&!midPack&&!cached){stage.innerHTML='<div class="hint">finding critters…</div>';await Promise.race([loadLive(true),new Promise(r=>setTimeout(r,12000))])}
+ else{setNote();if(live)loadLive(true)}
  renderGrid();
  if(state.pack&&state.pack.idx<state.pack.picks.length)showCard();else renderPack();
 })();
 </script>
 </body>
 </html>
- 
