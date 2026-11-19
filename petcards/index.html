@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#fbf6ee" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#17130f" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#141414" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%232a1238'/%3E%3Cg transform='translate(3.6 3.6) scale(.7)'%3E%3Cpath fill='%23ffd9a3' d='M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z'/%3E%3C/g%3E%3C/svg%3E">
 <title>critter cards</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,8 +15,8 @@
 :root{--bg:#fbf6ee;--surface:#fff;--text:#2b2118;--muted:#7a6a5a;--border:#e6d9c6;--accent:#2f7cf6;
 --w:min(72vw,290px);--glit:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='s' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 24 0 0 0 -18'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23s)'/%3E%3C/svg%3E");--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .5' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3Crect width='160' height='160' filter='url(%23f)' opacity='.55'/%3E%3C/svg%3E");--rb:linear-gradient(115deg,#ff7ac6,#ffd36e,#7dffb2,#6ec9ff,#b48aff,#ff7ac6);
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17130f;--surface:#2a231c;--text:#f3e9dc;--muted:#a8998a;--border:#3a3027}}
-:root[data-theme="dark"]{--bg:#17130f;--surface:#2a231c;--text:#f3e9dc;--muted:#a8998a;--border:#3a3027}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141414;--surface:#232323;--text:#ececec;--muted:#a0a0a0;--border:#333333}}
+:root[data-theme="dark"]{--bg:#141414;--surface:#232323;--text:#ececec;--muted:#a0a0a0;--border:#333333}
 html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:"Chakra Petch",system-ui,sans-serif;overflow-x:hidden}
@@ -69,7 +70,7 @@ box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),inset 9px 0 14px rgba(0,0,0,.14)
 .pk-su{font:600 12px "Chakra Petch",system-ui,sans-serif;letter-spacing:.08em;text-transform:lowercase;opacity:.92}
 .pk-rim{position:absolute;inset:0;pointer-events:none;clip-path:polygon(0 0,0 0,0 0);background:linear-gradient(90deg,#f1f3f8,#ffffff 35%,#c9d0dc 70%,#f4f6fa)}
 .pk-cards{position:absolute;left:7%;right:7%;top:calc(12% - 22px);height:70%;transition:transform .55s cubic-bezier(.2,.9,.3,1.2),opacity .5s}
-.pk-cards i{position:absolute;inset:0;border-radius:8px;border:2px solid #fff;background:repeating-linear-gradient(45deg,#e8743b 0 9px,#c9366b 9px 18px);box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.pk-cards i{position:absolute;inset:0;border-radius:8px;border:2px solid #ffd9a3;background:repeating-linear-gradient(45deg,transparent 0 8px,rgba(255,217,163,.18) 8px 9px),repeating-linear-gradient(-45deg,transparent 0 8px,rgba(255,217,163,.18) 8px 9px),linear-gradient(160deg,#4d1e60,#1b0c2a);box-shadow:0 2px 6px rgba(0,0,0,.3)}
 .pk-cards i:nth-child(1){transform:rotate(-2deg) translateX(-3px)}.pk-cards i:nth-child(2){transform:rotate(1.5deg) translateX(3px)}
 .pk.open .pk-cards{transform:translateY(-44px)}
 .pk.drop .pk-cards{transform:translateY(-84px) scale(1.04);opacity:0}
@@ -86,8 +87,18 @@ box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),inset 9px 0 14px rgba(0,0,0,.14)
 .flipper{--th:calc(var(--w)*.01);position:relative;width:var(--w);height:calc(var(--w)*1.4);transform-style:preserve-3d;transition:transform .7s cubic-bezier(.3,1.3,.5,1)}
 .flipper.flip{transform:rotateY(180deg)}
 .face{position:absolute;inset:0;font-size:calc(var(--w)*.0552);border-radius:1.1em;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:.3em solid var(--rc,var(--border));overflow:hidden}
-.back{background:var(--grain),repeating-linear-gradient(45deg,#e8743b,#e8743b 12px,#c9366b 12px,#c9366b 24px);background-size:160px 160px,auto;background-blend-mode:overlay,normal;display:flex;align-items:center;justify-content:center;color:#fff;--rc:#fff}
-.back span{font-size:4.5em;line-height:1}
+/* card back: deep plum with a fine gold lattice, a double frame with corner studs, and a glowing paw medallion with slow rays and an occasional sheen */
+.back{--rc:#ffd9a3;display:flex;align-items:center;justify-content:center;color:#fff;
+background:linear-gradient(115deg,transparent 42%,rgba(255,240,210,.28) 50%,transparent 58%) 130% 0/250% 100% no-repeat,var(--grain) 0 0/160px 160px,radial-gradient(circle at 50% 50%,rgba(255,120,70,.5),transparent 58%),repeating-linear-gradient(45deg,transparent 0 1.1em,rgba(255,217,163,.15) 1.1em 1.2em),repeating-linear-gradient(-45deg,transparent 0 1.1em,rgba(255,217,163,.15) 1.1em 1.2em),linear-gradient(160deg,#4d1e60,#2a1238 58%,#1b0c2a);
+background-blend-mode:normal,overlay,normal,normal,normal,normal;animation:backsheen 6s ease-in-out infinite}
+@keyframes backsheen{0%,50%{background-position:130% 0,0 0,0 0,0 0,0 0,0 0}100%{background-position:-130% 0,0 0,0 0,0 0,0 0,0 0}}
+.back::before,.back::after{content:"";position:absolute;pointer-events:none}
+.back::before{inset:.55em;border:.12em solid rgba(255,217,163,.85);border-radius:.7em;background:radial-gradient(circle at 0 0,#ffd9a3 0 .32em,transparent .36em) 0 0/100% 100% no-repeat,radial-gradient(circle at 100% 0,#ffd9a3 0 .32em,transparent .36em) 0 0/100% 100% no-repeat,radial-gradient(circle at 0 100%,#ffd9a3 0 .32em,transparent .36em) 0 0/100% 100% no-repeat,radial-gradient(circle at 100% 100%,#ffd9a3 0 .32em,transparent .36em) 0 0/100% 100% no-repeat}
+.back::after{inset:1.1em;border:.1em dotted rgba(255,217,163,.5);border-radius:.45em}
+.back span{position:relative;display:grid;place-items:center;width:7.4em;height:7.4em;border-radius:50%;line-height:1;background:radial-gradient(circle at 35% 28%,#ffbd7a,#ee7a3d 46%,#c9366b);box-shadow:0 0 0 .28em rgba(255,217,163,.95),0 0 0 .5em #2a1238,0 0 0 .64em rgba(255,217,163,.55),0 0 2.4em .5em rgba(255,130,80,.5),inset 0 -.6em 1em rgba(60,0,40,.3),inset 0 .4em .8em rgba(255,255,255,.4)}
+.back>.ic{width:5.4em;height:5.4em;color:#ffd9a3;filter:drop-shadow(0 0 .5em rgba(255,150,90,.55)) drop-shadow(0 .12em .18em rgba(20,0,30,.6))}
+.back span .ic{width:4.1em;height:4.1em;vertical-align:0;filter:drop-shadow(0 .12em .18em rgba(70,0,40,.45))}
+.back span::before{content:"";position:absolute;inset:-6.5em;z-index:-1;border-radius:50%;background:repeating-conic-gradient(rgba(255,217,163,.2) 0 3deg,transparent 3deg 12deg);-webkit-mask-image:radial-gradient(circle,#000 22%,transparent 62%);mask-image:radial-gradient(circle,#000 22%,transparent 62%);animation:novaspin 90s linear infinite}
 .back{transform:translateZ(calc(var(--th,2px)/2))}
 .sl{position:absolute;inset:0;font-size:calc(var(--w)*.0552);border-radius:1.1em;background:linear-gradient(90deg,#efeadd,#d6cfbc);transform:translateZ(calc(var(--th)*var(--k)))}
 .front{--fg:repeating-linear-gradient(112deg,#ff74b8 0,#ffd86b 4%,#79ffb0 8%,#6cc8ff 12%,#b58cff 16%,#ff74b8 20%);--cs:calc(var(--tx,0)*-14px) calc(var(--ty,0)*-14px + 10px) 22px rgba(0,0,0,.3);box-shadow:var(--cs);background:linear-gradient(90deg,rgba(0,0,0,var(--shl,0)),rgba(0,0,0,0) 55%,rgba(0,0,0,var(--shr,0))),var(--sd,var(--surface));transform:rotateY(180deg) translateZ(calc(var(--th,2px)/2));display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:1em .75em;text-align:center}
@@ -106,10 +117,22 @@ box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),inset 9px 0 14px rgba(0,0,0,.14)
 .badge{font-size:.75em;letter-spacing:.1em;text-transform:lowercase;font-weight:700;color:#fff;background:var(--rc);padding:.2em .75em;border-radius:99px}
 /* ===== card layout: name + species icon tab on top, framed photo, breed/age, description, shelter footer ===== */
 .front{align-items:stretch;justify-content:flex-start;text-align:left;gap:.45em;padding:.8em .75em 0}
-.face.front>.sptab{position:absolute;top:0;right:0;z-index:5;width:2.7em;height:2.7em;display:flex;align-items:center;justify-content:center;background:var(--rc);color:#fff;font-size:1em;border-bottom-left-radius:1.1em;box-shadow:-.08em .08em .3em rgba(0,0,0,.25)}
-.face.front>.sptab .ic{width:1.5em;height:1.5em;vertical-align:0}
+.face.front>.sptab{position:absolute;top:0;right:0;z-index:auto;width:2.7em;height:2.7em;display:flex;align-items:center;justify-content:center;background:none;border-color:inherit;color:#fff;font-size:1em;border-bottom-left-radius:1.1em;box-shadow:-.08em .08em .3em rgba(0,0,0,.25)}
+/* the species tab is part of the border: it takes the face's live border colour (inherited, so animated/finish colours follow),
+   and for gradient borders (holo / glisten edge) it paints the same border-box gradient, aligned to the card, clipped to the tab */
+.face.front>.sptab::before{content:"";position:absolute;inset:0;z-index:-1;box-sizing:border-box;border:1.35em solid;border-color:inherit;border-bottom-left-radius:1.1em;pointer-events:none}
+.front.fin-edge>.sptab::before,.front.shy-edge>.sptab::before{inset:auto;top:-.3em;right:-.3em;width:var(--w);height:calc(var(--w)*1.4);border:0;border-radius:0;clip-path:inset(.3em .3em calc(100% - 3em) calc(100% - 3em) round 0 0 0 1.1em)}
+.front.fin-edge>.sptab::before{background:var(--fg);background-size:300% 300%;background-position:var(--mx,50%) var(--my,30%)}
+.front.shy-edge>.sptab::before{background:linear-gradient(115deg,var(--rc) 0,var(--rc) calc(var(--gx,50%) - 30%),color-mix(in srgb,var(--rc) 20%,#fff) var(--gx,50%),var(--rc) calc(var(--gx,50%) + 30%),var(--rc) 100%)}
+/* shining voronoi borders: sit the tab under the shard frame's layer, which is extended below to cover the tab shape */
+.face.front.gold>.sptab{z-index:7}
+.face.front.gold>.sptab::before{display:none}
+.face.front>.sptab .ic{width:1.5em;height:1.5em;vertical-align:0;position:relative;z-index:4}
+.face.front{isolation:isolate}
+/* the tab's fill sits under the card's overlay layers (grain, holo/finish, glint sweep; they extend over the border), so it gets the same texture and effects as the frame; the icon stays above */
 .front .hd{min-height:2.1em;display:flex;align-items:center;padding-right:2.3em}
-.front .hd .nm{font-size:1.2em;line-height:1.1;text-align:left;text-wrap:balance;overflow-wrap:anywhere}
+.front .hd .nm{font-size:1.2em;line-height:1.1;text-align:left;white-space:nowrap;flex:none;display:inline-block;transform-origin:0 50%;scale:var(--sx,1) 1}
+/* names stay on one line: fitNames() squeezes them horizontally only (the individual `scale` property, so text-effect transforms still work) */
 .front .pw{border:.2em solid var(--rc);border-radius:.7em;box-sizing:border-box}
 .front .bd{display:flex;flex-direction:column;gap:.15em}
 .front .meta{text-align:center;font-weight:600}
@@ -117,6 +140,8 @@ box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),inset 9px 0 14px rgba(0,0,0,.14)
 .front .ft{display:flex;align-items:center;gap:.4em;margin:.1em -.75em 0;padding:.5em .8em .6em;border-top:.14em solid var(--rc);background:color-mix(in srgb,var(--rc) 14%,transparent);font-size:.75em;white-space:nowrap}
 .front .ft .ic{width:1.3em;height:1.3em;vertical-align:0;color:var(--rc)}
 .front .ft span{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.front .ft .flag{margin-left:auto;flex:none;height:1.05em;width:auto;display:block;border-radius:.15em;box-shadow:0 0 0 .07em rgba(0,0,0,.28)}
+.front .ft i.flag{display:none}
 .front.mys{align-items:center;justify-content:center;text-align:center;padding:1em .75em}
 .sp-mammal{--rc:#c9741f}.sp-bird{--rc:#1e8fb0}.sp-reptile{--rc:#2f8f58}.sp-amphib{--rc:#6b8f2f}.sp-fish{--rc:#3f6fd1}.sp-insect{--rc:#c2527f}.sp-arachnid{--rc:#7e57c2}.sp-mollusk{--rc:#a07a2f}
 button.act{background:var(--accent);color:#fff;border:0;border-radius:99px;padding:11px 22px;font:600 16px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
@@ -148,9 +173,9 @@ button.ghost{background:none;color:var(--muted);border:1px solid var(--border);b
 .cardbox.locked{opacity:.4;filter:grayscale(.7);cursor:default}
 .grid .cardbox{--w:150px}.sumrow .cardbox{--w:108px}
 .cell{text-align:center}.cap{font-size:12px;color:var(--muted);margin-top:8px}
-#lb{position:fixed;inset:0;z-index:50;background:rgba(10,8,6,.55);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px;touch-action:none}
+#lb{position:fixed;inset:0;z-index:50;background:rgba(10,8,6,.82);display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px;touch-action:none}
 #lb.on{display:flex}
-#lb .acts .lbx{background:rgba(255,255,255,.16);color:#fff;border:1px solid #fff8;border-radius:99px;padding:9px 16px;font:600 15px "Chakra Petch",system-ui,sans-serif;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+#lb .acts .lbx{background:rgba(255,255,255,.16);color:#fff;border:1px solid #fff8;border-radius:99px;padding:9px 16px;font:600 15px "Chakra Petch",system-ui,sans-serif;cursor:pointer;}
 #lb .acts .lbx:hover{background:rgba(255,255,255,.28)}
 .finl{font-size:.6875em;font-weight:700;margin-top:.4em;color:var(--text)}
 .fin-foil{border-color:var(--fb);box-shadow:var(--cs),0 0 1.1em var(--fb),inset 0 0 3em var(--wash)}
@@ -168,12 +193,6 @@ button.ghost{background:none;color:var(--muted);border:1px solid var(--border);b
 @keyframes neon{0%,100%{border-color:#ff4fd8;box-shadow:var(--cs),0 0 .7em #ff4fd8,inset 0 0 1.2em rgba(255,79,216,.35)}50%{border-color:#4fe3ff;box-shadow:var(--cs),0 0 .7em #4fe3ff,inset 0 0 1.2em rgba(79,227,255,.35)}}
 .fin-paws .holo,.fin-hearts .holo,.fin-stars .holo{opacity:.2;z-index:0}
 .fin-confetti .holo{opacity:.18;z-index:0;background:radial-gradient(circle,#000 0 3px,transparent 4px) 0 0/26px 26px,radial-gradient(circle,#000 0 2px,transparent 3px) 13px 13px/26px 26px,radial-gradient(circle,#000 0 1.5px,transparent 2.5px) 13px 0/26px 26px,radial-gradient(circle,#000 0 1px,transparent 2px) 0 13px/26px 26px}
-.fin-noir{border-color:#3a3a3a}.fin-noir .photo{filter:grayscale(1) contrast(1.15)}
-.fin-noir .holo{opacity:.35;z-index:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.25) 0 1px,transparent 1px 3px)}
-.fin-vintage{border-color:#b08a55}.fin-vintage .photo{filter:sepia(.75) contrast(1.05) saturate(1.2)}
-.fin-vintage .holo{opacity:.4;z-index:2;mix-blend-mode:multiply;background:radial-gradient(ellipse at center,transparent 55%,rgba(110,70,20,.6))}
-.fin-halftone{border-color:#e83a6e}.fin-halftone .photo{filter:saturate(1.5) contrast(1.1)}
-.fin-halftone .pholo{opacity:.35;mix-blend-mode:multiply;background:radial-gradient(circle,#000 22%,transparent 24%) 0 0/7px 7px}
 main button,main a.meet,#lb button,#lb a.meet,.pack{font-family:"Chakra Petch",system-ui,sans-serif}
 .ic{width:1em;height:1em;fill:currentColor;vertical-align:-.14em;flex:none}
 #lb .cardbox .face{backface-visibility:hidden;-webkit-backface-visibility:hidden}
@@ -182,6 +201,10 @@ main button,main a.meet,#lb button,#lb a.meet,.pack{font-family:"Chakra Petch",s
 .face.front>.tex{position:absolute;inset:0;z-index:0;pointer-events:none;background:#000;opacity:.14;-webkit-mask-repeat:repeat;mask-repeat:repeat}
 .chip{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:6px 14px;font:600 13px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
 .chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.srt{display:inline-flex;align-items:center;gap:8px;margin-left:auto;color:var(--muted);font:600 13px "Chakra Petch",system-ui,sans-serif}
+.srt select{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:6px 12px;font:600 13px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
+.srt select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h3.grp{grid-column:1/-1;justify-self:start;margin:16px 0 -4px;font-size:15px}
 .about{max-width:520px;margin:8px auto 0;font-size:13px;line-height:1.5;color:var(--muted);text-align:center}
 .acts{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
 .fv{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:9px 16px;font:600 15px "Chakra Petch",system-ui,sans-serif;cursor:pointer}
@@ -304,6 +327,21 @@ linear-gradient(115deg,var(--rc) 0,var(--rc) calc(var(--gx,50%) - 30%),color-mix
 .fin-facet.tint-ruby{--surface:#f0c6cd;--fh:350;--fs:20;--fb2:#d03050}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fin-facet.tint-ruby{--surface:#4f2732}}
 :root[data-theme="dark"] .fin-facet.tint-ruby{--surface:#4f2732}
+.fin-facet.tint-gsunset{--surface:#f6d9c4;--fh:45;--fh2:-30;--fs:22;--fb2:#e8795a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fin-facet.tint-gsunset{--surface:#4d3226}}
+:root[data-theme="dark"] .fin-facet.tint-gsunset{--surface:#4d3226}
+.fin-facet.tint-gocean{--surface:#cde6f2;--fh:190;--fh2:270;--fs:22;--fb2:#5a8fd6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fin-facet.tint-gocean{--surface:#1f3d4d}}
+:root[data-theme="dark"] .fin-facet.tint-gocean{--surface:#1f3d4d}
+.fin-facet.tint-gaurora{--surface:#cfeedd;--fh:150;--fh2:290;--fs:20;--fb2:#4fc0b0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fin-facet.tint-gaurora{--surface:#1f4238}}
+:root[data-theme="dark"] .fin-facet.tint-gaurora{--surface:#1f4238}
+.fin-facet.tint-gcandy{--surface:#f3d3e6;--fh:340;--fh2:190;--fs:22;--fb2:#c97ad0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fin-facet.tint-gcandy{--surface:#4a2c42}}
+:root[data-theme="dark"] .fin-facet.tint-gcandy{--surface:#4a2c42}
+.fin-facet.tint-gspectrum{--surface:#e3e3ea;--fh:0;--fh2:300;--fs:14;--fb2:#9a8fd0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fin-facet.tint-gspectrum{--surface:#3a3d46}}
+:root[data-theme="dark"] .fin-facet.tint-gspectrum{--surface:#3a3d46}
 .front.fin-facet::after{background:linear-gradient(115deg,transparent calc(var(--gx,calc(50% + var(--amb,0)*35%)) - 20%),rgba(255,255,255,.8) var(--gx,calc(50% + var(--amb,0)*35%)),transparent calc(var(--gx,calc(50% + var(--amb,0)*35%)) + 20%));mix-blend-mode:overlay}
 .fin-pearl{border-color:#e4d6ee}
 .fin-pearl .holo{opacity:.42;z-index:2;background:conic-gradient(from calc(var(--ang,0deg) + 30deg) at calc(35% + var(--tx,0)*18%) calc(30% + var(--ty,0)*18%),#ffc9e3,#fff0c2,#c9ffe0,#c4e6ff,#dccbff,#ffc9e3);animation:hue 10s linear infinite}
@@ -360,6 +398,12 @@ linear-gradient(115deg,var(--rc) 0,var(--rc) calc(var(--gx,50%) - 30%),color-mix
 .k-namerica{--pf:repeating-linear-gradient(0deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(112deg,#a63a12 0,#ee7a3c 8%,#ffb48a 15%,#c9501e 24%,#8a2f0c 32%,#a63a12 38%)}
 .k-samerica{--pf:repeating-linear-gradient(0deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(112deg,#04702f 0,#1fc15e 8%,#f4d23a 15%,#0e9040 24%,#035a26 32%,#04702f 38%)}
 .k-oceania{--pf:repeating-linear-gradient(0deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0 1px,transparent 1px 15px),repeating-linear-gradient(112deg,#06788f 0,#2fd0e6 8%,#9af0e0 15%,#0f9db8 24%,#055a6e 32%,#06788f 38%)}
+.k-cat{--pf:repeating-linear-gradient(78deg,rgba(0,0,0,.2) 0 4px,transparent 4px 17px),repeating-linear-gradient(112deg,#c2570c 0,#ffa43a 8%,#ffd27a 15%,#e07a18 24%,#8f3a06 32%,#c2570c 38%)}
+.k-dog{--pf:radial-gradient(circle at 30% 30%,rgba(255,255,255,.3) 0 3px,transparent 4px) 0 0/28px 28px,repeating-linear-gradient(112deg,#3f4f73 0,#7f98c9 8%,#c3d2f0 15%,#566a99 24%,#2f3b5a 32%,#3f4f73 38%)}
+.k-bear{--pf:repeating-linear-gradient(45deg,rgba(0,0,0,.16) 0 5px,transparent 5px 13px),repeating-linear-gradient(112deg,#5a3418 0,#a8693a 8%,#d6a06a 15%,#7a4824 24%,#3f230f 32%,#5a3418 38%)}
+.k-rabbit{--pf:radial-gradient(circle at 70% 30%,rgba(255,255,255,.4) 0 3px,transparent 4px) 0 0/26px 26px,repeating-linear-gradient(112deg,#b3406f 0,#ff86b4 8%,#ffd6e6 15%,#d85a8b 24%,#8f2a52 32%,#b3406f 38%)}
+.k-rodent{--pf:repeating-linear-gradient(135deg,rgba(255,255,255,.14) 0 3px,transparent 3px 11px),repeating-linear-gradient(112deg,#7a6a14 0,#cdb73a 8%,#efe18a 15%,#a8932a 24%,#5a4e0c 32%,#7a6a14 38%)}
+.k-turtle{--pf:repeating-linear-gradient(60deg,rgba(255,255,255,.15) 0 1px,transparent 1px 14px),repeating-linear-gradient(-60deg,rgba(255,255,255,.15) 0 1px,transparent 1px 14px),repeating-linear-gradient(112deg,#0c6b5a 0,#2fcfa0 8%,#a6f0cf 15%,#12967a 24%,#07493c 32%,#0c6b5a 38%)}
 /* ===== pack shop: a button on the main page opens this full-screen page (same file, no reload) ===== */
 .shopentry{margin:30px 0 0}
 .shopbtn{width:100%;display:flex;align-items:center;gap:14px;padding:12px 16px 12px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:600 16px "Chakra Petch",system-ui,sans-serif;cursor:pointer;text-align:left;box-shadow:0 3px 0 var(--border);transition:transform .15s,box-shadow .15s}
@@ -376,7 +420,7 @@ linear-gradient(115deg,var(--rc) 0,var(--rc) calc(var(--gx,50%) - 30%),color-mix
 body.shop-open{overflow:hidden}
 .shoppage{position:fixed;inset:0;z-index:45;background:var(--bg);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;opacity:0;visibility:hidden;transform:translateY(28px);transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .22s,visibility 0s .3s}
 .shoppage.on{opacity:1;visibility:visible;transform:none;transition-delay:0s}
-.sp-top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.sp-top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 96%,transparent);border-bottom:1px solid var(--border)}
 .sp-in{max-width:980px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 18px 10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .sp-in h2{margin:0;font-size:20px;flex:1;min-width:110px}
 .sp-back{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:8px 14px 8px 10px;font:600 14px "Chakra Petch",system-ui,sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
@@ -433,7 +477,7 @@ body.shop-open{overflow:hidden}
 .jri img{width:56px;height:56px;border-radius:8px;object-fit:cover;flex:none}.jri div{min-width:0;font-size:13px;line-height:1.35}
 .jri b{display:block;font-size:14px}.jri small{display:block;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .jri a{color:var(--accent);text-decoration:none;font-weight:600}
-#tradepop{position:fixed;inset:0;z-index:2000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}#tradepop.on{display:flex}
+#tradepop{position:fixed;inset:0;z-index:2000;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.78);}#tradepop.on{display:flex}
 .tpbox{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:16px;padding:20px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)}
 .tpbox h3{margin:10px 0 4px;font-size:18px}.tpbox p{margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.45}.tpbox p b{color:var(--text)}
 .tpcard{display:flex;justify-content:center;pointer-events:none}.tpcard .cardbox{--w:130px}.tpacts{display:flex;gap:10px;justify-content:center}
@@ -446,6 +490,14 @@ button.rawbtn{background:var(--surface);color:var(--text);border:1px solid var(-
 #raw img{max-width:min(94vw,900px);max-height:74vh;object-fit:contain;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.5);-webkit-user-drag:none}
 #raw .rawcap{color:#fffb;font-size:13px;text-align:center}
 #raw .rawx{color:#fff;border-color:#fff8}
+#wiki{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px));background:rgba(10,8,6,.82);}
+#wiki.on{display:flex}
+#wiki .wkbox{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:16px;padding:18px 18px 14px;width:100%;max-width:460px;max-height:min(80vh,640px);overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.5);font-size:14px;line-height:1.5;-webkit-overflow-scrolling:touch}
+#wiki h3{margin:0;font-size:19px}#wiki .wksci{font-style:italic;color:var(--muted);margin:1px 0 10px}
+#wiki .wkdesc{font-size:12px;color:var(--muted);text-transform:lowercase;margin:-4px 0 8px}
+#wiki .wkimg{float:right;max-width:42%;max-height:150px;object-fit:cover;border-radius:10px;margin:0 0 8px 12px}
+#wiki p{margin:0 0 10px}#wiki .wkfoot{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;clear:both;font-size:12px;color:var(--muted);margin-top:6px}
+#wiki .wkfoot a{color:var(--accent)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @supports (overflow-clip-margin:1px){
 .face.front{overflow:clip;overflow-clip-margin:.3em}
@@ -471,12 +523,6 @@ button.rawbtn{background:var(--surface);color:var(--text);border:1px solid var(-
 .fin-crt .holo{opacity:1;z-index:2;mix-blend-mode:multiply;background:repeating-linear-gradient(0deg,rgba(0,0,0,.3) 0 1px,transparent 1px 3px)}
 .fin-crt .holo::before{mix-blend-mode:screen;background:linear-gradient(180deg,transparent,rgba(170,255,210,.3) 50%,transparent) 0 0/100% 18% no-repeat;animation:crtbar 4s linear infinite}
 .fin-crt .holo::after{background:repeating-linear-gradient(90deg,rgba(255,0,0,.09) 0 1px,rgba(0,255,0,.09) 1px 2px,rgba(0,0,255,.09) 2px 3px);mix-blend-mode:screen}
-.fin-watercolor{border-color:#d9b8d0}.fin-watercolor .photo{filter:saturate(.85) contrast(.92) brightness(1.06)}
-.fin-watercolor .holo{opacity:.85;z-index:2;mix-blend-mode:multiply;background:radial-gradient(circle at 18% 22%,rgba(255,150,190,.6),transparent 38%),radial-gradient(circle at 82% 30%,rgba(120,190,255,.55),transparent 40%),radial-gradient(circle at 30% 85%,rgba(150,230,170,.55),transparent 40%),radial-gradient(circle at 85% 88%,rgba(255,220,120,.55),transparent 38%);background-position:calc(var(--tx,0)*8px) calc(var(--ty,0)*8px)}
-.fin-watercolor .holo::before{background-image:var(--grain);background-size:160px 160px;mix-blend-mode:multiply;opacity:.55}
-.fin-sketch{border-style:dashed;border-color:#6a6a6a}.fin-sketch .photo{filter:grayscale(1) contrast(1.35) brightness(1.05)}
-.fin-sketch .pholo{opacity:.55;mix-blend-mode:multiply;background:repeating-linear-gradient(45deg,rgba(0,0,0,.38) 0 1px,transparent 1px 4px),repeating-linear-gradient(-45deg,rgba(0,0,0,.24) 0 1px,transparent 1px 6px)}
-.fin-sketch .holo{opacity:.3;z-index:2;mix-blend-mode:multiply;background-image:var(--grain);background-size:160px 160px}
 .fin-sunbeam{border-color:#f0c060}
 .fin-sunbeam .holo{opacity:1;z-index:2;mix-blend-mode:screen;background:radial-gradient(circle at 100% 0,rgba(255,232,150,.7),transparent 55%)}
 .fin-sunbeam .holo::before{inset:-40%;transform-origin:100% 0;background:repeating-conic-gradient(from 170deg at 100% 0,rgba(255,244,200,.55) 0 4deg,transparent 4deg 11deg);-webkit-mask-image:linear-gradient(225deg,#000,transparent 75%);mask-image:linear-gradient(225deg,#000,transparent 75%);animation:sunsway 7s ease-in-out infinite alternate}
@@ -493,9 +539,6 @@ button.rawbtn{background:var(--surface);color:var(--text);border:1px solid var(-
 .fin-ripple .holo{opacity:1;z-index:2;mix-blend-mode:overlay;background:radial-gradient(circle at 50% 40%,rgba(120,200,255,.25),transparent 70%)}
 .fin-ripple .holo::before,.fin-ripple .holo::after{transform-origin:var(--mx,50%) var(--my,40%);background:radial-gradient(circle at var(--mx,50%) var(--my,40%),transparent 0 10%,rgba(255,255,255,.7) 11% 12.5%,transparent 14% 24%,rgba(255,255,255,.55) 25% 26.5%,transparent 28% 40%,rgba(255,255,255,.4) 41% 42.5%,transparent 44%);animation:rippulse 3.2s ease-out infinite}
 .fin-ripple .holo::after{animation-delay:-1.6s}
-.fin-duotone{border-color:#7a4dff}.fin-duotone .photo{filter:grayscale(1) contrast(1.15)}
-.fin-duotone .pholo{opacity:.9;mix-blend-mode:color;background:linear-gradient(160deg,#ff3d8a,#4a3dff)}
-.fin-duotone .holo{opacity:.35;z-index:2;mix-blend-mode:overlay;background:linear-gradient(115deg,transparent calc(var(--gx,50%) - 25%),rgba(255,255,255,.8) var(--gx,50%),transparent calc(var(--gx,50%) + 25%))}
 .fin-glow{animation:glowpulse 3s ease-in-out infinite alternate}
 .fin-glow .holo{opacity:1;z-index:2;mix-blend-mode:screen;background:radial-gradient(circle at 50% 40%,transparent 48%,color-mix(in srgb,var(--rc) 60%,transparent))}
 /* ===== more super rares ===== */
@@ -556,7 +599,7 @@ button.rawbtn{background:var(--surface);color:var(--text);border:1px solid var(-
 .front.gold{box-shadow:var(--cs),0 0 1.3em .15em rgba(var(--bglow,255,196,48),.55)}
 .face.front>.gb{position:absolute;inset:-.3em;z-index:6;pointer-events:none;border-radius:1.1em;padding:.3em;
 background:var(--bgrad);background-size:320% 320%;background-position:var(--mx,50%) var(--my,30%);
--webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);animation:goldglint 3.2s ease-in-out infinite,amb 7s ease-in-out infinite alternate}
+-webkit-mask:linear-gradient(#000 0 0) right .25em top .25em/2.75em 1.73em no-repeat border-box,linear-gradient(#000 0 0) right .25em top .25em/1.73em 2.75em no-repeat border-box,radial-gradient(circle 1.1em at 100% 0,#000 calc(1.1em - .5px),transparent 1.1em) right 1.9em top 1.9em/1.1em 1.1em no-repeat border-box,linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:source-over,source-over,source-over,xor;mask:linear-gradient(#000 0 0) right .25em top .25em/2.75em 1.73em no-repeat border-box,linear-gradient(#000 0 0) right .25em top .25em/1.73em 2.75em no-repeat border-box,radial-gradient(circle 1.1em at 100% 0,#000 calc(1.1em - .5px),transparent 1.1em) right 1.9em top 1.9em/1.1em 1.1em no-repeat border-box,linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:add,add,add,exclude,add;animation:goldglint 3.2s ease-in-out infinite,amb 7s ease-in-out infinite alternate}
 .face.front>.gb::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent calc(var(--gx,calc(50% + var(--amb,0)*35%)) - 14%),rgba(255,255,255,.9) var(--gx,calc(50% + var(--amb,0)*35%)),transparent calc(var(--gx,calc(50% + var(--amb,0)*35%)) + 14%));mix-blend-mode:overlay}
 /* voronoi border shards: same trick as glisten. every cell has its own tilt direction, sweet spot and shade */
 @keyframes goldglint{0%,100%{filter:brightness(1) saturate(1)}50%{filter:brightness(1.25) saturate(1.2)}}
@@ -592,6 +635,61 @@ body.lbopen #stage *,body.lbopen #stage *::before,body.lbopen #stage *::after{an
 @keyframes neonflick{0%,18%,22%,60%,64%,100%{opacity:1}20%,62%{opacity:.55}}
 @keyframes txglitch{0%,90%,100%{transform:none}91%{transform:translateX(-.05em) skewX(-6deg)}93%{transform:translateX(.06em)}95%{transform:translateX(-.02em) skewX(4deg)}97%{transform:none}}
 @keyframes txwave{50%{transform:translateY(-.18em)}}
+
+/* ===== full art: the photo becomes the whole card (the border stays); text keeps its exact spot, just with a drop shadow ===== */
+.front.fa{color:#fff;--text:#fff;--muted:#fff}
+.front.fa>.pw{position:static;overflow:visible;border:0;border-radius:0}
+.front.fa>.pw::after{display:none}
+.front.fa .fclip{position:absolute;inset:0;z-index:-2;overflow:hidden;border-radius:.8em;pointer-events:none}
+.front.fa .pholo,.front.fa .pshy{border-radius:.8em;z-index:1}
+.front.fa .txt{background:none;box-shadow:none}
+.front.fa .meta,.front.fa .desc,.front.fa .ft span,.front.fa:not([class*="tf-"]) .nm{text-shadow:0 .06em .14em rgba(0,0,0,.95),0 0 .35em rgba(0,0,0,.7)}
+.front.fa[class*="tf-"] .hd{filter:drop-shadow(0 .06em .1em rgba(0,0,0,.9)) drop-shadow(0 0 .3em rgba(0,0,0,.6))}
+.front.fa .ft{border-top-color:rgba(255,255,255,.55)}
+.front.fa .ft .ic{color:#fff;filter:drop-shadow(0 .05em .1em rgba(0,0,0,.9))}
+.front.fa .ft .flag{box-shadow:0 0 0 .07em rgba(0,0,0,.5),0 .05em .2em rgba(0,0,0,.6)}
+.front.fa-vig .fclip::after,.front.fa-glow .fclip::after{content:"";position:absolute;inset:0;pointer-events:none}
+.front.fa-vig .fclip::after{background:radial-gradient(ellipse at 50% 45%,transparent 42%,rgba(0,0,0,.6))}
+.front.fa-glow .fclip::after{box-shadow:inset 0 0 1.6em .2em color-mix(in srgb,var(--rc) 75%,transparent)}
+
+
+
+
+/* ===== image effects: their own category. they only touch the photo (a wrapper filter plus an overlay), so finishes, borders and text effects stack on top ===== */
+.front .ifw{width:100%;height:100%;display:block}
+.front .ifx{position:absolute;inset:0;pointer-events:none;border-radius:inherit}
+.front.fa .ifx{border-radius:.8em;z-index:1}
+.front.ie-noir .ifw{filter:grayscale(1) contrast(1.15)}
+.front.ie-noir .ifx{opacity:.35;background:repeating-linear-gradient(0deg,rgba(0,0,0,.25) 0 1px,transparent 1px 3px)}
+.front.ie-vintage .ifw{filter:sepia(.75) contrast(1.05) saturate(1.2)}
+.front.ie-vintage .ifx{opacity:.4;mix-blend-mode:multiply;background:radial-gradient(ellipse at center,transparent 55%,rgba(110,70,20,.6))}
+.front.ie-halftone .ifw{filter:saturate(1.5) contrast(1.1)}
+.front.ie-halftone .ifx{opacity:.35;mix-blend-mode:multiply;background:radial-gradient(circle,#000 22%,transparent 24%) 0 0/7px 7px}
+.front.ie-watercolor .ifw{filter:saturate(.85) contrast(.92) brightness(1.06)}
+.front.ie-watercolor .ifx{opacity:.85;mix-blend-mode:multiply;background:radial-gradient(circle at 18% 22%,rgba(255,150,190,.6),transparent 38%),radial-gradient(circle at 82% 30%,rgba(120,190,255,.55),transparent 40%),radial-gradient(circle at 30% 85%,rgba(150,230,170,.55),transparent 40%),radial-gradient(circle at 85% 88%,rgba(255,220,120,.55),transparent 38%);background-position:calc(var(--tx,0)*8px) calc(var(--ty,0)*8px)}
+.front.ie-watercolor .ifx::before,.front.ie-sketch .ifx::before,.front.ie-duotone .ifx::before{content:"";position:absolute;inset:0}
+.front.ie-watercolor .ifx::before{background-image:var(--grain);background-size:160px 160px;mix-blend-mode:multiply;opacity:.55}
+.front.ie-sketch .ifw{filter:grayscale(1) contrast(1.35) brightness(1.05)}
+.front.ie-sketch .ifx{opacity:.55;mix-blend-mode:multiply;background:repeating-linear-gradient(45deg,rgba(0,0,0,.38) 0 1px,transparent 1px 4px),repeating-linear-gradient(-45deg,rgba(0,0,0,.24) 0 1px,transparent 1px 6px)}
+.front.ie-sketch .ifx::before{background-image:var(--grain);background-size:160px 160px;mix-blend-mode:multiply;opacity:.4}
+.front.ie-duotone .ifw{filter:grayscale(1) contrast(1.15)}
+.front.ie-duotone .ifx{opacity:.9;mix-blend-mode:color;background:linear-gradient(160deg,#ff3d8a,#4a3dff)}
+.front.ie-duotone .ifx::before{mix-blend-mode:overlay;opacity:.35;background:linear-gradient(115deg,transparent calc(var(--gx,50%) - 25%),rgba(255,255,255,.8) var(--gx,50%),transparent calc(var(--gx,50%) + 25%))}
+/* toon family: svg filters (posterize + ink outlines from an edge-detect pass) */
+.front.ie-toon .ifw{filter:url(#fx-toon)}
+.front.ie-comic .ifw{filter:url(#fx-comic)}
+.front.ie-comic .ifx{opacity:.3;mix-blend-mode:multiply;background:radial-gradient(circle,#000 24%,transparent 27%) 0 0/6px 6px}
+.front.ie-ink .ifw{filter:url(#fx-ink)}
+.front.ie-ink .ifx{opacity:.25;mix-blend-mode:multiply;background-image:var(--grain);background-size:160px 160px}
+.front.ie-toon.par .photo,.front.ie-comic.par .photo,.front.ie-ink.par .photo{transform:none} /* a moving photo would re-run the filter every frame */
+/* pixel art: the photo is redrawn in js as a small, palette-limited, dithered, outlined sprite and shown with hard pixel edges */
+.front.ie-pixel .photo{image-rendering:pixelated;transition:transform .1s,opacity .25s}
+.front.ie-pixel .photo:not([data-px="1"]){opacity:0}
+.front.ie-pixel .photo.pxfb{filter:url(#fx-pxfb)}
+
+.drag.under{opacity:0}
+
+.k-superlucky{--pf:radial-gradient(circle at 25% 25%,rgba(255,255,255,.85) 0 1.5px,transparent 2.5px) 0 0/22px 22px,radial-gradient(circle at 70% 65%,rgba(255,230,150,.9) 0 1px,transparent 2px) 0 0/17px 17px,repeating-linear-gradient(112deg,#5a1fd1 0,#ff5ad2 8%,#ffd86b 15%,#4fd0ff 22%,#5a1fd1 30%)}
 
 /* ---------- mobile friendly ---------- */
 :root{--lbw:min(78vw,320px,calc((100dvh - 250px)/1.4))}
@@ -669,14 +767,49 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 .info>summary::after{content:" \25BE"}
 .info[open]>summary::after{content:" \25B4"}
 @media (max-width:600px){.info>summary{min-height:44px;display:inline-flex;align-items:center;justify-content:center}.info[open]{margin-bottom:8px}}
+/* ===== even more finishes ===== */
+.fin-topo{border-color:#8aa86a}
+.fin-topo .holo{opacity:.6;z-index:2;mix-blend-mode:multiply;background:repeating-radial-gradient(circle at calc(30% + var(--tx,0)*12%) calc(35% + var(--ty,0)*12%),transparent 0 .7em,rgba(70,110,60,.8) .7em .8em)}
+.fin-topo .holo::before{mix-blend-mode:multiply;background:repeating-radial-gradient(circle at calc(78% - var(--tx,0)*8%) calc(72% - var(--ty,0)*8%),transparent 0 1em,rgba(130,85,40,.65) 1em 1.1em)}
+.fin-topo .holo::after{background:linear-gradient(160deg,rgba(150,200,110,.28),rgba(235,195,110,.22))}
+.fin-carbon{border-color:#3a3d42}
+.fin-carbon .holo{opacity:.85;z-index:2;mix-blend-mode:overlay;background:conic-gradient(rgba(0,0,0,.55) 25%,rgba(255,255,255,.25) 0 50%,rgba(0,0,0,.55) 0 75%,rgba(255,255,255,.25) 0) 0 0/.55em .55em}
+.fin-carbon .holo::before{mix-blend-mode:overlay;background:linear-gradient(115deg,transparent calc(var(--gx,50%) - 22%),rgba(255,255,255,.85) var(--gx,50%),transparent calc(var(--gx,50%) + 22%))}
+.fin-hologrid{border-color:#2fe6ff}
+.fin-hologrid .holo{opacity:.7;z-index:2;mix-blend-mode:screen;background:linear-gradient(rgba(60,230,255,.75) 1px,transparent 1px) 0 0/1.6em 1.6em,linear-gradient(90deg,rgba(255,70,220,.7) 1px,transparent 1px) 0 0/1.6em 1.6em;background-position:calc(var(--tx,0)*1.2em) calc(var(--ty,0)*1.2em)}
+.fin-hologrid .holo::before{mix-blend-mode:screen;background:linear-gradient(180deg,transparent,rgba(120,255,255,.5) 50%,transparent) 0 0/100% 22% no-repeat;animation:crtbar 4s linear infinite}
+.fin-hologrid .holo::after{mix-blend-mode:multiply;background:radial-gradient(circle at 50% 50%,transparent 50%,rgba(40,10,90,.35))}
+.fin-moire{border-color:#9aa3b2}
+.fin-moire .holo{opacity:.6;z-index:2;mix-blend-mode:overlay;background:repeating-linear-gradient(0deg,rgba(0,0,0,.85) 0 1px,transparent 1px 4px)}
+.fin-moire .holo::before{background:repeating-linear-gradient(calc(3deg + var(--tx,0)*2.5deg),rgba(255,255,255,.85) 0 1px,transparent 1px 4px)}
+.fin-moire .holo::after{background:linear-gradient(115deg,transparent calc(var(--gx,50%) - 25%),rgba(255,255,255,.55) var(--gx,50%),transparent calc(var(--gx,50%) + 25%))}
+.fin-popart{border-color:#ff3d6e}
+.fin-popart .holo{opacity:.55;z-index:2;mix-blend-mode:multiply;background:radial-gradient(circle,#ff3d6e 0 28%,transparent 31%) 0 0/.9em .9em;background-position:calc(var(--tx,0)*.6em) calc(var(--ty,0)*.6em);-webkit-mask-image:linear-gradient(225deg,#000,transparent 55%);mask-image:linear-gradient(225deg,#000,transparent 55%)}
+.fin-popart .holo::before{mix-blend-mode:multiply;background:repeating-conic-gradient(from 0deg at 0 100%,rgba(255,215,0,.6) 0 5deg,transparent 5deg 10deg);-webkit-mask-image:linear-gradient(45deg,#000,transparent 60%);mask-image:linear-gradient(45deg,#000,transparent 60%)}
+.fin-popart .holo::after{mix-blend-mode:overlay;background:linear-gradient(115deg,transparent calc(var(--gx,50%) - 20%),rgba(255,255,255,.6) var(--gx,50%),transparent calc(var(--gx,50%) + 20%))}
+.fin-stardust{border-color:#f0c76a}
+.fin-stardust .holo{opacity:1;z-index:2;mix-blend-mode:screen;background-image:var(--glit),var(--glit);background-size:128px 128px,83px 83px;background-position:calc(var(--tx,0)*22px) calc(var(--ty,0)*22px),calc(var(--tx,0)*-11px) calc(var(--ty,0)*-11px);filter:sepia(1) saturate(3) brightness(1.15);animation:tw 1.2s ease-in-out infinite alternate}
+.fin-stardust .holo::before{background:radial-gradient(circle at 50% 0,rgba(255,215,120,.8),transparent 62%),radial-gradient(circle at 50% 100%,rgba(255,160,80,.6),transparent 58%)}
+.fin-lavalamp{border-color:#ff6a3d}
+.fin-lavalamp .holo{opacity:.75;z-index:2;mix-blend-mode:soft-light;background:radial-gradient(circle at 25% 30%,#ff5ec8 0 14%,transparent 30%),radial-gradient(circle at 75% 55%,#ffb43c 0 16%,transparent 32%),radial-gradient(circle at 40% 85%,#5c7cff 0 15%,transparent 30%);background-size:160% 160%;animation:lava 9s ease-in-out infinite alternate,hue 20s linear infinite}
+@keyframes lava{0%{background-position:0% 0%}50%{background-position:100% 60%}100%{background-position:30% 100%}}
+.fin-spectrum{border-color:#7ad0ff}
+.fin-spectrum .holo{opacity:.4;z-index:2;mix-blend-mode:overlay;background:repeating-conic-gradient(from calc(var(--tx,0)*20deg) at 50% 120%,#ff6e9a 0 6deg,#ffd86b 6deg 12deg,#79ffb0 12deg 18deg,#6cc8ff 18deg 24deg,#b58cff 24deg 30deg)}
+.fin-spectrum .holo::before{mix-blend-mode:overlay;background:radial-gradient(circle at 50% 120%,rgba(255,255,255,.85),transparent 55%)}
+/* ===== more text effects ===== */
+.tf-sunsettext .nm{background:linear-gradient(100deg,#ff5e3a,#ff9a3c 30%,#ff4fa8 65%,#9b5cff) var(--mx,50%) 0/200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 0 rgba(0,0,0,.35))}
+.tf-popout .nm{color:#fff;-webkit-text-stroke:.05em #111;paint-order:stroke fill;text-shadow:.04em .04em 0 var(--rc),.08em .08em 0 var(--rc),.12em .12em 0 #111}
+.tf-glowpulse .nm{color:var(--text);animation:glowtxt 2.2s ease-in-out infinite alternate}
+@keyframes glowtxt{from{text-shadow:0 0 .1em var(--rc),0 0 .25em var(--rc)}to{text-shadow:0 0 .25em #fff,0 0 .7em var(--rc),0 0 1.2em var(--rc)}}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><filter id="fx-toon" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="0.9" result="sm"/><feColorMatrix in="sm" type="saturate" values="1.6" result="sat0"/><feComponentTransfer in="sat0" result="post"><feFuncR type="discrete" tableValues="0.1 0.3 0.5 0.7 0.9 1"/><feFuncG type="discrete" tableValues="0.1 0.3 0.5 0.7 0.9 1"/><feFuncB type="discrete" tableValues="0.1 0.3 0.5 0.7 0.9 1"/></feComponentTransfer><feColorMatrix in="sm" type="matrix" values=".33 .59 .11 0 0 .33 .59 .11 0 0 .33 .59 .11 0 0 0 0 0 1 0" result="gray"/><feConvolveMatrix in="gray" order="3" kernelMatrix="-1 -1 -1 -1 8 -1 -1 -1 -1" divisor="1" preserveAlpha="true" edgeMode="duplicate" result="edge"/><feComponentTransfer in="edge" result="lines"><feFuncR type="linear" slope="-6" intercept="1.3"/><feFuncG type="linear" slope="-6" intercept="1.3"/><feFuncB type="linear" slope="-6" intercept="1.3"/></feComponentTransfer><feBlend in="post" in2="lines" mode="multiply"/></filter><filter id="fx-comic" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="0.7" result="sm"/><feColorMatrix in="sm" type="saturate" values="1.9" result="sat0"/><feComponentTransfer in="sat0" result="post"><feFuncR type="discrete" tableValues="0.06 0.4 0.72 1"/><feFuncG type="discrete" tableValues="0.06 0.4 0.72 1"/><feFuncB type="discrete" tableValues="0.06 0.4 0.72 1"/></feComponentTransfer><feColorMatrix in="sm" type="matrix" values=".33 .59 .11 0 0 .33 .59 .11 0 0 .33 .59 .11 0 0 0 0 0 1 0" result="gray"/><feConvolveMatrix in="gray" order="3" kernelMatrix="-1 -1 -1 -1 8 -1 -1 -1 -1" divisor="1" preserveAlpha="true" edgeMode="duplicate" result="edge"/><feComponentTransfer in="edge" result="lines"><feFuncR type="linear" slope="-9" intercept="1.4"/><feFuncG type="linear" slope="-9" intercept="1.4"/><feFuncB type="linear" slope="-9" intercept="1.4"/></feComponentTransfer><feBlend in="post" in2="lines" mode="multiply"/></filter><filter id="fx-ink" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="1.1" result="sm"/><feColorMatrix in="sm" type="saturate" values="1" result="sat0"/><feComponentTransfer in="sat0" result="post"><feFuncR type="discrete" tableValues="0.2 0.55 0.9"/><feFuncG type="discrete" tableValues="0.2 0.55 0.9"/><feFuncB type="discrete" tableValues="0.2 0.55 0.9"/></feComponentTransfer><feColorMatrix in="post" type="saturate" values=".3" result="d"/><feComponentTransfer in="d" result="post2"><feFuncR type="linear" slope=".3" intercept=".7"/><feFuncG type="linear" slope=".3" intercept=".7"/><feFuncB type="linear" slope=".3" intercept=".7"/></feComponentTransfer><feColorMatrix in="sm" type="matrix" values=".33 .59 .11 0 0 .33 .59 .11 0 0 .33 .59 .11 0 0 0 0 0 1 0" result="gray"/><feConvolveMatrix in="gray" order="3" kernelMatrix="-1 -1 -1 -1 8 -1 -1 -1 -1" divisor="1" preserveAlpha="true" edgeMode="duplicate" result="edge"/><feComponentTransfer in="edge" result="lines"><feFuncR type="linear" slope="-8" intercept="1.4"/><feFuncG type="linear" slope="-8" intercept="1.4"/><feFuncB type="linear" slope="-8" intercept="1.4"/></feComponentTransfer><feBlend in="post2" in2="lines" mode="multiply"/></filter><filter id="fx-pxfb" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="1.35"/><feComponentTransfer><feFuncR type="discrete" tableValues="0 .2 .4 .6 .8 1"/><feFuncG type="discrete" tableValues="0 .2 .4 .6 .8 1"/><feFuncB type="discrete" tableValues="0 .2 .4 .6 .8 1"/></feComponentTransfer></filter></defs></svg>
 <main>
 <h1><span id="logo"></span> critter cards</h1>
 <p class="sub">five real wild critters from iNaturalist, free every day</p>
 <details class="info" id="info"><summary>about this webpage</summary>
-<p class="about">every critter is a real wild animal, spotted and photographed by a nature lover and shared on iNaturalist, and every one has exactly the same chance of showing up. no critter is rarer than another; only the sparkle is luck of the draw, and sparkle is rare: most cards are plain, about 1 in 4 has a tinted card color, about 1 in 3 has a parallax photo, about 1 in 4 is slightly shiny, about 1 in 10 has a special finish, and roughly 1 in 100 has a super rare animated one. open a pack, enjoy the reveal, and add the ones that make you smile to your favorites. every card links to its original sighting on iNaturalist. trade in cards you don’t need for points, then spend the points on extra packs in the pack shop. the critter always stays in your list of critters you’ve met, so you can still look it up.</p>
+<p class="about">every critter is a real wild animal, spotted and photographed by a nature lover and shared on iNaturalist, and every one has exactly the same chance of showing up. no critter is rarer than another; only the sparkle is luck of the draw, and sparkle is rare: most cards are plain, about 1 in 4 has a tinted card color, about 1 in 3 has a parallax photo, about 1 in 16 is full art (the photo fills the whole card), about 1 in 12 has an image effect (toon, pixel art, noir and more) that changes the photo itself, about 1 in 4 is slightly shiny, about 1 in 10 has a special finish, and roughly 1 in 100 has a super rare animated one. open a pack, enjoy the reveal, and add the ones that make you smile to your favorites. every card links to its original sighting on iNaturalist. trade in cards you don’t need for points, then spend the points on extra packs in the pack shop. the critter always stays in your list of critters you’ve met, so you can still look it up.</p>
 <label class="tg" id="gyrow" style="display:none"><input type="checkbox" id="gy"> tilt the cards by moving your phone <span id="gymsg" style="color:#d6336c"></span></label>
 <label class="tg"><input type="checkbox" id="unl"> playtest mode: unlimited packs</label>
 <div class="rg"><label>where to look <select id="rgwhere"><option value="world">anywhere in the world</option><option value="near">near me (asks for your location)</option></select></label><button class="ghost" id="rgsave">save and load critters</button><span id="rgmsg" role="status"></span></div>
@@ -688,7 +821,7 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 
 <h2 id="coll">your collection</h2>
 <div class="sub" id="count" style="text-align:left"></div>
-<div class="acts" id="flt" style="justify-content:flex-start;margin-top:10px"><button class="chip on" data-f="all">all cards</button><button class="chip" data-f="smiles">favorites</button></div>
+<div class="acts" id="flt" style="justify-content:flex-start;margin-top:10px"><button class="chip on" data-f="all">all cards</button><button class="chip" data-f="smiles">favorites</button><label class="srt">sort by <select id="srt"><option value="recent">newest first</option><option value="oldest">oldest first</option><option value="worth">most valuable</option><option value="cheap">least valuable</option><option value="name">name a–z</option><option value="group">animal group</option></select></label></div>
 <div class="grid" id="grid"></div>
 <details class="info jr-d" id="jrd"><summary id="jrs">critters you’ve met</summary><div class="jr" id="journal"></div></details>
 <p class="foot"><span id="srcnote"></span> sparkle finishes vary in rarity, but they’re random and independent of the animal: any critter can come with any finish, and every critter in the day’s pool is equally likely to appear. photos are credited to their photographers in each card’s “original photo” view, and descriptions come from wikipedia when available. icons: material design icons by pictogrammers (apache 2.0).
@@ -764,7 +897,7 @@ function parseINat(list){
   out.push({rg:String(o.id),tid:t.id,name,sp,breed:esc(tidy(t.name)),age:GL[sp],trait:"",
    desc:esc(name+" spotted "+(place?"in "+clip(place,40):"in the wild")+(who?" by "+clip(who,24):"")+"."),sh:0,live:true,
    img:ph.url.replace("/square.","/medium."),big:ph.url.replace("/square.","/large."),
-   url:"https://www.inaturalist.org/observations/"+o.id,shn:esc(clip(place,42))||"somewhere in the wild",credit:esc(tidy(ph.attribution||""))})});
+   url:"https://www.inaturalist.org/observations/"+o.id,shn:esc(clip(place,42))||"somewhere in the wild",credit:esc(tidy(ph.attribution||"")),ll:typeof o.location=="string"?o.location:""})});
  return out}
 async function inat(path,q){
  const ac=new AbortController(),to=setTimeout(()=>ac.abort(),10000);
@@ -799,13 +932,28 @@ async function loadLive0(force){
   try{localStorage.setItem(POOLK,JSON.stringify({t:Date.now(),k:locKey(),ids:POOL.map(p=>p.id)}))}catch(e){}
  }catch(e){if(!POOL.length||force&&!POOL.length)POOL=[];srcErr=(e&&e.message)||"couldn’t load listings"}
  setNote()}
+/* animal packs (cats, dogs, bears...): one iNaturalist taxon per pack, resolved by its scientific name and cached */
+const TAXID={};
+async function taxId(name){if(TAXID[name])return TAXID[name];
+ const r=await inat("/taxa",{q:name,per_page:"8",locale:"en"}),t=(r.results||[]).find(x=>String(x.name).toLowerCase()==name.toLowerCase());
+ if(!t)throw new Error("couldn’t find "+name+" on iNaturalist");return TAXID[name]=t.id}
+async function fetchTaxon(name){
+ const id=await taxId(name);
+ const r=await inat("/observations",{quality_grade:"research",photos:"true",photo_license:"cc0,cc-by,cc-by-sa,cc-by-nc,cc-by-nc-sa",captive:"false",taxon_id:String(id),order_by:"random",per_page:"150",locale:"en"});
+ const all=parseINat(r.results||[]).slice(0,40);
+ const ids=all.map(p=>p.tid),ch=[];for(let i=0;i<ids.length;i+=30)ch.push(ids.slice(i,i+30));
+ const sm=await Promise.allSettled(ch.map(c=>inat("/taxa/"+c.join(","),{locale:"en"}))),W={};
+ sm.forEach(r=>{if(r.status=="fulfilled")(r.value.results||[]).forEach(t=>{if(t.wikipedia_summary)W[t.id]=t.wikipedia_summary})});
+ all.forEach(p=>{const d=clip(tidy(W[p.tid]||""),170);if(d.length>=40)p.desc=esc(d)});
+ return all}
+const packSrc=K=>K.where?"critters from "+K.where:K.what;
 /* region packs: every continent has its own iNaturalist place id. a fresh batch is fetched when the pack is on screen and again after each one is opened */
 const regFresh=k=>{const r=REGP[k];return !!(r&&Date.now()-r.t<POOL_TTL*2&&r.ids.every(i=>LIVE[i]))};
 const regPool=k=>REGP[k]?REGP[k].ids.map(i=>LIVE[i]).filter(Boolean):[];
 const regBusy={};
 function regionLoad(k){const K=PACKS[k];if(regFresh(k))return Promise.resolve();if(regBusy[k])return regBusy[k];
- return regBusy[k]=(async()=>{try{const list=await fetchLive(K.reg);
-   if(list.length<K.n)throw new Error("not enough critters came back for "+K.where);
+ return regBusy[k]=(async()=>{try{const list=K.tax?await fetchTaxon(K.tax):await fetchLive(K.reg);
+   if(list.length<K.n)throw new Error("not enough critters came back for "+(K.where||K.what));
    REGP[k]={t:Date.now(),ids:list.map(livePet).map(p=>p.id)};saveLive()}
   catch(e){srcErr=(e&&e.message)||"couldn’t load critters";throw e}
   finally{delete regBusy[k]}})()}
@@ -814,7 +962,7 @@ function setNote(){const el=document.getElementById("srcnote");if(!el)return;
   "sample data: these critters use illustrated placeholders instead of photos."+(srcErr?" couldn’t load live sightings ("+srcErr+").":" live sightings from inaturalist.org are loading.")}
 document.addEventListener("error",e=>{const t=e.target;if(t&&t.tagName=="IMG"&&t.classList.contains("photo")){const p=petOf(+t.closest("[data-id]")?.dataset.id);if(p&&p.live&&!p.imgBad){p.imgBad=true;t.src=photo(p)}}},true);
 
-const ICO={"earth":"M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z","paw": "M8.35 3c1.18-.17 2.43 1.12 2.79 2.9.36 1.77-.29 3.35-1.47 3.53-1.17.18-2.43-1.11-2.8-2.89-.37-1.77.3-3.35 1.48-3.54m7.15 0c1.19.19 1.85 1.77 1.5 3.54-.38 1.78-1.63 3.07-2.81 2.89-1.19-.18-1.84-1.76-1.47-3.53.36-1.78 1.61-3.07 2.78-2.9M3 7.6c1.14-.49 2.69.4 3.5 1.95.76 1.58.5 3.24-.63 3.73s-2.67-.39-3.46-1.96S1.9 8.08 3 7.6m18 0c1.1.48 1.38 2.15.59 3.72s-2.33 2.45-3.46 1.96-1.39-2.15-.63-3.73C18.31 8 19.86 7.11 21 7.6m-1.67 10.78c.04.94-.68 1.98-1.54 2.37-1.79.82-3.91-.88-5.9-.88s-4.13 1.77-5.89.88c-1-.49-1.69-1.79-1.56-2.87.18-1.49 1.97-2.29 3.03-3.38 1.41-1.41 2.41-4.06 4.42-4.06 2 0 3.06 2.61 4.41 4.06 1.11 1.22 2.96 2.25 3.03 3.88", "gift": "M9.06 1.93C7.17 1.92 5.33 3.74 6.17 6H3a2 2 0 0 0-2 2v2a1 1 0 0 0 1 1h9V8h2v3h9a1 1 0 0 0 1-1V8a2 2 0 0 0-2-2h-3.17C19 2.73 14.6.42 12.57 3.24L12 4l-.57-.78c-.63-.89-1.5-1.28-2.37-1.29M9 4c.89 0 1.34 1.08.71 1.71S8 5.89 8 5a1 1 0 0 1 1-1m6 0c.89 0 1.34 1.08.71 1.71S14 5.89 14 5a1 1 0 0 1 1-1M2 12v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-8h-9v8h-2v-8z", "dog": "M18 4c-1.71 0-2.75.33-3.35.61C13.88 4.23 13 4 12 4s-1.88.23-2.65.61C8.75 4.33 7.71 4 6 4c-3 0-5 8-5 10 0 .83 1.32 1.59 3.14 1.9.64 2.24 3.66 3.95 7.36 4.1v-4.28c-.59-.37-1.5-1.04-1.5-1.72 0-1 2-1 2-1s2 0 2 1c0 .68-.91 1.35-1.5 1.72V20c3.7-.15 6.72-1.86 7.36-4.1C21.68 15.59 23 14.83 23 14c0-2-2-10-5-10M4.15 13.87c-.5-.12-.89-.26-1.15-.37.25-2.77 2.2-7.1 3.05-7.5.54 0 .95.06 1.32.11-2.1 2.31-2.93 5.93-3.22 7.76M9 12a1 1 0 0 1-1-1c0-.54.45-1 1-1a1 1 0 0 1 1 1c0 .56-.45 1-1 1m6 0a1 1 0 0 1-1-1c0-.54.45-1 1-1a1 1 0 0 1 1 1c0 .56-.45 1-1 1m4.85 1.87c-.29-1.83-1.12-5.45-3.22-7.76.37-.05.78-.11 1.32-.11.85.4 2.8 4.73 3.05 7.5-.25.11-.64.25-1.15.37", "cat": "m12 8-1.33.09C9.81 7.07 7.4 4.5 5 4.5c0 0-1.97 2.96-.04 6.91-.55.83-.89 1.26-.96 2.25l-1.93.29.21.98 1.76-.26.14.71-1.57.94.47.89 1.45-.89C5.68 18.76 8.59 20 12 20s6.32-1.24 7.47-3.68l1.45.89.47-.89-1.57-.94.14-.71 1.76.26.21-.98-1.93-.29c-.07-.99-.41-1.42-.96-2.25C20.97 7.46 19 4.5 19 4.5c-2.4 0-4.81 2.57-5.67 3.59zm-3 3a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m6 0a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m-4 3h2l-.7 1.39c.2.64.76 1.11 1.45 1.11a1.5 1.5 0 0 0 1.5-1.5h.5a2 2 0 0 1-2 2c-.75 0-1.4-.41-1.75-1-.35.59-1 1-1.75 1a2 2 0 0 1-2-2h.5a1.5 1.5 0 0 0 1.5 1.5c.69 0 1.25-.47 1.45-1.11z", "rabbit": "m18.05 21-2.73-4.74c0-1.73-1.07-2.84-2.37-2.84-.9 0-1.68.5-2.08 1.24.33-.19.72-.29 1.13-.29 1.3 0 2.36 1.06 2.36 2.36 0 1.31-1.05 2.38-2.36 2.38h3.3V21H6.79c-.24 0-.49-.09-.67-.28a.95.95 0 0 1 0-1.34l.5-.5c-.34-.15-.62-.38-.9-.62-.22.5-.72.85-1.3.85a1.425 1.425 0 0 1 0-2.85l.47.08v-1.97a4.73 4.73 0 0 1 4.74-4.74h.02c2.12.01 3.77.84 3.77-.47 0-.93.2-1.3.54-1.82-.73-.34-1.56-.55-2.43-.55-.53 0-.95-.42-.95-.95 0-.43.28-.79.67-.91l-.67-.04c-.52 0-.95-.42-.95-.94 0-.53.43-.95.95-.95h.95c2.1 0 3.94 1.15 4.93 2.85l.28-.01c.71 0 1.37.23 1.91.61l.45.38c2.17 1.95 1.9 3.27 1.9 3.28 0 1.28-1.06 2.33-2.35 2.33l-.49-.05v.08c0 1.11-.48 2.1-1.23 2.8L20.24 21zm.11-13.26c-.53 0-.95.42-.95.94 0 .53.42.95.95.95.52 0 .95-.42.95-.95 0-.52-.43-.94-.95-.94", "bird": "m23 11.5-3.05-1.13c-.26-1.15-.91-1.81-.91-1.81a4.19 4.19 0 0 0-5.93 0l-1.48 1.48L5 3c-1 4 0 8 2.45 11.22L2 19.5s8.89 2 14.07-2.05c2.76-2.16 3.38-3.42 3.77-4.75zm-5.29.22c-.39.39-1.03.39-1.42 0a.996.996 0 0 1 0-1.41c.39-.39 1.03-.39 1.42 0s.39 1.02 0 1.41", "rodent": "M21.33 17.39c1.4 1.27.47 3.61-1.41 3.61h-8.86A5.04 5.04 0 0 1 6 15.94v-.05c-2.3-.47-4-2.48-4-4.89 0-2.75 2.22-5 5-5h2.5c.3 0 .5-.23.5-.5S9.8 5 9.5 5H7V3h2.5C10.88 3 12 4.13 12 5.5 12 6.89 10.88 8 9.5 8H7c-1.66 0-3 1.33-3 3 0 1.37.92 2.5 2.14 2.87.56-2.2 2.53-3.87 4.92-3.87.8 0 1.6.22 2.3.55-1.41.79-2.36 2.25-2.36 3.95 0 1.25.5 2.37 1.33 3.17l.7-.7c-.65-.61-1.03-1.5-1.03-2.47 0-2.59 2.34-3.5 3.5-3.5 2.08 0 3.95 1.89 3.44 4.23zM18 19c.56 0 1-.44 1-1s-.44-1-1-1-1 .44-1 1 .44 1 1 1", "horse": "M22 6v3.5l-1.5.5-1.54-2.46c-.13-.21-.46-.12-.46.13v3.58c0 .98-.39 1.86-1 2.53V21H15v-6h-.25c-.21 0-.42-.03-.62-.06l-4.44-.74-1.12 2.01.96 4.79H7l-1-4.75c-.03-.3 0-.6.16-.86l1.02-1.81a3.27 3.27 0 0 1-1.68-2.77c-.04.15-.06.37-.03.69.03.44.14 1.09.07 1.81-.04.72-.37 1.46-.79 1.95-.43.49-.9.83-1.4 1.09l-.7-.7c.19-.47.38-.89.42-1.28.06-.37-.01-.67-.12-.94l-.53-1.13c-.21-.51-.47-1.25-.42-2.12.03-.85.5-1.96 1.39-2.57.9-.61 1.87-.69 2.66-.53.5.1 1.01.34 1.45.68.37-.17.8-.26 1.25-.26h5.75V7c0-2.21 1.79-4 4-4H22l-.89 1.34c.54.36.89.97.89 1.66", "turtle": "M8.47 5.95c.48-.28 1-.51 1.53-.67V4c0-1.1.87-2 1.97-2.03C13.13 2 14 2.9 14 4v1.28c.53.17 1.05.39 1.53.67l-1.6 2.12h-3.86zM19 12c0 .5-.05.95-.14 1.4l-2.53-.78-1.19-3.66 1.6-2.11q.645.6 1.14 1.35c.79-.07 1.55.05 2.23.39 1.03.53 1.73 1.54 1.89 2.69l-3 .36zM5 12v-.35l-3-.37c.16-1.15.86-2.16 1.89-2.69a3.54 3.54 0 0 1 2.19-.33c.33-.51.71-.98 1.16-1.39l1.62 2.08-1.19 3.67-2.53.78C5.05 12.95 5 12.5 5 12m5.24-2.43h3.52l1.09 3.36L12 15l-2.85-2.07zm-2.11 4.48 3.12 2.26v2.65c-.57-.06-1.12-.19-1.63-.38l-1.23 2.76a3.49 3.49 0 0 1-2.02-2.58c-.14-.76-.02-1.52.32-2.2-.45-.52-.82-1.1-1.1-1.74zm7.74 0 2.54.77c-.28.64-.65 1.22-1.1 1.74.34.68.46 1.44.33 2.2a3.52 3.52 0 0 1-2.03 2.58l-1.22-2.76c-.53.19-1.06.36-1.64.42v-2.69z", "heart": "m12 21.35-1.45-1.32C5.4 15.36 2 12.27 2 8.5 2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.53z", "heart-outline": "m12.1 18.55-.1.1-.11-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04 1 3.57 2.36h1.86C13.46 6 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05M16.5 3c-1.74 0-3.41.81-4.5 2.08C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.41 2 8.5c0 3.77 3.4 6.86 8.55 11.53L12 21.35l1.45-1.32C18.6 15.36 22 12.27 22 8.5 22 5.41 19.58 3 16.5 3", "map-marker": "M12 11.5A2.5 2.5 0 0 1 9.5 9 2.5 2.5 0 0 1 12 6.5 2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7", "party-popper": "m14.53 1.45-1.08 1.08 1.6 1.6q.33.375.33.87c0 .495-.11.64-.33.86L11.5 9.47l1 1.08 3.63-3.61c.53-.59.79-1.24.79-1.94s-.26-1.36-.79-1.95zm-3.98 2.02L9.47 4.55l.61.56c.22.22.33.52.33.89s-.11.67-.33.89l-.61.56 1.08 1.08.56-.61c.53-.59.8-1.23.8-1.92 0-.72-.27-1.37-.8-1.97zM21 5.06c-.69 0-1.33.27-1.92.8l-5.63 5.64 1.08 1 5.58-5.56c.25-.25.55-.38.89-.38s.64.13.89.38l.61.61 1.03-1.08-.56-.61c-.59-.53-1.25-.8-1.97-.8M7 8 2 22l14-5zm12 3.06c-.7 0-1.34.27-1.94.8l-1.59 1.59 1.08 1.08 1.59-1.59c.25-.25.53-.38.86-.38s.63.13.88.38l1.62 1.59 1.05-1.03-1.6-1.64c-.59-.53-1.25-.8-1.95-.8", "arrow-top-right": "M5 17.59 15.59 7H9V5h10v10h-2V8.41L6.41 19z", "star-four-points": "M12 1 9 9l-8 3 8 3 3 8 3-8 8-3-8-3z", "border-all": "M19 11h-6V5h6m0 14h-6v-6h6m-8-2H5V5h6m0 14H5v-6h6m-8 8h18V3H3z", "palette": "M17.5 12a1.5 1.5 0 0 1-1.5-1.5A1.5 1.5 0 0 1 17.5 9a1.5 1.5 0 0 1 1.5 1.5 1.5 1.5 0 0 1-1.5 1.5m-3-4A1.5 1.5 0 0 1 13 6.5 1.5 1.5 0 0 1 14.5 5 1.5 1.5 0 0 1 16 6.5 1.5 1.5 0 0 1 14.5 8m-5 0A1.5 1.5 0 0 1 8 6.5 1.5 1.5 0 0 1 9.5 5 1.5 1.5 0 0 1 11 6.5 1.5 1.5 0 0 1 9.5 8m-3 4A1.5 1.5 0 0 1 5 10.5 1.5 1.5 0 0 1 6.5 9 1.5 1.5 0 0 1 8 10.5 1.5 1.5 0 0 1 6.5 12M12 3a9 9 0 0 0-9 9 9 9 0 0 0 9 9 1.5 1.5 0 0 0 1.5-1.5c0-.39-.15-.74-.39-1-.23-.27-.38-.62-.38-1a1.5 1.5 0 0 1 1.5-1.5H16a5 5 0 0 0 5-5c0-4.42-4.03-8-9-8", "diamond-stone": "M16 9h3l-5 7m-4-7h4l-2 8M5 9h3l2 7m5-12h2l2 3h-3m-5-3h2l1 3h-4M7 4h2L8 7H5m1-5L2 8l10 14L22 8l-4-6z", "shimmer": "M10.6 9.6 9 15 7.4 9.6 2 8l5.4-1.6L9 1l1.6 5.4L16 8zm6.4 4.6 4-2.2-2.2 4 2.2 4-4-2.2-4 2.2 2.2-4-2.2-4zM10 16l-1.7 3 1.7 3-3-1.7L4 22l1.7-3L4 16l3 1.7z", "creation": "m19 1-1.26 2.75L15 5l2.74 1.26L19 9l1.25-2.74L23 5l-2.75-1.25M9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5M19 15l-1.26 2.74L15 19l2.74 1.25L19 23l1.25-2.75L23 19l-2.75-1.26", "waves": "M20 12h2v2h-2c-1.38 0-2.74-.35-4-1-2.5 1.3-5.5 1.3-8 0-1.26.65-2.63 1-4 1H2v-2h2c1.39 0 2.78-.47 4-1.33 2.44 1.71 5.56 1.71 8 0 1.22.86 2.61 1.33 4 1.33m0-6h2v2h-2c-1.38 0-2.74-.35-4-1-2.5 1.3-5.5 1.3-8 0-1.26.65-2.63 1-4 1H2V6h2c1.39 0 2.78-.47 4-1.33 2.44 1.71 5.56 1.71 8 0C17.22 5.53 18.61 6 20 6m0 12h2v2h-2c-1.38 0-2.74-.35-4-1-2.5 1.3-5.5 1.3-8 0-1.26.65-2.63 1-4 1H2v-2h2c1.39 0 2.78-.47 4-1.33 2.44 1.71 5.56 1.71 8 0 1.22.86 2.61 1.33 4 1.33", "orbit": "M8.11 1.75C9.3 1.25 10.62 1 12 1c6.08 0 11 4.92 11 11s-4.92 11-11 11S1 18.08 1 12c0-1.38.25-2.7.72-3.92a4.5 4.5 0 0 0 1.73 1.1C3.16 10.07 3 11 3 12a9 9 0 0 0 9 9 9 9 0 0 0 9-9 9 9 0 0 0-9-9c-1 0-1.93.16-2.82.45-.22-.62-.57-1.21-1.07-1.7M4.93 2.93a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2c0-1.11.89-2 2-2M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5", "flash": "M7 2v11h3v9l7-12h-4l4-8z", "star": "M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.62L12 2 9.19 8.62 2 9.24l5.45 4.73L5.82 21z", "film": "M3.5 3H5V1.8c0-.44.36-.8.8-.8h4.4c.44 0 .8.36.8.8V3h1.5A1.5 1.5 0 0 1 14 4.5V5h8v15h-8v.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 20.5v-16A1.5 1.5 0 0 1 3.5 3M18 7v2h2V7zm-4 0v2h2V7zm-4 0v2h2V7zm4 9v2h2v-2zm4 0v2h2v-2zm-8 0v2h2v-2z", "script-text": "M17.8 20c-.4 1.2-1.5 2-2.8 2H5c-1.7 0-3-1.3-3-3v-1h12.2c.4 1.2 1.5 2 2.8 2zM19 2c1.7 0 3 1.3 3 3v1h-2V5c0-.6-.4-1-1-1s-1 .4-1 1v13h-1c-.6 0-1-.4-1-1v-1H5V5c0-1.7 1.3-3 3-3zM8 6v2h7V6zm0 4v2h6v-2z", "dots-grid": "M12 16c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2M6 16c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m12 12c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2", "medal": "M20 2H4v2l5.81 4.36a7.004 7.004 0 0 0-4.46 8.84 6.996 6.996 0 0 0 8.84 4.46 7 7 0 0 0 0-13.3L20 4zm-5.06 17.5L12 17.78 9.06 19.5l.78-3.33-2.59-2.24 3.41-.29L12 10.5l1.34 3.14 3.41.29-2.59 2.24z", "flower": "M3 13a9 9 0 0 0 9 9c0-5-4.03-9-9-9m9-7.5A2.5 2.5 0 0 1 14.5 8a2.5 2.5 0 0 1-2.5 2.5A2.5 2.5 0 0 1 9.5 8 2.5 2.5 0 0 1 12 5.5m-6.4 4.75a2.5 2.5 0 0 0 2.5 2.5c.53 0 1.02-.17 1.4-.44v.19A2.5 2.5 0 0 0 12 15a2.5 2.5 0 0 0 2.5-2.5v-.19c.38.27.87.44 1.4.44a2.5 2.5 0 0 0 2.5-2.5c0-1-.59-1.85-1.43-2.25.84-.4 1.43-1.26 1.43-2.25a2.5 2.5 0 0 0-2.5-2.5c-.53 0-1.02.16-1.4.44V3.5A2.5 2.5 0 0 0 12 1a2.5 2.5 0 0 0-2.5 2.5v.19c-.38-.28-.87-.44-1.4-.44a2.5 2.5 0 0 0-2.5 2.5c0 .99.59 1.85 1.43 2.25-.84.4-1.43 1.25-1.43 2.25M12 22a9 9 0 0 0 9-9c-5 0-9 4-9 9", "snowflake": "m20.79 13.95-2.33.62-2-1.13v-2.88l2-1.13 2.33.62.52-1.93-1.77-.47.46-1.77-1.93-.52-.62 2.33-2 1.13L13 7.38V5.12l1.71-1.71L13.29 2 12 3.29 10.71 2 9.29 3.41 11 5.12v2.26L8.5 8.82l-2-1.13-.58-2.33L4 5.88l.47 1.77-1.77.47.52 1.93 2.33-.62 2 1.13v2.89l-2 1.13-2.33-.62-.52 1.93 1.77.47L4 18.12l1.93.52.62-2.33 2-1.13L11 16.62v2.26l-1.71 1.71L10.71 22 12 20.71 13.29 22l1.41-1.41-1.7-1.71v-2.26l2.5-1.45 2 1.13.62 2.33 1.88-.51-.47-1.77 1.77-.47zM9.5 10.56 12 9.11l2.5 1.45v2.88L12 14.89l-2.5-1.45z", "weather-sunset": "M3 12h4a5 5 0 0 1 5-5 5 5 0 0 1 5 5h4a1 1 0 0 1 1 1 1 1 0 0 1-1 1H3a1 1 0 0 1-1-1 1 1 0 0 1 1-1m2 4h14a1 1 0 0 1 1 1 1 1 0 0 1-1 1H5a1 1 0 0 1-1-1 1 1 0 0 1 1-1m12 4a1 1 0 0 1 1 1 1 1 0 0 1-1 1H7a1 1 0 0 1-1-1 1 1 0 0 1 1-1zm-2-8a3 3 0 0 0-3-3 3 3 0 0 0-3 3zM12 2l2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm17.31 0-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15z"};
+const ICO={"leaf":"M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z","info":"M13,9H11V7H13M13,17H11V11H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z","earth":"M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z","paw": "M8.35 3c1.18-.17 2.43 1.12 2.79 2.9.36 1.77-.29 3.35-1.47 3.53-1.17.18-2.43-1.11-2.8-2.89-.37-1.77.3-3.35 1.48-3.54m7.15 0c1.19.19 1.85 1.77 1.5 3.54-.38 1.78-1.63 3.07-2.81 2.89-1.19-.18-1.84-1.76-1.47-3.53.36-1.78 1.61-3.07 2.78-2.9M3 7.6c1.14-.49 2.69.4 3.5 1.95.76 1.58.5 3.24-.63 3.73s-2.67-.39-3.46-1.96S1.9 8.08 3 7.6m18 0c1.1.48 1.38 2.15.59 3.72s-2.33 2.45-3.46 1.96-1.39-2.15-.63-3.73C18.31 8 19.86 7.11 21 7.6m-1.67 10.78c.04.94-.68 1.98-1.54 2.37-1.79.82-3.91-.88-5.9-.88s-4.13 1.77-5.89.88c-1-.49-1.69-1.79-1.56-2.87.18-1.49 1.97-2.29 3.03-3.38 1.41-1.41 2.41-4.06 4.42-4.06 2 0 3.06 2.61 4.41 4.06 1.11 1.22 2.96 2.25 3.03 3.88", "gift": "M9.06 1.93C7.17 1.92 5.33 3.74 6.17 6H3a2 2 0 0 0-2 2v2a1 1 0 0 0 1 1h9V8h2v3h9a1 1 0 0 0 1-1V8a2 2 0 0 0-2-2h-3.17C19 2.73 14.6.42 12.57 3.24L12 4l-.57-.78c-.63-.89-1.5-1.28-2.37-1.29M9 4c.89 0 1.34 1.08.71 1.71S8 5.89 8 5a1 1 0 0 1 1-1m6 0c.89 0 1.34 1.08.71 1.71S14 5.89 14 5a1 1 0 0 1 1-1M2 12v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-8h-9v8h-2v-8z", "dog": "M18 4c-1.71 0-2.75.33-3.35.61C13.88 4.23 13 4 12 4s-1.88.23-2.65.61C8.75 4.33 7.71 4 6 4c-3 0-5 8-5 10 0 .83 1.32 1.59 3.14 1.9.64 2.24 3.66 3.95 7.36 4.1v-4.28c-.59-.37-1.5-1.04-1.5-1.72 0-1 2-1 2-1s2 0 2 1c0 .68-.91 1.35-1.5 1.72V20c3.7-.15 6.72-1.86 7.36-4.1C21.68 15.59 23 14.83 23 14c0-2-2-10-5-10M4.15 13.87c-.5-.12-.89-.26-1.15-.37.25-2.77 2.2-7.1 3.05-7.5.54 0 .95.06 1.32.11-2.1 2.31-2.93 5.93-3.22 7.76M9 12a1 1 0 0 1-1-1c0-.54.45-1 1-1a1 1 0 0 1 1 1c0 .56-.45 1-1 1m6 0a1 1 0 0 1-1-1c0-.54.45-1 1-1a1 1 0 0 1 1 1c0 .56-.45 1-1 1m4.85 1.87c-.29-1.83-1.12-5.45-3.22-7.76.37-.05.78-.11 1.32-.11.85.4 2.8 4.73 3.05 7.5-.25.11-.64.25-1.15.37", "cat": "m12 8-1.33.09C9.81 7.07 7.4 4.5 5 4.5c0 0-1.97 2.96-.04 6.91-.55.83-.89 1.26-.96 2.25l-1.93.29.21.98 1.76-.26.14.71-1.57.94.47.89 1.45-.89C5.68 18.76 8.59 20 12 20s6.32-1.24 7.47-3.68l1.45.89.47-.89-1.57-.94.14-.71 1.76.26.21-.98-1.93-.29c-.07-.99-.41-1.42-.96-2.25C20.97 7.46 19 4.5 19 4.5c-2.4 0-4.81 2.57-5.67 3.59zm-3 3a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m6 0a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m-4 3h2l-.7 1.39c.2.64.76 1.11 1.45 1.11a1.5 1.5 0 0 0 1.5-1.5h.5a2 2 0 0 1-2 2c-.75 0-1.4-.41-1.75-1-.35.59-1 1-1.75 1a2 2 0 0 1-2-2h.5a1.5 1.5 0 0 0 1.5 1.5c.69 0 1.25-.47 1.45-1.11z", "rabbit": "m18.05 21-2.73-4.74c0-1.73-1.07-2.84-2.37-2.84-.9 0-1.68.5-2.08 1.24.33-.19.72-.29 1.13-.29 1.3 0 2.36 1.06 2.36 2.36 0 1.31-1.05 2.38-2.36 2.38h3.3V21H6.79c-.24 0-.49-.09-.67-.28a.95.95 0 0 1 0-1.34l.5-.5c-.34-.15-.62-.38-.9-.62-.22.5-.72.85-1.3.85a1.425 1.425 0 0 1 0-2.85l.47.08v-1.97a4.73 4.73 0 0 1 4.74-4.74h.02c2.12.01 3.77.84 3.77-.47 0-.93.2-1.3.54-1.82-.73-.34-1.56-.55-2.43-.55-.53 0-.95-.42-.95-.95 0-.43.28-.79.67-.91l-.67-.04c-.52 0-.95-.42-.95-.94 0-.53.43-.95.95-.95h.95c2.1 0 3.94 1.15 4.93 2.85l.28-.01c.71 0 1.37.23 1.91.61l.45.38c2.17 1.95 1.9 3.27 1.9 3.28 0 1.28-1.06 2.33-2.35 2.33l-.49-.05v.08c0 1.11-.48 2.1-1.23 2.8L20.24 21zm.11-13.26c-.53 0-.95.42-.95.94 0 .53.42.95.95.95.52 0 .95-.42.95-.95 0-.52-.43-.94-.95-.94", "bird": "m23 11.5-3.05-1.13c-.26-1.15-.91-1.81-.91-1.81a4.19 4.19 0 0 0-5.93 0l-1.48 1.48L5 3c-1 4 0 8 2.45 11.22L2 19.5s8.89 2 14.07-2.05c2.76-2.16 3.38-3.42 3.77-4.75zm-5.29.22c-.39.39-1.03.39-1.42 0a.996.996 0 0 1 0-1.41c.39-.39 1.03-.39 1.42 0s.39 1.02 0 1.41", "rodent": "M21.33 17.39c1.4 1.27.47 3.61-1.41 3.61h-8.86A5.04 5.04 0 0 1 6 15.94v-.05c-2.3-.47-4-2.48-4-4.89 0-2.75 2.22-5 5-5h2.5c.3 0 .5-.23.5-.5S9.8 5 9.5 5H7V3h2.5C10.88 3 12 4.13 12 5.5 12 6.89 10.88 8 9.5 8H7c-1.66 0-3 1.33-3 3 0 1.37.92 2.5 2.14 2.87.56-2.2 2.53-3.87 4.92-3.87.8 0 1.6.22 2.3.55-1.41.79-2.36 2.25-2.36 3.95 0 1.25.5 2.37 1.33 3.17l.7-.7c-.65-.61-1.03-1.5-1.03-2.47 0-2.59 2.34-3.5 3.5-3.5 2.08 0 3.95 1.89 3.44 4.23zM18 19c.56 0 1-.44 1-1s-.44-1-1-1-1 .44-1 1 .44 1 1 1", "horse": "M22 6v3.5l-1.5.5-1.54-2.46c-.13-.21-.46-.12-.46.13v3.58c0 .98-.39 1.86-1 2.53V21H15v-6h-.25c-.21 0-.42-.03-.62-.06l-4.44-.74-1.12 2.01.96 4.79H7l-1-4.75c-.03-.3 0-.6.16-.86l1.02-1.81a3.27 3.27 0 0 1-1.68-2.77c-.04.15-.06.37-.03.69.03.44.14 1.09.07 1.81-.04.72-.37 1.46-.79 1.95-.43.49-.9.83-1.4 1.09l-.7-.7c.19-.47.38-.89.42-1.28.06-.37-.01-.67-.12-.94l-.53-1.13c-.21-.51-.47-1.25-.42-2.12.03-.85.5-1.96 1.39-2.57.9-.61 1.87-.69 2.66-.53.5.1 1.01.34 1.45.68.37-.17.8-.26 1.25-.26h5.75V7c0-2.21 1.79-4 4-4H22l-.89 1.34c.54.36.89.97.89 1.66", "turtle": "M8.47 5.95c.48-.28 1-.51 1.53-.67V4c0-1.1.87-2 1.97-2.03C13.13 2 14 2.9 14 4v1.28c.53.17 1.05.39 1.53.67l-1.6 2.12h-3.86zM19 12c0 .5-.05.95-.14 1.4l-2.53-.78-1.19-3.66 1.6-2.11q.645.6 1.14 1.35c.79-.07 1.55.05 2.23.39 1.03.53 1.73 1.54 1.89 2.69l-3 .36zM5 12v-.35l-3-.37c.16-1.15.86-2.16 1.89-2.69a3.54 3.54 0 0 1 2.19-.33c.33-.51.71-.98 1.16-1.39l1.62 2.08-1.19 3.67-2.53.78C5.05 12.95 5 12.5 5 12m5.24-2.43h3.52l1.09 3.36L12 15l-2.85-2.07zm-2.11 4.48 3.12 2.26v2.65c-.57-.06-1.12-.19-1.63-.38l-1.23 2.76a3.49 3.49 0 0 1-2.02-2.58c-.14-.76-.02-1.52.32-2.2-.45-.52-.82-1.1-1.1-1.74zm7.74 0 2.54.77c-.28.64-.65 1.22-1.1 1.74.34.68.46 1.44.33 2.2a3.52 3.52 0 0 1-2.03 2.58l-1.22-2.76c-.53.19-1.06.36-1.64.42v-2.69z", "heart": "m12 21.35-1.45-1.32C5.4 15.36 2 12.27 2 8.5 2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.53z", "heart-outline": "m12.1 18.55-.1.1-.11-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04 1 3.57 2.36h1.86C13.46 6 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05M16.5 3c-1.74 0-3.41.81-4.5 2.08C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.41 2 8.5c0 3.77 3.4 6.86 8.55 11.53L12 21.35l1.45-1.32C18.6 15.36 22 12.27 22 8.5 22 5.41 19.58 3 16.5 3", "map-marker": "M12 11.5A2.5 2.5 0 0 1 9.5 9 2.5 2.5 0 0 1 12 6.5 2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7", "party-popper": "m14.53 1.45-1.08 1.08 1.6 1.6q.33.375.33.87c0 .495-.11.64-.33.86L11.5 9.47l1 1.08 3.63-3.61c.53-.59.79-1.24.79-1.94s-.26-1.36-.79-1.95zm-3.98 2.02L9.47 4.55l.61.56c.22.22.33.52.33.89s-.11.67-.33.89l-.61.56 1.08 1.08.56-.61c.53-.59.8-1.23.8-1.92 0-.72-.27-1.37-.8-1.97zM21 5.06c-.69 0-1.33.27-1.92.8l-5.63 5.64 1.08 1 5.58-5.56c.25-.25.55-.38.89-.38s.64.13.89.38l.61.61 1.03-1.08-.56-.61c-.59-.53-1.25-.8-1.97-.8M7 8 2 22l14-5zm12 3.06c-.7 0-1.34.27-1.94.8l-1.59 1.59 1.08 1.08 1.59-1.59c.25-.25.53-.38.86-.38s.63.13.88.38l1.62 1.59 1.05-1.03-1.6-1.64c-.59-.53-1.25-.8-1.95-.8", "arrow-top-right": "M5 17.59 15.59 7H9V5h10v10h-2V8.41L6.41 19z", "star-four-points": "M12 1 9 9l-8 3 8 3 3 8 3-8 8-3-8-3z", "border-all": "M19 11h-6V5h6m0 14h-6v-6h6m-8-2H5V5h6m0 14H5v-6h6m-8 8h18V3H3z", "palette": "M17.5 12a1.5 1.5 0 0 1-1.5-1.5A1.5 1.5 0 0 1 17.5 9a1.5 1.5 0 0 1 1.5 1.5 1.5 1.5 0 0 1-1.5 1.5m-3-4A1.5 1.5 0 0 1 13 6.5 1.5 1.5 0 0 1 14.5 5 1.5 1.5 0 0 1 16 6.5 1.5 1.5 0 0 1 14.5 8m-5 0A1.5 1.5 0 0 1 8 6.5 1.5 1.5 0 0 1 9.5 5 1.5 1.5 0 0 1 11 6.5 1.5 1.5 0 0 1 9.5 8m-3 4A1.5 1.5 0 0 1 5 10.5 1.5 1.5 0 0 1 6.5 9 1.5 1.5 0 0 1 8 10.5 1.5 1.5 0 0 1 6.5 12M12 3a9 9 0 0 0-9 9 9 9 0 0 0 9 9 1.5 1.5 0 0 0 1.5-1.5c0-.39-.15-.74-.39-1-.23-.27-.38-.62-.38-1a1.5 1.5 0 0 1 1.5-1.5H16a5 5 0 0 0 5-5c0-4.42-4.03-8-9-8", "diamond-stone": "M16 9h3l-5 7m-4-7h4l-2 8M5 9h3l2 7m5-12h2l2 3h-3m-5-3h2l1 3h-4M7 4h2L8 7H5m1-5L2 8l10 14L22 8l-4-6z", "shimmer": "M10.6 9.6 9 15 7.4 9.6 2 8l5.4-1.6L9 1l1.6 5.4L16 8zm6.4 4.6 4-2.2-2.2 4 2.2 4-4-2.2-4 2.2 2.2-4-2.2-4zM10 16l-1.7 3 1.7 3-3-1.7L4 22l1.7-3L4 16l3 1.7z", "creation": "m19 1-1.26 2.75L15 5l2.74 1.26L19 9l1.25-2.74L23 5l-2.75-1.25M9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5M19 15l-1.26 2.74L15 19l2.74 1.25L19 23l1.25-2.75L23 19l-2.75-1.26", "waves": "M20 12h2v2h-2c-1.38 0-2.74-.35-4-1-2.5 1.3-5.5 1.3-8 0-1.26.65-2.63 1-4 1H2v-2h2c1.39 0 2.78-.47 4-1.33 2.44 1.71 5.56 1.71 8 0 1.22.86 2.61 1.33 4 1.33m0-6h2v2h-2c-1.38 0-2.74-.35-4-1-2.5 1.3-5.5 1.3-8 0-1.26.65-2.63 1-4 1H2V6h2c1.39 0 2.78-.47 4-1.33 2.44 1.71 5.56 1.71 8 0C17.22 5.53 18.61 6 20 6m0 12h2v2h-2c-1.38 0-2.74-.35-4-1-2.5 1.3-5.5 1.3-8 0-1.26.65-2.63 1-4 1H2v-2h2c1.39 0 2.78-.47 4-1.33 2.44 1.71 5.56 1.71 8 0 1.22.86 2.61 1.33 4 1.33", "orbit": "M8.11 1.75C9.3 1.25 10.62 1 12 1c6.08 0 11 4.92 11 11s-4.92 11-11 11S1 18.08 1 12c0-1.38.25-2.7.72-3.92a4.5 4.5 0 0 0 1.73 1.1C3.16 10.07 3 11 3 12a9 9 0 0 0 9 9 9 9 0 0 0 9-9 9 9 0 0 0-9-9c-1 0-1.93.16-2.82.45-.22-.62-.57-1.21-1.07-1.7M4.93 2.93a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2c0-1.11.89-2 2-2M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5", "flash": "M7 2v11h3v9l7-12h-4l4-8z", "star": "M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.62L12 2 9.19 8.62 2 9.24l5.45 4.73L5.82 21z", "film": "M3.5 3H5V1.8c0-.44.36-.8.8-.8h4.4c.44 0 .8.36.8.8V3h1.5A1.5 1.5 0 0 1 14 4.5V5h8v15h-8v.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 20.5v-16A1.5 1.5 0 0 1 3.5 3M18 7v2h2V7zm-4 0v2h2V7zm-4 0v2h2V7zm4 9v2h2v-2zm4 0v2h2v-2zm-8 0v2h2v-2z", "script-text": "M17.8 20c-.4 1.2-1.5 2-2.8 2H5c-1.7 0-3-1.3-3-3v-1h12.2c.4 1.2 1.5 2 2.8 2zM19 2c1.7 0 3 1.3 3 3v1h-2V5c0-.6-.4-1-1-1s-1 .4-1 1v13h-1c-.6 0-1-.4-1-1v-1H5V5c0-1.7 1.3-3 3-3zM8 6v2h7V6zm0 4v2h6v-2z", "dots-grid": "M12 16c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2M6 16c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m12 12c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2m0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2", "medal": "M20 2H4v2l5.81 4.36a7.004 7.004 0 0 0-4.46 8.84 6.996 6.996 0 0 0 8.84 4.46 7 7 0 0 0 0-13.3L20 4zm-5.06 17.5L12 17.78 9.06 19.5l.78-3.33-2.59-2.24 3.41-.29L12 10.5l1.34 3.14 3.41.29-2.59 2.24z", "flower": "M3 13a9 9 0 0 0 9 9c0-5-4.03-9-9-9m9-7.5A2.5 2.5 0 0 1 14.5 8a2.5 2.5 0 0 1-2.5 2.5A2.5 2.5 0 0 1 9.5 8 2.5 2.5 0 0 1 12 5.5m-6.4 4.75a2.5 2.5 0 0 0 2.5 2.5c.53 0 1.02-.17 1.4-.44v.19A2.5 2.5 0 0 0 12 15a2.5 2.5 0 0 0 2.5-2.5v-.19c.38.27.87.44 1.4.44a2.5 2.5 0 0 0 2.5-2.5c0-1-.59-1.85-1.43-2.25.84-.4 1.43-1.26 1.43-2.25a2.5 2.5 0 0 0-2.5-2.5c-.53 0-1.02.16-1.4.44V3.5A2.5 2.5 0 0 0 12 1a2.5 2.5 0 0 0-2.5 2.5v.19c-.38-.28-.87-.44-1.4-.44a2.5 2.5 0 0 0-2.5 2.5c0 .99.59 1.85 1.43 2.25-.84.4-1.43 1.25-1.43 2.25M12 22a9 9 0 0 0 9-9c-5 0-9 4-9 9", "snowflake": "m20.79 13.95-2.33.62-2-1.13v-2.88l2-1.13 2.33.62.52-1.93-1.77-.47.46-1.77-1.93-.52-.62 2.33-2 1.13L13 7.38V5.12l1.71-1.71L13.29 2 12 3.29 10.71 2 9.29 3.41 11 5.12v2.26L8.5 8.82l-2-1.13-.58-2.33L4 5.88l.47 1.77-1.77.47.52 1.93 2.33-.62 2 1.13v2.89l-2 1.13-2.33-.62-.52 1.93 1.77.47L4 18.12l1.93.52.62-2.33 2-1.13L11 16.62v2.26l-1.71 1.71L10.71 22 12 20.71 13.29 22l1.41-1.41-1.7-1.71v-2.26l2.5-1.45 2 1.13.62 2.33 1.88-.51-.47-1.77 1.77-.47zM9.5 10.56 12 9.11l2.5 1.45v2.88L12 14.89l-2.5-1.45z", "weather-sunset": "M3 12h4a5 5 0 0 1 5-5 5 5 0 0 1 5 5h4a1 1 0 0 1 1 1 1 1 0 0 1-1 1H3a1 1 0 0 1-1-1 1 1 0 0 1 1-1m2 4h14a1 1 0 0 1 1 1 1 1 0 0 1-1 1H5a1 1 0 0 1-1-1 1 1 0 0 1 1-1m12 4a1 1 0 0 1 1 1 1 1 0 0 1-1 1H7a1 1 0 0 1-1-1 1 1 0 0 1 1-1zm-2-8a3 3 0 0 0-3-3 3 3 0 0 0-3 3zM12 2l2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm17.31 0-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15z"};
 ICO.image="M8.5 13.5l2.5 3 3.5-4.5 4.5 6H5m16 1V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z";
 ICO.bug="M12 12c-2-5-6-7-9-6 0 4 2 8 6 8zm0 0c2-5 6-7 9-6 0 4-2 8-6 8zm-3 3c-3 0-5 2-4 5 3 1 5-1 4-5zm6 0c3 0 5 2 4 5-3 1-5-1-4-5zM11.2 7h1.6v12h-1.6z";
 ICO.fish="M2 12c3-5.5 9-7 13-4l4-3v14l-4-3c-4 3-10 1.5-13-4z";
@@ -889,8 +1037,8 @@ const BN={gold:"g",silver:"s",copper:"c",rose:"r",ice:"i",emerald:"e",ruby:"y",s
 // voronoi ring, only the cells that touch the frame are drawn
 function borderCells(seed){
  const rnd=vRnd(seed),W=300,H=420,C=56,R=78,sx=W/C,sy=H/R,G=new Map(),cells=[];
- for(let r=0;r<R;r++)for(let c=0;c<C;c++){const x=(c+.12+rnd()*.76)*sx,y=(r+.12+rnd()*.76)*sy,e=Math.min(x,W-x,y,H-y);if(e<18)G.set(r*C+c,[x,y,r,c])}
- G.forEach(p=>{if(Math.min(p[0],W-p[0],p[1],H-p[1])>8)return;
+ for(let r=0;r<R;r++)for(let c=0;c<C;c++){const x=(c+.12+rnd()*.76)*sx,y=(r+.12+rnd()*.76)*sy,e=Math.min(x,W-x,y,H-y);if(e<18||(x>W-62&&y<62))G.set(r*C+c,[x,y,r,c])}
+ G.forEach(p=>{if(Math.min(p[0],W-p[0],p[1],H-p[1])>8&&!(p[0]>W-56&&p[1]<56))return; /* ring cells, plus the top-right block under the species tab (the frame's mask covers the tab too) */
   let poly=[[0,0],[W,0],[W,H],[0,H]];
   for(let dr=-2;dr<=2&&poly.length>2;dr++)for(let dc=-2;dc<=2;dc++){if(!dr&&!dc)continue;const cc=p[3]+dc;if(cc<0||cc>=C)continue;const q=G.get((p[2]+dr)*C+cc);if(q)poly=vClip(poly,p,q)}
   if(poly.length<3)return;
@@ -911,8 +1059,15 @@ const TFX={goldfoil:{label:"gold foil",icon:"medal",w:3},silverfoil:{label:"silv
  neon:{label:"neon sign",icon:"flash",w:2},glitch:{label:"glitch",icon:"flash",w:2},retro3d:{label:"retro 3d",icon:"star",w:2.5},
  outline:{label:"outline",icon:"script-text",w:2.5},ember:{label:"ember",icon:"fire",w:1.5},icetext:{label:"frost",icon:"snowflake",w:1.5},
  sparkle:{label:"sparkle",icon:"creation",w:2},shine:{label:"shine sweep",icon:"shimmer",w:3},wave:{label:"wavy letters",icon:"waves",w:2}};
+Object.assign(TFX,{sunsettext:{label:"sunset",icon:"weather-sunset",w:2},popout:{label:"pop-out",icon:"star",w:2},glowpulse:{label:"glow pulse",icon:"flash",w:2}});
 const TFL=Object.entries(TFX).map(([k,v])=>[k,v.w]),TFLT=TFL.reduce((a,[,w])=>a+w,0),TFX_CHANCE=.03;
 const rollTfx=()=>{if(PREVIEW=="text")return pickW(TFL,TFLT);if(PREVIEW.startsWith("text-")&&TFX[PREVIEW.slice(5)])return PREVIEW.slice(5);return Math.random()<TFX_CHANCE*LK?pickW(TFL,TFLT):""};
+const FA={full:{label:"full art",icon:"image",w:3},vig:{label:"full art · vignette",icon:"image",w:2},glow:{label:"full art · edge glow",icon:"image",w:1.5}};
+const FAL=Object.entries(FA).map(([k,v])=>[k,v.w]),FAT=FAL.reduce((a,[,w])=>a+w,0),FA_CHANCE=.06;
+const rollFa=()=>{if(PREVIEW=="fa")return pickW(FAL,FAT);if(PREVIEW.startsWith("fa-")&&FA[PREVIEW.slice(3)])return PREVIEW.slice(3);return Math.random()<FA_CHANCE*LK?pickW(FAL,FAT):""};
+const IE={noir:{label:"noir",icon:"film",w:3},vintage:{label:"vintage",icon:"script-text",w:3},halftone:{label:"halftone",icon:"dots-grid",w:3},watercolor:{label:"watercolor",icon:"palette",w:2.5},sketch:{label:"pencil sketch",icon:"script-text",w:2.5},duotone:{label:"duotone",icon:"layers",w:2.5},toon:{label:"toon",icon:"palette",w:2.5},comic:{label:"comic book",icon:"star-four-points",w:2},ink:{label:"ink drawing",icon:"script-text",w:2},pixel:{label:"pixel art",icon:"dots-grid",w:2}};
+const IEL=Object.entries(IE).map(([k,v])=>[k,v.w]),IET=IEL.reduce((a,[,w])=>a+w,0),IE_CHANCE=.08;
+const rollIe=()=>{if(IE[PREVIEW])return PREVIEW;if(PREVIEW=="ie")return pickW(IEL,IET);if(PREVIEW.startsWith("ie-")&&IE[PREVIEW.slice(3)])return PREVIEW.slice(3);return Math.random()<IE_CHANCE*LK?pickW(IEL,IET):""};
 const waveHTML=n=>[...n].map((ch,i)=>ch==" "?" ":`<span class="tfw" style="--i:${i}">${ch}</span>`).join("");
 // faceted-text tiles (a static voronoi texture, clipped to the letters; the highlight sweeps over it)
 function vorTile(seed,hue,spread,sat,l0,l1){
@@ -931,20 +1086,22 @@ const GOLD_CHANCE=.004,COLOR_CHANCE=.25,PARALLAX_CHANCE=.33,SHINY_CHANCE=.25,SHY
 const EDGE_OK=["","reverse","paws","hearts","stars","confetti","shimmer","holo"];
 const rollShy=f=>{if(PREVIEW!="shiny"&&Math.random()>=SHINY_CHANCE)return "";
  const m=["bg","img"];if(EDGE_OK.includes(f||""))m.push("edge");return m[Math.floor(Math.random()*m.length)]};
-const rollT=f=>{const t=f?rollTint(f):"",x=f&&!SR[f]&&Math.random()<.12*LK?TEXK[Math.floor(Math.random()*TEXK.length)]:"";return t+"."+x+"."+(Math.random()<COLOR_CHANCE?BGK[Math.floor(Math.random()*BGK.length)]:"")+"."+rollShy(f)+"."+(PREVIEW=="par"||Math.random()<PARALLAX_CHANCE?"p":"")+"."+rollBorder()+"."+rollTfx()+"."+rollVar(f)};
+const rollT=f=>{const t=f?rollTint(f):"",x=f&&!SR[f]&&Math.random()<.12*LK?TEXK[Math.floor(Math.random()*TEXK.length)]:"";return t+"."+x+"."+(Math.random()<COLOR_CHANCE?BGK[Math.floor(Math.random()*BGK.length)]:"")+"."+rollShy(f)+"."+(PREVIEW=="par"||Math.random()<PARALLAX_CHANCE?"p":"")+"."+rollBorder()+"."+rollTfx()+"."+rollVar(f)+"."+rollFa()+"."+rollIe()};
 {const st2=document.createElement("style");
  st2.textContent=Object.entries(TEX).map(([k,v])=>{const u=`url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='${v[2]}' height='${v[2]}' fill='none'>${v[1]}</svg>`)}")`;return `.tx-${k}{-webkit-mask-image:${u};mask-image:${u};-webkit-mask-size:${v[2]/16}em;mask-size:${v[2]/16}em}`}).join("");
  document.head.appendChild(st2)}
-const FIN={reverse:{label:"reverse foil",icon:"star-four-points"},edge:{label:"holo border",icon:"border-all"},holo:{label:"holographic",icon:"palette"},prism:{label:"prismatic",icon:"diamond-stone"},shimmer:{label:"shimmer",icon:"shimmer"},glitter:{label:"glitter",icon:"creation"},aurora:{label:"aurora",icon:"waves"},galaxy:{label:"galaxy",icon:"orbit"},neon:{label:"neon",icon:"flash"},confetti:{label:"confetti",icon:"party-popper"},paws:{label:"paw prints",icon:"paw"},hearts:{label:"hearts",icon:"heart"},stars:{label:"stars",icon:"star"},noir:{label:"noir",icon:"film"},vintage:{label:"vintage",icon:"script-text"},halftone:{label:"halftone",icon:"dots-grid"},satin:{label:"satin",icon:"shimmer"},oilslick:{label:"oil slick",icon:"palette"},mosaic:{label:"stained glass",icon:"diamond-stone"},crt:{label:"crt screen",icon:"film"},watercolor:{label:"watercolor",icon:"palette"},sketch:{label:"pencil sketch",icon:"script-text"},sunbeam:{label:"sunbeams",icon:"weather-sunset"},bokeh:{label:"bokeh lights",icon:"star-four-points"},fireflies:{label:"fireflies",icon:"creation"},laser:{label:"laser show",icon:"flash"},ripple:{label:"water ripple",icon:"waves"},duotone:{label:"duotone",icon:"layers"},glow:{label:"soft glow",icon:"star"}};
+const FIN={reverse:{label:"reverse foil",icon:"star-four-points"},edge:{label:"holo border",icon:"border-all"},holo:{label:"holographic",icon:"palette"},prism:{label:"prismatic",icon:"diamond-stone"},shimmer:{label:"shimmer",icon:"shimmer"},glitter:{label:"glitter",icon:"creation"},aurora:{label:"aurora",icon:"waves"},galaxy:{label:"galaxy",icon:"orbit"},neon:{label:"neon",icon:"flash"},confetti:{label:"confetti",icon:"party-popper"},paws:{label:"paw prints",icon:"paw"},hearts:{label:"hearts",icon:"heart"},stars:{label:"stars",icon:"star"},satin:{label:"satin",icon:"shimmer"},oilslick:{label:"oil slick",icon:"palette"},mosaic:{label:"stained glass",icon:"diamond-stone"},crt:{label:"crt screen",icon:"film"},sunbeam:{label:"sunbeams",icon:"weather-sunset"},bokeh:{label:"bokeh lights",icon:"star-four-points"},fireflies:{label:"fireflies",icon:"creation"},laser:{label:"laser show",icon:"flash"},ripple:{label:"water ripple",icon:"waves"},glow:{label:"soft glow",icon:"star"}};
 Object.entries(FOILS).forEach(([k,v])=>FIN[k]={label:v[0],icon:v[1],col:v[7]});
 const SR={nova:{label:"supernova",icon:"star-four-points",col:"#ffd27a"},inferno:{label:"inferno",icon:"fire",col:"#ff8a3a"},storm:{label:"thunderstorm",icon:"flash",col:"#9fc8ff"},sakura:{label:"petal storm",icon:"flower",col:"#ff9ccf"},starfall:{label:"starfall",icon:"star",col:"#cfe4ff"},crystal:{label:"crystal prism",icon:"diamond-stone",col:"#7ff0ff"},blizzard:{label:"blizzard",icon:"snowflake",col:"#bfe6ff"},matrix:{label:"digital rain",icon:"dots-grid",col:"#3dff7a"},ocean:{label:"deep ocean",icon:"waves",col:"#4fd0ff"},magma:{label:"magma",icon:"fire",col:"#ff7a1a"},vortex:{label:"vortex",icon:"orbit",col:"#c07bff"},plasma:{label:"plasma",icon:"flash",col:"#ff5ad2"},fireworks:{label:"fireworks",icon:"party-popper",col:"#ff8ad8"}};
 Object.entries(SR).forEach(([k,v])=>FIN[k]=v);
 FIN.facet={label:"glisten",icon:"diamond-stone"};
 Object.assign(FIN,{pearl:{label:"pearl",icon:"shimmer"},chrome:{label:"chrome",icon:"orbit"},rainbow:{label:"rainbow bands",icon:"palette"},bubbles:{label:"bubbles",icon:"waves"},snow:{label:"snowfall",icon:"snowflake"},synth:{label:"synthwave",icon:"weather-sunset"},blueprint:{label:"blueprint",icon:"border-all"}});
 const NOBG=["galaxy","neon","synth","blueprint","snow","bubbles"];
-const TN={silver:"silver",gold:"gold",rose:"rose gold",ice:"ice",emerald:"emerald",violet:"violet",ruby:"ruby"};
-const FTINTS=["gold","gold","rose","ice","emerald","violet","ruby"];;
-const W={pearl:3,chrome:2,rainbow:2.5,bubbles:2.5,snow:2,synth:1.5,blueprint:1.5,facet:2.5,reverse:5,paws:4,hearts:4,stars:3,confetti:3,noir:3,vintage:3,halftone:3,shimmer:3,edge:4,holo:4,glitter:3,silver:3,bronze:2.5,ice:2,rosegold:1.5,emerald:1.5,ruby:1.5,sapphire:1.5,amethyst:1.5,neon:1.5,gold:2,prism:1.5,aurora:1,galaxy:1,sunset:1,satin:2.5,oilslick:2,mosaic:2,crt:2,watercolor:2.5,sketch:2.5,sunbeam:2,bokeh:2.5,fireflies:2,laser:2,ripple:2,duotone:2.5,glow:2.5};
+const TN={silver:"silver",gold:"gold",rose:"rose gold",ice:"ice",emerald:"emerald",violet:"violet",ruby:"ruby",gsunset:"sunset gradient",gocean:"ocean gradient",gaurora:"aurora gradient",gcandy:"candy gradient",gspectrum:"spectrum gradient"};
+const FTINTS=["gold","gold","rose","ice","emerald","violet","ruby","gsunset","gocean","gaurora","gcandy","gspectrum"];;
+const W={pearl:3,chrome:2,rainbow:2.5,bubbles:2.5,snow:2,synth:1.5,blueprint:1.5,facet:2.5,reverse:5,paws:4,hearts:4,stars:3,confetti:3,shimmer:3,edge:4,holo:4,glitter:3,silver:3,bronze:2.5,ice:2,rosegold:1.5,emerald:1.5,ruby:1.5,sapphire:1.5,amethyst:1.5,neon:1.5,gold:2,prism:1.5,aurora:1,galaxy:1,sunset:1,satin:2.5,oilslick:2,mosaic:2,crt:2,sunbeam:2,bokeh:2.5,fireflies:2,laser:2,ripple:2,glow:2.5};
+Object.assign(FIN,{topo:{label:"topographic",icon:"earth"},carbon:{label:"carbon fiber",icon:"dots-grid"},hologrid:{label:"hologrid",icon:"border-all"},moire:{label:"moiré",icon:"waves"},popart:{label:"pop art",icon:"star-four-points"},stardust:{label:"stardust",icon:"creation"},lavalamp:{label:"lava lamp",icon:"palette"},spectrum:{label:"spectrum rays",icon:"weather-sunset"}});
+Object.assign(W,{topo:2,carbon:2,hologrid:1.5,moire:2,popart:2,stardust:2,lavalamp:1.5,spectrum:1.5});
 // Most cards are plain: ~10% get a regular finish, ~1% get a super rare animated one
 const EFFECT_CHANCE=.10,SR_CHANCE=.01;
 const FX=Object.entries(W),FXT=FX.reduce((a,[,w])=>a+w,0);
@@ -974,6 +1131,11 @@ let state={last:"",fav:{},col:{},filter:"all",pack:null,unl:false,pts:0,inv:{},s
 try{const s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(s))}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
 if(!state.econ){state.econ=2;state.pts=Math.round((+state.pts||0)*20)}
+{/* image effects used to be finishes: move saved cards over so they keep their look */
+ const ieFix=(f,t)=>{if(!f||!IE[f])return[f||"",t||""];const a=(t||"").split(".");while(a.length<9)a.push("");a[9]=f;return["",a.join(".")]};
+ const col={};Object.values(state.col||{}).forEach(c=>{[c.f,c.t]=ieFix(c.f,c.t);const k=c.id+"|"+c.f+"|"+c.t;if(col[k])col[k].n+=c.n;else col[k]=c});state.col=col;
+ Object.values(state.fav||{}).forEach(v=>{[v.f,v.t]=ieFix(v.f,v.t)});
+ if(state.pack&&state.pack.picks)state.pack.picks.forEach(x=>{[x[1],x[2]]=ieFix(x[1],x[2])})}
 const today=()=>{const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()};
 const stage=document.getElementById("stage");
 const perFrame=fn=>{let a=null,r=0;const run=()=>{r=0;const x=a;a=null;if(x)fn(...x)};
@@ -986,8 +1148,8 @@ const mkCull=()=>{if(typeof IntersectionObserver=="undefined")return{watch(){}};
 const gridCull=mkCull(),dbgCull=mkCull();
 
 const PACKS={
- daily:{label:"daily critter packs",n:5,hue:0,ico:"paw",what:"wild critters"},
- classic:{label:"classic pack",n:5,cost:200,ico:"paw",what:"critters",hue:30,desc:"5 random critters, same odds as the daily pack."},
+ daily:{label:"daily critter packs",n:5,hue:0,ico:"leaf",what:"wild critters"},
+ classic:{label:"classic pack",n:5,cost:200,ico:"leaf",what:"critters",hue:30,desc:"5 random critters, same odds as the daily pack."},
  mega:{label:"mega pack",n:10,cost:380,ico:"layers",what:"critters",hue:300,desc:"10 random critters in one go."},
  bird:{label:"bird pack",n:5,cost:230,ico:"bird",what:"birds",hue:250,sp:["bird"],desc:"5 birds, all spotted in the wild."},
  mammal:{label:"mammal pack",n:5,cost:230,ico:"paw",what:"mammals",hue:165,sp:["mammal"],desc:"5 mammals from around the world."},
@@ -998,10 +1160,17 @@ const PACKS={
  namerica:{label:"north america pack",n:5,cost:260,ico:"earth",what:"critters from north america",where:"north america",reg:"97394",hue:20,desc:"5 wild critters spotted in north america."},
  samerica:{label:"south america pack",n:5,cost:260,ico:"earth",what:"critters from south america",where:"south america",reg:"97389",hue:130,desc:"5 wild critters spotted in south america."},
  oceania:{label:"oceania pack",n:5,cost:260,ico:"earth",what:"critters from oceania",where:"oceania",reg:"97393",hue:185,desc:"5 wild critters spotted in oceania, from australia to the pacific islands."},
- lucky:{label:"lucky pack",n:5,cost:350,ico:"star-four-points",what:"critters",hue:195,luck:3,desc:"5 critters, with about 3× the chance of finishes, borders and text effects."}
+ cat:{label:"cat pack",n:5,cost:240,ico:"cat",what:"wild cats",tax:"Felidae",hue:35,desc:"5 wild cats, from lions and tigers to bobcats and ocelots."},
+ dog:{label:"dog pack",n:5,cost:240,ico:"dog",what:"wild dogs",tax:"Canidae",hue:215,desc:"5 wild dogs: wolves, foxes, coyotes, jackals and their cousins."},
+ bear:{label:"bear pack",n:5,cost:240,ico:"paw",what:"bears",tax:"Ursidae",hue:22,desc:"5 bears, from grizzlies to pandas."},
+ rabbit:{label:"rabbit pack",n:5,cost:240,ico:"rabbit",what:"rabbits and hares",tax:"Leporidae",hue:335,desc:"5 rabbits and hares, spotted in the wild."},
+ rodent:{label:"rodent pack",n:5,cost:240,ico:"rodent",what:"rodents",tax:"Rodentia",hue:55,desc:"5 rodents: squirrels, beavers, voles, capybaras and more."},
+ turtle:{label:"turtle pack",n:5,cost:240,ico:"turtle",what:"turtles and tortoises",tax:"Testudines",hue:160,desc:"5 turtles and tortoises, on land and in the sea."},
+ lucky:{label:"lucky pack",n:5,cost:350,ico:"star-four-points",what:"critters",hue:195,luck:3,desc:"5 critters, with about 3× the chance of finishes, borders and text effects."},
+ superlucky:{label:"super lucky pack",n:3,cost:600,ico:"creation",what:"critters",hue:285,luck:6,desc:"just 3 critters, but about 6× the chance of finishes, image effects, full art, borders and text effects."}
 };
-const SHOP_CAP=3,PKS=["classic","mega","bird","mammal","bug","lucky","asia","europe","africa","namerica","samerica","oceania"];
-const pkArt=(off,kind)=>`<div class="pk-art${kind&&kind!="daily"?" k-"+kind:""}"><span class="pk-crimp t"></span><span class="pk-crimp b"></span><div class="pk-tl"><span>${off?"":"‹ tear here ›"}</span></div><div class="pk-mid"><div class="pk-ic">${ic(PACKS[kind||"daily"].ico||"paw")}</div><div class="pk-ti">${PACKS[kind||"daily"].label}</div><div class="pk-su">${off?"pack opened":PACKS[kind||"daily"].n+" "+(PACKS[kind||"daily"].what||"wild critters")+" inside"}</div></div></div>`;
+const SHOP_CAP=3,PKS=["classic","mega","bird","mammal","bug","cat","dog","bear","rabbit","rodent","turtle","lucky","superlucky","asia","europe","africa","namerica","samerica","oceania"];
+const pkArt=(off,kind)=>`<div class="pk-art${kind&&kind!="daily"?" k-"+kind:""}"><span class="pk-crimp t"></span><span class="pk-crimp b"></span><div class="pk-tl"><span>${off?"":"‹ tear here ›"}</span></div><div class="pk-mid"><div class="pk-ic">${ic(PACKS[kind||"daily"].ico||"leaf")}</div><div class="pk-ti">${PACKS[kind||"daily"].label}</div><div class="pk-su">${off?"pack opened":PACKS[kind||"daily"].n+" "+(PACKS[kind||"daily"].what||"wild critters")+" inside"}</div></div></div>`;
 /* every pack you can open right now: today's daily pack (if not opened yet) plus any packs you bought */
 const packList=()=>{const L=[];if(state.unl||state.last!==today())L.push(["daily",1]);PKS.forEach(k=>{if((state.inv[k]||0)>0)L.push([k,state.inv[k]])});return L};
 let PKDIR=0;
@@ -1028,7 +1197,7 @@ function renderPack(){
   +`<div class="hint">swipe across the top to tear the pack open, or just tap it${n>1?"<br>swipe sideways, tap a pack or use ‹ › to switch packs":""}${dailyDone?"<br>today’s daily pack is already opened, come back tomorrow for a fresh one":""}</div>`;
  if(n>1)bindCar();
  bindPack();
- {const K0=PACKS[kind];if(K0&&K0.reg&&hasLive()&&!regFresh(kind))regionLoad(kind).catch(()=>{})}
+ {const K0=PACKS[kind];if(K0&&(K0.reg||K0.tax)&&hasLive()&&!regFresh(kind))regionLoad(kind).catch(()=>{})}
 }
 function bindCar(){
  const car=document.getElementById("pkcar");if(!car)return;
@@ -1049,14 +1218,14 @@ document.addEventListener("keydown",e=>{if(e.key!="ArrowLeft"&&e.key!="ArrowRigh
  pkGo(e.key=="ArrowRight"?1:-1)});
 // deal today's five cards (called once the pack is fully torn)
 function openPack(){
- const kind=state.cur||"daily",K=PACKS[kind]||PACKS.daily,base=K.reg?regPool(kind):POOL.length>=5?POOL:CRITTERS;
+ const kind=state.cur||"daily",K=PACKS[kind]||PACKS.daily,base=(K.reg||K.tax)?regPool(kind):POOL.length>=5?POOL:CRITTERS;
  let src=K.sp?base.filter(p=>K.sp.includes(p.sp)):base;if(!src.length)src=base;
  const unmet=src.filter(p=>!state.seen[p.id]),pool=(unmet.length>=K.n?unmet:src).slice(),picks=[],n=Math.min(K.n,pool.length);LK=K.luck||1;
  for(let i=0;i<n;i++){const p=pool.splice(Math.floor(Math.random()*pool.length),1)[0],f=rollFin();picks.push([p.id,f,rollT(f)])}
  LK=1;
  if(kind=="daily")state.last=today();else state.inv[kind]=Math.max(0,(state.inv[kind]||0)-1);
  state.pack={picks,idx:0,kind};save();
- setTimeout(()=>{if(!hasLive())return;if(K.reg){delete REGP[kind];regionLoad(kind).catch(()=>{})}else loadLive(true)},1200); // line up brand new critters for the next pack
+ setTimeout(()=>{if(!hasLive())return;if(K.reg||K.tax){delete REGP[kind];regionLoad(kind).catch(()=>{})}else loadLive(true)},1200); // line up brand new critters for the next pack
 }
 function bindPack(){
  const pk=document.getElementById("pack"),low=pk.querySelector(".pk-low"),strip=pk.querySelector(".pk-strip");
@@ -1096,8 +1265,8 @@ function bindPack(){
   setTimeout(()=>pk.classList.add("drop"),750);
   setTimeout(showCard,1250);};
   const kk=state.cur||"daily",KK=PACKS[kk];
-  if(KK&&KK.reg&&!regFresh(kk)){const h=stage.querySelector(".hint");if(h)h.textContent="finding critters from "+KK.where+"…";
-   regionLoad(kk).then(go,()=>{renderPack();const h2=stage.querySelector(".hint");if(h2)h2.textContent="couldn’t load critters from "+KK.where+" ("+srcErr+"). your pack is safe, try again in a moment."})}
+  if(KK&&(KK.reg||KK.tax)&&!regFresh(kk)){const h=stage.querySelector(".hint");if(h)h.textContent="finding "+packSrc(KK)+"…";
+   regionLoad(kk).then(go,()=>{renderPack();const h2=stage.querySelector(".hint");if(h2)h2.textContent="couldn’t load "+packSrc(KK)+" ("+srcErr+"). your pack is safe, try again in a moment."})}
   else go();
  }
  function autoTear(){
@@ -1129,11 +1298,11 @@ function showCard(){
  stage.innerHTML=`<div class="dots">${picks.map((_,i)=>`<i class="${i<idx?"done":i==idx?"on":""}"></i>`).join("")}</div>
  <div class="scene" id="scene"><div class="drag${first?" enter":""}" id="drag"><div class="tilt" id="tilt">
   <div class="flipper${first?"":" flip"}" id="flipper">
-   ${slices()}<div class="face back"><span>${ic("paw")}</span></div>
+   ${slices()}<div class="face back">${ic("leaf")}</div>
    ${cardFace(p,f,t)}
   </div></div></div></div>
  <div class="hint" id="hint">${first?"tap the card to reveal":hintText(idx)}</div>
- <div class="acts" id="acts" style="visibility:${first?"hidden":"visible"}">${favBtn(id,f,t,"made me smile")}${meetLink(p)}${rawBtn(p)}</div>
+ <div class="acts" id="acts" style="visibility:${first?"hidden":"visible"}">${favBtn(id,f,t,"made me smile")}${meetLink(p)}${rawBtn(p)}${wikiBtn(p)}</div>
  <button class="act" id="next" style="visibility:${first?"hidden":"visible"}">${idx==picks.length-1?"finish":"next card ›"}</button>`;
  bind();if(!first)srBurst();
 }
@@ -1141,9 +1310,11 @@ const hintText=i=>i==state.pack.picks.length-1?"add it to your favorites if it m
 // the next card waits face up underneath the one being swiped away
 function ensureUnder(){const sc=document.getElementById("scene");if(!sc||sc.querySelector(".under"))return;const n=state.pack.idx+1;if(n>=state.pack.picks.length)return;
  const[id,f,t]=state.pack.picks[n];const u=document.createElement("div");u.className="drag under";
- u.innerHTML=`<div class="tilt"><div class="flipper flip">${slices()}<div class="face back"><span>${ic("paw")}</span></div>${cardFace(petOf(id),f,t)}</div></div>`;sc.appendChild(u)}
+ u.innerHTML=`<div class="tilt"><div class="flipper flip">${slices()}<div class="face back">${ic("leaf")}</div>${cardFace(petOf(id),f,t)}</div></div>`;sc.appendChild(u)}
 const P={x:0,y:0,r:0};let anim=0,SCENE_DRAG=false;
-function place(){const d=document.getElementById("drag");if(d)d.style.transform=`translate(${P.x}px,${P.y}px) rotate(${P.r}deg)`}
+function place(){const d=document.getElementById("drag");if(d)d.style.transform=`translate(${P.x}px,${P.y}px) rotate(${P.r}deg)`;
+ /* the next card waits underneath, but stays invisible until this one is actually dragged away (otherwise tilting the card shows it peeking out behind) */
+ const u=document.querySelector("#scene .under");if(u)u.style.opacity=Math.abs(P.x)+Math.abs(P.y)>20?"1":"0"}
 function bind(){
  cancelAnimationFrame(anim);P.x=P.y=P.r=0;
  const scene=document.getElementById("scene"),drag=document.getElementById("drag"),tilt=document.getElementById("tilt"),fl=document.getElementById("flipper");
@@ -1212,8 +1383,8 @@ function flip(){if(flipped)return;flipped=true;document.getElementById("flipper"
 function fling(dir){if(busy||!flipped)return;launch(dir*1.4,-.5,dir*.18)}
 function finish(){
  const kind=state.pack.kind||"daily",cnt=state.pack.picks.length;
- const rows=state.pack.picks.map(([id,f,t])=>{const p=petOf(id);
-  return `<div class="cell">${cardBox(id,f,t,state.col[ck(id,f,t)]?"":'<span class="new">new</span>')}<div class="cap">${favBtn(id,f,t,"smile","sm")}<br>${meetLink(p,"sm")}</div></div>`}).join("");
+ const meet=new Set(),rows=state.pack.picks.map(([id,f,t])=>{const p=petOf(id),isNew=!state.seen[id]&&!meet.has(String(id));meet.add(String(id)); /* "new" only for a species you've never met before (a repeat inside the same pack isn't new either) */
+  return `<div class="cell">${cardBox(id,f,t,isNew?'<span class="new">new</span>':"")}</div>`}).join("");
  state.pack.picks.forEach(([id,f,t])=>addCard(id,f,t));state.pack=null;state.cur=null;save();
  stage.innerHTML=`<div style="font-size:48px;color:var(--accent)">${ic("party-popper")}</div><div class="sumrow">${rows}</div>
  <div class="hint">${cnt==1?"a real critter was":cnt+" real critters were"} spotted in the wild. add anyone who made you smile to your favorites, then take a look at the sightings.${kind=="daily"&&!state.unl?" come back tomorrow for a fresh pack.":""}</div>
@@ -1238,7 +1409,8 @@ function shardDraw(cv,v){
  ctx.lineJoin="round";
  for(let n=0;n<cells.length;n++){const c=cells[n],d=Math.abs(v.tx*c.a+v.ty*c.b+v.amb*.8-c.c),u=shClamp(1-d*1.2,0,1),p=shClamp(1-d*3.2,0,1);
   let h,sat,l,al;
-  if(k=="f"){h=v.fh+c.r*v.fs;sat=32+u*46-p*30;l=54+u*12+p*26;al=c.m*.85}
+  if(k=="f"){if(c.gx===undefined){let sx=0,sy=0;for(const q of c.poly){sx+=q[0];sy+=q[1]}c.gx=sx/c.poly.length/300;c.gy=sy/c.poly.length/420}
+  h=v.fh+(v.fh2>-900?(v.fh2-v.fh)*(c.gx+c.gy)/2:0)+c.r*v.fs;sat=32+u*46-p*30;l=54+u*12+p*26;al=c.m*.85}
   else{h=v.bh+c.r*v.bs;sat=v.bsat+u*18-p*v.bps;l=v.bl+u*v.bu+p*v.bp;al=.55+c.m*.45}
   ctx.globalAlpha=al;ctx.fillStyle="hsl("+(((h%360)+360)%360).toFixed(1)+","+shClamp(sat,0,100).toFixed(1)+"%,"+shClamp(l,0,100).toFixed(1)+"%)";
   ctx.beginPath();const P=c.poly;ctx.moveTo(P[0][0],P[0][1]);for(let i=1;i<P.length;i++)ctx.lineTo(P[i][0],P[i][1]);ctx.closePath();ctx.fill();
@@ -1256,7 +1428,7 @@ function shardTick(now){
   const moved=cv._tx===undefined||Math.abs(tx-cv._tx)>.003||Math.abs(ty-cv._ty)>.003;
   if(!moved&&cv._amb!==undefined&&(Math.abs(amb-cv._amb)<.004||now-(cv._at||0)<33))continue;
   cv._tx=tx;cv._ty=ty;cv._amb=amb;cv._at=now;
-  shardDraw(cv,{tx,ty,amb,fh:shNum(cs,"--fh",0),fs:shNum(cs,"--fs",360),bh:shNum(cs,"--bh",40),bs:shNum(cs,"--bs",14),bsat:shNum(cs,"--bsat",72),bl:shNum(cs,"--bl",40),bu:shNum(cs,"--bu",24),bp:shNum(cs,"--bp",30),bps:shNum(cs,"--bps",30)})}
+  shardDraw(cv,{tx,ty,amb,fh:shNum(cs,"--fh",0),fh2:shNum(cs,"--fh2",-999),fs:shNum(cs,"--fs",360),bh:shNum(cs,"--bh",40),bs:shNum(cs,"--bs",14),bsat:shNum(cs,"--bsat",72),bl:shNum(cs,"--bl",40),bu:shNum(cs,"--bu",24),bp:shNum(cs,"--bp",30),bps:shNum(cs,"--bps",30)})}
  requestAnimationFrame(shardTick)}
 requestAnimationFrame(shardTick);
 const slices=()=>[-.45,-.3,-.15,0,.15,.3,.45].map(k=>`<i class="sl" style="--k:${k}"></i>`).join("");
@@ -1285,20 +1457,22 @@ function odds(p){if(!(p>0))return"";let n=1/p;n=n<10?Math.round(n*10)/10:n<100?M
  const tier=n<5?"common":n<20?"uncommon":n<100?"rare":n<500?"very rare":"ultra rare";
  return` <em class="rar">${tier} · 1 in ${n}</em>`}
 const finP=f=>SR[f]?SR_CHANCE/SRL.length:W[f]?EFFECT_CHANCE*W[f]/FXT:0;
-function fxText(f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr0]=(t||"").split(".");const vr=VARS[vr0]&&VARE.includes(f)?vr0:"";const sh=SHY[sh0]?sh0:"",par=par0===undefined||par0=="p";
+function fxText(f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr0,fa,ie]=(t||"").split(".");const vr=VARS[vr0]&&VARE.includes(f)?vr0:"";const sh=SHY[sh0]?sh0:"",par=par0===undefined||par0=="p";
  const out=[];
  if(f)out.push(`<span${SR[f]?' class="srt"':""}>${ic(FIN[f].icon,FIN[f].col)} ${SR[f]?"super rare · ":""}${tn?TN[tn]+" ":""}${FIN[f].label}${tx&&TEX[tx]?" · "+TEX[tx][0]:""}${vr?" · "+VARS[vr].n+" variation":""}${odds(finP(f)*(tx&&TEX[tx]&&!SR[f]?.12/TEXK.length:1)*(vr?VAR_CHANCE/VARK.length:1))}</span>`);
  if(BORD[gd])out.push(`<span class="srt">${ic("medal",BORD[gd].col)} ${BORD[gd].n} border · really rare${odds(BORDER_CHANCE*BORD[gd].w/BFXT)}</span>`);
  if(TFX[tf])out.push(`<span>${ic(TFX[tf].icon,"#e0a21b")} text: ${TFX[tf].label}${odds(TFX_CHANCE*TFX[tf].w/TFLT)}</span>`);
  if(sh)out.push(`<span>${ic("shimmer","#e0a21b")} shiny ${SHY[sh].toLowerCase()}${odds(SHINY_CHANCE/(EDGE_OK.includes(f||"")?3:2))}</span>`);
+ if(IE[ie])out.push(`<span>${ic(IE[ie].icon,"#e0a21b")} image effect: ${IE[ie].label}${odds(IE_CHANCE*IE[ie].w/IET)}</span>`);
+ if(FA[fa])out.push(`<span>${ic("image","#6aa9ff")} ${FA[fa].label}${odds(FA_CHANCE*FA[fa].w/FAT)}</span>`);
  if(par)out.push(`<span>${ic("layers","#9fb0c0")} parallax photo${odds(PARALLAX_CHANCE)}</span>`);
  return out.length?`<div class="fxl">${out.join("")}</div>`:`<div class="fxl none">plain card, no special effects</div>`}
 const FACES=new Map();
 function cardFace(p,f,t){const k=p.id+"|"+(f||"")+"|"+(t||"");let h=FACES.get(k);if(!h){h=cardFace0(p,f,t);FACES.set(k,h)}return h}
-function cardFace0(p,f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr]=(t||"").split(".");const par=par0===undefined||par0=="p";const sh=SHY[sh0]?sh0:"";return `<div class="face front sp-${p.sp} fin-${f||"none"}${BORD[gd]?" gold bd-"+gd:""}${TFX[tf]?" tf-"+tf:""}${sh?" shy-"+sh:""}${VARS[vr]&&VARE.includes(f)?" var-"+vr:""}${par?" par":""}${SR[f]?" sr":""}${FOILS[f]?" fin-foil foil-"+f:""} tint-${FOILS[f]?"foil":(tn||"rb")}${bg&&BGS[bg]&&!NOBG.includes(f)&&!SR[f]?" bg-"+bg:""}"><div class="holo">${f=="facet"?facetSVG(seedOf(p,t)):""}</div>${sh=="bg"?'<div class="shy"></div>':""}${tx&&TEX[tx]?`<div class="tex tx-${tx}"></div>`:""}<div class="hd txt"><div class="nm">${tf=="wave"?waveHTML(p.name):p.name}</div></div><div class="sptab" title="${SPC[p.sp]}" role="img" aria-label="${SPC[p.sp]}">${ic(SPI[p.sp])}</div>
- <div class="pw"><img class="photo" decoding="async" src="${photo(p)}" alt="${p.name}${p.live?"":", sample photo"}" referrerpolicy="no-referrer" draggable="false"><div class="pholo"></div>${sh=="img"?'<div class="pshy"></div>':""}</div>
- ${BORD[gd]?`<div class="gb">${borderSVG(seedOf(p,t))}</div>`:""}<div class="bd txt"><div class="meta"><i>${p.breed}</i> · ${p.age}</div><div class="desc">${p.desc}</div></div><div class="ft where txt">${ic("map-marker")}<span>${shOf(p).n}</span></div></div>`}
-function cardBox(id,f,t,extra,back){return `<div class="cardbox" data-id="${id}" data-f="${f||""}" data-t="${t||""}"><div class="tilt">${slices()}${cardFace(petOf(id),f,t)}${back?`<div class="face back"><span>${ic("paw")}</span></div>`:""}</div>${extra||""}</div>`}
+function cardFace0(p,f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr,fa,ie]=(t||"").split(".");const par=par0===undefined||par0=="p";const sh=SHY[sh0]?sh0:"";return `<div class="face front sp-${p.sp} fin-${f||"none"}${BORD[gd]?" gold bd-"+gd:""}${FA[fa]?" fa fa-"+fa:""}${IE[ie]?" ie-"+ie:""}${TFX[tf]?" tf-"+tf:""}${sh?" shy-"+sh:""}${VARS[vr]&&VARE.includes(f)?" var-"+vr:""}${par?" par":""}${SR[f]?" sr":""}${FOILS[f]?" fin-foil foil-"+f:""} tint-${FOILS[f]?"foil":(tn||"rb")}${bg&&BGS[bg]&&!NOBG.includes(f)&&!SR[f]?" bg-"+bg:""}"><div class="holo">${f=="facet"?facetSVG(seedOf(p,t)):""}</div>${sh=="bg"?'<div class="shy"></div>':""}${tx&&TEX[tx]?`<div class="tex tx-${tx}"></div>`:""}<div class="hd txt"><div class="nm">${tf=="wave"?waveHTML(p.name):p.name}</div></div><div class="sptab" title="${SPC[p.sp]}" role="img" aria-label="${SPC[p.sp]}">${ic(SPI[p.sp])}</div>
+ <div class="pw">${FA[fa]?'<div class="fclip">':""}${IE[ie]?'<div class="ifw">':""}<img class="photo" decoding="async" src="${photo(p)}" alt="${p.name}${p.live?"":", sample photo"}" referrerpolicy="no-referrer" draggable="false">${IE[ie]?"</div>":""}${FA[fa]?"</div>":""}${IE[ie]?'<div class="ifx"></div>':""}<div class="pholo"></div>${sh=="img"?'<div class="pshy"></div>':""}</div>
+ ${BORD[gd]?`<div class="gb">${borderSVG(seedOf(p,t))}</div>`:""}<div class="bd txt"><div class="meta"><i>${p.breed}</i> · ${p.age}</div><div class="desc">${p.desc}</div></div><div class="ft where txt">${ic("map-marker")}<span>${shOf(p).n}</span>${flagHTML(p)}</div></div>`}
+function cardBox(id,f,t,extra,back){return `<div class="cardbox" data-id="${id}" data-f="${f||""}" data-t="${t||""}"><div class="tilt">${slices()}${cardFace(petOf(id),f,t)}${back?`<div class="face back">${ic("leaf")}</div>`:""}</div>${extra||""}</div>`}
 const ck=(id,f,t)=>id+"|"+(f||"")+"|"+(t||"");
 function addCard(id,f,t){const k=ck(id,f,t),c=state.col[k];if(!state.seen[id])state.seen[id]=Date.now();if(c)c.n++;else state.col[k]={id,f:f||"",t:t||"",n:1,at:Date.now()}}
 function setCount(all){
@@ -1306,12 +1480,29 @@ function setCount(all){
  document.getElementById("count").textContent=all.length?`${all.length} card${all.length>1?"s":""} · ${met} animal${met>1?"s":""} met · ${sm} favorite${sm==1?"":"s"} · tap a card for a closer look`:(met?"no cards right now. open a pack, or see the critters you’ve met below.":"nothing here yet. open your first pack!");
 }
 function renderGrid(){renderGrid0();renderJournal();renderShop()}
+/* collection sorting: newest, oldest, card worth, name, or grouped by kind of animal (same species stay together inside a group) */
+const GORD=["mammal","bird","reptile","amphib","fish","insect","arachnid","mollusk"],GPL=sp=>sp=="fish"?"fish":GL[sp]+"s";
+function sortCards(list,mode){const L=list.slice(),by=(a,b)=>b.at-a.at,nm=c=>(petOf(c.id)||{}).name||"",val=c=>cardValue(c.f,c.t);
+ if(mode=="oldest")L.sort((a,b)=>a.at-b.at);
+ else if(mode=="worth")L.sort((a,b)=>val(b)-val(a)||by(a,b));
+ else if(mode=="cheap")L.sort((a,b)=>val(a)-val(b)||by(a,b));
+ else if(mode=="name")L.sort((a,b)=>nm(a).localeCompare(nm(b))||by(a,b));
+ else if(mode=="group")L.sort((a,b)=>GORD.indexOf(petOf(a.id).sp)-GORD.indexOf(petOf(b.id).sp)||nm(a).localeCompare(nm(b))||by(a,b));
+ else L.sort(by);
+ return L}
+function gridHTML(list,mode){let out="",last="";const cnt={};if(mode=="group")list.forEach(c=>{const k=petOf(c.id).sp;cnt[k]=(cnt[k]||0)+1});
+ list.forEach(c=>{const p=petOf(c.id);
+  if(mode=="group"&&p.sp!=last){last=p.sp;out+=`<h3 class="grp">${GPL(p.sp)} · ${cnt[p.sp]}</h3>`}
+  const worth=mode=="worth"||mode=="cheap"?" · worth "+ptsTxt(cardValue(c.f,c.t)):"";
+  out+=`<div class="cell">${cardBox(c.id,c.f,c.t,state.fav[c.id]?`<span class="fvmark">${ic("heart","#d6336c")}</span>`:"")}<div class="cap">${c.n>1?"pulled ×"+c.n:"pulled once"}${worth}</div></div>`});
+ return out}
+document.getElementById("srt").onchange=e=>{state.sort=e.target.value;save();renderGrid()};
 function renderGrid0(){
- const all=Object.values(state.col).filter(c=>petOf(c.id)).sort((a,b)=>b.at-a.at),list=state.filter=="smiles"?all.filter(c=>state.fav[c.id]):all;
+ const all=Object.values(state.col).filter(c=>petOf(c.id)),mode=state.sort||"recent",list=sortCards(state.filter=="smiles"?all.filter(c=>state.fav[c.id]):all,mode);
+ {const sel=document.getElementById("srt");if(sel)sel.value=mode}
  setCount(all);
  document.querySelectorAll("#flt .chip").forEach(b=>b.classList.toggle("on",b.dataset.f==(state.filter||"all")));
- const gEl=document.getElementById("grid");gEl.innerHTML=list.length?list.map(c=>{const p=petOf(c.id);
-  return `<div class="cell">${cardBox(c.id,c.f,c.t,state.fav[c.id]?`<span class="fvmark">${ic("heart","#d6336c")}</span>`:"")}<div class="cap">${c.n>1?"pulled ×"+c.n:"pulled once"}</div></div>`}).join(""):(all.length?`<p class="sub" style="grid-column:1/-1">no favorites yet. tap favorite on any card you love.</p>`:"");gridCull.watch(gEl)}
+ const gEl=document.getElementById("grid");gEl.innerHTML=list.length?gridHTML(list,mode):(all.length?`<p class="sub" style="grid-column:1/-1">no favorites yet. tap favorite on any card you love.</p>`:"");gridCull.watch(gEl)}
 function toggleFav(b){const id=+b.dataset.id;if(state.fav[id])delete state.fav[id];else state.fav[id]={f:b.dataset.f,t:b.dataset.t};save();
  const on=!!state.fav[id];document.querySelectorAll('#stage .fv[data-id="'+id+'"],#lb .fv[data-id="'+id+'"]').forEach(x=>{x.classList.toggle("on",on);x.innerHTML=favTxt(on,x.classList.contains("sm")?"sm":"")});refreshTrade();favGrid(id,on)}
 function favGrid(id,on){
@@ -1376,7 +1567,7 @@ function closeLb(){
  an.onfinish=fin;an.oncancel=fin}
 function closeLbNow(){lb.getAnimations().forEach(x=>x.cancel());if(LB.src){LB.src.style.visibility="";LB.src=null}cancelAnimationFrame(LB.raf);LB.drag=LB.spin=false;LB.z=1;LB.px=LB.py=0;LB.pan=false;lb.classList.remove("on","zoomed");document.body.classList.remove("lbopen");closeRaw();lb.innerHTML=""}
 function openLb(b){cancelAnimationFrame(LB.raf);LB.z=1;LB.px=LB.py=0;LB.pan=false;lb.classList.remove("zoomed");LB.rx=LB.ry=0;LB.drag=LB.spin=false;const id=+b.dataset.id,p=petOf(id);
- lb.innerHTML=cardBox(id,b.dataset.f,b.dataset.t,"",true).replace('class="cardbox"','class="cardbox" style="--w:var(--lbw);cursor:grab"')+`<div class="acts">${favBtn(id,b.dataset.f,b.dataset.t,"made me smile")}${meetLink(p)}${rawBtn(p)}${tradeBtn(id,b.dataset.f,b.dataset.t,b)}<button class="lbx x" aria-label="close">close</button></div>${fxText(b.dataset.f,b.dataset.t)}<div class="hint" style="color:#fffa">drag the card to rotate it · ${matchMedia("(pointer:coarse)").matches?"pinch":"scroll"} to zoom</div>`;
+ lb.innerHTML=cardBox(id,b.dataset.f,b.dataset.t,"",true).replace('class="cardbox"','class="cardbox" style="--w:var(--lbw);cursor:grab"')+`<div class="acts">${favBtn(id,b.dataset.f,b.dataset.t,"made me smile")}${meetLink(p)}${rawBtn(p)}${wikiBtn(p)}${tradeBtn(id,b.dataset.f,b.dataset.t,b)}<button class="lbx x" aria-label="close">close</button></div>${fxText(b.dataset.f,b.dataset.t)}<div class="hint" style="color:#fffa">drag the card to rotate it · ${matchMedia("(pointer:coarse)").matches?"pinch":"scroll"} to zoom</div>`;
  lb.classList.add("on");document.body.classList.add("lbopen");lb.querySelector(".x").onclick=closeLb;
  if(LB.src)LB.src.style.visibility="";LB.src=b;
  /* fly the card from where it was clicked to the centre of the screen */
@@ -1410,7 +1601,7 @@ document.addEventListener("pointermove",e=>{if(LB.drag){const b=lbBox();if(!b)re
  if(LB.spin)return;const inLb=lb.classList.contains("on");if(inLb&&!lbFront())return;/* preview: cursor tilt only while the card faces front */
  const box=inLb?lb.querySelector(".cardbox"):(e.target.closest&&e.target.closest(".cardbox[data-id]"));if(box)pmFrame(0,box,e.clientX,e.clientY)});
 document.addEventListener("pointerout",e=>{const b=e.target.closest&&e.target.closest(".cardbox");if(b&&!b.closest("#lb")&&!b.contains(e.relatedTarget)){pmFrame.cancel();b.querySelector(".tilt").style.transform="";resetFx(b.querySelector(".front"))}});
-document.addEventListener("keydown",e=>{if(e.key=="Escape"){if(rawOpen())closeRaw();else if(lb.classList.contains("on"))closeLb();else closeDbg()}});
+document.addEventListener("keydown",e=>{if(e.key=="Escape"){if(wikiOpen())closeWiki();else if(rawOpen())closeRaw();else if(lb.classList.contains("on"))closeLb();else closeDbg()}});
 document.getElementById("reset").onclick=()=>{if(confirm("clear your collection and favorites, and reset today’s pack?")){state={last:"",fav:{},col:{},filter:"all",pack:null,unl:state.unl,pts:0,inv:{},seen:{},shop:{d:"",n:0},cur:null,econ:2};save();renderPack();renderGrid()}};
 // ===== debug gallery: every finish, tint, texture, shiny mode, parallax and card color =====
 function openDbg(){let d=document.getElementById("dbg");
@@ -1427,9 +1618,9 @@ function openDbg(){let d=document.getElementById("dbg");
 function closeDbg(){const d=document.getElementById("dbg");if(d)d.classList.remove("on")}
 function buildDbg(){const d=document.getElementById("dbg"),q=s=>d.querySelector(s);
  const pet=+q("#dbg-pet").value,col=q("#dbg-col").value,shy=q("#dbg-shy").value,par=q("#dbg-par").checked?"p":"";
- const T=(o={})=>[o.tn||"",o.tx||"",o.bg!==undefined?o.bg:col,o.sh!==undefined?o.sh:shy,o.pa!==undefined?o.pa:par,o.gd||"",o.tf||"",o.vr||""].join(".");
+ const T=(o={})=>[o.tn||"",o.tx||"",o.bg!==undefined?o.bg:col,o.sh!==undefined?o.sh:shy,o.pa!==undefined?o.pa:par,o.gd||"",o.tf||"",o.vr||"",o.fa||"",o.ie||""].join(".");
  const all=q("#dbg-all").checked;
- const have=Object.values(state.col).map(c=>{const[tn,tx,bg,sh,pa,gd,tf,vr]=(c.t||"").split(".");return{vr:vr||"",gd:gd||"",tf:tf||"",f:c.f||"",tn:tn||"",tx:tx||"",bg:bg||"",sh:SHY[sh]?sh:"",pon:pa===undefined||pa=="p",poff:pa===""}});
+ const have=Object.values(state.col).map(c=>{const[tn,tx,bg,sh,pa,gd,tf,vr,fa,ie]=(c.t||"").split(".");return{ie:ie||"",fa:fa||"",vr:vr||"",gd:gd||"",tf:tf||"",f:c.f||"",tn:tn||"",tx:tx||"",bg:bg||"",sh:SHY[sh]?sh:"",pon:pa===undefined||pa=="p",poff:pa===""}});
  const got=fn=>all||have.some(fn);
  const fin=Object.keys(FIN).filter(k=>!SR[k]);
  const sec=[
@@ -1444,6 +1635,9 @@ function buildDbg(){const d=document.getElementById("dbg"),q=s=>d.querySelector(
   ["parallax photo","tilt the card to see the photo shift.",[["parallax on","",T({pa:"p"}),got(c=>c.pon)],["parallax off","",T({pa:""}),got(c=>c.poff)]]],
   ["border variants","really rare: a shining voronoi-shard frame that can show up on any card (about 1 in 70 cards; gold is about 1 in 250). tilt to make the shards flash.",Object.entries(BORD).map(([k,v])=>[v.n+" border","",T({gd:k}),got(c=>c.gd==k)])],
   ["text effects","effects on the card name (about 1 in 30 cards).",Object.entries(TFX).map(([k,v])=>[v.label,"",T({tf:k}),got(c=>c.tf==k)])],
+  ["image effects","these change the photo itself, so any finish, border or text effect can stack on top (about 1 in 12 cards).",Object.entries(IE).map(([k,v])=>[v.label,"",T({ie:k}),got(c=>c.ie==k)])],
+  ["image effects + finishes","an image effect with a finish stacked on top.",[["noir + holographic","holo","noir"],["toon + prismatic","prism","toon"],["pixel art + glitter","glitter","pixel"],["comic book + neon","neon","comic"],["watercolor + shimmer","shimmer","watercolor"],["pencil sketch + glisten","facet","sketch"]].map(([l,f,ie])=>[l,f,T({ie}),got(c=>c.ie==ie&&c.f==f)])],
+  ["full art","the photo fills the whole card and the border stays. text keeps its spot with a drop shadow (about 1 in 16 cards).",Object.entries(FA).map(([k,v])=>[v.label,"",T({fa:k}),got(c=>c.fa==k)])],
   ["card colors","tinted card surfaces (about 1 in 4 cards).",BGK.map(k=>[k,"",T({bg:k}),got(c=>c.bg==k)])]];
  q(".dbody")&&q(".dbody").remove();
  const b=document.createElement("div");b.className="dbody";
@@ -1515,7 +1709,7 @@ gyChk.onchange=async()=>{
  save()};
 // Android/Chrome can resume without a prompt; iPhone asks again each visit (needs a tap)
 if(gyOK&&state.gyro&&!(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==="function")){gyChk.checked=true;gyEnable().then(ok=>{if(!ok)gyChk.checked=false})}
-document.getElementById("logo").innerHTML=ic("paw");document.querySelector("#flt .chip[data-f=smiles]").innerHTML=ic("heart","#d6336c")+" favorites";
+document.getElementById("logo").innerHTML=ic("leaf");document.querySelector("#flt .chip[data-f=smiles]").innerHTML=ic("heart","#d6336c")+" favorites";
 Object.keys(state.fav).forEach(id=>{if(!Object.values(state.col).some(c=>c.id==id)){const v=state.fav[id];addCard(+id,v.f,v.t)}});
 Object.values(state.col).forEach(c=>{if(!state.seen[c.id])state.seen[c.id]=c.at||Date.now()});
 
@@ -1523,8 +1717,8 @@ Object.values(state.col).forEach(c=>{if(!state.seen[c.id])state.seen[c.id]=c.at|
 /* points economy: every effect is worth points by how rare it really is (from the same odds the roll uses),
    and stacking several effects on one card multiplies the whole total */
 const BASE_VALUE=10,STACK_BONUS=.5;
-const pv=p=>p>0?Math.max(5,Math.round(10*Math.pow(1/p,.35)/5)*5):5;
-function valueInfo(f,t){const[tn,tx,bg,sh,par0,gd,tf,vr0]=(t||"").split(".");
+const pv=p=>{if(!(p>0))return 5;const base=6*Math.pow(1/p,.5),hi=p<.0012?Math.pow(.0012/p,4):1;return Math.max(5,Math.round(base*hi/5)*5)}; /* gentle curve for nearly everything, then a sharp jump only for the very rarest effects (super rares and the 1-in-1000 finishes), so only some effects are worth really high */
+function valueInfo(f,t){const[tn,tx,bg,sh,par0,gd,tf,vr0,fa,ie]=(t||"").split(".");
  const parts=[["critter card",BASE_VALUE]];let k=0;const add=(l,p,st)=>{parts.push([l,pv(p)]);if(st)k++};
  const par=par0===undefined||par0=="p",vr=VARS[vr0]&&VARE.includes(f)?vr0:"";
  if(f&&FIN[f])add((SR[f]?"super rare ":"")+FIN[f].label,finP(f),1);
@@ -1532,6 +1726,8 @@ function valueInfo(f,t){const[tn,tx,bg,sh,par0,gd,tf,vr0]=(t||"").split(".");
  if(vr)add(VARS[vr].n+" variation",VAR_CHANCE/VARK.length,1);
  if(BORD[gd])add(BORD[gd].n+" border",BORDER_CHANCE*BORD[gd].w/BFXT,1);
  if(TFX[tf])add("text: "+TFX[tf].label,TFX_CHANCE*TFX[tf].w/TFLT,1);
+ if(IE[ie])add("image effect: "+IE[ie].label,IE_CHANCE*IE[ie].w/IET,1);
+ if(FA[fa])add(FA[fa].label,FA_CHANCE*FA[fa].w/FAT,1);
  if(SHY[sh])add("shiny "+SHY[sh].toLowerCase(),SHINY_CHANCE/(EDGE_OK.includes(f||"")?3:2),1);
  if(par)add("parallax photo",PARALLAX_CHANCE,0);
  const sum=parts.reduce((s,x)=>s+x[1],0),mult=k>1?1+STACK_BONUS*(k-1):1;
@@ -1562,13 +1758,13 @@ document.addEventListener("click",e=>{const tb=e.target.closest&&e.target.closes
  e.stopPropagation();e.preventDefault();if(tb.disabled)return;tradePop(+tb.dataset.id,tb.dataset.f,tb.dataset.t)},true);
 function shopToday(){if(state.shop.d!==today())state.shop={d:today(),n:0};return state.shop}
 function poolCount(k){const base=POOL.length>=5?POOL:CRITTERS,K=PACKS[k];return K.sp?base.filter(p=>K.sp.includes(p.sp)).length:base.length}
-const SHOPG=[["classic packs","random critters from anywhere in the world",["classic","mega","lucky"]],["by animal","pick the kind of critter you want",["bird","mammal","bug"]],["around the world","wild critters spotted on each continent, fetched fresh every time",["asia","europe","africa","namerica","samerica","oceania"]]];
+const SHOPG=[["classic packs","random critters from anywhere in the world",["classic","mega","lucky","superlucky"]],["by animal","pick the kind of critter you want",["bird","mammal","bug"]],["specific animals","one family of animals per pack, wild sightings fetched fresh every time",["cat","dog","bear","rabbit","rodent","turtle"]],["around the world","wild critters spotted on each continent, fetched fresh every time",["asia","europe","africa","namerica","samerica","oceania"]]];
 let shopPop="",shopMsgT=0;
 const shopEl=document.getElementById("shop"),shopEntry=document.getElementById("shopentry");
 const shopIsOpen=()=>shopEl.classList.contains("on");
 function packTile(k,own,left,busy){
  const K=PACKS[k],few=K.sp&&poolCount(k)<3,short=K.cost-state.pts,why=few?"not enough available today":short>0?"need "+short.toLocaleString()+" more":left<1?"daily limit reached":"";
- const tags=[`<i class="hl">${K.n} cards</i>`];if(K.luck)tags.push(`<i class="hl">${K.luck}× sparkle</i>`);if(K.reg)tags.push(`<i class="hl">live sightings</i>`);if(K.sp)tags.push(`<i>${K.what}</i>`);
+ const tags=[`<i class="hl">${K.n} cards</i>`];if(K.luck)tags.push(`<i class="hl">${K.luck}× sparkle</i>`);if(K.reg||K.tax)tags.push(`<i class="hl">live sightings</i>`);if(K.sp)tags.push(`<i>${K.what}</i>`);
  return `<div class="sp-card${shopPop==k?" pop":""}" style="--h:${K.hue||30}">${own>0?`<span class="sp-badge">×${own} owned</span>`:""}
   <div class="mp k-${k}"><u class="sh"></u><span class="mi">${ic(K.ico,"#fff")}</span><em>${K.label.replace(" pack","")}</em></div>
   <b class="nm2">${K.label}</b><span class="pd">${K.desc}</span><div class="sp-tags">${tags.join("")}</div>
@@ -1579,7 +1775,7 @@ function renderShop(){if(!shopEl)return;
  const ready=inv.reduce((a,[,n])=>a+n,0);
  const pips=Array.from({length:SHOP_CAP},(_,i)=>`<i class="${i<left?"":"u"}"></i>`).join("");
  // the button on the main page
- shopEntry.innerHTML=`<button class="shopbtn" id="shopbtn" aria-haspopup="dialog"><span class="stk"><i class="mpk k-bird"></i><i class="mpk k-asia"></i><i class="mpk k-lucky"></i></span><span class="st"><b>pack shop${ready?`<span class="rdy">${ready} ready</span>`:""}</b><small>spend your points on extra packs, 12 kinds to collect</small></span><span class="bal"><span class="coin"></span>${state.pts.toLocaleString()}</span><span class="chev" aria-hidden="true">›</span></button>`;
+ shopEntry.innerHTML=`<button class="shopbtn" id="shopbtn" aria-haspopup="dialog"><span class="stk"><i class="mpk k-bird"></i><i class="mpk k-asia"></i><i class="mpk k-lucky"></i></span><span class="st"><b>pack shop${ready?`<span class="rdy">${ready} ready</span>`:""}</b><small>spend your points on extra packs, 13 kinds to collect</small></span><span class="bal"><span class="coin"></span>${state.pts.toLocaleString()}</span><span class="chev" aria-hidden="true">›</span></button>`;
  shopEntry.querySelector("#shopbtn").onclick=shopOpen;
  // the full-screen page
  shopEl.innerHTML=`<div class="sp-top"><div class="sp-in"><button class="sp-back" id="spback" aria-label="back to your packs">‹ back</button><h2>pack shop</h2><span class="sp-toast" id="sptoast" role="status"></span><span class="lim">${state.unl?"playtest mode: no daily limit":"extra packs today "+pips+" · "+left+" of "+SHOP_CAP+" left"}</span><span class="bal"><span class="coin"></span>${state.pts.toLocaleString()} <small>points</small></span></div></div>
@@ -1633,6 +1829,109 @@ document.getElementById("rgsave").onclick=async()=>{
  renderGrid();
  if(state.pack&&state.pack.idx<state.pack.picks.length)showCard();else renderPack();
 })();
+
+/* ===== one-line names: squish horizontally (x only) to fit the space beside the species tab ===== */
+const fitNm=hd=>{const nm=hd.querySelector(".nm");if(!nm)return;const cs=getComputedStyle(hd),av=hd.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),w=nm.offsetWidth;
+ if(av<=0||!w)return;const sx=Math.min(1,av/w);nm.style.setProperty("--sx",sx.toFixed(4))};
+const nmRO=new ResizeObserver(es=>es.forEach(e=>fitNm(e.target))),nmSeen=new WeakSet();
+const nmScan=root=>{(root.querySelectorAll?root.querySelectorAll(".front .hd"):[]).forEach(hd=>{if(!nmSeen.has(hd)){nmSeen.add(hd);nmRO.observe(hd)}fitNm(hd)})};
+new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>n.nodeType==1&&nmScan(n)))).observe(document.body,{childList:true,subtree:true});
+nmScan(document);
+if(document.fonts){document.fonts.ready.then(()=>nmScan(document));document.fonts.addEventListener("loadingdone",()=>nmScan(document))}
+
+/* ===== country flag in the card footer: the country the photo was taken in, looked up once per observation from its coordinates ===== */
+function flagImg(cc){return `<img class="flag" src="https://flagcdn.com/h40/${cc}.png" srcset="https://flagcdn.com/h80/${cc}.png 2x" alt="${cc.toUpperCase()}" title="${cc.toUpperCase()}" draggable="false" referrerpolicy="no-referrer" onerror="this.remove()">`}
+function flagHTML(p){return p.cc?flagImg(p.cc):(p.ll&&p.cc===undefined?`<i class="flag" data-fid="${p.id}"></i>`:"")}
+const ccMemo=new Map(),ccQ=[];let ccBusy=0;
+function ccPump(){while(ccBusy<3&&ccQ.length){const job=ccQ.shift();ccBusy++;job().finally(()=>{ccBusy--;ccPump()})}}
+function ccLookup(ll){const [la,lo]=ll.split(",").map(Number);if(!isFinite(la)||!isFinite(lo))return Promise.resolve("");
+ const k=la.toFixed(1)+","+lo.toFixed(1);if(ccMemo.has(k))return ccMemo.get(k);
+ const pr=new Promise(res=>ccQ.push(async()=>{try{const ac=new AbortController(),to=setTimeout(()=>ac.abort(),8000);
+  const r=await fetch("https://api.bigdatacloud.net/data/reverse-geocode-client?localityLanguage=en&latitude="+la+"&longitude="+lo,{signal:ac.signal});clearTimeout(to);
+  const j=r.ok?await r.json():{};const c=String(j.countryCode||"").toLowerCase();res(/^[a-z]{2}$/.test(c)?c:"")}catch(e){res("")}}));
+ ccMemo.set(k,pr);ccPump();return pr}
+function flagScan(root){(root.querySelectorAll?root.querySelectorAll("i.flag[data-fid]"):[]).forEach(el=>{
+ const id=+el.dataset.fid,p=petOf(id);if(!p)return;if(p.cc!==undefined){el.outerHTML=flagHTML(p);return}
+ if(el._ccw)return;el._ccw=1;
+ ccLookup(p.ll).then(cc=>{p.cc=cc;document.querySelectorAll('i.flag[data-fid="'+id+'"]').forEach(x=>{x.outerHTML=flagHTML(p)})})})}
+new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>n.nodeType==1&&flagScan(n)))).observe(document.body,{childList:true,subtree:true});
+flagScan(document);
+
+/* ===== wikipedia summary for the species (REST summary api, looked up by scientific name, then common name) ===== */
+function wikiBtn(p,c){return `<button class="rawbtn wikibtn ${c||""}" data-id="${p.id}">${ic("info")} about the species</button>`}
+const WK=new Map(),wkText=h=>{const t=document.createElement("textarea");t.innerHTML=h;return t.value};
+async function wikiFetch(p){
+ if(WK.has(p.id))return WK.get(p.id);
+ const sci=wkText(p.breed||"").trim(),com=wkText(p.name||"").trim(),names=[];
+ if(sci)names.push(sci);if(sci.split(/\s+/).length>2)names.push(sci.split(/\s+/).slice(0,2).join(" "));if(com&&!names.includes(com))names.push(com);
+ let netErr=false;
+ for(const n of names){
+  try{const r=await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(n.replace(/ /g,"_"))+"?redirect=true",{headers:{Accept:"application/json"}});
+   if(!r.ok)continue;const j=await r.json();if(j.type=="disambiguation"||!j.extract)continue;
+   const out={title:j.title,desc:j.description||"",extract:j.extract,img:j.thumbnail&&j.thumbnail.source||"",url:j.content_urls&&j.content_urls.desktop&&j.content_urls.desktop.page||""};
+   WK.set(p.id,out);return out}
+  catch(e){netErr=true}}
+ if(netErr)throw new Error("net");
+ WK.set(p.id,null);return null}
+function openWiki(id){const p=petOf(id);if(!p)return;let w=document.getElementById("wiki");
+ if(!w){w=document.createElement("div");w.id="wiki";w.setAttribute("role","dialog");w.setAttribute("aria-modal","true");w.onclick=e=>{if(e.target===w||e.target.closest(".wkx"))closeWiki()};document.body.appendChild(w)}
+ const sci=wkText(p.breed||""),head=`<h3>${p.name}</h3><div class="wksci">${p.breed||""}</div>`,close=`<button class="ghost wkx">close</button>`;
+ const box=h=>{w.innerHTML=`<div class="wkbox">${head}${h}</div>`};
+ box(`<p>looking it up on wikipedia…</p>`);w.classList.add("on");w._id=id;
+ wikiFetch(p).then(o=>{if(!w.classList.contains("on")||w._id!==id)return;
+  if(!o)box(`<p>couldn’t find a wikipedia article for this one.</p><div class="wkfoot"><a href="https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(sci||wkText(p.name))}" target="_blank" rel="noopener">search wikipedia ↗</a>${close}</div>`);
+  else box(`${o.desc?`<div class="wkdesc">${esc(o.desc)}</div>`:""}${o.img?`<img class="wkimg" src="${esc(o.img)}" alt="" referrerpolicy="no-referrer" draggable="false" onerror="this.remove()">`:""}${o.extract.split(/\n+/).map(t=>`<p>${esc(t)}</p>`).join("")}<div class="wkfoot"><span>from wikipedia · <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA</a>${o.url?` · <a href="${esc(o.url)}" target="_blank" rel="noopener">read the full article ↗</a>`:""}</span>${close}</div>`)})
+ .catch(()=>{if(!w.classList.contains("on")||w._id!==id)return;box(`<p>couldn’t reach wikipedia (offline, or blocked).</p><div class="wkfoot"><span></span>${close}</div>`)})}
+function closeWiki(){const w=document.getElementById("wiki");if(w)w.classList.remove("on")}
+const wikiOpen=()=>{const w=document.getElementById("wiki");return !!(w&&w.classList.contains("on"))};
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest(".wikibtn");if(b){e.stopPropagation();e.preventDefault();openWiki(+b.dataset.id)}},true);
+
+/* ===== pixel art finish =====
+   not a plain pixelate: the photo is downscaled in two steps, given a little extra colour and contrast, squeezed into a 20 colour palette
+   (median cut), mapped with an ordered (bayer) dither for smooth gradients, then strong light-to-dark edges get a one pixel dark outline,
+   like hand made sprites. if the photo host blocks pixel access we fall back to a pixelated, posterized canvas. */
+const PXW=56,PXN=20,PXE=58,PXC=new Map(),PXL=new Map(),PXB=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
+const px8=v=>v<0?0:v>255?255:v;
+function pxLoad(src,cors){const k=src+"|"+cors;if(PXL.has(k))return PXL.get(k);
+ const pr=new Promise((ok,no)=>{const im=new Image();if(cors)im.crossOrigin="anonymous";im.referrerPolicy="no-referrer";im.onload=()=>ok(im);im.onerror=()=>no(new Error("img"));im.src=src});
+ PXL.set(k,pr);pr.catch(()=>PXL.delete(k));return pr}
+function pxDraw(im,W,H){
+ const iw=im.naturalWidth,ih=im.naturalHeight,s=Math.max(W/iw,H/ih),sw=W/s,sh=H/s,sx=(iw-sw)/2,sy=(ih-sh)/2;
+ const mid=document.createElement("canvas");mid.width=W*3;mid.height=H*3;const mx=mid.getContext("2d");mx.imageSmoothingQuality="high";mx.drawImage(im,sx,sy,sw,sh,0,0,W*3,H*3);
+ const c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d",{willReadFrequently:true});x.imageSmoothingQuality="high";x.drawImage(mid,0,0,W*3,H*3,0,0,W,H);return c}
+function pxArt(c,W,H){
+ const x=c.getContext("2d"),d=x.getImageData(0,0,W,H),a=d.data,n=W*H;
+ for(let i=0;i<n;i++){const o=i*4,l=.3*a[o]+.59*a[o+1]+.11*a[o+2];
+  for(let k=0;k<3;k++)a[o+k]=px8((l+(a[o+k]-l)*1.3-128)*1.12+128)}
+ let boxes=[Array.from({length:n},(_,i)=>i)];
+ while(boxes.length<PXN){let bi=-1,bs=0,bc=0;
+  boxes.forEach((B,j)=>{if(B.length<2)return;const lo=[255,255,255],hi=[0,0,0];
+   for(const i of B)for(let k=0;k<3;k++){const v=a[i*4+k];if(v<lo[k])lo[k]=v;if(v>hi[k])hi[k]=v}
+   for(let k=0;k<3;k++){const sc=(hi[k]-lo[k])*B.length;if(sc>bs){bs=sc;bi=j;bc=k}}});
+  if(bi<0)break;const B=boxes[bi];B.sort((p,q)=>a[p*4+bc]-a[q*4+bc]);const m=B.length>>1;boxes.splice(bi,1,B.slice(0,m),B.slice(m))}
+ const pal=boxes.map(B=>{let r=0,g=0,b=0;for(const i of B){r+=a[i*4];g+=a[i*4+1];b+=a[i*4+2]}const k=B.length;return[r/k,g/k,b/k]});
+ const idx=new Uint8Array(n),lum=new Float32Array(n);
+ for(let i=0;i<n;i++)lum[i]=.3*a[i*4]+.59*a[i*4+1]+.11*a[i*4+2];
+ for(let y=0;y<H;y++)for(let xx=0;xx<W;xx++){const i=y*W+xx,o=i*4,t=(PXB[(y&3)*4+(xx&3)]/16-.47)*34,r=a[o]+t,g=a[o+1]+t,b=a[o+2]+t;
+  let best=0,bd=1e9;for(let j=0;j<pal.length;j++){const p=pal[j],e=(p[0]-r)**2+(p[1]-g)**2+(p[2]-b)**2;if(e<bd){bd=e;best=j}}idx[i]=best}
+ const dark=new Uint8Array(n);
+ for(let y=0;y<H;y++)for(let xx=0;xx<W;xx++){const i=y*W+xx;
+  if(xx<W-1){const dl=lum[i]-lum[i+1];if(Math.abs(dl)>PXE)dark[dl<0?i:i+1]=1}
+  if(y<H-1){const dl=lum[i]-lum[i+W];if(Math.abs(dl)>PXE)dark[dl<0?i:i+W]=1}}
+ for(let i=0;i<n;i++){const p=pal[idx[i]],k=dark[i]?.42:1,o=i*4;a[o]=p[0]*k;a[o+1]=p[1]*k;a[o+2]=p[2]*k;a[o+3]=255}
+ x.putImageData(d,0,0);return c}
+async function pxApply(img){
+ if(img.dataset.px)return;img.dataset.px="0";
+ const src=img.getAttribute("src"),box=img.parentElement;let w=box.offsetWidth,h=box.offsetHeight;
+ if(!w||!h){w=1;h=img.closest(".fa")?1.42:.9}
+ const H=Math.max(30,Math.min(110,Math.round(PXW*h/w))),key=src+"|"+H;
+ const set=u=>{img.src=u;img.dataset.px="1"};
+ if(PXC.has(key)){set(PXC.get(key));return}
+ try{const im=await pxLoad(src,true),c=pxDraw(im,PXW,H);pxArt(c,PXW,H);const u=c.toDataURL();PXC.set(key,u);set(u)}
+ catch(e){try{const im=await pxLoad(src,false),c=pxDraw(im,PXW,H);c.className="photo pxfb";c.dataset.px="1";if(img.isConnected)img.replaceWith(c)}catch(e2){img.dataset.px="1"}}}
+const pxScan=root=>{(root.querySelectorAll?root.querySelectorAll(".ie-pixel img.photo:not([data-px])"):[]).forEach(pxApply)};
+new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>n.nodeType==1&&pxScan(n)))).observe(document.body,{childList:true,subtree:true});
+pxScan(document);
 </script>
 </body>
 </html>
