@@ -841,6 +841,19 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 .k-fox{--pf:repeating-linear-gradient(45deg,rgba(0,0,0,.14) 0 5px,transparent 5px 13px),repeating-linear-gradient(112deg,#a13a0a 0,#f27a2a 8%,#ffd9b0 15%,#d9561a 24%,#74270a 32%,#a13a0a 38%)}
 .obsnote{max-width:min(92vw,420px);margin:2px auto 0;padding:8px 14px;border-radius:12px;background:rgba(255,255,255,.08);color:#fff;font-size:13px;line-height:1.4;text-align:center;overflow-wrap:anywhere}.obsnote small{display:block;font-size:10.5px;letter-spacing:.06em;text-transform:lowercase;opacity:.6;margin-bottom:2px}
 .front .hd .nm.cut,.front .ft .lt.cut{overflow:hidden;text-overflow:ellipsis}
+/* ===== gamedevrg account ===== */
+.gdacc{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin:8px 0 0;font-size:13px;color:var(--muted)}
+.gdacc button{background:none;color:var(--accent);border:1px solid var(--border);border-radius:99px;padding:5px 12px;font:600 13px inherit;font-family:inherit;cursor:pointer}
+.gdacc b{color:var(--text)}
+@media (max-width:600px){.gdacc button{min-height:44px;padding:8px 16px}}
+.gdmod{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.55)}
+.gdbox{width:min(92vw,380px);background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.gdbox h3{margin:0 0 8px;font-size:17px}.gdbox p{margin:0 0 12px;font-size:14px;line-height:1.45;color:var(--muted)}
+.gdbox input{width:100%;margin:0 0 6px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font:inherit;font-size:16px}
+.gdbox .gderr{min-height:1.3em;margin:0 0 6px;font-size:13px;color:#d6336c}
+.gdbtns{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.gdbtns button{border-radius:10px;padding:9px 14px;font:600 14px inherit;font-family:inherit;cursor:pointer;border:1px solid var(--border);background:none;color:var(--muted)}
+.gdbtns button.pri{background:var(--accent);border-color:var(--accent);color:#fff}
 </style>
 </head>
 <body>
@@ -848,6 +861,7 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 <main>
 <h1><span id="logo"></span> critter cards</h1>
 <p class="sub">five real wild critters from iNaturalist, free every day</p>
+<div class="gdacc" id="gdacc" role="status"></div>
 <details class="info" id="info"><summary>about this webpage</summary>
 <p class="about">every critter is a real wild animal, spotted and photographed by a nature lover and shared on iNaturalist, and every one has exactly the same chance of showing up. no critter is rarer than another; only the sparkle is luck of the draw, and sparkle is rare: most cards are plain, about 1 in 4 has a tinted card color, about 1 in 3 has a parallax photo, about 1 in 16 is full art (the photo fills the whole card), about 1 in 12 has an image effect (toon, pixel art, noir and more) that changes the photo itself, about 1 in 4 is slightly shiny, about 1 in 10 has a special finish, and roughly 1 in 100 has a super rare animated one. open a pack, enjoy the reveal, and add the ones that make you smile to your favorites. every card links to its original sighting on iNaturalist. trade in cards you don’t need for points, then spend the points on extra packs in the pack shop. the critter always stays in your list of critters you’ve met, so you can still look it up.</p>
 <label class="tg" id="gyrow" style="display:none"><input type="checkbox" id="gy"> tilt the cards by moving your phone <span id="gymsg" style="color:#d6336c"></span></label>
@@ -1169,7 +1183,7 @@ const favTxt=(on,c)=>on?ic("heart","#d6336c")+" favorited":ic("heart-outline")+"
 const KEY="critterpacks:v1";
 let state={last:"",fav:{},col:{},filter:"all",pack:null,unl:false,pts:0,inv:{},seen:{},shop:{d:"",n:0},cur:null};
 try{const s=localStorage.getItem(KEY);if(s)state=Object.assign(state,JSON.parse(s))}catch(e){}
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}cloudQueue()};
 if(!state.econ){state.econ=2;state.pts=Math.round((+state.pts||0)*20)}
 {/* image effects used to be finishes: move saved cards over so they keep their look */
  const ieFix=(f,t)=>{if(!f||!IE[f])return[f||"",t||""];const a=(t||"").split(".");while(a.length<9)a.push("");a[9]=f;return["",a.join(".")]};
@@ -2095,6 +2109,98 @@ async function pxApply(img){
 const pxScan=root=>{(root.querySelectorAll?root.querySelectorAll(".ie-pixel img.photo:not([data-px])"):[]).forEach(pxApply)};
 new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>n.nodeType==1&&pxScan(n)))).observe(document.body,{childList:true,subtree:true});
 pxScan(document);
+
+/* ===== gamedevrg.com account sync =====
+   sign in happens on gamedevrg.com/account (the login page of the whole website), which remembers the username in localStorage.
+   this game then asks for the password once per browser session to save its data to that account.
+   a brand-new account with no critter data can take over this browser's existing collection (this game only). */
+const GD_API="https://gamedevrg-com-backend.vercel.app",GD_LOGIN="https://gamedevrg.com/account",GD_GAME="critters",GD_PW="gdrg:pw",GD_OFF="gdrg:off",GD_DONE="gdrg:done";
+const gdLS={get(k){try{return localStorage.getItem(k)||""}catch(e){return ""}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const gdSS={get(k){try{return sessionStorage.getItem(k)||""}catch(e){return ""}},set(k,v){try{sessionStorage.setItem(k,v)}catch(e){}},del(k){try{sessionStorage.removeItem(k)}catch(e){}}};
+const gdUser=()=>gdLS.get("loggedIn")==="true"?gdLS.get("username"):"";
+let gdLinked=false,gdTimer=0,gdStatus="";
+async function gdApi(path,body){
+ try{const r=await fetch(GD_API+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  let j={};try{j=await r.json()}catch(e){}return{ok:r.ok,status:r.status,j}}
+ catch(e){return{ok:false,status:0,j:{message:"couldn’t reach the server"}}}}
+const gdBody=extra=>Object.assign({username:gdUser(),password:gdSS.get(GD_PW),game:GD_GAME},extra||{});
+function gdHasLocal(){return !!(Object.keys(state.col||{}).length||Object.keys(state.fav||{}).length||Object.keys(state.seen||{}).length||(+state.pts||0)>0||state.last)}
+function gdPayload(){
+ const keep=new Set();Object.values(state.col||{}).forEach(c=>keep.add(+c.id));Object.keys(state.fav||{}).forEach(i=>keep.add(+i));Object.keys(state.seen||{}).forEach(i=>keep.add(+i));
+ if(state.pack&&state.pack.picks)state.pack.picks.forEach(x=>keep.add(+x[0]));
+ const pets={};Object.keys(LIVE).forEach(k=>{if(keep.has(+k))pets[k]=LIVE[k]});
+ return{v:1,state,live:{next:LIVEN,pets}}}
+function gdUi(){
+ const el=document.getElementById("gdacc");if(!el)return;
+ const u=gdUser();el.textContent="";
+ const btn=(t,fn)=>{const b=document.createElement("button");b.textContent=t;b.onclick=fn;el.appendChild(b);return b};
+ const txt=t=>{const s=document.createElement("span");s.innerHTML=t;el.appendChild(s)};
+ const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+ if(!u){btn("sign in to gamedevrg.com",()=>{location.href=GD_LOGIN});txt("save your cards to your account")}
+ else if(!gdSS.get(GD_PW)||gdSS.get(GD_OFF)){txt("signed in as <b>"+esc(u)+"</b>");btn("sync my cards",()=>gdConnect(true));btn("sign out",gdSignOut)}
+ else{txt("signed in as <b>"+esc(u)+"</b> · "+esc(gdStatus||(gdLinked?"saved to your account":"connecting…")));btn("sign out",gdSignOut)}}
+function gdSignOut(){gdLS.del("loggedIn");gdLS.del("username");gdSS.del(GD_PW);gdSS.del(GD_OFF);gdSS.del(GD_DONE);gdLinked=false;gdStatus="";clearTimeout(gdTimer);gdUi()}
+function gdDialog(title,body,buttons,input){
+ return new Promise(res=>{
+  const m=document.createElement("div");m.className="gdmod";
+  const b=document.createElement("div");b.className="gdbox";b.setAttribute("role","dialog");b.setAttribute("aria-modal","true");
+  const h=document.createElement("h3");h.textContent=title;const p=document.createElement("p");p.textContent=body;b.append(h,p);
+  let inp=null,err=null;
+  if(input){inp=document.createElement("input");inp.type="password";inp.autocomplete="current-password";inp.placeholder="password";inp.setAttribute("aria-label","password");b.appendChild(inp);err=document.createElement("div");err.className="gderr";b.appendChild(err)}
+  const bar=document.createElement("div");bar.className="gdbtns";
+  buttons.forEach(([label,val,pri])=>{const x=document.createElement("button");x.textContent=label;if(pri)x.className="pri";x.onclick=()=>{if(inp&&val!==null&&!inp.value){err.textContent="enter your password";return}m.remove();res(val===true&&inp?inp.value:val)};bar.appendChild(x)});
+  b.appendChild(bar);m.appendChild(b);document.body.appendChild(m);
+  if(inp){inp.focus();inp.onkeydown=e=>{if(e.key==="Enter")bar.querySelector(".pri").click()}}
+  m._err=msg=>{if(err)err.textContent=msg}})}
+async function gdAsk(note){
+ const u=gdUser();
+ for(;;){
+  const pw=await gdDialog("sync with gamedevrg.com","enter the password for "+u+" to save your critter cards to your account."+(note?" "+note:""),[["not now",null],["sync",true,true]],true);
+  if(!pw)return null;
+  gdSS.set(GD_PW,pw);
+  const r=await gdApi("/account/gamedata/get",gdBody());
+  if(r.ok)return r;
+  gdSS.del(GD_PW);
+  if(r.status===400&&r.j&&r.j.message==="Incorrect password"){note="that password was incorrect.";continue}
+  gdStatus=(r.j&&r.j.message)||"couldn’t sync";gdUi();return null}}
+async function gdConnect(force){
+ if(!gdUser()){gdUi();return}
+ gdSS.del(GD_OFF);
+ let r=null;
+ if(gdSS.get(GD_PW)){r=await gdApi("/account/gamedata/get",gdBody());
+  if(!r.ok){gdSS.del(GD_PW);const nf=r.status===400&&r.j&&r.j.message==="User not found";r=null;if(nf){gdUi();return}}}
+ if(!r){if(!force&&!gdSS.get(GD_PW)){gdUi();return}r=await gdAsk();if(!r){gdSS.set(GD_OFF,"1");gdUi();return}}
+ const data=r.j&&r.j.data;
+ if(data&&data.state){
+  /* the account already has critter data */
+  if(!gdSS.get(GD_DONE)){
+   gdSS.set(GD_DONE,"1");
+   let same=false;try{same=JSON.stringify(data.state)===localStorage.getItem(KEY)}catch(e){}
+   if(!same){
+    try{if(gdHasLocal())localStorage.setItem(KEY+":backup",localStorage.getItem(KEY)||"")}catch(e){}
+    try{localStorage.setItem(KEY,JSON.stringify(data.state));
+     const lv=data.live||{};const cur=JSON.parse(localStorage.getItem(LIVEK)||"null")||{pets:{},next:1000};
+     localStorage.setItem(LIVEK,JSON.stringify({next:Math.max(cur.next||1000,lv.next||1000),pets:Object.assign({},cur.pets||{},lv.pets||{})}))}catch(e){}
+    location.reload();return}}
+  gdLinked=true;gdStatus="saved to your account";gdUi();return}
+ /* nothing saved for this game on the account yet */
+ if(gdHasLocal()){
+  const ok=await gdDialog("load your cards to your account?","your gamedevrg.com account has no critter cards data yet, but this browser has a saved collection. want to load it to your account? this only copies critter cards data, nothing from your other games.",[["no thanks",false],["load my cards",true,true]]);
+  if(!ok){gdSS.set(GD_OFF,"1");gdStatus="";gdUi();return}}
+ gdSS.set(GD_DONE,"1");gdLinked=true;await gdPush();gdUi()}
+async function gdPush(){
+ if(!gdLinked)return;
+ gdStatus="saving…";gdUi();
+ const r=await gdApi("/account/gamedata/set",gdBody({data:gdPayload()}));
+ if(r.ok)gdStatus="saved to your account";
+ else if(r.status===400&&r.j&&/password|not found/i.test(r.j.message||"")){gdLinked=false;gdSS.del(GD_PW);gdStatus="";gdUi();return}
+ else gdStatus="couldn’t save, will retry";
+ gdUi()}
+function cloudQueue(){if(!gdLinked)return;clearTimeout(gdTimer);gdTimer=setTimeout(gdPush,1500)}
+addEventListener("pagehide",()=>{if(gdLinked&&gdTimer){clearTimeout(gdTimer);gdTimer=0;try{fetch(GD_API+"/account/gamedata/set",{method:"POST",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify(gdBody({data:gdPayload()}))})}catch(e){}}});
+gdUi();
+if(gdUser()&&gdSS.get(GD_PW)&&!gdSS.get(GD_OFF))gdConnect(false);
+else if(gdUser()&&!gdSS.get(GD_OFF)&&!gdSS.get("gdrg:asked")){gdSS.set("gdrg:asked","1");setTimeout(()=>gdConnect(true),600)}
 </script>
 </body>
 </html>
