@@ -205,6 +205,10 @@ main button,main a.meet,#lb button,#lb a.meet,.pack{font-family:"Chakra Petch","
 .face.front>.tex{position:absolute;inset:0;z-index:0;pointer-events:none;background:#000;opacity:.14;-webkit-mask-repeat:repeat;mask-repeat:repeat}
 .chip{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:6px 14px;font:600 13px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;cursor:pointer}
 .chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.qrow{margin-top:10px}.qrow[hidden]{display:none}
+.qrow input{width:100%;max-width:420px;box-sizing:border-box;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:8px 16px;font:600 14px "Chakra Petch","Noto Sans",system-ui,sans-serif}
+.qrow input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:600px){.qrow input{max-width:none;min-height:44px;font-size:16px}}
 .srt{display:inline-flex;align-items:center;gap:8px;margin-left:auto;color:var(--muted);font:600 13px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif}
 .srt select{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:99px;padding:6px 12px;font:600 13px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;cursor:pointer}
 .srt select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -383,7 +387,7 @@ linear-gradient(115deg,var(--rc) 0,var(--rc) calc(var(--gx,50%) - 30%),color-mix
 #dbg .dsub{font-size:12px;color:var(--muted);margin:0}
 #lb .cardbox{flex:none}
 #lb.zoomed .acts{position:fixed;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:3}
-#lb.zoomed .hint,#lb.zoomed .fxl{display:none}
+#lb.zoomed .hint,#lb.zoomed .fxl,#lb.zoomed .lbfav{display:none}
 .fxl{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 14px;max-width:min(92vw,420px);color:#fff;font-size:14px;font-weight:700;text-align:center}
 .fxl .rar{display:block;font-style:normal;font-weight:400;font-size:12px;letter-spacing:.02em;opacity:.8}
 .front[class*="var-"] .holo{filter:hue-rotate(var(--vhr,0deg))}
@@ -652,6 +656,9 @@ body.lbopen #stage *,body.lbopen #stage *::before,body.lbopen #stage *::after{an
 
 /* ===== full art: the photo becomes the whole card (the border stays); text keeps its exact spot, just with a drop shadow ===== */
 .pcr{position:absolute;left:0;right:0;bottom:0;z-index:5;padding:.4em .5em .22em;font-size:.55em;line-height:1.2;text-align:right;color:rgba(255,255,255,.92);background:linear-gradient(transparent,rgba(0,0,0,.62));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+/* country backdrop (t field 10): the flag of the photo's country replaces the plain card colour, softened so the text panels stay readable */
+.front>.cbd{position:absolute!important;inset:0;z-index:0;border-radius:inherit;pointer-events:none;background-size:cover;background-position:center;opacity:.92}
+.front>.cbd::after{content:"";position:absolute;inset:0;background:color-mix(in srgb,var(--surface) 30%,transparent)}
 .front.fa>.pw>.pcr{top:.1em;bottom:auto;left:.75em;right:.75em;padding:0;background:none;text-shadow:0 .06em .14em rgba(0,0,0,.95),0 0 .35em rgba(0,0,0,.7)}
 .front.fa{color:#fff;--text:#fff;--muted:#fff}
 .front.fa>.pw{position:static;overflow:visible;border:0;border-radius:0}
@@ -841,7 +848,21 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 .k-fox{--pf:repeating-linear-gradient(45deg,rgba(0,0,0,.14) 0 5px,transparent 5px 13px),repeating-linear-gradient(112deg,#a13a0a 0,#f27a2a 8%,#ffd9b0 15%,#d9561a 24%,#74270a 32%,#a13a0a 38%)}
 .obsnote{max-width:min(92vw,420px);margin:2px auto 0;padding:8px 14px;border-radius:12px;background:rgba(255,255,255,.08);color:#fff;font-size:13px;line-height:1.4;text-align:center;overflow-wrap:anywhere}.obsnote small{display:block;font-size:10.5px;letter-spacing:.06em;text-transform:lowercase;opacity:.6;margin-bottom:2px}
 /* card preview on phones: the effects list and the observer note live behind an info button next to the close button */
+/* settings page + the page-behind-the-card-preview effect */
+main{position:relative;transition:transform .3s ease-out}
+.setbtn{position:absolute;top:14px;right:14px;z-index:2}
+.setpage{position:fixed;inset:0;z-index:44;background:var(--bg);color:var(--text);overflow-y:auto;overscroll-behavior:contain;display:none}
+.setpage.on{display:block}
+.setin{max-width:560px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top,0px)) 16px calc(40px + env(safe-area-inset-bottom,0px))}
+.sethd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}.sethd h2{margin:0;font-size:22px}
+.setpage h3{margin:22px 0 4px;font-size:13px;letter-spacing:.06em;text-transform:lowercase;color:var(--muted)}
+.setpage .tg{justify-content:flex-start;text-align:left;font-size:14px;padding:8px 0;margin:0}
+.setpage .rg{justify-content:flex-start}
+@media (max-width:600px){.setpage button{min-height:44px}.setbtn{top:10px;right:12px}}
+body.lbbg main{transform:translate3d(var(--bgx,0px),var(--bgy,0px),0) scale(.955);transform-origin:50% calc(var(--lbsy,0px) + 50vh);will-change:transform}
+@media (prefers-reduced-motion:reduce){body.lbbg main{transform:scale(.955)}}
 .lbinfo{display:contents}
+.lbfav{display:flex;align-items:center;justify-content:center;gap:6px;color:#fffc;font-size:13px}.lbfav .ic{width:15px;height:15px;flex:none}.lbfav b{color:#fff}
 .lbinfobtn{display:none}
 @media (max-width:600px),(max-height:480px) and (orientation:landscape){
  #lb .acts .lbx{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));right:12px;width:44px;height:44px;min-height:0;padding:0;font-size:0;display:flex;align-items:center;justify-content:center;z-index:5}
@@ -872,15 +893,12 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><filter id="fx-toon" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="0.9" result="sm"/><feColorMatrix in="sm" type="saturate" values="1.6" result="sat0"/><feComponentTransfer in="sat0" result="post"><feFuncR type="discrete" tableValues="0.1 0.3 0.5 0.7 0.9 1"/><feFuncG type="discrete" tableValues="0.1 0.3 0.5 0.7 0.9 1"/><feFuncB type="discrete" tableValues="0.1 0.3 0.5 0.7 0.9 1"/></feComponentTransfer><feColorMatrix in="sm" type="matrix" values=".33 .59 .11 0 0 .33 .59 .11 0 0 .33 .59 .11 0 0 0 0 0 1 0" result="gray"/><feConvolveMatrix in="gray" order="3" kernelMatrix="-1 -1 -1 -1 8 -1 -1 -1 -1" divisor="1" preserveAlpha="true" edgeMode="duplicate" result="edge"/><feComponentTransfer in="edge" result="lines"><feFuncR type="linear" slope="-6" intercept="1.3"/><feFuncG type="linear" slope="-6" intercept="1.3"/><feFuncB type="linear" slope="-6" intercept="1.3"/></feComponentTransfer><feBlend in="post" in2="lines" mode="multiply"/></filter><filter id="fx-comic" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="0.7" result="sm"/><feColorMatrix in="sm" type="saturate" values="1.9" result="sat0"/><feComponentTransfer in="sat0" result="post"><feFuncR type="discrete" tableValues="0.06 0.4 0.72 1"/><feFuncG type="discrete" tableValues="0.06 0.4 0.72 1"/><feFuncB type="discrete" tableValues="0.06 0.4 0.72 1"/></feComponentTransfer><feColorMatrix in="sm" type="matrix" values=".33 .59 .11 0 0 .33 .59 .11 0 0 .33 .59 .11 0 0 0 0 0 1 0" result="gray"/><feConvolveMatrix in="gray" order="3" kernelMatrix="-1 -1 -1 -1 8 -1 -1 -1 -1" divisor="1" preserveAlpha="true" edgeMode="duplicate" result="edge"/><feComponentTransfer in="edge" result="lines"><feFuncR type="linear" slope="-9" intercept="1.4"/><feFuncG type="linear" slope="-9" intercept="1.4"/><feFuncB type="linear" slope="-9" intercept="1.4"/></feComponentTransfer><feBlend in="post" in2="lines" mode="multiply"/></filter><filter id="fx-ink" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="1.1" result="sm"/><feColorMatrix in="sm" type="saturate" values="1" result="sat0"/><feComponentTransfer in="sat0" result="post"><feFuncR type="discrete" tableValues="0.2 0.55 0.9"/><feFuncG type="discrete" tableValues="0.2 0.55 0.9"/><feFuncB type="discrete" tableValues="0.2 0.55 0.9"/></feComponentTransfer><feColorMatrix in="post" type="saturate" values=".3" result="d"/><feComponentTransfer in="d" result="post2"><feFuncR type="linear" slope=".3" intercept=".7"/><feFuncG type="linear" slope=".3" intercept=".7"/><feFuncB type="linear" slope=".3" intercept=".7"/></feComponentTransfer><feColorMatrix in="sm" type="matrix" values=".33 .59 .11 0 0 .33 .59 .11 0 0 .33 .59 .11 0 0 0 0 0 1 0" result="gray"/><feConvolveMatrix in="gray" order="3" kernelMatrix="-1 -1 -1 -1 8 -1 -1 -1 -1" divisor="1" preserveAlpha="true" edgeMode="duplicate" result="edge"/><feComponentTransfer in="edge" result="lines"><feFuncR type="linear" slope="-8" intercept="1.4"/><feFuncG type="linear" slope="-8" intercept="1.4"/><feFuncB type="linear" slope="-8" intercept="1.4"/></feComponentTransfer><feBlend in="post2" in2="lines" mode="multiply"/></filter><filter id="fx-pxfb" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="1.35"/><feComponentTransfer><feFuncR type="discrete" tableValues="0 .2 .4 .6 .8 1"/><feFuncG type="discrete" tableValues="0 .2 .4 .6 .8 1"/><feFuncB type="discrete" tableValues="0 .2 .4 .6 .8 1"/></feComponentTransfer></filter></defs></svg>
 <main>
+<button class="ghost setbtn" id="setbtn" aria-haspopup="dialog">settings</button>
 <h1><span id="logo"></span> critter cards</h1>
 <p class="sub">five real wild critters from iNaturalist, free every day</p>
 <div class="gdacc" id="gdacc" role="status"></div>
 <details class="info" id="info"><summary>about this webpage</summary>
-<p class="about">every critter is a real wild animal, spotted and photographed by a nature lover and shared on iNaturalist, and every one has exactly the same chance of showing up. no critter is rarer than another; only the sparkle is luck of the draw, and sparkle is rare: most cards are plain, about 1 in 4 has a tinted card color, about 1 in 3 has a parallax photo, about 1 in 16 is full art (the photo fills the whole card), about 1 in 12 has an image effect (toon, pixel art, noir and more) that changes the photo itself, about 1 in 4 is slightly shiny, about 1 in 10 has a special finish, and roughly 1 in 100 has a super rare animated one. open a pack, enjoy the reveal, and add the ones that make you smile to your favorites. every card links to its original sighting on iNaturalist. trade in cards you don’t need for points, then spend the points on extra packs in the pack shop. the critter always stays in your list of critters you’ve met, so you can still look it up.</p>
-<label class="tg" id="gyrow" style="display:none"><input type="checkbox" id="gy"> tilt the cards by moving your phone <span id="gymsg" style="color:#d6336c"></span></label>
-<label class="tg"><input type="checkbox" id="unl"> playtest mode: unlimited packs</label>
-<div class="rg"><label>where to look <select id="rgwhere"><option value="world">anywhere in the world</option><option value="near">near me (asks for your location)</option></select></label><button class="ghost" id="rgsave">save and load critters</button><span id="rgmsg" role="status"></span></div>
-<div class="acts" style="margin-top:6px"><button class="ghost" id="dbgbtn">debug: view every card effect</button></div>
+<p class="about">every critter is a real wild animal, spotted and photographed by a nature lover and shared on iNaturalist, and every one has exactly the same chance of showing up. no critter is rarer than another; only the sparkle is luck of the draw, and sparkle is rare: most cards are plain, about 1 in 4 has a tinted card color, about 1 in 3 has a parallax photo, about 1 in 16 is full art (the photo fills the whole card), about 1 in 12 has an image effect (toon, pixel art, noir and more) that changes the photo itself, about 1 in 4 is slightly shiny, about 1 in 10 has a special finish, and roughly 1 in 100 has a super rare animated one. open a pack, enjoy the reveal, and add the ones that make you smile to your favorites. every card links to its original sighting on iNaturalist. trade in cards you don’t need for points, then spend the points on extra packs in the pack shop. the critter always stays in your list of critters you’ve met, so you can still look it up. about 1 in 33 cards also has a country backdrop: the flag of the country where the photo was taken fills the card background.</p>
 </details>
 <div class="stage" id="stage"></div>
 
@@ -888,13 +906,27 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 
 <h2 id="coll">your collection</h2>
 <div class="sub" id="count" style="text-align:left"></div>
-<div class="acts" id="flt" style="justify-content:flex-start;margin-top:10px"><button class="chip on" data-f="all">all cards</button><button class="chip" data-f="smiles">favorites</button><label class="srt">sort by <select id="srt"><option value="recent">newest first</option><option value="oldest">oldest first</option><option value="worth">most valuable</option><option value="cheap">least valuable</option><option value="name">name a–z</option><option value="group">animal group</option></select></label></div>
+<div class="acts" id="flt" style="justify-content:flex-start;margin-top:10px"><button class="chip on" data-f="all">all cards</button><button class="chip" data-f="smiles">favorites</button><button class="chip" id="qbtn" aria-expanded="false" aria-controls="qrow">search</button><label class="srt">sort by <select id="srt"><option value="recent">newest first</option><option value="oldest">oldest first</option><option value="worth">most valuable</option><option value="cheap">least valuable</option><option value="name">name a–z</option><option value="group">animal group</option></select></label></div>
+<div class="qrow" id="qrow" hidden><input id="q" type="search" placeholder="search name, group, place or effect" aria-label="search your collection" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
 <div class="grid" id="grid"></div>
 <details class="info jr-d" id="jrd"><summary id="jrs">critters you’ve met</summary><div class="jr" id="journal"></div></details>
 <p class="foot"><span id="srcnote"></span> sparkle finishes vary in rarity, but they’re random and independent of the animal: any critter can come with any finish, and every critter in the day’s pool is equally likely to appear. photos are credited to their photographers on each card and in its “original photo” view, and descriptions come from wikipedia when available. icons: material design icons by pictogrammers (apache 2.0).
 <button class="ghost" id="reset" style="margin-left:6px">reset collection</button></p>
 </main>
 <section id="shop" class="shoppage" role="dialog" aria-modal="true" aria-label="pack shop" aria-hidden="true" inert></section>
+<section id="settings" class="setpage" role="dialog" aria-modal="true" aria-label="settings" aria-hidden="true">
+<div class="setin">
+<div class="sethd"><h2>settings</h2><button class="ghost" id="setx">done</button></div>
+<h3>card preview</h3>
+<label class="tg"><input type="checkbox" id="lbbgchk"> on phones, zoom the page out a little behind a card preview and move it with parallax</label>
+<h3>motion</h3>
+<label class="tg" id="gyrow" style="display:none"><input type="checkbox" id="gy"> tilt the cards by moving your phone <span id="gymsg" style="color:#d6336c"></span></label>
+<h3>packs</h3>
+<label class="tg"><input type="checkbox" id="unl"> playtest mode: unlimited packs</label>
+<div class="rg"><label>where to look <select id="rgwhere"><option value="world">anywhere in the world</option><option value="near">near me (asks for your location)</option></select></label><button class="ghost" id="rgsave">save and load critters</button><span id="rgmsg" role="status"></span></div>
+<h3>other</h3>
+<div class="acts" style="margin-top:6px"><button class="ghost" id="dbgbtn">debug: view every card effect</button></div>
+</div></section>
 <div id="lb"></div>
 
 <script>
@@ -961,7 +993,7 @@ function parseINat(list){
   let name=tidy(t.preferred_common_name);if(name===name.toLowerCase())name=name.replace(/(^|[\s-])([a-z])/g,(m,b,c)=>b+c.toUpperCase());
   const nameRaw=name;name=esc(clip(name,40));
   const place=tidy(o.place_guess||""),who=tidy(o.user&&(o.user.name||o.user.login)||"");
-  out.push({rg:String(o.id),tid:t.id,name,nf:nameRaw,pf:place,sp,breed:esc(tidy(t.name)),age:GL[sp],trait:"",
+  out.push({rg:String(o.id),fv:Math.max(+o.faves_count||0,+o.cached_votes_total||0),tid:t.id,name,nf:nameRaw,pf:place,sp,breed:esc(tidy(t.name)),age:GL[sp],trait:"",
    desc:esc(name+" spotted "+(place?"in "+clip(place,40):"in the wild")+(who?" by "+clip(who,24):"")+"."),sh:0,live:true,
    img:ph.url.replace("/square.","/medium."),big:ph.url.replace("/square.","/large."),
    url:"https://www.inaturalist.org/observations/"+o.id,shn:esc(clip(place,64))||"somewhere in the wild",credit:esc(tidy(ph.attribution||"")),ll:typeof o.location=="string"?o.location:"",note:(n=>n.length>=8?esc(clip(n,300)):"")(tidy(o.description))})});
@@ -1133,6 +1165,8 @@ const FA={full:{label:"full art",icon:"image",w:3},vig:{label:"full art · vigne
 const FAL=Object.entries(FA).map(([k,v])=>[k,v.w]),FAT=FAL.reduce((a,[,w])=>a+w,0),FA_CHANCE=.06;
 const rollFa=()=>{if(PREVIEW=="fa")return pickW(FAL,FAT);if(PREVIEW.startsWith("fa-")&&FA[PREVIEW.slice(3)])return PREVIEW.slice(3);return Math.random()<FA_CHANCE*LK?pickW(FAL,FAT):""};
 const IE={noir:{label:"noir",icon:"film",w:3},vintage:{label:"vintage",icon:"script-text",w:3},halftone:{label:"halftone",icon:"dots-grid",w:3},watercolor:{label:"watercolor",icon:"palette",w:2.5},sketch:{label:"pencil sketch",icon:"script-text",w:2.5},duotone:{label:"duotone",icon:"layers",w:2.5},toon:{label:"toon",icon:"palette",w:2.5},comic:{label:"comic book",icon:"star-four-points",w:2},ink:{label:"ink drawing",icon:"script-text",w:2},pixel:{label:"pixel art",icon:"dots-grid",w:2}};
+const CB_CHANCE=.03;
+const rollCb=fa=>{if(fa)return"";if(PREVIEW=="cb")return"c";return Math.random()<CB_CHANCE*LK?"c":""};
 const IEL=Object.entries(IE).map(([k,v])=>[k,v.w]),IET=IEL.reduce((a,[,w])=>a+w,0),IE_CHANCE=.08;
 const rollIe=()=>{if(IE[PREVIEW])return PREVIEW;if(PREVIEW=="ie")return pickW(IEL,IET);if(PREVIEW.startsWith("ie-")&&IE[PREVIEW.slice(3)])return PREVIEW.slice(3);return Math.random()<IE_CHANCE*LK?pickW(IEL,IET):""};
 const waveHTML=n=>[...n].map((ch,i)=>ch==" "?" ":`<span class="tfw" style="--i:${i}">${ch}</span>`).join("");
@@ -1153,7 +1187,7 @@ const GOLD_CHANCE=.004,COLOR_CHANCE=.25,PARALLAX_CHANCE=.33,SHINY_CHANCE=.25,SHY
 const EDGE_OK=["","reverse","paws","hearts","stars","confetti","shimmer","holo"];
 const rollShy=f=>{if(PREVIEW!="shiny"&&Math.random()>=SHINY_CHANCE)return "";
  const m=["bg","img"];if(EDGE_OK.includes(f||""))m.push("edge");return m[Math.floor(Math.random()*m.length)]};
-const rollT=f=>{const t=f?rollTint(f):"",x=f&&!SR[f]&&Math.random()<.12*LK?TEXK[Math.floor(Math.random()*TEXK.length)]:"";return t+"."+x+"."+(Math.random()<COLOR_CHANCE?BGK[Math.floor(Math.random()*BGK.length)]:"")+"."+rollShy(f)+"."+(PREVIEW=="par"||Math.random()<PARALLAX_CHANCE?"p":"")+"."+rollBorder()+"."+rollTfx()+"."+rollVar(f)+"."+rollFa()+"."+rollIe()};
+const rollT=f=>{let fa;const t=f?rollTint(f):"",x=f&&!SR[f]&&Math.random()<.12*LK?TEXK[Math.floor(Math.random()*TEXK.length)]:"";return t+"."+x+"."+(Math.random()<COLOR_CHANCE?BGK[Math.floor(Math.random()*BGK.length)]:"")+"."+rollShy(f)+"."+(PREVIEW=="par"||Math.random()<PARALLAX_CHANCE?"p":"")+"."+rollBorder()+"."+rollTfx()+"."+rollVar(f)+"."+(fa=rollFa())+"."+rollIe()+"."+rollCb(fa)};
 {const st2=document.createElement("style");
  st2.textContent=Object.entries(TEX).map(([k,v])=>{const u=`url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='${v[2]}' height='${v[2]}' fill='none'>${v[1]}</svg>`)}")`;return `.tx-${k}{-webkit-mask-image:${u};mask-image:${u};-webkit-mask-size:${v[2]/16}em;mask-size:${v[2]/16}em}`}).join("");
  document.head.appendChild(st2)}
@@ -1526,7 +1560,7 @@ function odds(p){if(!(p>0))return"";let n=1/p;n=n<10?Math.round(n*10)/10:n<100?M
  const tier=n<5?"common":n<20?"uncommon":n<100?"rare":n<500?"very rare":"ultra rare";
  return` <em class="rar">${tier} · 1 in ${n}</em>`}
 const finP=f=>SR[f]?SR_CHANCE/SRL.length:W[f]?EFFECT_CHANCE*W[f]/FXT:0;
-function fxText(f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr0,fa,ie]=(t||"").split(".");const vr=VARS[vr0]&&VARE.includes(f)?vr0:"";const sh=SHY[sh0]?sh0:"",par=par0===undefined||par0=="p";
+function fxText(f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr0,fa,ie,cb]=(t||"").split(".");const vr=VARS[vr0]&&VARE.includes(f)?vr0:"";const sh=SHY[sh0]?sh0:"",par=par0===undefined||par0=="p";
  const out=[];
  if(f)out.push(`<span${SR[f]?' class="srt"':""}>${ic(FIN[f].icon,FIN[f].col)} ${SR[f]?"super rare · ":""}${tn?TN[tn]+" ":""}${FIN[f].label}${tx&&TEX[tx]?" · "+TEX[tx][0]:""}${vr?" · "+VARS[vr].n+" variation":""}${odds(finP(f)*(tx&&TEX[tx]&&!SR[f]?.12/TEXK.length:1)*(vr?VAR_CHANCE/VARK.length:1))}</span>`);
  if(BORD[gd])out.push(`<span class="srt">${ic("medal",BORD[gd].col)} ${BORD[gd].n} border · really rare${odds(BORDER_CHANCE*BORD[gd].w/BFXT)}</span>`);
@@ -1534,6 +1568,7 @@ function fxText(f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr0,fa,ie]=(t||"").split(".")
  if(sh)out.push(`<span>${ic("shimmer","#e0a21b")} shiny ${SHY[sh].toLowerCase()}${odds(SHINY_CHANCE/(EDGE_OK.includes(f||"")?3:2))}</span>`);
  if(IE[ie])out.push(`<span>${ic(IE[ie].icon,"#e0a21b")} image effect: ${IE[ie].label}${odds(IE_CHANCE*IE[ie].w/IET)}</span>`);
  if(FA[fa])out.push(`<span>${ic("image","#6aa9ff")} ${FA[fa].label}${odds(FA_CHANCE*FA[fa].w/FAT)}</span>`);
+ if(cb&&!FA[fa])out.push(`<span>${ic("map-marker","#6aa9ff")} country backdrop${odds(CB_CHANCE)}</span>`);
  if(par)out.push(`<span>${ic("layers","#9fb0c0")} parallax photo${odds(PARALLAX_CHANCE)}</span>`);
  return out.length?`<div class="fxl">${out.join("")}</div>`:`<div class="fxl none">plain card, no special effects</div>`}
 const FACES=new Map();
@@ -1543,7 +1578,7 @@ const crTxt=a=>{a=String(a||"");if(!a)return"";const lic=(a.match(/\(CC[^)]*\)/)
  const n=a.replace(/\(CC[^)]*\)/,"").replace(/^\s*\(c\)\s*/i,"").replace(/,?\s*some rights reserved/i,"").replace(/no rights reserved,?\s*(uploaded by)?\s*/i,"").replace(/[\s,]+$/,"").trim();
  return "photo: "+(n||"unknown")+(lic?" "+lic:"")};
 const crHTML=p=>p.credit?`<div class="pcr">${crTxt(p.credit)}</div>`:"";
-function cardFace0(p,f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr,fa,ie]=(t||"").split(".");const par=par0===undefined||par0=="p";const sh=SHY[sh0]?sh0:"";return `<div class="face front sp-${p.sp} fin-${f||"none"}${BORD[gd]?" gold bd-"+gd:""}${FA[fa]?" fa fa-"+fa:""}${IE[ie]?" ie-"+ie:""}${TFX[tf]?" tf-"+tf:""}${sh?" shy-"+sh:""}${VARS[vr]&&VARE.includes(f)?" var-"+vr:""}${par?" par":""}${SR[f]?" sr":""}${FOILS[f]?" fin-foil foil-"+f:""} tint-${FOILS[f]?"foil":(tn||"rb")}${bg&&BGS[bg]&&!NOBG.includes(f)&&!SR[f]?" bg-"+bg:""}"><div class="holo">${f=="facet"?facetSVG(seedOf(p,t)):""}</div>${sh=="bg"?'<div class="shy"></div>':""}${tx&&TEX[tx]?`<div class="tex tx-${tx}"></div>`:""}<div class="hd txt"><div class="nm">${tf=="wave"?waveHTML(p.name):p.name}</div></div><div class="sptab" title="${SPC[p.sp]}" role="img" aria-label="${SPC[p.sp]}">${ic(SPI[p.sp])}</div>
+function cardFace0(p,f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr,fa,ie,cb]=(t||"").split(".");const par=par0===undefined||par0=="p";const sh=SHY[sh0]?sh0:"";return `<div class="face front sp-${p.sp} fin-${f||"none"}${cb&&!FA[fa]?" cbk":""}${BORD[gd]?" gold bd-"+gd:""}${FA[fa]?" fa fa-"+fa:""}${IE[ie]?" ie-"+ie:""}${TFX[tf]?" tf-"+tf:""}${sh?" shy-"+sh:""}${VARS[vr]&&VARE.includes(f)?" var-"+vr:""}${par?" par":""}${SR[f]?" sr":""}${FOILS[f]?" fin-foil foil-"+f:""} tint-${FOILS[f]?"foil":(tn||"rb")}${bg&&BGS[bg]&&!NOBG.includes(f)&&!SR[f]?" bg-"+bg:""}">${cb&&!FA[fa]?`<div class="cbd" data-cb="${p.id}" aria-hidden="true"></div>`:""}<div class="holo">${f=="facet"?facetSVG(seedOf(p,t)):""}</div>${sh=="bg"?'<div class="shy"></div>':""}${tx&&TEX[tx]?`<div class="tex tx-${tx}"></div>`:""}<div class="hd txt"><div class="nm">${tf=="wave"?waveHTML(p.name):p.name}</div></div><div class="sptab" title="${SPC[p.sp]}" role="img" aria-label="${SPC[p.sp]}">${ic(SPI[p.sp])}</div>
  <div class="pw">${FA[fa]?'<div class="fclip">':""}${IE[ie]?'<div class="ifw">':""}<img class="photo" decoding="async" src="${photo(p)}" alt="${p.name}${p.live?"":", sample photo"}" referrerpolicy="no-referrer" draggable="false">${IE[ie]?"</div>":""}${FA[fa]?"</div>":""}${IE[ie]?'<div class="ifx"></div>':""}<div class="pholo"></div>${sh=="img"?'<div class="pshy"></div>':""}</div>
  ${BORD[gd]?`<div class="gb">${borderSVG(seedOf(p,t))}</div>`:""}<div class="bd txt"><div class="meta"><i>${p.breed}</i> · ${p.age}</div><div class="desc">${p.desc}</div></div><div class="ft where txt">${ic("map-marker")}<span class="lw"><span class="lt">${shOf(p).n}</span></span>${flagHTML(p)}${p.credit?`<div class="cr2">${crTxt(p.credit)}</div>`:""}</div></div>`}
 function cardBox(id,f,t,extra,back){return `<div class="cardbox" data-id="${id}" data-f="${f||""}" data-t="${t||""}"><div class="tilt">${slices()}${cardFace(petOf(id),f,t)}${back?`<div class="face back">${ic("leaf")}</div>`:""}</div>${extra||""}</div>`}
@@ -1570,13 +1605,25 @@ function gridHTML(list,mode){let out="",last="";const cnt={};if(mode=="group")li
   const worth=mode=="worth"||mode=="cheap"?" · worth "+ptsTxt(cardValue(c.f,c.t,c.id)):"";
   out+=`<div class="cell">${cardBox(c.id,c.f,c.t,state.fav[c.id]?`<span class="fvmark">${ic("heart","#d6336c")}</span>`:"")}<div class="cap">${c.n>1?"pulled ×"+c.n:"pulled once"}${worth}</div></div>`});
  return out}
+/* collection search: every word must match the card's name, scientific name, animal group, place or one of its effects */
+let GQ="";const gqFx=new Map();
+function gqHay(c){const p=petOf(c.id),k=c.id+"|"+c.f+"|"+c.t;let fx=gqFx.get(k);
+ if(fx===undefined){fx=fxText(c.f,c.t).replace(/<[^>]*>/g," ").toLowerCase();gqFx.set(k,fx)}
+ return[p.name,p.breed,p.sp,GL[p.sp],GL[p.sp]&&GL[p.sp]+"s",p.shn].filter(Boolean).join(" ").toLowerCase()+" "+fx}
+function gqMatch(c){const h=gqHay(c);return GQ.toLowerCase().split(/\s+/).filter(Boolean).every(w=>h.includes(w))}
+{const qb=document.getElementById("qbtn"),qr=document.getElementById("qrow"),qi=document.getElementById("q");let qt=0;
+ const run=()=>{GQ=qi.value;qb.classList.toggle("on",!!GQ.trim());renderGrid0()};
+ const close=()=>{qr.hidden=true;qb.setAttribute("aria-expanded","false");if(GQ){qi.value="";run()}qb.classList.remove("on")};
+ qb.onclick=()=>{if(qr.hidden){qr.hidden=false;qb.setAttribute("aria-expanded","true");qi.focus()}else close()};
+ qi.oninput=()=>{clearTimeout(qt);qt=setTimeout(run,120)};
+ qi.onkeydown=e=>{if(e.key=="Escape"){e.preventDefault();close();qb.focus()}}}
 document.getElementById("srt").onchange=e=>{state.sort=e.target.value;save();renderGrid()};
 function renderGrid0(){
- const all=Object.values(state.col).filter(c=>petOf(c.id)),mode=state.sort||"recent",list=sortCards(state.filter=="smiles"?all.filter(c=>state.fav[c.id]):all,mode);
+ const all=Object.values(state.col).filter(c=>petOf(c.id)),mode=state.sort||"recent",base=state.filter=="smiles"?all.filter(c=>state.fav[c.id]):all,list=sortCards(GQ.trim()?base.filter(gqMatch):base,mode);
  {const sel=document.getElementById("srt");if(sel)sel.value=mode}
  setCount(all);
- document.querySelectorAll("#flt .chip").forEach(b=>b.classList.toggle("on",b.dataset.f==(state.filter||"all")));
- const gEl=document.getElementById("grid");gEl.innerHTML=list.length?gridHTML(list,mode):(all.length?`<p class="sub" style="grid-column:1/-1">no favorites yet. tap favorite on any card you love.</p>`:"");gridCull.watch(gEl)}
+ document.querySelectorAll("#flt .chip[data-f]").forEach(b=>b.classList.toggle("on",b.dataset.f==(state.filter||"all")));
+ const gEl=document.getElementById("grid");gEl.innerHTML=list.length?gridHTML(list,mode):(all.length?(GQ.trim()?`<p class="sub" style="grid-column:1/-1">no cards match “${GQ.trim().replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}”.</p>`:`<p class="sub" style="grid-column:1/-1">no favorites yet. tap favorite on any card you love.</p>`):"");gridCull.watch(gEl)}
 function toggleFav(b){const id=+b.dataset.id;if(state.fav[id])delete state.fav[id];else state.fav[id]={f:b.dataset.f,t:b.dataset.t};save();
  const on=!!state.fav[id];document.querySelectorAll('#stage .fv[data-id="'+id+'"],#lb .fv[data-id="'+id+'"]').forEach(x=>{x.classList.toggle("on",on);x.innerHTML=favTxt(on,x.classList.contains("sm")?"sm":"")});refreshTrade();favGrid(id,on)}
 function favGrid(id,on){
@@ -1592,11 +1639,15 @@ function tiltCard(box,e){const b=box.getBoundingClientRect(),px=cl((e.clientX-b.
  f.style.setProperty("--mx",px*100+"%");f.style.setProperty("--my",py*100+"%");f.style.setProperty("--tx",(px-.5)*2);f.style.setProperty("--ty",(py-.5)*2);f.style.setProperty("--gx",(1-px)*100+"%");f.style.setProperty("--ang",(px-.5)*140+"deg");f.style.setProperty("--shl",Math.max(0,.5-px)*.45);f.style.setProperty("--shr",Math.max(0,px-.5)*.45)}
 const lb=document.getElementById("lb");
 // drag-to-rotate in the card preview
+/* the page behind a card preview (phones): zooms out a little and drifts opposite to the card's tilt, from dragging or from moving the phone */
+const lbBgQ=matchMedia("(max-width:600px),(max-height:480px) and (orientation:landscape)");
+function lbBg(px,py){if(!document.body.classList.contains("lbbg"))return;const R=document.documentElement.style;R.setProperty("--bgx",((.5-px)*20).toFixed(2)+"px");R.setProperty("--bgy",((.5-py)*20).toFixed(2)+"px")}
 const LB={z:1,px:0,py:0,pan:false,rx:0,ry:0,drag:false,spin:false,lx:0,ly:0,vx:0,vy:0,raf:0};
 const lbBox=()=>lb.querySelector(".cardbox");
 function lbApply(box,snap){const t=box.querySelector(".tilt");t.style.transition=snap?"none":"";t.style.transform=`rotateX(${LB.rx}deg) rotateY(${LB.ry}deg)`;
  const f=box.querySelector(".front"),px=.5+Math.sin(LB.ry*Math.PI/180)*.5,py=.5-Math.sin(LB.rx*Math.PI/180)*.5;
- if(f){f.style.setProperty("--mx",px*100+"%");f.style.setProperty("--my",py*100+"%");f.style.setProperty("--tx",(px-.5)*2);f.style.setProperty("--ty",(py-.5)*2);f.style.setProperty("--gx",(1-px)*100+"%");f.style.setProperty("--ang",(px-.5)*140+"deg");f.style.setProperty("--shl",Math.max(0,.5-px)*.45);f.style.setProperty("--shr",Math.max(0,px-.5)*.45)}}
+ if(f){f.style.setProperty("--mx",px*100+"%");f.style.setProperty("--my",py*100+"%");f.style.setProperty("--tx",(px-.5)*2);f.style.setProperty("--ty",(py-.5)*2);f.style.setProperty("--gx",(1-px)*100+"%");f.style.setProperty("--ang",(px-.5)*140+"deg");f.style.setProperty("--shl",Math.max(0,.5-px)*.45);f.style.setProperty("--shr",Math.max(0,px-.5)*.45)}
+ lbBg(px,py)}
 lb.addEventListener("selectstart",e=>{if(e.target.closest&&e.target.closest(".cardbox"))e.preventDefault()});
 lb.addEventListener("pointerdown",e=>{const b=e.target.closest&&e.target.closest(".cardbox");if(!b)return;e.preventDefault();const sel=getSelection&&getSelection();if(sel)sel.removeAllRanges();
  cancelAnimationFrame(LB.raf);LB.spin=false;LB.pan=LB.z>1.02;LB.drag=true;LB.mv=false;LB.sx=e.clientX;LB.sy=e.clientY;LB.lx=e.clientX;LB.ly=e.clientY;LB.vx=LB.vy=0;b.setPointerCapture(e.pointerId);b.style.cursor="grabbing"});
@@ -1624,7 +1675,7 @@ document.addEventListener("pointermove",e=>{if(e.pointerType!=="touch"||!lbPts.h
 const lbPtEnd=e=>{if(!lbPts.delete(e.pointerId))return;if(LB.pinch&&lbPts.size<2){LB.pinch=false;LB.drag=false;LB.mv=true;e.stopImmediatePropagation()}};
 document.addEventListener("pointerup",lbPtEnd,true);document.addEventListener("pointercancel",lbPtEnd,true);
 let lbClosing=false;
-function closeLb(){
+function closeLb(){document.body.classList.remove("lbbg");
  if(lbClosing||!lb.classList.contains("on"))return;
  const nb=lbBox(),src=LB.src;
  if(!nb||!src||!nb.animate||!document.contains(src)||matchMedia("(prefers-reduced-motion:reduce)").matches)return closeLbNow();
@@ -1637,12 +1688,14 @@ function closeLb(){
  const fin=()=>{lbClosing=false;closeLbNow()};
  const an=nb.animate([{transform:"none"},{transform:`translate(${dx}px,${dy}px) scale(${k})`}],{duration:dur,easing:"cubic-bezier(.5,0,.75,.3)",fill:"forwards"});
  lb.animate([{opacity:1},{opacity:1,offset:.4},{opacity:0}],{duration:dur,fill:"forwards"});
- lb.querySelectorAll(".acts,.fxl,.hint").forEach(e=>e.animate([{opacity:1},{opacity:0}],{duration:160,fill:"forwards"}));
+ lb.querySelectorAll(".acts,.fxl,.lbfav,.hint").forEach(e=>e.animate([{opacity:1},{opacity:0}],{duration:160,fill:"forwards"}));
  an.onfinish=fin;an.oncancel=fin}
-function closeLbNow(){lb.getAnimations().forEach(x=>x.cancel());if(LB.src){LB.src.style.visibility="";LB.src=null}cancelAnimationFrame(LB.raf);LB.drag=LB.spin=false;LB.z=1;LB.px=LB.py=0;LB.pan=false;lb.classList.remove("on","zoomed","info");document.body.classList.remove("lbopen");closeRaw();lb.innerHTML=""}
+function closeLbNow(){lb.getAnimations().forEach(x=>x.cancel());if(LB.src){LB.src.style.visibility="";LB.src=null}cancelAnimationFrame(LB.raf);LB.drag=LB.spin=false;LB.z=1;LB.px=LB.py=0;LB.pan=false;lb.classList.remove("on","zoomed","info");document.body.classList.remove("lbopen","lbbg");closeRaw();lb.innerHTML=""}
 function openLb(b){cancelAnimationFrame(LB.raf);LB.z=1;LB.px=LB.py=0;LB.pan=false;lb.classList.remove("zoomed","info");LB.rx=LB.ry=0;LB.drag=LB.spin=false;const id=+b.dataset.id,p=petOf(id);
- lb.innerHTML=cardBox(id,b.dataset.f,b.dataset.t,"",true).replace('class="cardbox"','class="cardbox" style="--w:var(--lbw);cursor:grab"')+`<div class="acts">${favBtn(id,b.dataset.f,b.dataset.t,"made me smile")}${meetLink(p)}${rawBtn(p)}${wikiBtn(p)}${tradeBtn(id,b.dataset.f,b.dataset.t,b)}<button class="lbx x" aria-label="close">close</button><button class="lbinfobtn" aria-label="card info" aria-expanded="false">i</button></div><div class="lbinfo">${fxText(b.dataset.f,b.dataset.t)}${p.note?`<div class="obsnote"><small>note from the observer</small>${p.note}</div>`:""}</div><div class="hint" style="color:#fffa">drag the card to rotate it · ${matchMedia("(pointer:coarse)").matches?"pinch":"scroll"} to zoom</div>`;
- lb.classList.add("on");document.body.classList.add("lbopen");lb.querySelector(".x").onclick=closeLb;
+ lb.innerHTML=cardBox(id,b.dataset.f,b.dataset.t,"",true).replace('class="cardbox"','class="cardbox" style="--w:var(--lbw);cursor:grab"')+`<div class="acts">${favBtn(id,b.dataset.f,b.dataset.t,"made me smile")}${meetLink(p)}${rawBtn(p)}${wikiBtn(p)}${tradeBtn(id,b.dataset.f,b.dataset.t,b)}<button class="lbx x" aria-label="close">close</button><button class="lbinfobtn" aria-label="card info" aria-expanded="false">i</button></div><div class="lbinfo">${fxText(b.dataset.f,b.dataset.t)}${p.fv!=null?`<div class="lbfav">${ic("heart","#ff6b9a")}<span>${p.fv>0?"<b>"+(+p.fv).toLocaleString()+"</b> favorite"+(p.fv==1?"":"s")+" on inaturalist":"no favorites on inaturalist yet"}</span></div>`:""}${p.note?`<div class="obsnote"><small>note from the observer</small>${p.note}</div>`:""}</div><div class="hint" style="color:#fffa">drag the card to rotate it · ${matchMedia("(pointer:coarse)").matches?"pinch":"scroll"} to zoom</div>`;
+ lb.classList.add("on");document.body.classList.add("lbopen");
+ {const R=document.documentElement.style;R.setProperty("--lbsy",scrollY+"px");R.setProperty("--bgx","0px");R.setProperty("--bgy","0px");document.body.classList.toggle("lbbg",state.lbbg!==false&&lbBgQ.matches)}
+ lb.querySelector(".x").onclick=closeLb;
  {const ib=lb.querySelector(".lbinfobtn");ib.onclick=e=>{e.stopPropagation();ib.setAttribute("aria-expanded",lb.classList.toggle("info"))}}
  if(LB.src)LB.src.style.visibility="";LB.src=b;
  /* fly the card from where it was clicked to the centre of the screen */
@@ -1653,7 +1706,7 @@ function openLb(b){cancelAnimationFrame(LB.raf);LB.z=1;LB.px=LB.py=0;LB.pan=fals
    const dx=a.left+a.width/2-(z.left+z.width/2),dy=a.top+a.height/2-(z.top+z.height/2),k=a.width/z.width;
    nb.animate([{transform:`translate(${dx}px,${dy}px) scale(${k})`},{transform:"none"}],{duration:420,easing:"cubic-bezier(.2,.9,.25,1)"});
    lb.animate([{opacity:0},{opacity:1}],{duration:220,easing:"ease-out"});
-   lb.querySelectorAll(".acts,.fxl,.hint").forEach(e=>e.animate([{opacity:0},{opacity:0,offset:.45},{opacity:1}],{duration:420}))}}
+   lb.querySelectorAll(".acts,.fxl,.lbfav,.hint").forEach(e=>e.animate([{opacity:0},{opacity:0,offset:.45},{opacity:1}],{duration:420}))}}
  /* the clicked card has flown out of its spot, so hide it there until the preview closes (keeps its place in the grid) */
  b.style.visibility="hidden"}
 lb.onclick=e=>{if(e.target===lb)closeLb()};
@@ -1668,7 +1721,7 @@ lb.addEventListener("wheel",e=>{if(!lb.classList.contains("on"))return;e.prevent
  if(z1<1.001){LB.z=1;LB.px=LB.py=0}
  lb.classList.toggle("zoomed",LB.z>1.001);lbZoom(b)},{passive:false});
 document.addEventListener("click",e=>{const rb=e.target.closest&&e.target.closest(".rawbtn");if(rb){e.stopPropagation();openRaw(+rb.dataset.id);return}
- const ch=e.target.closest&&e.target.closest(".chip");if(ch){state.filter=ch.dataset.f;save();renderGrid();return}
+ const ch=e.target.closest&&e.target.closest(".chip[data-f]");if(ch){state.filter=ch.dataset.f;save();renderGrid();return}
  const v=e.target.closest&&e.target.closest(".fv");if(v){toggleFav(v);return}
  const b=e.target.closest&&e.target.closest(".cardbox[data-id]");if(b&&!b.closest("#lb"))openLb(b)});
 const pmFrame=perFrame((k,box,cx,cy)=>{if(!box.isConnected)return;if(k==1)lbApply(box,true);else if(k==2)lbZoom(box);else tiltCard(box,{clientX:cx,clientY:cy})});
@@ -1677,7 +1730,7 @@ document.addEventListener("pointermove",e=>{if(LB.drag){const b=lbBox();if(!b)re
  const box=inLb?lb.querySelector(".cardbox"):(e.target.closest&&e.target.closest(".cardbox[data-id]"));if(box)pmFrame(0,box,e.clientX,e.clientY)});
 document.addEventListener("pointerout",e=>{const b=e.target.closest&&e.target.closest(".cardbox");if(b&&!b.closest("#lb")&&!b.contains(e.relatedTarget)){pmFrame.cancel();b.querySelector(".tilt").style.transform="";resetFx(b.querySelector(".front"))}});
 document.addEventListener("keydown",e=>{if(e.key=="Escape"){if(wkZoomOpen())wkZoomClose();else if(wikiOpen())closeWiki();else if(rawOpen())closeRaw();else if(lb.classList.contains("on"))closeLb();else closeDbg()}});
-document.getElementById("reset").onclick=()=>{if(confirm("clear your collection and favorites, and reset today’s pack?")){state={last:"",fav:{},col:{},filter:"all",pack:null,unl:state.unl,pts:0,inv:{},seen:{},shop:{d:"",n:0},cur:null,econ:2};save();renderPack();renderGrid()}};
+document.getElementById("reset").onclick=()=>{if(confirm("clear your collection and favorites, and reset today’s pack?")){state={last:"",fav:{},col:{},filter:"all",pack:null,unl:state.unl,lbbg:state.lbbg,pts:0,inv:{},seen:{},shop:{d:"",n:0},cur:null,econ:2};save();renderPack();renderGrid()}};
 // ===== debug gallery: every finish, tint, texture, shiny mode, parallax and card color =====
 function openDbg(){let d=document.getElementById("dbg");
  if(!d){d=document.createElement("div");d.id="dbg";
@@ -1718,7 +1771,14 @@ function buildDbg(){const d=document.getElementById("dbg"),q=s=>d.querySelector(
  const b=document.createElement("div");b.className="dbody";
  b.innerHTML=sec.map(([h,sub,items])=>`<h3>${h} <span class="dsub">(${items.length})</span></h3><p class="dsub">${sub} hover or tap a card to tilt it; click for the full preview. cards you haven\u2019t pulled yet show as ???.</p><div class="grid">${items.map(([l,f,t,ok])=>ok?`<div class="cell">${cardBox(pet,f,t)}<div class="cap">${l}</div></div>`:`<div class="cell"><div class="cardbox mysbox"><div class="tilt">${slices()}<div class="face front mys"><div class="nm">???</div></div></div></div><div class="cap">???</div></div>`).join("")}</div>`).join("");
  d.appendChild(b);dbgCull.watch(b)}
-document.getElementById("dbgbtn").onclick=openDbg;
+document.getElementById("dbgbtn").onclick=()=>{closeSettings();openDbg()};
+/* ===== settings page ===== */
+const setPg=document.getElementById("settings"),setBtn=document.getElementById("setbtn"),lbbgChk=document.getElementById("lbbgchk");
+lbbgChk.checked=state.lbbg!==false;lbbgChk.onchange=()=>{state.lbbg=lbbgChk.checked;save()};
+function openSettings(){setPg.classList.add("on");setPg.setAttribute("aria-hidden","false");setPg.scrollTop=0;document.getElementById("setx").focus()}
+function closeSettings(){if(!setPg.classList.contains("on"))return;setPg.classList.remove("on");setPg.setAttribute("aria-hidden","true");setBtn.focus()}
+setBtn.onclick=openSettings;document.getElementById("setx").onclick=closeSettings;
+document.addEventListener("keydown",e=>{if(e.key=="Escape"&&setPg.classList.contains("on")&&!document.querySelector(".gdmod"))closeSettings()});
 const unl=document.getElementById("unl");unl.checked=!!state.unl;
 unl.onchange=()=>{state.unl=unl.checked;save();if(!document.getElementById("scene")&&!state.pack)renderPack()};
 
@@ -1737,7 +1797,7 @@ function gyTilt(box,px,py,inLb){
  const B=inLb?LB:{rx:0,ry:0};
  // physically tilting the phone is already the card's rotation, so only the effects move (the preview keeps any rotation you dragged in)
  if(inLb)box.querySelector(".tilt").style.transform=`rotateX(${B.rx}deg) rotateY(${B.ry}deg)`;
- const f=box.querySelector(".front");if(f)gyFx(f,px,py)}
+ const f=box.querySelector(".front");if(f)gyFx(f,px,py);if(inLb)lbBg(px,py)}
 function gyFrame(){GY.raf=0;gyStep();if(GY.on&&Math.abs(GY.tx-GY.cx)+Math.abs(GY.ty-GY.cy)>.002)GY.raf=requestAnimationFrame(gyFrame)}
 function gyStep(){
  GY.cx+=(GY.tx-GY.cx)*.3;GY.cy+=(GY.ty-GY.cy)*.3;
@@ -1793,7 +1853,7 @@ Object.values(state.col).forEach(c=>{if(!state.seen[c.id])state.seen[c.id]=c.at|
    and stacking several effects on one card multiplies the whole total */
 const BASE_VALUE=10,STACK_BONUS=.35;
 const pv=p=>{if(!(p>0))return 5;return Math.min(1500,Math.max(5,Math.round(.0356*Math.pow(p,-1.2)/5)*5))}; /* steeper curve: everyday effects (shiny, parallax, common textures) are worth a few points, typical finishes ~50-100, and only the rarest (super rares, ~1 in 2000+) climb into the hundreds. capped at 1500 */
-function valueInfo(f,t,id){const[tn,tx,bg,sh,par0,gd,tf,vr0,fa,ie]=(t||"").split(".");
+function valueInfo(f,t,id){const[tn,tx,bg,sh,par0,gd,tf,vr0,fa,ie,cb]=(t||"").split(".");
  const parts=[["critter card",BASE_VALUE]];let k=0;const add=(l,p,st)=>{parts.push([l,pv(p)]);if(st)k++};
  const par=par0===undefined||par0=="p",vr=VARS[vr0]&&VARE.includes(f)?vr0:"";
  if(f&&FIN[f])add((SR[f]?"super rare ":"")+FIN[f].label,finP(f),1);
@@ -1804,16 +1864,26 @@ function valueInfo(f,t,id){const[tn,tx,bg,sh,par0,gd,tf,vr0,fa,ie]=(t||"").split
  if(IE[ie])add("image effect: "+IE[ie].label,IE_CHANCE*IE[ie].w/IET,1);
  if(FA[fa])add(FA[fa].label,FA_CHANCE*FA[fa].w/FAT,1);
  if(SHY[sh])add("shiny "+SHY[sh].toLowerCase(),SHINY_CHANCE/(EDGE_OK.includes(f||"")?3:2),1);
+ if(cb&&!FA[fa])add("country backdrop",CB_CHANCE,1);
  if(par)add("parallax photo",PARALLAX_CHANCE,0);
  const sum=parts.reduce((s,x)=>s+x[1],0),mult=k>1?1+STACK_BONUS*(k-1):1,pp=id!=null&&petOf(id),oc=pp&&pp.oc,bv=oc==null?0:oc<100?120:oc<500?70:oc<2500?35:oc<10000?15:0,
   bonus=bv?{l:"rarely spotted · only "+Number(oc).toLocaleString()+" sightings on inaturalist",v:bv}:null; /* flat bonus after stacking: species with few documented sightings */
- return{parts,k,mult,bonus,total:Math.round((sum*mult+bv)/5)*5}}
+ /* flat bonus after stacking: a photo other people loved (favorites on its inaturalist sighting). most photos have 0-3, so it only kicks in at 5+ */
+ const fv=pp&&+pp.fv||0,fb=fv>=100?250:fv>=50?150:fv>=20?90:fv>=10?50:fv>=5?20:0,
+  bonus2=fb?{l:"loved photo · "+fv.toLocaleString()+" favorites on inaturalist",v:fb}:null;
+ return{parts,k,mult,bonus,bonus2,total:Math.round((sum*mult+bv+fb)/5)*5}}
 const cardValue=(f,t,id)=>valueInfo(f,t,id).total;
 /* cards saved before sighting counts existed get theirs filled in quietly in the background */
 async function ocBackfill(){try{const need=Object.values(LIVE).filter(p=>p&&p.tid&&p.oc==null);if(!need.length)return;const ids=[...new Set(need.map(p=>p.tid))];
  for(let i=0;i<ids.length;i+=30){const r=await inat("/taxa/"+ids.slice(i,i+30).join(","),{locale:"en"});(r.results||[]).forEach(t=>{if(t.observations_count!=null)OCM[t.id]=t.observations_count})}
  need.forEach(p=>{if(OCM[p.tid]!=null)p.oc=OCM[p.tid]});saveLive();try{renderGrid()}catch(e){}}catch(e){}}
-setTimeout(ocBackfill,2500);
+/* cards saved before favorites were tracked get theirs filled in quietly too (one request per 30 sightings) */
+async function fvBackfill(){try{const need=Object.values(LIVE).filter(p=>p&&p.rg&&p.fv==null);if(!need.length)return;let got=false;
+ for(let i=0;i<need.length;i+=30){const ch=need.slice(i,i+30),r=await inat("/observations/"+[...new Set(ch.map(p=>p.rg))].join(","),{per_page:"30",locale:"en"}),m={};
+  (r.results||[]).forEach(o=>{m[o.id]=Math.max(+o.faves_count||0,+o.cached_votes_total||0)});
+  ch.forEach(p=>{p.fv=m[p.rg]||0});got=true}
+ if(got){saveLive();try{renderGrid()}catch(e){}}}catch(e){}}
+setTimeout(ocBackfill,2500);setTimeout(fvBackfill,4500);
 const ptsTxt=n=>n.toLocaleString()+" point"+(n==1?"":"s");
 function tradeBtn(id,f,t,b){
  if(!state.col[ck(id,f,t)]||!(b&&b.closest&&b.closest("#grid,#stage")))return"";
@@ -1828,7 +1898,7 @@ function closeTradePop(){const el=document.getElementById("tradepop");if(el){el.
 function tradePop(id,f,t){
  const p=petOf(id),vi=valueInfo(f,t,id),v=vi.total;if(!p)return;
  let el=document.getElementById("tradepop");if(!el){el=document.createElement("div");el.id="tradepop";document.body.appendChild(el)}
- el.innerHTML=`<div class="tpbox" role="dialog" aria-modal="true" aria-label="trade in this card"><div class="tpcard">${cardBox(id,f,t)}</div><h3>trade in ${p.name}?</h3><ul class="vb">${vi.parts.map(x=>`<li><span>${x[0]}</span><b>+${x[1].toLocaleString()}</b></li>`).join("")}${vi.mult>1?`<li class="st"><span>${vi.k} effects stacked</span><b>×${vi.mult}</b></li>`:""}${vi.bonus?`<li><span>${vi.bonus.l}</span><b>+${vi.bonus.v}</b></li>`:""}</ul><p>you’ll get <b>${ptsTxt(v)}</b>. the card leaves your collection, but ${p.name} stays in your list of critters you’ve met.</p><div class="tpacts"><button class="act" id="tpyes">trade in</button><button class="ghost" id="tpno">keep it</button></div></div>`;
+ el.innerHTML=`<div class="tpbox" role="dialog" aria-modal="true" aria-label="trade in this card"><div class="tpcard">${cardBox(id,f,t)}</div><h3>trade in ${p.name}?</h3><ul class="vb">${vi.parts.map(x=>`<li><span>${x[0]}</span><b>+${x[1].toLocaleString()}</b></li>`).join("")}${vi.mult>1?`<li class="st"><span>${vi.k} effects stacked</span><b>×${vi.mult}</b></li>`:""}${vi.bonus?`<li><span>${vi.bonus.l}</span><b>+${vi.bonus.v}</b></li>`:""}${vi.bonus2?`<li><span>${vi.bonus2.l}</span><b>+${vi.bonus2.v}</b></li>`:""}</ul><p>you’ll get <b>${ptsTxt(v)}</b>. the card leaves your collection, but ${p.name} stays in your list of critters you’ve met.</p><div class="tpacts"><button class="act" id="tpyes">trade in</button><button class="ghost" id="tpno">keep it</button></div></div>`;
  el.classList.add("on");
  el.onclick=e=>{e.stopPropagation();if(e.target===el)closeTradePop()};
  document.getElementById("tpno").onclick=closeTradePop;
@@ -1938,8 +2008,14 @@ function flagScan(root){(root.querySelectorAll?root.querySelectorAll("i.flag[dat
  const id=+el.dataset.fid,p=petOf(id);if(!p)return;if(p.cc!==undefined){el.outerHTML=flagHTML(p);return}
  if(el._ccw)return;el._ccw=1;
  ccLookup(p.ll).then(cc=>{p.cc=cc;document.querySelectorAll('i.flag[data-fid="'+id+'"]').forEach(x=>{x.outerHTML=flagHTML(p)})})})}
-new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>n.nodeType==1&&flagScan(n)))).observe(document.body,{childList:true,subtree:true});
-flagScan(document);
+new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>n.nodeType==1&&(flagScan(n),cbFill(n))))).observe(document.body,{childList:true,subtree:true});
+/* country backdrop: the flag of the country the photo was taken in fills the card background (needs the same coordinate lookup as the footer flag) */
+function cbFill(root){(root.querySelectorAll?root.querySelectorAll(".cbd[data-cb]:not([data-ok])"):[]).forEach(el=>{
+ const id=+el.dataset.cb,p=petOf(id);if(!p)return;
+ const put=cc=>{if(!cc)return;document.querySelectorAll('.cbd[data-cb="'+id+'"]').forEach(x=>{x.style.backgroundImage="url(https://flagcdn.com/w320/"+cc+".png)";x.dataset.ok="1"})};
+ if(p.cc){put(p.cc);return}
+ if(p.ll&&p.cc===undefined&&!el._cbw){el._cbw=1;ccLookup(p.ll).then(cc=>{if(p.cc===undefined)p.cc=cc;put(p.cc)})}})}
+flagScan(document);cbFill(document);
 
 /* ===== wikipedia summary for the species (REST summary api, looked up by scientific name, then common name) ===== */
 function wikiBtn(p,c){return `<button class="rawbtn wikibtn ${c||""}" data-id="${p.id}">${ic("info")} about the species</button>`}
