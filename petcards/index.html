@@ -2111,19 +2111,21 @@ new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>n.nodeType==1&&px
 pxScan(document);
 
 /* ===== gamedevrg.com account sync =====
-   sign in happens on gamedevrg.com/account (the login page of the whole website), which remembers the username in localStorage.
-   this game then asks for the password once per browser session to save its data to that account.
+   sign in happens on gamedevrg.com/account, which remembers the username and a login token in localStorage.
+   this game loads and saves its data with that token, so a logged-in account loads its data with no prompt.
+   (only if the browser has a username but no token, e.g. logged in before tokens existed, does it ask for the password once.)
    a brand-new account with no critter data can take over this browser's existing collection (this game only). */
-const GD_API="https://gamedevrg-com-backend.vercel.app",GD_LOGIN="https://gamedevrg.com/account",GD_GAME="critters",GD_PW="gdrg:pw",GD_OFF="gdrg:off",GD_DONE="gdrg:done";
-const gdLS={get(k){try{return localStorage.getItem(k)||""}catch(e){return ""}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const GD_API="https://gamedevrg-com-backend.vercel.app",GD_LOGIN="https://gamedevrg.com/account",GD_GAME="critters",GD_OFF="gdrg:off",GD_DONE="gdrg:done";
+const gdLS={get(k){try{return localStorage.getItem(k)||""}catch(e){return ""}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
 const gdSS={get(k){try{return sessionStorage.getItem(k)||""}catch(e){return ""}},set(k,v){try{sessionStorage.setItem(k,v)}catch(e){}},del(k){try{sessionStorage.removeItem(k)}catch(e){}}};
 const gdUser=()=>gdLS.get("loggedIn")==="true"?gdLS.get("username"):"";
+const gdTok=()=>gdLS.get("token");
 let gdLinked=false,gdTimer=0,gdStatus="";
 async function gdApi(path,body){
  try{const r=await fetch(GD_API+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
   let j={};try{j=await r.json()}catch(e){}return{ok:r.ok,status:r.status,j}}
  catch(e){return{ok:false,status:0,j:{message:"couldn’t reach the server"}}}}
-const gdBody=extra=>Object.assign({username:gdUser(),password:gdSS.get(GD_PW),game:GD_GAME},extra||{});
+const gdBody=extra=>Object.assign({username:gdUser(),token:gdTok(),game:GD_GAME},extra||{});
 function gdHasLocal(){return !!(Object.keys(state.col||{}).length||Object.keys(state.fav||{}).length||Object.keys(state.seen||{}).length||(+state.pts||0)>0||state.last)}
 function gdPayload(){
  const keep=new Set();Object.values(state.col||{}).forEach(c=>keep.add(+c.id));Object.keys(state.fav||{}).forEach(i=>keep.add(+i));Object.keys(state.seen||{}).forEach(i=>keep.add(+i));
@@ -2137,9 +2139,9 @@ function gdUi(){
  const txt=t=>{const s=document.createElement("span");s.innerHTML=t;el.appendChild(s)};
  const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
  if(!u){btn("sign in to gamedevrg.com",()=>{location.href=GD_LOGIN});txt("save your cards to your account")}
- else if(!gdSS.get(GD_PW)||gdSS.get(GD_OFF)){txt("signed in as <b>"+esc(u)+"</b>");btn("sync my cards",()=>gdConnect(true));btn("sign out",gdSignOut)}
+ else if(!gdTok()||gdSS.get(GD_OFF)){txt("signed in as <b>"+esc(u)+"</b>"+(gdStatus?" · "+esc(gdStatus):""));btn("connect my cards",()=>gdConnect(true));btn("sign out",gdSignOut)}
  else{txt("signed in as <b>"+esc(u)+"</b> · "+esc(gdStatus||(gdLinked?"saved to your account":"connecting…")));btn("sign out",gdSignOut)}}
-function gdSignOut(){gdLS.del("loggedIn");gdLS.del("username");gdSS.del(GD_PW);gdSS.del(GD_OFF);gdSS.del(GD_DONE);gdLinked=false;gdStatus="";clearTimeout(gdTimer);gdUi()}
+function gdSignOut(){gdLS.del("loggedIn");gdLS.del("username");gdLS.del("token");gdSS.del(GD_OFF);gdSS.del(GD_DONE);gdLinked=false;gdStatus="";clearTimeout(gdTimer);gdUi()}
 function gdDialog(title,body,buttons,input){
  return new Promise(res=>{
   const m=document.createElement("div");m.className="gdmod";
@@ -2152,27 +2154,29 @@ function gdDialog(title,body,buttons,input){
   b.appendChild(bar);m.appendChild(b);document.body.appendChild(m);
   if(inp){inp.focus();inp.onkeydown=e=>{if(e.key==="Enter")bar.querySelector(".pri").click()}}
   m._err=msg=>{if(err)err.textContent=msg}})}
-async function gdAsk(note){
+async function gdAsk(note){ /* fallback for a browser that is logged in but has no token yet: password once, then it gets a token */
  const u=gdUser();
  for(;;){
-  const pw=await gdDialog("sync with gamedevrg.com","enter the password for "+u+" to save your critter cards to your account."+(note?" "+note:""),[["not now",null],["sync",true,true]],true);
+  const pw=await gdDialog("sign in again","enter the password for "+u+" to connect your critter cards to your account."+(note?" "+note:""),[["not now",null],["continue",true,true]],true);
   if(!pw)return null;
-  gdSS.set(GD_PW,pw);
-  const r=await gdApi("/account/gamedata/get",gdBody());
-  if(r.ok)return r;
-  gdSS.del(GD_PW);
+  const r=await gdApi("/account/gamedata/get",{username:u,password:pw,game:GD_GAME});
+  if(r.ok){const l=await gdApi("/login",{username:u,password:pw});if(l.ok&&l.j&&l.j.token)gdLS.set("token",l.j.token);return r}
   if(r.status===400&&r.j&&r.j.message==="Incorrect password"){note="that password was incorrect.";continue}
-  gdStatus=(r.j&&r.j.message)||"couldn’t sync";gdUi();return null}}
+  gdStatus=(r.j&&r.j.message)||"couldn’t connect";gdUi();return null}}
 async function gdConnect(force){
  if(!gdUser()){gdUi();return}
  gdSS.del(GD_OFF);
  let r=null;
- if(gdSS.get(GD_PW)){r=await gdApi("/account/gamedata/get",gdBody());
-  if(!r.ok){gdSS.del(GD_PW);const nf=r.status===400&&r.j&&r.j.message==="User not found";r=null;if(nf){gdUi();return}}}
- if(!r){if(!force&&!gdSS.get(GD_PW)){gdUi();return}r=await gdAsk();if(!r){gdSS.set(GD_OFF,"1");gdUi();return}}
+ if(gdTok()){r=await gdApi("/account/gamedata/get",gdBody());
+  if(!r.ok){
+   if(r.status===0){gdStatus=r.j.message;gdUi();return} /* offline: keep the token, try again later */
+   if(r.status===401)gdLS.del("token"); /* expired or the password was changed */
+   if(r.status===400&&r.j&&r.j.message==="User not found"){gdUi();return}
+   r=null}}
+ if(!r){if(!force){gdStatus=gdTok()?"":"sign in again to save your cards";gdUi();return}r=await gdAsk();if(!r){gdSS.set(GD_OFF,"1");gdUi();return}}
  const data=r.j&&r.j.data;
  if(data&&data.state){
-  /* the account already has critter data */
+  /* the account already has critter data: load it, no questions */
   if(!gdSS.get(GD_DONE)){
    gdSS.set(GD_DONE,"1");
    let same=false;try{same=JSON.stringify(data.state)===localStorage.getItem(KEY)}catch(e){}
@@ -2193,14 +2197,14 @@ async function gdPush(){
  gdStatus="saving…";gdUi();
  const r=await gdApi("/account/gamedata/set",gdBody({data:gdPayload()}));
  if(r.ok)gdStatus="saved to your account";
- else if(r.status===400&&r.j&&/password|not found/i.test(r.j.message||"")){gdLinked=false;gdSS.del(GD_PW);gdStatus="";gdUi();return}
+ else if(r.status===401){gdLinked=false;gdLS.del("token");gdStatus="session expired, sign in again";gdUi();return}
+ else if(r.status===400&&/not found/i.test(r.j.message||"")){gdLinked=false;gdStatus="";gdUi();return}
  else gdStatus="couldn’t save, will retry";
  gdUi()}
 function cloudQueue(){if(!gdLinked)return;clearTimeout(gdTimer);gdTimer=setTimeout(gdPush,1500)}
 addEventListener("pagehide",()=>{if(gdLinked&&gdTimer){clearTimeout(gdTimer);gdTimer=0;try{fetch(GD_API+"/account/gamedata/set",{method:"POST",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify(gdBody({data:gdPayload()}))})}catch(e){}}});
 gdUi();
-if(gdUser()&&gdSS.get(GD_PW)&&!gdSS.get(GD_OFF))gdConnect(false);
-else if(gdUser()&&!gdSS.get(GD_OFF)&&!gdSS.get("gdrg:asked")){gdSS.set("gdrg:asked","1");setTimeout(()=>gdConnect(true),600)}
+if(gdUser()&&gdTok()&&!gdSS.get(GD_OFF))gdConnect(false);
 </script>
 </body>
 </html>
