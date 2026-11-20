@@ -656,9 +656,10 @@ body.lbopen #stage *,body.lbopen #stage *::before,body.lbopen #stage *::after{an
 
 /* ===== full art: the photo becomes the whole card (the border stays); text keeps its exact spot, just with a drop shadow ===== */
 .pcr{position:absolute;left:0;right:0;bottom:0;z-index:5;padding:.4em .5em .22em;font-size:.55em;line-height:1.2;text-align:right;color:rgba(255,255,255,.92);background:linear-gradient(transparent,rgba(0,0,0,.62));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
-/* country backdrop (t field 10): the flag of the photo's country replaces the plain card colour, softened so the text panels stay readable */
+/* country backdrop (t field 10): the photo's country (its map outline over its flag) replaces the plain card colour, softened so the text panels stay readable */
 .front>.cbd{position:absolute!important;inset:0;z-index:0;border-radius:inherit;pointer-events:none;background-size:cover;background-position:center;opacity:.92}
-.front>.cbd::after{content:"";position:absolute;inset:0;background:color-mix(in srgb,var(--surface) 30%,transparent)}
+.front>.cbd::before{content:"";position:absolute;inset:0;background:color-mix(in srgb,var(--surface) 30%,transparent)}
+.front>.cbd.ol::after{content:"";position:absolute;inset:7% 5%;background:rgba(255,255,255,.58);-webkit-mask:var(--ol) center/contain no-repeat;mask:var(--ol) center/contain no-repeat;filter:drop-shadow(0 0 .12em rgba(0,0,0,.4))}
 .front.fa>.pw>.pcr{top:.1em;bottom:auto;left:.75em;right:.75em;padding:0;background:none;text-shadow:0 .06em .14em rgba(0,0,0,.95),0 0 .35em rgba(0,0,0,.7)}
 .front.fa{color:#fff;--text:#fff;--muted:#fff}
 .front.fa>.pw{position:static;overflow:visible;border:0;border-radius:0}
@@ -898,7 +899,7 @@ body.lbbg main{transform:translate3d(var(--bgx,0px),var(--bgy,0px),0) scale(.955
 <p class="sub">five real wild critters from iNaturalist, free every day</p>
 <div class="gdacc" id="gdacc" role="status"></div>
 <details class="info" id="info"><summary>about this webpage</summary>
-<p class="about">every critter is a real wild animal, spotted and photographed by a nature lover and shared on iNaturalist, and every one has exactly the same chance of showing up. no critter is rarer than another; only the sparkle is luck of the draw, and sparkle is rare: most cards are plain, about 1 in 4 has a tinted card color, about 1 in 3 has a parallax photo, about 1 in 16 is full art (the photo fills the whole card), about 1 in 12 has an image effect (toon, pixel art, noir and more) that changes the photo itself, about 1 in 4 is slightly shiny, about 1 in 10 has a special finish, and roughly 1 in 100 has a super rare animated one. open a pack, enjoy the reveal, and add the ones that make you smile to your favorites. every card links to its original sighting on iNaturalist. trade in cards you don’t need for points, then spend the points on extra packs in the pack shop. the critter always stays in your list of critters you’ve met, so you can still look it up. about 1 in 33 cards also has a country backdrop: the flag of the country where the photo was taken fills the card background.</p>
+<p class="about">every critter is a real wild animal, spotted and photographed by a nature lover and shared on iNaturalist, and every one has exactly the same chance of showing up. no critter is rarer than another; only the sparkle is luck of the draw, and sparkle is rare: most cards are plain, about 1 in 4 has a tinted card color, about 1 in 3 has a parallax photo, about 1 in 16 is full art (the photo fills the whole card), about 1 in 12 has an image effect (toon, pixel art, noir and more) that changes the photo itself, about 1 in 4 is slightly shiny, about 1 in 10 has a special finish, and roughly 1 in 100 has a super rare animated one. open a pack, enjoy the reveal, and add the ones that make you smile to your favorites. every card links to its original sighting on iNaturalist. trade in cards you don’t need for points, then spend the points on extra packs in the pack shop. the critter always stays in your list of critters you’ve met, so you can still look it up. about 1 in 33 cards also has a country backdrop: the country where the photo was taken (its flag, with its map outline on top) fills the card background. country maps by <a href="https://github.com/djaiss/mapsicon" target="_blank" rel="noopener">mapsicon</a>.</p>
 </details>
 <div class="stage" id="stage"></div>
 
@@ -2010,9 +2011,16 @@ function flagScan(root){(root.querySelectorAll?root.querySelectorAll("i.flag[dat
  ccLookup(p.ll).then(cc=>{p.cc=cc;document.querySelectorAll('i.flag[data-fid="'+id+'"]').forEach(x=>{x.outerHTML=flagHTML(p)})})})}
 new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>n.nodeType==1&&(flagScan(n),cbFill(n))))).observe(document.body,{childList:true,subtree:true});
 /* country backdrop: the flag of the country the photo was taken in fills the card background (needs the same coordinate lookup as the footer flag) */
+/* the country's map outline (black on transparent, from the "mapsicon" collection by djaiss), tried in a few file names; if none loads the card just keeps the flag */
+const OUT_FILES=["vector.svg","512.png","256.png"],outMemo=new Map();
+function outlineUrl(cc){if(outMemo.has(cc))return outMemo.get(cc);
+ const pr=(async()=>{for(const f of OUT_FILES){const u="https://cdn.jsdelivr.net/gh/djaiss/mapsicon@master/all/"+cc+"/"+f;
+  if(await new Promise(r=>{const i=new Image();i.onload=()=>r(true);i.onerror=()=>r(false);i.src=u}))return u}return""})();
+ outMemo.set(cc,pr);return pr}
 function cbFill(root){(root.querySelectorAll?root.querySelectorAll(".cbd[data-cb]:not([data-ok])"):[]).forEach(el=>{
  const id=+el.dataset.cb,p=petOf(id);if(!p)return;
- const put=cc=>{if(!cc)return;document.querySelectorAll('.cbd[data-cb="'+id+'"]').forEach(x=>{x.style.backgroundImage="url(https://flagcdn.com/w320/"+cc+".png)";x.dataset.ok="1"})};
+ const put=cc=>{if(!cc)return;document.querySelectorAll('.cbd[data-cb="'+id+'"]').forEach(x=>{x.style.backgroundImage="url(https://flagcdn.com/w320/"+cc+".png)";x.dataset.ok="1"});
+  outlineUrl(cc).then(u=>{if(u)document.querySelectorAll('.cbd[data-cb="'+id+'"]').forEach(x=>{x.style.setProperty("--ol","url("+u+")");x.classList.add("ol")})})};
  if(p.cc){put(p.cc);return}
  if(p.ll&&p.cc===undefined&&!el._cbw){el._cbw=1;ccLookup(p.ll).then(cc=>{if(p.cc===undefined)p.cc=cc;put(p.cc)})}})}
 flagScan(document);cbFill(document);
