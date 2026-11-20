@@ -840,6 +840,19 @@ button,a.meet,.chip,.fv,.rawbtn{touch-action:manipulation}
 .k-penguin{--pf:repeating-linear-gradient(45deg,rgba(255,255,255,.1) 0 4px,transparent 4px 12px),repeating-linear-gradient(112deg,#0c1d33 0,#2a6fb0 8%,#cfe9ff 15%,#1c4f84 24%,#071426 32%,#0c1d33 38%)}
 .k-fox{--pf:repeating-linear-gradient(45deg,rgba(0,0,0,.14) 0 5px,transparent 5px 13px),repeating-linear-gradient(112deg,#a13a0a 0,#f27a2a 8%,#ffd9b0 15%,#d9561a 24%,#74270a 32%,#a13a0a 38%)}
 .obsnote{max-width:min(92vw,420px);margin:2px auto 0;padding:8px 14px;border-radius:12px;background:rgba(255,255,255,.08);color:#fff;font-size:13px;line-height:1.4;text-align:center;overflow-wrap:anywhere}.obsnote small{display:block;font-size:10.5px;letter-spacing:.06em;text-transform:lowercase;opacity:.6;margin-bottom:2px}
+/* card preview on phones: the effects list and the observer note live behind an info button next to the close button */
+.lbinfo{display:contents}
+.lbinfobtn{display:none}
+@media (max-width:600px),(max-height:480px) and (orientation:landscape){
+ #lb .acts .lbx{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));right:12px;width:44px;height:44px;min-height:0;padding:0;font-size:0;display:flex;align-items:center;justify-content:center;z-index:5}
+ #lb .acts .lbx::before{content:"\2715";font-size:18px;line-height:1}
+ #lb .acts .lbinfobtn{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));right:64px;width:44px;height:44px;padding:0;border-radius:99px;background:rgba(255,255,255,.16);color:#fff;border:1px solid #fff8;display:flex;align-items:center;justify-content:center;font:italic 700 21px/1 Georgia,"Times New Roman",serif;z-index:5;cursor:pointer}
+ #lb.info .acts .lbinfobtn{background:rgba(255,255,255,.34)}
+ #lb .lbinfo{display:none}
+ #lb.info:not(.zoomed) .lbinfo{display:flex;flex-direction:column;align-items:center;gap:10px;position:fixed;top:calc(62px + env(safe-area-inset-top,0px));left:12px;right:12px;max-width:420px;margin:0 auto;max-height:calc(100dvh - 90px);overflow:auto;padding:12px 14px;border-radius:14px;background:rgba(18,14,10,.95);border:1px solid #fff3;z-index:4;touch-action:pan-y}
+ #lb .lbinfo .fxl{display:flex;max-width:100%}
+ #lb .lbinfo .obsnote{margin:0;max-width:100%}
+}
 .front .hd .nm.cut,.front .ft .lt.cut{overflow:hidden;text-overflow:ellipsis}
 /* ===== gamedevrg account ===== */
 .gdacc{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin:8px 0 0;font-size:13px;color:var(--muted)}
@@ -1626,10 +1639,11 @@ function closeLb(){
  lb.animate([{opacity:1},{opacity:1,offset:.4},{opacity:0}],{duration:dur,fill:"forwards"});
  lb.querySelectorAll(".acts,.fxl,.hint").forEach(e=>e.animate([{opacity:1},{opacity:0}],{duration:160,fill:"forwards"}));
  an.onfinish=fin;an.oncancel=fin}
-function closeLbNow(){lb.getAnimations().forEach(x=>x.cancel());if(LB.src){LB.src.style.visibility="";LB.src=null}cancelAnimationFrame(LB.raf);LB.drag=LB.spin=false;LB.z=1;LB.px=LB.py=0;LB.pan=false;lb.classList.remove("on","zoomed");document.body.classList.remove("lbopen");closeRaw();lb.innerHTML=""}
-function openLb(b){cancelAnimationFrame(LB.raf);LB.z=1;LB.px=LB.py=0;LB.pan=false;lb.classList.remove("zoomed");LB.rx=LB.ry=0;LB.drag=LB.spin=false;const id=+b.dataset.id,p=petOf(id);
- lb.innerHTML=cardBox(id,b.dataset.f,b.dataset.t,"",true).replace('class="cardbox"','class="cardbox" style="--w:var(--lbw);cursor:grab"')+`<div class="acts">${favBtn(id,b.dataset.f,b.dataset.t,"made me smile")}${meetLink(p)}${rawBtn(p)}${wikiBtn(p)}${tradeBtn(id,b.dataset.f,b.dataset.t,b)}<button class="lbx x" aria-label="close">close</button></div>${fxText(b.dataset.f,b.dataset.t)}${p.note?`<div class="obsnote"><small>note from the observer</small>${p.note}</div>`:""}<div class="hint" style="color:#fffa">drag the card to rotate it · ${matchMedia("(pointer:coarse)").matches?"pinch":"scroll"} to zoom</div>`;
+function closeLbNow(){lb.getAnimations().forEach(x=>x.cancel());if(LB.src){LB.src.style.visibility="";LB.src=null}cancelAnimationFrame(LB.raf);LB.drag=LB.spin=false;LB.z=1;LB.px=LB.py=0;LB.pan=false;lb.classList.remove("on","zoomed","info");document.body.classList.remove("lbopen");closeRaw();lb.innerHTML=""}
+function openLb(b){cancelAnimationFrame(LB.raf);LB.z=1;LB.px=LB.py=0;LB.pan=false;lb.classList.remove("zoomed","info");LB.rx=LB.ry=0;LB.drag=LB.spin=false;const id=+b.dataset.id,p=petOf(id);
+ lb.innerHTML=cardBox(id,b.dataset.f,b.dataset.t,"",true).replace('class="cardbox"','class="cardbox" style="--w:var(--lbw);cursor:grab"')+`<div class="acts">${favBtn(id,b.dataset.f,b.dataset.t,"made me smile")}${meetLink(p)}${rawBtn(p)}${wikiBtn(p)}${tradeBtn(id,b.dataset.f,b.dataset.t,b)}<button class="lbx x" aria-label="close">close</button><button class="lbinfobtn" aria-label="card info" aria-expanded="false">i</button></div><div class="lbinfo">${fxText(b.dataset.f,b.dataset.t)}${p.note?`<div class="obsnote"><small>note from the observer</small>${p.note}</div>`:""}</div><div class="hint" style="color:#fffa">drag the card to rotate it · ${matchMedia("(pointer:coarse)").matches?"pinch":"scroll"} to zoom</div>`;
  lb.classList.add("on");document.body.classList.add("lbopen");lb.querySelector(".x").onclick=closeLb;
+ {const ib=lb.querySelector(".lbinfobtn");ib.onclick=e=>{e.stopPropagation();ib.setAttribute("aria-expanded",lb.classList.toggle("info"))}}
  if(LB.src)LB.src.style.visibility="";LB.src=b;
  /* fly the card from where it was clicked to the centre of the screen */
  const nb=lbBox();
@@ -2157,7 +2171,7 @@ function gdDialog(title,body,buttons,input){
 async function gdAsk(note){ /* fallback for a browser that is logged in but has no token yet: password once, then it gets a token */
  const u=gdUser();
  for(;;){
-  const pw=await gdDialog("sign in again","enter the password for "+u+" to connect your critter cards to your account."+(note?" "+note:""),[["not now",null],["continue",true,true]],true);
+  const pw=await gdDialog("sign in again","enter the password for "+u+" to connect your critter cards to your account."+(note?" "+note:""),[["back",null],["continue",true,true]],true);
   if(!pw)return null;
   const r=await gdApi("/account/gamedata/get",{username:u,password:pw,game:GD_GAME});
   if(r.ok){const l=await gdApi("/login",{username:u,password:pw});if(l.ok&&l.j&&l.j.token)gdLS.set("token",l.j.token);return r}
@@ -2173,7 +2187,7 @@ async function gdConnect(force){
    if(r.status===401)gdLS.del("token"); /* expired or the password was changed */
    if(r.status===400&&r.j&&r.j.message==="User not found"){gdUi();return}
    r=null}}
- if(!r){if(!force){gdStatus=gdTok()?"":"sign in again to save your cards";gdUi();return}r=await gdAsk();if(!r){gdSS.set(GD_OFF,"1");gdUi();return}}
+ if(!r){if(!force){gdStatus=gdTok()?"":"sign in again to save your cards";gdUi();if(!gdTok())gdForce();return}r=await gdAsk();if(!r){gdSS.set(GD_OFF,"1");gdUi();return}}
  const data=r.j&&r.j.data;
  if(data&&data.state){
   /* the account already has critter data: load it, no questions */
@@ -2192,12 +2206,22 @@ async function gdConnect(force){
   const ok=await gdDialog("load your cards to your account?","your gamedevrg.com account has no critter cards data yet, but this browser has a saved collection. want to load it to your account? this only copies critter cards data, nothing from your other games.",[["no thanks",false],["load my cards",true,true]]);
   if(!ok){gdSS.set(GD_OFF,"1");gdStatus="";gdUi();return}}
  gdSS.set(GD_DONE,"1");gdLinked=true;await gdPush();gdUi()}
+let gdForcing=false;
+/* when "connect my cards" would be the only option (logged in, but no login token), the game insists on updating first */
+async function gdForce(){
+ if(gdForcing)return;gdForcing=true;
+ while(gdUser()&&!gdLS.get("token")){
+  const v=await gdDialog("newer data detected","your gamedevrg.com account may have newer critter cards than this browser. update now so you’re always up to date.",[["sign out",null],["update now",true,true]]);
+  if(v===null){gdSignOut();break}
+  await gdConnect(true);
+  if(/reach/.test(gdStatus))break} /* offline: don't trap the player, the connect button stays */
+ gdForcing=false}
 async function gdPush(){
  if(!gdLinked)return;
  gdStatus="saving…";gdUi();
  const r=await gdApi("/account/gamedata/set",gdBody({data:gdPayload()}));
  if(r.ok)gdStatus="saved to your account";
- else if(r.status===401){gdLinked=false;gdLS.del("token");gdStatus="session expired, sign in again";gdUi();return}
+ else if(r.status===401){gdLinked=false;gdLS.del("token");gdStatus="session expired, sign in again";gdUi();gdForce();return}
  else if(r.status===400&&/not found/i.test(r.j.message||"")){gdLinked=false;gdStatus="";gdUi();return}
  else gdStatus="couldn’t save, will retry";
  gdUi()}
@@ -2205,6 +2229,7 @@ function cloudQueue(){if(!gdLinked)return;clearTimeout(gdTimer);gdTimer=setTimeo
 addEventListener("pagehide",()=>{if(gdLinked&&gdTimer){clearTimeout(gdTimer);gdTimer=0;try{fetch(GD_API+"/account/gamedata/set",{method:"POST",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify(gdBody({data:gdPayload()}))})}catch(e){}}});
 gdUi();
 if(gdUser()&&gdTok()&&!gdSS.get(GD_OFF))gdConnect(false);
+else if(gdUser()&&!gdTok())gdForce();
 </script>
 </body>
 </html>
