@@ -380,6 +380,24 @@ linear-gradient(115deg,var(--rc) 0,var(--rc) calc(var(--gx,50%) - 30%),color-mix
 #dbg{position:fixed;inset:0;z-index:45;background:var(--bg);color:var(--text);overflow-y:auto;overscroll-behavior:contain;display:none;padding:0 16px 48px}
 #dbg.on{display:block}
 #dbg .bar{position:sticky;top:0;z-index:2;background:var(--bg);display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:calc(10px + env(safe-area-inset-top,0px)) 0 10px;border-bottom:1px solid var(--border)}
+#gen{position:fixed;inset:0;z-index:45;background:var(--bg);color:var(--text);overflow-y:auto;overscroll-behavior:contain;display:none;padding:0 16px 48px}
+#gen.on{display:block}
+#gen .bar{position:sticky;top:0;z-index:2;background:var(--bg);display:flex;gap:8px 14px;align-items:center;padding:calc(10px + env(safe-area-inset-top,0px)) 0 10px;border-bottom:1px solid var(--border)}
+#gen .bar b{font-size:16px}
+#gen .gform{max-width:640px;margin:14px auto 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px 12px}
+#gen .gform label{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+#gen .gform label.chk{flex-direction:row;align-items:center;gap:6px;font-size:13px}
+#gen .gform .wide{grid-column:1/-1}
+#gen select,#gen input[type=text]{font:13px "Chakra Petch","Noto Sans",system-ui,sans-serif;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 8px;min-width:0;width:100%}
+#gen .gtit{grid-column:1/-1;margin:8px 0 0;font-size:13px;font-weight:700}
+#gen .gact{max-width:640px;margin:14px auto 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#gen .gact button.go{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:9px 18px;font:700 14px "Chakra Petch","Noto Sans",system-ui,sans-serif;cursor:pointer}
+#gen .gact button.go:disabled{opacity:.55;cursor:wait}
+#gen .gmsg{font-size:13px;color:var(--muted)}
+#gen .gout{display:flex;flex-direction:column;align-items:center;gap:12px;margin:22px auto 0;max-width:640px}
+#gen .gout .fxl{color:var(--text)}
+#gen .ginfo{font-size:12px;color:var(--muted);text-align:center;line-height:1.5}
+#gen .cardbox:not(:hover) *,#gen .cardbox:not(:hover) *::before,#gen .cardbox:not(:hover) *::after{animation-play-state:paused!important}
 #dbg .bar b{font-size:16px}
 #dbg .bar label{font-size:13px;color:var(--muted);display:flex;gap:6px;align-items:center}
 #dbg select{font:13px "Chakra Petch","Noto Sans","Noto Sans SC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Tamil","Noto Sans Thai","Noto Sans Georgian","Noto Sans Armenian",system-ui,sans-serif;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:4px 6px}
@@ -659,6 +677,9 @@ body.lbopen #stage *,body.lbopen #stage *::before,body.lbopen #stage *::after{an
 /* country backdrop (t field 10): the photo's country (its map outline over its flag) replaces the plain card colour, softened so the text panels stay readable */
 .front>.cbd{position:absolute!important;inset:0;z-index:0;border-radius:inherit;pointer-events:none;background-size:cover;background-position:center;opacity:.92}
 .front>.cbd::before{content:"";position:absolute;inset:0;background:color-mix(in srgb,var(--surface) 30%,transparent)}
+.front>.cbd.cbp::before{background:linear-gradient(color-mix(in srgb,var(--surface) 18%,transparent),color-mix(in srgb,var(--surface) 26%,transparent))}
+.front>.cbd.cbp{opacity:1;background-color:color-mix(in srgb,var(--surface) 60%,#888)}
+.front>.cbd .cbc{position:absolute;right:.5em;bottom:.2em;z-index:2;max-width:70%;font-size:.42em;line-height:1.2;color:rgba(255,255,255,.9);text-shadow:0 .06em .2em rgba(0,0,0,.95);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .front>.cbd.ol::after{content:"";position:absolute;inset:7% 5%;background:rgba(255,255,255,.58);-webkit-mask:var(--ol) center/contain no-repeat;mask:var(--ol) center/contain no-repeat;filter:drop-shadow(0 0 .12em rgba(0,0,0,.4))}
 .front.fa>.pw>.pcr{top:.1em;bottom:auto;left:.75em;right:.75em;padding:0;background:none;text-shadow:0 .06em .14em rgba(0,0,0,.95),0 0 .35em rgba(0,0,0,.7)}
 .front.fa{color:#fff;--text:#fff;--muted:#fff}
@@ -899,7 +920,7 @@ body.lbbg main{transform:translate3d(var(--bgx,0px),var(--bgy,0px),0) scale(.955
 <p class="sub">five real wild critters from iNaturalist, free every day</p>
 <div class="gdacc" id="gdacc" role="status"></div>
 <details class="info" id="info"><summary>about this webpage</summary>
-<p class="about">every critter is a real wild animal, spotted and photographed by a nature lover and shared on iNaturalist, and every one has exactly the same chance of showing up. no critter is rarer than another; only the sparkle is luck of the draw, and sparkle is rare: most cards are plain, about 1 in 4 has a tinted card color, about 1 in 3 has a parallax photo, about 1 in 16 is full art (the photo fills the whole card), about 1 in 12 has an image effect (toon, pixel art, noir and more) that changes the photo itself, about 1 in 4 is slightly shiny, about 1 in 10 has a special finish, and roughly 1 in 100 has a super rare animated one. open a pack, enjoy the reveal, and add the ones that make you smile to your favorites. every card links to its original sighting on iNaturalist. trade in cards you don’t need for points, then spend the points on extra packs in the pack shop. the critter always stays in your list of critters you’ve met, so you can still look it up. about 1 in 33 cards also has a country backdrop: the country where the photo was taken (its flag, with its map outline on top) fills the card background. country maps by <a href="https://github.com/djaiss/mapsicon" target="_blank" rel="noopener">mapsicon</a>.</p>
+<p class="about">every critter is a real wild animal, spotted and photographed by a nature lover and shared on iNaturalist, and every one has exactly the same chance of showing up. no critter is rarer than another; only the sparkle is luck of the draw, and sparkle is rare: most cards are plain, about 1 in 4 has a tinted card color, about 1 in 3 has a parallax photo, about 1 in 16 is full art (the photo fills the whole card), about 1 in 12 has an image effect (toon, pixel art, noir and more) that changes the photo itself, about 1 in 4 is slightly shiny, about 1 in 10 has a special finish, and roughly 1 in 100 has a super rare animated one. open a pack, enjoy the reveal, and add the ones that make you smile to your favorites. every card links to its original sighting on iNaturalist. trade in cards you don’t need for points, then spend the points on extra packs in the pack shop. the critter always stays in your list of critters you’ve met, so you can still look it up. about 1 in 33 cards also has a country backdrop: the country where the photo was taken (its flag, with its map outline on top) fills the card background. another 1 in 33 has a country photo backdrop instead: a random featured photo of that country from <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener">wikimedia commons</a>. country maps by <a href="https://github.com/djaiss/mapsicon" target="_blank" rel="noopener">mapsicon</a>.</p>
 </details>
 <div class="stage" id="stage"></div>
 
@@ -926,7 +947,7 @@ body.lbbg main{transform:translate3d(var(--bgx,0px),var(--bgy,0px),0) scale(.955
 <label class="tg"><input type="checkbox" id="unl"> playtest mode: unlimited packs</label>
 <div class="rg"><label>where to look <select id="rgwhere"><option value="world">anywhere in the world</option><option value="near">near me (asks for your location)</option></select></label><button class="ghost" id="rgsave">save and load critters</button><span id="rgmsg" role="status"></span></div>
 <h3>other</h3>
-<div class="acts" style="margin-top:6px"><button class="ghost" id="dbgbtn">debug: view every card effect</button></div>
+<div class="acts" style="margin-top:6px"><button class="ghost" id="dbgbtn">debug: view every card effect</button> <button class="ghost" id="genbtn">debug: generate a card</button></div>
 </div></section>
 <div id="lb"></div>
 
@@ -965,7 +986,8 @@ let LIVE={},LIVEN=1000,POOL=[],srcErr="";const REGP={}; // fresh critters per wo
 try{const s=JSON.parse(localStorage.getItem(LIVEK)||"null");if(s&&s.pets){LIVE=s.pets;LIVEN=s.next||1000}}catch(e){}
 let cfg={near:false,lat:0,lng:0};try{Object.assign(cfg,JSON.parse(localStorage.getItem(CFGK)||"{}"))}catch(e){}
 const locKey=()=>cfg.near?(+cfg.lat).toFixed(1)+","+(+cfg.lng).toFixed(1):"world";
-const petOf=id=>CRITTERS[+id]||LIVE[id];
+const DBGP={};
+const petOf=id=>CRITTERS[+id]||LIVE[id]||DBGP[id];
 function saveLive(){
  try{
   if(Object.keys(LIVE).length>400){const keep=new Set(POOL.map(p=>p.id));Object.values(REGP).forEach(r=>r.ids.forEach(i=>keep.add(+i)));
@@ -1166,8 +1188,8 @@ const FA={full:{label:"full art",icon:"image",w:3},vig:{label:"full art · vigne
 const FAL=Object.entries(FA).map(([k,v])=>[k,v.w]),FAT=FAL.reduce((a,[,w])=>a+w,0),FA_CHANCE=.06;
 const rollFa=()=>{if(PREVIEW=="fa")return pickW(FAL,FAT);if(PREVIEW.startsWith("fa-")&&FA[PREVIEW.slice(3)])return PREVIEW.slice(3);return Math.random()<FA_CHANCE*LK?pickW(FAL,FAT):""};
 const IE={noir:{label:"noir",icon:"film",w:3},vintage:{label:"vintage",icon:"script-text",w:3},halftone:{label:"halftone",icon:"dots-grid",w:3},watercolor:{label:"watercolor",icon:"palette",w:2.5},sketch:{label:"pencil sketch",icon:"script-text",w:2.5},duotone:{label:"duotone",icon:"layers",w:2.5},toon:{label:"toon",icon:"palette",w:2.5},comic:{label:"comic book",icon:"star-four-points",w:2},ink:{label:"ink drawing",icon:"script-text",w:2},pixel:{label:"pixel art",icon:"dots-grid",w:2}};
-const CB_CHANCE=.03;
-const rollCb=fa=>{if(fa)return"";if(PREVIEW=="cb")return"c";return Math.random()<CB_CHANCE*LK?"c":""};
+const CB_CHANCE=.03,CBP_CHANCE=.03;// flag backdrop / country photo backdrop (?preview=cb or ?preview=cbp forces one)
+const rollCb=fa=>{if(fa)return"";if(PREVIEW=="cb")return"c";if(PREVIEW=="cbp")return"p";if(Math.random()<CB_CHANCE*LK)return"c";return Math.random()<CBP_CHANCE*LK?"p":""};
 const IEL=Object.entries(IE).map(([k,v])=>[k,v.w]),IET=IEL.reduce((a,[,w])=>a+w,0),IE_CHANCE=.08;
 const rollIe=()=>{if(IE[PREVIEW])return PREVIEW;if(PREVIEW=="ie")return pickW(IEL,IET);if(PREVIEW.startsWith("ie-")&&IE[PREVIEW.slice(3)])return PREVIEW.slice(3);return Math.random()<IE_CHANCE*LK?pickW(IEL,IET):""};
 const waveHTML=n=>[...n].map((ch,i)=>ch==" "?" ":`<span class="tfw" style="--i:${i}">${ch}</span>`).join("");
@@ -1569,7 +1591,7 @@ function fxText(f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr0,fa,ie,cb]=(t||"").split("
  if(sh)out.push(`<span>${ic("shimmer","#e0a21b")} shiny ${SHY[sh].toLowerCase()}${odds(SHINY_CHANCE/(EDGE_OK.includes(f||"")?3:2))}</span>`);
  if(IE[ie])out.push(`<span>${ic(IE[ie].icon,"#e0a21b")} image effect: ${IE[ie].label}${odds(IE_CHANCE*IE[ie].w/IET)}</span>`);
  if(FA[fa])out.push(`<span>${ic("image","#6aa9ff")} ${FA[fa].label}${odds(FA_CHANCE*FA[fa].w/FAT)}</span>`);
- if(cb&&!FA[fa])out.push(`<span>${ic("map-marker","#6aa9ff")} country backdrop${odds(CB_CHANCE)}</span>`);
+ if(cb&&!FA[fa])out.push(cb=="p"?`<span>${ic("image","#6aa9ff")} country photo backdrop${odds(CBP_CHANCE)}</span>`:`<span>${ic("map-marker","#6aa9ff")} country backdrop${odds(CB_CHANCE)}</span>`);
  if(par)out.push(`<span>${ic("layers","#9fb0c0")} parallax photo${odds(PARALLAX_CHANCE)}</span>`);
  return out.length?`<div class="fxl">${out.join("")}</div>`:`<div class="fxl none">plain card, no special effects</div>`}
 const FACES=new Map();
@@ -1579,7 +1601,7 @@ const crTxt=a=>{a=String(a||"");if(!a)return"";const lic=(a.match(/\(CC[^)]*\)/)
  const n=a.replace(/\(CC[^)]*\)/,"").replace(/^\s*\(c\)\s*/i,"").replace(/,?\s*some rights reserved/i,"").replace(/no rights reserved,?\s*(uploaded by)?\s*/i,"").replace(/[\s,]+$/,"").trim();
  return "photo: "+(n||"unknown")+(lic?" "+lic:"")};
 const crHTML=p=>p.credit?`<div class="pcr">${crTxt(p.credit)}</div>`:"";
-function cardFace0(p,f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr,fa,ie,cb]=(t||"").split(".");const par=par0===undefined||par0=="p";const sh=SHY[sh0]?sh0:"";return `<div class="face front sp-${p.sp} fin-${f||"none"}${cb&&!FA[fa]?" cbk":""}${BORD[gd]?" gold bd-"+gd:""}${FA[fa]?" fa fa-"+fa:""}${IE[ie]?" ie-"+ie:""}${TFX[tf]?" tf-"+tf:""}${sh?" shy-"+sh:""}${VARS[vr]&&VARE.includes(f)?" var-"+vr:""}${par?" par":""}${SR[f]?" sr":""}${FOILS[f]?" fin-foil foil-"+f:""} tint-${FOILS[f]?"foil":(tn||"rb")}${bg&&BGS[bg]&&!NOBG.includes(f)&&!SR[f]?" bg-"+bg:""}">${cb&&!FA[fa]?`<div class="cbd" data-cb="${p.id}" aria-hidden="true"></div>`:""}<div class="holo">${f=="facet"?facetSVG(seedOf(p,t)):""}</div>${sh=="bg"?'<div class="shy"></div>':""}${tx&&TEX[tx]?`<div class="tex tx-${tx}"></div>`:""}<div class="hd txt"><div class="nm">${tf=="wave"?waveHTML(p.name):p.name}</div></div><div class="sptab" title="${SPC[p.sp]}" role="img" aria-label="${SPC[p.sp]}">${ic(SPI[p.sp])}</div>
+function cardFace0(p,f,t){const[tn,tx,bg,sh0,par0,gd,tf,vr,fa,ie,cb]=(t||"").split(".");const par=par0===undefined||par0=="p";const sh=SHY[sh0]?sh0:"";return `<div class="face front sp-${p.sp} fin-${f||"none"}${cb&&!FA[fa]?" cbk":""}${BORD[gd]?" gold bd-"+gd:""}${FA[fa]?" fa fa-"+fa:""}${IE[ie]?" ie-"+ie:""}${TFX[tf]?" tf-"+tf:""}${sh?" shy-"+sh:""}${VARS[vr]&&VARE.includes(f)?" var-"+vr:""}${par?" par":""}${SR[f]?" sr":""}${FOILS[f]?" fin-foil foil-"+f:""} tint-${FOILS[f]?"foil":(tn||"rb")}${bg&&BGS[bg]&&!NOBG.includes(f)&&!SR[f]?" bg-"+bg:""}">${cb&&!FA[fa]?`<div class="cbd${cb=="p"?" cbp":""}" data-cb="${p.id}" data-k="${cb=="p"?"p":"c"}" aria-hidden="true"></div>`:""}<div class="holo">${f=="facet"?facetSVG(seedOf(p,t)):""}</div>${sh=="bg"?'<div class="shy"></div>':""}${tx&&TEX[tx]?`<div class="tex tx-${tx}"></div>`:""}<div class="hd txt"><div class="nm">${tf=="wave"?waveHTML(p.name):p.name}</div></div><div class="sptab" title="${SPC[p.sp]}" role="img" aria-label="${SPC[p.sp]}">${ic(SPI[p.sp])}</div>
  <div class="pw">${FA[fa]?'<div class="fclip">':""}${IE[ie]?'<div class="ifw">':""}<img class="photo" decoding="async" src="${photo(p)}" alt="${p.name}${p.live?"":", sample photo"}" referrerpolicy="no-referrer" draggable="false">${IE[ie]?"</div>":""}${FA[fa]?"</div>":""}${IE[ie]?'<div class="ifx"></div>':""}<div class="pholo"></div>${sh=="img"?'<div class="pshy"></div>':""}</div>
  ${BORD[gd]?`<div class="gb">${borderSVG(seedOf(p,t))}</div>`:""}<div class="bd txt"><div class="meta"><i>${p.breed}</i> · ${p.age}</div><div class="desc">${p.desc}</div></div><div class="ft where txt">${ic("map-marker")}<span class="lw"><span class="lt">${shOf(p).n}</span></span>${flagHTML(p)}${p.credit?`<div class="cr2">${crTxt(p.credit)}</div>`:""}</div></div>`}
 function cardBox(id,f,t,extra,back){return `<div class="cardbox" data-id="${id}" data-f="${f||""}" data-t="${t||""}"><div class="tilt">${slices()}${cardFace(petOf(id),f,t)}${back?`<div class="face back">${ic("leaf")}</div>`:""}</div>${extra||""}</div>`}
@@ -1693,7 +1715,7 @@ function closeLb(){document.body.classList.remove("lbbg");
  an.onfinish=fin;an.oncancel=fin}
 function closeLbNow(){lb.getAnimations().forEach(x=>x.cancel());if(LB.src){LB.src.style.visibility="";LB.src=null}cancelAnimationFrame(LB.raf);LB.drag=LB.spin=false;LB.z=1;LB.px=LB.py=0;LB.pan=false;lb.classList.remove("on","zoomed","info");document.body.classList.remove("lbopen","lbbg");closeRaw();lb.innerHTML=""}
 function openLb(b){cancelAnimationFrame(LB.raf);LB.z=1;LB.px=LB.py=0;LB.pan=false;lb.classList.remove("zoomed","info");LB.rx=LB.ry=0;LB.drag=LB.spin=false;const id=+b.dataset.id,p=petOf(id);
- lb.innerHTML=cardBox(id,b.dataset.f,b.dataset.t,"",true).replace('class="cardbox"','class="cardbox" style="--w:var(--lbw);cursor:grab"')+`<div class="acts">${favBtn(id,b.dataset.f,b.dataset.t,"made me smile")}${meetLink(p)}${rawBtn(p)}${wikiBtn(p)}${tradeBtn(id,b.dataset.f,b.dataset.t,b)}<button class="lbx x" aria-label="close">close</button><button class="lbinfobtn" aria-label="card info" aria-expanded="false">i</button></div><div class="lbinfo">${fxText(b.dataset.f,b.dataset.t)}${p.fv!=null?`<div class="lbfav">${ic("heart","#ff6b9a")}<span>${p.fv>0?"<b>"+(+p.fv).toLocaleString()+"</b> favorite"+(p.fv==1?"":"s")+" on inaturalist":"no favorites on inaturalist yet"}</span></div>`:""}${p.note?`<div class="obsnote"><small>note from the observer</small>${p.note}</div>`:""}</div><div class="hint" style="color:#fffa">drag the card to rotate it · ${matchMedia("(pointer:coarse)").matches?"pinch":"scroll"} to zoom</div>`;
+ lb.innerHTML=cardBox(id,b.dataset.f,b.dataset.t,"",true).replace('class="cardbox"','class="cardbox" style="--w:var(--lbw);cursor:grab"')+`<div class="acts">${p.dbg?"":favBtn(id,b.dataset.f,b.dataset.t,"made me smile")}${meetLink(p)}${rawBtn(p)}${wikiBtn(p)}${p.dbg?"":tradeBtn(id,b.dataset.f,b.dataset.t,b)}<button class="lbx x" aria-label="close">close</button><button class="lbinfobtn" aria-label="card info" aria-expanded="false">i</button></div><div class="lbinfo">${fxText(b.dataset.f,b.dataset.t)}${p.fv!=null?`<div class="lbfav">${ic("heart","#ff6b9a")}<span>${p.fv>0?"<b>"+(+p.fv).toLocaleString()+"</b> favorite"+(p.fv==1?"":"s")+" on inaturalist":"no favorites on inaturalist yet"}</span></div>`:""}${p.note?`<div class="obsnote"><small>note from the observer</small>${p.note}</div>`:""}</div><div class="hint" style="color:#fffa">drag the card to rotate it · ${matchMedia("(pointer:coarse)").matches?"pinch":"scroll"} to zoom</div>`;
  lb.classList.add("on");document.body.classList.add("lbopen");
  {const R=document.documentElement.style;R.setProperty("--lbsy",scrollY+"px");R.setProperty("--bgx","0px");R.setProperty("--bgy","0px");document.body.classList.toggle("lbbg",state.lbbg!==false&&lbBgQ.matches)}
  lb.querySelector(".x").onclick=closeLb;
@@ -1730,7 +1752,7 @@ document.addEventListener("pointermove",e=>{if(LB.drag){const b=lbBox();if(!b)re
  if(LB.spin)return;const inLb=lb.classList.contains("on");if(inLb&&!lbFront())return;/* preview: cursor tilt only while the card faces front */
  const box=inLb?lb.querySelector(".cardbox"):(e.target.closest&&e.target.closest(".cardbox[data-id]"));if(box)pmFrame(0,box,e.clientX,e.clientY)});
 document.addEventListener("pointerout",e=>{const b=e.target.closest&&e.target.closest(".cardbox");if(b&&!b.closest("#lb")&&!b.contains(e.relatedTarget)){pmFrame.cancel();b.querySelector(".tilt").style.transform="";resetFx(b.querySelector(".front"))}});
-document.addEventListener("keydown",e=>{if(e.key=="Escape"){if(wkZoomOpen())wkZoomClose();else if(wikiOpen())closeWiki();else if(rawOpen())closeRaw();else if(lb.classList.contains("on"))closeLb();else closeDbg()}});
+document.addEventListener("keydown",e=>{if(e.key=="Escape"){if(wkZoomOpen())wkZoomClose();else if(wikiOpen())closeWiki();else if(rawOpen())closeRaw();else if(lb.classList.contains("on"))closeLb();else if(genOpen())closeGen();else closeDbg()}});
 document.getElementById("reset").onclick=()=>{if(confirm("clear your collection and favorites, and reset today’s pack?")){state={last:"",fav:{},col:{},filter:"all",pack:null,unl:state.unl,lbbg:state.lbbg,pts:0,inv:{},seen:{},shop:{d:"",n:0},cur:null,econ:2};save();renderPack();renderGrid()}};
 // ===== debug gallery: every finish, tint, texture, shiny mode, parallax and card color =====
 function openDbg(){let d=document.getElementById("dbg");
@@ -1772,6 +1794,70 @@ function buildDbg(){const d=document.getElementById("dbg"),q=s=>d.querySelector(
  const b=document.createElement("div");b.className="dbody";
  b.innerHTML=sec.map(([h,sub,items])=>`<h3>${h} <span class="dsub">(${items.length})</span></h3><p class="dsub">${sub} hover or tap a card to tilt it; click for the full preview. cards you haven\u2019t pulled yet show as ???.</p><div class="grid">${items.map(([l,f,t,ok])=>ok?`<div class="cell">${cardBox(pet,f,t)}<div class="cap">${l}</div></div>`:`<div class="cell"><div class="cardbox mysbox"><div class="tilt">${slices()}<div class="face front mys"><div class="nm">???</div></div></div></div><div class="cap">???</div></div>`).join("")}</div>`).join("");
  d.appendChild(b);dbgCull.watch(b)}
+/* ===== debug: generate one card (a preview only; never added to the collection, favorites, packs or the live pool) ===== */
+let GENN=0;
+const GEN_ANY_ICONIC="Aves,Mammalia,Reptilia,Amphibia,Actinopterygii,Insecta,Arachnida,Mollusca";
+function openGen(){let d=document.getElementById("gen");
+ if(!d){d=document.createElement("div");d.id="gen";
+  const opt=(o,first)=>`<option value="">${first}</option>`+o,fin=Object.keys(FIN).filter(k=>!SR[k]).map(k=>`<option value="${k}">${FIN[k].label}</option>`).join(""),sr=Object.keys(SR).map(k=>`<option value="${k}">${FIN[k]?FIN[k].label:SR[k].label}</option>`).join("");
+  d.innerHTML=`<div class="bar"><b>generate a card</b><span class="gmsg">debug preview only, never added to your collection</span><button class="ghost gx" style="margin-left:auto">close</button></div>
+  <div class="gform">
+   <label>animal (optional)<input type="text" id="gen-an" placeholder="e.g. red fox, Vulpes vulpes, owl" autocomplete="off"></label>
+   <label>country (optional)<input type="text" id="gen-co" placeholder="e.g. Japan, Brazil, Kenya" autocomplete="off"></label>
+   <div class="gtit">effects (blank = plain card)</div>
+   <label class="chk wide"><input type="checkbox" id="gen-roll"> roll the effects at normal odds like a real pack (ignores the choices below)</label>
+   <label>finish<select id="gen-f"><option value="">none</option><optgroup label="finishes">${fin}</optgroup><optgroup label="super rare">${sr}</optgroup></select></label>
+   <label>tint<select id="gen-tn"><option value="">none</option>${Object.keys(TN).map(k=>`<option value="${k}">${TN[k]}</option>`).join("")}</select></label>
+   <label>variation<select id="gen-vr"><option value="">none</option>${Object.keys(VARS).map(k=>`<option value="${k}">${VARS[k].n}</option>`).join("")}</select></label>
+   <label>texture<select id="gen-tx"><option value="">none</option>${TEXK.map(k=>`<option value="${k}">${TEX[k][0]}</option>`).join("")}</select></label>
+   <label>card color<select id="gen-bg"><option value="">default</option>${BGK.map(k=>`<option>${k}</option>`).join("")}</select></label>
+   <label>shiny<select id="gen-sh"><option value="">none</option>${Object.keys(SHY).map(k=>`<option value="${k}">${SHY[k]}</option>`).join("")}</select></label>
+   <label>border<select id="gen-gd"><option value="">none</option>${Object.entries(BORD).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join("")}</select></label>
+   <label>text effect<select id="gen-tf"><option value="">none</option>${Object.entries(TFX).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join("")}</select></label>
+   <label>image effect<select id="gen-ie"><option value="">none</option>${Object.entries(IE).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join("")}</select></label>
+   <label>full art<select id="gen-fa"><option value="">none</option>${Object.entries(FA).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join("")}</select></label>
+   <label>country backdrop<select id="gen-cb"><option value="">none</option><option value="c">flag + map outline</option><option value="p">country photo (commons)</option></select></label>
+   <label class="chk"><input type="checkbox" id="gen-par"> parallax photo</label>
+  </div>
+  <div class="gact"><button class="go" id="gen-go">generate</button><span class="gmsg" id="gen-msg" role="status"></span></div>
+  <div class="gout" id="gen-out"></div>`;
+  document.body.appendChild(d);d.querySelector(".gx").onclick=closeGen;
+  d.querySelector("#gen-go").onclick=genRun;
+  d.addEventListener("keydown",e=>{if(e.key=="Enter"&&e.target.tagName=="INPUT"&&e.target.type=="text"){e.preventDefault();genRun()}})}
+ d.classList.add("on");d.scrollTop=0}
+function closeGen(){const d=document.getElementById("gen");if(d)d.classList.remove("on")}
+const genOpen=()=>{const d=document.getElementById("gen");return !!(d&&d.classList.contains("on"))};
+async function genPlace(q){ // country name -> iNaturalist place id
+ const r=await inat("/places/autocomplete",{q,per_page:"10",locale:"en"}),l=r.results||[],ql=q.trim().toLowerCase();
+ const pick=l.find(x=>x.admin_level===0&&String(x.name||"").toLowerCase()==ql)||l.find(x=>x.admin_level===0)||l[0];
+ if(!pick)throw new Error("couldn’t find a place called “"+q+"”");return pick}
+async function genTaxon(q){ // common or scientific name -> iNaturalist taxon
+ const r=await inat("/taxa",{q,per_page:"10",is_active:"true",locale:"en"}),l=r.results||[],ql=q.trim().toLowerCase();
+ const pick=l.find(t=>String(t.name||"").toLowerCase()==ql||String(t.preferred_common_name||"").toLowerCase()==ql)||l[0];
+ if(!pick)throw new Error("couldn’t find an animal called “"+q+"”");return pick}
+async function genRun(){
+ const d=document.getElementById("gen"),q=s=>d.querySelector(s),v=id=>q("#gen-"+id).value,go=q("#gen-go"),msg=q("#gen-msg"),out=q("#gen-out");
+ go.disabled=true;out.innerHTML="";msg.textContent="pulling a card…";
+ try{
+  const an=v("an").trim(),co=v("co").trim(),par={quality_grade:"research",photos:"true",photo_license:"cc0,cc-by,cc-by-sa,cc-by-nc,cc-by-nc-sa",captive:"false",order_by:"random",per_page:"40",locale:"en"};
+  let place=null,tax=null;
+  if(co){msg.textContent="finding “"+co+"”…";place=await genPlace(co);par.place_id=String(place.id)}
+  if(an){msg.textContent="finding “"+an+"”…";tax=await genTaxon(an);par.taxon_id=String(tax.id)}else par.iconic_taxa=GEN_ANY_ICONIC;
+  msg.textContent="pulling a sighting…";
+  const r=await inat("/observations",par),list=parseINat(r.results||[]);
+  if(!list.length)throw new Error("no matching animal sighting came back"+(co||an?" for that animal / country combination":"")+" (the game only uses mammals, birds, reptiles, amphibians, fish, insects, arachnids and mollusks)");
+  const pet=list[Math.floor(Math.random()*list.length)];
+  try{const tr=await inat("/taxa/"+pet.tid,{locale:"en"}),t=(tr.results||[])[0];if(t){if(t.observations_count!=null)pet.oc=t.observations_count;const w=clip(tidy(t.wikipedia_summary||""),170);if(w.length>=40)pet.desc=esc(w)}}catch(e){}
+  pet.id=9000000+(++GENN);pet.dbg=true;DBGP[pet.id]=pet;
+  let f,t;
+  if(q("#gen-roll").checked){const fin=rollFin();f=fin;t=rollT(fin)}
+  else{f=v("f");t=[v("tn"),v("tx"),v("bg"),v("sh"),q("#gen-par").checked?"p":"",v("gd"),v("tf"),VARS[v("vr")]&&VARE.includes(f)?v("vr"):"",v("fa"),v("ie"),v("fa")?"":v("cb")].join(".")}
+  out.innerHTML=`${cardBox(pet.id,f,t)}${fxText(f,t)}<div class="ginfo"><b>${pet.name}</b> <i>${pet.breed}</i><br>${pet.shn}${pet.ll?` · ${esc(pet.ll)}`:""}<br><a href="${esc(pet.url)}" target="_blank" rel="noopener">original sighting ↗</a><br>finish: ${f||"none"} · code: <code>${esc(t)}</code><br>tap the card for the full preview</div>`;
+  msg.textContent="";
+  flagScan(out);cbFill(out);
+ }catch(e){msg.textContent=(e&&e.message)||"something went wrong"}
+ finally{go.disabled=false}}
+document.getElementById("genbtn").onclick=()=>{closeSettings();openGen()};
 document.getElementById("dbgbtn").onclick=()=>{closeSettings();openDbg()};
 /* ===== settings page ===== */
 const setPg=document.getElementById("settings"),setBtn=document.getElementById("setbtn"),lbbgChk=document.getElementById("lbbgchk");
@@ -1865,7 +1951,7 @@ function valueInfo(f,t,id){const[tn,tx,bg,sh,par0,gd,tf,vr0,fa,ie,cb]=(t||"").sp
  if(IE[ie])add("image effect: "+IE[ie].label,IE_CHANCE*IE[ie].w/IET,1);
  if(FA[fa])add(FA[fa].label,FA_CHANCE*FA[fa].w/FAT,1);
  if(SHY[sh])add("shiny "+SHY[sh].toLowerCase(),SHINY_CHANCE/(EDGE_OK.includes(f||"")?3:2),1);
- if(cb&&!FA[fa])add("country backdrop",CB_CHANCE,1);
+ if(cb&&!FA[fa])add(cb=="p"?"country photo backdrop":"country backdrop",cb=="p"?CBP_CHANCE:CB_CHANCE,1);
  if(par)add("parallax photo",PARALLAX_CHANCE,0);
  const sum=parts.reduce((s,x)=>s+x[1],0),mult=k>1?1+STACK_BONUS*(k-1):1,pp=id!=null&&petOf(id),oc=pp&&pp.oc,bv=oc==null?0:oc<100?120:oc<500?70:oc<2500?35:oc<10000?15:0,
   bonus=bv?{l:"rarely spotted · only "+Number(oc).toLocaleString()+" sightings on inaturalist",v:bv}:null; /* flat bonus after stacking: species with few documented sightings */
@@ -2017,10 +2103,33 @@ function outlineUrl(cc){if(outMemo.has(cc))return outMemo.get(cc);
  const pr=(async()=>{for(const f of OUT_FILES){const u="https://cdn.jsdelivr.net/gh/djaiss/mapsicon@master/all/"+cc+"/"+f;
   if(await new Promise(r=>{const i=new Image();i.onload=()=>r(true);i.onerror=()=>r(false);i.src=u}))return u}return""})();
  outMemo.set(cc,pr);return pr}
+/* country photo backdrop: a random featured picture of the country from wikimedia commons (its "featured pictures of …" category, then a search of all featured pictures as a fallback) */
+const CPH=new Map(),cName=cc=>{try{return new Intl.DisplayNames(["en"],{type:"region"}).of(cc.toUpperCase())||""}catch(e){return""}};
+const cStrip=h=>{const d=document.createElement("div");d.innerHTML=h||"";return(d.textContent||"").replace(/\s+/g," ").trim()};
+function cphParse(j){const pg=Object.values((j&&j.query&&j.query.pages)||{}),out=[];
+ pg.forEach(x=>{const ii=x.imageinfo&&x.imageinfo[0];if(!ii||!ii.thumburl||!/\.(jpe?g|png|webp)$/i.test(x.title||""))return;
+  const md=ii.extmetadata||{},who=cStrip(md.Artist&&md.Artist.value).slice(0,40),lic=cStrip(md.LicenseShortName&&md.LicenseShortName.value);
+  out.push({src:ii.thumburl,cr:["commons",who,lic].filter(Boolean).join(" · "),page:ii.descriptionurl||""})});return out}
+async function cphQuery(extra){const u="https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=640&iiextmetadatafilter=Artist|LicenseShortName&"+extra;
+ const ac=new AbortController(),to=setTimeout(()=>ac.abort(),10000);try{const r=await fetch(u,{signal:ac.signal});return r.ok?cphParse(await r.json()):[]}catch(e){return[]}finally{clearTimeout(to)}}
+function cphList(cc){if(CPH.has(cc))return CPH.get(cc);
+ const pr=(async()=>{const n=cName(cc);if(!n)return[];
+  const cats=["Featured pictures of "+n,"Featured pictures of the "+n,"Quality images of "+n,"Quality images of the "+n];
+  for(const c of cats){const l=await cphQuery("generator=categorymembers&gcmtype=file&gcmlimit=60&gcmtitle="+encodeURIComponent("Category:"+c));if(l.length)return l}
+  return await cphQuery("generator=search&gsrnamespace=6&gsrlimit=40&gsrsearch="+encodeURIComponent(n+' incategory:"Featured pictures on Wikimedia Commons"'))})();
+ CPH.set(cc,pr);return pr}
+function cphPick(cc,p){if(p.cph)return Promise.resolve(p.cph);
+ return cphList(cc).then(async l=>{l=l.slice();while(l.length){const it=l.splice(Math.floor(Math.random()*l.length),1)[0];
+  if(await new Promise(r=>{const i=new Image();i.onload=()=>r(true);i.onerror=()=>r(false);i.referrerPolicy="no-referrer";i.src=it.src}))return(p.cph=it)}return null})}
 function cbFill(root){(root.querySelectorAll?root.querySelectorAll(".cbd[data-cb]:not([data-ok])"):[]).forEach(el=>{
  const id=+el.dataset.cb,p=petOf(id);if(!p)return;
- const put=cc=>{if(!cc)return;document.querySelectorAll('.cbd[data-cb="'+id+'"]').forEach(x=>{x.style.backgroundImage="url(https://flagcdn.com/w320/"+cc+".png)";x.dataset.ok="1"});
-  outlineUrl(cc).then(u=>{if(u)document.querySelectorAll('.cbd[data-cb="'+id+'"]').forEach(x=>{x.style.setProperty("--ol","url("+u+")");x.classList.add("ol")})})};
+ const flag=(x,cc)=>{x.style.backgroundImage="url(https://flagcdn.com/w320/"+cc+".png)";x.dataset.ok="1";x.classList.remove("cbp")};
+ const put=cc=>{if(!cc)return;
+  document.querySelectorAll('.cbd[data-cb="'+id+'"]').forEach(x=>{if(x.dataset.k!="p")flag(x,cc)});
+  if(el.dataset.k=="p"){if(el._cph)return;el._cph=1;cphPick(cc,p).then(it=>{document.querySelectorAll('.cbd[data-cb="'+id+'"]').forEach(x=>{
+    if(it){x.style.backgroundImage="url("+it.src+")";x.dataset.ok="1";if(!x.querySelector(".cbc")){const c=document.createElement("span");c.className="cbc";c.textContent=it.cr;x.appendChild(c)}}
+    else flag(x,cc)})});return}
+  outlineUrl(cc).then(u=>{if(u)document.querySelectorAll('.cbd[data-cb="'+id+'"]').forEach(x=>{if(x.dataset.k=="p")return;x.style.setProperty("--ol","url("+u+")");x.classList.add("ol")})})};
  if(p.cc){put(p.cc);return}
  if(p.ll&&p.cc===undefined&&!el._cbw){el._cbw=1;ccLookup(p.ll).then(cc=>{if(p.cc===undefined)p.cc=cc;put(p.cc)})}})}
 flagScan(document);cbFill(document);
